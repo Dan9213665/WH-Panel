@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DateTimePicker dateTimePicker1;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmAddItemsToDB));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -46,7 +47,6 @@
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.textBox6 = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -82,6 +82,7 @@
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -101,6 +102,15 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // dateTimePicker1
+            // 
+            dateTimePicker1.Dock = System.Windows.Forms.DockStyle.Fill;
+            dateTimePicker1.Enabled = false;
+            dateTimePicker1.Location = new System.Drawing.Point(598, 18);
+            dateTimePicker1.Name = "dateTimePicker1";
+            dateTimePicker1.Size = new System.Drawing.Size(113, 23);
+            dateTimePicker1.TabIndex = 5;
             // 
             // tabControl1
             // 
@@ -291,7 +301,7 @@
             this.tableLayoutPanel2.Controls.Add(this.textBox3, 0, 1);
             this.tableLayoutPanel2.Controls.Add(this.textBox4, 1, 1);
             this.tableLayoutPanel2.Controls.Add(this.comboBox1, 6, 1);
-            this.tableLayoutPanel2.Controls.Add(this.dateTimePicker1, 5, 1);
+            this.tableLayoutPanel2.Controls.Add(dateTimePicker1, 5, 1);
             this.tableLayoutPanel2.Controls.Add(this.textBox5, 3, 1);
             this.tableLayoutPanel2.Controls.Add(this.textBox6, 4, 1);
             this.tableLayoutPanel2.Controls.Add(this.label4, 0, 0);
@@ -362,14 +372,6 @@
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(113, 23);
             this.comboBox1.TabIndex = 6;
-            // 
-            // dateTimePicker1
-            // 
-            this.dateTimePicker1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dateTimePicker1.Location = new System.Drawing.Point(598, 18);
-            this.dateTimePicker1.Name = "dateTimePicker1";
-            this.dateTimePicker1.Size = new System.Drawing.Size(113, 23);
-            this.dateTimePicker1.TabIndex = 5;
             // 
             // textBox5
             // 
@@ -819,7 +821,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmAddItemsToDB";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Move items IN/OUT of Stock";
+            this.Text = "Move_stock_items";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);

@@ -24,9 +24,12 @@ using System.Security.AccessControl;
 using static System.Security.AccessControl.NativeObjectSecurity;
 using System;
 using System.Threading;
-
 using System.Security.Principal;
+using Microsoft.VisualBasic;
+using System.ComponentModel.Design;
 
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace WH_Panel
 {
@@ -48,6 +51,11 @@ namespace WH_Panel
         public int countStockItems = 0;
         int iAVL = 0;
         int iStock = 0;
+        private object cmd;
+
+        public string stockFile = @"\\dbr1\Data\WareHouse\2022\_DEV\SAMPLE_DATA\TESTDBWH.xlsm";
+        public string avlSource = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_AVL.xlsm";
+
         private void textBox9_TextChanged(object sender, EventArgs e)
         {
         }
@@ -59,9 +67,9 @@ namespace WH_Panel
             countAVLItems = 0;
             iAVL = 0;
             label1.Text = "RELOAD AVL";
-            var fp = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_AVL.xlsm";
+            
             //MessageBox.Show(fp);
-            DataLoaderAVL(fp,"AVL");
+            DataLoaderAVL(avlSource, "AVL");
             PopulateGridView();
             
         }
@@ -272,10 +280,35 @@ namespace WH_Panel
             if (radioButton1.Checked == true)
             {
                 sorce_req = "MFG";
-                if (textBox6.Text != string.Empty && int.Parse(textBox6.Text) > 0)
+                if (textBox6.Text != string.Empty )
                 {
-                    qty = int.Parse(textBox6.Text);
-                    MoveIntoDATABASE(qty, sorce_req);
+                    try
+                    {
+                        int outNumber;
+                        bool success = int.TryParse(textBox6.Text,out outNumber);
+                        if (success) 
+                        {
+
+                            MoveIntoDATABASE(outNumber, sorce_req);
+                            FilterStockDataGridView(textBox10.Text);
+
+                        }
+                       else
+                        {
+                            MessageBox.Show("Input positive numeric values ONLY !");
+                            textBox6.Text = string.Empty;
+                            textBox6.Focus();   
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+                        throw;
+                    }
+                    
+                   
+
+                   
                 }
                 else
                 {
@@ -293,6 +326,9 @@ namespace WH_Panel
                     {
                         qty = int.Parse(textBox6.Text);
                         MoveIntoDATABASE(qty, sorce_req);
+                        FilterStockDataGridView(textBox10.Text);
+
+                       
                     }
                     else
                     {
@@ -310,11 +346,24 @@ namespace WH_Panel
             {
                 sorce_req = textBox9.Text;
                 qty = int.Parse(textBox6.Text) * (-1);
+                MoveIntoDATABASE(qty, sorce_req);
+                FilterStockDataGridView(textBox10.Text);
+
+                
             }
 
-            FilterStockDataGridView(textBox3.Text);
+
 
         }
+
+        private void ComeBackFromPrint()
+        {
+
+            Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
+
+            textBox1.Focus();
+        }
+
         private void MoveIntoDATABASE(int qty, string sorce_req)
         {
             WHitem inputWHitem = new WHitem
@@ -324,16 +373,17 @@ namespace WH_Panel
                 MFPN = textBox4.Text,
                 Description = textBox5.Text,
                 Stock = qty,
-                UpdatedOn = dateTimePicker1.Value.ToString("yyyy-MM-dd")+" "+DateTime.Now.ToString("HH:mm:ss tt"), //tt
+                UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd")+" "+DateTime.Now.ToString("HH:mm:ss tt"), //tt
                 Comments = comboBox1.Text,
                 SourceRequester = sorce_req
             };
-            string stockFile = @"\\dbr1\Data\WareHouse\2022\_DEV\SAMPLE_DATA\TESTDBWH.xlsm";
+           
             DataInserter(stockFile, "STOCK", inputWHitem);
             stockItems.Add(inputWHitem);
             textBox10.Text = inputWHitem.IPN;
             PopulateStockView();
 
+            
             // MessageBox.Show(inputWHitem.IPN + "\n" +
             //" " + inputWHitem.Manufacturer + "\n" +
             //" " + inputWHitem.MFPN + "\n" +
@@ -361,7 +411,7 @@ namespace WH_Panel
                 textBox1.Clear();
                 label2.BackColor = Color.LightGreen;
                 textBox1.Focus();
-                //printSticker(wHitem);
+                printSticker(wHitem);
                 //printStickerAPI(wHitem);
             }
             catch (IOException)
@@ -373,40 +423,51 @@ namespace WH_Panel
 
         private void printSticker(WHitem wHitem)
         {
-            string fp = @"C:\\Users\\lgt\\Desktop\\Print_StickersWH.xlsm";
-            string thesheetName = @"STICKER";
-            try
-            {
-                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
-                using (OleDbConnection conn = new OleDbConnection(constr))
-                {
-                    conn.Open();
-                    OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$] (IPN,MFPN,Description,Qty,UpdatedOn) values('" + wHitem.IPN + "','" + wHitem.MFPN + "','" + wHitem.Description + "','" + wHitem.Stock.ToString() + "','" + wHitem.UpdatedOn.ToString().Substring(0, 10) + "')", conn);
-                    command.ExecuteNonQuery();
-
-
-                    //OleDbCommand command0 = new OleDbCommand("UPDATE [" + thesheetName + "$A2:A2] SET IPN='test'", conn);
-                    //command0.ExecuteNonQuery();
-                    //OleDbCommand command1 = new OleDbCommand("UPDATE [" + thesheetName + "$B2:B2] SET MFPN='test1'", conn);
-                    //command1.ExecuteNonQuery();
-                    //OleDbCommand command2 = new OleDbCommand("UPDATE [" + thesheetName + "$C2:C2] SET Description='test2'", conn);
-                    //command2.ExecuteNonQuery();
-                    //OleDbCommand command3 = new OleDbCommand("UPDATE [" + thesheetName + "$D2:D2] SET Qty='test3'", conn);
-                    //command3.ExecuteNonQuery();
-                    //OleDbCommand command4 = new OleDbCommand("UPDATE [" + thesheetName + "$E2:E2] SET UpdatedOn='test4'", conn);
-                    //command4.ExecuteNonQuery();
+            string fp = @"C:\\Users\\lgt\\Desktop\\Print_Stickers.xlsx"; // //////Print_StickersWH.xlsm
+            string thesheetName = "Sheet1";
+            string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+            OleDbConnection conn = new OleDbConnection(constr);
+            OleDbCommand cmd = new OleDbCommand();
+            cmd.Connection = conn;
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @UPDATEDON";
+            cmd.Parameters.AddWithValue("@PN",wHitem.IPN);
+            cmd.Parameters.AddWithValue("@MFPN",wHitem.MFPN);
+            cmd.Parameters.AddWithValue("@ItemDesc", wHitem.Description);
+            cmd.Parameters.AddWithValue("@QTY",wHitem.Stock);
+            cmd.Parameters.AddWithValue("@UPDATEDON", wHitem.UpdatedOn);
+            conn.Open();
+            cmd.ExecuteNonQuery();
+            conn.Close();
+            Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
+            SendKeys.SendWait("^p");
+            SendKeys.SendWait("{Enter}");
 
 
 
+            ComeBackFromPrint();
 
-                    conn.Close();
-                }
-                
-            }
-            catch (IOException)
-            {
-                MessageBox.Show("Error");
-            }
+            
+
+            Microsoft.VisualBasic.Interaction.AppActivate("Move_stock_items");
+            
+            textBox1.Focus();
+
+
+
+
+            //[DllImport("User32.dll")]
+            //static extern int SetForegroundWindow(IntPtr point);
+
+            ////...
+
+            //Process p = Process.GetProcessesByName("PN_STICKER_2022.btw - BarTender Designer").FirstOrDefault();
+            //if (p != null)
+            //{
+            //    IntPtr h = p.MainWindowHandle;
+            //    SetForegroundWindow(h);
+            //    SendKeys.SendWait("^p");
+            //}
         }
 
         private static void printStickerAPI(WHitem wHitem)
@@ -557,7 +618,7 @@ namespace WH_Panel
             button3.Text="LOAD STOCK";
             button3.Update();
 
-        string stockFile = @"\\dbr1\Data\WareHouse\2022\_DEV\SAMPLE_DATA\TESTDBWH.xlsm";
+        
             StockViewDataLoader(stockFile, "STOCK");
             PopulateStockView();
         }
