@@ -66,7 +66,8 @@ namespace WH_Panel
                         {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm", "STOCK_VALENS" },
                         {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm","STOCK" },
                         {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm","STOCK" },
-                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\FIELDIN\\FIELDIN_STOCK.xlsm","STOCK" }
+                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\FIELDIN\\FIELDIN_STOCK.xlsm","STOCK" },
+                {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm","STOCK"}
 
                    };
 
@@ -94,30 +95,39 @@ namespace WH_Panel
                     {
                         while (reader.Read())
                         {
+                            int number;
 
+                            bool success = int.TryParse(reader[4].ToString(), out number);
 
-                            WHitem abc = new WHitem
+                            if (success)
                             {
-                                IPN = reader[0].ToString(),
-                                Manufacturer = reader[1].ToString(),
-                                MFPN = reader[2].ToString(),
-                                Description = reader[3].ToString(),
-                                Stock = reader[4].ToString(),
-                                UpdatedOn = reader[5].ToString(),
-                                Comments = reader[6].ToString(),
-                                SourceRequester = reader[7].ToString()
+                                WHitem abc = new WHitem
+                                {
 
-                            };
+                                    IPN = reader[0].ToString(),
+                                    Manufacturer = reader[1].ToString(),
+                                    MFPN = reader[2].ToString(),
+                                    Description = reader[3].ToString(),
+                                    Stock = number,
+                                    UpdatedOn = reader[5].ToString(),
+                                    Comments = reader[6].ToString(),
+                                    SourceRequester = reader[7].ToString()
 
-                            if (i > 0)
-                            {
-                                countItems = i;
-                                label1.Text = "Rows:" + (countItems).ToString();
-                                label1.Update();
-                                wHitems.Add(abc);
+                                };
+                                if (i > 0)
+                                {
+                                    countItems = i;
+                                    label1.Text = "Rows:" + (countItems).ToString();
+                                    label1.Update();
+                                    wHitems.Add(abc);
+                                }
+
+                                i++;
                             }
 
-                            i++;
+                        
+
+                           
                         }
                     }
                     conn.Close();
@@ -142,7 +152,7 @@ namespace WH_Panel
             dataGridView1.DataSource = UDtable;
             SetColumsOrder();
             label1.BackColor = Color.LightGreen;
-
+            
             //dataGridView1.AutoResizeColumns();
             //dataGridView1.Update();
 
@@ -166,6 +176,8 @@ namespace WH_Panel
             dataGridView1.Columns["UpdatedOn"].DisplayIndex = 5;
             dataGridView1.Columns["Comments"].DisplayIndex = 6;
             dataGridView1.Columns["SourceRequester"].DisplayIndex = 7;
+
+            
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -197,6 +209,7 @@ namespace WH_Panel
             FilterTheDataGridView();
 
         }
+     
 
         private void FilterTheDataGridView()
         {
@@ -373,5 +386,11 @@ namespace WH_Panel
                 MessageBox.Show("ACCESS DENIED");
             }
         }
+
+        //private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        //{
+        //    MessageBox.Show(e.ColumnIndex.ToString());
+            
+        //}
     }
 }

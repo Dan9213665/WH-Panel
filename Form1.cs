@@ -126,5 +126,11 @@ namespace WH_Panel
             var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ST_MICRO\\ST_MICRO_STOCK.xlsm";
             openWHexcelDB(fp);
         }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            FrmAddItemsToDB addItemsToDB = new FrmAddItemsToDB();
+            addItemsToDB.Show();
+        }
     }
 }

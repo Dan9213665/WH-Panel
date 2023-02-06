@@ -83,6 +83,16 @@ namespace WH_Panel.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap database_add_12927 {
+            get {
+                object obj = ResourceManager.GetObject("database_add_12927", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap documents_files_history_64 {
             get {
                 object obj = ResourceManager.GetObject("documents_files_history_64", resourceCulture);

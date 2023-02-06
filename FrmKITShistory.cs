@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Common;
 using System.Data.OleDb;
 using System.Diagnostics;
 using System.Drawing;
@@ -14,6 +15,8 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
+using static System.Net.WebRequestMethods;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using DataTable = System.Data.DataTable;
 
@@ -28,7 +31,16 @@ namespace WH_Panel
         int i = 0;
         int loadingErrors = 0;
         public static Stopwatch stopWatch = new Stopwatch();
-        
+        public int colIpnFoundIndex;
+        public int colMFPNFoundIndex;
+        public List<string> listOfPaths = new List<string>()
+            {
+                "\\\\dbr1\\Data\\WareHouse\\2022\\10.2022",
+                "\\\\dbr1\\Data\\WareHouse\\2022\\11.2022",
+                "\\\\dbr1\\Data\\WareHouse\\2022\\12.2022",
+                "\\\\dbr1\\Data\\WareHouse\\2023"
+            };
+
         public FrmKITShistory()
         {
             InitializeComponent();
@@ -87,13 +99,7 @@ namespace WH_Panel
             stopWatch.Start();
 
             
-            List<string> listOfPaths = new List<string>()
-            {
-                "\\\\dbr1\\Data\\WareHouse\\2022\\10.2022",
-                "\\\\dbr1\\Data\\WareHouse\\2022\\11.2022",
-                "\\\\dbr1\\Data\\WareHouse\\2022\\12.2022",
-                "\\\\dbr1\\Data\\WareHouse\\2023"
-            };
+          
 
             label12.BackColor = Color.IndianRed;
 
@@ -140,7 +146,7 @@ namespace WH_Panel
 
             try
             {
-                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=1\string.Empty;
+                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=1\"";
                 
                 using (OleDbConnection conn = new OleDbConnection(constr))
                 {
@@ -159,17 +165,56 @@ namespace WH_Panel
                             //label13.Text+=columnName;
                             string cleanedUpSheetName = firstSheetName.Substring(1).Substring(0, firstSheetName.Length - 3);
 
-                            //string cleanedUPfP = fp.Split("/",);
-                            //string[] cleanedUPfP = fp.Split(string.Empty);
-                            //MessageBox.Show(cleanedUPfP[0]+" "+ cleanedUPfP[1]);
+                        //string cleanedUPfP = fp.Split("/",);
+                        //string[] cleanedUPfP = fp.Split(string.Empty);
+                        //MessageBox.Show(cleanedUPfP[0]+" "+ cleanedUPfP[1]);
+                        //MessageBox.Show(dbSchema.Rows[0]["COLUMN_NAME"].ToString());
 
-                            OleDbCommand command = new OleDbCommand("Select * from [" + cleanedUpSheetName + "$]", conn);
+
+                        OleDbCommand command = new OleDbCommand("Select * from [" + cleanedUpSheetName + "$]", conn);
                             OleDbDataReader reader = command.ExecuteReader();
                             if (reader.HasRows)
                             {
-                                while (reader.Read())
+
+
+                            //DataTable schemaTable = reader.GetSchemaTable();
+                            //MessageBox.Show(dbSchema.TableName[0].ToString());  
+                            //foreach (DataColumn column in schemaTable.Columns)
+                            //{
+                            //    if (column.ColumnName.ToString() == "IPN")
+                            //    {
+                            //        colIpnFoundIndex = column.Ordinal;
+                            //        MessageBox.Show(colIpnFoundIndex.ToString());
+                            //    }
+                            //}
+
+
+                            while (reader.Read())
                                 {
-                                    KitHistoryItem abc = new KitHistoryItem
+                                
+
+
+                                //    if (i==0)
+                                //{
+                                //    //for (int cIndex = 0; cIndex < reader.FieldCount; cIndex++)
+                                //    //{
+                                //    //    if (reader[cIndex].ToString() == "IPN")
+                                //    //    {
+                                //    //        colIpnFoundIndex = cIndex;
+                                //    //    }
+                                //    //    else if (reader[cIndex].ToString() == "MFPN")
+                                //    //    {
+                                //    //        colMFPNFoundIndex = cIndex;
+                                //    //    }
+
+                                //    //}
+                                //}
+
+                                //else if(i>0)
+                                //{
+
+
+                                KitHistoryItem abc = new KitHistoryItem
                                     {
                                         DateOfCreation = cleanedUpSheetName,
                                         ProjectName = excelFIleName,
@@ -183,13 +228,15 @@ namespace WH_Panel
                                         Alts = reader[9].ToString()
                                     };
 
-                                    if (i > 0)
-                                    {
-                                        countItems = i;
-                                        label12.Text = "Loaded " + (countItems).ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{0:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
-                                        label12.Update();
-                                        KitHistoryItemsList.Add(abc);
-                                    }
+
+                                    countItems = i;
+                                    label12.Text = "Loaded " + (countItems).ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{0:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
+                                    label12.Update();
+                                    KitHistoryItemsList.Add(abc);
+
+                                //}
+                               
+                                        
 
                                     i++;
                                 }
@@ -353,8 +400,67 @@ namespace WH_Panel
             Process excel = new Process();
 
             excel.StartInfo.FileName = "C:\\Program Files\\Microsoft Office\\root\\Office16\\EXCEL.exe";
-            excel.StartInfo.Arguments = thePathToFile;
+            excel.StartInfo.Arguments = AddQuotesIfRequired(thePathToFile);
             excel.Start();
+        }
+        public string AddQuotesIfRequired(string path)
+        {
+            return !string.IsNullOrWhiteSpace(path) ?
+                path.Contains(" ") && (!path.StartsWith("\"") && !path.EndsWith("\"")) ?
+                    "\"" + path + "\"" : path :
+                    string.Empty;
+        }
+        private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            //MessageBox.Show();
+            //openWHexcelDB(e.RowIndex);
+            int rowindex = dataGridView1.CurrentCell.RowIndex;
+            int columnindex = dataGridView1.CurrentCell.ColumnIndex;
+            string fp = dataGridView1.Rows[rowindex].Cells["ProjectName"].Value.ToString();
+
+            string fullpath = string.Empty;
+            foreach (string path in listOfPaths)
+            {
+                foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
+                {
+                    //countLoadedFIles++;
+                    //MessageBox.Show(file);
+                    string Litem = Path.GetFileName(file);
+                    //MessageBox.Show(Litem);
+                    if(Litem==fp)
+                    {
+                        //MessageBox.Show(file);
+                        string str = @file.ToString();
+                        
+
+                        DialogResult result = MessageBox.Show("Open the file : " + str + " ?", "Open file", MessageBoxButtons.OKCancel);
+                        if (result == DialogResult.OK)
+                        {
+                            openWHexcelDB(@str);
+                           
+                        }
+                        else
+                        {
+                            // Do something  
+                        }
+
+                       
+                        
+                    }
+                    
+                    //
+                    //listOfKitFiles.Add(@file);
+
+                }
+
+
+
+            }
+            //
+
+
+
+
         }
     }
 }
