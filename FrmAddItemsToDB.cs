@@ -353,14 +353,6 @@ namespace WH_Panel
             stockItems.Add(inputWHitem);
             textBox10.Text = inputWHitem.IPN;
             PopulateStockView();
-            // MessageBox.Show(inputWHitem.IPN + "\n" +
-            //" " + inputWHitem.Manufacturer + "\n" +
-            //" " + inputWHitem.MFPN + "\n" +
-            //" " + inputWHitem.Description + "\n" +
-            //" " + inputWHitem.Stock + "\n" +
-            //" " + inputWHitem.UpdatedOn + "\n" +
-            //" " + inputWHitem.Comments + "\n" +
-            //" " + inputWHitem.SourceRequester);
         }
         private void DataInserter(string fp, string thesheetName,WHitem wHitem)
         {
@@ -421,38 +413,35 @@ namespace WH_Panel
         }
         private void printSticker(WHitem wHitem)
         {
-            string fp = @"C:\\Users\\lgt\\Desktop\\Print_Stickers.xlsx"; // //////Print_StickersWH.xlsm
-            string thesheetName = "Sheet1";
-            string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
-            OleDbConnection conn = new OleDbConnection(constr);
-            OleDbCommand cmd = new OleDbCommand();
-            cmd.Connection = conn;
-            cmd.CommandType = CommandType.Text;
-            cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @UPDATEDON";
-            cmd.Parameters.AddWithValue("@PN",wHitem.IPN);
-            cmd.Parameters.AddWithValue("@MFPN",wHitem.MFPN);
-            cmd.Parameters.AddWithValue("@ItemDesc", wHitem.Description);
-            cmd.Parameters.AddWithValue("@QTY",wHitem.Stock);
-            cmd.Parameters.AddWithValue("@UPDATEDON", wHitem.UpdatedOn);
-            conn.Open();
-            cmd.ExecuteNonQuery();
-            conn.Close();
-            Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
-            SendKeys.SendWait("^p");
-            SendKeys.SendWait("{Enter}");
-            ComeBackFromPrint();
-            Microsoft.VisualBasic.Interaction.AppActivate("Move_stock_items");
-            textBox1.Focus();
-            //[DllImport("User32.dll")]
-            //static extern int SetForegroundWindow(IntPtr point);
-            ////...
-            //Process p = Process.GetProcessesByName("PN_STICKER_2022.btw - BarTender Designer").FirstOrDefault();
-            //if (p != null)
-            //{
-            //    IntPtr h = p.MainWindowHandle;
-            //    SetForegroundWindow(h);
-            //    SendKeys.SendWait("^p");
-            //}
+            try
+            {
+                string fp = @"C:\\Users\\lgt\\Desktop\\Print_Stickers.xlsx"; // //////Print_StickersWH.xlsm
+                string thesheetName = "Sheet1";
+                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+                OleDbConnection conn = new OleDbConnection(constr);
+                OleDbCommand cmd = new OleDbCommand();
+                cmd.Connection = conn;
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @UPDATEDON";
+                cmd.Parameters.AddWithValue("@PN", wHitem.IPN);
+                cmd.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
+                cmd.Parameters.AddWithValue("@ItemDesc", wHitem.Description);
+                cmd.Parameters.AddWithValue("@QTY", wHitem.Stock);
+                cmd.Parameters.AddWithValue("@UPDATEDON", wHitem.UpdatedOn);
+                conn.Open();
+                cmd.ExecuteNonQuery();
+                conn.Close();
+                Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
+                SendKeys.SendWait("^p");
+                SendKeys.SendWait("{Enter}");
+                ComeBackFromPrint();
+                Microsoft.VisualBasic.Interaction.AppActivate("Move_stock_items");
+                textBox1.Focus();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Sticker printing failed : "+e.Message);
+            }
         }
         private static void printStickerAPI(WHitem wHitem)
         {
