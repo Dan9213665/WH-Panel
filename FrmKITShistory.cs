@@ -19,7 +19,6 @@ using System.Xml;
 using static System.Net.WebRequestMethods;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using DataTable = System.Data.DataTable;
-
 namespace WH_Panel
 {
     public partial class FrmKITShistory : Form
@@ -40,19 +39,12 @@ namespace WH_Panel
                 "\\\\dbr1\\Data\\WareHouse\\2022\\12.2022",
                 "\\\\dbr1\\Data\\WareHouse\\2023"
             };
-
         public FrmKITShistory()
         {
             InitializeComponent();
-            
             //startUpLogic();
             //SetColumsOrder();
         }
-
-        
-        
-        
-
         private void button1_Click(object sender, EventArgs e)
         {
             stopWatch.Reset();
@@ -60,7 +52,6 @@ namespace WH_Panel
             startUpLogic();
             SetColumsOrder();
         }
-
         private void ResetViews()
         {
             listBox1.Items.Clear();
@@ -81,9 +72,7 @@ namespace WH_Panel
             UDtable.Clear();
             dataGridView1.DataSource = null;
             dataGridView1.Refresh();
-            
         }
-
         //public class KeyValueList<TKey, TValue> : List<KeyValuePair<TKey, TValue>>
         //{
         //    public void Add(TKey key, TValue value)
@@ -91,18 +80,10 @@ namespace WH_Panel
         //        Add(new KeyValuePair<TKey, TValue>(key, value));
         //    }
         //}
-
-        
         private void startUpLogic()
-
         {
             stopWatch.Start();
-
-            
-          
-
             label12.BackColor = Color.IndianRed;
-
             foreach (string path in listOfPaths)
             {
                 foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
@@ -113,48 +94,30 @@ namespace WH_Panel
                     //MessageBox.Show(Litem);
                     DataLoader(file, Litem);
                     //listOfKitFiles.Add(@file);
-
                 }
-
-                
-
             }
-
-
-      
-
             //MessageBox.Show(listOfKitFiles.Count.ToString());
-
             //for (int i = 0; i < listOfKitFiles.Count; i++)
-
             //{
             //    //MessageBox.Show("i:"+i+" "+listOfKitFiles[i].ToString());
             //    // DataLoader(listOfKitFiles[i].Key, listOfKitFiles[i].Value);
             //    //DataLoader(listOfKitFiles[i]);
             //}
-
-
             PopulateGridView();
             SetColumsOrder();
-
             stopWatch.Stop();
         }
-     
         private void DataLoader(string fp,string excelFIleName)
         {
             TimeSpan ts = stopWatch.Elapsed;
-
             try
             {
                 string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=1\"";
-                
                 using (OleDbConnection conn = new OleDbConnection(constr))
                 {
                     try
                     {
-
                         conn.Open();
-                        
                             DataTable dbSchema = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
                             if (dbSchema == null || dbSchema.Rows.Count < 1)
                             {
@@ -164,19 +127,14 @@ namespace WH_Panel
                             // string columnName = dbSchema.Columns.ToString();
                             //label13.Text+=columnName;
                             string cleanedUpSheetName = firstSheetName.Substring(1).Substring(0, firstSheetName.Length - 3);
-
                         //string cleanedUPfP = fp.Split("/",);
                         //string[] cleanedUPfP = fp.Split(string.Empty);
                         //MessageBox.Show(cleanedUPfP[0]+" "+ cleanedUPfP[1]);
                         //MessageBox.Show(dbSchema.Rows[0]["COLUMN_NAME"].ToString());
-
-
                         OleDbCommand command = new OleDbCommand("Select * from [" + cleanedUpSheetName + "$]", conn);
                             OleDbDataReader reader = command.ExecuteReader();
                             if (reader.HasRows)
                             {
-
-
                             //DataTable schemaTable = reader.GetSchemaTable();
                             //MessageBox.Show(dbSchema.TableName[0].ToString());  
                             //foreach (DataColumn column in schemaTable.Columns)
@@ -187,13 +145,8 @@ namespace WH_Panel
                             //        MessageBox.Show(colIpnFoundIndex.ToString());
                             //    }
                             //}
-
-
                             while (reader.Read())
                                 {
-                                
-
-
                                 //    if (i==0)
                                 //{
                                 //    //for (int cIndex = 0; cIndex < reader.FieldCount; cIndex++)
@@ -206,14 +159,10 @@ namespace WH_Panel
                                 //    //    {
                                 //    //        colMFPNFoundIndex = cIndex;
                                 //    //    }
-
                                 //    //}
                                 //}
-
                                 //else if(i>0)
                                 //{
-
-
                                 KitHistoryItem abc = new KitHistoryItem
                                     {
                                         DateOfCreation = cleanedUpSheetName,
@@ -227,26 +176,16 @@ namespace WH_Panel
                                         Notes = reader[8].ToString(),
                                         Alts = reader[9].ToString()
                                     };
-
-
                                     countItems = i;
                                     label12.Text = "Loaded " + (countItems).ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{0:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
                                     label12.Update();
                                     KitHistoryItemsList.Add(abc);
-
                                 //}
-                               
-                                        
-
                                     i++;
                                 }
                             }
-                       
-                      
-
                         conn.Dispose();
                         conn.Close();
-
                     }
                     catch (Exception)
                     {
@@ -256,27 +195,21 @@ namespace WH_Panel
                         label13.Text = loadingErrors.ToString() + " Loading Errors detected: ";
                         label13.BackColor = Color.IndianRed;
                         label13.Update();
-                        
                         //string er =  "\n Access denied: " + fp;
                         string er = fp;
                         listBox1.Items.Add(er);
                         listBox1.Update();
                         conn.Close();
                     }
-
-                    
                 }
             }
             catch (IOException)
             {
                 throw;
             }
-
         }
-
         private void PopulateGridView()
         {
-            
             //MessageBox.Show(.Count.ToString()); 
             IEnumerable<KitHistoryItem> data = KitHistoryItemsList;
             //UDtable.Clear();
@@ -287,14 +220,9 @@ namespace WH_Panel
             dataGridView1.DataSource = UDtable;
             SetColumsOrder();
             label12.BackColor = Color.LightGreen;
-
             //dataGridView1.AutoResizeColumns();
             //dataGridView1.Update();
-
-            
-
         }
-
         private void SetColumsOrder()
         {
             dataGridView1.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -307,7 +235,6 @@ namespace WH_Panel
             dataGridView1.Columns[7].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dataGridView1.Columns[8].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dataGridView1.Columns[9].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-
             dataGridView1.Columns["DateOfCreation"].DisplayIndex = 0;
             dataGridView1.Columns["ProjectName"].DisplayIndex = 1;
             dataGridView1.Columns["IPN"].DisplayIndex = 2;
@@ -334,71 +261,58 @@ namespace WH_Panel
             catch (Exception)
             {
                 MessageBox.Show("Incorrect search pattern, remove invalid character and try again !", "Search pattern error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
                 throw;
             }
-
         }
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             label1.BackColor = Color.IndianRed;
             FilterTheDataGridView();
         }
-
         private void label1_Click(object sender, EventArgs e)
         {
             textBox1.Text = string.Empty;
             label1.BackColor = Color.LightGreen;
         }
-
         private void textBox11_TextChanged(object sender, EventArgs e)
         {
             label11.BackColor = Color.IndianRed;
-            
             FilterTheDataGridView();
         }
-
         private void label11_Click(object sender, EventArgs e)
         {
             textBox11.Text = string.Empty;
             label11.BackColor = Color.LightGreen;
         }
-
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             label2.BackColor = Color.IndianRed;
             FilterTheDataGridView();
         }
-
         private void label2_Click(object sender, EventArgs e)
         {
             textBox2.Text = string.Empty;
             label2.BackColor = Color.LightGreen;
         }
-
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
             label3.BackColor = Color.IndianRed;
             FilterTheDataGridView();
         }
-
         private void label3_Click(object sender, EventArgs e)
         {
             textBox3.Text = string.Empty;
             label3.BackColor = Color.LightGreen;
         }
-
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             //MessageBox.Show(listBox1.SelectedItem.ToString());
-
             //var fpp = @listBox1.SelectedItem.ToString();
             //openWHexcelDB(fpp);
         }
         private void openWHexcelDB(string thePathToFile)
         {
             Process excel = new Process();
-
             excel.StartInfo.FileName = "C:\\Program Files\\Microsoft Office\\root\\Office16\\EXCEL.exe";
             excel.StartInfo.Arguments = AddQuotesIfRequired(thePathToFile);
             excel.Start();
@@ -417,7 +331,6 @@ namespace WH_Panel
             int rowindex = dataGridView1.CurrentCell.RowIndex;
             int columnindex = dataGridView1.CurrentCell.ColumnIndex;
             string fp = dataGridView1.Rows[rowindex].Cells["ProjectName"].Value.ToString();
-
             string fullpath = string.Empty;
             foreach (string path in listOfPaths)
             {
@@ -431,36 +344,21 @@ namespace WH_Panel
                     {
                         //MessageBox.Show(file);
                         string str = @file.ToString();
-                        
-
                         DialogResult result = MessageBox.Show("Open the file : " + str + " ?", "Open file", MessageBoxButtons.OKCancel);
                         if (result == DialogResult.OK)
                         {
                             openWHexcelDB(@str);
-                           
                         }
                         else
                         {
                             // Do something  
                         }
-
-                       
-                        
                     }
-                    
                     //
                     //listOfKitFiles.Add(@file);
-
                 }
-
-
-
             }
             //
-
-
-
-
         }
     }
 }

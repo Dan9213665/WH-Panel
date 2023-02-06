@@ -27,10 +27,8 @@ using System.Threading;
 using System.Security.Principal;
 using Microsoft.VisualBasic;
 using System.ComponentModel.Design;
-
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-
 namespace WH_Panel
 {
     public partial class FrmAddItemsToDB : Form
@@ -52,10 +50,8 @@ namespace WH_Panel
         int iAVL = 0;
         int iStock = 0;
         private object cmd;
-
         public string stockFile = @"\\dbr1\Data\WareHouse\2022\_DEV\SAMPLE_DATA\TESTDBWH.xlsm";
         public string avlSource = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_AVL.xlsm";
-
         private void textBox9_TextChanged(object sender, EventArgs e)
         {
         }
@@ -67,11 +63,9 @@ namespace WH_Panel
             countAVLItems = 0;
             iAVL = 0;
             label1.Text = "RELOAD AVL";
-            
             //MessageBox.Show(fp);
             DataLoaderAVL(avlSource, "AVL");
             PopulateGridView();
-            
         }
         private void DataLoaderAVL(string fp, string thesheetName)
         {
@@ -176,7 +170,6 @@ namespace WH_Panel
         {
             label2.BackColor = Color.IndianRed;
             FilterAVLDataGridView();
-
         }
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
@@ -226,8 +219,6 @@ namespace WH_Panel
                 textBox4.Text = dataGridView2.Rows[rowindex].Cells["MFPN"].Value.ToString();
                 textBox5.Text = dataGridView2.Rows[rowindex].Cells["Description"].Value.ToString();
                 textBox6.Clear();
-
-                
             }
         }
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
@@ -288,10 +279,8 @@ namespace WH_Panel
                         bool success = int.TryParse(textBox6.Text,out outNumber);
                         if (success) 
                         {
-
                             MoveIntoDATABASE(outNumber, sorce_req);
                             FilterStockDataGridView(textBox10.Text);
-
                         }
                        else
                         {
@@ -302,13 +291,8 @@ namespace WH_Panel
                     }
                     catch (Exception)
                     {
-
                         throw;
                     }
-                    
-                   
-
-                   
                 }
                 else
                 {
@@ -316,7 +300,6 @@ namespace WH_Panel
                     textBox6.Focus();
                 }
             }
-
             else if (radioButton2.Checked == true)
             {
                 if (textBox8.Text != string.Empty)
@@ -327,8 +310,6 @@ namespace WH_Panel
                         qty = int.Parse(textBox6.Text);
                         MoveIntoDATABASE(qty, sorce_req);
                         FilterStockDataGridView(textBox10.Text);
-
-                       
                     }
                     else
                     {
@@ -348,22 +329,13 @@ namespace WH_Panel
                 qty = int.Parse(textBox6.Text) * (-1);
                 MoveIntoDATABASE(qty, sorce_req);
                 FilterStockDataGridView(textBox10.Text);
-
-                
             }
-
-
-
         }
-
         private void ComeBackFromPrint()
         {
-
             Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
-
             textBox1.Focus();
         }
-
         private void MoveIntoDATABASE(int qty, string sorce_req)
         {
             WHitem inputWHitem = new WHitem
@@ -377,13 +349,10 @@ namespace WH_Panel
                 Comments = comboBox1.Text,
                 SourceRequester = sorce_req
             };
-           
             DataInserter(stockFile, "STOCK", inputWHitem);
             stockItems.Add(inputWHitem);
             textBox10.Text = inputWHitem.IPN;
             PopulateStockView();
-
-            
             // MessageBox.Show(inputWHitem.IPN + "\n" +
             //" " + inputWHitem.Manufacturer + "\n" +
             //" " + inputWHitem.MFPN + "\n" +
@@ -406,13 +375,14 @@ namespace WH_Panel
                     command.ExecuteNonQuery();
                     conn.Close();
                 }
-                MessageBox.Show(wHitem.IPN + " MOVED to DB ");
+                //MessageBox.Show(wHitem.IPN + " MOVED to DB ","Item added to DB",MessageBoxButtons.OK,MessageBoxIcon.Information);
                 textBox6.Clear();
                 textBox1.Clear();
                 label2.BackColor = Color.LightGreen;
                 textBox1.Focus();
                 printSticker(wHitem);
                 //printStickerAPI(wHitem);
+                AutoClosingMessageBox.Show(wHitem.IPN + " MOVED to DB ", "Item added to DB", 3000);
             }
             catch (IOException)
             {
@@ -420,7 +390,35 @@ namespace WH_Panel
             }
             //DataLoader(fp, thesheetName);
         }
-
+        public class AutoClosingMessageBox
+        {
+            System.Threading.Timer _timeoutTimer;
+            string _caption;
+            AutoClosingMessageBox(string text, string caption, int timeout)
+            {
+                _caption = caption;
+                _timeoutTimer = new System.Threading.Timer(OnTimerElapsed,
+                    null, timeout, System.Threading.Timeout.Infinite);
+                using (_timeoutTimer)
+                    MessageBox.Show(text, caption);
+            }
+            public static void Show(string text, string caption, int timeout)
+            {
+                new AutoClosingMessageBox(text, caption, timeout);
+            }
+            void OnTimerElapsed(object state)
+            {
+                IntPtr mbWnd = FindWindow("#32770", _caption); // lpClassName is #32770 for MessageBox
+                if (mbWnd != IntPtr.Zero)
+                    SendMessage(mbWnd, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+                _timeoutTimer.Dispose();
+            }
+            const int WM_CLOSE = 0x0010;
+            [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
+            static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+            [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Auto)]
+            static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
+        }
         private void printSticker(WHitem wHitem)
         {
             string fp = @"C:\\Users\\lgt\\Desktop\\Print_Stickers.xlsx"; // //////Print_StickersWH.xlsm
@@ -442,25 +440,12 @@ namespace WH_Panel
             Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
             SendKeys.SendWait("^p");
             SendKeys.SendWait("{Enter}");
-
-
-
             ComeBackFromPrint();
-
-            
-
             Microsoft.VisualBasic.Interaction.AppActivate("Move_stock_items");
-            
             textBox1.Focus();
-
-
-
-
             //[DllImport("User32.dll")]
             //static extern int SetForegroundWindow(IntPtr point);
-
             ////...
-
             //Process p = Process.GetProcessesByName("PN_STICKER_2022.btw - BarTender Designer").FirstOrDefault();
             //if (p != null)
             //{
@@ -469,10 +454,8 @@ namespace WH_Panel
             //    SendKeys.SendWait("^p");
             //}
         }
-
         private static void printStickerAPI(WHitem wHitem)
         {
-
             //MessageBox.Show("Printed_"+wHitem.IPN);
             try
             {
@@ -482,37 +465,25 @@ namespace WH_Panel
                     btengine.Start();
                     btengine.Window.Visible = true;
                     Messages messages = null;
-
                     LabelFormatDocument labelFormat =
                         btengine.Documents.Open(@"C:\1\PN_STICKER_2022.btw");
                     //Result result = labelFormat.Print();
                     //Result result = labelFormat.Print("PrintJob1", out messages);
-
                     labelFormat.SubStrings["Date"].Value = wHitem.UpdatedOn;
-
                     labelFormat.SubStrings["DESC"].Value = wHitem.Description;
-
                     labelFormat.SubStrings["MFPN"].Value = wHitem.MFPN;
                     labelFormat.SubStrings["PN"].Value = wHitem.IPN;
                     labelFormat.SubStrings["QTY"].Value = wHitem.Stock.ToString();
-
-
                     labelFormat.Print();
                     btengine.Stop();
                 }
             }
             catch (Exception e)
             {
-
                 MessageBox.Show(e.Message);
-
                 throw;
             }
-        
-
-
         }
-
         private void textBox8_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -559,7 +530,6 @@ namespace WH_Panel
                 }
             }
         }
-
         private void StockViewDataLoader(string fp, string thesheetName)
         {
             try
@@ -603,22 +573,16 @@ namespace WH_Panel
                 MessageBox.Show("Error");
             }
         }
-
         private void button3_Click(object sender, EventArgs e)
         {
             button3.BackColor = Color.IndianRed;
             stockItems.Clear();
-
             stockDTable.Clear();
-       
             countStockItems = 0;
             iStock = 0;
             dataGridView1.DataSource = null;
-
             button3.Text="LOAD STOCK";
             button3.Update();
-
-        
             StockViewDataLoader(stockFile, "STOCK");
             PopulateStockView();
         }
@@ -658,14 +622,11 @@ namespace WH_Panel
             dataGridView1.Columns["Comments"].DisplayIndex = 6;
             dataGridView1.Columns["SourceRequester"].DisplayIndex = 7;
         }
-
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
-            
         }
         private void FilterStockDataGridView(string IPN)
         {
-           
             if (textBox3.Text!=string.Empty)
             {
                 try
@@ -673,36 +634,26 @@ namespace WH_Panel
                     int balance = 0;
                     DataView dv = stockDTable.DefaultView;
                     dv.RowFilter = "[IPN] LIKE '%" + IPN +
-                       
                         "%'";
                     dataGridView1.DataSource = dv;
                     dataGridView1.Update();
                     SetSTOCKiewColumsOrder();
-
-
                     List<int> qtys = new List<int>();
-
-
                     for (int i=0;i< dataGridView1.RowCount;i++)
                     {
                        int qty=int.Parse(dataGridView1.Rows[i].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString());
                         qtys.Add(qty);
                     }
-
-
                     foreach (int i in qtys)
                     {
                         balance += i;
                     }
-
                     label15.Text = "BALANCE: " + balance;
                     if (balance > 0)
                         label15.BackColor = Color.LightGreen;
                     else if (balance==0)
                         label15.BackColor = Color.IndianRed;
                     label15.Update();
-
-                  
                 }
                 catch (Exception)
                 {
@@ -717,9 +668,7 @@ namespace WH_Panel
                 dataGridView1.Update();
                 SetSTOCKiewColumsOrder();
             }
-          
         }
-
         private void dataGridView2_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if (dataGridView2.SelectedCells.Count > 0)
@@ -729,19 +678,17 @@ namespace WH_Panel
                 //string cellValue = Convert.ToString(selectedRow.Cells["IPN"].Value);
                 int rowindex = dataGridView2.CurrentCell.RowIndex;
                 int columnindex = dataGridView2.CurrentCell.ColumnIndex;
-                
                 string cellValue = dataGridView2.Rows[rowindex].Cells[dataGridView2.Columns["IPN"].Index].Value.ToString();
                 //MessageBox.Show(dataGridView2.Rows[rowindex].Cells[1].Value.ToString());
-
                 FilterStockDataGridView(cellValue);
-
             }
         }
-
         private void button4_Click(object sender, EventArgs e)
         {
-
-            
+        }
+        private void FrmAddItemsToDB_Load(object sender, EventArgs e)
+        {
+            textBox1.Focus();
         }
     }
 }

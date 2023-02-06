@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace WH_Panel
 {
     public class WHitem
@@ -17,6 +16,5 @@ namespace WH_Panel
         public string? UpdatedOn { get; set; }
         public string? Comments{ get; set; }
         public string? SourceRequester { get; set; }
-
     }
 }

@@ -16,7 +16,6 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Diagnostics;
 using Label = System.Windows.Forms.Label;
-
 namespace WH_Panel
 {
     public partial class FrmUberSearch : Form
@@ -33,19 +32,11 @@ namespace WH_Panel
             {
                 l.BackColor = Color.LightGreen;
             }
-          
         }
-
-      
-
         public List<WHitem> wHitems = new List<WHitem>();
         public DataTable UDtable = new DataTable();
         public int countItems = 0;
         int i = 0;
-
-
-
-
         public class KeyValueList<TKey, TValue> : List<KeyValuePair<TKey, TValue>>
         {
             public void Add(TKey key, TValue value)
@@ -57,7 +48,6 @@ namespace WH_Panel
         {
             startUpLogic();
         }
-
         private void startUpLogic()
         {
             label1.BackColor = Color.IndianRed;
@@ -68,21 +58,15 @@ namespace WH_Panel
                         {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm","STOCK" },
                         {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\FIELDIN\\FIELDIN_STOCK.xlsm","STOCK" },
                 {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm","STOCK"}
-
                    };
-
             for (int i = 0; i < listOfWareHouses.Count; i++)
-
             {
                 DataLoader(listOfWareHouses[i].Key, listOfWareHouses[i].Value);
             }
-
             PopulateGridView();
         }
-
         private void DataLoader(string fp, string thesheetName)
         {
-
             try
             {
                 string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=1\"";
@@ -96,14 +80,11 @@ namespace WH_Panel
                         while (reader.Read())
                         {
                             int number;
-
                             bool success = int.TryParse(reader[4].ToString(), out number);
-
                             if (success)
                             {
                                 WHitem abc = new WHitem
                                 {
-
                                     IPN = reader[0].ToString(),
                                     Manufacturer = reader[1].ToString(),
                                     MFPN = reader[2].ToString(),
@@ -112,7 +93,6 @@ namespace WH_Panel
                                     UpdatedOn = reader[5].ToString(),
                                     Comments = reader[6].ToString(),
                                     SourceRequester = reader[7].ToString()
-
                                 };
                                 if (i > 0)
                                 {
@@ -121,13 +101,8 @@ namespace WH_Panel
                                     label1.Update();
                                     wHitems.Add(abc);
                                 }
-
                                 i++;
                             }
-
-                        
-
-                           
                         }
                     }
                     conn.Close();
@@ -137,9 +112,7 @@ namespace WH_Panel
             {
                 MessageBox.Show("Error");
             }
-
         }
-
         private void PopulateGridView()
         {
             //MessageBox.Show(wHitems.Count.ToString()); 
@@ -152,12 +125,9 @@ namespace WH_Panel
             dataGridView1.DataSource = UDtable;
             SetColumsOrder();
             label1.BackColor = Color.LightGreen;
-            
             //dataGridView1.AutoResizeColumns();
             //dataGridView1.Update();
-
         }
-
         private void SetColumsOrder()
         {
             dataGridView1.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -176,22 +146,16 @@ namespace WH_Panel
             dataGridView1.Columns["UpdatedOn"].DisplayIndex = 5;
             dataGridView1.Columns["Comments"].DisplayIndex = 6;
             dataGridView1.Columns["SourceRequester"].DisplayIndex = 7;
-
-            
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
             ResetViews();
             startUpLogic();
-
             //SetColumsOrder();
-
             //ResetViews();
             //LoadDataFromFile();
             //PopulateGW();
         }
-
         private void ResetViews()
         {
             wHitems.Clear();
@@ -202,15 +166,11 @@ namespace WH_Panel
             dataGridView1.DataSource = null;
             dataGridView1.Refresh();
         }
-
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             label2.BackColor = Color.IndianRed;
             FilterTheDataGridView();
-
         }
-     
-
         private void FilterTheDataGridView()
         {
             try
@@ -227,30 +187,22 @@ namespace WH_Panel
             catch (Exception)
             {
                 MessageBox.Show("Incorrect search pattern, remove invalid character and try again !");
-
                 throw;
             }
-
         }
-
         private void textBox4_TextChanged(object sender, EventArgs e)
         {
             label4.BackColor = Color.IndianRed;
-
             FilterTheDataGridView();
         }
-
         private void textBox5_TextChanged(object sender, EventArgs e)
         {
-
             label5.BackColor = Color.IndianRed;
             FilterTheDataGridView();
         }
-
         private void openWHexcelDB(string thePathToFile)
         {
             Process excel = new Process();
-
             excel.StartInfo.FileName = "C:\\Program Files\\Microsoft Office\\root\\Office16\\EXCEL.exe";
             excel.StartInfo.Arguments = thePathToFile;
             excel.Start();
@@ -268,7 +220,6 @@ namespace WH_Panel
                 MessageBox.Show("ACCESS DENIED");
             }
         }
-
         private void button3_Click(object sender, EventArgs e)
         {
             if (Environment.MachineName.ToString() == "RT12")
@@ -280,9 +231,7 @@ namespace WH_Panel
             {
                 MessageBox.Show("ACCESS DENIED");
             }
-
         }
-
         private void button4_Click(object sender, EventArgs e)
         {
             if (Environment.MachineName.ToString() == "RT12")
@@ -295,7 +244,6 @@ namespace WH_Panel
                 MessageBox.Show("ACCESS DENIED");
             }
         }
-
         private void button5_Click(object sender, EventArgs e)
         {
             if (Environment.MachineName.ToString() == "RT12")
@@ -308,45 +256,35 @@ namespace WH_Panel
                 MessageBox.Show("ACCESS DENIED");
             }
         }
-
         private void textBox9_TextChanged(object sender, EventArgs e)
         {
-
             label9.BackColor = Color.IndianRed;
             FilterTheDataGridView();
         }
-
-        
-
         private void label2_Click(object sender, EventArgs e)
         {
             textBox2.Text = "";
             label2.BackColor = Color.LightGreen;
         }
-
         private void label4_Click(object sender, EventArgs e)
         {
             textBox4.Text = "";
             label4.BackColor = Color.LightGreen;
         }
-
         private void label5_Click(object sender, EventArgs e)
         {
             textBox5.Text = "";
             label5.BackColor = Color.LightGreen;
         }
-
         private void label9_Click(object sender, EventArgs e)
         {
             textBox9.Text = "";
             label9.BackColor = Color.LightGreen;
         }
-
         private void label2_DoubleClick(object sender, EventArgs e)
         {
             clearAllsearchTextboxes();
         }
-
         private  void clearAllsearchTextboxes()
         {
             textBox2.Text = "";
@@ -358,22 +296,18 @@ namespace WH_Panel
             label5.BackColor = Color.LightGreen;
             label9.BackColor = Color.LightGreen;
         }
-
         private void label4_DoubleClick(object sender, EventArgs e)
         {
             clearAllsearchTextboxes();
         }
-
         private void label5_DoubleClick(object sender, EventArgs e)
         {
             clearAllsearchTextboxes();
         }
-
         private void label9_DoubleClick(object sender, EventArgs e)
         {
             clearAllsearchTextboxes();
         }
-
         private void button6_Click(object sender, EventArgs e)
         {
             if (Environment.MachineName.ToString() == "RT12")
@@ -386,11 +320,9 @@ namespace WH_Panel
                 MessageBox.Show("ACCESS DENIED");
             }
         }
-
         //private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         //{
         //    MessageBox.Show(e.ColumnIndex.ToString());
-            
         //}
     }
 }

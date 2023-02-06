@@ -1,5 +1,4 @@
 ﻿using System.Windows.Forms;
-
 namespace WH_Panel
 {
     partial class Form1
@@ -8,7 +7,6 @@ namespace WH_Panel
         ///  Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
-
         /// <summary>
         ///  Clean up any resources being used.
         /// </summary>
@@ -21,9 +19,7 @@ namespace WH_Panel
             }
             base.Dispose(disposing);
         }
-
         #region Windows Form Designer generated code
-
         /// <summary>
         ///  Required method for Designer support - do not modify
         ///  the contents of this method with the code editor.
@@ -285,12 +281,8 @@ namespace WH_Panel
             this.groupBox1.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
-
         }
-    
-
         #endregion
-
         private Button btnValens;
         private GroupBox groupBox1;
         private FlowLayoutPanel flowLayoutPanel1;
