@@ -24,9 +24,12 @@ using System.Security.AccessControl;
 using static System.Security.AccessControl.NativeObjectSecurity;
 using System;
 using System.Threading;
-
 using System.Security.Principal;
+using Microsoft.VisualBasic;
+using System.ComponentModel.Design;
 
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace WH_Panel
 {
@@ -48,6 +51,8 @@ namespace WH_Panel
         public int countStockItems = 0;
         int iAVL = 0;
         int iStock = 0;
+        private object cmd;
+
         private void textBox9_TextChanged(object sender, EventArgs e)
         {
         }
@@ -361,7 +366,7 @@ namespace WH_Panel
                 textBox1.Clear();
                 label2.BackColor = Color.LightGreen;
                 textBox1.Focus();
-                //printSticker(wHitem);
+                printSticker(wHitem);
                 //printStickerAPI(wHitem);
             }
             catch (IOException)
@@ -373,40 +378,45 @@ namespace WH_Panel
 
         private void printSticker(WHitem wHitem)
         {
-            string fp = @"C:\\Users\\lgt\\Desktop\\Print_StickersWH.xlsm";
-            string thesheetName = @"STICKER";
-            try
-            {
-                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
-                using (OleDbConnection conn = new OleDbConnection(constr))
-                {
-                    conn.Open();
-                    OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$] (IPN,MFPN,Description,Qty,UpdatedOn) values('" + wHitem.IPN + "','" + wHitem.MFPN + "','" + wHitem.Description + "','" + wHitem.Stock.ToString() + "','" + wHitem.UpdatedOn.ToString().Substring(0, 10) + "')", conn);
-                    command.ExecuteNonQuery();
+            string fp = @"C:\\Users\\lgt\\Desktop\\Print_Stickers.xlsx"; // //////Print_StickersWH.xlsm
+            string thesheetName = "Sheet1";
+            string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+            OleDbConnection conn = new OleDbConnection(constr);
+            OleDbCommand cmd = new OleDbCommand();
+            cmd.Connection = conn;
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @UPDATEDON";
+            cmd.Parameters.AddWithValue("@PN",wHitem.IPN);
+            cmd.Parameters.AddWithValue("@MFPN",wHitem.MFPN);
+            cmd.Parameters.AddWithValue("@ItemDesc", wHitem.Description);
+            cmd.Parameters.AddWithValue("@QTY",wHitem.Stock);
+            cmd.Parameters.AddWithValue("@UPDATEDON", wHitem.UpdatedOn);
+            conn.Open();
+            cmd.ExecuteNonQuery();
+            conn.Close();
+            Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
+            SendKeys.SendWait("^p");
+            SendKeys.SendWait("{Enter}");
+            
+
+            Microsoft.VisualBasic.Interaction.AppActivate("Move_stock_items");
+            
+            textBox1.Focus();
 
 
-                    //OleDbCommand command0 = new OleDbCommand("UPDATE [" + thesheetName + "$A2:A2] SET IPN='test'", conn);
-                    //command0.ExecuteNonQuery();
-                    //OleDbCommand command1 = new OleDbCommand("UPDATE [" + thesheetName + "$B2:B2] SET MFPN='test1'", conn);
-                    //command1.ExecuteNonQuery();
-                    //OleDbCommand command2 = new OleDbCommand("UPDATE [" + thesheetName + "$C2:C2] SET Description='test2'", conn);
-                    //command2.ExecuteNonQuery();
-                    //OleDbCommand command3 = new OleDbCommand("UPDATE [" + thesheetName + "$D2:D2] SET Qty='test3'", conn);
-                    //command3.ExecuteNonQuery();
-                    //OleDbCommand command4 = new OleDbCommand("UPDATE [" + thesheetName + "$E2:E2] SET UpdatedOn='test4'", conn);
-                    //command4.ExecuteNonQuery();
 
+            //[DllImport("User32.dll")]
+            //static extern int SetForegroundWindow(IntPtr point);
 
+            ////...
 
-
-                    conn.Close();
-                }
-                
-            }
-            catch (IOException)
-            {
-                MessageBox.Show("Error");
-            }
+            //Process p = Process.GetProcessesByName("PN_STICKER_2022.btw - BarTender Designer").FirstOrDefault();
+            //if (p != null)
+            //{
+            //    IntPtr h = p.MainWindowHandle;
+            //    SetForegroundWindow(h);
+            //    SendKeys.SendWait("^p");
+            //}
         }
 
         private static void printStickerAPI(WHitem wHitem)
