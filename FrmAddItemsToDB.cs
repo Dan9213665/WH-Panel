@@ -673,12 +673,43 @@ namespace WH_Panel
                 FilterStockDataGridView(cellValue);
             }
         }
-        private void button4_Click(object sender, EventArgs e)
-        {
-        }
+       
         private void FrmAddItemsToDB_Load(object sender, EventArgs e)
         {
             textBox1.Focus();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            //List<int> fqtys = new List<int>();
+            //dataGridView1.Update();
+            //for (int i = 0; i < dataGridView1.RowCount; i++)
+            //{
+            //    int fqty = int.Parse(dataGridView1.Rows[i].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString());
+            //    fqtys.Add(fqty);
+            //}
+
+            //for (int q = 0; q < fqtys.Count; q++)
+            //{
+            //    if (fqtys[q] < 0)
+            //    {
+            //        int antitem = Math.Abs(fqtys[q]);
+            //       // fqtys.Remove(antitem);
+            //        fqtys.Remove(fqtys[q]);
+            //        //_qtys.Remove((i * (-1)));
+            //    }
+            //}
+
+            ////MessageBox.Show(fqtys.Count.ToString());
+
+            //string resOutUnique=string.Empty;
+
+            //List<int> resultsFiltered = fqtys;
+            //foreach (int i in resultsFiltered)
+            //{
+            //    resOutUnique += i.ToString() + " ";
+            //}
+            //MessageBox.Show(resOutUnique);
         }
     }
 }
