@@ -436,7 +436,7 @@ namespace WH_Panel
                 SendKeys.SendWait("^p");
                 SendKeys.SendWait("{Enter}");
                 ComeBackFromPrint();
-                Microsoft.VisualBasic.Interaction.AppActivate("Move_stock_items");
+                Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
                 textBox1.Focus();
             }
             catch (Exception e)
