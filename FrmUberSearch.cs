@@ -91,7 +91,7 @@ namespace WH_Panel
                                     Description = reader[3].ToString(),
                                     Stock = number,
                                     UpdatedOn = reader[5].ToString(),
-                                    Comments = reader[6].ToString(),
+                                    CommentsWHitem = reader[6].ToString(),
                                     SourceRequester = reader[7].ToString()
                                 };
                                 if (i > 0)

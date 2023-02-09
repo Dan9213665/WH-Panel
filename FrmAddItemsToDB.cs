@@ -92,7 +92,7 @@ namespace WH_Panel
                                     Description = reader[4].ToString(),
                                     Stock = 0,
                                     UpdatedOn = string.Empty,
-                                    Comments = string.Empty,
+                                    CommentsWHitem = string.Empty,
                                     SourceRequester = string.Empty
                                 };
                                 if (iAVL > 0)
@@ -349,7 +349,7 @@ namespace WH_Panel
                 Description = textBox5.Text,
                 Stock = qty,
                 UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd")+" "+DateTime.Now.ToString("HH:mm:ss tt"), //tt
-                Comments = comboBox1.Text,
+                CommentsWHitem = comboBox1.Text,
                 SourceRequester = sorce_req
             };
             DataInserter(stockFile, "STOCK", inputWHitem);
@@ -365,7 +365,7 @@ namespace WH_Panel
                 using (OleDbConnection conn = new OleDbConnection(constr))
                 {
                     conn.Open();
-                    OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$] (IPN,Manufacturer,MFPN,Description,Stock,Updated_on,Comments,Source_Requester) values('" + wHitem.IPN + "','" + wHitem.Manufacturer + "','" + wHitem.MFPN + "','" + wHitem.Description + "','" + wHitem.Stock + "','" + wHitem.UpdatedOn + "','" + wHitem.Comments + "','" + wHitem.SourceRequester + "')", conn);
+                    OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$] (IPN,Manufacturer,MFPN,Description,Stock,Updated_on,Comments,Source_Requester) values('" + wHitem.IPN + "','" + wHitem.Manufacturer + "','" + wHitem.MFPN + "','" + wHitem.Description + "','" + wHitem.Stock + "','" + wHitem.UpdatedOn + "','" + wHitem.CommentsWHitem + "','" + wHitem.SourceRequester + "')", conn);
                     // sql = "Insert into [Sheet1$] (id,name) values('5','e')";
                     command.ExecuteNonQuery();
                     conn.Close();
@@ -544,7 +544,7 @@ namespace WH_Panel
                                 Description = reader[3].ToString(),
                                 Stock = int.Parse(reader[4].ToString()),
                                 UpdatedOn = reader[5].ToString(),
-                                Comments = reader[6].ToString(),
+                                CommentsWHitem = reader[6].ToString(),
                                 SourceRequester = reader[7].ToString()
                             };
                             if (iStock > 0)
@@ -687,19 +687,23 @@ namespace WH_Panel
 
             //for (int i = 0; i < dataGridView1.RowCount; i++)
             //{
-            //    int stockResult;
-            //    WHitem wHitem = new WHitem();
-            //    {
-            //        IPN = dataGridView1.Rows[i].Cells[dataGridView1.Columns["IPN"].Index).Value.ToString(),
-            //    Manufacturer = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Manufacturer"].Index).Value.ToString(),
-            //    MFPN = dataGridView1.Rows[i].Cells[dataGridView1.Columns["MFPN"].Index).Value.ToString(),
-            //    Description = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Description"].Index).Value.ToString(),
-            //    Stock = int.TryParse((dataGridView1.Rows[i].Cells[dataGridView1.Columns["Stock"].Index).Value.ToString(), out stockResult),
-            //       UpdatedOn = dataGridView1.Rows[i].Cells[dataGridView1.Columns["UpdatedOn"].Index).Value.ToString(),
-            //       Comments = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Comments"].Index).Value.ToString(),
-            //       SourceRequester = dataGridView1.Rows[i].Cells[dataGridView1.Columns["SourceRequester"].Index).Value.ToString()
+                
+
+            //    WHitem wHitemABC = new WHitem(){
+
+                    
+
+            //        IPN = dataGridView1.Rows[i].Cells[dataGridView1.Columns["IPN"].Index].Value.ToString(),
+            //        Manufacturer = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Manufacturer"].Index].Value.ToString(),
+            //        MFPN = dataGridView1.Rows[i].Cells[dataGridView1.Columns["MFPN"].Index].Value.ToString(),
+            //        Description = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Description"].Index].Value.ToString(),
+            //        Stock = int.Parse((dataGridView1.Rows[i].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString(),
+            //        UpdatedOn = dataGridView1.Rows[i].Cells[dataGridView1.Columns["UpdatedOn"].Index].Value.ToString(),
+            //        CommentsWHitem = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Comments"].Index].Value.ToString(),
+            //        SourceRequester = dataGridView1.Rows[i].Cells[dataGridView1.Columns["SourceRequester"].Index].Value.ToString()
             //    };
-            //    inWHstock.Add(wHitem);
+
+            //    inWHstock.Add(wHitemABC);
             //}
 
 
