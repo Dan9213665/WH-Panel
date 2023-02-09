@@ -687,18 +687,22 @@ namespace WH_Panel
 
             //for (int i = 0; i < dataGridView1.RowCount; i++)
             //{
+            //    int stockResult;
             //    WHitem wHitem = new WHitem();
             //    {
             //        IPN = dataGridView1.Rows[i].Cells[dataGridView1.Columns["IPN"].Index).Value.ToString(),
             //    Manufacturer = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Manufacturer"].Index).Value.ToString(),
             //    MFPN = dataGridView1.Rows[i].Cells[dataGridView1.Columns["MFPN"].Index).Value.ToString(),
             //    Description = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Description"].Index).Value.ToString(),
-            //    Stock = int.Parse((dataGridView1.Rows[i].Cells[dataGridView1.Columns["Stock"].Index).Value.ToString()),
+            //    Stock = int.TryParse((dataGridView1.Rows[i].Cells[dataGridView1.Columns["Stock"].Index).Value.ToString(), out stockResult),
             //       UpdatedOn = dataGridView1.Rows[i].Cells[dataGridView1.Columns["UpdatedOn"].Index).Value.ToString(),
             //       Comments = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Comments"].Index).Value.ToString(),
             //       SourceRequester = dataGridView1.Rows[i].Cells[dataGridView1.Columns["SourceRequester"].Index).Value.ToString()
             //    };
+            //    inWHstock.Add(wHitem);
             //}
+
+
             //List<int> fqtys = new List<int>();
             //dataGridView1.Update();
             //for (int i = 0; i < dataGridView1.RowCount; i++)
