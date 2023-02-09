@@ -107,5 +107,11 @@ namespace WH_Panel
             FrmAddItemsToDB addItemsToDB = new FrmAddItemsToDB();
             addItemsToDB.Show();
         }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            FrmPackingSlips fps = new FrmPackingSlips();
+            fps.Show();
+        }
     }
 }
