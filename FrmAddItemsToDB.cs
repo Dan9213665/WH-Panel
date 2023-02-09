@@ -29,6 +29,8 @@ using Microsoft.VisualBasic;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Microsoft.VisualBasic.Devices;
+
 namespace WH_Panel
 {
     public partial class FrmAddItemsToDB : Form
@@ -681,6 +683,22 @@ namespace WH_Panel
 
         private void button4_Click(object sender, EventArgs e)
         {
+            //List<WHitem> inWHstock = new List<WHitem>();
+
+            //for (int i = 0; i < dataGridView1.RowCount; i++)
+            //{
+            //    WHitem wHitem = new WHitem();
+            //    {
+            //        IPN = dataGridView1.Rows[i].Cells[dataGridView1.Columns["IPN"].Index).Value.ToString(),
+            //    Manufacturer = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Manufacturer"].Index).Value.ToString(),
+            //    MFPN = dataGridView1.Rows[i].Cells[dataGridView1.Columns["MFPN"].Index).Value.ToString(),
+            //    Description = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Description"].Index).Value.ToString(),
+            //    Stock = int.Parse((dataGridView1.Rows[i].Cells[dataGridView1.Columns["Stock"].Index).Value.ToString()),
+            //       UpdatedOn = dataGridView1.Rows[i].Cells[dataGridView1.Columns["UpdatedOn"].Index).Value.ToString(),
+            //       Comments = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Comments"].Index).Value.ToString(),
+            //       SourceRequester = dataGridView1.Rows[i].Cells[dataGridView1.Columns["SourceRequester"].Index).Value.ToString()
+            //    };
+            //}
             //List<int> fqtys = new List<int>();
             //dataGridView1.Update();
             //for (int i = 0; i < dataGridView1.RowCount; i++)

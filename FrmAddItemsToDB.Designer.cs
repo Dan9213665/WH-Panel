@@ -624,9 +624,9 @@
             this.label15.AutoSize = true;
             this.label15.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label15.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label15.Location = new System.Drawing.Point(298, 0);
+            this.label15.Location = new System.Drawing.Point(299, 0);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(289, 39);
+            this.label15.Size = new System.Drawing.Size(290, 39);
             this.label15.TabIndex = 5;
             this.label15.Text = "BALANCE : ";
             this.label15.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -638,16 +638,16 @@
             this.textBox10.Location = new System.Drawing.Point(3, 3);
             this.textBox10.Name = "textBox10";
             this.textBox10.ReadOnly = true;
-            this.textBox10.Size = new System.Drawing.Size(289, 33);
+            this.textBox10.Size = new System.Drawing.Size(290, 33);
             this.textBox10.TabIndex = 3;
             this.textBox10.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // button4
             // 
             this.button4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button4.Location = new System.Drawing.Point(593, 3);
+            this.button4.Location = new System.Drawing.Point(595, 3);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(292, 33);
+            this.button4.Size = new System.Drawing.Size(290, 33);
             this.button4.TabIndex = 4;
             this.button4.Text = "FIlter Current WH stock ONLY";
             this.button4.UseVisualStyleBackColor = true;
