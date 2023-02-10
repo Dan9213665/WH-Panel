@@ -19,6 +19,7 @@ using System.Xml;
 using static System.Net.WebRequestMethods;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using DataTable = System.Data.DataTable;
+using Label = System.Windows.Forms.Label;
 
 namespace WH_Panel
 {
@@ -237,9 +238,55 @@ namespace WH_Panel
             }
         }
 
+      
+
+        private void textBox11_TextChanged(object sender, EventArgs e)
+        {
+            label11.BackColor = Color.IndianRed;
+            FilterTheDataGridView();
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+            label2.BackColor = Color.IndianRed;
+            FilterTheDataGridView();
+        }
+
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+            label3.BackColor = Color.IndianRed;
+            FilterTheDataGridView();
+        }
+
+     
         private void label1_Click(object sender, EventArgs e)
         {
+            Label? lbl = sender as Label;
+
             textBox1.Clear();
+            lbl.BackColor = Color.LightGreen;
+        }
+        private void label11_Click(object sender, EventArgs e)
+        {
+            Label? lbl = sender as Label;
+
+            textBox11.Clear();
+            lbl.BackColor = Color.LightGreen;
+        }
+        private void label2_Click(object sender, EventArgs e)
+        {
+            Label? lbl = sender as Label;
+            
+            textBox2.Clear();
+            lbl.BackColor = Color.LightGreen;
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+            Label? lbl = sender as Label;
+            
+            textBox3.Clear();
+            lbl.BackColor = Color.LightGreen;
         }
     }
 }
