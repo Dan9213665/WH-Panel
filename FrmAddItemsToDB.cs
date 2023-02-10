@@ -68,7 +68,7 @@ namespace WH_Panel
             label1.Text = "RELOAD AVL";
             //MessageBox.Show(fp);
             DataLoaderAVL(avlSource, "AVL");
-            PopulateGridView();
+            PopulateAVLGridView();
         }
         private void DataLoaderAVL(string fp, string thesheetName)
         {
@@ -113,7 +113,7 @@ namespace WH_Panel
                 MessageBox.Show("Error");
             }
         }
-        private void PopulateGridView()
+        private void PopulateAVLGridView()
         {
             //MessageBox.Show(avlItems.Count.ToString()); 
             IEnumerable<WHitem> data = avlItems;
@@ -142,10 +142,10 @@ namespace WH_Panel
             dataGridView2.Columns["Manufacturer"].DisplayIndex = 1;
             dataGridView2.Columns["MFPN"].DisplayIndex = 2;
             dataGridView2.Columns["Description"].DisplayIndex = 3;
-            dataGridView2.Columns["Stock"].Visible= false;
-            dataGridView2.Columns["UpdatedOn"].Visible = false;
-            dataGridView2.Columns["Comments"].Visible = false;
-            dataGridView2.Columns["SourceRequester"].Visible = false;
+            //dataGridView2.Columns["Stock"].Visible= false;
+            //dataGridView2.Columns["UpdatedOn"].Visible = false;
+            //dataGridView2.Columns["Comments"].Visible = false;
+            //dataGridView2.Columns["SourceRequester"].Visible = false;
         }
         private void FilterAVLDataGridView()
         {
@@ -577,23 +577,23 @@ namespace WH_Panel
             button3.Update();
             StockViewDataLoader(stockFile, "STOCK");
             PopulateStockView();
+           
         }
         private void PopulateStockView()
         {
-            //MessageBox.Show(avlItems.Count.ToString()); 
+           
             IEnumerable<WHitem> data = stockItems;
-            //avlDTable.Clear();
+            
             stockDTable.Clear();
             using (var reader = ObjectReader.Create(data))
             {
                 stockDTable.Load(reader);
             }
             dataGridView1.DataSource = stockDTable;
-            SetSTOCKiewColumsOrder();
+            
             button3.BackColor = Color.LightGreen;
-            dataGridView1.Update();
-            //dataGridView2.AutoResizeColumns();
-            //dataGridView2.Update();
+        
+            SetSTOCKiewColumsOrder();
         }
         private void SetSTOCKiewColumsOrder()
         {
@@ -611,7 +611,7 @@ namespace WH_Panel
             dataGridView1.Columns["Description"].DisplayIndex = 3;
             dataGridView1.Columns["Stock"].DisplayIndex = 4;
             dataGridView1.Columns["UpdatedOn"].DisplayIndex = 5;
-            dataGridView1.Columns["Comments"].DisplayIndex = 6;
+            dataGridView1.Columns["CommentsWHitem"].DisplayIndex = 6;
             dataGridView1.Columns["SourceRequester"].DisplayIndex = 7;
         }
         private void textBox3_TextChanged(object sender, EventArgs e)
@@ -683,28 +683,63 @@ namespace WH_Panel
 
         private void button4_Click(object sender, EventArgs e)
         {
-            //List<WHitem> inWHstock = new List<WHitem>();
+            List<WHitem> inWHstock = new List<WHitem>();
 
-            //for (int i = 0; i < dataGridView1.RowCount; i++)
-            //{
-                
+            for (int i = 0; i < dataGridView1.RowCount; i++)
+            {
+                WHitem wHitemABC = new WHitem()
+                {
+                    IPN = dataGridView1.Rows[i].Cells[dataGridView1.Columns["IPN"].Index].Value.ToString(),
+                    Manufacturer = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Manufacturer"].Index].Value.ToString(),
+                    MFPN = dataGridView1.Rows[i].Cells[dataGridView1.Columns["MFPN"].Index].Value.ToString(),
+                    Description = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Description"].Index].Value.ToString(),
+                    Stock = int.Parse(dataGridView1.Rows[i].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString()),
+                    UpdatedOn = dataGridView1.Rows[i].Cells[dataGridView1.Columns["UpdatedOn"].Index].Value.ToString(),
+                    CommentsWHitem = dataGridView1.Rows[i].Cells[dataGridView1.Columns["CommentsWHitem"].Index].Value.ToString(),
+                    SourceRequester = dataGridView1.Rows[i].Cells[dataGridView1.Columns["SourceRequester"].Index].Value.ToString()
+                };
 
-            //    WHitem wHitemABC = new WHitem(){
+                inWHstock.Add(wHitemABC);
+            }
 
-                    
 
-            //        IPN = dataGridView1.Rows[i].Cells[dataGridView1.Columns["IPN"].Index].Value.ToString(),
-            //        Manufacturer = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Manufacturer"].Index].Value.ToString(),
-            //        MFPN = dataGridView1.Rows[i].Cells[dataGridView1.Columns["MFPN"].Index].Value.ToString(),
-            //        Description = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Description"].Index].Value.ToString(),
-            //        Stock = int.Parse((dataGridView1.Rows[i].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString(),
-            //        UpdatedOn = dataGridView1.Rows[i].Cells[dataGridView1.Columns["UpdatedOn"].Index].Value.ToString(),
-            //        CommentsWHitem = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Comments"].Index].Value.ToString(),
-            //        SourceRequester = dataGridView1.Rows[i].Cells[dataGridView1.Columns["SourceRequester"].Index].Value.ToString()
-            //    };
 
-            //    inWHstock.Add(wHitemABC);
-            //}
+            for(int i = 0;i< inWHstock.Count;i++)
+            {
+                for (int j=i; j<inWHstock.Count-1;j++)
+                {
+                    if (Math.Abs(inWHstock[i].Stock) == Math.Abs(inWHstock[j].Stock) && ( inWHstock[i].CommentsWHitem.ToString() == inWHstock[j].CommentsWHitem.ToString() ))
+                        {
+
+                        inWHstock.Remove(inWHstock[i]);
+                        inWHstock.Remove(inWHstock[j]);
+                  
+
+                        
+
+                    }
+                }
+            }
+
+
+
+          
+
+
+            IEnumerable<WHitem> WHdata = inWHstock;
+            DataTable INWH = new DataTable();
+
+
+            using (var reader = ObjectReader.Create(WHdata))
+            {
+                INWH.Load(reader);
+            }
+
+            DataView dv = INWH.DefaultView;
+            dataGridView1.DataSource = dv;
+            dataGridView1.Update();
+            SetSTOCKiewColumsOrder();
+
 
 
             //List<int> fqtys = new List<int>();

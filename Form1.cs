@@ -104,8 +104,8 @@ namespace WH_Panel
         }
         private void button7_Click(object sender, EventArgs e)
         {
-            FrmAddItemsToDB addItemsToDB = new FrmAddItemsToDB();
-            addItemsToDB.Show();
+            FrmAddItemsToDB addItemsToDBLDT = new FrmAddItemsToDB();
+            addItemsToDBLDT.Show();
         }
 
         private void button8_Click(object sender, EventArgs e)

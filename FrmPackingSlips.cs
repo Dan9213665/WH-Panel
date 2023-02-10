@@ -49,7 +49,7 @@ namespace WH_Panel
             stopWatch.Reset();
             ResetViews();
             startUpLogic();
-            SetColumsOrder();
+            SetColumsOrderPS();
         }
         private void ResetViews()
         {
@@ -96,10 +96,10 @@ namespace WH_Panel
             //    //DataLoader(listOfKitFiles[i]);
             //}
             PopulateGridView();
-            SetColumsOrder();
+            SetColumsOrderPS();
             stopWatch.Stop();
         }
-        private void SetColumsOrder()
+        private void SetColumsOrderPS()
         {
             dataGridView1.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dataGridView1.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -123,7 +123,7 @@ namespace WH_Panel
                 PSIDtable.Load(reader);
             }
             dataGridView1.DataSource = PSIDtable;
-            SetColumsOrder();
+            SetColumsOrderPS();
             label12.BackColor = Color.LightGreen;
          
         }
@@ -229,7 +229,7 @@ namespace WH_Panel
                 "%' AND [MFPN] LIKE '%" + textBox2.Text.ToString() +
                 "%' AND [Description] LIKE '%" + textBox3.Text.ToString() + "%' ";
                 dataGridView1.DataSource = dv;
-                SetColumsOrder();
+                SetColumsOrderPS();
             }
             catch (Exception)
             {
