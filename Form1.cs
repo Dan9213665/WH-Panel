@@ -113,5 +113,11 @@ namespace WH_Panel
             FrmPackingSlips fps = new FrmPackingSlips();
             fps.Show();
         }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            FrmAddItemsTOValens val = new FrmAddItemsTOValens();
+            val.Show();
+        }
     }
 }

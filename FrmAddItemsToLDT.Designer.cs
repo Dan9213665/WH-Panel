@@ -814,7 +814,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmAddItemsToLDT";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Move_stock_items";
+            this.Text = "Leader Tech warehouse";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.FrmAddItemsToDB_Load);
             this.tabControl1.ResumeLayout(false);
