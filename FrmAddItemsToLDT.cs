@@ -33,9 +33,9 @@ using Microsoft.VisualBasic.Devices;
 
 namespace WH_Panel
 {
-    public partial class FrmAddItemsToDB : Form
+    public partial class FrmAddItemsToLDT : Form
     {
-        public FrmAddItemsToDB()
+        public FrmAddItemsToLDT()
         {
             InitializeComponent();
             radioButton1.Checked = true;
@@ -703,30 +703,50 @@ namespace WH_Panel
             }
 
 
+           
 
-            for(int i = 0;i< inWHstock.Count;i++)
+            List<WHitem> negatiVEQTYs = new List<WHitem>();
+            for (int i = 0; i < inWHstock.Count; i++)
             {
-                for (int j=i; j<inWHstock.Count-1;j++)
+                if (inWHstock[i].Stock<0)
                 {
-                    if (Math.Abs(inWHstock[i].Stock) == Math.Abs(inWHstock[j].Stock) && ( inWHstock[i].CommentsWHitem.ToString() == inWHstock[j].CommentsWHitem.ToString() ))
-                        {
+                    negatiVEQTYs.Add(inWHstock[i]);
+                }
+            }
 
-                        inWHstock.Remove(inWHstock[i]);
-                        inWHstock.Remove(inWHstock[j]);
-                  
+            List<WHitem> positiveInWH= new List<WHitem>();
 
-                        
+            for (int k=0;k < inWHstock.Count;k++)
+            {
+                if (inWHstock[k].Stock > 0)
+                {
+                    positiveInWH.Add(inWHstock[k]);
+                }
+            }
 
+          
+
+
+            for(int i=0;i< negatiVEQTYs.Count;i++)
+            {
+                for(int j=0;j< positiveInWH.Count;j++)
+                {
+                    if (Math.Abs(negatiVEQTYs[i].Stock) == positiveInWH[j].Stock)
+                    {
+                        positiveInWH.Remove((WHitem)positiveInWH[j]);
+                        break;
                     }
                 }
             }
 
 
 
-          
 
 
-            IEnumerable<WHitem> WHdata = inWHstock;
+
+
+
+                IEnumerable<WHitem> WHdata = positiveInWH;
             DataTable INWH = new DataTable();
 
 

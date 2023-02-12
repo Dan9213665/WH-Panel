@@ -1,6 +1,6 @@
 ﻿namespace WH_Panel
 {
-    partial class FrmAddItemsToDB
+    partial class FrmAddItemsToLDT
     {
         /// <summary>
         /// Required designer variable.
@@ -26,7 +26,7 @@
         private void InitializeComponent()
         {
             System.Windows.Forms.DateTimePicker dateTimePicker1;
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmAddItemsToDB));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmAddItemsToLDT));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -805,14 +805,14 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "LEADER TECH WAREHOUSE";
             // 
-            // FrmAddItemsToDB
+            // FrmAddItemsToLDT
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1223, 710);
             this.Controls.Add(this.groupBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "FrmAddItemsToDB";
+            this.Name = "FrmAddItemsToLDT";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Move_stock_items";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
