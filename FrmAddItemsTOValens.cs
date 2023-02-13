@@ -32,6 +32,8 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Microsoft.VisualBasic.Devices;
 using System.ComponentModel.Design.Serialization;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolBar;
+using TextBox = System.Windows.Forms.TextBox;
 
 namespace WH_Panel
 {
@@ -45,6 +47,7 @@ namespace WH_Panel
             comboBox1.SelectedIndex = 1;
            button2_Click_1(this, new EventArgs());
             button3_Click(this, new EventArgs());
+            textBox1.Focus();
         }
         public List<WHitem> avlItems = new List<WHitem>();
         public List<WHitem> stockItems = new List<WHitem>();
@@ -360,7 +363,11 @@ namespace WH_Panel
             };
             DataInserter(stockFile, "STOCK_VALENS", inputWHitem);
             stockItems.Add(inputWHitem);
+            countStockItems++;
+            button3.Text = "Rows in STOCK: " + (countStockItems).ToString();
+            button3.Update();
             textBox10.Text = inputWHitem.IPN;
+
             PopulateStockView();
         }
         private void DataInserter(string fp, string thesheetName, WHitem wHitem)
@@ -778,6 +785,68 @@ namespace WH_Panel
           
         }
 
-        
+        private void textBox1_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter(sender);
+        }
+
+        private static void txtbColorGreenOnEnter(object sender)
+        {
+            TextBox? tb = sender as TextBox;
+
+            tb.BackColor = Color.LightGreen;
+        }
+
+        private void textBox1_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave(sender);
+        }
+
+        private static void txtbColorWhiteOnLeave(object sender)
+        {
+            TextBox? tb = sender as TextBox;
+
+            tb.BackColor = Color.White;
+        }
+
+        private void textBox6_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter(sender);
+        }
+
+        private void textBox6_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave(sender);
+        }
+
+        private void textBox2_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter(sender);
+        }
+
+        private void textBox2_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave(sender);
+        }
+
+        private void textBox8_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter(sender);
+        }
+
+        private void textBox8_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave(sender);
+        }
+
+        private void textBox9_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter(sender);
+        }
+
+        private void textBox9_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave(sender);
+        }
     }
 }
