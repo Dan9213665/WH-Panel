@@ -43,9 +43,11 @@ namespace WH_Panel
             this.btnLEADERTECH = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.button9 = new System.Windows.Forms.Button();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.button10 = new System.Windows.Forms.Button();
+            this.btnNETLINE = new System.Windows.Forms.Button();
             this.btnSHILAT = new System.Windows.Forms.Button();
             this.btnFIELDIN = new System.Windows.Forms.Button();
-            this.btnNETLINE = new System.Windows.Forms.Button();
             this.btnVAYYAR = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
@@ -55,6 +57,7 @@ namespace WH_Panel
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            this.groupBox5.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnValens
@@ -78,7 +81,7 @@ namespace WH_Panel
             this.groupBox1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(928, 246);
+            this.groupBox1.Size = new System.Drawing.Size(964, 251);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Elige scopum";
@@ -93,9 +96,9 @@ namespace WH_Panel
             this.flowLayoutPanel1.Controls.Add(this.groupBox3);
             this.flowLayoutPanel1.Controls.Add(this.groupBox2);
             this.flowLayoutPanel1.Controls.Add(this.groupBox4);
+            this.flowLayoutPanel1.Controls.Add(this.groupBox5);
             this.flowLayoutPanel1.Controls.Add(this.btnSHILAT);
             this.flowLayoutPanel1.Controls.Add(this.btnFIELDIN);
-            this.flowLayoutPanel1.Controls.Add(this.btnNETLINE);
             this.flowLayoutPanel1.Controls.Add(this.btnVAYYAR);
             this.flowLayoutPanel1.Controls.Add(this.button4);
             this.flowLayoutPanel1.Controls.Add(this.button6);
@@ -103,7 +106,7 @@ namespace WH_Panel
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 19);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(922, 224);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(958, 229);
             this.flowLayoutPanel1.TabIndex = 2;
             // 
             // btnWorkProgramm
@@ -246,12 +249,48 @@ namespace WH_Panel
             this.button9.UseVisualStyleBackColor = true;
             this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.button10);
+            this.groupBox5.Controls.Add(this.btnNETLINE);
+            this.groupBox5.ForeColor = System.Drawing.Color.White;
+            this.groupBox5.Location = new System.Drawing.Point(409, 114);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(132, 105);
+            this.groupBox5.TabIndex = 17;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "NETLINE";
+            // 
+            // button10
+            // 
+            this.button10.BackgroundImage = global::WH_Panel.Properties.Resources.database_add_12927;
+            this.button10.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.button10.Location = new System.Drawing.Point(6, 60);
+            this.button10.Name = "button10";
+            this.button10.Size = new System.Drawing.Size(120, 39);
+            this.button10.TabIndex = 2;
+            this.button10.UseVisualStyleBackColor = true;
+            this.button10.Click += new System.EventHandler(this.button10_Click);
+            // 
+            // btnNETLINE
+            // 
+            this.btnNETLINE.BackColor = System.Drawing.Color.White;
+            this.btnNETLINE.BackgroundImage = global::WH_Panel.Properties.Resources.netline;
+            this.btnNETLINE.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.btnNETLINE.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnNETLINE.Location = new System.Drawing.Point(6, 16);
+            this.btnNETLINE.Name = "btnNETLINE";
+            this.btnNETLINE.Size = new System.Drawing.Size(120, 59);
+            this.btnNETLINE.TabIndex = 1;
+            this.btnNETLINE.UseVisualStyleBackColor = false;
+            this.btnNETLINE.Click += new System.EventHandler(this.button1_Click_1);
+            // 
             // btnSHILAT
             // 
             this.btnSHILAT.BackColor = System.Drawing.Color.White;
             this.btnSHILAT.BackgroundImage = global::WH_Panel.Properties.Resources.shilat1;
             this.btnSHILAT.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.btnSHILAT.Location = new System.Drawing.Point(409, 114);
+            this.btnSHILAT.Location = new System.Drawing.Point(547, 3);
             this.btnSHILAT.Name = "btnSHILAT";
             this.btnSHILAT.Size = new System.Drawing.Size(132, 105);
             this.btnSHILAT.TabIndex = 6;
@@ -264,25 +303,12 @@ namespace WH_Panel
             this.btnFIELDIN.BackgroundImage = global::WH_Panel.Properties.Resources.Fieldin;
             this.btnFIELDIN.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.btnFIELDIN.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnFIELDIN.Location = new System.Drawing.Point(547, 3);
+            this.btnFIELDIN.Location = new System.Drawing.Point(547, 114);
             this.btnFIELDIN.Name = "btnFIELDIN";
-            this.btnFIELDIN.Size = new System.Drawing.Size(120, 105);
+            this.btnFIELDIN.Size = new System.Drawing.Size(132, 105);
             this.btnFIELDIN.TabIndex = 2;
             this.btnFIELDIN.UseVisualStyleBackColor = false;
             this.btnFIELDIN.Click += new System.EventHandler(this.btnFIELDIN_Click);
-            // 
-            // btnNETLINE
-            // 
-            this.btnNETLINE.BackColor = System.Drawing.Color.White;
-            this.btnNETLINE.BackgroundImage = global::WH_Panel.Properties.Resources.netline;
-            this.btnNETLINE.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.btnNETLINE.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnNETLINE.Location = new System.Drawing.Point(547, 114);
-            this.btnNETLINE.Name = "btnNETLINE";
-            this.btnNETLINE.Size = new System.Drawing.Size(120, 105);
-            this.btnNETLINE.TabIndex = 1;
-            this.btnNETLINE.UseVisualStyleBackColor = false;
-            this.btnNETLINE.Click += new System.EventHandler(this.button1_Click_1);
             // 
             // btnVAYYAR
             // 
@@ -290,9 +316,9 @@ namespace WH_Panel
             this.btnVAYYAR.BackgroundImage = global::WH_Panel.Properties.Resources.vayyar;
             this.btnVAYYAR.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.btnVAYYAR.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnVAYYAR.Location = new System.Drawing.Point(673, 3);
+            this.btnVAYYAR.Location = new System.Drawing.Point(685, 3);
             this.btnVAYYAR.Name = "btnVAYYAR";
-            this.btnVAYYAR.Size = new System.Drawing.Size(120, 105);
+            this.btnVAYYAR.Size = new System.Drawing.Size(132, 105);
             this.btnVAYYAR.TabIndex = 5;
             this.btnVAYYAR.UseVisualStyleBackColor = false;
             this.btnVAYYAR.Click += new System.EventHandler(this.btnVAYYAR_Click);
@@ -301,9 +327,9 @@ namespace WH_Panel
             // 
             this.button4.BackgroundImage = global::WH_Panel.Properties.Resources.CIS;
             this.button4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.button4.Location = new System.Drawing.Point(673, 114);
+            this.button4.Location = new System.Drawing.Point(685, 114);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(120, 105);
+            this.button4.Size = new System.Drawing.Size(132, 105);
             this.button4.TabIndex = 10;
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
@@ -312,9 +338,9 @@ namespace WH_Panel
             // 
             this.button6.BackgroundImage = global::WH_Panel.Properties.Resources.STM;
             this.button6.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.button6.Location = new System.Drawing.Point(799, 3);
+            this.button6.Location = new System.Drawing.Point(823, 3);
             this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(120, 105);
+            this.button6.Size = new System.Drawing.Size(132, 105);
             this.button6.TabIndex = 12;
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click);
@@ -334,7 +360,7 @@ namespace WH_Panel
             this.AutoScroll = true;
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.Black;
-            this.ClientSize = new System.Drawing.Size(928, 246);
+            this.ClientSize = new System.Drawing.Size(964, 251);
             this.Controls.Add(this.groupBox1);
             this.ForeColor = System.Drawing.SystemColors.ControlText;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -349,6 +375,7 @@ namespace WH_Panel
             this.groupBox3.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
+            this.groupBox5.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -375,5 +402,7 @@ namespace WH_Panel
         private Button button8;
         private GroupBox groupBox4;
         private Button button9;
+        private GroupBox groupBox5;
+        private Button button10;
     }
 }

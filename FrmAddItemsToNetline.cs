@@ -1,5 +1,4 @@
-﻿
-using FastMember;
+﻿using FastMember;
 using Microsoft.Office.Interop.Excel;
 using System;
 using System.Collections;
@@ -37,15 +36,16 @@ using TextBox = System.Windows.Forms.TextBox;
 
 namespace WH_Panel
 {
-          public partial class FrmAddItemsTOValens : Form
-        {
-              
-        public FrmAddItemsTOValens()
+  
+    public partial class FrmAddItemsToNetline : Form
+    {
+
+        public FrmAddItemsToNetline()
         {
             InitializeComponent();
             radioButton1.Checked = true;
             comboBox1.SelectedIndex = 1;
-           button2_Click_1(this, new EventArgs());
+            button2_Click_1(this, new EventArgs());
             button3_Click(this, new EventArgs());
             textBox1.Focus();
         }
@@ -60,8 +60,8 @@ namespace WH_Panel
         private object cmd;
         // public string stockFile = @"\\dbr1\Data\WareHouse\2022\_DEV\SAMPLE_DATA\TESTDBWH.xlsm";
 
-        public string avlSource = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_AVL.xlsx";
-        public string stockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm";
+        public string avlSource = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_AVL.xlsx";
+        public string stockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm";
         private void textBox9_TextChanged_1(object sender, EventArgs e)
         {
         }
@@ -229,8 +229,8 @@ namespace WH_Panel
                 textBox4.Text = dataGridView2.Rows[rowindex].Cells["MFPN"].Value.ToString();
                 textBox5.Text = dataGridView2.Rows[rowindex].Cells["Description"].Value.ToString();
                 textBox6.Clear();
-               
-               
+
+
             }
         }
         private void radioButton1_CheckedChanged_1(object sender, EventArgs e)
@@ -239,6 +239,7 @@ namespace WH_Panel
             RadioButton rbtn = sender as RadioButton;
             if (rbtn.Checked == true)
             {
+                textBox8.Text = string.Empty;   
                 textBox8.ReadOnly = true;
                 textBox9.ReadOnly = true;
             }
@@ -316,7 +317,7 @@ namespace WH_Panel
             {
                 if (textBox8.Text != string.Empty)
                 {
-                    sorce_req = "GILT_" + textBox8.Text;
+                    sorce_req = "WR23000" + textBox8.Text;
                     if (textBox6.Text != string.Empty && int.Parse(textBox6.Text) > 0)
                     {
                         qty = int.Parse(textBox6.Text);
@@ -331,7 +332,7 @@ namespace WH_Panel
                 }
                 else
                 {
-                    MessageBox.Show("Input GILT_XXXXX ID !");
+                    MessageBox.Show("Input WR23000XXX ID !");
                     textBox8.Focus();
                 }
             }
@@ -361,7 +362,7 @@ namespace WH_Panel
                 CommentsWHitem = comboBox1.Text,
                 SourceRequester = sorce_req
             };
-            DataInserter(stockFile, "STOCK_VALENS", inputWHitem);
+            DataInserter(stockFile, "STOCK", inputWHitem);
             stockItems.Add(inputWHitem);
             countStockItems++;
             button3.Text = "Rows in STOCK: " + (countStockItems).ToString();
@@ -390,7 +391,7 @@ namespace WH_Panel
                 textBox1.Focus();
                 printSticker(wHitem);
                 //printStickerAPI(wHitem);
-                AutoClosingMessageBox.Show(wHitem.IPN + " MOVED to DB ", "Item added to DB", 3000);
+                AutoClosingMessageBox.Show(wHitem.Stock.ToString() +" PCS of "+ wHitem.IPN + " MOVED to DB ", "Item added to DB", 3000);
             }
             catch (IOException)
             {
@@ -556,7 +557,7 @@ namespace WH_Panel
                                 int res = 0;
                                 int toStk = 0;
                                 bool stk = int.TryParse(reader[4].ToString(), out res);
-                                if(stk)
+                                if (stk)
                                 {
                                     toStk = res;
                                 }
@@ -579,7 +580,7 @@ namespace WH_Panel
                                     button3.Update();
                                     //aLASTaBC = abc;
                                     stockItems.Add(abc);
-                                    
+
                                 }
                                 iStock++;
                             }
@@ -589,7 +590,7 @@ namespace WH_Panel
                                 MessageBox.Show(E.Message);
                                 throw;
                             }
-                         
+
                         }
                     }
                     conn.Close();
@@ -610,7 +611,7 @@ namespace WH_Panel
             dataGridView1.DataSource = null;
             button3.Text = "LOAD STOCK";
             button3.Update();
-            StockViewDataLoader(stockFile, "STOCK_VALENS");
+            StockViewDataLoader(stockFile, "STOCK");
             PopulateStockView();
 
         }
@@ -782,7 +783,7 @@ namespace WH_Panel
 
         private void textBox1_KeyUp(object sender, KeyEventArgs e)
         {
-          
+
         }
 
         private void textBox1_Enter(object sender, EventArgs e)
@@ -849,6 +850,6 @@ namespace WH_Panel
             txtbColorWhiteOnLeave(sender);
         }
 
-       
+      
     }
 }
