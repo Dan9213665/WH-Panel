@@ -57,8 +57,8 @@ namespace WH_Panel
         private object cmd;
         // public string stockFile = @"\\dbr1\Data\WareHouse\2022\_DEV\SAMPLE_DATA\TESTDBWH.xlsm";
 
-        public string avlSource = "\\\\dbr1\\Data\\WareHouse\\2022\\_DEV\\SAMPLE_DATA\\TESTVALAVL.xlsx";
-        public string stockFile = "\\\\dbr1\\Data\\WareHouse\\2022\\_DEV\\SAMPLE_DATA\\TESTVALWH.xlsm";
+        public string avlSource = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_AVL.xlsx";
+        public string stockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm";
         private void textBox9_TextChanged_1(object sender, EventArgs e)
         {
         }
@@ -226,6 +226,8 @@ namespace WH_Panel
                 textBox4.Text = dataGridView2.Rows[rowindex].Cells["MFPN"].Value.ToString();
                 textBox5.Text = dataGridView2.Rows[rowindex].Cells["Description"].Value.ToString();
                 textBox6.Clear();
+               
+               
             }
         }
         private void radioButton1_CheckedChanged_1(object sender, EventArgs e)
@@ -356,7 +358,7 @@ namespace WH_Panel
                 CommentsWHitem = comboBox1.Text,
                 SourceRequester = sorce_req
             };
-            DataInserter(stockFile, "STOCK", inputWHitem);
+            DataInserter(stockFile, "STOCK_VALENS", inputWHitem);
             stockItems.Add(inputWHitem);
             textBox10.Text = inputWHitem.IPN;
             PopulateStockView();
@@ -498,7 +500,7 @@ namespace WH_Panel
         {
             textBox6.Focus();
         }
-        private void textBox1_KeyDown_1(object sender, KeyEventArgs e)
+        private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
@@ -601,7 +603,7 @@ namespace WH_Panel
             dataGridView1.DataSource = null;
             button3.Text = "LOAD STOCK";
             button3.Update();
-            StockViewDataLoader(stockFile, "STOCK");
+            StockViewDataLoader(stockFile, "STOCK_VALENS");
             PopulateStockView();
 
         }
@@ -771,6 +773,11 @@ namespace WH_Panel
             SetSTOCKiewColumsOrder();
         }
 
-      
+        private void textBox1_KeyUp(object sender, KeyEventArgs e)
+        {
+          
+        }
+
+        
     }
 }

@@ -308,11 +308,18 @@ namespace WH_Panel
                 if (textBox8.Text != string.Empty)
                 {
                     sorce_req = "GILT_" + textBox8.Text;
-                    if (textBox6.Text != string.Empty && int.Parse(textBox6.Text) > 0)
+                    if (textBox6.Text != string.Empty)
                     {
+                        int outNumber;
+                        bool success = int.TryParse(textBox6.Text, out outNumber);
+
                         qty = int.Parse(textBox6.Text);
-                        MoveIntoDATABASE(qty, sorce_req);
-                        FilterStockDataGridView(textBox10.Text);
+                        if (success)
+                        {
+                            MoveIntoDATABASE(qty, sorce_req);
+                            FilterStockDataGridView(textBox10.Text);
+                        }
+                         
                     }
                     else
                     {

@@ -743,7 +743,7 @@
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(291, 29);
             this.label12.TabIndex = 2;
-            this.label12.Text = "GILT";
+            this.label12.Text = "GILT_";
             this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // textBox9
