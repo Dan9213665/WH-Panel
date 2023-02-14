@@ -540,7 +540,7 @@ namespace WH_Panel
         {
             try
             {
-                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=NO;IMEX=0\"";
+                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
                 using (OleDbConnection conn = new OleDbConnection(constr))
                 {
                     conn.Open();
@@ -555,11 +555,14 @@ namespace WH_Panel
                             try
                             {
                                 int res = 0;
-                                int toStk = 0;
+                                int toStk;
                                 bool stk = int.TryParse(reader[4].ToString(), out res);
                                 if (stk)
                                 {
                                     toStk = res;
+                                }
+                                else {
+                                    toStk = 0;
                                 }
 
                                 WHitem abc = new WHitem
@@ -669,7 +672,18 @@ namespace WH_Panel
                     List<int> qtys = new List<int>();
                     for (int i = 0; i < dataGridView1.RowCount; i++)
                     {
-                        int qty = int.Parse(dataGridView1.Rows[i].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString());
+                        int qty = 0;
+                        int result;
+                       
+                        bool prs = int.TryParse(dataGridView1.Rows[i].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString(),out result);
+                        if (prs)
+                        {
+                            qty = result;
+                        }
+                           
+
+
+
                         qtys.Add(qty);
                     }
                     foreach (int i in qtys)
@@ -723,13 +737,26 @@ namespace WH_Panel
 
             for (int i = 0; i < dataGridView1.RowCount; i++)
             {
+
+                int res = 0;
+                int toStk;
+                bool stk = int.TryParse(dataGridView1.Rows[i].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString(), out res);
+                if (stk)
+                {
+                    toStk = res;
+                }
+                else
+                {
+                    toStk = 0;
+                }
+
                 WHitem wHitemABC = new WHitem()
                 {
                     IPN = dataGridView1.Rows[i].Cells[dataGridView1.Columns["IPN"].Index].Value.ToString(),
                     Manufacturer = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Manufacturer"].Index].Value.ToString(),
                     MFPN = dataGridView1.Rows[i].Cells[dataGridView1.Columns["MFPN"].Index].Value.ToString(),
                     Description = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Description"].Index].Value.ToString(),
-                    Stock = int.Parse(dataGridView1.Rows[i].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString()),
+                    Stock = toStk,
                     UpdatedOn = dataGridView1.Rows[i].Cells[dataGridView1.Columns["UpdatedOn"].Index].Value.ToString(),
                     CommentsWHitem = dataGridView1.Rows[i].Cells[dataGridView1.Columns["CommentsWHitem"].Index].Value.ToString(),
                     SourceRequester = dataGridView1.Rows[i].Cells[dataGridView1.Columns["SourceRequester"].Index].Value.ToString()
@@ -850,6 +877,9 @@ namespace WH_Panel
             txtbColorWhiteOnLeave(sender);
         }
 
-      
+        private void FrmAddItemsToNetline_Load(object sender, EventArgs e)
+        {
+            textBox1.Focus();
+        }
     }
 }

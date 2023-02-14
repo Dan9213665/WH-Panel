@@ -551,7 +551,7 @@ namespace WH_Panel
         {
             try
             {
-                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=NO;IMEX=0\"";
+                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
                 using (OleDbConnection conn = new OleDbConnection(constr))
                 {
                     conn.Open();
