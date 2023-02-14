@@ -548,6 +548,7 @@
             this.textBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
             this.textBox2.Enter += new System.EventHandler(this.textBox2_Enter);
+            this.textBox2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyDown_1);
             this.textBox2.Leave += new System.EventHandler(this.textBox2_Leave);
             // 
             // textBox1
@@ -601,6 +602,7 @@
             this.label2.Text = "Search in AVL by IPN";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.label2.Click += new System.EventHandler(this.label2_Click);
+            this.label2.DoubleClick += new System.EventHandler(this.label2_DoubleClick_1);
             // 
             // label3
             // 
@@ -614,6 +616,7 @@
             this.label3.Text = "Search in AVL by MFPN";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.label3.Click += new System.EventHandler(this.label3_Click_1);
+            this.label3.DoubleClick += new System.EventHandler(this.label3_DoubleClick_1);
             // 
             // groupBox3
             // 

@@ -47,6 +47,7 @@ namespace WH_Panel
             comboBox1.SelectedIndex = 1;
            button2_Click_1(this, new EventArgs());
             button3_Click(this, new EventArgs());
+            //LastInputFromUser = textBox1;
             textBox1.Focus();
         }
         public List<WHitem> avlItems = new List<WHitem>();
@@ -55,6 +56,8 @@ namespace WH_Panel
         public DataTable stockDTable = new DataTable();
         public int countAVLItems = 0;
         public int countStockItems = 0;
+        public TextBox LastInputFromUser = new TextBox();
+        
         int iAVL = 0;
         int iStock = 0;
         private object cmd;
@@ -346,7 +349,7 @@ namespace WH_Panel
         private void ComeBackFromPrint()
         {
             Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
-            textBox1.Focus();
+            LastInputFromUser.Focus();
         }
         private void MoveIntoDATABASE(int qty, string sorce_req)
         {
@@ -385,9 +388,12 @@ namespace WH_Panel
                 }
                 //MessageBox.Show(wHitem.IPN + " MOVED to DB ","Item added to DB",MessageBoxButtons.OK,MessageBoxIcon.Information);
                 textBox6.Clear();
-                textBox1.Clear();
+                //textBox1.Clear();
+                LastInputFromUser.Clear();
                 label2.BackColor = Color.LightGreen;
-                textBox1.Focus();
+                label3.BackColor = Color.LightGreen;
+                //textBox1.Focus();
+                LastInputFromUser.Focus();
                 printSticker(wHitem);
                 //printStickerAPI(wHitem);
                 AutoClosingMessageBox.Show(wHitem.IPN + " MOVED to DB ", "Item added to DB", 3000);
@@ -408,7 +414,7 @@ namespace WH_Panel
                 _timeoutTimer = new System.Threading.Timer(OnTimerElapsed,
                     null, timeout, System.Threading.Timeout.Infinite);
                 using (_timeoutTimer)
-                    MessageBox.Show(text, caption);
+                    MessageBox.Show(text, caption,MessageBoxButtons.OK,MessageBoxIcon.Information);
             }
             public static void Show(string text, string caption, int timeout)
             {
@@ -452,7 +458,7 @@ namespace WH_Panel
                 SendKeys.SendWait("{Enter}");
                 ComeBackFromPrint();
                 Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
-                textBox1.Focus();
+                LastInputFromUser.Focus();
             }
             catch (Exception e)
             {
@@ -509,10 +515,13 @@ namespace WH_Panel
         }
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
+            LastInputFromUser = (TextBox)sender;
+
             if (e.KeyCode == Keys.Enter)
             {
                 if (dataGridView2.Rows.Count == 1)
                 {
+                   
                     textBox6.Focus();
                 }
                 else
@@ -523,10 +532,13 @@ namespace WH_Panel
         }
         private void textBox2_KeyDown_1(object sender, KeyEventArgs e)
         {
+            LastInputFromUser = (TextBox)sender;
+
             if (e.KeyCode == Keys.Enter)
             {
                 if (dataGridView2.Rows.Count == 1)
                 {
+                   
                     textBox6.Focus();
                 }
                 else
