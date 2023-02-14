@@ -396,7 +396,7 @@ namespace WH_Panel
                 LastInputFromUser.Focus();
                 printSticker(wHitem);
                 //printStickerAPI(wHitem);
-                AutoClosingMessageBox.Show(wHitem.IPN + " MOVED to DB ", "Item added to DB", 3000);
+                AutoClosingMessageBox.Show(wHitem.Stock.ToString() + " PCS of " + wHitem.IPN + " in a " + wHitem.CommentsWHitem + " MOVED to DB ", "Item added to DB", 3000);
             }
             catch (IOException)
             {
