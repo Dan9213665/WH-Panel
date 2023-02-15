@@ -295,8 +295,17 @@ namespace WH_Panel
                 {
                     try
                     {
+                        string quantity=string.Empty;
+                        if(textBox6.Text.StartsWith("Q"))
+                        {
+                            quantity=textBox6.Text.Substring(1);
+                        }
+                        else
+                        {
+                            quantity=textBox6.Text;
+                        }
                         int outNumber;
-                        bool success = int.TryParse(textBox6.Text, out outNumber);
+                        bool success = int.TryParse(quantity, out outNumber);
                         if (success)
                         {
                             MoveIntoDATABASE(outNumber, sorce_req);
@@ -325,9 +334,29 @@ namespace WH_Panel
                 if (textBox8.Text != string.Empty)
                 {
                     sorce_req = "WR23000" + textBox8.Text;
-                    if (textBox6.Text != string.Empty && int.Parse(textBox6.Text) > 0)
+                    if (textBox6.Text != string.Empty )
                     {
-                        qty = int.Parse(textBox6.Text);
+
+                        string quantity = string.Empty;
+                        if (textBox6.Text.StartsWith("Q"))
+                        {
+                            quantity = textBox6.Text.Substring(1);
+                        }
+                        else
+                        {
+                            quantity = textBox6.Text;
+                        }
+                        int outNumber;
+                        bool success = int.TryParse(quantity, out outNumber);
+                                if (success)
+                        {
+                            qty = outNumber;
+                        }
+                                else
+                        {
+                            MessageBox.Show("Input Qty !");
+                        }
+                       
                         MoveIntoDATABASE(qty, sorce_req);
                         FilterStockDataGridView(textBox10.Text);
                     }
