@@ -47,8 +47,8 @@ namespace WH_Panel
             comboBox1.SelectedIndex = 1;
            button2_Click_1(this, new EventArgs());
             button3_Click(this, new EventArgs());
-            //LastInputFromUser = textBox1;
-            textBox1.Focus();
+            LastInputFromUser = textBox1;
+            LastInputFromUser.Focus();
         }
         public List<WHitem> avlItems = new List<WHitem>();
         public List<WHitem> stockItems = new List<WHitem>();
@@ -319,7 +319,7 @@ namespace WH_Panel
             {
                 if (textBox8.Text != string.Empty)
                 {
-                    sorce_req = "GILT_" + textBox8.Text;
+                    sorce_req = "WR23000" + textBox8.Text;
                     if (textBox6.Text != string.Empty && int.Parse(textBox6.Text) > 0)
                     {
                         qty = int.Parse(textBox6.Text);
@@ -334,7 +334,7 @@ namespace WH_Panel
                 }
                 else
                 {
-                    MessageBox.Show("Input GILT_XXXXX ID !");
+                    MessageBox.Show("Input WR23000___ ID !");
                     textBox8.Focus();
                 }
             }
@@ -861,6 +861,12 @@ namespace WH_Panel
             txtbColorWhiteOnLeave(sender);
         }
 
-       
+        private void textBox8_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                LastInputFromUser.Focus();
+            }
+        }
     }
 }

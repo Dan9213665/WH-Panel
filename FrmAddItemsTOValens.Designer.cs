@@ -419,6 +419,7 @@
             this.textBox8.TabIndex = 0;
             this.textBox8.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.textBox8.Enter += new System.EventHandler(this.textBox8_Enter);
+            this.textBox8.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox8_KeyDown);
             this.textBox8.Leave += new System.EventHandler(this.textBox8_Leave);
             // 
             // groupBox6
