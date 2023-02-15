@@ -30,6 +30,7 @@ using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Microsoft.VisualBasic.Devices;
+using TextBox = System.Windows.Forms.TextBox;
 
 namespace WH_Panel
 {
@@ -42,6 +43,8 @@ namespace WH_Panel
             comboBox1.SelectedIndex = 1;
             button2_Click(this, new EventArgs());
             button3_Click(this, new EventArgs());
+            LastInputFromUser = textBox1;
+            LastInputFromUser.Focus();
         }
         public List<WHitem> avlItems = new List<WHitem>();
         public List<WHitem> stockItems = new List<WHitem>();
@@ -52,6 +55,7 @@ namespace WH_Panel
         int iAVL = 0;
         int iStock = 0;
         private object cmd;
+        public TextBox LastInputFromUser = new TextBox();
         // public string stockFile = @"\\dbr1\Data\WareHouse\2022\_DEV\SAMPLE_DATA\TESTDBWH.xlsm";
         public string stockFile = @"\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\G.I.Leader_Tech\G.I.Leader_Tech_STOCK.xlsm";
         public string avlSource = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_AVL.xlsm";
@@ -149,16 +153,22 @@ namespace WH_Panel
         }
         private void FilterAVLDataGridView()
         {
-            string searchByIPN= textBox1.Text;
+            string searchByIPN = textBox1.Text;
             if (textBox1.Text.Contains("("))
             {
                 searchByIPN = textBox1.Text.Substring(0, 15);
             }
+            string searchbyMFPN = textBox2.Text;
+            if (textBox2.Text.StartsWith("1P") == true)
+            {
+                searchbyMFPN = textBox2.Text.Substring(2);
+            }
+
             try
             {
                 DataView dv = avlDTable.DefaultView;
                 dv.RowFilter = "[IPN] LIKE '%" + searchByIPN.ToString() +
-                    "%' AND [MFPN] LIKE '%" + textBox2.Text.ToString() +
+                    "%' AND [MFPN] LIKE '%" + searchbyMFPN.ToString() +
                     "%'";
                 dataGridView2.DataSource = dv;
                 SetColumsOrder();
@@ -233,6 +243,7 @@ namespace WH_Panel
                 textBox8.ReadOnly = true;
                 textBox9.ReadOnly = true;
             }
+          
         }
         private void MoveByRadioColor(object sender)
         {
@@ -344,7 +355,7 @@ namespace WH_Panel
         private void ComeBackFromPrint()
         {
             Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
-            textBox1.Focus();
+            LastInputFromUser.Focus();
         }
         private void MoveIntoDATABASE(int qty, string sorce_req)
         {
@@ -355,7 +366,7 @@ namespace WH_Panel
                 MFPN = textBox4.Text,
                 Description = textBox5.Text,
                 Stock = qty,
-                UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd")+" "+DateTime.Now.ToString("HH:mm:ss tt"), //tt
+                UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd")+" "+DateTime.Now.ToString("HH:mm:ss"), //tt
                 CommentsWHitem = comboBox1.Text,
                 SourceRequester = sorce_req
             };
@@ -379,9 +390,10 @@ namespace WH_Panel
                 }
                 //MessageBox.Show(wHitem.IPN + " MOVED to DB ","Item added to DB",MessageBoxButtons.OK,MessageBoxIcon.Information);
                 textBox6.Clear();
-                textBox1.Clear();
+                LastInputFromUser.Clear();
                 label2.BackColor = Color.LightGreen;
-                textBox1.Focus();
+                label3.BackColor = Color.LightGreen;
+                LastInputFromUser.Focus();
                 printSticker(wHitem);
                 //printStickerAPI(wHitem);
                 AutoClosingMessageBox.Show(wHitem.IPN + " MOVED to DB ", "Item added to DB", 3000);
@@ -446,7 +458,7 @@ namespace WH_Panel
                 SendKeys.SendWait("{Enter}");
                 ComeBackFromPrint();
                 Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
-                textBox1.Focus();
+                LastInputFromUser.Focus();
             }
             catch (Exception e)
             {
@@ -487,7 +499,7 @@ namespace WH_Panel
         {
             if (e.KeyCode == Keys.Enter)
             {
-                textBox6.Focus();
+                LastInputFromUser.Focus();
             }
         }
         private void textBox6_KeyDown(object sender, KeyEventArgs e)
@@ -503,9 +515,11 @@ namespace WH_Panel
         }
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
+            LastInputFromUser = (TextBox)sender;
+
             if (e.KeyCode == Keys.Enter)
             {
-                if(dataGridView2.Rows.Count==1)
+                if (dataGridView2.Rows.Count == 1)
                 {
                     textBox6.Focus();
                 }
@@ -517,6 +531,7 @@ namespace WH_Panel
         }
         private void textBox2_KeyDown(object sender, KeyEventArgs e)
         {
+            LastInputFromUser = (TextBox)sender;
             if (e.KeyCode == Keys.Enter)
             {
                 if (dataGridView2.Rows.Count == 1)
@@ -798,6 +813,66 @@ namespace WH_Panel
             //    resOutUnique += i.ToString() + " ";
             //}
             //MessageBox.Show(resOutUnique);
+        }
+
+        private void textBox8_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter(sender);
+        }
+        private static void txtbColorGreenOnEnter(object sender)
+        {
+            TextBox tb = (TextBox)sender;
+            tb.BackColor = Color.LightGreen;
+        }
+        private static void txtbColorWhiteOnLeave(object sender)
+        {
+            TextBox tb = (TextBox)sender;
+            tb.BackColor = Color.White;
+        }
+
+        private void textBox8_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave(sender);
+        }
+
+        private void textBox1_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter(sender);
+        }
+
+        private void textBox1_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave(sender);
+        }
+
+        private void textBox9_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter(sender);
+        }
+
+        private void textBox9_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave(sender);
+        }
+
+        private void textBox6_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter(sender);
+        }
+
+        private void textBox6_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave(sender);
+        }
+
+        private void textBox2_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter(sender);
+        }
+
+        private void textBox2_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave(sender);
         }
     }
 }

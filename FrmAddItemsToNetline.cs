@@ -47,7 +47,8 @@ namespace WH_Panel
             comboBox1.SelectedIndex = 1;
             button2_Click_1(this, new EventArgs());
             button3_Click(this, new EventArgs());
-            textBox1.Focus();
+            LastInputFromUser = textBox1;
+            LastInputFromUser.Focus();
         }
         public List<WHitem> avlItems = new List<WHitem>();
         public List<WHitem> stockItems = new List<WHitem>();
@@ -860,7 +861,7 @@ namespace WH_Panel
 
         private static void txtbColorGreenOnEnter(object sender)
         {
-            TextBox? tb = sender as TextBox;
+            TextBox? tb = (TextBox)sender;
 
             tb.BackColor = Color.LightGreen;
         }

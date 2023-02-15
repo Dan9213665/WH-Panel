@@ -198,7 +198,9 @@
             this.textBox2.TabIndex = 3;
             this.textBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
+            this.textBox2.Enter += new System.EventHandler(this.textBox2_Enter);
             this.textBox2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyDown);
+            this.textBox2.Leave += new System.EventHandler(this.textBox2_Leave);
             // 
             // textBox1
             // 
@@ -209,7 +211,9 @@
             this.textBox1.TabIndex = 0;
             this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.textBox1.Enter += new System.EventHandler(this.textBox1_Enter);
             this.textBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
+            this.textBox1.Leave += new System.EventHandler(this.textBox1_Leave);
             // 
             // button2
             // 
@@ -383,12 +387,15 @@
             // textBox6
             // 
             this.textBox6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBox6.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.textBox6.Location = new System.Drawing.Point(479, 18);
             this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(113, 23);
+            this.textBox6.Size = new System.Drawing.Size(113, 39);
             this.textBox6.TabIndex = 4;
             this.textBox6.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.textBox6.Enter += new System.EventHandler(this.textBox6_Enter);
             this.textBox6.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox6_KeyDown);
+            this.textBox6.Leave += new System.EventHandler(this.textBox6_Leave);
             // 
             // label4
             // 
@@ -761,6 +768,8 @@
             this.textBox9.TabIndex = 1;
             this.textBox9.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.textBox9.TextChanged += new System.EventHandler(this.textBox9_TextChanged);
+            this.textBox9.Enter += new System.EventHandler(this.textBox9_Enter);
+            this.textBox9.Leave += new System.EventHandler(this.textBox9_Leave);
             // 
             // textBox8
             // 
@@ -770,7 +779,9 @@
             this.textBox8.Size = new System.Drawing.Size(291, 23);
             this.textBox8.TabIndex = 0;
             this.textBox8.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.textBox8.Enter += new System.EventHandler(this.textBox8_Enter);
             this.textBox8.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox8_KeyDown);
+            this.textBox8.Leave += new System.EventHandler(this.textBox8_Leave);
             // 
             // groupBox6
             // 
