@@ -115,6 +115,8 @@
             // 
             this.btnMove.AutoSize = true;
             this.btnMove.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnMove.BackgroundImage = global::WH_Panel.Properties.Resources.valens;
+            this.btnMove.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.tableLayoutPanel5.SetColumnSpan(this.btnMove, 3);
             this.btnMove.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnMove.Location = new System.Drawing.Point(3, 60);
@@ -122,6 +124,7 @@
             this.btnMove.Size = new System.Drawing.Size(311, 51);
             this.btnMove.TabIndex = 15;
             this.btnMove.Text = "MOVE";
+            this.btnMove.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnMove.UseVisualStyleBackColor = true;
             this.btnMove.Click += new System.EventHandler(this.btnMove_Click);
             // 

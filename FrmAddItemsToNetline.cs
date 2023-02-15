@@ -162,11 +162,17 @@ namespace WH_Panel
             {
                 searchByIPN = textBox1.Text.Substring(0, 15);
             }
+            string searchbyMFPN = textBox2.Text;
+            if(textBox2.Text.StartsWith("1P")==true)
+            {
+                searchbyMFPN = textBox2.Text.Substring(2);
+            }
+                
             try
             {
                 DataView dv = avlDTable.DefaultView;
                 dv.RowFilter = "[IPN] LIKE '%" + searchByIPN.ToString() +
-                    "%' AND [MFPN] LIKE '%" + textBox2.Text.ToString() +
+                    "%' AND [MFPN] LIKE '%" + searchbyMFPN.ToString() +
                     "%'";
                 dataGridView2.DataSource = dv;
                 SetColumsOrder();
@@ -389,6 +395,7 @@ namespace WH_Panel
                 textBox6.Clear();
                 LastInputFromUser.Clear();
                 label2.BackColor = Color.LightGreen;
+                label3.BackColor = Color.LightGreen;
                 LastInputFromUser.Focus();
                 printSticker(wHitem);
                 //printStickerAPI(wHitem);

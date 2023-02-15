@@ -281,6 +281,7 @@
             // 
             this.tableLayoutPanel2.AutoSize = true;
             this.tableLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.tableLayoutPanel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.tableLayoutPanel2.ColumnCount = 10;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
@@ -503,6 +504,8 @@
             // 
             this.btnMove.AutoSize = true;
             this.btnMove.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnMove.BackgroundImage = global::WH_Panel.Properties.Resources.leadertech;
+            this.btnMove.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.tableLayoutPanel5.SetColumnSpan(this.btnMove, 3);
             this.btnMove.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnMove.Location = new System.Drawing.Point(3, 60);
@@ -510,6 +513,7 @@
             this.btnMove.Size = new System.Drawing.Size(346, 51);
             this.btnMove.TabIndex = 15;
             this.btnMove.Text = "MOVE";
+            this.btnMove.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnMove.UseVisualStyleBackColor = true;
             this.btnMove.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -657,6 +661,7 @@
             // 
             this.button3.AutoSize = true;
             this.button3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.button3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.button3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.button3.Location = new System.Drawing.Point(3, 3);
             this.button3.Name = "button3";
@@ -695,6 +700,7 @@
             // 
             this.groupBox5.AutoSize = true;
             this.groupBox5.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.groupBox5.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.groupBox5.Controls.Add(this.tableLayoutPanel4);
             this.groupBox5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox5.Location = new System.Drawing.Point(3, 195);
@@ -796,6 +802,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.groupBox1.Controls.Add(this.tabControl1);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
