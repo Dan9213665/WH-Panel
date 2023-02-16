@@ -617,15 +617,15 @@ namespace WH_Panel
                                     CommentsWHitem = reader[6].ToString(),
                                     SourceRequester = reader[7].ToString()
                                 };
-                                if (iStock > 0)
-                                {
+                                //if (iStock > 0)
+                                //{
                                     countStockItems = iStock;
                                     button3.Text = "Rows in STOCK: " + (countStockItems).ToString();
                                     button3.Update();
                                     //aLASTaBC = abc;
                                     stockItems.Add(abc);
 
-                                }
+                                //}
                                 iStock++;
                             }
                             catch (Exception E)

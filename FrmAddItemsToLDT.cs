@@ -318,6 +318,7 @@ namespace WH_Panel
             {
                 if (textBox8.Text != string.Empty)
                 {
+
                     sorce_req = "GILT_" + textBox8.Text;
                     if (textBox6.Text != string.Empty)
                     {
@@ -548,7 +549,7 @@ namespace WH_Panel
         {
             try
             {
-                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=NO;IMEX=0\"";
+                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
                 using (OleDbConnection conn = new OleDbConnection(constr))
                 {
                     conn.Open();
@@ -569,13 +570,13 @@ namespace WH_Panel
                                 CommentsWHitem = reader[6].ToString(),
                                 SourceRequester = reader[7].ToString()
                             };
-                            if (iStock > 0)
-                            {
+                            //if (iStock > 0)
+                            //{
                                 countStockItems = iStock;
                                 button3.Text = "Rows in STOCK: " + (countStockItems).ToString();
                                 button3.Update();
                                 stockItems.Add(abc);
-                            }
+                            //}
                             iStock++;
                         }
                     }
