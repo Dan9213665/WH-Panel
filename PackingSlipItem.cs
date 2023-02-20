@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace WH_Panel
 {
     public class PackingSlipItem
@@ -14,6 +13,5 @@ namespace WH_Panel
         public string? MFPN { get; set; }
         public string? Description { get; set; }
         public string? QtySent { get; set; }
-     
     }
 }

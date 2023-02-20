@@ -769,6 +769,7 @@
             this.textBox9.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.textBox9.TextChanged += new System.EventHandler(this.textBox9_TextChanged);
             this.textBox9.Enter += new System.EventHandler(this.textBox9_Enter);
+            this.textBox9.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox9_KeyDown);
             this.textBox9.Leave += new System.EventHandler(this.textBox9_Leave);
             // 
             // textBox8

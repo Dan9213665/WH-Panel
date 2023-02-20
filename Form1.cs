@@ -107,19 +107,16 @@ namespace WH_Panel
             FrmAddItemsToLDT addItemsToDBLDT = new FrmAddItemsToLDT();
             addItemsToDBLDT.Show();
         }
-
         private void button8_Click(object sender, EventArgs e)
         {
             FrmPackingSlips fps = new FrmPackingSlips();
             fps.Show();
         }
-
         private void button9_Click(object sender, EventArgs e)
         {
             FrmAddItemsTOValens val = new FrmAddItemsTOValens();
             val.Show();
         }
-
         private void button10_Click(object sender, EventArgs e)
         {
             FrmAddItemsToNetline net= new FrmAddItemsToNetline();

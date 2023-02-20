@@ -377,7 +377,6 @@ namespace WH_Panel
             this.groupBox4.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
             this.ResumeLayout(false);
-
         }
         #endregion
         private Button btnValens;

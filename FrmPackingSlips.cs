@@ -20,7 +20,6 @@ using static System.Net.WebRequestMethods;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using DataTable = System.Data.DataTable;
 using Label = System.Windows.Forms.Label;
-
 namespace WH_Panel
 {
     public partial class FrmPackingSlips : Form
@@ -38,12 +37,10 @@ namespace WH_Panel
             {
                 "\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\2023"
             };
-
         public FrmPackingSlips()
         {
             InitializeComponent();
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
             stopWatch.Reset();
@@ -116,7 +113,6 @@ namespace WH_Panel
         }
         private void PopulateGridView()
         {
-      
             IEnumerable<PackingSlipItem> data = PSItems;
             using (var reader = ObjectReader.Create(data))
             {
@@ -125,7 +121,6 @@ namespace WH_Panel
             dataGridView1.DataSource = PSIDtable;
             SetColumsOrderPS();
             label12.BackColor = Color.LightGreen;
-         
         }
         private void DataLoader(string fp, string excelFIleName)
         {
@@ -156,37 +151,28 @@ namespace WH_Panel
                         if (reader.HasRows)
                         {
                             int j = 0;
-                      
                             while (reader.Read())
                             {
-                               
                                     string _ClientName=excelFIleName.Substring(13);
                                     string thName= _ClientName.Substring(0, _ClientName.Length-5);
-
                                     PackingSlipItem abc = new PackingSlipItem
                                     {
-
                                         ShipmentDate = excelFIleName.Substring(0,12),
                                         ClientName = thName,
                                         IPN = reader[0].ToString(),
                                         MFPN = reader[1].ToString(),
                                         Description = reader[2].ToString(),
                                         QtySent = reader[3].ToString()
-
                                     };
                                     countItems = i;
                                     label12.Text = "Loaded " + (countItems).ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{0:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
                                     label12.Update();
-
                                     if(abc.IPN!=string.Empty&& !abc.IPN.StartsWith("Comments") && abc.IPN != "Thank You" && !abc.IPN.StartsWith("Signature") && !abc.IPN.StartsWith("if you") && j > 11)
                                     {
                                         PSItems.Add(abc);
                                     i++;
                                 }
                                 j++;
-                                
-
-
                             }
                         }
                         conn.Dispose();
@@ -213,7 +199,6 @@ namespace WH_Panel
                 throw;
             }
         }
-
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             label1.BackColor = Color.IndianRed;
@@ -237,54 +222,42 @@ namespace WH_Panel
                 throw;
             }
         }
-
-      
-
         private void textBox11_TextChanged(object sender, EventArgs e)
         {
             label11.BackColor = Color.IndianRed;
             FilterTheDataGridView();
         }
-
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             label2.BackColor = Color.IndianRed;
             FilterTheDataGridView();
         }
-
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
             label3.BackColor = Color.IndianRed;
             FilterTheDataGridView();
         }
-
-     
         private void label1_Click(object sender, EventArgs e)
         {
             Label? lbl = sender as Label;
-
             textBox1.Clear();
             lbl.BackColor = Color.LightGreen;
         }
         private void label11_Click(object sender, EventArgs e)
         {
             Label? lbl = sender as Label;
-
             textBox11.Clear();
             lbl.BackColor = Color.LightGreen;
         }
         private void label2_Click(object sender, EventArgs e)
         {
             Label? lbl = sender as Label;
-            
             textBox2.Clear();
             lbl.BackColor = Color.LightGreen;
         }
-
         private void label3_Click(object sender, EventArgs e)
         {
             Label? lbl = sender as Label;
-            
             textBox3.Clear();
             lbl.BackColor = Color.LightGreen;
         }
