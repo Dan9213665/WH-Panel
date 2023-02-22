@@ -26,7 +26,7 @@ namespace WH_Panel
         {
             //Process.Start("C:\\1\\source\\repos\\1.Txt");
             var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm";
-            openWHexcelDB(fp);
+            AuthorizedExcelFileOpening(fp);
             //Process excel = new Process();
             //excel.StartInfo.FileName = "C:\\Program Files\\Microsoft Office\\root\\Office16\\EXCEL.exe";
             //excel.StartInfo.Arguments = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm"; 
