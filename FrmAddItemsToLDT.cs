@@ -344,25 +344,8 @@ namespace WH_Panel
                 if (textBox8.Text != string.Empty)
                 {
                     sorce_req = label12.Text + textBox8.Text;
-
-                    //if (textBox6.Text != string.Empty)
-                    //{
-                    //    int outNumber;
-                    //    bool success = int.TryParse(textBox6.Text, out outNumber);
-                    //    if (success&&outNumber<15001&&outNumber>0)
-                    //    {
-                    //        MoveIntoDATABASE(outNumber, sorce_req, toPrintGILT);
-                    //        FilterStockDataGridView(textBox10.Text);
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    MessageBox.Show("Input Qty !");
-                    //    textBox6.Focus();
-                    //}
                     if (textBox6.Text.ToString().StartsWith("Q"))
                     {
-                        //MessageBox.Show(textBox6.Text.ToString().Substring(1));
                         int outNumberq;
                         bool successq = int.TryParse(textBox6.Text.ToString().Substring(1), out outNumberq);
                         if (successq && outNumberq < 15001 && outNumberq > 0)
@@ -376,7 +359,6 @@ namespace WH_Panel
                             textBox6.Text = string.Empty;
                             textBox6.Focus();
                         }
-
                     }
                     else
                     {
@@ -412,51 +394,10 @@ namespace WH_Panel
                     bool success = int.TryParse(textBox6.Text, out outNumber);
                     if (success && outNumber < 15001 && outNumber > 0)
                     {
-                        //qty = int.Parse(textBox6.Text) * (-1);
                         int negQty = outNumber * (-1);
                         MoveIntoDATABASE(negQty, sorce_req, toPrintWO);
                         FilterStockDataGridView(textBox10.Text);
                     }
-                    //if (textBox6.Text != string.Empty)
-                    //{
-
-                    //        if (textBox6.Text.ToString().StartsWith("Q"))
-                    //        {
-                    //        MessageBox.Show(textBox6.Text.ToString().Substring(1));
-                    //        int outNumberq;
-                    //            bool successq = int.TryParse(textBox6.Text.ToString().Substring(1), out outNumberq);
-                    //            if (successq && outNumberq < 15001 && outNumberq > 0)
-                    //            {
-                    //                MoveIntoDATABASE(outNumberq, sorce_req, toPrintWO);
-                    //                FilterStockDataGridView(textBox10.Text);
-                    //            }
-                    //            else
-                    //            {
-                    //                MessageBox.Show("Input positive numeric values ONLY !");
-                    //                textBox6.Text = string.Empty;
-                    //                textBox6.Focus();
-                    //            }
-
-                    //        }
-                    //        else
-                    //        {
-
-                    //            int outNumber;
-                    //            bool success = int.TryParse(textBox6.Text.ToString(), out outNumber);
-                    //            if (success && outNumber < 15001 && outNumber > 0)
-                    //            {
-                    //                MoveIntoDATABASE(outNumber, sorce_req, toPrintWO);
-                    //                FilterStockDataGridView(textBox10.Text);
-                    //            }
-                    //            else
-                    //            {
-                    //                MessageBox.Show("Input positive numeric values ONLY !");
-                    //                textBox6.Text = string.Empty;
-                    //                textBox6.Focus();
-                    //            }
-                    //        }
-
-                    //}
                     else
                     {
                         MessageBox.Show("Input Qty !");
