@@ -288,18 +288,43 @@ namespace WH_Panel
                 {
                     try
                     {
-                        int outNumber;
-                        bool success = int.TryParse(textBox6.Text,out outNumber);
-                        if (success && outNumber < 15001 && outNumber > 0)
+                        string qInqty = (string)textBox6.Text;
+                        string inQty = string.Empty;
+                        if(qInqty.StartsWith("Q"))
                         {
-                            MoveIntoDATABASE(outNumber, sorce_req, toPrintMFG);
-                            FilterStockDataGridView(textBox10.Text);
+                            inQty = qInqty.Substring(1);
+                            MessageBox.Show(inQty);
+                            int outNumberq;
+                            bool successq = int.TryParse(inQty, out outNumberq);
+                            if (successq && outNumberq < 15001 && outNumberq > 0)
+                            {
+                                MoveIntoDATABASE(outNumberq, sorce_req, toPrintMFG);
+                                FilterStockDataGridView(textBox10.Text);
+                            }
+                            else
+                            {
+                                MessageBox.Show("Input positive numeric values ONLY !");
+                                textBox6.Text = string.Empty;
+                                textBox6.Focus();
+                            }
+
                         }
-                       else
+                        else
                         {
-                            MessageBox.Show("Input positive numeric values ONLY !");
-                            textBox6.Text = string.Empty;
-                            textBox6.Focus();   
+                            inQty = (string)textBox6.Text;
+                            int outNumber;
+                            bool success = int.TryParse(inQty, out outNumber);
+                            if (success && outNumber < 15001 && outNumber > 0)
+                            {
+                                MoveIntoDATABASE(outNumber, sorce_req, toPrintMFG);
+                                FilterStockDataGridView(textBox10.Text);
+                            }
+                            else
+                            {
+                                MessageBox.Show("Input positive numeric values ONLY !");
+                                textBox6.Text = string.Empty;
+                                textBox6.Focus();
+                            }
                         }
                     }
                     catch (Exception)
@@ -319,20 +344,56 @@ namespace WH_Panel
                 if (textBox8.Text != string.Empty)
                 {
                     sorce_req = label12.Text + textBox8.Text;
-                    if (textBox6.Text != string.Empty)
+
+                    //if (textBox6.Text != string.Empty)
+                    //{
+                    //    int outNumber;
+                    //    bool success = int.TryParse(textBox6.Text, out outNumber);
+                    //    if (success&&outNumber<15001&&outNumber>0)
+                    //    {
+                    //        MoveIntoDATABASE(outNumber, sorce_req, toPrintGILT);
+                    //        FilterStockDataGridView(textBox10.Text);
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    MessageBox.Show("Input Qty !");
+                    //    textBox6.Focus();
+                    //}
+                    if (textBox6.Text.ToString().StartsWith("Q"))
                     {
+                        //MessageBox.Show(textBox6.Text.ToString().Substring(1));
+                        int outNumberq;
+                        bool successq = int.TryParse(textBox6.Text.ToString().Substring(1), out outNumberq);
+                        if (successq && outNumberq < 15001 && outNumberq > 0)
+                        {
+                            MoveIntoDATABASE(outNumberq, sorce_req, toPrintGILT);
+                            FilterStockDataGridView(textBox10.Text);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Input positive numeric values ONLY !");
+                            textBox6.Text = string.Empty;
+                            textBox6.Focus();
+                        }
+
+                    }
+                    else
+                    {
+
                         int outNumber;
-                        bool success = int.TryParse(textBox6.Text, out outNumber);
-                        if (success&&outNumber<15001&&outNumber>0)
+                        bool success = int.TryParse(textBox6.Text.ToString(), out outNumber);
+                        if (success && outNumber < 15001 && outNumber > 0)
                         {
                             MoveIntoDATABASE(outNumber, sorce_req, toPrintGILT);
                             FilterStockDataGridView(textBox10.Text);
                         }
-                    }
-                    else
-                    {
-                        MessageBox.Show("Input Qty !");
-                        textBox6.Focus();
+                        else
+                        {
+                            MessageBox.Show("Input positive numeric values ONLY !");
+                            textBox6.Text = string.Empty;
+                            textBox6.Focus();
+                        }
                     }
                 }
                 else
@@ -347,14 +408,59 @@ namespace WH_Panel
                 sorce_req = textBox9.Text;
                 if(textBox9.Text != string.Empty)
                 {
-                    int outNumber;
-                    bool success = int.TryParse(textBox6.Text, out outNumber);
-                    if (success && outNumber < 15001 && outNumber > 0)
+                    //int outNumber;
+                    //bool success = int.TryParse(textBox6.Text, out outNumber);
+                    //if (success && outNumber < 15001 && outNumber > 0)
+                    //{
+                    //    //qty = int.Parse(textBox6.Text) * (-1);
+                    //    int negQty = outNumber * (-1);
+                    //    MoveIntoDATABASE(negQty, sorce_req, toPrintWO);
+                    //    FilterStockDataGridView(textBox10.Text);
+                    //}
+                    if (textBox6.Text != string.Empty)
                     {
-                        //qty = int.Parse(textBox6.Text) * (-1);
-                        int negQty = outNumber * (-1);
-                        MoveIntoDATABASE(negQty, sorce_req, toPrintWO);
-                        FilterStockDataGridView(textBox10.Text);
+                           
+                            if (textBox6.Text.ToString().StartsWith("Q"))
+                            {
+                            MessageBox.Show(textBox6.Text.ToString().Substring(1));
+                            int outNumberq;
+                                bool successq = int.TryParse(textBox6.Text.ToString().Substring(1), out outNumberq);
+                                if (successq && outNumberq < 15001 && outNumberq > 0)
+                                {
+                                    MoveIntoDATABASE(outNumberq, sorce_req, toPrintWO);
+                                    FilterStockDataGridView(textBox10.Text);
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Input positive numeric values ONLY !");
+                                    textBox6.Text = string.Empty;
+                                    textBox6.Focus();
+                                }
+
+                            }
+                            else
+                            {
+                               
+                                int outNumber;
+                                bool success = int.TryParse(textBox6.Text.ToString(), out outNumber);
+                                if (success && outNumber < 15001 && outNumber > 0)
+                                {
+                                    MoveIntoDATABASE(outNumber, sorce_req, toPrintWO);
+                                    FilterStockDataGridView(textBox10.Text);
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Input positive numeric values ONLY !");
+                                    textBox6.Text = string.Empty;
+                                    textBox6.Focus();
+                                }
+                            }
+                       
+                    }
+                    else
+                    {
+                        MessageBox.Show("Input Qty !");
+                        textBox6.Focus();
                     }
                 }
                 else
@@ -419,7 +525,7 @@ namespace WH_Panel
                 }
                 else
                 {
-                    AutoClosingMessageBox.Show(wHitem.IPN + " MOVED to DB ", "Item added to DB", 3000);
+                    AutoClosingMessageBox.Show(wHitem.Stock.ToString() + " PCS of " + wHitem.IPN + " in a " + wHitem.CommentsWHitem + " MOVED to DB ", "Item added to DB", 2000);
                 }
                
             }
@@ -466,7 +572,7 @@ namespace WH_Panel
                
                 string userName = Environment.UserName;
 
-                MessageBox.Show(userName);
+                //MessageBox.Show(userName);
                 string fp = @"C:\\Users\\"+ userName + "\\Desktop\\Print_Stickers.xlsx"; // //////Print_StickersWH.xlsm
                 string thesheetName = "Sheet1";
                 string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";

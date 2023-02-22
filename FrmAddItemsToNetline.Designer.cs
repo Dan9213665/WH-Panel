@@ -857,6 +857,7 @@
             this.groupBox6.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             this.ResumeLayout(false);
+
         }
         #endregion
         private GroupBox groupBox1;
