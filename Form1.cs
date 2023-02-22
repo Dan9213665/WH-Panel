@@ -1,5 +1,7 @@
 using System.Diagnostics;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+
 namespace WH_Panel
 {
     public partial class Form1 : Form
@@ -33,12 +35,26 @@ namespace WH_Panel
         private void button1_Click_1(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\NETLINE\NETLINE_STOCK.xlsm";
-            openWHexcelDB(fp);
+
+            AuthorizedExcelFileOpening(fp);
         }
+
+        private void AuthorizedExcelFileOpening(string fp)
+        {
+            if (Environment.UserName == "lgt")
+            {
+                openWHexcelDB(fp);
+            }
+            else
+            {
+                MessageBox.Show("Unauthorized access denied");
+            }
+        }
+
         private void btnFIELDIN_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\FIELDIN\\FIELDIN_STOCK.xlsm";
-            openWHexcelDB(fp);
+            AuthorizedExcelFileOpening(fp);
         }
         private void btnWorkProgramm_Click(object sender, EventArgs e)
         {
@@ -48,7 +64,7 @@ namespace WH_Panel
         private void btnLEADERTECH_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm";
-            openWHexcelDB(fp);
+            AuthorizedExcelFileOpening(fp);
         }
         private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
@@ -61,12 +77,12 @@ namespace WH_Panel
         private void btnVAYYAR_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm";
-            openWHexcelDB(fp);
+            AuthorizedExcelFileOpening(fp);
         }
         private void btnSHILAT_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_STOCK.xlsm";
-            openWHexcelDB(fp);
+            AuthorizedExcelFileOpening(fp);
         }
         private void button1_Click_2(object sender, EventArgs e)
         {
@@ -90,7 +106,7 @@ namespace WH_Panel
         private void button4_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_STOCK.xlsm";
-            openWHexcelDB(fp);
+            AuthorizedExcelFileOpening(fp);
         }
         private void button5_Click(object sender, EventArgs e)
         {
@@ -100,7 +116,7 @@ namespace WH_Panel
         private void button6_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ST_MICRO\\ST_MICRO_STOCK.xlsm";
-            openWHexcelDB(fp);
+            AuthorizedExcelFileOpening(fp);
         }
         private void button7_Click(object sender, EventArgs e)
         {
