@@ -164,6 +164,10 @@ namespace WH_Panel
             {
                 searchbyMFPN = textBox2.Text.Substring(2);
             }
+            else if (textBox2.Text.StartsWith("P") == true)
+            {
+                searchbyMFPN = textBox2.Text.Substring(1);
+            }
             try
             {
                 DataView dv = avlDTable.DefaultView;
@@ -300,16 +304,19 @@ namespace WH_Panel
                         }
                         int outNumber;
                         bool success = int.TryParse(quantity, out outNumber);
-                        if (success)
+                        if (success&& outNumber>0)
                         {
                             MoveIntoDATABASE(outNumber, sorce_req);
                             FilterStockDataGridView(textBox10.Text);
                         }
                         else
                         {
-                            MessageBox.Show("Input positive numeric values ONLY !");
-                            textBox6.Text = string.Empty;
+                            textBox6.Clear();
+                            //textBox6.Update();
                             textBox6.Focus();
+                            MessageBox.Show("Input positive numeric values ONLY !");
+                            //textBox6.Text = string.Empty;
+                            
                         }
                     }
                     catch (Exception)
@@ -319,8 +326,12 @@ namespace WH_Panel
                 }
                 else
                 {
-                    MessageBox.Show("Input Qty !");
+                    textBox6.Clear();
+                    //textBox6.Update();
                     textBox6.Focus();
+                    MessageBox.Show("Input Qty !");
+                    //textBox6.Text = string.Empty;
+                  
                 }
             }
             else if (radioButton2.Checked == true)
@@ -339,23 +350,31 @@ namespace WH_Panel
                         {
                             quantity = textBox6.Text;
                         }
+
                         int outNumber;
                         bool success = int.TryParse(quantity, out outNumber);
-                                if (success)
+                                if (success&&outNumber > 0)
                         {
                             qty = outNumber;
+                            MoveIntoDATABASE(qty, sorce_req);
+                            FilterStockDataGridView(textBox10.Text);
                         }
                                 else
                         {
+                            textBox6.Clear();
+                            //textBox6.Update();
+                            textBox6.Focus();
                             MessageBox.Show("Input Qty !");
                         }
-                        MoveIntoDATABASE(qty, sorce_req);
-                        FilterStockDataGridView(textBox10.Text);
+                      
                     }
                     else
-                    {
-                        MessageBox.Show("Input Qty !");
+                    {//textBox6.Text = string.Empty;
+                        textBox6.Clear();
+                        //textBox6.Update();
                         textBox6.Focus();
+                        MessageBox.Show("Input Qty !");
+                        
                     }
                 }
                 else
