@@ -33,6 +33,8 @@ using Microsoft.VisualBasic.Devices;
 using System.ComponentModel.Design.Serialization;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolBar;
 using TextBox = System.Windows.Forms.TextBox;
+using Seagull.BarTender.PrintServer.Tasks;
+
 namespace WH_Panel
 {
     public partial class FrmAddItemsToNetline : Form
@@ -479,7 +481,8 @@ namespace WH_Panel
         {
             try
             {
-                string fp = @"C:\\Users\\lgt\\Desktop\\Print_Stickers.xlsx"; // //////Print_StickersWH.xlsm
+                string userName = Environment.UserName;
+                string fp = @"C:\\Users\\" + userName + "\\Desktop\\Print_Stickers.xlsx"; // //////Print_StickersWH.xlsm
                 string thesheetName = "Sheet1";
                 string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
                 OleDbConnection conn = new OleDbConnection(constr);
@@ -887,6 +890,34 @@ namespace WH_Panel
         private void FrmAddItemsToNetline_Load(object sender, EventArgs e)
         {
             textBox1.Focus();
+        }
+
+        private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            int rowindex = dataGridView1.CurrentCell.RowIndex;
+
+            WHitem wHitemABCD = new WHitem()
+            {
+                IPN = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["IPN"].Index].Value.ToString(),
+                Manufacturer = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Manufacturer"].Index].Value.ToString(),
+                MFPN = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["MFPN"].Index].Value.ToString(),
+                Description = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Description"].Index].Value.ToString(),
+                Stock =int.Parse(dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString()),
+                UpdatedOn = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["UpdatedOn"].Index].Value.ToString(),
+                CommentsWHitem = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["CommentsWHitem"].Index].Value.ToString(),
+                SourceRequester = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["SourceRequester"].Index].Value.ToString()
+            };
+
+            if(wHitemABCD.Stock>0)
+            {
+                printSticker(wHitemABCD);
+            }
+            else
+            {
+                MessageBox.Show("Can print only positive quantites !");
+            }
+            
+
         }
     }
 }

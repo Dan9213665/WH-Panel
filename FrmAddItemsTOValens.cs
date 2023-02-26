@@ -429,7 +429,8 @@ namespace WH_Panel
         {
             try
             {
-                string fp = @"C:\\Users\\lgt\\Desktop\\Print_Stickers.xlsx"; // //////Print_StickersWH.xlsm
+                string userName = Environment.UserName;
+                string fp = @"C:\\Users\\" + userName + "\\Desktop\\Print_Stickers.xlsx"; // //////Print_StickersWH.xlsm
                 string thesheetName = "Sheet1";
                 string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
                 OleDbConnection conn = new OleDbConnection(constr);

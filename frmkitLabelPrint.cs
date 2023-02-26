@@ -33,7 +33,8 @@ namespace WH_Panel
         }
         private void btnBrowseToFile_Click(object sender, EventArgs e)
         {
-            openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\2022\\12.2022";
+            
+            openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\"+ DateTime.Now.ToString("yyyy") + "\\"+ DateTime.Now.ToString("MM") + "."+ DateTime.Now.ToString("yyyy");
             openFileDialog1.Filter = "xlsm files (*.xlsm)|*.xlsm";
             openFileDialog1.FilterIndex = 2;
             openFileDialog1.RestoreDirectory = true;
