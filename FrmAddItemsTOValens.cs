@@ -822,5 +822,32 @@ namespace WH_Panel
                 LastInputFromUser.Focus();
             }
         }
+
+        private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            int rowindex = dataGridView1.CurrentCell.RowIndex;
+
+            WHitem wHitemABCD = new WHitem()
+            {
+                IPN = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["IPN"].Index].Value.ToString(),
+                Manufacturer = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Manufacturer"].Index].Value.ToString(),
+                MFPN = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["MFPN"].Index].Value.ToString(),
+                Description = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Description"].Index].Value.ToString(),
+                Stock = int.Parse(dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString()),
+                UpdatedOn = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["UpdatedOn"].Index].Value.ToString(),
+                CommentsWHitem = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["CommentsWHitem"].Index].Value.ToString(),
+                SourceRequester = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["SourceRequester"].Index].Value.ToString()
+            };
+
+            if (wHitemABCD.Stock > 0)
+            {
+                printSticker(wHitemABCD);
+            }
+            else
+            {
+                MessageBox.Show("Can print only positive quantites !");
+            }
+
+        }
     }
 }
