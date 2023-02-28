@@ -305,6 +305,7 @@
             this.dataGridView1.RowTemplate.Height = 25;
             this.dataGridView1.Size = new System.Drawing.Size(1168, 114);
             this.dataGridView1.TabIndex = 0;
+            this.dataGridView1.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellDoubleClick);
             // 
             // textBox7
             // 
@@ -426,6 +427,9 @@
             this.textBox9.Size = new System.Drawing.Size(388, 23);
             this.textBox9.TabIndex = 1;
             this.textBox9.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.textBox9.Enter += new System.EventHandler(this.textBox9_Enter);
+            this.textBox9.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox9_KeyDown);
+            this.textBox9.Leave += new System.EventHandler(this.textBox9_Leave);
             // 
             // comboBox2
             // 
