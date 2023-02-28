@@ -1,4 +1,5 @@
-﻿using FastMember;
+﻿
+using FastMember;
 using Microsoft.Office.Interop.Excel;
 using System;
 using System.Collections;
@@ -33,16 +34,21 @@ using Microsoft.VisualBasic.Devices;
 using System.ComponentModel.Design.Serialization;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolBar;
 using TextBox = System.Windows.Forms.TextBox;
+using Seagull.BarTender.PrintServer.Tasks;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
+using System.Reflection.Emit;
+using RadioButton = System.Windows.Forms.RadioButton;
+
 namespace WH_Panel
 {
-          public partial class FrmAddItemsTOValens : Form
-        {
-        public FrmAddItemsTOValens()
+    public partial class FrmAddItemsToVayyar : Form
+    {
+        public FrmAddItemsToVayyar()
         {
             InitializeComponent();
             radioButton1.Checked = true;
             comboBox1.SelectedIndex = 1;
-           button2_Click_1(this, new EventArgs());
+            button2_Click(this, new EventArgs());
             button3_Click(this, new EventArgs());
             LastInputFromUser = textBox1;
             LastInputFromUser.Focus();
@@ -53,17 +59,14 @@ namespace WH_Panel
         public DataTable stockDTable = new DataTable();
         public int countAVLItems = 0;
         public int countStockItems = 0;
-        public TextBox LastInputFromUser = new TextBox();
         int iAVL = 0;
         int iStock = 0;
         private object cmd;
-        // public string stockFile = @"\\dbr1\Data\WareHouse\2022\_DEV\SAMPLE_DATA\TESTDBWH.xlsm";
-        public string avlSource = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_AVL.xlsx";
-        public string stockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm";
-        private void textBox9_TextChanged_1(object sender, EventArgs e)
-        {
-        }
-        private void button2_Click_1(object sender, EventArgs e)
+        public TextBox LastInputFromUser = new TextBox();
+        public string avlSource = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_AVL.xlsx";
+        public string stockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm";
+      
+        private void button2_Click(object sender, EventArgs e)
         {
             label1.BackColor = Color.IndianRed;
             avlItems.Clear();
@@ -71,7 +74,6 @@ namespace WH_Panel
             countAVLItems = 0;
             iAVL = 0;
             label1.Text = "RELOAD AVL";
-            //MessageBox.Show(fp);
             DataLoaderAVL(avlSource, "AVL");
             PopulateAVLGridView();
         }
@@ -120,9 +122,7 @@ namespace WH_Panel
         }
         private void PopulateAVLGridView()
         {
-            //MessageBox.Show(avlItems.Count.ToString()); 
             IEnumerable<WHitem> data = avlItems;
-            //avlDTable.Clear();
             using (var reader = ObjectReader.Create(data))
             {
                 avlDTable.Load(reader);
@@ -130,8 +130,6 @@ namespace WH_Panel
             dataGridView2.DataSource = avlDTable;
             SetColumsOrder();
             label1.BackColor = Color.LightGreen;
-            //dataGridView2.AutoResizeColumns();
-            //dataGridView2.Update();
         }
         private void SetColumsOrder()
         {
@@ -147,10 +145,6 @@ namespace WH_Panel
             dataGridView2.Columns["Manufacturer"].DisplayIndex = 1;
             dataGridView2.Columns["MFPN"].DisplayIndex = 2;
             dataGridView2.Columns["Description"].DisplayIndex = 3;
-            //dataGridView2.Columns["Stock"].Visible= false;
-            //dataGridView2.Columns["UpdatedOn"].Visible = false;
-            //dataGridView2.Columns["Comments"].Visible = false;
-            //dataGridView2.Columns["SourceRequester"].Visible = false;
         }
         private void FilterAVLDataGridView()
         {
@@ -159,11 +153,20 @@ namespace WH_Panel
             {
                 searchByIPN = textBox1.Text.Substring(0, 15);
             }
+            string searchbyMFPN = textBox2.Text;
+            if (textBox2.Text.StartsWith("1P") == true)
+            {
+                searchbyMFPN = textBox2.Text.Substring(2);
+            }
+            else if (textBox2.Text.StartsWith("P") == true)
+            {
+                searchbyMFPN = textBox2.Text.Substring(1);
+            }
             try
             {
                 DataView dv = avlDTable.DefaultView;
                 dv.RowFilter = "[IPN] LIKE '%" + searchByIPN.ToString() +
-                    "%' AND [MFPN] LIKE '%" + textBox2.Text.ToString() +
+                    "%' AND [MFPN] LIKE '%" + searchbyMFPN.ToString() +
                     "%'";
                 dataGridView2.DataSource = dv;
                 SetColumsOrder();
@@ -190,17 +193,17 @@ namespace WH_Panel
             textBox1.Focus();
             label2.BackColor = Color.LightGreen;
         }
-        private void label3_Click_1(object sender, EventArgs e)
+        private void label3_Click(object sender, EventArgs e)
         {
             textBox2.Text = string.Empty;
             textBox2.Focus();
             label3.BackColor = Color.LightGreen;
         }
-        private void label2_DoubleClick_1(object sender, EventArgs e)
+        private void label2_DoubleClick(object sender, EventArgs e)
         {
             AvlClearFilters();
         }
-        private void label3_DoubleClick_1(object sender, EventArgs e)
+        private void label3_DoubleClick(object sender, EventArgs e)
         {
             AvlClearFilters();
         }
@@ -215,13 +218,9 @@ namespace WH_Panel
         {
             if (dataGridView2.SelectedCells.Count > 0)
             {
-                //int selectedrowindex = dataGridView2.SelectedCells[0].RowIndex;
-                //DataGridViewRow selectedRow = dataGridView2.Rows[selectedrowindex];
-                //string cellValue = Convert.ToString(selectedRow.Cells["IPN"].Value);
                 int rowindex = dataGridView2.CurrentCell.RowIndex;
                 int columnindex = dataGridView2.CurrentCell.ColumnIndex;
                 string cellValue = dataGridView2.Rows[rowindex].Cells[columnindex].Value.ToString();
-                //MessageBox.Show(dataGridView2.Rows[rowindex].Cells[1].Value.ToString());
                 textBox3.Text = dataGridView2.Rows[rowindex].Cells["IPN"].Value.ToString();
                 textBox7.Text = dataGridView2.Rows[rowindex].Cells["Manufacturer"].Value.ToString();
                 textBox4.Text = dataGridView2.Rows[rowindex].Cells["MFPN"].Value.ToString();
@@ -235,6 +234,7 @@ namespace WH_Panel
             RadioButton rbtn = sender as RadioButton;
             if (rbtn.Checked == true)
             {
+                textBox8.Text = string.Empty;
                 textBox8.ReadOnly = true;
                 textBox9.ReadOnly = true;
             }
@@ -278,24 +278,49 @@ namespace WH_Panel
             string sorce_req = string.Empty;
             if (radioButton1.Checked == true)
             {
-                bool printMfg = true;
+                bool toPrintMFG = true;
                 sorce_req = "MFG";
                 if (textBox6.Text != string.Empty)
                 {
                     try
                     {
-                        int outNumber;
-                        bool success = int.TryParse(textBox6.Text, out outNumber);
-                        if (success)
+                        string qInqty = (string)textBox6.Text;
+                        string inQty = string.Empty;
+                        if (qInqty.StartsWith("Q"))
                         {
-                            MoveIntoDATABASE(outNumber, sorce_req, printMfg);
-                            FilterStockDataGridView(textBox10.Text);
+                            inQty = qInqty.Substring(1);
+                            MessageBox.Show(inQty);
+                            int outNumberq;
+                            bool successq = int.TryParse(inQty, out outNumberq);
+                            if (successq && outNumberq < 15001 && outNumberq > 0)
+                            {
+                                MoveIntoDATABASE(outNumberq, sorce_req, toPrintMFG);
+                                FilterStockDataGridView(textBox10.Text);
+                            }
+                            else
+                            {
+                                MessageBox.Show("Input positive numeric values ONLY !");
+                                textBox6.Text = string.Empty;
+                                textBox6.Focus();
+                            }
+
                         }
                         else
                         {
-                            MessageBox.Show("Input positive numeric values ONLY !");
-                            textBox6.Text = string.Empty;
-                            textBox6.Focus();
+                            inQty = (string)textBox6.Text;
+                            int outNumber;
+                            bool success = int.TryParse(inQty, out outNumber);
+                            if (success && outNumber < 15001 && outNumber > 0)
+                            {
+                                MoveIntoDATABASE(outNumber, sorce_req, toPrintMFG);
+                                FilterStockDataGridView(textBox10.Text);
+                            }
+                            else
+                            {
+                                MessageBox.Show("Input positive numeric values ONLY !");
+                                textBox6.Text = string.Empty;
+                                textBox6.Focus();
+                            }
                         }
                     }
                     catch (Exception)
@@ -311,14 +336,62 @@ namespace WH_Panel
             }
             else if (radioButton2.Checked == true)
             {
+                bool toPrintGILT = true;
                 if (textBox8.Text != string.Empty)
                 {
-                    bool printWR=true;
-                    sorce_req = "WR23000" + textBox8.Text;
-                    if (textBox6.Text != string.Empty && int.Parse(textBox6.Text) > 0)
+                    sorce_req = comboBox2.Text + textBox8.Text;
+                    if (textBox6.Text.ToString().StartsWith("Q"))
                     {
-                        qty = int.Parse(textBox6.Text);
-                        MoveIntoDATABASE(qty, sorce_req, printWR);
+                        int outNumberq;
+                        bool successq = int.TryParse(textBox6.Text.ToString().Substring(1), out outNumberq);
+                        if (successq && outNumberq < 15001 && outNumberq > 0)
+                        {
+                            MoveIntoDATABASE(outNumberq, sorce_req, toPrintGILT);
+                            FilterStockDataGridView(textBox10.Text);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Input positive numeric values ONLY !");
+                            textBox6.Text = string.Empty;
+                            textBox6.Focus();
+                        }
+                    }
+                    else
+                    {
+
+                        int outNumber;
+                        bool success = int.TryParse(textBox6.Text.ToString(), out outNumber);
+                        if (success && outNumber < 15001 && outNumber > 0)
+                        {
+                            MoveIntoDATABASE(outNumber, sorce_req, toPrintGILT);
+                            FilterStockDataGridView(textBox10.Text);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Input positive numeric values ONLY !");
+                            textBox6.Text = string.Empty;
+                            textBox6.Focus();
+                        }
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Input " + comboBox2.Text + "_XXX ID !");
+                    textBox8.Focus();
+                }
+            }
+            else if (radioButton4.Checked == true)
+            {
+                bool toPrintWO = false;
+                sorce_req = textBox9.Text;
+                if (textBox9.Text != string.Empty)
+                {
+                    int outNumber;
+                    bool success = int.TryParse(textBox6.Text, out outNumber);
+                    if (success && outNumber < 15001 && outNumber > 0)
+                    {
+                        int negQty = outNumber * (-1);
+                        MoveIntoDATABASE(negQty, sorce_req, toPrintWO);
                         FilterStockDataGridView(textBox10.Text);
                     }
                     else
@@ -329,17 +402,9 @@ namespace WH_Panel
                 }
                 else
                 {
-                    MessageBox.Show("Input WR23000___ ID !");
-                    textBox8.Focus();
+                    MessageBox.Show("INPUT WO !");
+                    textBox9.Focus();
                 }
-            }
-            else if (radioButton4.Checked == true)
-            {
-                bool printToWO = false;
-                sorce_req = textBox9.Text;
-                qty = int.Parse(textBox6.Text) * (-1);
-                MoveIntoDATABASE(qty, sorce_req, printToWO);
-                FilterStockDataGridView(textBox10.Text);
             }
         }
         private void ComeBackFromPrint()
@@ -347,9 +412,9 @@ namespace WH_Panel
             Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
             LastInputFromUser.Focus();
         }
-        private void MoveIntoDATABASE(int qty, string sorce_req,bool toPrintOrNotToPrint)
+        private void MoveIntoDATABASE(int qty, string sorce_req, bool toPrintOrNotToPrint)
         {
-            bool thePrintBool = toPrintOrNotToPrint;
+            bool toPrint = toPrintOrNotToPrint;
             WHitem inputWHitem = new WHitem
             {
                 IPN = textBox3.Text,
@@ -361,16 +426,14 @@ namespace WH_Panel
                 CommentsWHitem = comboBox1.Text,
                 SourceRequester = sorce_req
             };
-            DataInserter(stockFile, "STOCK_VALENS", inputWHitem, thePrintBool);
+            DataInserter(stockFile, "STOCK", inputWHitem, toPrint);
             stockItems.Add(inputWHitem);
-            countStockItems++;
-            button3.Text = "Rows in STOCK: " + (countStockItems).ToString();
-            button3.Update();
             textBox10.Text = inputWHitem.IPN;
             PopulateStockView();
         }
-        private void DataInserter(string fp, string thesheetName, WHitem wHitem, bool thePrintOrNot)
+        private void DataInserter(string fp, string thesheetName, WHitem wHitem, bool toPrintOrNotToPrint)
         {
+            bool toPrint = toPrintOrNotToPrint;
             try
             {
                 string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
@@ -378,19 +441,15 @@ namespace WH_Panel
                 {
                     conn.Open();
                     OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$] (IPN,Manufacturer,MFPN,Description,Stock,Updated_on,Comments,Source_Requester) values('" + wHitem.IPN + "','" + wHitem.Manufacturer + "','" + wHitem.MFPN + "','" + wHitem.Description + "','" + wHitem.Stock + "','" + wHitem.UpdatedOn + "','" + wHitem.CommentsWHitem + "','" + wHitem.SourceRequester + "')", conn);
-                    // sql = "Insert into [Sheet1$] (id,name) values('5','e')";
                     command.ExecuteNonQuery();
                     conn.Close();
                 }
-                //MessageBox.Show(wHitem.IPN + " MOVED to DB ","Item added to DB",MessageBoxButtons.OK,MessageBoxIcon.Information);
                 textBox6.Clear();
-                //textBox1.Clear();
                 LastInputFromUser.Clear();
                 label2.BackColor = Color.LightGreen;
                 label3.BackColor = Color.LightGreen;
-                //textBox1.Focus();
                 LastInputFromUser.Focus();
-                if (thePrintOrNot)
+                if (toPrintOrNotToPrint)
                 {
                     printSticker(wHitem);
                 }
@@ -402,14 +461,12 @@ namespace WH_Panel
                 {
                     AutoClosingMessageBox.Show(wHitem.Stock.ToString() + " PCS of " + wHitem.IPN + " in a " + wHitem.CommentsWHitem + " MOVED to DB ", "Item added to DB", 2000);
                 }
-                //printStickerAPI(wHitem);
-                //AutoClosingMessageBox.Show(wHitem.Stock.ToString() + " PCS of " + wHitem.IPN + " in a " + wHitem.CommentsWHitem + " MOVED to DB ", "Item added to DB", 3000);
+
             }
             catch (IOException)
             {
                 MessageBox.Show("Error");
             }
-            //DataLoader(fp, thesheetName);
         }
         public class AutoClosingMessageBox
         {
@@ -421,7 +478,7 @@ namespace WH_Panel
                 _timeoutTimer = new System.Threading.Timer(OnTimerElapsed,
                     null, timeout, System.Threading.Timeout.Infinite);
                 using (_timeoutTimer)
-                    MessageBox.Show(text, caption,MessageBoxButtons.OK,MessageBoxIcon.Information);
+                    MessageBox.Show(text, caption, MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             public static void Show(string text, string caption, int timeout)
             {
@@ -475,7 +532,6 @@ namespace WH_Panel
         }
         private static void printStickerAPI(WHitem wHitem)
         {
-            //MessageBox.Show("Printed_"+wHitem.IPN);
             try
             {
                 using (Engine btengine = new Engine(true))
@@ -486,8 +542,6 @@ namespace WH_Panel
                     Messages messages = null;
                     LabelFormatDocument labelFormat =
                         btengine.Documents.Open(@"C:\1\PN_STICKER_2022.btw");
-                    //Result result = labelFormat.Print();
-                    //Result result = labelFormat.Print("PrintJob1", out messages);
                     labelFormat.SubStrings["Date"].Value = wHitem.UpdatedOn;
                     labelFormat.SubStrings["DESC"].Value = wHitem.Description;
                     labelFormat.SubStrings["MFPN"].Value = wHitem.MFPN;
@@ -507,7 +561,7 @@ namespace WH_Panel
         {
             if (e.KeyCode == Keys.Enter)
             {
-                textBox6.Focus();
+                LastInputFromUser.Focus();
             }
         }
         private void textBox6_KeyDown(object sender, KeyEventArgs e)
@@ -536,7 +590,7 @@ namespace WH_Panel
                 }
             }
         }
-        private void textBox2_KeyDown_1(object sender, KeyEventArgs e)
+        private void textBox2_KeyDown(object sender, KeyEventArgs e)
         {
             LastInputFromUser = (TextBox)sender;
             if (e.KeyCode == Keys.Enter)
@@ -565,15 +619,18 @@ namespace WH_Panel
                     {
                         while (reader.Read())
                         {
-                            //WHitem aLASTaBC = new WHitem();
                             try
                             {
                                 int res = 0;
-                                int toStk = 0;
+                                int toStk;
                                 bool stk = int.TryParse(reader[4].ToString(), out res);
-                                if(stk)
+                                if (stk)
                                 {
                                     toStk = res;
+                                }
+                                else
+                                {
+                                    toStk = 0;
                                 }
                                 WHitem abc = new WHitem
                                 {
@@ -586,19 +643,14 @@ namespace WH_Panel
                                     CommentsWHitem = reader[6].ToString(),
                                     SourceRequester = reader[7].ToString()
                                 };
-                                //if (iStock > 0)
-                                //{
-                                    countStockItems = iStock;
-                                    button3.Text = "Rows in STOCK: " + (countStockItems).ToString();
-                                    button3.Update();
-                                    //aLASTaBC = abc;
-                                    stockItems.Add(abc);
-                                //}
+                                countStockItems = iStock;
+                                button3.Text = "Rows in STOCK: " + (countStockItems).ToString();
+                                button3.Update();
+                                stockItems.Add(abc);
                                 iStock++;
                             }
                             catch (Exception E)
                             {
-                                //MessageBox.Show(E.Message + aLASTaBC.IPN +" "+aLASTaBC.Description);
                                 MessageBox.Show(E.Message);
                                 throw;
                             }
@@ -622,7 +674,7 @@ namespace WH_Panel
             dataGridView1.DataSource = null;
             button3.Text = "LOAD STOCK";
             button3.Update();
-            StockViewDataLoader(stockFile, "STOCK_VALENS");
+            StockViewDataLoader(stockFile, "STOCK");
             PopulateStockView();
         }
         private void PopulateStockView()
@@ -675,7 +727,13 @@ namespace WH_Panel
                     List<int> qtys = new List<int>();
                     for (int i = 0; i < dataGridView1.RowCount; i++)
                     {
-                        int qty = int.Parse(dataGridView1.Rows[i].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString());
+                        int qty = 0;
+                        int result;
+                        bool prs = int.TryParse(dataGridView1.Rows[i].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString(), out result);
+                        if (prs)
+                        {
+                            qty = result;
+                        }
                         qtys.Add(qty);
                     }
                     foreach (int i in qtys)
@@ -707,13 +765,9 @@ namespace WH_Panel
         {
             if (dataGridView2.SelectedCells.Count > 0)
             {
-                //int selectedrowindex = dataGridView2.SelectedCells[0].RowIndex;
-                //DataGridViewRow selectedRow = dataGridView2.Rows[selectedrowindex];
-                //string cellValue = Convert.ToString(selectedRow.Cells["IPN"].Value);
                 int rowindex = dataGridView2.CurrentCell.RowIndex;
                 int columnindex = dataGridView2.CurrentCell.ColumnIndex;
                 string cellValue = dataGridView2.Rows[rowindex].Cells[dataGridView2.Columns["IPN"].Index].Value.ToString();
-                //MessageBox.Show(dataGridView2.Rows[rowindex].Cells[1].Value.ToString());
                 FilterStockDataGridView(cellValue);
             }
         }
@@ -726,13 +780,24 @@ namespace WH_Panel
             List<WHitem> inWHstock = new List<WHitem>();
             for (int i = 0; i < dataGridView1.RowCount; i++)
             {
+                int res = 0;
+                int toStk;
+                bool stk = int.TryParse(dataGridView1.Rows[i].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString(), out res);
+                if (stk)
+                {
+                    toStk = res;
+                }
+                else
+                {
+                    toStk = 0;
+                }
                 WHitem wHitemABC = new WHitem()
                 {
                     IPN = dataGridView1.Rows[i].Cells[dataGridView1.Columns["IPN"].Index].Value.ToString(),
                     Manufacturer = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Manufacturer"].Index].Value.ToString(),
                     MFPN = dataGridView1.Rows[i].Cells[dataGridView1.Columns["MFPN"].Index].Value.ToString(),
                     Description = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Description"].Index].Value.ToString(),
-                    Stock = int.Parse(dataGridView1.Rows[i].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString()),
+                    Stock = toStk,
                     UpdatedOn = dataGridView1.Rows[i].Cells[dataGridView1.Columns["UpdatedOn"].Index].Value.ToString(),
                     CommentsWHitem = dataGridView1.Rows[i].Cells[dataGridView1.Columns["CommentsWHitem"].Index].Value.ToString(),
                     SourceRequester = dataGridView1.Rows[i].Cells[dataGridView1.Columns["SourceRequester"].Index].Value.ToString()
@@ -786,7 +851,7 @@ namespace WH_Panel
         }
         private static void txtbColorGreenOnEnter(object sender)
         {
-            TextBox? tb = sender as TextBox;
+            TextBox? tb = (TextBox)sender;
             tb.BackColor = Color.LightGreen;
         }
         private void textBox1_Leave(object sender, EventArgs e)
@@ -830,12 +895,9 @@ namespace WH_Panel
         {
             txtbColorWhiteOnLeave(sender);
         }
-        private void textBox8_KeyDown(object sender, KeyEventArgs e)
+        private void FrmAddItemsToNetline_Load(object sender, EventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
-            {
-                LastInputFromUser.Focus();
-            }
+            textBox1.Focus();
         }
 
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -862,7 +924,8 @@ namespace WH_Panel
             {
                 MessageBox.Show("Can print only positive quantites !");
             }
-
         }
+
+      
     }
 }

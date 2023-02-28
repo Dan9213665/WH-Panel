@@ -346,6 +346,7 @@ namespace WH_Panel
             this.button12.Size = new System.Drawing.Size(119, 42);
             this.button12.TabIndex = 6;
             this.button12.UseVisualStyleBackColor = true;
+            this.button12.Click += new System.EventHandler(this.button12_Click);
             // 
             // btnVAYYAR
             // 

@@ -385,7 +385,7 @@ namespace WH_Panel
                 }
                 else
                 {
-                    MessageBox.Show("Input " + label12.Text +"_XXXXX ID !");
+                    MessageBox.Show("Input " + label12.Text +"_XXX ID !");
                     textBox8.Focus();
                 }
             }
