@@ -19,6 +19,8 @@ using System.Xml;
 using static System.Net.WebRequestMethods;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using DataTable = System.Data.DataTable;
+using TextBox = System.Windows.Forms.TextBox;
+
 namespace WH_Panel
 {
     public partial class FrmKITShistory : Form
@@ -51,6 +53,7 @@ namespace WH_Panel
             ResetViews();
             startUpLogic();
             SetColumsOrder();
+            textBox1.Focus();
         }
         private void ResetViews()
         {
@@ -273,6 +276,7 @@ namespace WH_Panel
         {
             textBox1.Text = string.Empty;
             label1.BackColor = Color.LightGreen;
+            textBox1.Focus();
         }
         private void textBox11_TextChanged(object sender, EventArgs e)
         {
@@ -293,6 +297,7 @@ namespace WH_Panel
         {
             textBox2.Text = string.Empty;
             label2.BackColor = Color.LightGreen;
+            textBox2.Focus();
         }
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
@@ -359,6 +364,173 @@ namespace WH_Panel
                 }
             }
             //
+        }
+
+        private void dataGridView1_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedCells.Count > 0)
+            {
+                int rowindex = dataGridView1.CurrentCell.RowIndex;
+                int columnindex = dataGridView1.CurrentCell.ColumnIndex;
+                string cellValue = dataGridView1.Rows[rowindex].Cells[columnindex].Value.ToString();
+                txtbIPN.Text = dataGridView1.Rows[rowindex].Cells["IPN"].Value.ToString();
+                txtbMFPN.Text = dataGridView1.Rows[rowindex].Cells["MFPN"].Value.ToString();
+                txtbDescription.Text = dataGridView1.Rows[rowindex].Cells["Description"].Value.ToString();
+                txtbQty.Clear();
+            }
+        }
+
+        private void txtbQty_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter(sender);
+        }
+
+        private void txtbQty_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave(sender);
+        }
+        private static void txtbColorGreenOnEnter(object sender)
+        {
+            TextBox? tb = (TextBox)sender;
+            tb.BackColor = Color.LightGreen;
+        }
+        private static void txtbColorWhiteOnLeave(object sender)
+        {
+            TextBox? tb = sender as TextBox;
+            tb.BackColor = Color.White;
+        }
+
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            txtbQty.Focus();
+        }
+
+        private void textBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            filterViewAndJump2Qty(e);
+        }
+
+        private void filterViewAndJump2Qty(KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (dataGridView1.Rows.Count == 1)
+                {
+                    txtbQty.Focus();
+                }
+                else
+                {
+                    dataGridView1.Focus();
+                }
+            }
+        }
+
+        private void textBox2_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter(sender);
+        }
+
+        private void textBox2_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave(sender);
+        }
+
+        private void textBox2_KeyDown(object sender, KeyEventArgs e)
+        {
+            filterViewAndJump2Qty(e);
+        }
+
+        private void textBox1_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter(sender);
+        }
+
+        private void textBox1_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave(sender);
+        }
+
+        private void btnPrintSticker_Click(object sender, EventArgs e)
+        {
+            
+            int outNumber;
+            bool success = int.TryParse(txtbQty.Text, out outNumber);
+            if (success && outNumber < 15001 && outNumber > 0)
+            {
+                WHitem w = new WHitem() { IPN = txtbIPN.Text, MFPN = txtbMFPN.Text, Description = txtbDescription.Text, Stock = outNumber, UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss") };
+                printSticker(w);
+                ResetAllTexboxes(textBox1);
+            }
+            else
+            {
+                MessageBox.Show("Input valid QTY !");
+                txtbQty.Clear();
+                txtbQty.Focus();
+            }
+               
+
+        }
+        private void printSticker(WHitem wHitem)
+        {
+            try
+            {
+                string userName = Environment.UserName;
+                string fp = @"C:\\Users\\" + userName + "\\Desktop\\Print_Stickers.xlsx"; // //////Print_StickersWH.xlsm
+                string thesheetName = "Sheet1";
+                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+                OleDbConnection conn = new OleDbConnection(constr);
+                OleDbCommand cmd = new OleDbCommand();
+                cmd.Connection = conn;
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @UPDATEDON";
+                cmd.Parameters.AddWithValue("@PN", wHitem.IPN);
+                cmd.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
+                cmd.Parameters.AddWithValue("@ItemDesc", wHitem.Description);
+                cmd.Parameters.AddWithValue("@QTY", wHitem.Stock);
+                cmd.Parameters.AddWithValue("@UPDATEDON", wHitem.UpdatedOn);
+                conn.Open();
+                cmd.ExecuteNonQuery();
+                conn.Close();
+                Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
+                SendKeys.SendWait("^p");
+                SendKeys.SendWait("{Enter}");
+                //ComeBackFromPrint();
+                Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
+                textBox1.Focus();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Sticker printing failed : " + e.Message);
+            }
+        }
+
+        private void txtbQty_KeyDown(object sender, KeyEventArgs e)
+        {
+                 if (e.KeyCode == Keys.Enter)
+            {
+                btnPrintSticker_Click(this, new EventArgs());
+            }
+        }
+
+        private void label1_DoubleClick(object sender, EventArgs e)
+        {
+            ResetAllTexboxes(textBox1);
+        }
+
+        private void ResetAllTexboxes(TextBox txtb)
+        {
+            
+            textBox1.Clear();
+            textBox2.Clear();
+            txtbQty.Clear();
+            label1.BackColor = Color.LightGreen;
+            label2.BackColor = Color.LightGreen;
+            txtb.Focus();
+        }
+
+        private void label2_DoubleClick(object sender, EventArgs e)
+        {
+            ResetAllTexboxes(textBox2);
         }
     }
 }

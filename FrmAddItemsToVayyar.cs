@@ -934,6 +934,9 @@ namespace WH_Panel
             }
         }
 
-       
+        private void s(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
     }
 }
