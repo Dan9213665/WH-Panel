@@ -20,7 +20,6 @@ using static System.Net.WebRequestMethods;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using DataTable = System.Data.DataTable;
 using TextBox = System.Windows.Forms.TextBox;
-
 namespace WH_Panel
 {
     public partial class FrmKITShistory : Form
@@ -44,8 +43,6 @@ namespace WH_Panel
         public FrmKITShistory()
         {
             InitializeComponent();
-            //startUpLogic();
-            //SetColumsOrder();
         }
         private void button1_Click(object sender, EventArgs e)
         {
@@ -76,13 +73,6 @@ namespace WH_Panel
             dataGridView1.DataSource = null;
             dataGridView1.Refresh();
         }
-        //public class KeyValueList<TKey, TValue> : List<KeyValuePair<TKey, TValue>>
-        //{
-        //    public void Add(TKey key, TValue value)
-        //    {
-        //        Add(new KeyValuePair<TKey, TValue>(key, value));
-        //    }
-        //}
         private void startUpLogic()
         {
             stopWatch.Start();
@@ -92,20 +82,10 @@ namespace WH_Panel
                 foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
                 {
                     countLoadedFIles++;
-                    //MessageBox.Show(file);
                     string Litem = Path.GetFileName(file);
-                    //MessageBox.Show(Litem);
                     DataLoader(file, Litem);
-                    //listOfKitFiles.Add(@file);
                 }
             }
-            //MessageBox.Show(listOfKitFiles.Count.ToString());
-            //for (int i = 0; i < listOfKitFiles.Count; i++)
-            //{
-            //    //MessageBox.Show("i:"+i+" "+listOfKitFiles[i].ToString());
-            //    // DataLoader(listOfKitFiles[i].Key, listOfKitFiles[i].Value);
-            //    //DataLoader(listOfKitFiles[i]);
-            //}
             PopulateGridView();
             SetColumsOrder();
             stopWatch.Stop();
@@ -120,52 +100,20 @@ namespace WH_Panel
                 {
                     try
                     {
-                        conn.Open();
+                            conn.Open();
                             DataTable dbSchema = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
                             if (dbSchema == null || dbSchema.Rows.Count < 1)
                             {
                                 throw new Exception("Error: Could not determine the name of the first worksheet.");
                             }
                             string firstSheetName = dbSchema.Rows[0]["TABLE_NAME"].ToString();
-                            // string columnName = dbSchema.Columns.ToString();
-                            //label13.Text+=columnName;
                             string cleanedUpSheetName = firstSheetName.Substring(1).Substring(0, firstSheetName.Length - 3);
-                        //string cleanedUPfP = fp.Split("/",);
-                        //string[] cleanedUPfP = fp.Split(string.Empty);
-                        //MessageBox.Show(cleanedUPfP[0]+" "+ cleanedUPfP[1]);
-                        //MessageBox.Show(dbSchema.Rows[0]["COLUMN_NAME"].ToString());
-                        OleDbCommand command = new OleDbCommand("Select * from [" + cleanedUpSheetName + "$]", conn);
+                            OleDbCommand command = new OleDbCommand("Select * from [" + cleanedUpSheetName + "$]", conn);
                             OleDbDataReader reader = command.ExecuteReader();
                             if (reader.HasRows)
                             {
-                            //DataTable schemaTable = reader.GetSchemaTable();
-                            //MessageBox.Show(dbSchema.TableName[0].ToString());  
-                            //foreach (DataColumn column in schemaTable.Columns)
-                            //{
-                            //    if (column.ColumnName.ToString() == "IPN")
-                            //    {
-                            //        colIpnFoundIndex = column.Ordinal;
-                            //        MessageBox.Show(colIpnFoundIndex.ToString());
-                            //    }
-                            //}
                             while (reader.Read())
                                 {
-                                //    if (i==0)
-                                //{
-                                //    //for (int cIndex = 0; cIndex < reader.FieldCount; cIndex++)
-                                //    //{
-                                //    //    if (reader[cIndex].ToString() == "IPN")
-                                //    //    {
-                                //    //        colIpnFoundIndex = cIndex;
-                                //    //    }
-                                //    //    else if (reader[cIndex].ToString() == "MFPN")
-                                //    //    {
-                                //    //        colMFPNFoundIndex = cIndex;
-                                //    //    }
-                                //    //}
-                                //}
-                                //else if(i>0)
-                                //{
                                 KitHistoryItem abc = new KitHistoryItem
                                     {
                                         DateOfCreation = cleanedUpSheetName,
@@ -183,7 +131,6 @@ namespace WH_Panel
                                     label12.Text = "Loaded " + (countItems).ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{0:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
                                     label12.Update();
                                     KitHistoryItemsList.Add(abc);
-                                //}
                                     i++;
                                 }
                             }
@@ -192,30 +139,26 @@ namespace WH_Panel
                     }
                     catch (Exception)
                     {
-                        //MessageBox.Show(excelFIleName +" is open by another user !!!\n File can not be loaded ! \n"+ "Full path: " +fp , "Error loading "+ excelFIleName, MessageBoxButtons.OK,MessageBoxIcon.Stop);
-                        //label13.Text += "\n"+ "File can not be loaded ! " + fp ;
                         loadingErrors++;
                         label13.Text = loadingErrors.ToString() + " Loading Errors detected: ";
                         label13.BackColor = Color.IndianRed;
                         label13.Update();
-                        //string er =  "\n Access denied: " + fp;
                         string er = fp;
                         listBox1.Items.Add(er);
                         listBox1.Update();
+                        conn.Dispose();
                         conn.Close();
                     }
                 }
             }
-            catch (IOException)
+            catch (IOException e)
             {
-                throw;
+                MessageBox.Show(e.Message);
             }
         }
         private void PopulateGridView()
         {
-            //MessageBox.Show(.Count.ToString()); 
             IEnumerable<KitHistoryItem> data = KitHistoryItemsList;
-            //UDtable.Clear();
             using (var reader = ObjectReader.Create(data))
             {
                 UDtable.Load(reader);
@@ -223,8 +166,6 @@ namespace WH_Panel
             dataGridView1.DataSource = UDtable;
             SetColumsOrder();
             label12.BackColor = Color.LightGreen;
-            //dataGridView1.AutoResizeColumns();
-            //dataGridView1.Update();
         }
         private void SetColumsOrder()
         {
@@ -311,9 +252,7 @@ namespace WH_Panel
         }
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //MessageBox.Show(listBox1.SelectedItem.ToString());
-            //var fpp = @listBox1.SelectedItem.ToString();
-            //openWHexcelDB(fpp);
+
         }
         private void openWHexcelDB(string thePathToFile)
         {
@@ -331,8 +270,6 @@ namespace WH_Panel
         }
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            //MessageBox.Show();
-            //openWHexcelDB(e.RowIndex);
             int rowindex = dataGridView1.CurrentCell.RowIndex;
             int columnindex = dataGridView1.CurrentCell.ColumnIndex;
             string fp = dataGridView1.Rows[rowindex].Cells["ProjectName"].Value.ToString();
@@ -341,13 +278,9 @@ namespace WH_Panel
             {
                 foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
                 {
-                    //countLoadedFIles++;
-                    //MessageBox.Show(file);
                     string Litem = Path.GetFileName(file);
-                    //MessageBox.Show(Litem);
                     if(Litem==fp)
                     {
-                        //MessageBox.Show(file);
                         string str = @file.ToString();
                         DialogResult result = MessageBox.Show("Open the file : " + str + " ?", "Open file", MessageBoxButtons.OKCancel);
                         if (result == DialogResult.OK)
@@ -356,16 +289,11 @@ namespace WH_Panel
                         }
                         else
                         {
-                            // Do something  
                         }
                     }
-                    //
-                    //listOfKitFiles.Add(@file);
                 }
             }
-            //
         }
-
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
             if (dataGridView1.SelectedCells.Count > 0)
@@ -379,12 +307,10 @@ namespace WH_Panel
                 txtbQty.Clear();
             }
         }
-
         private void txtbQty_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
         }
-
         private void txtbQty_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(sender);
@@ -399,17 +325,14 @@ namespace WH_Panel
             TextBox? tb = sender as TextBox;
             tb.BackColor = Color.White;
         }
-
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             txtbQty.Focus();
         }
-
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
             filterViewAndJump2Qty(e);
         }
-
         private void filterViewAndJump2Qty(KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -424,35 +347,28 @@ namespace WH_Panel
                 }
             }
         }
-
         private void textBox2_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
         }
-
         private void textBox2_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(sender);
         }
-
         private void textBox2_KeyDown(object sender, KeyEventArgs e)
         {
             filterViewAndJump2Qty(e);
         }
-
         private void textBox1_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
         }
-
         private void textBox1_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(sender);
         }
-
         private void btnPrintSticker_Click(object sender, EventArgs e)
         {
-            
             int outNumber;
             bool success = int.TryParse(txtbQty.Text, out outNumber);
             if (success && outNumber < 15001 && outNumber > 0)
@@ -467,8 +383,6 @@ namespace WH_Panel
                 txtbQty.Clear();
                 txtbQty.Focus();
             }
-               
-
         }
         private void printSticker(WHitem wHitem)
         {
@@ -503,7 +417,6 @@ namespace WH_Panel
                 MessageBox.Show("Sticker printing failed : " + e.Message);
             }
         }
-
         private void txtbQty_KeyDown(object sender, KeyEventArgs e)
         {
                  if (e.KeyCode == Keys.Enter)
@@ -511,15 +424,12 @@ namespace WH_Panel
                 btnPrintSticker_Click(this, new EventArgs());
             }
         }
-
         private void label1_DoubleClick(object sender, EventArgs e)
         {
             ResetAllTexboxes(textBox1);
         }
-
         private void ResetAllTexboxes(TextBox txtb)
         {
-            
             textBox1.Clear();
             textBox2.Clear();
             txtbQty.Clear();
@@ -527,7 +437,6 @@ namespace WH_Panel
             label2.BackColor = Color.LightGreen;
             txtb.Focus();
         }
-
         private void label2_DoubleClick(object sender, EventArgs e)
         {
             ResetAllTexboxes(textBox2);

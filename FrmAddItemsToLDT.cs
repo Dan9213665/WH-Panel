@@ -158,7 +158,6 @@ namespace WH_Panel
                 searchByIPN = textBox1.Text.Substring(0, 15);
             }
             string searchbyMFPN = textBox2.Text;
-
             if (textBox2.Text.StartsWith("1P") == true)
             {
                 searchbyMFPN = textBox2.Text.Substring(2);
@@ -312,7 +311,6 @@ namespace WH_Panel
                                 textBox6.Text = string.Empty;
                                 textBox6.Focus();
                             }
-
                         }
                         else
                         {
@@ -367,7 +365,6 @@ namespace WH_Panel
                     }
                     else
                     {
-
                         int outNumber;
                         bool success = int.TryParse(textBox6.Text.ToString(), out outNumber);
                         if (success && outNumber < 15001 && outNumber > 0)
@@ -473,7 +470,6 @@ namespace WH_Panel
                 {
                     AutoClosingMessageBox.Show(wHitem.Stock.ToString() + " PCS of " + wHitem.IPN + " in a " + wHitem.CommentsWHitem + " MOVED to DB ", "Item added to DB", 2000);
                 }
-               
             }
             catch (IOException)
             {
@@ -514,10 +510,7 @@ namespace WH_Panel
         {
             try
             {
-                
-               
                 string userName = Environment.UserName;
-
                 //MessageBox.Show(userName);
                 string fp = @"C:\\Users\\"+ userName + "\\Desktop\\Print_Stickers.xlsx"; // //////Print_StickersWH.xlsm
                 string thesheetName = "Sheet1";
@@ -922,11 +915,9 @@ namespace WH_Panel
                 }
             }
         }
-
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             int rowindex = dataGridView1.CurrentCell.RowIndex;
-
             WHitem wHitemABCD = new WHitem()
             {
                 IPN = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["IPN"].Index].Value.ToString(),
@@ -938,7 +929,6 @@ namespace WH_Panel
                 CommentsWHitem = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["CommentsWHitem"].Index].Value.ToString(),
                 SourceRequester = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["SourceRequester"].Index].Value.ToString()
             };
-
             if (wHitemABCD.Stock > 0)
             {
                 printSticker(wHitemABCD);
@@ -947,7 +937,6 @@ namespace WH_Panel
             {
                 MessageBox.Show("Can print only positive quantites !");
             }
-
         }
     }
 }

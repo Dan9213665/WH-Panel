@@ -33,7 +33,6 @@ namespace WH_Panel
         }
         private void btnBrowseToFile_Click(object sender, EventArgs e)
         {
-            
             openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\"+ DateTime.Now.ToString("yyyy") + "\\"+ DateTime.Now.ToString("MM") + "."+ DateTime.Now.ToString("yyyy");
             openFileDialog1.Filter = "xlsm files (*.xlsm)|*.xlsm";
             openFileDialog1.FilterIndex = 2;
@@ -45,18 +44,31 @@ namespace WH_Panel
                 //string file = openFileDialog1.FileName;
                 string fileN = openFileDialog1.SafeFileName;
                 string r = fileN.Substring(0, fileN.Length - 5);
-                txtbPasteCPQ.Text = r;
+                txtbPasteCPQ.Text =r;
                 try
                 {
                     //string kitLabelExcel = @"\\\\dbr1\\Data\\WareHouse\\KitLabel.xlsm";
-                    string kitLabelExcel = "\\\\C:\\1\\KitLabel.xlsm";
-                    string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source="+ kitLabelExcel+ "; Extended Properties=\"Excel 12.0 Xml;HDR=YES;IMEX=1\"";
+                    string kitLabelExcel = @"C:\\1\\KitLabel.xlsm";
+                    string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source="+ kitLabelExcel+ "; Extended Properties=\"Excel 12.0 Xml;HDR=YES;IMEX=0\"";
                     //using (
                     OleDbConnection conn = new OleDbConnection(constr);
                     //{
-                        conn.Open();
-                        OleDbCommand command = new OleDbCommand("Insert into [Sheet1$].[1,2] values (" + r + ")");
-                        command.ExecuteNonQuery();
+                    conn.Open();
+
+                    OleDbCommand command = new OleDbCommand();
+                    
+
+                    //OleDbCommand command = new OleDbCommand("Insert into [Sheet1$].[1,2] values (" + r + ")");
+                    //OleDbCommand command = new OleDbCommand("UPDATE [Sheet1$ + $B1:B1] SET F1=" + r + '"');
+                    //string sql = "UPDATE [KIT$ + $B1:B1] SET F1=5";
+                    string stSheetName = "KIT";
+                   //string  sql = "UPDATE [" + stSheetName + "$B2:B2] ToPrint =@ToPrint";
+                   
+                    command.CommandText = "INSERT INTO [" + stSheetName + "$B2:B2] (IPN) values ("+"12313"+")";
+                    //command.Parameters.AddWithValue("@ToPrint", r);
+                    command.Connection = conn;
+                   
+                    command.ExecuteNonQuery();
                         //OleDbCommand command = new OleDbCommand("Select * from [Sheet1$]", conn);
                         //OleDbDataReader reader = command.ExecuteReader();
                         //if (reader.HasRows)
@@ -75,6 +87,7 @@ namespace WH_Panel
         }
         private void btnPrintKitLabel_Click(object sender, EventArgs e)
         {
+
         }
     }
 }

@@ -37,7 +37,6 @@ using Seagull.BarTender.PrintServer.Tasks;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 using System.Reflection.Emit;
 using RadioButton = System.Windows.Forms.RadioButton;
-
 namespace WH_Panel
 {
     public partial class FrmAddItemsToNetline : Form
@@ -304,7 +303,6 @@ namespace WH_Panel
                                 textBox6.Text = string.Empty;
                                 textBox6.Focus();
                             }
-
                         }
                         else
 {
@@ -359,7 +357,6 @@ namespace WH_Panel
         }
         else
         {
-
             int outNumber;
             bool success = int.TryParse(textBox6.Text.ToString(), out outNumber);
             if (success && outNumber < 15001 && outNumber > 0)
@@ -462,7 +459,6 @@ else if (radioButton4.Checked == true)
                 {
                     AutoClosingMessageBox.Show(wHitem.Stock.ToString() + " PCS of " + wHitem.IPN + " in a " + wHitem.CommentsWHitem + " MOVED to DB ", "Item added to DB", 2000);
                 }
-
             }
             catch (IOException)
             {
@@ -899,11 +895,9 @@ else if (radioButton4.Checked == true)
         {
             textBox1.Focus();
         }
-
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             int rowindex = dataGridView1.CurrentCell.RowIndex;
-
             WHitem wHitemABCD = new WHitem()
             {
                 IPN = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["IPN"].Index].Value.ToString(),
@@ -915,7 +909,6 @@ else if (radioButton4.Checked == true)
                 CommentsWHitem = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["CommentsWHitem"].Index].Value.ToString(),
                 SourceRequester = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["SourceRequester"].Index].Value.ToString()
             };
-
             if(wHitemABCD.Stock>0)
             {
                 printSticker(wHitemABCD);
@@ -924,8 +917,6 @@ else if (radioButton4.Checked == true)
             {
                 MessageBox.Show("Can print only positive quantites !");
             }
-            
-
         }
     }
 }

@@ -837,11 +837,9 @@ namespace WH_Panel
                 LastInputFromUser.Focus();
             }
         }
-
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             int rowindex = dataGridView1.CurrentCell.RowIndex;
-
             WHitem wHitemABCD = new WHitem()
             {
                 IPN = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["IPN"].Index].Value.ToString(),
@@ -853,7 +851,6 @@ namespace WH_Panel
                 CommentsWHitem = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["CommentsWHitem"].Index].Value.ToString(),
                 SourceRequester = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["SourceRequester"].Index].Value.ToString()
             };
-
             if (wHitemABCD.Stock > 0)
             {
                 printSticker(wHitemABCD);
@@ -862,7 +859,6 @@ namespace WH_Panel
             {
                 MessageBox.Show("Can print only positive quantites !");
             }
-
         }
     }
 }

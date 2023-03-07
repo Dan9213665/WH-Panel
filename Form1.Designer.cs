@@ -39,6 +39,7 @@ namespace WH_Panel
             this.button5 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.button13 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -149,6 +150,7 @@ namespace WH_Panel
             this.button11.Size = new System.Drawing.Size(120, 46);
             this.button11.TabIndex = 8;
             this.button11.UseVisualStyleBackColor = true;
+            this.button11.Click += new System.EventHandler(this.button11_Click);
             // 
             // button1
             // 
@@ -177,7 +179,7 @@ namespace WH_Panel
             // button5
             // 
             this.button5.Image = global::WH_Panel.Properties.Resources.documents_files_history_64;
-            this.button5.Location = new System.Drawing.Point(58, 56);
+            this.button5.Location = new System.Drawing.Point(58, 59);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(70, 60);
             this.button5.TabIndex = 11;
@@ -188,7 +190,7 @@ namespace WH_Panel
             // 
             this.button3.BackgroundImage = global::WH_Panel.Properties.Resources.search;
             this.button3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.button3.Location = new System.Drawing.Point(6, 16);
+            this.button3.Location = new System.Drawing.Point(8, 16);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(62, 56);
             this.button3.TabIndex = 9;
@@ -197,6 +199,7 @@ namespace WH_Panel
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.button13);
             this.groupBox3.Controls.Add(this.button8);
             this.groupBox3.Controls.Add(this.button2);
             this.groupBox3.ForeColor = System.Drawing.Color.White;
@@ -207,11 +210,22 @@ namespace WH_Panel
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Packing Slips";
             // 
+            // button13
+            // 
+            this.button13.BackgroundImage = global::WH_Panel.Properties.Resources.box_214671;
+            this.button13.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.button13.Location = new System.Drawing.Point(74, 68);
+            this.button13.Name = "button13";
+            this.button13.Size = new System.Drawing.Size(54, 49);
+            this.button13.TabIndex = 10;
+            this.button13.UseVisualStyleBackColor = true;
+            this.button13.Click += new System.EventHandler(this.button13_Click);
+            // 
             // button8
             // 
             this.button8.BackgroundImage = global::WH_Panel.Properties.Resources.search;
             this.button8.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.button8.Location = new System.Drawing.Point(40, 68);
+            this.button8.Location = new System.Drawing.Point(8, 68);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(54, 51);
             this.button8.TabIndex = 9;
@@ -475,5 +489,6 @@ namespace WH_Panel
         private Button button11;
         private GroupBox groupBox8;
         private Button button12;
+        private Button button13;
     }
 }
