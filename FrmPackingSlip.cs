@@ -18,7 +18,6 @@ using Seagull.Framework.OS;
 using Microsoft.Office.Interop.Excel;
 using Range = Microsoft.Office.Interop.Excel.Range;
 using DataTable = System.Data.DataTable;
-
 namespace WH_Panel
 {
     public partial class FrmPackingSlip : Form
@@ -35,7 +34,6 @@ namespace WH_Panel
         public static Stopwatch stopWatch = new Stopwatch();
         public int colIpnFoundIndex;
         public int colMFPNFoundIndex;
-      
         public List<string> listOfPaths = new List<string>()
             {
                 "\\\\dbr1\\Data\\WareHouse\\2022\\10.2022",
@@ -43,14 +41,10 @@ namespace WH_Panel
                 "\\\\dbr1\\Data\\WareHouse\\2022\\12.2022",
                 "\\\\dbr1\\Data\\WareHouse\\2023"
             };
-
         public FrmPackingSlip()
         {
             InitializeComponent();
-            
-
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
             stopWatch.Reset();
@@ -98,9 +92,7 @@ namespace WH_Panel
                 {
                     countLoadedFIles++;
                     string Litem = Path.GetFileName(file);
-                   
-
-                    if(!FileIsLocked(Litem))
+                    if(FileIsLocked(Litem))
                     {
                         DataLoader(file, Litem);
                     }
@@ -118,7 +110,6 @@ namespace WH_Panel
             textBox2.ReadOnly= false;
             textBox3.ReadOnly= false;
         }
-
         public bool FileIsLocked(string strFullFileName)
         {
             bool blnReturn = false;
@@ -135,7 +126,6 @@ namespace WH_Panel
             }
             return blnReturn;
         }
-
         private void SetColumsOrder(DataGridView dgw)
         {
             dgw.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -178,7 +168,6 @@ namespace WH_Panel
             dgw.Columns["CommentsWHitem"].Visible = false;
             dgw.Columns["SourceRequester"].Visible = false;
             dgw.AutoResizeColumns();
-
         }
         private void DataLoader(string fp, string excelFIleName)
         {
@@ -219,7 +208,8 @@ namespace WH_Panel
                                 };
                                 countItems = i;
                                 label12.Text = "Loaded " + (countItems).ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{0:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
-                                label12.Update();
+                               if(countItems%1000==0)
+                                { label12.Update(); }
                                 KitHistoryItemsList.Add(abc);
                                 i++;
                             }
@@ -240,7 +230,6 @@ namespace WH_Panel
                 MessageBox.Show(e.Message);
             }
         }
-
         private void AddErrorousFilesToListOfErrors(string fp)
         {
             loadingErrors++;
@@ -251,7 +240,6 @@ namespace WH_Panel
             listBox1.Items.Add(er);
             listBox1.Update();
         }
-
         private void PopulateGridView()
         {
             IEnumerable<KitHistoryItem> data = KitHistoryItemsList;
@@ -263,7 +251,6 @@ namespace WH_Panel
             SetColumsOrder(dataGridView1);
             label12.BackColor = Color.LightGreen;
         }
-
         private void PopulatePackedItemsGridView()
         {
             PackedItemsDtable.Clear();
@@ -275,7 +262,6 @@ namespace WH_Panel
             dataGridView2.DataSource = PackedItemsDtable;
             //SetColumsOrder();
         }
-
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
             filterViewAndJump2Qty(sender,e); ;
@@ -285,8 +271,6 @@ namespace WH_Panel
             if (e.KeyCode == Keys.Enter)
             {
                 LastInputFromUser = (TextBox)sender;
-                
-
                 if (dataGridView1.Rows.Count == 1)
                 {
                     txtbQty.Focus();
@@ -301,7 +285,6 @@ namespace WH_Panel
         {
             filterViewAndJump2Qty(sender,e);
         }
-
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             label1.BackColor = Color.IndianRed;
@@ -325,7 +308,6 @@ namespace WH_Panel
                 throw;
             }
         }
-
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
             if (dataGridView1.SelectedCells.Count > 0)
@@ -339,39 +321,33 @@ namespace WH_Panel
                 txtbQty.Clear();
             }
         }
-
         private void label1_Click(object sender, EventArgs e)
         {
             textBox1.Text = string.Empty;
             label1.BackColor = Color.LightGreen;
             textBox1.Focus();
         }
-
         private void label2_Click(object sender, EventArgs e)
         {
             textBox2.Text = string.Empty;
             label2.BackColor = Color.LightGreen;
             textBox2.Focus();
         }
-
         private void textBox11_TextChanged(object sender, EventArgs e)
         {
             label11.BackColor = Color.IndianRed;
             FilterTheDataGridView();
         }
-
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
             label3.BackColor = Color.IndianRed;
             FilterTheDataGridView();
         }
-
         private void label3_Click(object sender, EventArgs e)
         {
             textBox3.Text = string.Empty;
             label3.BackColor = Color.LightGreen;
         }
-
         private void textBox1_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
@@ -381,22 +357,18 @@ namespace WH_Panel
             TextBox? tb = (TextBox)sender;
             tb.BackColor = Color.LightGreen;
         }
-
         private void textBox11_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
         }
-
         private void textBox2_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
         }
-
         private void textBox3_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
         }
-
         private void textBox11_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(sender);
@@ -406,52 +378,43 @@ namespace WH_Panel
             TextBox? tb = sender as TextBox;
             tb.BackColor = Color.White;
         }
-
         private void textBox1_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(sender);
         }
-
         private void textBox2_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(sender);
         }
-
         private void textBox3_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(sender);
         }
-
         private void label11_Click(object sender, EventArgs e)
         {
             textBox11.Text = string.Empty;
             label11.BackColor = Color.LightGreen;
             textBox11.Focus();
         }
-
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             label2.BackColor = Color.IndianRed;
             FilterTheDataGridView();
         }
-
         private void txtbQty_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
         }
-
         private void txtbQty_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(sender);
         }
-
         private void txtbQty_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
                 btnPrintSticker_Click(this, new EventArgs());
             }
-
         }
         private void btnPrintSticker_Click(object sender, EventArgs e)
         {
@@ -460,17 +423,13 @@ namespace WH_Panel
             if (success && outNumber < 15001 && outNumber > 0)
             {
                 WHitem w = new WHitem() { IPN = txtbIPN.Text, MFPN = txtbMFPN.Text, Description = txtbDescription.Text, Stock = outNumber, UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss") };
-                
                 if(checkBox1.Checked)
                 {
                     printSticker(w);
                 }
-
                 PackedItemsList.Add(w);
                 PopulatePackedItemsGridView();
                 SetColumsOrderPackedItems(dataGridView2);
-
-
                 ResetAllTexboxes(LastInputFromUser);
             }
             else
@@ -524,7 +483,6 @@ namespace WH_Panel
             label3.BackColor = Color.LightGreen;
             txtb.Focus();
         }
-
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
            if( checkBox1.Checked == true)
@@ -539,55 +497,81 @@ namespace WH_Panel
             }
             LastInputFromUser.Focus();
         }
-
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             txtbQty.Focus();
         }
-
         private void button3_Click(object sender, EventArgs e)
         {
-           
-
             DialogResult dialogResult = MessageBox.Show("Close the shipment ?", "Complete the shipment procedure", MessageBoxButtons.YesNo);
             if (dialogResult == DialogResult.Yes)
             {
-                MessageBox.Show("Shipment sent");
-                string fp = "\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\_template.xlsm";
-                string thesheetName = "PACKING_SLIP";
-              
+                //MessageBox.Show("Shipment sent");
+                //string fp = "\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\_template.xlsm";
+                //string thesheetName = "PACKING_SLIP";
                     //DataInserter(fp,thesheetName, PackedItemsList);
-                //EXCELinserter();
-
-
-
+                EXCELinserter(PackedItemsList);
             }
             else if (dialogResult == DialogResult.No)
             {
                 LastInputFromUser.Focus();
             }
         }
-
-        private void EXCELinserter()
+        private void EXCELinserter(List<WHitem> lst)
         {
-            string fp = "\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\_template.xlsm";
-
-            _Application docExcel = new Microsoft.Office.Interop.Excel.Application();
-            docExcel.Visible = false;
-            docExcel.DisplayAlerts = false;
-
-            _Workbook workbooksExcel = docExcel.Workbooks.Open(@fp, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
-            _Worksheet worksheetExcel = (_Worksheet)workbooksExcel.ActiveSheet;
-
-            ((Range)worksheetExcel.Cells["12", "A"]).Value2 = "aa";
-            ((Range)worksheetExcel.Cells["12", "B"]).Value2 = "bb";
-
-            workbooksExcel.Save();
-            workbooksExcel.Close(false, Type.Missing, Type.Missing);
-            docExcel.Application.DisplayAlerts = true;
-            docExcel.Application.Quit();
+            try
+            {
+                lst.Sort((x, y) => string.Compare(x.IPN, y.IPN));
+                string? v = KitHistoryItemsList.FirstOrDefault(r => lst[0].IPN == r.IPN).ProjectName;
+                string[]? client = v.Split("_");
+                string fp = "\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\_templateITPc.xlsm";
+                _Application docExcel = new Microsoft.Office.Interop.Excel.Application();
+                docExcel.Visible = false;
+                docExcel.DisplayAlerts = false;
+                _Workbook workbooksExcel = docExcel.Workbooks.Open(@fp, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+                _Worksheet worksheetExcel = (_Worksheet)workbooksExcel.ActiveSheet;
+                int startRow = 12;
+                string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+                ((Range)worksheetExcel.Cells[1, "A"]).Value2 = "RPS_" + _fileTimeStamp;
+                ((Range)worksheetExcel.Cells[2, "D"]).Value2 = DateTime.Now.ToString("yyyy-MM-dd");
+                ((Range)worksheetExcel.Cells[8, "B"]).Value2 = client?[0];
+                for (int i = 0; i < lst.Count; i++)
+                {
+                    ((Range)worksheetExcel.Cells[startRow + i, "A"]).Value2 = lst[i].IPN.ToString();
+                    ((Range)worksheetExcel.Cells[startRow + i, "B"]).Value2 = lst[i].MFPN.ToString();
+                    ((Range)worksheetExcel.Cells[startRow + i, "C"]).Value2 = lst[i].Description.ToString();
+                    ((Range)worksheetExcel.Cells[startRow + i, "D"]).Value2 = lst[i].Stock;
+                }
+             ((Range)worksheetExcel.Cells[startRow + lst.Count + 1, "A"]).Value2 = "Comments:  ";
+                //((Range)worksheetExcel.Cells[startRow + lst.Count + 1, "A"]).HorizontalAlignment = Left;
+                worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 1, 1], worksheetExcel.Cells[startRow + lst.Count + 1, 4]].Merge();
+                ((Range)worksheetExcel.Cells[startRow + lst.Count + 2, "A"]).Value2 = "Signature____________________________ חתימה     DATE ______/______/2023  תאריך      NAME _____________________________________  שם";
+                //((Range)worksheetExcel.Cells[startRow + lst.Count + 2, "A"]).HorizontalAlignment = CenterToParent;
+                worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 2, 1], worksheetExcel.Cells[startRow + lst.Count + 2, 4]].Merge();
+                ((Range)worksheetExcel.Cells[startRow + lst.Count + 3, "A"]).Value2 = "Thank You";
+                //((Range)worksheetExcel.Cells[startRow + lst.Count + 3, "A"]).HorizontalAlignment = CenterToParent;
+                worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 3, 1], worksheetExcel.Cells[startRow + lst.Count + 3, 4]].Merge();
+                ((Range)worksheetExcel.Cells[startRow + lst.Count + 4, "A"]).Value2 = "if you have any questions or concerns, please contact  Vlad Berezin, (972) 525118807, vlad@robotron.co.il";
+                worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 4, 1], worksheetExcel.Cells[startRow + lst.Count + 4, 4]].Merge();
+                //((Range)worksheetExcel.Cells[startRow + lst.Count + 4, "A"]).HorizontalAlignment = CenterToParent;
+                workbooksExcel.SaveAs("\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\" + DateTime.Now.ToString("yyyy") + "\\" + DateTime.Now.ToString("yyyy.MM") + "\\" + _fileTimeStamp + "_" + client?[0] + ".xlsm");
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
+                {
+                    FileName = "\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\" + DateTime.Now.ToString("yyyy") + "\\" + DateTime.Now.ToString("yyyy.MM") + "",
+                    UseShellExecute = true,
+                    Verb = "open"
+                });
+                workbooksExcel.Close(false, Type.Missing, Type.Missing);
+                docExcel.Application.DisplayAlerts = false;
+                docExcel.Application.Quit();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+    
+           
         }
-
         private void DataInserter(string fp, string thesheetName,List<WHitem>lst)
         {
             try
@@ -601,12 +585,6 @@ namespace WH_Panel
                     {
                         string stRowID = "A" + startRow+i + ":C" + startRow+i;
                         //OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$" + stRowID +"] (IPN,MFPN,Description,Stock) values('" + lst[i].IPN + "','" + lst[i].MFPN + "','" + lst[i].Description + "','" + lst[i].Stock + "')", conn);
-
-
-                   
-
-
-
                         //OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$A12] (F1) VALUES"+lst[i].IPN +")", conn);
                         OleDbCommand command=new OleDbCommand();
                         command.Connection= conn;

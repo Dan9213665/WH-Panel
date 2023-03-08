@@ -166,8 +166,9 @@ namespace WH_Panel
                                     };
                                     countItems = i;
                                     label12.Text = "Loaded " + (countItems).ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{0:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
-                                    label12.Update();
-                                    if(abc.IPN!=string.Empty&& !abc.IPN.StartsWith("Comments") && abc.IPN != "Thank You" && !abc.IPN.StartsWith("Signature") && !abc.IPN.StartsWith("if you") && j > 11)
+                                if (countItems % 1000 == 0)
+                                { label12.Update(); }
+                                if (abc.IPN!=string.Empty&& !abc.IPN.StartsWith("Comments") && abc.IPN != "Thank You" && !abc.IPN.StartsWith("Signature") && !abc.IPN.StartsWith("if you") && j > 11)
                                     {
                                         PSItems.Add(abc);
                                     i++;

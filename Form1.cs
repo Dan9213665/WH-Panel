@@ -139,13 +139,11 @@ namespace WH_Panel
             FrmAddItemsToVayyar frV = new FrmAddItemsToVayyar();
             frV.Show();
         }
-
         private void button11_Click(object sender, EventArgs e)
         {
             frmkitLabelPrint frmkit= new frmkitLabelPrint();
             frmkit.Show();
         }
-
         private void button13_Click(object sender, EventArgs e)
         {
             FrmPackingSlip ps = new FrmPackingSlip();   

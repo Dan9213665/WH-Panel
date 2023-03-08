@@ -27,6 +27,12 @@
     <Reference Include="Microsoft.Office.Interop.Excel">
       <HintPath>Binaries\excel\Microsoft.Office.Interop.Excel.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Vbe.Interop">
+      <HintPath>..\..\..\..\Windows\assembly\GAC_MSIL\Microsoft.Vbe.Interop\15.0.0.0__71e9bce111e9429c\Microsoft.Vbe.Interop.dll</HintPath>
+    </Reference>
+    <Reference Include="office">
+      <HintPath>..\..\..\..\Windows\assembly\GAC_MSIL\office\15.0.0.0__71e9bce111e9429c\office.dll</HintPath>
+    </Reference>
     <Reference Include="Seagull.BarTender.Print">
       <HintPath>Binaries\Seagull\Seagull.BarTender.Print.dll</HintPath>
     </Reference>

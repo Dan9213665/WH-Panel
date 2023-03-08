@@ -84,8 +84,7 @@ namespace WH_Panel
                 {
                     countLoadedFIles++;
                     string Litem = Path.GetFileName(file);
-
-                    if (!FileIsLocked(Litem))
+                    if (FileIsLocked(Litem))
                     {
                         DataLoader(file, Litem);
                     }
@@ -116,7 +115,6 @@ namespace WH_Panel
             try
             {
                 fs = System.IO.File.Open(strFullFileName, System.IO.FileMode.Open, System.IO.FileAccess.Write, System.IO.FileShare.None);
-
                 fs.Close();
                 fs.Dispose();
             }
@@ -165,8 +163,9 @@ namespace WH_Panel
                                     };
                                     countItems = i;
                                     label12.Text = "Loaded " + (countItems).ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{0:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
-                                    label12.Update();
-                                    KitHistoryItemsList.Add(abc);
+                                if (countItems % 1000 == 0)
+                                { label12.Update(); }
+                                KitHistoryItemsList.Add(abc);
                                     i++;
                                 }
                             }
@@ -288,7 +287,6 @@ namespace WH_Panel
         }
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-
         }
         private void openWHexcelDB(string thePathToFile)
         {

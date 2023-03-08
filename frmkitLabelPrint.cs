@@ -54,20 +54,15 @@ namespace WH_Panel
                     OleDbConnection conn = new OleDbConnection(constr);
                     //{
                     conn.Open();
-
                     OleDbCommand command = new OleDbCommand();
-                    
-
                     //OleDbCommand command = new OleDbCommand("Insert into [Sheet1$].[1,2] values (" + r + ")");
                     //OleDbCommand command = new OleDbCommand("UPDATE [Sheet1$ + $B1:B1] SET F1=" + r + '"');
                     //string sql = "UPDATE [KIT$ + $B1:B1] SET F1=5";
                     string stSheetName = "KIT";
                    //string  sql = "UPDATE [" + stSheetName + "$B2:B2] ToPrint =@ToPrint";
-                   
                     command.CommandText = "INSERT INTO [" + stSheetName + "$B2:B2] (IPN) values ("+"12313"+")";
                     //command.Parameters.AddWithValue("@ToPrint", r);
                     command.Connection = conn;
-                   
                     command.ExecuteNonQuery();
                         //OleDbCommand command = new OleDbCommand("Select * from [Sheet1$]", conn);
                         //OleDbDataReader reader = command.ExecuteReader();
@@ -87,7 +82,6 @@ namespace WH_Panel
         }
         private void btnPrintKitLabel_Click(object sender, EventArgs e)
         {
-
         }
     }
 }
