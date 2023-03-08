@@ -529,7 +529,9 @@ namespace WH_Panel
                 docExcel.Visible = false;
                 docExcel.DisplayAlerts = false;
                 _Workbook workbooksExcel = docExcel.Workbooks.Open(@fp, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
-                _Worksheet worksheetExcel = (_Worksheet)workbooksExcel.ActiveSheet;
+                //_Worksheet worksheetExcel = (_Worksheet)workbooksExcel;
+                _Worksheet worksheetExcel = (_Worksheet)workbooksExcel.Worksheets["PACKING_SLIP"];
+
                 int startRow = 12;
                 string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
                 ((Range)worksheetExcel.Cells[1, "A"]).Value2 = "RPS_" + _fileTimeStamp;
@@ -542,18 +544,15 @@ namespace WH_Panel
                     ((Range)worksheetExcel.Cells[startRow + i, "C"]).Value2 = lst[i].Description.ToString();
                     ((Range)worksheetExcel.Cells[startRow + i, "D"]).Value2 = lst[i].Stock;
                 }
-             ((Range)worksheetExcel.Cells[startRow + lst.Count + 1, "A"]).Value2 = "Comments:  ";
-                //((Range)worksheetExcel.Cells[startRow + lst.Count + 1, "A"]).HorizontalAlignment = Left;
+             ((Range)worksheetExcel.Cells[startRow + lst.Count + 1, "A"]).Value2 = "Comments:                                ";
                 worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 1, 1], worksheetExcel.Cells[startRow + lst.Count + 1, 4]].Merge();
-                ((Range)worksheetExcel.Cells[startRow + lst.Count + 2, "A"]).Value2 = "Signature____________________________ חתימה     DATE ______/______/2023  תאריך      NAME _____________________________________  שם";
-                //((Range)worksheetExcel.Cells[startRow + lst.Count + 2, "A"]).HorizontalAlignment = CenterToParent;
+                ((Range)worksheetExcel.Cells[startRow + lst.Count + 2, "A"]).Value2 = "Signature_______________________ חתימה     DATE ______/______/2023  תאריך      NAME ________________________________  שם";
+                ((Range)worksheetExcel.Cells[startRow + lst.Count + 2, "A"]).WrapText = true;
                 worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 2, 1], worksheetExcel.Cells[startRow + lst.Count + 2, 4]].Merge();
                 ((Range)worksheetExcel.Cells[startRow + lst.Count + 3, "A"]).Value2 = "Thank You";
-                //((Range)worksheetExcel.Cells[startRow + lst.Count + 3, "A"]).HorizontalAlignment = CenterToParent;
                 worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 3, 1], worksheetExcel.Cells[startRow + lst.Count + 3, 4]].Merge();
                 ((Range)worksheetExcel.Cells[startRow + lst.Count + 4, "A"]).Value2 = "if you have any questions or concerns, please contact  Vlad Berezin, (972) 525118807, vlad@robotron.co.il";
                 worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 4, 1], worksheetExcel.Cells[startRow + lst.Count + 4, 4]].Merge();
-                //((Range)worksheetExcel.Cells[startRow + lst.Count + 4, "A"]).HorizontalAlignment = CenterToParent;
                 workbooksExcel.SaveAs("\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\" + DateTime.Now.ToString("yyyy") + "\\" + DateTime.Now.ToString("yyyy.MM") + "\\" + _fileTimeStamp + "_" + client?[0] + ".xlsm");
                 System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
                 {
