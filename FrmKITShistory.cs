@@ -16,6 +16,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
+using System.IO;
 using static System.Net.WebRequestMethods;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using DataTable = System.Data.DataTable;
@@ -83,12 +84,47 @@ namespace WH_Panel
                 {
                     countLoadedFIles++;
                     string Litem = Path.GetFileName(file);
-                    DataLoader(file, Litem);
+
+                    if (!FileIsLocked(Litem))
+                    {
+                        DataLoader(file, Litem);
+                    }
+                    else
+                    {
+                        AddErrorousFilesToListOfErrors(Litem);
+                    }
                 }
             }
             PopulateGridView();
             SetColumsOrder();
             stopWatch.Stop();
+        }
+        private void AddErrorousFilesToListOfErrors(string fp)
+        {
+            loadingErrors++;
+            label13.Text = loadingErrors.ToString() + " Loading Errors detected: ";
+            label13.BackColor = Color.IndianRed;
+            label13.Update();
+            string er = fp;
+            listBox1.Items.Add(er);
+            listBox1.Update();
+        }
+        public bool FileIsLocked(string strFullFileName)
+        {
+            bool blnReturn = false;
+            System.IO.FileStream fs;
+            try
+            {
+                fs = System.IO.File.Open(strFullFileName, System.IO.FileMode.Open, System.IO.FileAccess.Write, System.IO.FileShare.None);
+
+                fs.Close();
+                fs.Dispose();
+            }
+            catch (System.IO.IOException ex)
+            {
+                blnReturn = true;
+            }
+            return blnReturn;
         }
         private void DataLoader(string fp,string excelFIleName)
         {

@@ -10,6 +10,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
+using TextBox = System.Windows.Forms.TextBox;
+using Seagull.Framework.OS;
+using Microsoft.Office.Interop.Excel;
+using Range = Microsoft.Office.Interop.Excel.Range;
+using DataTable = System.Data.DataTable;
 
 namespace WH_Panel
 {
@@ -19,6 +27,7 @@ namespace WH_Panel
         public List<WHitem> PackedItemsList = new List<WHitem>();
         public DataTable UDtable = new DataTable();
         public DataTable PackedItemsDtable = new DataTable();
+        public TextBox LastInputFromUser = new TextBox();
         public int countItems = 0;
         public int countLoadedFIles = 0;
         int i = 0;
@@ -26,6 +35,7 @@ namespace WH_Panel
         public static Stopwatch stopWatch = new Stopwatch();
         public int colIpnFoundIndex;
         public int colMFPNFoundIndex;
+      
         public List<string> listOfPaths = new List<string>()
             {
                 "\\\\dbr1\\Data\\WareHouse\\2022\\10.2022",
@@ -37,6 +47,8 @@ namespace WH_Panel
         public FrmPackingSlip()
         {
             InitializeComponent();
+            
+
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -44,11 +56,13 @@ namespace WH_Panel
             stopWatch.Reset();
             ResetViews();
             startUpLogic();
-            SetColumsOrder();
+            SetColumsOrder(dataGridView1);
             textBox1.Focus();
         }
         private void ResetViews()
         {
+            LastInputFromUser = textBox1;
+            LastInputFromUser.Focus();
             listBox1.Items.Clear();
             listBox1.Update();
             label13.Text = "No Errors detected.";
@@ -70,7 +84,9 @@ namespace WH_Panel
             dataGridView1.DataSource = null;
             dataGridView2.DataSource= null;
             dataGridView1.Refresh();
-            dataGridView2.Refresh(); 
+            dataGridView2.Refresh();
+            checkBox1.BackColor = Color.LightGreen;
+            checkBox1.Checked = true;
         }
         private void startUpLogic()
         {
@@ -82,39 +98,87 @@ namespace WH_Panel
                 {
                     countLoadedFIles++;
                     string Litem = Path.GetFileName(file);
-                    DataLoader(file, Litem);
+                   
+
+                    if(!FileIsLocked(Litem))
+                    {
+                        DataLoader(file, Litem);
+                    }
+                    else
+                    {
+                        AddErrorousFilesToListOfErrors(Litem);
+                    }
                 }
             }
             PopulateGridView();
-            SetColumsOrder();
+            SetColumsOrder(dataGridView1);
             stopWatch.Stop();
             textBox1.ReadOnly= false;
             textBox11.ReadOnly= false;
             textBox2.ReadOnly= false;
             textBox3.ReadOnly= false;
         }
-        private void SetColumsOrder()
+
+        public bool FileIsLocked(string strFullFileName)
         {
-            dataGridView1.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridView1.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridView1.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridView1.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridView1.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridView1.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridView1.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridView1.Columns[7].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridView1.Columns[8].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridView1.Columns[9].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridView1.Columns["DateOfCreation"].DisplayIndex = 0;
-            dataGridView1.Columns["ProjectName"].DisplayIndex = 1;
-            dataGridView1.Columns["IPN"].DisplayIndex = 2;
-            dataGridView1.Columns["MFPN"].DisplayIndex = 3;
-            dataGridView1.Columns["Description"].DisplayIndex = 4;
-            dataGridView1.Columns["QtyInKit"].DisplayIndex = 5;
-            dataGridView1.Columns["Delta"].DisplayIndex = 6;
-            dataGridView1.Columns["QtyPerUnit"].DisplayIndex = 7;
-            dataGridView1.Columns["Notes"].DisplayIndex = 8;
-            dataGridView1.Columns["Alts"].DisplayIndex = 9;
+            bool blnReturn = false;
+            System.IO.FileStream fs;
+            try
+            {
+                fs = System.IO.File.Open(strFullFileName, System.IO.FileMode.Open, System.IO.FileAccess.Write, System.IO.FileShare.None);
+                fs.Close();
+                fs.Dispose();
+            }
+            catch (System.IO.IOException ex)
+            {
+                blnReturn = true;
+            }
+            return blnReturn;
+        }
+
+        private void SetColumsOrder(DataGridView dgw)
+        {
+            dgw.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[7].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[8].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[9].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns["DateOfCreation"].DisplayIndex = 0;
+            dgw.Columns["ProjectName"].DisplayIndex = 1;
+            dgw.Columns["IPN"].DisplayIndex = 2;
+            dgw.Columns["MFPN"].DisplayIndex = 3;
+            dgw.Columns["Description"].DisplayIndex = 4;
+            dgw.Columns["QtyInKit"].DisplayIndex = 5;
+            dgw.Columns["Delta"].DisplayIndex = 6;
+            dgw.Columns["QtyPerUnit"].DisplayIndex = 7;
+            dgw.Columns["Notes"].DisplayIndex = 8;
+            dgw.Columns["Alts"].DisplayIndex = 9;
+        }
+        private void SetColumsOrderPackedItems(DataGridView dgw)
+        {
+            dgw.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            //dgw.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            //dgw.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            //dgw.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            //dgw.Columns[7].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns["IPN"].DisplayIndex = 0;
+            dgw.Columns["Manufacturer"].Visible = false;
+            dgw.Columns["MFPN"].DisplayIndex = 1;
+            dgw.Columns["Description"].DisplayIndex = 2;
+            dgw.Columns["Stock"].DisplayIndex = 3;
+            dgw.Columns["UpdatedOn"].Visible = false;
+            dgw.Columns["CommentsWHitem"].Visible = false;
+            dgw.Columns["SourceRequester"].Visible = false;
+            dgw.AutoResizeColumns();
+
         }
         private void DataLoader(string fp, string excelFIleName)
         {
@@ -165,13 +229,7 @@ namespace WH_Panel
                     }
                     catch (Exception)
                     {
-                        loadingErrors++;
-                        label13.Text = loadingErrors.ToString() + " Loading Errors detected: ";
-                        label13.BackColor = Color.IndianRed;
-                        label13.Update();
-                        string er = fp;
-                        listBox1.Items.Add(er);
-                        listBox1.Update();
+                        AddErrorousFilesToListOfErrors(fp);
                         conn.Dispose();
                         conn.Close();
                     }
@@ -182,6 +240,18 @@ namespace WH_Panel
                 MessageBox.Show(e.Message);
             }
         }
+
+        private void AddErrorousFilesToListOfErrors(string fp)
+        {
+            loadingErrors++;
+            label13.Text = loadingErrors.ToString() + " Loading Errors detected: ";
+            label13.BackColor = Color.IndianRed;
+            label13.Update();
+            string er = fp;
+            listBox1.Items.Add(er);
+            listBox1.Update();
+        }
+
         private void PopulateGridView()
         {
             IEnumerable<KitHistoryItem> data = KitHistoryItemsList;
@@ -190,12 +260,13 @@ namespace WH_Panel
                 UDtable.Load(reader);
             }
             dataGridView1.DataSource = UDtable;
-            SetColumsOrder();
+            SetColumsOrder(dataGridView1);
             label12.BackColor = Color.LightGreen;
         }
 
         private void PopulatePackedItemsGridView()
         {
+            PackedItemsDtable.Clear();
             IEnumerable<WHitem> data = PackedItemsList;
             using (var reader = ObjectReader.Create(data))
             {
@@ -207,12 +278,15 @@ namespace WH_Panel
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
-            filterViewAndJump2Qty(e);
+            filterViewAndJump2Qty(sender,e); ;
         }
-        private void filterViewAndJump2Qty(KeyEventArgs e)
+        private void filterViewAndJump2Qty(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
+                LastInputFromUser = (TextBox)sender;
+                
+
                 if (dataGridView1.Rows.Count == 1)
                 {
                     txtbQty.Focus();
@@ -222,6 +296,10 @@ namespace WH_Panel
                     dataGridView1.Focus();
                 }
             }
+        }
+        private void textBox2_KeyDown(object sender, KeyEventArgs e)
+        {
+            filterViewAndJump2Qty(sender,e);
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -239,7 +317,7 @@ namespace WH_Panel
                 "%' AND [MFPN] LIKE '%" + textBox2.Text.ToString() +
                 "%' AND [Description] LIKE '%" + textBox3.Text.ToString() + "%' ";
                 dataGridView1.DataSource = dv;
-                SetColumsOrder();
+                SetColumsOrder(dataGridView1);
             }
             catch (Exception)
             {
@@ -390,9 +468,10 @@ namespace WH_Panel
 
                 PackedItemsList.Add(w);
                 PopulatePackedItemsGridView();
+                SetColumsOrderPackedItems(dataGridView2);
 
 
-                ResetAllTexboxes(textBox1);
+                ResetAllTexboxes(LastInputFromUser);
             }
             else
             {
@@ -427,7 +506,7 @@ namespace WH_Panel
                 SendKeys.SendWait("{Enter}");
                 //ComeBackFromPrint();
                 Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
-                textBox1.Focus();
+                LastInputFromUser.Focus();
             }
             catch (Exception e)
             {
@@ -444,6 +523,104 @@ namespace WH_Panel
             label2.BackColor = Color.LightGreen;
             label3.BackColor = Color.LightGreen;
             txtb.Focus();
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+           if( checkBox1.Checked == true)
+            {
+                checkBox1.BackColor = Color.LightGreen;
+                checkBox1.Text="Print Sticker";
+            }
+            else
+            {
+                checkBox1.BackColor = Color.IndianRed;
+                checkBox1.Text = "No sticker needed";
+            }
+            LastInputFromUser.Focus();
+        }
+
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            txtbQty.Focus();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+           
+
+            DialogResult dialogResult = MessageBox.Show("Close the shipment ?", "Complete the shipment procedure", MessageBoxButtons.YesNo);
+            if (dialogResult == DialogResult.Yes)
+            {
+                MessageBox.Show("Shipment sent");
+                string fp = "\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\_template.xlsm";
+                string thesheetName = "PACKING_SLIP";
+              
+                    //DataInserter(fp,thesheetName, PackedItemsList);
+                //EXCELinserter();
+
+
+
+            }
+            else if (dialogResult == DialogResult.No)
+            {
+                LastInputFromUser.Focus();
+            }
+        }
+
+        private void EXCELinserter()
+        {
+            string fp = "\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\_template.xlsm";
+
+            _Application docExcel = new Microsoft.Office.Interop.Excel.Application();
+            docExcel.Visible = false;
+            docExcel.DisplayAlerts = false;
+
+            _Workbook workbooksExcel = docExcel.Workbooks.Open(@fp, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+            _Worksheet worksheetExcel = (_Worksheet)workbooksExcel.ActiveSheet;
+
+            ((Range)worksheetExcel.Cells["12", "A"]).Value2 = "aa";
+            ((Range)worksheetExcel.Cells["12", "B"]).Value2 = "bb";
+
+            workbooksExcel.Save();
+            workbooksExcel.Close(false, Type.Missing, Type.Missing);
+            docExcel.Application.DisplayAlerts = true;
+            docExcel.Application.Quit();
+        }
+
+        private void DataInserter(string fp, string thesheetName,List<WHitem>lst)
+        {
+            try
+            {
+                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=NO;IMEX=0\"";
+                using (OleDbConnection conn = new OleDbConnection(constr))
+                {
+                    conn.Open();
+                    int startRow = 12;
+                    for ( int i =0; i< lst.Count;i++)
+                    {
+                        string stRowID = "A" + startRow+i + ":C" + startRow+i;
+                        //OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$" + stRowID +"] (IPN,MFPN,Description,Stock) values('" + lst[i].IPN + "','" + lst[i].MFPN + "','" + lst[i].Description + "','" + lst[i].Stock + "')", conn);
+
+
+                   
+
+
+
+                        //OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$A12] (F1) VALUES"+lst[i].IPN +")", conn);
+                        OleDbCommand command=new OleDbCommand();
+                        command.Connection= conn;
+                        string sql= "INSERT INTO ["+ thesheetName + "$] (IPN,MFPN,Description,Qty) values('" + lst[i].IPN + "','" + lst[i].MFPN + "','" + lst[i].Description + "','" + lst[i].Stock + "')";
+                        command.CommandText= sql;   
+                        command.ExecuteNonQuery();
+                    }
+                    conn.Close();
+                }
+         }
+            catch (IOException)
+            {
+                MessageBox.Show("Error");
+            }
         }
     }
 }

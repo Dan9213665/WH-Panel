@@ -24,6 +24,9 @@
     <PackageReference Include="System.Data.OleDb" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Office.Interop.Excel">
+      <HintPath>Binaries\excel\Microsoft.Office.Interop.Excel.dll</HintPath>
+    </Reference>
     <Reference Include="Seagull.BarTender.Print">
       <HintPath>Binaries\Seagull\Seagull.BarTender.Print.dll</HintPath>
     </Reference>
