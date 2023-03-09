@@ -927,5 +927,62 @@ namespace WH_Panel
         private void s(object sender, DataGridViewCellEventArgs e)
         {
         }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            List<WHitem> inWHstock = new List<WHitem>();
+            for (int i = 0; i < dataGridView1.RowCount; i++)
+            {
+                WHitem wHitemABC = new WHitem()
+                {
+                    IPN = dataGridView1.Rows[i].Cells[dataGridView1.Columns["IPN"].Index].Value.ToString(),
+                    Manufacturer = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Manufacturer"].Index].Value.ToString(),
+                    MFPN = dataGridView1.Rows[i].Cells[dataGridView1.Columns["MFPN"].Index].Value.ToString(),
+                    Description = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Description"].Index].Value.ToString(),
+                    Stock = int.Parse(dataGridView1.Rows[i].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString()),
+                    UpdatedOn = dataGridView1.Rows[i].Cells[dataGridView1.Columns["UpdatedOn"].Index].Value.ToString(),
+                    CommentsWHitem = dataGridView1.Rows[i].Cells[dataGridView1.Columns["CommentsWHitem"].Index].Value.ToString(),
+                    SourceRequester = dataGridView1.Rows[i].Cells[dataGridView1.Columns["SourceRequester"].Index].Value.ToString()
+                };
+                inWHstock.Add(wHitemABC);
+            }
+            List<WHitem> negatiVEQTYs = new List<WHitem>();
+            for (int i = 0; i < inWHstock.Count; i++)
+            {
+                if (inWHstock[i].Stock < 0)
+                {
+                    negatiVEQTYs.Add(inWHstock[i]);
+                }
+            }
+            List<WHitem> positiveInWH = new List<WHitem>();
+            for (int k = 0; k < inWHstock.Count; k++)
+            {
+                if (inWHstock[k].Stock > 0)
+                {
+                    positiveInWH.Add(inWHstock[k]);
+                }
+            }
+            for (int i = 0; i < negatiVEQTYs.Count; i++)
+            {
+                for (int j = 0; j < positiveInWH.Count; j++)
+                {
+                    if (Math.Abs(negatiVEQTYs[i].Stock) == positiveInWH[j].Stock)
+                    {
+                        positiveInWH.Remove((WHitem)positiveInWH[j]);
+                        break;
+                    }
+                }
+            }
+            IEnumerable<WHitem> WHdata = positiveInWH;
+            DataTable INWH = new DataTable();
+            using (var reader = ObjectReader.Create(WHdata))
+            {
+                INWH.Load(reader);
+            }
+            DataView dv = INWH.DefaultView;
+            dataGridView1.DataSource = dv;
+            dataGridView1.Update();
+            SetSTOCKiewColumsOrder();
+        }
     }
 }

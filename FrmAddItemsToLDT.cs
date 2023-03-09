@@ -162,6 +162,19 @@ namespace WH_Panel
             {
                 searchbyMFPN = textBox2.Text.Substring(2);
             }
+            else if (textBox2.Text.Contains("-") == true)
+            {
+                string[] theSplit = textBox2.Text.ToString().Split("-");
+                if (theSplit[0].Length==3 && theSplit.Length==2)
+                {
+                    searchbyMFPN = theSplit[1];
+                }
+                else
+                {
+                    searchbyMFPN = textBox2.Text;
+                }
+                
+            }
             else if(textBox2.Text.StartsWith("P") == true)
             {
                 searchbyMFPN = textBox2.Text.Substring(1);
