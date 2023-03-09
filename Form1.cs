@@ -149,5 +149,11 @@ namespace WH_Panel
             FrmPackingSlip ps = new FrmPackingSlip();   
             ps.Show();
         }
+
+        private void button14_Click(object sender, EventArgs e)
+        {
+            FrmClientAgnosticWH cl = new FrmClientAgnosticWH();
+            cl.Show();
+        }
     }
 }

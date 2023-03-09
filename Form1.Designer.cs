@@ -58,6 +58,7 @@ namespace WH_Panel
             this.button6 = new System.Windows.Forms.Button();
             this.btnSHILAT = new System.Windows.Forms.Button();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.button14 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.groupBox6.SuspendLayout();
@@ -166,6 +167,7 @@ namespace WH_Panel
             // 
             // groupBox7
             // 
+            this.groupBox7.Controls.Add(this.button14);
             this.groupBox7.Controls.Add(this.button5);
             this.groupBox7.Controls.Add(this.button3);
             this.groupBox7.ForeColor = System.Drawing.Color.White;
@@ -430,6 +432,17 @@ namespace WH_Panel
             this.notifyIcon1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseClick);
             this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
             // 
+            // button14
+            // 
+            this.button14.BackgroundImage = global::WH_Panel.Properties.Resources.database_add_12927;
+            this.button14.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.button14.Location = new System.Drawing.Point(9, 76);
+            this.button14.Name = "button14";
+            this.button14.Size = new System.Drawing.Size(43, 41);
+            this.button14.TabIndex = 12;
+            this.button14.UseVisualStyleBackColor = true;
+            this.button14.Click += new System.EventHandler(this.button14_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -457,6 +470,7 @@ namespace WH_Panel
             this.groupBox5.ResumeLayout(false);
             this.groupBox8.ResumeLayout(false);
             this.ResumeLayout(false);
+
         }
         #endregion
         private Button btnValens;
@@ -489,5 +503,6 @@ namespace WH_Panel
         private GroupBox groupBox8;
         private Button button12;
         private Button button13;
+        private Button button14;
     }
 }
