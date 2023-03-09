@@ -159,11 +159,33 @@ namespace WH_Panel
             {
                 searchByIPN = textBox1.Text.Substring(0, 15);
             }
+            string searchbyMFPN = textBox2.Text;
+            if (textBox2.Text.StartsWith("1P") == true)
+            {
+                searchbyMFPN = textBox2.Text.Substring(2);
+            }
+            else if (textBox2.Text.Contains("-") == true && textBox2.Text.Length > 6)
+            {
+                string[] theSplit = textBox2.Text.ToString().Split("-");
+                if (theSplit[0].Length == 3 && theSplit.Length == 2)
+                {
+                    searchbyMFPN = theSplit[1];
+                }
+                else
+                {
+                    searchbyMFPN = textBox2.Text;
+                }
+
+            }
+            else if (textBox2.Text.StartsWith("P") == true)
+            {
+                searchbyMFPN = textBox2.Text.Substring(1);
+            }
             try
             {
                 DataView dv = avlDTable.DefaultView;
                 dv.RowFilter = "[IPN] LIKE '%" + searchByIPN.ToString() +
-                    "%' AND [MFPN] LIKE '%" + textBox2.Text.ToString() +
+                    "%' AND [MFPN] LIKE '%" + searchbyMFPN.ToString() +
                     "%'";
                 dataGridView2.DataSource = dv;
                 SetColumsOrder();
@@ -335,11 +357,30 @@ namespace WH_Panel
             }
             else if (radioButton4.Checked == true)
             {
-                bool printToWO = false;
-                sorce_req = textBox9.Text;
-                qty = int.Parse(textBox6.Text) * (-1);
-                MoveIntoDATABASE(qty, sorce_req, printToWO);
-                FilterStockDataGridView(textBox10.Text);
+                bool toPrintWO = false;
+                string[] theWOsplit = textBox9.Text.Split("_");
+                sorce_req = theWOsplit[1] + "_" + theWOsplit[2];
+                if (textBox9.Text != string.Empty)
+                {
+                    int outNumber;
+                    bool success = int.TryParse(textBox6.Text, out outNumber);
+                    if (success && outNumber < 15001 && outNumber > 0)
+                    {
+                        int negQty = outNumber * (-1);
+                        MoveIntoDATABASE(negQty, sorce_req, toPrintWO);
+                        FilterStockDataGridView(textBox10.Text);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Input Qty !");
+                        textBox6.Focus();
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("INPUT WO !");
+                    textBox9.Focus();
+                }
             }
         }
         private void ComeBackFromPrint()

@@ -155,6 +155,19 @@ namespace WH_Panel
             {
                 searchbyMFPN = textBox2.Text.Substring(2);
             }
+            else if (textBox2.Text.Contains("-") == true && textBox2.Text.Length > 6)
+            {
+                string[] theSplit = textBox2.Text.ToString().Split("-");
+                if (theSplit[0].Length == 3 && theSplit.Length == 2)
+                {
+                    searchbyMFPN = theSplit[1];
+                }
+                else
+                {
+                    searchbyMFPN = textBox2.Text;
+                }
+
+            }
             else if (textBox2.Text.StartsWith("P") == true)
             {
                 searchbyMFPN = textBox2.Text.Substring(1);
@@ -379,7 +392,8 @@ namespace WH_Panel
             else if (radioButton4.Checked == true)
             {
                 bool toPrintWO = false;
-                sorce_req = textBox9.Text;
+                string[] theWOsplit = textBox9.Text.Split("_");
+                sorce_req = theWOsplit[1] + "_" + theWOsplit[2];
                 if (textBox9.Text != string.Empty)
                 {
                     int outNumber;
