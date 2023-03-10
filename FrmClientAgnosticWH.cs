@@ -1,43 +1,10 @@
 ﻿using FastMember;
-using Microsoft.Office.Interop.Excel;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
+using Seagull.BarTender.Print;
 using System.Data;
 using System.Data.OleDb;
-using System.Drawing;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using DataTable = System.Data.DataTable;
-using Seagull.BarTender.Print;
-using static System.Windows.Forms.DataFormats;
-using System.Xml;
-using System.Threading;
-using static System.Threading.Mutex;
-using System.Security.AccessControl;
-using static System.Security.AccessControl.NativeObjectSecurity;
-using System;
-using System.Threading;
-using System.Security.Principal;
-using Microsoft.VisualBasic;
-using System.ComponentModel.Design;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using Microsoft.VisualBasic.Devices;
-using System.ComponentModel.Design.Serialization;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolBar;
-using TextBox = System.Windows.Forms.TextBox;
-using Seagull.BarTender.PrintServer.Tasks;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
-using System.Reflection.Emit;
 using RadioButton = System.Windows.Forms.RadioButton;
-using System.Runtime.Intrinsics.X86;
+using TextBox = System.Windows.Forms.TextBox;
 
 namespace WH_Panel
 {
@@ -56,10 +23,19 @@ namespace WH_Panel
             
             avlFile = avlParam;
             stockFile = stockParam;
+            textBox8.ReadOnly= true;
             radioButton1.Checked = true;
             comboBox1.SelectedIndex = 1;
             button2_Click(this, new EventArgs());
             button3_Click(this, new EventArgs());
+            comboBox2.Enabled = false;
+            textBox1.Clear();
+            textBox2.Clear();
+            textBox6.Clear();
+            textBox8.Clear();
+            textBox9.Clear();
+            label1.BackColor= Color.LightGreen;
+            label2.BackColor= Color.LightGreen;
             LastInputFromUser = textBox1;
             LastInputFromUser.Focus();
         }
@@ -81,13 +57,6 @@ namespace WH_Panel
             avlFP = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_AVL.xlsx",
             stockFP = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_AVL.xlsx"
         };
-        
-
-
-
-
-
-
         public string avlNETLINE = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_AVL.xlsx";
         public string stockNETLINE = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm";
         public string stockLeader_Tech = @"\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\G.I.Leader_Tech\G.I.Leader_Tech_STOCK.xlsm";
@@ -277,7 +246,7 @@ namespace WH_Panel
                 textBox6.Clear();
             }
         }
-        private void radioButton1_CheckedChanged_1(object sender, EventArgs e)
+        private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
             MoveByRadioColor(sender);
             RadioButton rbtn = sender as RadioButton;
@@ -300,18 +269,19 @@ namespace WH_Panel
                 btnMove.BackColor = Color.IndianRed;
             }
         }
-        private void radioButton2_CheckedChanged_1(object sender, EventArgs e)
+        private void radioButton2_CheckedChanged(object sender, EventArgs e)
         {
             MoveByRadioColor(sender);
             RadioButton rbtn = sender as RadioButton;
             if (rbtn.Checked == true)
             {
+                comboBox2.Enabled = true;
                 textBox8.ReadOnly = false;
                 textBox9.ReadOnly = true;
                 textBox8.Focus();
             }
         }
-        private void radioButton4_CheckedChanged_1(object sender, EventArgs e)
+        private void radioButton4_CheckedChanged(object sender, EventArgs e)
         {
             MoveByRadioColor(sender);
             RadioButton rbtn = sender as RadioButton;
@@ -475,7 +445,7 @@ namespace WH_Panel
                 CommentsWHitem = comboBox1.Text,
                 SourceRequester = sorce_req
             };
-            DataInserter(stockFile, "STOCK", inputWHitem, toPrint);
+            DataInserter(stockFile,"STOCK", inputWHitem, toPrint);
             stockItems.Add(inputWHitem);
             textBox10.Text = inputWHitem.IPN;
             PopulateStockView();
@@ -569,9 +539,9 @@ namespace WH_Panel
                 Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
                 SendKeys.SendWait("^p");
                 SendKeys.SendWait("{Enter}");
-                ComeBackFromPrint();
+                //ComeBackFromPrint();
                 Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
-                LastInputFromUser.Focus();
+                textBox1.Focus();
             }
             catch (Exception e)
             {
@@ -626,7 +596,7 @@ namespace WH_Panel
                 btnMove_Click(this, new EventArgs());
             }
         }
-        private void dataGridView2_CellClick_1(object sender, DataGridViewCellEventArgs e)
+        private void dataGridView2_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             textBox6.Focus();
         }
@@ -981,9 +951,6 @@ namespace WH_Panel
                 MessageBox.Show("Can print only positive quantites !");
             }
         }
-        private void s(object sender, DataGridViewCellEventArgs e)
-        {
-        }
 
         private void button4_Click(object sender, EventArgs e)
         {
@@ -1060,8 +1027,30 @@ namespace WH_Panel
             {
                 MasterReload(avlVALENS, stockVALENS);
             }
-
-
         }
+        private void textBox8_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if(comboBox2.SelectedIndex!=(-1))
+                {
+                    LastInputFromUser.Focus();
+                }
+                else
+                {
+                    MessageBox.Show("SELECT GILT/WS/WR/SH/IF source !");
+                    comboBox2.DroppedDown = true;
+                }
+                
+            }
+           
+        }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            textBox8.Focus();
+        }
+
+       
     }
 }
