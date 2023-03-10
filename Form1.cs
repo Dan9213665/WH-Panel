@@ -44,7 +44,7 @@ namespace WH_Panel
             }
             else
             {
-                MessageBox.Show("Unauthorized access denied");
+                MessageBox.Show("Unauthorized ! Access denied !", "Unauthorized ! Access denied !", MessageBoxButtons.OK,MessageBoxIcon.Stop);
             }
         }
         private void btnFIELDIN_Click(object sender, EventArgs e)

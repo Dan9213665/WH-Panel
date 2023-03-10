@@ -120,7 +120,7 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1210, 714);
+            this.groupBox1.Size = new System.Drawing.Size(1210, 785);
             this.groupBox1.TabIndex = 5;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "AGNOSTIC WAREHOUSE";
@@ -153,7 +153,7 @@
             this.tabControl1.Location = new System.Drawing.Point(3, 19);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1204, 692);
+            this.tabControl1.Size = new System.Drawing.Size(1204, 763);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -163,7 +163,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1196, 664);
+            this.tabPage1.Size = new System.Drawing.Size(1196, 735);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Agnostic";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -188,7 +188,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1190, 658);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1190, 729);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
             // groupBox2
@@ -584,7 +584,7 @@
             this.radioButton2.Name = "radioButton2";
             this.radioButton2.Size = new System.Drawing.Size(111, 51);
             this.radioButton2.TabIndex = 1;
-            this.radioButton2.Text = "MOVE IN (SH/IF)";
+            this.radioButton2.Text = "MOVE IN (source)";
             this.radioButton2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.radioButton2.UseVisualStyleBackColor = false;
             this.radioButton2.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
@@ -623,7 +623,7 @@
             this.groupBox4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox4.Location = new System.Drawing.Point(3, 599);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(1184, 56);
+            this.groupBox4.Size = new System.Drawing.Size(1184, 127);
             this.groupBox4.TabIndex = 2;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Stock VIEW filtered by selected item";
@@ -644,7 +644,7 @@
             this.tableLayoutPanel6.RowCount = 2;
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel6.Size = new System.Drawing.Size(1178, 34);
+            this.tableLayoutPanel6.Size = new System.Drawing.Size(1178, 105);
             this.tableLayoutPanel6.TabIndex = 1;
             // 
             // tableLayoutPanel7
@@ -736,6 +736,7 @@
             this.dataGridView1.RowTemplate.Height = 25;
             this.dataGridView1.Size = new System.Drawing.Size(1166, 114);
             this.dataGridView1.TabIndex = 0;
+            this.dataGridView1.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellDoubleClick);
             // 
             // groupBox5
             // 
@@ -868,7 +869,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1210, 714);
+            this.ClientSize = new System.Drawing.Size(1210, 785);
             this.Controls.Add(this.groupBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmClientAgnosticWH";
