@@ -85,8 +85,10 @@ namespace WH_Panel
             //Form f = new frmkitLabelPrint();
             //f.Show();
             //f.Focus();
-            var fp = @"\\\\dbr1\\Data\\WareHouse\\KitLabel.xlsm";
-            openWHexcelDB(fp);
+            //var fp = @"\\\\dbr1\\Data\\WareHouse\\KitLabel.xlsm";
+            //openWHexcelDB(fp);
+            frmkitLabelPrint frmkit = new frmkitLabelPrint();
+            frmkit.Show();
         }
         private void button2_Click(object sender, EventArgs e)
         {

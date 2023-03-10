@@ -33,16 +33,16 @@ namespace WH_Panel
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.btnWorkProgramm = new System.Windows.Forms.Button();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.button11 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
-            this.button14 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.button13 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
+            this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.button14 = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.button7 = new System.Windows.Forms.Button();
             this.btnLEADERTECH = new System.Windows.Forms.Button();
@@ -59,17 +59,16 @@ namespace WH_Panel
             this.button6 = new System.Windows.Forms.Button();
             this.btnSHILAT = new System.Windows.Forms.Button();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
-            this.groupBox9 = new System.Windows.Forms.GroupBox();
             this.groupBox1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox7.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.groupBox9.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.groupBox8.SuspendLayout();
-            this.groupBox9.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnValens
@@ -135,7 +134,6 @@ namespace WH_Panel
             // 
             // groupBox6
             // 
-            this.groupBox6.Controls.Add(this.button11);
             this.groupBox6.Controls.Add(this.button1);
             this.groupBox6.ForeColor = System.Drawing.Color.White;
             this.groupBox6.Location = new System.Drawing.Point(3, 134);
@@ -143,18 +141,7 @@ namespace WH_Panel
             this.groupBox6.Size = new System.Drawing.Size(132, 125);
             this.groupBox6.TabIndex = 18;
             this.groupBox6.TabStop = false;
-            this.groupBox6.Text = "Print";
-            // 
-            // button11
-            // 
-            this.button11.BackgroundImage = global::WH_Panel.Properties.Resources.Sticker;
-            this.button11.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.button11.Location = new System.Drawing.Point(6, 73);
-            this.button11.Name = "button11";
-            this.button11.Size = new System.Drawing.Size(120, 46);
-            this.button11.TabIndex = 8;
-            this.button11.UseVisualStyleBackColor = true;
-            this.button11.Click += new System.EventHandler(this.button11_Click);
+            this.groupBox6.Text = "KIT label";
             // 
             // button1
             // 
@@ -163,7 +150,7 @@ namespace WH_Panel
             this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.button1.Location = new System.Drawing.Point(6, 17);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(120, 58);
+            this.button1.Size = new System.Drawing.Size(120, 100);
             this.button1.TabIndex = 7;
             this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.button1_Click_2);
@@ -179,18 +166,6 @@ namespace WH_Panel
             this.groupBox7.TabIndex = 19;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Find";
-            // 
-            // button14
-            // 
-            this.button14.BackgroundImage = global::WH_Panel.Properties.Resources.database_add_12927;
-            this.button14.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.button14.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button14.Location = new System.Drawing.Point(3, 19);
-            this.button14.Name = "button14";
-            this.button14.Size = new System.Drawing.Size(128, 103);
-            this.button14.TabIndex = 12;
-            this.button14.UseVisualStyleBackColor = true;
-            this.button14.Click += new System.EventHandler(this.button14_Click);
             // 
             // button5
             // 
@@ -258,6 +233,29 @@ namespace WH_Panel
             this.button2.TabIndex = 8;
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // groupBox9
+            // 
+            this.groupBox9.Controls.Add(this.button14);
+            this.groupBox9.ForeColor = System.Drawing.Color.White;
+            this.groupBox9.Location = new System.Drawing.Point(283, 3);
+            this.groupBox9.Name = "groupBox9";
+            this.groupBox9.Size = new System.Drawing.Size(134, 125);
+            this.groupBox9.TabIndex = 21;
+            this.groupBox9.TabStop = false;
+            this.groupBox9.Text = "AGNOSTIC WH";
+            // 
+            // button14
+            // 
+            this.button14.BackgroundImage = global::WH_Panel.Properties.Resources.database_add_12927;
+            this.button14.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.button14.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.button14.Location = new System.Drawing.Point(3, 19);
+            this.button14.Name = "button14";
+            this.button14.Size = new System.Drawing.Size(128, 103);
+            this.button14.TabIndex = 12;
+            this.button14.UseVisualStyleBackColor = true;
+            this.button14.Click += new System.EventHandler(this.button14_Click);
             // 
             // groupBox2
             // 
@@ -446,17 +444,6 @@ namespace WH_Panel
             this.notifyIcon1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseClick);
             this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
             // 
-            // groupBox9
-            // 
-            this.groupBox9.Controls.Add(this.button14);
-            this.groupBox9.ForeColor = System.Drawing.Color.White;
-            this.groupBox9.Location = new System.Drawing.Point(283, 3);
-            this.groupBox9.Name = "groupBox9";
-            this.groupBox9.Size = new System.Drawing.Size(134, 125);
-            this.groupBox9.TabIndex = 21;
-            this.groupBox9.TabStop = false;
-            this.groupBox9.Text = "AGNOSTIC WH";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -479,11 +466,11 @@ namespace WH_Panel
             this.groupBox6.ResumeLayout(false);
             this.groupBox7.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
+            this.groupBox9.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
             this.groupBox8.ResumeLayout(false);
-            this.groupBox9.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -514,7 +501,6 @@ namespace WH_Panel
         private Button button10;
         private GroupBox groupBox6;
         private GroupBox groupBox7;
-        private Button button11;
         private GroupBox groupBox8;
         private Button button12;
         private Button button13;
