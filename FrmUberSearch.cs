@@ -16,6 +16,9 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Diagnostics;
 using Label = System.Windows.Forms.Label;
+using Microsoft.Office.Interop.Excel;
+using DataTable = System.Data.DataTable;
+
 namespace WH_Panel
 {
     public partial class FrmUberSearch : Form
@@ -53,7 +56,7 @@ namespace WH_Panel
             label1.BackColor = Color.IndianRed;
             var listOfWareHouses = new KeyValueList<string, string>
                    {
-                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm", "STOCK_VALENS" },
+                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm", "STOCK" },
                         {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm","STOCK" },
                         {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm","STOCK" },
                         {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\FIELDIN\\FIELDIN_STOCK.xlsm","STOCK" },
@@ -126,8 +129,6 @@ namespace WH_Panel
             dataGridView1.DataSource = UDtable;
             SetColumsOrder();
             label1.BackColor = Color.LightGreen;
-            //dataGridView1.AutoResizeColumns();
-            //dataGridView1.Update();
         }
         private void SetColumsOrder()
         {
@@ -313,7 +314,7 @@ namespace WH_Panel
         {
             if (Environment.MachineName.ToString() == "RT12")
             {
-                var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_STOCK.xlsm";
+                var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm";
                 openWHexcelDB(fp);
             }
             else

@@ -59,10 +59,14 @@ namespace WH_Panel
         }
         private void btnPrintKitLabel_Click(object sender, EventArgs e)
         {
-            if(txtbPasteCPQ.Text!= null)
+            if(txtbPasteCPQ.Text!= string.Empty)
             {
                 EXCELinserter(txtbPasteCPQ.Text);
-            }            
+            }
+            else
+            {
+                MessageBox.Show("Input file name or browse to file to print the KIT label !","",MessageBoxButtons.OK,MessageBoxIcon.Exclamation);
+            }
         }
 
         private void EXCELinserter(string kitName)
