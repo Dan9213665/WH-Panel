@@ -157,5 +157,11 @@ namespace WH_Panel
             FrmClientAgnosticWH cl = new FrmClientAgnosticWH();
             cl.Show();
         }
+
+        private void button11_Click_1(object sender, EventArgs e)
+        {
+            FrmBOM frmBOM = new FrmBOM();
+            frmBOM.Show();
+        }
     }
 }

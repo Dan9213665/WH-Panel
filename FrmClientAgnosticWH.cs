@@ -158,8 +158,9 @@ namespace WH_Panel
             {
                 searchByIPN = textBox1.Text.Substring(0, 15);
             }
+
             string searchbyMFPN = textBox2.Text;
-            if (textBox2.Text.StartsWith("1P") == true)
+             if(textBox2.Text.StartsWith("1P") == true)
             {
                 searchbyMFPN = textBox2.Text.Substring(2);
             }

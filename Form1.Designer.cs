@@ -46,6 +46,8 @@ namespace WH_Panel
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.button7 = new System.Windows.Forms.Button();
             this.btnLEADERTECH = new System.Windows.Forms.Button();
+            this.groupBox10 = new System.Windows.Forms.GroupBox();
+            this.button11 = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.button9 = new System.Windows.Forms.Button();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
@@ -66,6 +68,7 @@ namespace WH_Panel
             this.groupBox3.SuspendLayout();
             this.groupBox9.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.groupBox10.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.groupBox8.SuspendLayout();
@@ -106,6 +109,7 @@ namespace WH_Panel
             this.flowLayoutPanel1.Controls.Add(this.groupBox3);
             this.flowLayoutPanel1.Controls.Add(this.groupBox9);
             this.flowLayoutPanel1.Controls.Add(this.groupBox2);
+            this.flowLayoutPanel1.Controls.Add(this.groupBox10);
             this.flowLayoutPanel1.Controls.Add(this.groupBox4);
             this.flowLayoutPanel1.Controls.Add(this.groupBox5);
             this.flowLayoutPanel1.Controls.Add(this.groupBox8);
@@ -293,13 +297,38 @@ namespace WH_Panel
             this.btnLEADERTECH.UseVisualStyleBackColor = false;
             this.btnLEADERTECH.Click += new System.EventHandler(this.btnLEADERTECH_Click);
             // 
+            // groupBox10
+            // 
+            this.groupBox10.BackColor = System.Drawing.Color.Black;
+            this.groupBox10.Controls.Add(this.button11);
+            this.groupBox10.ForeColor = System.Drawing.Color.White;
+            this.groupBox10.Location = new System.Drawing.Point(423, 3);
+            this.groupBox10.Name = "groupBox10";
+            this.groupBox10.Size = new System.Drawing.Size(132, 125);
+            this.groupBox10.TabIndex = 22;
+            this.groupBox10.TabStop = false;
+            this.groupBox10.Text = "Boomer";
+            // 
+            // button11
+            // 
+            this.button11.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button11.BackgroundImage")));
+            this.button11.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button11.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.button11.ForeColor = System.Drawing.Color.Black;
+            this.button11.Location = new System.Drawing.Point(3, 19);
+            this.button11.Name = "button11";
+            this.button11.Size = new System.Drawing.Size(126, 103);
+            this.button11.TabIndex = 0;
+            this.button11.UseVisualStyleBackColor = true;
+            this.button11.Click += new System.EventHandler(this.button11_Click_1);
+            // 
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.button9);
             this.groupBox4.Controls.Add(this.btnValens);
             this.groupBox4.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.groupBox4.ForeColor = System.Drawing.Color.White;
-            this.groupBox4.Location = new System.Drawing.Point(423, 3);
+            this.groupBox4.Location = new System.Drawing.Point(423, 134);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(132, 125);
             this.groupBox4.TabIndex = 16;
@@ -322,7 +351,7 @@ namespace WH_Panel
             this.groupBox5.Controls.Add(this.button10);
             this.groupBox5.Controls.Add(this.btnNETLINE);
             this.groupBox5.ForeColor = System.Drawing.Color.White;
-            this.groupBox5.Location = new System.Drawing.Point(423, 134);
+            this.groupBox5.Location = new System.Drawing.Point(561, 3);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(132, 125);
             this.groupBox5.TabIndex = 17;
@@ -358,7 +387,7 @@ namespace WH_Panel
             this.groupBox8.Controls.Add(this.button12);
             this.groupBox8.Controls.Add(this.btnVAYYAR);
             this.groupBox8.ForeColor = System.Drawing.Color.White;
-            this.groupBox8.Location = new System.Drawing.Point(561, 3);
+            this.groupBox8.Location = new System.Drawing.Point(561, 134);
             this.groupBox8.Name = "groupBox8";
             this.groupBox8.Size = new System.Drawing.Size(131, 125);
             this.groupBox8.TabIndex = 20;
@@ -395,7 +424,7 @@ namespace WH_Panel
             this.btnFIELDIN.BackgroundImage = global::WH_Panel.Properties.Resources.Fieldin;
             this.btnFIELDIN.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.btnFIELDIN.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnFIELDIN.Location = new System.Drawing.Point(561, 134);
+            this.btnFIELDIN.Location = new System.Drawing.Point(699, 3);
             this.btnFIELDIN.Name = "btnFIELDIN";
             this.btnFIELDIN.Size = new System.Drawing.Size(132, 60);
             this.btnFIELDIN.TabIndex = 2;
@@ -406,7 +435,7 @@ namespace WH_Panel
             // 
             this.button4.BackgroundImage = global::WH_Panel.Properties.Resources.CIS;
             this.button4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.button4.Location = new System.Drawing.Point(561, 200);
+            this.button4.Location = new System.Drawing.Point(699, 69);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(132, 61);
             this.button4.TabIndex = 10;
@@ -417,7 +446,7 @@ namespace WH_Panel
             // 
             this.button6.BackgroundImage = global::WH_Panel.Properties.Resources.STM;
             this.button6.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.button6.Location = new System.Drawing.Point(699, 3);
+            this.button6.Location = new System.Drawing.Point(699, 136);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(132, 60);
             this.button6.TabIndex = 12;
@@ -429,7 +458,7 @@ namespace WH_Panel
             this.btnSHILAT.BackColor = System.Drawing.Color.White;
             this.btnSHILAT.BackgroundImage = global::WH_Panel.Properties.Resources.shilat1;
             this.btnSHILAT.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.btnSHILAT.Location = new System.Drawing.Point(699, 69);
+            this.btnSHILAT.Location = new System.Drawing.Point(699, 202);
             this.btnSHILAT.Name = "btnSHILAT";
             this.btnSHILAT.Size = new System.Drawing.Size(132, 56);
             this.btnSHILAT.TabIndex = 6;
@@ -468,6 +497,7 @@ namespace WH_Panel
             this.groupBox3.ResumeLayout(false);
             this.groupBox9.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
+            this.groupBox10.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
             this.groupBox8.ResumeLayout(false);
@@ -506,5 +536,7 @@ namespace WH_Panel
         private Button button13;
         private Button button14;
         private GroupBox groupBox9;
+        private GroupBox groupBox10;
+        private Button button11;
     }
 }

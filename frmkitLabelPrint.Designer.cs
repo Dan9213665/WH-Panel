@@ -47,7 +47,7 @@
             this.groupBox1.Size = new System.Drawing.Size(518, 113);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Browse to file or Paste CUSTOMER_PN_QTY";
+            this.groupBox1.Text = "Browse to file or Paste BOM filename  (client_kit name_qty)";
             // 
             // btnBrowseToFile
             // 
@@ -106,6 +106,7 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
+
         }
         #endregion
         private GroupBox groupBox1;
