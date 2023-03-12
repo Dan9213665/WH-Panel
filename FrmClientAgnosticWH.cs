@@ -245,6 +245,7 @@ namespace WH_Panel
                 textBox4.Text = dataGridView2.Rows[rowindex].Cells["MFPN"].Value.ToString();
                 textBox5.Text = dataGridView2.Rows[rowindex].Cells["Description"].Value.ToString();
                 textBox6.Clear();
+                FilterStockDataGridView(textBox3.Text);
             }
         }
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
@@ -449,6 +450,7 @@ namespace WH_Panel
             DataInserter(stockFile,"STOCK", inputWHitem, toPrint);
             stockItems.Add(inputWHitem);
             textBox10.Text = inputWHitem.IPN;
+            textBox10.BackColor = Color.LightGreen;
             PopulateStockView();
         }
         private void DataInserter(string fp, string thesheetName, WHitem wHitem, bool toPrintOrNotToPrint)
@@ -600,6 +602,13 @@ namespace WH_Panel
         private void dataGridView2_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             textBox6.Focus();
+            if (dataGridView2.SelectedCells.Count > 0)
+            {
+                int rowindex = dataGridView2.CurrentCell.RowIndex;
+                int columnindex = dataGridView2.CurrentCell.ColumnIndex;
+                string cellValue = dataGridView2.Rows[rowindex].Cells[dataGridView2.Columns["IPN"].Index].Value.ToString();
+                FilterStockDataGridView(cellValue);
+            }
         }
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
@@ -609,6 +618,7 @@ namespace WH_Panel
                 if (dataGridView2.Rows.Count == 1)
                 {
                     textBox6.Focus();
+
                 }
                 else
                 {
@@ -745,6 +755,7 @@ namespace WH_Panel
         {
             if (textBox3.Text != string.Empty)
             {
+                
                 try
                 {
                     int balance = 0;
@@ -754,6 +765,7 @@ namespace WH_Panel
                     dataGridView1.DataSource = dv;
                     dataGridView1.Update();
                     SetSTOCKiewColumsOrder();
+                    
                     List<int> qtys = new List<int>();
                     for (int i = 0; i < dataGridView1.RowCount; i++)
                     {
@@ -896,6 +908,8 @@ namespace WH_Panel
         private void textBox6_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
+            textBox10.Text = textBox3.Text;
+            textBox10.BackColor = Color.IndianRed;
         }
         private void textBox6_Leave(object sender, EventArgs e)
         {

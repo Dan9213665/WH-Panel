@@ -126,30 +126,36 @@ namespace WH_Panel
                         {
                             while (reader.Read())
                             {
-                                KitHistoryItem abc = new KitHistoryItem
-                                {
-                                    DateOfCreation = cleanedUpSheetName,
-                                    ProjectName = excelFIleName,
-                                    IPN = reader[1].ToString(),
-                                    MFPN = reader[2].ToString(),
-                                    Description = reader[3].ToString(),
-                                    QtyInKit = reader[4].ToString(),
-                                    Delta = reader[5].ToString(),
-                                    QtyPerUnit = reader[7].ToString(),
-                                    Notes = reader[8].ToString(),
-                                    Alts = reader[9].ToString()
-                                };
-                                i ++;
-                                countItems = i;
-                                if(int.Parse(abc.Delta)>=0)
-                                {
-                                    SufficientItemsList.Add(abc);
-                                }
-                                else
-                                {
-                                    MissingItemsList.Add(abc);
-                                }
-                                
+                                int del = 0;
+                                bool delPar = int.TryParse(reader[5].ToString(), out del);
+                                int qtk = 0;
+                                bool qtkPar= int.TryParse(reader[4].ToString(), out qtk);
+                                int qpu = 0;
+                                bool qpuPar= int.TryParse(reader[7].ToString(), out qpu);
+                               
+                                    KitHistoryItem abc = new KitHistoryItem
+                                    {
+                                        DateOfCreation = cleanedUpSheetName,
+                                        ProjectName = excelFIleName,
+                                        IPN = reader[1].ToString(),
+                                        MFPN = reader[2].ToString(),
+                                        Description = reader[3].ToString(),
+                                        QtyInKit = qtk,
+                                        Delta = del,
+                                        QtyPerUnit = qpu,
+                                        Notes = reader[8].ToString(),
+                                        Alts = reader[9].ToString()
+                                    };
+                                    i++;
+                                    countItems = i;
+                                    if (abc.Delta >= 0)
+                                    {
+                                        SufficientItemsList.Add(abc);
+                                    }
+                                    else
+                                    {
+                                        MissingItemsList.Add(abc);
+                                    }
                             }
                         }
                         conn.Dispose();
@@ -284,14 +290,20 @@ namespace WH_Panel
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
-            if (dataGridView1.SelectedCells.Count ==1)
+
+            if (e.KeyCode == Keys.Enter)
             {
-                txtbQtyToAdd.Focus();
+                if (dataGridView1.SelectedCells.Count == 1)
+                {
+                    txtbQtyToAdd.Focus();
+                }
+                else
+                {
+                    dataGridView1.Focus();
+                }
             }
-            else
-            {
-                dataGridView1.Focus();
-            }
+
+         
         }
         private static void txtbColorGreenOnEnter(object sender)
         {
@@ -342,6 +354,20 @@ namespace WH_Panel
         private void txtbQtyToAdd_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave((TextBox)sender);
+        }
+
+        private void btnPrintSticker_Click(object sender, EventArgs e)
+        {
+            KitHistoryItem w = MissingItemsList.FirstOrDefault(r => r.IPN == txtbSelIPN.Text);
+            updateQtyInBomFile(w) ;
+        }
+
+        private void updateQtyInBomFile(KitHistoryItem w)
+        {
+            if(w.QtyInKit>w.QtyPerUnit)
+            {
+
+            }
         }
     }
 }

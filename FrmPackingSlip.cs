@@ -200,9 +200,9 @@ namespace WH_Panel
                                     IPN = reader[1].ToString(),
                                     MFPN = reader[2].ToString(),
                                     Description = reader[3].ToString(),
-                                    QtyInKit = reader[4].ToString(),
-                                    Delta = reader[5].ToString(),
-                                    QtyPerUnit = reader[7].ToString(),
+                                    QtyInKit = int.Parse(reader[4].ToString()),
+                                    Delta = int.Parse(reader[5].ToString()),
+                                    QtyPerUnit = int.Parse(reader[7].ToString()),
                                     Notes = reader[8].ToString(),
                                     Alts = reader[9].ToString()
                                 };

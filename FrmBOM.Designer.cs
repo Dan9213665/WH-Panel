@@ -687,6 +687,7 @@
             this.btnPrintSticker.Size = new System.Drawing.Size(207, 72);
             this.btnPrintSticker.TabIndex = 4;
             this.btnPrintSticker.UseVisualStyleBackColor = true;
+            this.btnPrintSticker.Click += new System.EventHandler(this.btnPrintSticker_Click);
             // 
             // checkBox1
             // 
