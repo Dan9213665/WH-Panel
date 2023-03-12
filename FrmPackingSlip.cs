@@ -193,6 +193,13 @@ namespace WH_Panel
                         {
                             while (reader.Read())
                             {
+                                int del = 0;
+                                bool delPar = int.TryParse(reader[5].ToString(), out del);
+                                int qtk = 0;
+                                bool qtkPar = int.TryParse(reader[4].ToString(), out qtk);
+                                int qpu = 0;
+                                bool qpuPar = int.TryParse(reader[7].ToString(), out qpu);
+
                                 KitHistoryItem abc = new KitHistoryItem
                                 {
                                     DateOfCreation = cleanedUpSheetName,
@@ -200,9 +207,9 @@ namespace WH_Panel
                                     IPN = reader[1].ToString(),
                                     MFPN = reader[2].ToString(),
                                     Description = reader[3].ToString(),
-                                    QtyInKit = int.Parse(reader[4].ToString()),
-                                    Delta = int.Parse(reader[5].ToString()),
-                                    QtyPerUnit = int.Parse(reader[7].ToString()),
+                                    QtyInKit = qtk,
+                                    Delta = del,
+                                    QtyPerUnit = qpu,
                                     Notes = reader[8].ToString(),
                                     Alts = reader[9].ToString()
                                 };
