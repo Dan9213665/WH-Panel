@@ -67,7 +67,20 @@ namespace WH_Panel
             sufficientUDtable.Clear();
             dataGridView2.DataSource = null;
             dataGridView2.Refresh();
+            //foreach (TextBox tb in this.Controls.OfType<TextBox>())
+            //{
+            //    tb.Enter += new System.EventHandler(Tb_Enter); ;
+            // }
         }
+
+        //private void Tb_Enter(object? sender, EventArgs e)
+        //{
+        //    if((TextBox)sender!=null)
+        //    {
+        //        txtbColorGreenOnEnter((TextBox)sender);
+        //    }
+           
+        //}
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -151,6 +164,7 @@ namespace WH_Panel
                         textBox1.ReadOnly= false;
                         textBox2.ReadOnly= false;
                         textBox3.ReadOnly= false;
+                        textBox1.Focus();
                     }
                     catch (Exception)
                     {
@@ -252,6 +266,82 @@ namespace WH_Panel
             textBox1.Text = string.Empty;
             label1.BackColor = Color.LightGreen;
             textBox1.Focus();
+        }
+
+        private void dataGridView1_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedCells.Count > 0)
+            {
+                int rowindex = dataGridView1.CurrentCell.RowIndex;
+                //int columnindex = dataGridView1.CurrentCell.ColumnIndex;
+                //string cellValue = dataGridView1.Rows[rowindex].Cells[columnindex].Value.ToString();
+                txtbSelIPN.Text = dataGridView1.Rows[rowindex].Cells["IPN"].Value.ToString();
+                txtbSelMFPN.Text = dataGridView1.Rows[rowindex].Cells["MFPN"].Value.ToString();
+                txtbSelDes.Text = dataGridView1.Rows[rowindex].Cells["Description"].Value.ToString();
+                txtbQtyToAdd.Clear();
+            }
+        }
+
+        private void textBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (dataGridView1.SelectedCells.Count ==1)
+            {
+                txtbQtyToAdd.Focus();
+            }
+            else
+            {
+                dataGridView1.Focus();
+            }
+        }
+        private static void txtbColorGreenOnEnter(object sender)
+        {
+            TextBox? tb = (TextBox)sender;
+            tb.BackColor = Color.LightGreen;
+        }
+        private static void txtbColorWhiteOnLeave(object sender)
+        {
+            TextBox? tb = sender as TextBox;
+            tb.BackColor = Color.White;
+        }
+
+        private void textBox1_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter((TextBox)sender);
+        }
+
+        private void textBox2_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter((TextBox)sender);
+        }
+
+        private void textBox3_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter((TextBox)sender);
+        }
+
+        private void txtbQtyToAdd_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter((TextBox)sender);
+        }
+
+        private void textBox1_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave((TextBox)sender);
+        }
+
+        private void textBox2_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave((TextBox)sender);
+        }
+
+        private void textBox3_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave((TextBox)sender);
+        }
+
+        private void txtbQtyToAdd_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave((TextBox)sender);
         }
     }
 }
