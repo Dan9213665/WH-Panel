@@ -18,6 +18,10 @@ using Seagull.Framework.OS;
 using Microsoft.Office.Interop.Excel;
 using Range = Microsoft.Office.Interop.Excel.Range;
 using DataTable = System.Data.DataTable;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Menu;
+using System.Xml.Serialization;
+using System.Xml;
+
 namespace WH_Panel
 {
     public partial class FrmPackingSlip : Form
@@ -52,6 +56,7 @@ namespace WH_Panel
             startUpLogic();
             SetColumsOrder(dataGridView1);
             textBox1.Focus();
+            button2.Enabled = true;
         }
         private void ResetViews()
         {
@@ -435,6 +440,7 @@ namespace WH_Panel
                     printSticker(w);
                 }
                 PackedItemsList.Add(w);
+                addToXML();
                 PopulatePackedItemsGridView();
                 SetColumsOrderPackedItems(dataGridView2);
                 ResetAllTexboxes(LastInputFromUser);
@@ -619,6 +625,75 @@ namespace WH_Panel
         private void btnPrintSticker_Click_1(object sender, EventArgs e)
         {
 
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            
+            loadFromXML();
+        }
+        private void addToXML()
+        {
+            //List<WHitem> allData = new List<WHitem>();
+            //allData.AddRange(PackedItemsList);
+            string s = SerializeToXml(PackedItemsList);
+            XmlDocument xdoc = new XmlDocument();
+
+            string theTimeStamp = DateTime.Now.ToString("_yyMMdd");
+            string theLogFileName = "\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\PackedItemsInProgress" + theTimeStamp + ".log";
+            try
+            {
+                xdoc.Load(theLogFileName);
+                xdoc.LoadXml(s);
+                
+                xdoc.Save(theLogFileName);
+            }
+            catch (Exception)
+            {
+                xdoc.LoadXml(s);
+                xdoc.Save(theLogFileName);
+            }
+        }
+        private void loadFromXML()
+        {
+            openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS";
+            openFileDialog1.Filter = "LOG files(*.log) | *.log";
+            openFileDialog1.Multiselect = false;
+            List<WHitem> BomItemS = new List<WHitem>();
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                string foldefileName = openFileDialog1.FileName;
+                //label1.Text += foldefileName.ToString() + "\n";
+                //groupBox2.Text += foldefileName.ToString() + " ";
+                XmlSerializer serializer = new XmlSerializer(typeof(List<WHitem>));
+                using (StreamReader reader = new StreamReader(openFileDialog1.FileName))
+                {
+                    BomItemS = (List<WHitem>)serializer.Deserialize(reader);
+                }
+            }
+            if (BomItemS != null && BomItemS.Count > 0)
+            {
+                for (int i = 0; i < BomItemS.Count; i++)
+                {
+                    PackedItemsList.Add(BomItemS[i]);
+                }
+                PopulatePackedItemsGridView();
+                SetColumsOrderPackedItems(dataGridView2);
+                ResetAllTexboxes(LastInputFromUser);
+            }
+            
+        }
+        public string SerializeToXml(object input)
+        {
+            XmlSerializer ser = new XmlSerializer(input.GetType(), "");
+            string result = string.Empty;
+            using (MemoryStream memStm = new MemoryStream())
+            {
+                ser.Serialize(memStm, input);
+                memStm.Position = 0;
+                result = new StreamReader(memStm).ReadToEnd();
+            }
+            return result;
         }
     }
 }
