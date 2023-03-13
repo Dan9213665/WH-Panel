@@ -675,6 +675,7 @@
             this.txtbQtyToAdd.TabIndex = 3;
             this.txtbQtyToAdd.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.txtbQtyToAdd.Enter += new System.EventHandler(this.txtbQtyToAdd_Enter);
+            this.txtbQtyToAdd.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtbQtyToAdd_KeyDown);
             this.txtbQtyToAdd.Leave += new System.EventHandler(this.txtbQtyToAdd_Leave);
             // 
             // btnPrintSticker
@@ -703,6 +704,7 @@
             this.checkBox1.Text = "Print Sticker";
             this.checkBox1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // openFileDialog1
             // 

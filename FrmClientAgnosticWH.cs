@@ -403,10 +403,19 @@ namespace WH_Panel
             else if (radioButton4.Checked == true)
             {
                 bool toPrintWO = false;
-                string[] theWOsplit = textBox9.Text.Split("_");
-                sorce_req = theWOsplit[1] + "_" + theWOsplit[2];
+              
                 if (textBox9.Text != string.Empty)
                 {
+                    if (textBox9.Text.Contains("_"))
+                    {
+                        string[] theWOsplit = textBox9.Text.Split("_");
+                        sorce_req = theWOsplit[1] + "_" + theWOsplit[2];
+                    }
+                    else
+                    {
+                        sorce_req = textBox9.Text;
+                    }
+
                     int outNumber;
                     bool success = int.TryParse(textBox6.Text, out outNumber);
                     if (success && outNumber < 15001 && outNumber > 0)

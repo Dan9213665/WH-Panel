@@ -141,7 +141,7 @@
             this.comboBox3.Location = new System.Drawing.Point(150, 0);
             this.comboBox3.Name = "comboBox3";
             this.comboBox3.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.comboBox3.Size = new System.Drawing.Size(255, 40);
+            this.comboBox3.Size = new System.Drawing.Size(321, 40);
             this.comboBox3.Sorted = true;
             this.comboBox3.TabIndex = 7;
             this.comboBox3.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);

@@ -101,7 +101,7 @@ namespace WH_Panel
                                 {
                                     countItems = i;
                                     label1.Text = "Rows:" + (countItems).ToString();
-                                    if (countItems % 1000 == 0)
+                                    if (countItems % 5000 == 0)
                                     { label1.Update(); }
                                     wHitems.Add(abc);
                                 }

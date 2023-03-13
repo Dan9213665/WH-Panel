@@ -302,8 +302,6 @@ namespace WH_Panel
                     dataGridView1.Focus();
                 }
             }
-
-         
         }
         private static void txtbColorGreenOnEnter(object sender)
         {
@@ -360,6 +358,7 @@ namespace WH_Panel
         {
             KitHistoryItem w = MissingItemsList.FirstOrDefault(r => r.IPN == txtbSelIPN.Text);
             updateQtyInBomFile(w) ;
+            MessageBox.Show("Test");
         }
 
         private void updateQtyInBomFile(KitHistoryItem w)
@@ -367,6 +366,62 @@ namespace WH_Panel
             if(w.QtyInKit>w.QtyPerUnit)
             {
 
+            }
+        }
+
+        private void txtbQtyToAdd_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                btnPrintSticker_Click(sender, e);
+            }
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox1.Checked == true)
+            {
+                checkBox1.BackColor = Color.LightGreen;
+                checkBox1.Text = "Print Sticker";
+            }
+            else
+            {
+                checkBox1.BackColor = Color.IndianRed;
+                checkBox1.Text = "No sticker needed";
+            }
+            txtbQtyToAdd.Focus();
+        }
+        private void printSticker(WHitem wHitem)
+        {
+            try
+            {
+                string userName = Environment.UserName;
+                string fp = @"C:\\Users\\" + userName + "\\Desktop\\Print_Stickers.xlsx"; // //////Print_StickersWH.xlsm
+                string thesheetName = "Sheet1";
+                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+                OleDbConnection conn = new OleDbConnection(constr);
+                OleDbCommand cmd = new OleDbCommand();
+                cmd.Connection = conn;
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @UPDATEDON";
+                cmd.Parameters.AddWithValue("@PN", wHitem.IPN);
+                cmd.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
+                cmd.Parameters.AddWithValue("@ItemDesc", wHitem.Description);
+                cmd.Parameters.AddWithValue("@QTY", wHitem.Stock);
+                cmd.Parameters.AddWithValue("@UPDATEDON", wHitem.UpdatedOn);
+                conn.Open();
+                cmd.ExecuteNonQuery();
+                conn.Close();
+                Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
+                SendKeys.SendWait("^p");
+                SendKeys.SendWait("{Enter}");
+                //ComeBackFromPrint();
+                Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
+                //LastInputFromUser.Focus();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Sticker printing failed : " + e.Message);
             }
         }
     }

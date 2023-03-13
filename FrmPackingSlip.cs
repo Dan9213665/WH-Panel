@@ -547,19 +547,28 @@ namespace WH_Panel
                 for (int i = 0; i < lst.Count; i++)
                 {
                     ((Range)worksheetExcel.Cells[startRow + i, "A"]).Value2 = lst[i].IPN.ToString();
+                    ((Range)worksheetExcel.Cells[startRow + i, "A"]).BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
                     ((Range)worksheetExcel.Cells[startRow + i, "B"]).Value2 = lst[i].MFPN.ToString();
+                    ((Range)worksheetExcel.Cells[startRow + i, "B"]).BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
                     ((Range)worksheetExcel.Cells[startRow + i, "C"]).Value2 = lst[i].Description.ToString();
+                    ((Range)worksheetExcel.Cells[startRow + i, "C"]).BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
                     ((Range)worksheetExcel.Cells[startRow + i, "D"]).Value2 = lst[i].Stock;
+                    ((Range)worksheetExcel.Cells[startRow + i, "D"]).BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
                 }
-             ((Range)worksheetExcel.Cells[startRow + lst.Count + 1, "A"]).Value2 = "Comments:                                ";
+                ((Range)worksheetExcel.Cells[startRow + lst.Count+1, "A"]).Value2 = "Comments:                                ";
                 worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 1, 1], worksheetExcel.Cells[startRow + lst.Count + 1, 4]].Merge();
+                worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 1, 1], worksheetExcel.Cells[startRow + lst.Count + 1, 4]].BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
                 ((Range)worksheetExcel.Cells[startRow + lst.Count + 2, "A"]).Value2 = "Signature_______________________ חתימה     DATE ______/______/2023  תאריך      NAME ________________________________  שם";
                 ((Range)worksheetExcel.Cells[startRow + lst.Count + 2, "A"]).WrapText = true;
                 worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 2, 1], worksheetExcel.Cells[startRow + lst.Count + 2, 4]].Merge();
+                worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 2, 1], worksheetExcel.Cells[startRow + lst.Count + 2, 4]].BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
                 ((Range)worksheetExcel.Cells[startRow + lst.Count + 3, "A"]).Value2 = "Thank You";
                 worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 3, 1], worksheetExcel.Cells[startRow + lst.Count + 3, 4]].Merge();
+                worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 3, 1], worksheetExcel.Cells[startRow + lst.Count + 3, 4]].BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
                 ((Range)worksheetExcel.Cells[startRow + lst.Count + 4, "A"]).Value2 = "if you have any questions or concerns, please contact  Vlad Berezin, (972) 525118807, vlad@robotron.co.il";
+                ((Range)worksheetExcel.Cells[startRow + lst.Count + 4, "A"]).BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
                 worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 4, 1], worksheetExcel.Cells[startRow + lst.Count + 4, 4]].Merge();
+                worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 4, 1], worksheetExcel.Cells[startRow + lst.Count + 4, 4]].BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
                 workbooksExcel.SaveAs("\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\" + DateTime.Now.ToString("yyyy") + "\\" + DateTime.Now.ToString("yyyy.MM") + "\\" + _fileTimeStamp + "_" + client?[0] + ".xlsm");
                 System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
                 {
@@ -605,6 +614,11 @@ namespace WH_Panel
             {
                 MessageBox.Show("Error");
             }
+        }
+
+        private void btnPrintSticker_Click_1(object sender, EventArgs e)
+        {
+
         }
     }
 }

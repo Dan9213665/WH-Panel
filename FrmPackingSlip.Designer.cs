@@ -200,6 +200,7 @@
             this.btnPrintSticker.TabIndex = 15;
             this.btnPrintSticker.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnPrintSticker.UseVisualStyleBackColor = true;
+            this.btnPrintSticker.Click += new System.EventHandler(this.btnPrintSticker_Click_1);
             // 
             // txtbIPN
             // 

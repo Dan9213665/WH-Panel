@@ -163,5 +163,29 @@ namespace WH_Panel
             FrmBOM frmBOM = new FrmBOM();
             frmBOM.Show();
         }
+
+        private void button15_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_AVL.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+
+        private void button16_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_AVL.xlsx";
+            AuthorizedExcelFileOpening(fp);
+        }
+
+        private void button17_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\NETLINE\NETLINE_AVL.xlsx";
+            AuthorizedExcelFileOpening(fp);
+        }
+
+        private void button18_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_AVL.xlsx";
+            AuthorizedExcelFileOpening(fp);
+        }
     }
 }

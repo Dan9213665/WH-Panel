@@ -36,6 +36,7 @@ namespace WH_Panel
         public int colMFPNFoundIndex;
         public List<string> listOfPaths = new List<string>()
             {
+                "\\\\dbr1\\Data\\WareHouse\\2022\\09.2022",
                 "\\\\dbr1\\Data\\WareHouse\\2022\\10.2022",
                 "\\\\dbr1\\Data\\WareHouse\\2022\\11.2022",
                 "\\\\dbr1\\Data\\WareHouse\\2022\\12.2022",
@@ -171,7 +172,7 @@ namespace WH_Panel
                                     };
                                     countItems = i;
                                     label12.Text = "Loaded " + (countItems).ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{0:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
-                                if (countItems % 1000 == 0)
+                                if (countItems % 5000 == 0)
                                 { label12.Update(); }
                                 KitHistoryItemsList.Add(abc);
                                     i++;
@@ -377,6 +378,7 @@ namespace WH_Panel
         }
         private void filterViewAndJump2Qty(KeyEventArgs e)
         {
+
             if (e.KeyCode == Keys.Enter)
             {
                 if (dataGridView1.Rows.Count == 1)
@@ -399,7 +401,7 @@ namespace WH_Panel
         }
         private void textBox2_KeyDown(object sender, KeyEventArgs e)
         {
-            filterViewAndJump2Qty(e);
+                filterViewAndJump2Qty(e);
         }
         private void textBox1_Enter(object sender, EventArgs e)
         {
