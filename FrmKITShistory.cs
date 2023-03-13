@@ -149,14 +149,12 @@ namespace WH_Panel
                             {
                             while (reader.Read())
                                 {
-
                                 int del = 0;
                                 bool delPar = int.TryParse(reader[5].ToString(), out del);
                                 int qtk = 0;
                                 bool qtkPar = int.TryParse(reader[4].ToString(), out qtk);
                                 int qpu = 0;
                                 bool qpuPar = int.TryParse(reader[7].ToString(), out qpu);
-
                                 KitHistoryItem abc = new KitHistoryItem
                                     {
                                         DateOfCreation = cleanedUpSheetName,
@@ -378,7 +376,6 @@ namespace WH_Panel
         }
         private void filterViewAndJump2Qty(KeyEventArgs e)
         {
-
             if (e.KeyCode == Keys.Enter)
             {
                 if (dataGridView1.Rows.Count == 1)

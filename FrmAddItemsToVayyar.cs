@@ -166,7 +166,6 @@ namespace WH_Panel
                 {
                     searchbyMFPN = textBox2.Text;
                 }
-
             }
             else if (textBox2.Text.StartsWith("P") == true)
             {
@@ -941,7 +940,6 @@ namespace WH_Panel
         private void s(object sender, DataGridViewCellEventArgs e)
         {
         }
-
         private void button4_Click(object sender, EventArgs e)
         {
             List<WHitem> inWHstock = new List<WHitem>();

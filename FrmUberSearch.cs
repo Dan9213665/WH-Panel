@@ -18,7 +18,6 @@ using System.Diagnostics;
 using Label = System.Windows.Forms.Label;
 using Microsoft.Office.Interop.Excel;
 using DataTable = System.Data.DataTable;
-
 namespace WH_Panel
 {
     public partial class FrmUberSearch : Form

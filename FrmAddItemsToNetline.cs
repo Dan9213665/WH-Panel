@@ -169,7 +169,6 @@ namespace WH_Panel
                 {
                     searchbyMFPN = textBox2.Text;
                 }
-
             }
             else if (textBox2.Text.StartsWith("P") == true)
             {

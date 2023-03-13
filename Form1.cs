@@ -151,37 +151,31 @@ namespace WH_Panel
             FrmPackingSlip ps = new FrmPackingSlip();   
             ps.Show();
         }
-
         private void button14_Click(object sender, EventArgs e)
         {
             FrmClientAgnosticWH cl = new FrmClientAgnosticWH();
             cl.Show();
         }
-
         private void button11_Click_1(object sender, EventArgs e)
         {
             FrmBOM frmBOM = new FrmBOM();
             frmBOM.Show();
         }
-
         private void button15_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_AVL.xlsm";
             AuthorizedExcelFileOpening(fp);
         }
-
         private void button16_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_AVL.xlsx";
             AuthorizedExcelFileOpening(fp);
         }
-
         private void button17_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\NETLINE\NETLINE_AVL.xlsx";
             AuthorizedExcelFileOpening(fp);
         }
-
         private void button18_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_AVL.xlsx";

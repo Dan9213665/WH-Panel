@@ -68,7 +68,6 @@ namespace WH_Panel
                 MessageBox.Show("Input file name or browse to file to print the KIT label !","",MessageBoxButtons.OK,MessageBoxIcon.Exclamation);
             }
         }
-
         private void EXCELinserter(string kitName)
         {
             try
@@ -80,7 +79,6 @@ namespace WH_Panel
                 _Workbook workbooksExcel = docExcel.Workbooks.Open(@fp, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
                 _Worksheet worksheetExcel = (_Worksheet)workbooksExcel.Worksheets[1];
                 ((Range)worksheetExcel.Cells[1, "B"]).Value2 = kitName;
-
                 ((Range)worksheetExcel.Columns["B"]).ColumnWidth= 51;
                 ((Range)worksheetExcel.Cells[3, "B"]).WrapText= true;
                 ((Range)worksheetExcel.Cells[6, "B"]).WrapText = true;
@@ -96,8 +94,6 @@ namespace WH_Panel
             {
                 MessageBox.Show(e.Message);
             }
-
-
         }
     }
 }

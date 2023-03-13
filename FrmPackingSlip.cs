@@ -21,7 +21,6 @@ using DataTable = System.Data.DataTable;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Menu;
 using System.Xml.Serialization;
 using System.Xml;
-
 namespace WH_Panel
 {
     public partial class FrmPackingSlip : Form
@@ -204,7 +203,6 @@ namespace WH_Panel
                                 bool qtkPar = int.TryParse(reader[4].ToString(), out qtk);
                                 int qpu = 0;
                                 bool qpuPar = int.TryParse(reader[7].ToString(), out qpu);
-
                                 KitHistoryItem abc = new KitHistoryItem
                                 {
                                     DateOfCreation = cleanedUpSheetName,
@@ -272,7 +270,6 @@ namespace WH_Panel
                 PackedItemsDtable.Load(reader);
             }
             dataGridView2.DataSource = PackedItemsDtable;
-            //SetColumsOrder();
         }
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
@@ -544,7 +541,6 @@ namespace WH_Panel
                 _Workbook workbooksExcel = docExcel.Workbooks.Open(@fp, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
                 //_Worksheet worksheetExcel = (_Worksheet)workbooksExcel;
                 _Worksheet worksheetExcel = (_Worksheet)workbooksExcel.Worksheets["PACKING_SLIP"];
-
                 int startRow = 12;
                 string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
                 ((Range)worksheetExcel.Cells[1, "A"]).Value2 = "RPS_" + _fileTimeStamp;
@@ -590,8 +586,6 @@ namespace WH_Panel
             {
                 MessageBox.Show(e.Message);
             }
-    
-           
         }
         private void DataInserter(string fp, string thesheetName,List<WHitem>lst)
         {
@@ -621,15 +615,11 @@ namespace WH_Panel
                 MessageBox.Show("Error");
             }
         }
-
         private void btnPrintSticker_Click_1(object sender, EventArgs e)
         {
-
         }
-
         private void button2_Click(object sender, EventArgs e)
         {
-            
             loadFromXML();
         }
         private void addToXML()
@@ -638,14 +628,12 @@ namespace WH_Panel
             //allData.AddRange(PackedItemsList);
             string s = SerializeToXml(PackedItemsList);
             XmlDocument xdoc = new XmlDocument();
-
             string theTimeStamp = DateTime.Now.ToString("_yyMMdd");
             string theLogFileName = "\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\PackedItemsInProgress" + theTimeStamp + ".log";
             try
             {
                 xdoc.Load(theLogFileName);
                 xdoc.LoadXml(s);
-                
                 xdoc.Save(theLogFileName);
             }
             catch (Exception)
@@ -681,7 +669,6 @@ namespace WH_Panel
                 SetColumsOrderPackedItems(dataGridView2);
                 ResetAllTexboxes(LastInputFromUser);
             }
-            
         }
         public string SerializeToXml(object input)
         {

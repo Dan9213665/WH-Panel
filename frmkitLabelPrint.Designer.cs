@@ -106,7 +106,6 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
-
         }
         #endregion
         private GroupBox groupBox1;

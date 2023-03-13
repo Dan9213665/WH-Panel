@@ -175,7 +175,6 @@ namespace WH_Panel
                 {
                     searchbyMFPN = textBox2.Text;
                 }
-
             }
             else if (textBox2.Text.StartsWith("P") == true)
             {
@@ -358,7 +357,6 @@ namespace WH_Panel
             else if (radioButton4.Checked == true)
             {
                 bool toPrintWO = false;
-                
                 if (textBox9.Text != string.Empty)
                 {
                     if(textBox9.Text.Contains("_"))
@@ -370,8 +368,6 @@ namespace WH_Panel
                     {
                         sorce_req = textBox9.Text;
                     }
-                    
-
                     int outNumber;
                     bool success = int.TryParse(textBox6.Text, out outNumber);
                     if (success && outNumber < 15001 && outNumber > 0)

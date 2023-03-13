@@ -738,7 +738,6 @@
             this.tableLayoutPanel5.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
         #endregion
         private TableLayoutPanel tableLayoutPanel1;

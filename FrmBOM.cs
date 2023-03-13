@@ -23,7 +23,6 @@ using DataTable = System.Data.DataTable;
 using TextBox = System.Windows.Forms.TextBox;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Menu;
 using System.Xml.Serialization;
-
 namespace WH_Panel
 {
     public partial class FrmBOM : Form
@@ -72,21 +71,17 @@ namespace WH_Panel
             //    tb.Enter += new System.EventHandler(Tb_Enter); ;
             // }
         }
-
         //private void Tb_Enter(object? sender, EventArgs e)
         //{
         //    if((TextBox)sender!=null)
         //    {
         //        txtbColorGreenOnEnter((TextBox)sender);
         //    }
-           
         //}
-
         private void button1_Click(object sender, EventArgs e)
         {
             ResetViews();
             var result = openFileDialog1.Title;
-
             openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\2023\\03.2023";
             openFileDialog1.Filter = "LOG files(*.xlsm) | *.xlsm";
             openFileDialog1.Multiselect = false;
@@ -100,7 +95,6 @@ namespace WH_Panel
             }
             PopulateMissingGridView();
             PopulateSufficientGridView();
-
         }
         private void DataLoader(string fp, string excelFIleName)
         {
@@ -132,7 +126,6 @@ namespace WH_Panel
                                 bool qtkPar= int.TryParse(reader[4].ToString(), out qtk);
                                 int qpu = 0;
                                 bool qpuPar= int.TryParse(reader[7].ToString(), out qpu);
-                               
                                     KitHistoryItem abc = new KitHistoryItem
                                     {
                                         DateOfCreation = cleanedUpSheetName,
@@ -236,7 +229,6 @@ namespace WH_Panel
             dgw.Columns["Notes"].DisplayIndex = 8;
             dgw.Columns["Alts"].DisplayIndex = 9;
         }
-
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             label1.BackColor = Color.IndianRed;
@@ -260,20 +252,17 @@ namespace WH_Panel
                 throw;
             }
         }
-
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             label2.BackColor = Color.IndianRed;
             FilterTheDataGridView();
         }
-
         private void label1_Click(object sender, EventArgs e)
         {
             textBox1.Text = string.Empty;
             label1.BackColor = Color.LightGreen;
             textBox1.Focus();
         }
-
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
             if (dataGridView1.SelectedCells.Count > 0)
@@ -287,10 +276,8 @@ namespace WH_Panel
                 txtbQtyToAdd.Clear();
             }
         }
-
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
-
             if (e.KeyCode == Keys.Enter)
             {
                 if (dataGridView1.SelectedCells.Count == 1)
@@ -313,62 +300,50 @@ namespace WH_Panel
             TextBox? tb = sender as TextBox;
             tb.BackColor = Color.White;
         }
-
         private void textBox1_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter((TextBox)sender);
         }
-
         private void textBox2_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter((TextBox)sender);
         }
-
         private void textBox3_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter((TextBox)sender);
         }
-
         private void txtbQtyToAdd_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter((TextBox)sender);
         }
-
         private void textBox1_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave((TextBox)sender);
         }
-
         private void textBox2_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave((TextBox)sender);
         }
-
         private void textBox3_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave((TextBox)sender);
         }
-
         private void txtbQtyToAdd_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave((TextBox)sender);
         }
-
         private void btnPrintSticker_Click(object sender, EventArgs e)
         {
             KitHistoryItem w = MissingItemsList.FirstOrDefault(r => r.IPN == txtbSelIPN.Text);
             updateQtyInBomFile(w) ;
             MessageBox.Show("Test");
         }
-
         private void updateQtyInBomFile(KitHistoryItem w)
         {
             if(w.QtyInKit>w.QtyPerUnit)
             {
-
             }
         }
-
         private void txtbQtyToAdd_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -376,7 +351,6 @@ namespace WH_Panel
                 btnPrintSticker_Click(sender, e);
             }
         }
-
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox1.Checked == true)

@@ -5,7 +5,6 @@ using System.Data.OleDb;
 using DataTable = System.Data.DataTable;
 using RadioButton = System.Windows.Forms.RadioButton;
 using TextBox = System.Windows.Forms.TextBox;
-
 namespace WH_Panel
 {
     public partial class FrmClientAgnosticWH : Form
@@ -15,12 +14,9 @@ namespace WH_Panel
             InitializeComponent();
             comboBox3.SelectedIndex = 0;
             MasterReload(avlLeader_Tech, stockLeader_Tech);
-
         }
-
         private void MasterReload(string avlParam, string stockParam)
         {
-            
             avlFile = avlParam;
             stockFile = stockParam;
             textBox8.ReadOnly= true;
@@ -39,7 +35,6 @@ namespace WH_Panel
             LastInputFromUser = textBox1;
             LastInputFromUser.Focus();
         }
-
         public List<WHitem> avlItems = new List<WHitem>();
         public List<WHitem> stockItems = new List<WHitem>();
         public DataTable avlDTable = new DataTable();
@@ -111,7 +106,6 @@ namespace WH_Panel
                                 {
                                     label1.Update();
                                 }
-                                
                                 avlItems.Add(abc);
                             }
                             iAVL++;
@@ -158,7 +152,6 @@ namespace WH_Panel
             {
                 searchByIPN = textBox1.Text.Substring(0, 15);
             }
-
             string searchbyMFPN = textBox2.Text;
              if(textBox2.Text.StartsWith("1P") == true)
             {
@@ -175,7 +168,6 @@ namespace WH_Panel
                 {
                     searchbyMFPN = textBox2.Text;
                 }
-
             }
             else if (textBox2.Text.StartsWith("P") == true)
             {
@@ -403,7 +395,6 @@ namespace WH_Panel
             else if (radioButton4.Checked == true)
             {
                 bool toPrintWO = false;
-              
                 if (textBox9.Text != string.Empty)
                 {
                     if (textBox9.Text.Contains("_"))
@@ -415,7 +406,6 @@ namespace WH_Panel
                     {
                         sorce_req = textBox9.Text;
                     }
-
                     int outNumber;
                     bool success = int.TryParse(textBox6.Text, out outNumber);
                     if (success && outNumber < 15001 && outNumber > 0)
@@ -627,7 +617,6 @@ namespace WH_Panel
                 if (dataGridView2.Rows.Count == 1)
                 {
                     textBox6.Focus();
-
                 }
                 else
                 {
@@ -694,7 +683,6 @@ namespace WH_Panel
                                 {
                                     button3.Update();
                                 }
-                                
                                 stockItems.Add(abc);
                                 iStock++;
                             }
@@ -764,7 +752,6 @@ namespace WH_Panel
         {
             if (textBox3.Text != string.Empty)
             {
-                
                 try
                 {
                     int balance = 0;
@@ -774,7 +761,6 @@ namespace WH_Panel
                     dataGridView1.DataSource = dv;
                     dataGridView1.Update();
                     SetSTOCKiewColumsOrder();
-                    
                     List<int> qtys = new List<int>();
                     for (int i = 0; i < dataGridView1.RowCount; i++)
                     {
@@ -975,7 +961,6 @@ namespace WH_Panel
                 MessageBox.Show("Can print only positive quantites !");
             }
         }
-
         private void button4_Click(object sender, EventArgs e)
         {
             List<WHitem> inWHstock = new List<WHitem>();
@@ -1032,7 +1017,6 @@ namespace WH_Panel
             dataGridView1.Update();
             SetSTOCKiewColumsOrder();
         }
-
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
             if(comboBox3.Text== "LEADER-TECH")
@@ -1065,16 +1049,11 @@ namespace WH_Panel
                     MessageBox.Show("SELECT GILT/WS/WR/SH/IF source !");
                     comboBox2.DroppedDown = true;
                 }
-                
             }
-           
         }
-
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
             textBox8.Focus();
         }
-
-      
     }
 }

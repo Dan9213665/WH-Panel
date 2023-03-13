@@ -879,7 +879,6 @@
             this.tableLayoutPanel5.ResumeLayout(false);
             this.tableLayoutPanel5.PerformLayout();
             this.ResumeLayout(false);
-
         }
         #endregion
         private GroupBox groupBox6;
