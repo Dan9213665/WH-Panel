@@ -21,6 +21,9 @@ using DataTable = System.Data.DataTable;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Menu;
 using System.Xml.Serialization;
 using System.Xml;
+using System.Windows.Forms.VisualStyles;
+using Microsoft.Office.Tools.Excel;
+
 namespace WH_Panel
 {
     public partial class FrmPackingSlip : Form
@@ -561,9 +564,11 @@ namespace WH_Panel
                 worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 1, 1], worksheetExcel.Cells[startRow + lst.Count + 1, 4]].Merge();
                 worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 1, 1], worksheetExcel.Cells[startRow + lst.Count + 1, 4]].BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
                 ((Range)worksheetExcel.Cells[startRow + lst.Count + 2, "A"]).Value2 = "Signature_______________________ חתימה     DATE ______/______/2023  תאריך      NAME ________________________________  שם";
+             
                 ((Range)worksheetExcel.Cells[startRow + lst.Count + 2, "A"]).WrapText = true;
                 worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 2, 1], worksheetExcel.Cells[startRow + lst.Count + 2, 4]].Merge();
                 worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 2, 1], worksheetExcel.Cells[startRow + lst.Count + 2, 4]].BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
+                worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 2, 1], worksheetExcel.Cells[startRow + lst.Count + 2, 4]].RowHeight = 40;
                 ((Range)worksheetExcel.Cells[startRow + lst.Count + 3, "A"]).Value2 = "Thank You";
                 worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 3, 1], worksheetExcel.Cells[startRow + lst.Count + 3, 4]].Merge();
                 worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 3, 1], worksheetExcel.Cells[startRow + lst.Count + 3, 4]].BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
@@ -647,23 +652,21 @@ namespace WH_Panel
             openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS";
             openFileDialog1.Filter = "LOG files(*.log) | *.log";
             openFileDialog1.Multiselect = false;
-            List<WHitem> BomItemS = new List<WHitem>();
+            List<WHitem> LoggedPackedItemS = new List<WHitem>();
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 string foldefileName = openFileDialog1.FileName;
-                //label1.Text += foldefileName.ToString() + "\n";
-                //groupBox2.Text += foldefileName.ToString() + " ";
                 XmlSerializer serializer = new XmlSerializer(typeof(List<WHitem>));
                 using (StreamReader reader = new StreamReader(openFileDialog1.FileName))
                 {
-                    BomItemS = (List<WHitem>)serializer.Deserialize(reader);
+                    LoggedPackedItemS = (List<WHitem>)serializer.Deserialize(reader);
                 }
             }
-            if (BomItemS != null && BomItemS.Count > 0)
+            if (LoggedPackedItemS != null && LoggedPackedItemS.Count > 0)
             {
-                for (int i = 0; i < BomItemS.Count; i++)
+                for (int i = 0; i < LoggedPackedItemS.Count; i++)
                 {
-                    PackedItemsList.Add(BomItemS[i]);
+                    PackedItemsList.Add(LoggedPackedItemS[i]);
                 }
                 PopulatePackedItemsGridView();
                 SetColumsOrderPackedItems(dataGridView2);
