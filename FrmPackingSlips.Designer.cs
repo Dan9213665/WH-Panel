@@ -405,6 +405,7 @@
             this.tableLayoutPanel4.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
         #endregion
         private GroupBox groupBox3;

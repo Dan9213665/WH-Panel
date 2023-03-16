@@ -104,15 +104,6 @@ namespace WH_Panel
                 {
                     try
                     {
-                        //using (var reader = cmd.ExecuteReader(CommandBehavior.SchemaOnly))
-                        //{
-                        //    var table = reader.GetSchemaTable();
-                        //    var nameCol = table.Columns["ColumnName"];
-                        //    foreach (DataRow row in table.Rows)
-                        //    {
-                        //        Console.WriteLine(row[nameCol]);
-                        //    }
-                        //}
                         conn.Open();
                         DataTable dbSchema = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
                         if (dbSchema == null || dbSchema.Rows.Count < 1)
@@ -125,48 +116,64 @@ namespace WH_Panel
                         OleDbDataReader reader = command.ExecuteReader();
                         if (reader.HasRows)
                         {
-                            while (reader.Read())
+                            int indIPN = reader.GetOrdinal("IPN");
+                            int indMFPN = reader.GetOrdinal("MFPN");
+                            int indDescription = reader.GetOrdinal("Description");
+                            int indDELTA = reader.GetOrdinal("DELTA");
+                            int indQty = reader.GetOrdinal("Qty");
+                            int indNotes = indQty + 1;
+                            //if (reader.GetOrdinal("Notes") != -1)
+                            //{
+                            //    indNotes = reader.GetOrdinal("Notes");
+                            //}
+                            //else
+                            //{
+                            //    MessageBox.Show(reader.GetOrdinal("Notes").ToString());
+                            //    indNotes = indQty + 1;
+                            //}
+                            int indAlts = indQty + 2;
+                            //if (reader.GetOrdinal("Alts") != -1)
+                            //{
+                            //    indAlts = reader.GetOrdinal("Alts");
+                            //}
+                            //else
+                            //{
+                            //    MessageBox.Show(reader.GetOrdinal("Alts").ToString());
+                            //    indAlts = indQty + 2;
+                            //}
+                                while (reader.Read())
                             {
-                                //reader.GetSchemaTable().Rows[i][nameCol].index
-                                var table = reader.GetSchemaTable();
-                                var nameCol = table.Columns["ColumnName"];
-                                //int conInd = nameCol.
-                                //for (int i=0;i<table.Columns.Count;i++)
-                                //{
-                                //    DataRow dataRowrow = table.Rows[i];
-                                //   MessageBox.Show((dataRowrow[nameCol]).ToString());
-                                //}
-                                //MessageBox.Show(reader[reader.GetSchemaTable().Rows[reader.GetSchemaTable().Columns["ColumnName"]]]);
                                 int del = 0;
-                                bool delPar = int.TryParse(reader[5].ToString(), out del);
+                                bool delPar = int.TryParse(reader[indDELTA].ToString(), out del);
                                 int qtk = 0;
-                                bool qtkPar= int.TryParse(reader[4].ToString(), out qtk);
+                                bool qtkPar= int.TryParse(reader[indDELTA-1].ToString(), out qtk);
                                 int qpu = 0;
-                                bool qpuPar= int.TryParse(reader[7].ToString(), out qpu);
-                                    KitHistoryItem abc = new KitHistoryItem
+                                bool qpuPar= int.TryParse(reader[indQty].ToString(), out qpu);
+
+                                KitHistoryItem abc = new KitHistoryItem
                                     {
                                         DateOfCreation = cleanedUpSheetName,
                                         ProjectName = excelFIleName,
-                                        IPN = reader[1].ToString(),
-                                        MFPN = reader[2].ToString(),
-                                        Description = reader[3].ToString(),
+                                        IPN = reader[indIPN].ToString(),
+                                        MFPN = reader[indMFPN].ToString(),
+                                        Description = reader[indDescription].ToString(),
                                         QtyInKit = qtk,
                                         Delta = del,
                                         QtyPerUnit = qpu,
-                                        Notes = reader[8].ToString(),
-                                        Alts = reader[9].ToString()
-                                    };
+                                        Notes = reader[indNotes].ToString(),
+                                        Alts = reader[indAlts].ToString()
+                                };
                                     i++;
                                     countItems = i;
                                     if (abc.Delta >= 0)
                                     {
                                         SufficientItemsList.Add(abc);
-                                       sufficientCount++;
+                                        sufficientCount++;
                                     }
                                     else
                                     {
                                         MissingItemsList.Add(abc);
-                                    missingCount++;
+                                        missingCount++;
                                     }
                             }
                         }

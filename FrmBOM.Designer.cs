@@ -737,6 +737,7 @@
             this.tableLayoutPanel5.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
         #endregion
         private TextBox textBox10;
