@@ -23,10 +23,10 @@ using System.Xml.Serialization;
 using System.Xml;
 using System.Windows.Forms.VisualStyles;
 using Microsoft.Office.Tools.Excel;
-
+using CheckBox = System.Windows.Forms.CheckBox;
 namespace WH_Panel
 {
-    public partial class FrmPackingSlip : Form
+    public partial class FrmPackingSlipShip : Form
     {
         public List<KitHistoryItem> KitHistoryItemsList = new List<KitHistoryItem>();
         public List<WHitem> PackedItemsList = new List<WHitem>();
@@ -35,6 +35,7 @@ namespace WH_Panel
         public TextBox LastInputFromUser = new TextBox();
         public int countItems = 0;
         public int countLoadedFIles = 0;
+        int qtyToEDIT = 0;
         int i = 0;
         int loadingErrors = 0;
         public static Stopwatch stopWatch = new Stopwatch();
@@ -47,7 +48,7 @@ namespace WH_Panel
                 "\\\\dbr1\\Data\\WareHouse\\2022\\12.2022",
                 "\\\\dbr1\\Data\\WareHouse\\2023"
             };
-        public FrmPackingSlip()
+        public FrmPackingSlipShip()
         {
             InitializeComponent();
         }
@@ -221,7 +222,7 @@ namespace WH_Panel
                                 };
                                 countItems = i;
                                 label12.Text = "Loaded " + (countItems).ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{0:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
-                               if(countItems%1000==0)
+                               if(countItems%100==0)
                                 { label12.Update(); }
                                 KitHistoryItemsList.Add(abc);
                                 i++;
@@ -425,7 +426,25 @@ namespace WH_Panel
         {
             if (e.KeyCode == Keys.Enter)
             {
-                btnPrintSticker_Click(this, new EventArgs());
+                if(checkBox2.Checked==true)
+                {
+                    int rowindex = dataGridView2.CurrentCell.RowIndex;
+                    int columnindex = dataGridView2.CurrentCell.ColumnIndex;
+                    string cellValue = dataGridView2.Rows[rowindex].Cells[columnindex].Value.ToString();
+                    string selIPN = txtbIPN.Text = dataGridView2.Rows[rowindex].Cells["IPN"].Value.ToString();
+                    string selMFPN = dataGridView2.Rows[rowindex].Cells["MFPN"].Value.ToString();
+                    int selStock = qtyToEDIT;
+                    PackedItemsList.Remove(PackedItemsList.Find(r => r.IPN == selIPN && r.MFPN == selMFPN && r.Stock == selStock));
+                    btnPrintSticker_Click(this, new EventArgs());
+                    MessageBox.Show("QTY UPDATED");
+                    checkBox2.Checked= false;
+                    LastInputFromUser.Clear();
+                    LastInputFromUser.Focus();
+                }
+                else
+                {
+                    btnPrintSticker_Click(this, new EventArgs());
+                }
             }
         }
         private void btnPrintSticker_Click(object sender, EventArgs e)
@@ -519,10 +538,6 @@ namespace WH_Panel
             DialogResult dialogResult = MessageBox.Show("Close the shipment ?", "Complete the shipment procedure", MessageBoxButtons.YesNo);
             if (dialogResult == DialogResult.Yes)
             {
-                //MessageBox.Show("Shipment sent");
-                //string fp = "\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\_template.xlsm";
-                //string thesheetName = "PACKING_SLIP";
-                    //DataInserter(fp,thesheetName, PackedItemsList);
                 EXCELinserter(PackedItemsList);
             }
             else if (dialogResult == DialogResult.No)
@@ -564,7 +579,6 @@ namespace WH_Panel
                 worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 1, 1], worksheetExcel.Cells[startRow + lst.Count + 1, 4]].Merge();
                 worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 1, 1], worksheetExcel.Cells[startRow + lst.Count + 1, 4]].BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
                 ((Range)worksheetExcel.Cells[startRow + lst.Count + 2, "A"]).Value2 = "Signature_______________________ חתימה     DATE ______/______/2023  תאריך      NAME ________________________________  שם";
-             
                 ((Range)worksheetExcel.Cells[startRow + lst.Count + 2, "A"]).WrapText = true;
                 worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 2, 1], worksheetExcel.Cells[startRow + lst.Count + 2, 4]].Merge();
                 worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 2, 1], worksheetExcel.Cells[startRow + lst.Count + 2, 4]].BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
@@ -634,7 +648,7 @@ namespace WH_Panel
             string s = SerializeToXml(PackedItemsList);
             XmlDocument xdoc = new XmlDocument();
             string theTimeStamp = DateTime.Now.ToString("_yyMMdd");
-            string theLogFileName = "\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\PackedItemsInProgress" + theTimeStamp + ".log";
+            string theLogFileName = "\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\PackedItemsInProgress" + theTimeStamp +"_"+ Environment.UserName+".log";
             try
             {
                 xdoc.Load(theLogFileName);
@@ -649,6 +663,10 @@ namespace WH_Panel
         }
         private void loadFromXML()
         {
+            PackedItemsList.Clear();
+            PackedItemsDtable.Clear();
+            dataGridView2.DataSource = null;
+            dataGridView2.Refresh();
             openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS";
             openFileDialog1.Filter = "LOG files(*.log) | *.log";
             openFileDialog1.Multiselect = false;
@@ -684,6 +702,70 @@ namespace WH_Panel
                 result = new StreamReader(memStm).ReadToEnd();
             }
             return result;
+        }
+        private void dataGridView2_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if(checkBox2.Checked==true)
+            {
+                if (dataGridView2.SelectedCells.Count == 1)
+                {
+                    int rowindex = dataGridView2.CurrentCell.RowIndex;
+                    int columnindex = dataGridView2.CurrentCell.ColumnIndex;
+                    string cellValue = dataGridView2.Rows[rowindex].Cells[columnindex].Value.ToString();
+                    txtbIPN.Text = dataGridView2.Rows[rowindex].Cells["IPN"].Value.ToString();
+                    txtbMFPN.Text = dataGridView2.Rows[rowindex].Cells["MFPN"].Value.ToString();
+                    txtbDescription.Text = dataGridView2.Rows[rowindex].Cells["Description"].Value.ToString();
+                    txtbQty.Text = dataGridView2.Rows[rowindex].Cells["Stock"].Value.ToString();
+                    qtyToEDIT = int.Parse(txtbQty.Text);
+                    txtbQty.BackColor = Color.Yellow;
+                }
+            }
+        }
+        private void button5_Click(object sender, EventArgs e)
+        {
+        }
+        private void dataGridView2_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (checkBox2.Checked == true)
+            {
+                DialogResult dialogResult = MessageBox.Show("Remove the line ?", "DELETE the line from the list", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    int rowindex = dataGridView2.CurrentCell.RowIndex;
+                    int columnindex = dataGridView2.CurrentCell.ColumnIndex;
+                    string cellValue = dataGridView2.Rows[rowindex].Cells[columnindex].Value.ToString();
+                    string selIPN = txtbIPN.Text = dataGridView2.Rows[rowindex].Cells["IPN"].Value.ToString();
+                    string selMFPN = dataGridView2.Rows[rowindex].Cells["MFPN"].Value.ToString();
+                    int selStock = int.Parse(dataGridView2.Rows[rowindex].Cells["Stock"].Value.ToString());
+                    PackedItemsList.Remove(PackedItemsList.Find(r => r.IPN == selIPN && r.MFPN == selMFPN && r.Stock == selStock));
+                    PopulatePackedItemsGridView();
+                    SetColumsOrderPackedItems(dataGridView2);
+                    addToXML();
+                    checkBox2.Checked = false;
+                    ResetAllTexboxes(LastInputFromUser);
+                }
+                else if (dialogResult == DialogResult.No)
+                {
+                    LastInputFromUser.Focus();
+                    checkBox2.Checked = false;
+                    ResetAllTexboxes(LastInputFromUser);
+                }
+            }
+        }
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox chkb = (CheckBox)sender;
+            if(chkb.Checked==true)
+            {
+                chkb.BackColor = Color.Yellow;
+                chkb.Text = "EDIT MODE enabled";
+            }
+            else
+            {
+                chkb.BackColor=Color.LightGray;
+                chkb.Text = "EDIT disabled";
+                txtbQty.BackColor= Color.White;
+            }
         }
     }
 }

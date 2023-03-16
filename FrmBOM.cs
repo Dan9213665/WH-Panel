@@ -32,6 +32,9 @@ namespace WH_Panel
         public DataTable missingUDtable = new DataTable();
         public DataTable sufficientUDtable = new DataTable();
         public int countItems = 0;
+        public int sufficientCount = 0;
+        public int missingCount = 0;
+        public double percentageComplete = 0.0;
         public int countLoadedFIles = 0;
         int i = 0;
         int loadingErrors = 0;
@@ -54,6 +57,9 @@ namespace WH_Panel
             label2.BackColor = Color.LightGreen;
             label3.BackColor = Color.LightGreen;
             countItems = 0;
+            sufficientCount = 0;
+            missingCount = 0;
+            percentageComplete = 0.0;
             countLoadedFIles = 0;
             i = 0;
             loadingErrors = 0;
@@ -66,24 +72,13 @@ namespace WH_Panel
             sufficientUDtable.Clear();
             dataGridView2.DataSource = null;
             dataGridView2.Refresh();
-            //foreach (TextBox tb in this.Controls.OfType<TextBox>())
-            //{
-            //    tb.Enter += new System.EventHandler(Tb_Enter); ;
-            // }
         }
-        //private void Tb_Enter(object? sender, EventArgs e)
-        //{
-        //    if((TextBox)sender!=null)
-        //    {
-        //        txtbColorGreenOnEnter((TextBox)sender);
-        //    }
-        //}
         private void button1_Click(object sender, EventArgs e)
         {
             ResetViews();
             var result = openFileDialog1.Title;
-            openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\2023\\03.2023";
-            openFileDialog1.Filter = "LOG files(*.xlsm) | *.xlsm";
+            openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\2023\\"+ DateTime.Now.ToString("MM") + ".2023";
+            openFileDialog1.Filter = "BOM files(*.xlsm) | *.xlsm";
             openFileDialog1.Multiselect = false;
             List<KitHistoryItem> BomItemS = new List<KitHistoryItem>();
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
@@ -92,6 +87,9 @@ namespace WH_Panel
                 string Litem = Path.GetFileName(fileName);
                 label12.Text += fileName.ToString() + "\n";
                 DataLoader(fileName, Litem);
+                double pers = double.Parse(countItems.ToString()) * 0.01;
+                percentageComplete = Math.Round((sufficientCount / pers),2);
+                this.Text = fileName + " MIS:" + missingCount.ToString() + " / SUF:" + sufficientCount.ToString() + " of TOT:" + countItems + " (" + percentageComplete + "%)";
             }
             PopulateMissingGridView();
             PopulateSufficientGridView();
@@ -106,6 +104,15 @@ namespace WH_Panel
                 {
                     try
                     {
+                        //using (var reader = cmd.ExecuteReader(CommandBehavior.SchemaOnly))
+                        //{
+                        //    var table = reader.GetSchemaTable();
+                        //    var nameCol = table.Columns["ColumnName"];
+                        //    foreach (DataRow row in table.Rows)
+                        //    {
+                        //        Console.WriteLine(row[nameCol]);
+                        //    }
+                        //}
                         conn.Open();
                         DataTable dbSchema = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
                         if (dbSchema == null || dbSchema.Rows.Count < 1)
@@ -120,6 +127,16 @@ namespace WH_Panel
                         {
                             while (reader.Read())
                             {
+                                //reader.GetSchemaTable().Rows[i][nameCol].index
+                                var table = reader.GetSchemaTable();
+                                var nameCol = table.Columns["ColumnName"];
+                                //int conInd = nameCol.
+                                //for (int i=0;i<table.Columns.Count;i++)
+                                //{
+                                //    DataRow dataRowrow = table.Rows[i];
+                                //   MessageBox.Show((dataRowrow[nameCol]).ToString());
+                                //}
+                                //MessageBox.Show(reader[reader.GetSchemaTable().Rows[reader.GetSchemaTable().Columns["ColumnName"]]]);
                                 int del = 0;
                                 bool delPar = int.TryParse(reader[5].ToString(), out del);
                                 int qtk = 0;
@@ -144,17 +161,18 @@ namespace WH_Panel
                                     if (abc.Delta >= 0)
                                     {
                                         SufficientItemsList.Add(abc);
+                                       sufficientCount++;
                                     }
                                     else
                                     {
                                         MissingItemsList.Add(abc);
+                                    missingCount++;
                                     }
                             }
                         }
                         conn.Dispose();
                         conn.Close();
-                        this.Text= excelFIleName;
-                        string[] alltheNames=excelFIleName.Split("_");
+                     string[] alltheNames=excelFIleName.Split("_");
                         textBox11.Text = alltheNames[1];
                         textBox6.Text= alltheNames[2].Substring(0, alltheNames[2].Length-5);
                         countLoadedFIles++;

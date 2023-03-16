@@ -148,7 +148,7 @@ namespace WH_Panel
         }
         private void button13_Click(object sender, EventArgs e)
         {
-            FrmPackingSlip ps = new FrmPackingSlip();   
+            FrmPackingSlipShip ps = new FrmPackingSlipShip();   
             ps.Show();
         }
         private void button14_Click(object sender, EventArgs e)
