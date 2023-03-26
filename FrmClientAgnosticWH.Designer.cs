@@ -395,6 +395,7 @@
             this.comboBox1.Items.AddRange(new object[] {
             "5\"",
             "7\"",
+            "10\"",
             "13\"",
             "Bag",
             "Box",

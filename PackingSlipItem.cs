@@ -12,6 +12,6 @@ namespace WH_Panel
         public string? IPN { get; set; }
         public string? MFPN { get; set; }
         public string? Description { get; set; }
-        public string? QtySent { get; set; }
+        public int? QtySent { get; set; }
     }
 }

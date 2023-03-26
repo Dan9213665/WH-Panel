@@ -23,6 +23,8 @@ using DataTable = System.Data.DataTable;
 using TextBox = System.Windows.Forms.TextBox;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Menu;
 using System.Xml.Serialization;
+using Label = System.Windows.Forms.Label;
+
 namespace WH_Panel
 {
     public partial class FrmBOM : Form
@@ -282,11 +284,14 @@ namespace WH_Panel
             label2.BackColor = Color.IndianRed;
             FilterTheDataGridView();
         }
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+            label3.BackColor = Color.IndianRed;
+            FilterTheDataGridView();
+        }
         private void label1_Click(object sender, EventArgs e)
         {
-            textBox1.Text = string.Empty;
-            label1.BackColor = Color.LightGreen;
-            textBox1.Focus();
+            clearTextboxesOnSingleLabelClick(sender, textBox1);
         }
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
@@ -422,6 +427,25 @@ namespace WH_Panel
             {
                 MessageBox.Show("Sticker printing failed : " + e.Message);
             }
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+            clearTextboxesOnSingleLabelClick(sender, textBox3);
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+            clearTextboxesOnSingleLabelClick(sender,textBox2);
+        }
+
+        private void clearTextboxesOnSingleLabelClick(object sender,TextBox txtb)
+        {
+            Label l = new Label();
+            l = (Label)sender;
+            txtb.Text = string.Empty;
+            l.BackColor = Color.LightGreen;
+            txtb.Focus();
         }
     }
 }

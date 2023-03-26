@@ -310,10 +310,25 @@ namespace WH_Panel
                 DataView dv = UDtable.DefaultView;
                 dv.RowFilter = "[IPN] LIKE '%" + textBox1.Text.ToString() +
                      "%' AND [ProjectName] LIKE '%" + textBox11.Text.ToString() +
-                "%' AND [MFPN] LIKE '%" + textBox2.Text.ToString() +
-                "%' AND [Description] LIKE '%" + textBox3.Text.ToString() + "%' ";
+                "%' AND [MFPN] LIKE'%" + textBox2.Text.ToString() +
+                "%' AND [Description] LIKE '%" + textBox3.Text.ToString() + "%'";
                 dataGridView1.DataSource = dv;
                 SetColumsOrder(dataGridView1);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Incorrect search pattern, remove invalid character and try again !", "Search pattern error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                throw;
+            }
+        }
+        private void FilterTheDataGridViewDistinctMFPN()
+        {
+            try
+            {
+               // DataView dv = UDtable.Rows.AsQueryable;
+                //dv.RowFilter = "SELECT DISTINCT from [MFPN]";
+                //dataGridView1.DataSource = dv;
+                //SetColumsOrder(dataGridView1);
             }
             catch (Exception)
             {
@@ -558,7 +573,7 @@ namespace WH_Panel
                 docExcel.DisplayAlerts = false;
                 _Workbook workbooksExcel = docExcel.Workbooks.Open(@fp, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
                 //_Worksheet worksheetExcel = (_Worksheet)workbooksExcel;
-                _Worksheet worksheetExcel = (_Worksheet)workbooksExcel.Worksheets["PACKING_SLIP"];
+                _Worksheet worksheetExcel = (_Worksheet)workbooksExcel.Worksheets["PACKING SLIP"];
                 int startRow = 12;
                 string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
                 ((Range)worksheetExcel.Cells[1, "A"]).Value2 = "RPS_" + _fileTimeStamp;

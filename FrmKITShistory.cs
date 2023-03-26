@@ -111,13 +111,14 @@ namespace WH_Panel
         }
         public bool FileIsLocked(string strFullFileName)
         {
-            bool blnReturn = false;
+            bool blnReturn;
             System.IO.FileStream fs;
             try
             {
                 fs = System.IO.File.Open(strFullFileName, System.IO.FileMode.Open, System.IO.FileAccess.Write, System.IO.FileShare.None);
                 fs.Close();
                 fs.Dispose();
+                blnReturn = false;
             }
             catch (System.IO.IOException ex)
             {

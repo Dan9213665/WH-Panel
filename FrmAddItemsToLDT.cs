@@ -215,6 +215,7 @@ namespace WH_Panel
             textBox2.Focus();
             label3.BackColor = Color.LightGreen;
         }
+       
         private void label2_DoubleClick(object sender, EventArgs e)
         {
             AvlClearFilters();
