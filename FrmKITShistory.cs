@@ -230,7 +230,7 @@ namespace WH_Panel
             dataGridView1.Columns["QtyInKit"].DisplayIndex = 5;
             dataGridView1.Columns["Delta"].DisplayIndex = 6;
             dataGridView1.Columns["QtyPerUnit"].DisplayIndex = 7;
-            dataGridView1.Columns["Notes"].DisplayIndex = 8;
+            dataGridView1.Columns["Calc"].DisplayIndex = 8;
             dataGridView1.Columns["Alts"].DisplayIndex = 9;
         }
         private void FilterTheDataGridView()

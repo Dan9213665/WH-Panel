@@ -47,6 +47,7 @@ namespace WH_Panel
         public static Stopwatch stopWatch = new Stopwatch();
         public int colIpnFoundIndex;
         public int colMFPNFoundIndex;
+        public TextBox lastTxtbInputFromUser = new TextBox();
         public FrmBOM()
         {
             InitializeComponent();
@@ -140,7 +141,7 @@ namespace WH_Panel
                             int indDescription = reader.GetOrdinal("Description");
                             int indDELTA = reader.GetOrdinal("DELTA");
                             int indQty = reader.GetOrdinal("Qty");
-                            int indNotes = indQty + 1;
+                            int indCalc = reader.GetOrdinal("Calc");
                             int indAlts = indQty + 2;
                         
                                 while (reader.Read())
@@ -162,7 +163,7 @@ namespace WH_Panel
                                         QtyInKit = qtk,
                                         Delta = del,
                                         QtyPerUnit = qpu,
-                                        Calc = reader[indNotes].ToString(),
+                                        Calc = reader[indCalc].ToString(),
                                         Alts = reader[indAlts].ToString()
                                 };
                                     i++;
@@ -263,15 +264,16 @@ namespace WH_Panel
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             label1.BackColor = Color.IndianRed;
-            FilterTheDataGridView();
+            FilterTheMissingDataGridView();
+            FilterTheFoundDataGridView();
         }
-        private void FilterTheDataGridView()
+        private void FilterTheMissingDataGridView()
         {
             try
             {
                 DataView dv = missingUDtable.DefaultView;
                 dv.RowFilter = "[IPN] LIKE '%" + textBox1.Text.ToString() +
-                     "%' AND [ProjectName] LIKE '%" + textBox11.Text.ToString() +
+                "%' AND [ProjectName] LIKE '%" + textBox11.Text.ToString() +
                 "%' AND [MFPN] LIKE '%" + textBox2.Text.ToString() +
                 "%' AND [Alts] LIKE '%" + textBox9.Text.ToString() +
                 "%' AND [Description] LIKE '%" + textBox3.Text.ToString() + "%' ";
@@ -284,15 +286,34 @@ namespace WH_Panel
                 throw;
             }
         }
+        private void FilterTheFoundDataGridView()
+        {
+            try
+            {
+                DataView dv2 = sufficientUDtable.DefaultView;
+                dv2.RowFilter = "[IPN] LIKE '%" + textBox1.Text.ToString() +
+                "%' AND [ProjectName] LIKE '%" + textBox11.Text.ToString() +
+                "%' AND [MFPN] LIKE '%" + textBox2.Text.ToString() +
+                "%' AND [Alts] LIKE '%" + textBox9.Text.ToString() +
+                "%' AND [Description] LIKE '%" + textBox3.Text.ToString() + "%' ";
+                dataGridView2.DataSource = dv2;
+                SetColumsOrder(dataGridView2);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Incorrect search pattern, remove invalid character and try again !", "Search pattern error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                throw;
+            }
+        }
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             label2.BackColor = Color.IndianRed;
-            FilterTheDataGridView();
+            FilterTheMissingDataGridView();
         }
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
             label3.BackColor = Color.IndianRed;
-            FilterTheDataGridView();
+            FilterTheMissingDataGridView();
         }
         private void label1_Click(object sender, EventArgs e)
         {
@@ -308,6 +329,7 @@ namespace WH_Panel
             clearTextboxesOnSingleLabelClick(label1, textBox1);
             clearTextboxesOnSingleLabelClick(label2, textBox2);
             clearTextboxesOnSingleLabelClick(label3, textBox3);
+            clearTextboxesOnSingleLabelClick(label9, textBox9);
         }
 
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
@@ -323,19 +345,25 @@ namespace WH_Panel
         }
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
-            JumpToQtyInput(e);
+            JumpToQtyInput((TextBox)sender,e);
         }
         private void textBox2_KeyDown(object sender, KeyEventArgs e)
         {
-            JumpToQtyInput(e);
+            JumpToQtyInput((TextBox)sender, e);
         }
         private void textBox3_KeyDown(object sender, KeyEventArgs e)
         {
-            JumpToQtyInput(e);
+            JumpToQtyInput((TextBox)sender, e);
+        }
+        private void textBox9_KeyDown(object sender, KeyEventArgs e)
+        {
+            JumpToQtyInput((TextBox)sender, e);
         }
 
-        private void JumpToQtyInput(KeyEventArgs e)
+        private void JumpToQtyInput(TextBox t, KeyEventArgs e)
         {
+            lastTxtbInputFromUser = t;
+
             if (e.KeyCode == Keys.Enter)
             {
                 if (dataGridView1.Rows.Count == 1)
@@ -461,6 +489,10 @@ namespace WH_Panel
             if (e.KeyCode == Keys.Enter)
             {
                 btnPrintSticker_Click(sender, e);
+                txtbQtyToAdd.Clear();
+                clearAllTextBoxesOnDoubleClick();
+                lastTxtbInputFromUser.Clear();
+                lastTxtbInputFromUser.Focus();
             }
         }
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
@@ -577,7 +609,7 @@ namespace WH_Panel
         private void textBox9_TextChanged(object sender, EventArgs e)
         {
             label9.BackColor = Color.IndianRed;
-            FilterTheDataGridView();
+            FilterTheMissingDataGridView();
         }
 
         private void label9_Click(object sender, EventArgs e)
@@ -589,5 +621,12 @@ namespace WH_Panel
         {
             clearAllTextBoxesOnDoubleClick();
         }
+
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            txtbQtyToAdd.Focus();
+        }
+
+        
     }
 }
