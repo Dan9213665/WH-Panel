@@ -40,6 +40,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.txtbFiltAVLbyDESCR = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.textBox7 = new System.Windows.Forms.TextBox();
@@ -124,7 +126,7 @@
             // 
             // comboBox3
             // 
-            this.comboBox3.BackColor = System.Drawing.Color.Black;
+            this.comboBox3.BackColor = System.Drawing.Color.DarkOrange;
             this.comboBox3.Cursor = System.Windows.Forms.Cursors.Hand;
             this.comboBox3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox3.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
@@ -133,6 +135,7 @@
             this.comboBox3.Items.AddRange(new object[] {
             "LEADER-TECH",
             "NETLINE",
+            "ROBOTRON",
             "VALENS",
             "VAYYAR"});
             this.comboBox3.Location = new System.Drawing.Point(150, 0);
@@ -205,16 +208,19 @@
             // 
             this.tableLayoutPanel3.AutoSize = true;
             this.tableLayoutPanel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel3.ColumnCount = 3;
+            this.tableLayoutPanel3.ColumnCount = 4;
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 45F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 45F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
             this.tableLayoutPanel3.Controls.Add(this.textBox2, 2, 1);
             this.tableLayoutPanel3.Controls.Add(this.textBox1, 1, 1);
             this.tableLayoutPanel3.Controls.Add(this.button2, 0, 1);
             this.tableLayoutPanel3.Controls.Add(this.label2, 1, 0);
             this.tableLayoutPanel3.Controls.Add(this.label3, 2, 0);
             this.tableLayoutPanel3.Controls.Add(this.label1, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this.label16, 3, 0);
+            this.tableLayoutPanel3.Controls.Add(this.txtbFiltAVLbyDESCR, 3, 1);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 19);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -227,9 +233,9 @@
             // textBox2
             // 
             this.textBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox2.Location = new System.Drawing.Point(650, 32);
+            this.textBox2.Location = new System.Drawing.Point(473, 32);
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(525, 23);
+            this.textBox2.Size = new System.Drawing.Size(347, 23);
             this.textBox2.TabIndex = 3;
             this.textBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
@@ -242,7 +248,7 @@
             this.textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBox1.Location = new System.Drawing.Point(120, 32);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(524, 23);
+            this.textBox1.Size = new System.Drawing.Size(347, 23);
             this.textBox1.TabIndex = 0;
             this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
@@ -271,7 +277,7 @@
             this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label2.Location = new System.Drawing.Point(120, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(524, 29);
+            this.label2.Size = new System.Drawing.Size(347, 29);
             this.label2.TabIndex = 5;
             this.label2.Text = "Search in AVL by IPN";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -283,9 +289,9 @@
             this.label3.AutoSize = true;
             this.label3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label3.Location = new System.Drawing.Point(650, 0);
+            this.label3.Location = new System.Drawing.Point(473, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(525, 29);
+            this.label3.Size = new System.Drawing.Size(347, 29);
             this.label3.TabIndex = 6;
             this.label3.Text = "Search in AVL by MFPN";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -302,6 +308,33 @@
             this.label1.TabIndex = 7;
             this.label1.Text = "RELOAD AVL";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.label16.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label16.Location = new System.Drawing.Point(826, 0);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(349, 29);
+            this.label16.TabIndex = 8;
+            this.label16.Text = "Search in AVL by DESCRIPTION";
+            this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label16.Click += new System.EventHandler(this.label16_Click);
+            this.label16.DoubleClick += new System.EventHandler(this.label16_DoubleClick);
+            // 
+            // txtbFiltAVLbyDESCR
+            // 
+            this.txtbFiltAVLbyDESCR.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtbFiltAVLbyDESCR.Location = new System.Drawing.Point(826, 32);
+            this.txtbFiltAVLbyDESCR.Name = "txtbFiltAVLbyDESCR";
+            this.txtbFiltAVLbyDESCR.Size = new System.Drawing.Size(349, 23);
+            this.txtbFiltAVLbyDESCR.TabIndex = 9;
+            this.txtbFiltAVLbyDESCR.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtbFiltAVLbyDESCR.TextChanged += new System.EventHandler(this.txtbFiltAVLbyDESCR_TextChanged);
+            this.txtbFiltAVLbyDESCR.Enter += new System.EventHandler(this.txtbFiltAVLbyDESCR_Enter);
+            this.txtbFiltAVLbyDESCR.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtbFiltAVLbyDESCR_KeyDown);
+            this.txtbFiltAVLbyDESCR.Leave += new System.EventHandler(this.txtbFiltAVLbyDESCR_Leave);
             // 
             // groupBox3
             // 
@@ -874,6 +907,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Client Agnostic WH";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.Load += new System.EventHandler(this.FrmClientAgnosticWH_Load);
             this.groupBox1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
@@ -960,5 +994,7 @@
         private DataGridView dataGridView2;
         private ComboBox comboBox3;
         private Label label1;
+        private Label label16;
+        private TextBox txtbFiltAVLbyDESCR;
     }
 }

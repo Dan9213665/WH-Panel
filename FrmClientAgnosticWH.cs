@@ -12,8 +12,9 @@ namespace WH_Panel
         public FrmClientAgnosticWH()
         {
             InitializeComponent();
-            comboBox3.SelectedIndex = 0;
-            MasterReload(avlLeader_Tech, stockLeader_Tech);
+            //comboBox3.SelectedIndex = 0;
+            comboBox3.SelectedItem = "ROBOTRON";
+            MasterReload(avlROBOTRON, stockROBOTRON);
         }
         private void MasterReload(string avlParam, string stockParam)
         {
@@ -60,8 +61,35 @@ namespace WH_Panel
         public string stockVAYAR = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm";
         public string avlVALENS = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_AVL.xlsx";
         public string stockVALENS = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm";
+        public string avlROBOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_AVL.xlsm";
+        public string stockROBOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_STOCK.xlsm";
         public string avlFile;
         public string stockFile;
+
+        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox3.Text == "ROBOTRON")
+            {
+                MasterReload(avlROBOTRON, stockROBOTRON);
+            }
+
+            else if(comboBox3.Text == "LEADER-TECH")
+            {
+                MasterReload(avlLeader_Tech, stockLeader_Tech);
+            }
+            else if (comboBox3.Text == "NETLINE")
+            {
+                MasterReload(avlNETLINE, stockNETLINE);
+            }
+            else if (comboBox3.Text == "VAYYAR")
+            {
+                MasterReload(avlVAYAR, stockVAYAR);
+            }
+            else if (comboBox3.Text == "VALENS")
+            {
+                MasterReload(avlVALENS, stockVALENS);
+            }
+        }
         private void button2_Click(object sender, EventArgs e)
         {
             label1.BackColor = Color.IndianRed;
@@ -178,8 +206,11 @@ namespace WH_Panel
                 DataView dv = avlDTable.DefaultView;
                 dv.RowFilter = "[IPN] LIKE '%" + searchByIPN.ToString() +
                     "%' AND [MFPN] LIKE '%" + searchbyMFPN.ToString() +
+                    "%' AND [DESCRIPTION] LIKE '%" + txtbFiltAVLbyDESCR.Text.ToString() +
                     "%'";
+                
                 dataGridView2.DataSource = dv;
+
                 SetColumsOrder();
             }
             catch (Exception)
@@ -224,6 +255,8 @@ namespace WH_Panel
             label2.BackColor = Color.LightGreen;
             textBox2.Text = string.Empty;
             label3.BackColor = Color.LightGreen;
+            txtbFiltAVLbyDESCR.Text = string.Empty;
+            label16.BackColor = Color.LightGreen;
         }
         private void dataGridView2_SelectionChanged(object sender, EventArgs e)
         {
@@ -344,6 +377,7 @@ namespace WH_Panel
                 else
                 {
                     MessageBox.Show("Input Qty !");
+                    textBox6.Text = string.Empty;
                     textBox6.Focus();
                 }
             }
@@ -926,7 +960,15 @@ namespace WH_Panel
         {
             txtbColorWhiteOnLeave(sender);
         }
+        private void txtbFiltAVLbyDESCR_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave(sender);
+        }
         private void textBox9_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter(sender);
+        }
+        private void txtbFiltAVLbyDESCR_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
         }
@@ -1017,25 +1059,7 @@ namespace WH_Panel
             dataGridView1.Update();
             SetSTOCKiewColumsOrder();
         }
-        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if(comboBox3.Text== "LEADER-TECH")
-            {
-                MasterReload(avlLeader_Tech, stockLeader_Tech);
-            }
-            else if(comboBox3.Text == "NETLINE")
-            {
-                MasterReload(avlNETLINE, stockNETLINE);
-            }
-            else if (comboBox3.Text == "VAYYAR")
-            {
-                MasterReload(avlVAYAR, stockVAYAR);
-            }
-            else if (comboBox3.Text == "VALENS")
-            {
-                MasterReload(avlVALENS, stockVALENS);
-            }
-        }
+   
         private void textBox8_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -1054,6 +1078,43 @@ namespace WH_Panel
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
             textBox8.Focus();
+        }
+
+        private void FrmClientAgnosticWH_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtbFiltAVLbyDESCR_TextChanged(object sender, EventArgs e)
+        {
+            label16.BackColor = Color.IndianRed;
+            FilterAVLDataGridView();
+        }
+
+        private void label16_Click(object sender, EventArgs e)
+        {
+            txtbFiltAVLbyDESCR.Text = string.Empty;
+            txtbFiltAVLbyDESCR.Focus();
+            label16.BackColor = Color.LightGreen;
+        }
+        private void label16_DoubleClick(object sender, EventArgs e)
+        {
+            AvlClearFilters();
+        }
+        private void txtbFiltAVLbyDESCR_KeyDown(object sender, KeyEventArgs e)
+        {
+            LastInputFromUser = (TextBox)sender;
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (dataGridView2.Rows.Count == 1)
+                {
+                    textBox6.Focus();
+                }
+                else
+                {
+                    dataGridView2.Focus();
+                }
+            }
         }
     }
 }

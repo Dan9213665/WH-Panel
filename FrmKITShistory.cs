@@ -166,7 +166,7 @@ namespace WH_Panel
                                         QtyInKit = qtk,
                                         Delta = del,
                                         QtyPerUnit = qpu,
-                                        Notes = reader[8].ToString(),
+                                        Calc = reader[8].ToString(),
                                         Alts = reader[9].ToString()
                                     };
                                     countItems = i;

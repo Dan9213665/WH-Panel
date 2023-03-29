@@ -163,7 +163,7 @@ namespace WH_Panel
             dgw.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dgw.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dgw.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            //dgw.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             //dgw.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             //dgw.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             //dgw.Columns[7].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -172,7 +172,7 @@ namespace WH_Panel
             dgw.Columns["MFPN"].DisplayIndex = 1;
             dgw.Columns["Description"].DisplayIndex = 2;
             dgw.Columns["Stock"].DisplayIndex = 3;
-            dgw.Columns["UpdatedOn"].Visible = false;
+            dgw.Columns["UpdatedOn"].DisplayIndex = 4;
             dgw.Columns["CommentsWHitem"].Visible = false;
             dgw.Columns["SourceRequester"].Visible = false;
             dgw.AutoResizeColumns();
@@ -217,7 +217,7 @@ namespace WH_Panel
                                     QtyInKit = qtk,
                                     Delta = del,
                                     QtyPerUnit = qpu,
-                                    Notes = reader[8].ToString(),
+                                    Calc = reader[8].ToString(),
                                     Alts = reader[9].ToString()
                                 };
                                 countItems = i;

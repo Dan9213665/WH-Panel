@@ -50,11 +50,14 @@ namespace WH_Panel
             this.groupBox10 = new System.Windows.Forms.GroupBox();
             this.button11 = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.button16 = new System.Windows.Forms.Button();
             this.button9 = new System.Windows.Forms.Button();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.button17 = new System.Windows.Forms.Button();
             this.button10 = new System.Windows.Forms.Button();
             this.btnNETLINE = new System.Windows.Forms.Button();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.button18 = new System.Windows.Forms.Button();
             this.button12 = new System.Windows.Forms.Button();
             this.btnVAYYAR = new System.Windows.Forms.Button();
             this.btnFIELDIN = new System.Windows.Forms.Button();
@@ -62,9 +65,6 @@ namespace WH_Panel
             this.button6 = new System.Windows.Forms.Button();
             this.btnSHILAT = new System.Windows.Forms.Button();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
-            this.button16 = new System.Windows.Forms.Button();
-            this.button17 = new System.Windows.Forms.Button();
-            this.button18 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.groupBox6.SuspendLayout();
@@ -293,6 +293,7 @@ namespace WH_Panel
             // 
             this.button7.BackgroundImage = global::WH_Panel.Properties.Resources.database_add_12927;
             this.button7.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.button7.Enabled = false;
             this.button7.Location = new System.Drawing.Point(8, 77);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(57, 42);
@@ -352,10 +353,22 @@ namespace WH_Panel
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "VALENS";
             // 
+            // button16
+            // 
+            this.button16.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button16.BackgroundImage")));
+            this.button16.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.button16.Location = new System.Drawing.Point(69, 77);
+            this.button16.Name = "button16";
+            this.button16.Size = new System.Drawing.Size(57, 42);
+            this.button16.TabIndex = 15;
+            this.button16.UseVisualStyleBackColor = true;
+            this.button16.Click += new System.EventHandler(this.button16_Click);
+            // 
             // button9
             // 
             this.button9.BackgroundImage = global::WH_Panel.Properties.Resources.database_add_12927;
             this.button9.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.button9.Enabled = false;
             this.button9.Location = new System.Drawing.Point(6, 77);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(59, 42);
@@ -376,10 +389,22 @@ namespace WH_Panel
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "NETLINE";
             // 
+            // button17
+            // 
+            this.button17.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button17.BackgroundImage")));
+            this.button17.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.button17.Location = new System.Drawing.Point(68, 77);
+            this.button17.Name = "button17";
+            this.button17.Size = new System.Drawing.Size(57, 42);
+            this.button17.TabIndex = 16;
+            this.button17.UseVisualStyleBackColor = true;
+            this.button17.Click += new System.EventHandler(this.button17_Click);
+            // 
             // button10
             // 
             this.button10.BackgroundImage = global::WH_Panel.Properties.Resources.database_add_12927;
             this.button10.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.button10.Enabled = false;
             this.button10.Location = new System.Drawing.Point(6, 77);
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(59, 42);
@@ -413,10 +438,22 @@ namespace WH_Panel
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "VAYYAR";
             // 
+            // button18
+            // 
+            this.button18.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button18.BackgroundImage")));
+            this.button18.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.button18.Location = new System.Drawing.Point(68, 77);
+            this.button18.Name = "button18";
+            this.button18.Size = new System.Drawing.Size(57, 42);
+            this.button18.TabIndex = 16;
+            this.button18.UseVisualStyleBackColor = true;
+            this.button18.Click += new System.EventHandler(this.button18_Click);
+            // 
             // button12
             // 
             this.button12.BackgroundImage = global::WH_Panel.Properties.Resources.database_add_12927;
             this.button12.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.button12.Enabled = false;
             this.button12.Location = new System.Drawing.Point(6, 77);
             this.button12.Name = "button12";
             this.button12.Size = new System.Drawing.Size(59, 42);
@@ -492,39 +529,6 @@ namespace WH_Panel
             this.notifyIcon1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseClick);
             this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
             // 
-            // button16
-            // 
-            this.button16.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button16.BackgroundImage")));
-            this.button16.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.button16.Location = new System.Drawing.Point(69, 77);
-            this.button16.Name = "button16";
-            this.button16.Size = new System.Drawing.Size(57, 42);
-            this.button16.TabIndex = 15;
-            this.button16.UseVisualStyleBackColor = true;
-            this.button16.Click += new System.EventHandler(this.button16_Click);
-            // 
-            // button17
-            // 
-            this.button17.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button17.BackgroundImage")));
-            this.button17.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.button17.Location = new System.Drawing.Point(68, 77);
-            this.button17.Name = "button17";
-            this.button17.Size = new System.Drawing.Size(57, 42);
-            this.button17.TabIndex = 16;
-            this.button17.UseVisualStyleBackColor = true;
-            this.button17.Click += new System.EventHandler(this.button17_Click);
-            // 
-            // button18
-            // 
-            this.button18.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button18.BackgroundImage")));
-            this.button18.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.button18.Location = new System.Drawing.Point(68, 77);
-            this.button18.Name = "button18";
-            this.button18.Size = new System.Drawing.Size(57, 42);
-            this.button18.TabIndex = 16;
-            this.button18.UseVisualStyleBackColor = true;
-            this.button18.Click += new System.EventHandler(this.button18_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -552,6 +556,7 @@ namespace WH_Panel
             this.groupBox5.ResumeLayout(false);
             this.groupBox8.ResumeLayout(false);
             this.ResumeLayout(false);
+
         }
         #endregion
         private Button btnValens;

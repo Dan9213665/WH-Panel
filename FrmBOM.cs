@@ -24,6 +24,7 @@ using TextBox = System.Windows.Forms.TextBox;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Menu;
 using System.Xml.Serialization;
 using Label = System.Windows.Forms.Label;
+using System.Web;
 
 namespace WH_Panel
 {
@@ -38,6 +39,9 @@ namespace WH_Panel
         public int missingCount = 0;
         public double percentageComplete = 0.0;
         public int countLoadedFIles = 0;
+        public string fileName = string.Empty;
+        public int orderQty = 0;
+        public int validQty= 0;
         int i = 0;
         int loadingErrors = 0;
         public static Stopwatch stopWatch = new Stopwatch();
@@ -46,9 +50,12 @@ namespace WH_Panel
         public FrmBOM()
         {
             InitializeComponent();
+            ResetViews();
         }
         private void ResetViews()
         {
+            checkBox1.Checked= true;
+            checkBox1.BackColor= Color.LightGreen;
             listBox1.Items.Clear();
             listBox1.Update();
             label13.Text = "No Errors detected.";
@@ -58,6 +65,7 @@ namespace WH_Panel
             label11.BackColor = Color.LightGreen;
             label2.BackColor = Color.LightGreen;
             label3.BackColor = Color.LightGreen;
+            label9.BackColor = Color.LightGreen;
             countItems = 0;
             sufficientCount = 0;
             missingCount = 0;
@@ -85,17 +93,26 @@ namespace WH_Panel
             List<KitHistoryItem> BomItemS = new List<KitHistoryItem>();
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                string fileName = openFileDialog1.FileName;
+                fileName = openFileDialog1.FileName;
                 string Litem = Path.GetFileName(fileName);
                 label12.Text += fileName.ToString() + "\n";
                 DataLoader(fileName, Litem);
-                double pers = double.Parse(countItems.ToString()) * 0.01;
-                percentageComplete = Math.Round((sufficientCount / pers),2);
-                this.Text = fileName + " MIS:" + missingCount.ToString() + " / SUF:" + sufficientCount.ToString() + " of TOT:" + countItems + " (" + percentageComplete + "%)";
+                KitProgressUpdate(fileName);
+                button2.Enabled = true;
             }
             PopulateMissingGridView();
             PopulateSufficientGridView();
         }
+
+        private void KitProgressUpdate(string fileName)
+        {
+            double pers = double.Parse(countItems.ToString()) * 0.01;
+            percentageComplete = Math.Round((sufficientCount / pers), 2);
+            this.Text = fileName + " MIS:" + missingCount.ToString() + " / SUF:" + sufficientCount.ToString() + " of TOT:" + countItems + " (" + percentageComplete + "%)";
+            groupBox3.Text= "Missing Items "+ missingCount.ToString()+ " / " + countItems.ToString();
+            groupBox5.Text = "Sufficient Items " + sufficientCount.ToString()+" / " + countItems.ToString();
+        }
+
         private void DataLoader(string fp, string excelFIleName)
         {
             TimeSpan ts = stopWatch.Elapsed;
@@ -124,25 +141,8 @@ namespace WH_Panel
                             int indDELTA = reader.GetOrdinal("DELTA");
                             int indQty = reader.GetOrdinal("Qty");
                             int indNotes = indQty + 1;
-                            //if (reader.GetOrdinal("Notes") != -1)
-                            //{
-                            //    indNotes = reader.GetOrdinal("Notes");
-                            //}
-                            //else
-                            //{
-                            //    MessageBox.Show(reader.GetOrdinal("Notes").ToString());
-                            //    indNotes = indQty + 1;
-                            //}
                             int indAlts = indQty + 2;
-                            //if (reader.GetOrdinal("Alts") != -1)
-                            //{
-                            //    indAlts = reader.GetOrdinal("Alts");
-                            //}
-                            //else
-                            //{
-                            //    MessageBox.Show(reader.GetOrdinal("Alts").ToString());
-                            //    indAlts = indQty + 2;
-                            //}
+                        
                                 while (reader.Read())
                             {
                                 int del = 0;
@@ -162,7 +162,7 @@ namespace WH_Panel
                                         QtyInKit = qtk,
                                         Delta = del,
                                         QtyPerUnit = qpu,
-                                        Notes = reader[indNotes].ToString(),
+                                        Calc = reader[indNotes].ToString(),
                                         Alts = reader[indAlts].ToString()
                                 };
                                     i++;
@@ -184,12 +184,14 @@ namespace WH_Panel
                      string[] alltheNames=excelFIleName.Split("_");
                         textBox11.Text = alltheNames[1];
                         textBox6.Text= alltheNames[2].Substring(0, alltheNames[2].Length-5);
+                        orderQty = int.Parse(alltheNames[2].Substring(0, alltheNames[2].Length - 8));
                         countLoadedFIles++;
                         label12.Text = "Loaded " + (countItems).ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{0:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
                         label12.Update();
                         textBox1.ReadOnly= false;
                         textBox2.ReadOnly= false;
                         textBox3.ReadOnly= false;
+                        textBox9.ReadOnly= false;
                         textBox1.Focus();
                     }
                     catch (Exception)
@@ -213,6 +215,7 @@ namespace WH_Panel
         }
         private void PopulateMissingGridView()
         {
+            missingUDtable.Clear();
             IEnumerable<KitHistoryItem> data = MissingItemsList;
             using (var reader = ObjectReader.Create(data))
             {
@@ -224,6 +227,7 @@ namespace WH_Panel
         }
         private void PopulateSufficientGridView()
         {
+            sufficientUDtable.Clear();
             IEnumerable<KitHistoryItem> data = SufficientItemsList;
             using (var reader = ObjectReader.Create(data))
             {
@@ -253,7 +257,7 @@ namespace WH_Panel
             dgw.Columns["QtyInKit"].DisplayIndex = 5;
             dgw.Columns["Delta"].DisplayIndex = 6;
             dgw.Columns["QtyPerUnit"].DisplayIndex = 7;
-            dgw.Columns["Notes"].DisplayIndex = 8;
+            dgw.Columns["Calc"].DisplayIndex = 8;
             dgw.Columns["Alts"].DisplayIndex = 9;
         }
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -269,6 +273,7 @@ namespace WH_Panel
                 dv.RowFilter = "[IPN] LIKE '%" + textBox1.Text.ToString() +
                      "%' AND [ProjectName] LIKE '%" + textBox11.Text.ToString() +
                 "%' AND [MFPN] LIKE '%" + textBox2.Text.ToString() +
+                "%' AND [Alts] LIKE '%" + textBox9.Text.ToString() +
                 "%' AND [Description] LIKE '%" + textBox3.Text.ToString() + "%' ";
                 dataGridView1.DataSource = dv;
                 SetColumsOrder(dataGridView1);
@@ -293,13 +298,23 @@ namespace WH_Panel
         {
             clearTextboxesOnSingleLabelClick(sender, textBox1);
         }
+        private void label1_DoubleClick(object sender, EventArgs e)
+        {
+            clearAllTextBoxesOnDoubleClick();
+        }
+
+        private void clearAllTextBoxesOnDoubleClick()
+        {
+            clearTextboxesOnSingleLabelClick(label1, textBox1);
+            clearTextboxesOnSingleLabelClick(label2, textBox2);
+            clearTextboxesOnSingleLabelClick(label3, textBox3);
+        }
+
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
-            if (dataGridView1.SelectedCells.Count > 0)
+            if (dataGridView1.SelectedCells.Count >0)
             {
                 int rowindex = dataGridView1.CurrentCell.RowIndex;
-                //int columnindex = dataGridView1.CurrentCell.ColumnIndex;
-                //string cellValue = dataGridView1.Rows[rowindex].Cells[columnindex].Value.ToString();
                 txtbSelIPN.Text = dataGridView1.Rows[rowindex].Cells["IPN"].Value.ToString();
                 txtbSelMFPN.Text = dataGridView1.Rows[rowindex].Cells["MFPN"].Value.ToString();
                 txtbSelDes.Text = dataGridView1.Rows[rowindex].Cells["Description"].Value.ToString();
@@ -308,9 +323,22 @@ namespace WH_Panel
         }
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
+            JumpToQtyInput(e);
+        }
+        private void textBox2_KeyDown(object sender, KeyEventArgs e)
+        {
+            JumpToQtyInput(e);
+        }
+        private void textBox3_KeyDown(object sender, KeyEventArgs e)
+        {
+            JumpToQtyInput(e);
+        }
+
+        private void JumpToQtyInput(KeyEventArgs e)
+        {
             if (e.KeyCode == Keys.Enter)
             {
-                if (dataGridView1.SelectedCells.Count == 1)
+                if (dataGridView1.Rows.Count == 1)
                 {
                     txtbQtyToAdd.Focus();
                 }
@@ -320,6 +348,7 @@ namespace WH_Panel
                 }
             }
         }
+
         private static void txtbColorGreenOnEnter(object sender)
         {
             TextBox? tb = (TextBox)sender;
@@ -342,6 +371,10 @@ namespace WH_Panel
         {
             txtbColorGreenOnEnter((TextBox)sender);
         }
+        private void textBox9_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter((TextBox)sender);
+        }
         private void txtbQtyToAdd_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter((TextBox)sender);
@@ -354,6 +387,10 @@ namespace WH_Panel
         {
             txtbColorWhiteOnLeave((TextBox)sender);
         }
+        private void textBox9_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave((TextBox)sender);
+        }
         private void textBox3_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave((TextBox)sender);
@@ -362,16 +399,61 @@ namespace WH_Panel
         {
             txtbColorWhiteOnLeave((TextBox)sender);
         }
+      
         private void btnPrintSticker_Click(object sender, EventArgs e)
         {
             KitHistoryItem w = MissingItemsList.FirstOrDefault(r => r.IPN == txtbSelIPN.Text);
-            updateQtyInBomFile(w) ;
-            MessageBox.Show("Test");
+            validQty = 0;
+            bool qtyOK = int.TryParse(txtbQtyToAdd.Text.ToString(),out validQty);
+            if(qtyOK)
+            {
+                    w.QtyInKit += validQty;
+                    w.Delta = w.QtyInKit - (w.QtyPerUnit * orderQty);
+                    updateQtyInBomFile(w);
+            }
         }
         private void updateQtyInBomFile(KitHistoryItem w)
         {
-            if(w.QtyInKit>w.QtyPerUnit)
+            if (w.Delta >= 0)
             {
+                KitHistoryItem itemToUpdate = MissingItemsList.FirstOrDefault(r => r.IPN == w.IPN && r.QtyPerUnit ==w.QtyPerUnit);
+                if (itemToUpdate != null)
+                {
+                    //itemToUpdate.QtyInKit = w.QtyInKit;
+                    if (itemToUpdate.Calc == string.Empty)
+                    {
+                        //itemToUpdate.Calc = validQty.ToString();
+                    }
+                    else
+                    {
+                        itemToUpdate.Calc += "+" + validQty.ToString();
+                    }
+                    MissingItemsList.Remove(itemToUpdate);
+                    PopulateMissingGridView();
+                    SufficientItemsList.Add(itemToUpdate);
+                    sufficientCount++;
+                    missingCount--;
+                    PopulateSufficientGridView();
+                    KitProgressUpdate(fileName);
+                }
+            }
+            else if(w.Delta <0)
+            {
+                KitHistoryItem itemToUpdate = MissingItemsList.FirstOrDefault(r => r.IPN == w.IPN && r.QtyPerUnit == w.QtyPerUnit);
+                if (itemToUpdate != null)
+                {
+                    itemToUpdate.QtyInKit = w.QtyInKit;
+                    if(itemToUpdate.Calc==string.Empty)
+                    {
+                        itemToUpdate.Calc = validQty.ToString();
+                    }
+                    else
+                    {
+                        itemToUpdate.Calc += "+" + validQty.ToString();
+                    }
+                    
+                    PopulateMissingGridView();
+                }
             }
         }
         private void txtbQtyToAdd_KeyDown(object sender, KeyEventArgs e)
@@ -421,14 +503,12 @@ namespace WH_Panel
                 SendKeys.SendWait("{Enter}");
                 //ComeBackFromPrint();
                 Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
-                //LastInputFromUser.Focus();
             }
             catch (Exception e)
             {
                 MessageBox.Show("Sticker printing failed : " + e.Message);
             }
         }
-
         private void label3_Click(object sender, EventArgs e)
         {
             clearTextboxesOnSingleLabelClick(sender, textBox3);
@@ -446,6 +526,68 @@ namespace WH_Panel
             txtb.Text = string.Empty;
             l.BackColor = Color.LightGreen;
             txtb.Focus();
+        }
+
+        private void label2_DoubleClick(object sender, EventArgs e)
+        {
+            clearAllTextBoxesOnDoubleClick();
+        }
+
+        private void label3_DoubleClick(object sender, EventArgs e)
+        {
+            clearAllTextBoxesOnDoubleClick();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+           AuthorizedExcelFileOpening(AddQuotesIfRequired(fileName));
+        }
+        private void AuthorizedExcelFileOpening(string fp)
+        {
+            if (Environment.UserName == "lgt")
+            {
+                openWHexcelDB(fp);
+            }
+            else
+            {
+                MessageBox.Show("Unauthorized ! Access denied !", "Unauthorized ! Access denied !", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            }
+        }
+        private void openWHexcelDB(string thePathToFile)
+        {
+            Process excel = new Process();
+            excel.StartInfo.FileName = "C:\\Program Files\\Microsoft Office\\root\\Office16\\EXCEL.exe";
+            excel.StartInfo.Arguments = thePathToFile;
+            excel.Start();
+        }
+        public string AddQuotesIfRequired(string path)
+        {
+            return !string.IsNullOrWhiteSpace(path) ?
+                path.Contains(" ") && (!path.StartsWith("\"") && !path.EndsWith("\"")) ?
+                    "\"" + path + "\"" : path :
+                    string.Empty;
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\\Data\\DocumentsForProduction\\WORK_PROGRAM.xlsm";
+            openWHexcelDB(fp);
+        }
+
+        private void textBox9_TextChanged(object sender, EventArgs e)
+        {
+            label9.BackColor = Color.IndianRed;
+            FilterTheDataGridView();
+        }
+
+        private void label9_Click(object sender, EventArgs e)
+        {
+            clearTextboxesOnSingleLabelClick(sender, textBox9);
+        }
+
+        private void label9_DoubleClick(object sender, EventArgs e)
+        {
+            clearAllTextBoxesOnDoubleClick();
         }
     }
 }
