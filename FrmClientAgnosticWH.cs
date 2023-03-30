@@ -208,9 +208,7 @@ namespace WH_Panel
                     "%' AND [MFPN] LIKE '%" + searchbyMFPN.ToString() +
                     "%' AND [DESCRIPTION] LIKE '%" + txtbFiltAVLbyDESCR.Text.ToString() +
                     "%'";
-                
                 dataGridView2.DataSource = dv;
-
                 SetColumsOrder();
             }
             catch (Exception)

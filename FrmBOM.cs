@@ -105,14 +105,26 @@ namespace WH_Panel
             PopulateSufficientGridView();
         }
 
+        //private void KitProgressUpdate(string fileName)
+        //{
+        //    double pers = double.Parse(countItems.ToString()) * 0.01;
+        //    percentageComplete = Math.Round((sufficientCount / pers), 2);
+        //    this.Text = fileName + " MIS:" + missingCount.ToString() + " / SUF:" + sufficientCount.ToString() + " of TOT:" + countItems + " (" + percentageComplete + "%)";
+        //    groupBox3.Text= "Missing Items "+ missingCount.ToString()+ " / " + countItems.ToString();
+        //    groupBox5.Text = "Sufficient Items " + sufficientCount.ToString()+" / " + countItems.ToString();
+        //}
+
         private void KitProgressUpdate(string fileName)
         {
-            double pers = double.Parse(countItems.ToString()) * 0.01;
-            percentageComplete = Math.Round((sufficientCount / pers), 2);
-            this.Text = fileName + " MIS:" + missingCount.ToString() + " / SUF:" + sufficientCount.ToString() + " of TOT:" + countItems + " (" + percentageComplete + "%)";
-            groupBox3.Text= "Missing Items "+ missingCount.ToString()+ " / " + countItems.ToString();
-            groupBox5.Text = "Sufficient Items " + sufficientCount.ToString()+" / " + countItems.ToString();
+            double percentage = countItems * 100.0 / double.Parse(sufficientCount.ToString());
+            percentageComplete = Math.Round(percentage, 2);
+
+            string text = $"{fileName} MIS:{missingCount} / SUF:{sufficientCount} of TOT:{countItems} ({percentageComplete}%)";
+            this.Text = text;
+            groupBox3.Text = $"Missing Items {missingCount} / {countItems}";
+            groupBox5.Text = $"Sufficient Items {sufficientCount} / {countItems}";
         }
+
 
         private void DataLoader(string fp, string excelFIleName)
         {
@@ -182,7 +194,7 @@ namespace WH_Panel
                         }
                         conn.Dispose();
                         conn.Close();
-                     string[] alltheNames=excelFIleName.Split("_");
+                        string[] alltheNames=excelFIleName.Split("_");
                         textBox11.Text = alltheNames[1];
                         textBox6.Text= alltheNames[2].Substring(0, alltheNames[2].Length-5);
                         orderQty = int.Parse(alltheNames[2].Substring(0, alltheNames[2].Length - 8));
@@ -379,13 +391,17 @@ namespace WH_Panel
 
         private static void txtbColorGreenOnEnter(object sender)
         {
-            TextBox? tb = (TextBox)sender;
-            tb.BackColor = Color.LightGreen;
+            if (sender is TextBox tb)
+            {
+                tb.BackColor = Color.LightGreen;
+            }
         }
         private static void txtbColorWhiteOnLeave(object sender)
         {
-            TextBox? tb = sender as TextBox;
-            tb.BackColor = Color.White;
+            if (sender is TextBox tb)
+            {
+                tb.BackColor = Color.White;
+            }
         }
         private void textBox1_Enter(object sender, EventArgs e)
         {
@@ -435,55 +451,116 @@ namespace WH_Panel
             bool qtyOK = int.TryParse(txtbQtyToAdd.Text.ToString(),out validQty);
             if(qtyOK)
             {
-                    w.QtyInKit += validQty;
-                    w.Delta = w.QtyInKit - (w.QtyPerUnit * orderQty);
-                    updateQtyInBomFile(w);
+                    //w.QtyInKit += validQty;
+                    //w.Delta = w.QtyInKit - (w.QtyPerUnit * orderQty);
+                    updateQtyInBomFile(w, validQty);
             }
         }
-        private void updateQtyInBomFile(KitHistoryItem w)
+        //private void updateQtyInBomFile(KitHistoryItem w)
+        //{
+        //    if (w.Delta >= 0)
+        //    {
+        //        KitHistoryItem itemToUpdate = MissingItemsList.FirstOrDefault(r => r.IPN == w.IPN && r.QtyPerUnit == w.QtyPerUnit);
+        //        if (itemToUpdate != null)
+        //        {
+        //            if (itemToUpdate.QtyInKit > 0 && itemToUpdate.Calc == string.Empty)
+        //            {
+        //                itemToUpdate.Calc += itemToUpdate.QtyInKit.ToString() + "+" + validQty.ToString();
+        //            }
+        //            //else if (itemToUpdate.QtyInKit == 0)
+        //            //{
+        //            //    itemToUpdate.Calc += validQty.ToString();
+        //            //}
+        //            else
+        //            {
+        //                itemToUpdate.Calc += "+" + validQty.ToString();
+        //            }
+        //            MissingItemsList.Remove(itemToUpdate);
+        //            PopulateMissingGridView();
+        //            SufficientItemsList.Add(itemToUpdate);
+        //            sufficientCount++;
+        //            missingCount--;
+        //            PopulateSufficientGridView();
+        //            KitProgressUpdate(fileName);
+        //        }
+        //    }
+        //    else if (w.Delta < 0)
+        //    {
+        //        KitHistoryItem itemToUpdate = MissingItemsList.FirstOrDefault(r => r.IPN == w.IPN && r.QtyPerUnit == w.QtyPerUnit);
+        //        if (itemToUpdate != null)
+        //        {
+        //            itemToUpdate.QtyInKit = w.QtyInKit;
+
+        //            if (itemToUpdate.QtyInKit > 0 && itemToUpdate.Calc == string.Empty)
+        //            {
+        //                itemToUpdate.Calc += itemToUpdate.QtyInKit.ToString() + "+" + validQty.ToString();
+        //            }
+        //            else if (itemToUpdate.QtyInKit == 0)
+        //            {
+        //                itemToUpdate.Calc += validQty.ToString();
+        //            }
+        //            else
+        //            {
+        //                itemToUpdate.Calc += "+" + validQty.ToString();
+        //            }
+        //            PopulateMissingGridView();
+        //        }
+        //    }
+        //}
+
+
+
+
+        private void updateQtyInBomFile(KitHistoryItem w,int qtyToAdd)
         {
-            if (w.Delta >= 0)
+            KitHistoryItem itemToUpdate = MissingItemsList.FirstOrDefault(r => r.IPN == w.IPN && r.QtyPerUnit == w.QtyPerUnit);
+
+            if (itemToUpdate != null)
             {
-                KitHistoryItem itemToUpdate = MissingItemsList.FirstOrDefault(r => r.IPN == w.IPN && r.QtyPerUnit ==w.QtyPerUnit);
-                if (itemToUpdate != null)
+                if (itemToUpdate.QtyInKit > 0 && itemToUpdate.Calc == string.Empty)
                 {
-                    //itemToUpdate.QtyInKit = w.QtyInKit;
-                    if (itemToUpdate.Calc == string.Empty)
-                    {
-                        //itemToUpdate.Calc = validQty.ToString();
-                    }
-                    else
-                    {
-                        itemToUpdate.Calc += "+" + validQty.ToString();
-                    }
+                    itemToUpdate.Calc = $"{w.QtyInKit}+{qtyToAdd}";
+                    itemToUpdate.QtyInKit += qtyToAdd;
+                    itemToUpdate.Delta = itemToUpdate.QtyInKit - (itemToUpdate.QtyPerUnit * orderQty);
+                }
+                else if (itemToUpdate.QtyInKit > 0 && itemToUpdate.Calc != string.Empty)
+                {
+                    itemToUpdate.Calc += $"+{qtyToAdd}";
+                    itemToUpdate.QtyInKit += qtyToAdd;
+                    itemToUpdate.Delta = itemToUpdate.QtyInKit - (itemToUpdate.QtyPerUnit * orderQty);
+                }
+                else if (itemToUpdate.QtyInKit == 0 && itemToUpdate.Calc == string.Empty)
+                {
+                    itemToUpdate.QtyInKit = qtyToAdd;
+                    itemToUpdate.Delta = itemToUpdate.QtyInKit - (itemToUpdate.QtyPerUnit * orderQty);
+                }
+
+                if (itemToUpdate.Delta >= 0)
+                {
                     MissingItemsList.Remove(itemToUpdate);
                     PopulateMissingGridView();
+
                     SufficientItemsList.Add(itemToUpdate);
                     sufficientCount++;
                     missingCount--;
+
                     PopulateSufficientGridView();
                     KitProgressUpdate(fileName);
+                    UpdateKitHistoryItem(fileName,itemToUpdate);
                 }
-            }
-            else if(w.Delta <0)
-            {
-                KitHistoryItem itemToUpdate = MissingItemsList.FirstOrDefault(r => r.IPN == w.IPN && r.QtyPerUnit == w.QtyPerUnit);
-                if (itemToUpdate != null)
+                else
                 {
-                    itemToUpdate.QtyInKit = w.QtyInKit;
-                    if(itemToUpdate.Calc==string.Empty)
-                    {
-                        itemToUpdate.Calc = validQty.ToString();
-                    }
-                    else
-                    {
-                        itemToUpdate.Calc += "+" + validQty.ToString();
-                    }
-                    
                     PopulateMissingGridView();
+                    UpdateKitHistoryItem( fileName, itemToUpdate);
                 }
             }
+            else
+            {
+
+            }
+            
         }
+
         private void txtbQtyToAdd_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -497,7 +574,7 @@ namespace WH_Panel
         }
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBox1.Checked == true)
+            if (checkBox1.Checked)
             {
                 checkBox1.BackColor = Color.LightGreen;
                 checkBox1.Text = "Print Sticker";
@@ -509,38 +586,74 @@ namespace WH_Panel
             }
             txtbQtyToAdd.Focus();
         }
+        //private void printSticker(WHitem wHitem)
+        //{
+        //    try
+        //    {
+        //        string userName = Environment.UserName;
+        //        string fp = @"C:\\Users\\" + userName + "\\Desktop\\Print_Stickers.xlsx"; // //////Print_StickersWH.xlsm
+        //        string thesheetName = "Sheet1";
+        //        string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+        //        OleDbConnection conn = new OleDbConnection(constr);
+        //        OleDbCommand cmd = new OleDbCommand();
+        //        cmd.Connection = conn;
+        //        cmd.CommandType = CommandType.Text;
+        //        cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @UPDATEDON";
+        //        cmd.Parameters.AddWithValue("@PN", wHitem.IPN);
+        //        cmd.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
+        //        cmd.Parameters.AddWithValue("@ItemDesc", wHitem.Description);
+        //        cmd.Parameters.AddWithValue("@QTY", wHitem.Stock);
+        //        cmd.Parameters.AddWithValue("@UPDATEDON", wHitem.UpdatedOn);
+        //        conn.Open();
+        //        cmd.ExecuteNonQuery();
+        //        conn.Close();
+        //        Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
+        //        SendKeys.SendWait("^p");
+        //        SendKeys.SendWait("{Enter}");
+        //        //ComeBackFromPrint();
+        //        Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        MessageBox.Show("Sticker printing failed : " + e.Message);
+        //    }
+        //}
         private void printSticker(WHitem wHitem)
         {
             try
             {
                 string userName = Environment.UserName;
-                string fp = @"C:\\Users\\" + userName + "\\Desktop\\Print_Stickers.xlsx"; // //////Print_StickersWH.xlsm
+                string fp = $@"C:\Users\{userName}\Desktop\Print_Stickers.xlsx"; // Use string interpolation instead of concatenation
                 string thesheetName = "Sheet1";
-                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
-                OleDbConnection conn = new OleDbConnection(constr);
-                OleDbCommand cmd = new OleDbCommand();
-                cmd.Connection = conn;
-                cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @UPDATEDON";
-                cmd.Parameters.AddWithValue("@PN", wHitem.IPN);
-                cmd.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
-                cmd.Parameters.AddWithValue("@ItemDesc", wHitem.Description);
-                cmd.Parameters.AddWithValue("@QTY", wHitem.Stock);
-                cmd.Parameters.AddWithValue("@UPDATEDON", wHitem.UpdatedOn);
-                conn.Open();
-                cmd.ExecuteNonQuery();
-                conn.Close();
+                string constr = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={fp}; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+                using (OleDbConnection conn = new OleDbConnection(constr))
+                {
+                    conn.Open();
+                    using (OleDbCommand cmd = new OleDbCommand($"UPDATE [{thesheetName}$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @UPDATEDON", conn))
+                    {
+                        cmd.Parameters.AddWithValue("@PN", wHitem.IPN);
+                        cmd.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
+                        cmd.Parameters.AddWithValue("@ItemDesc", wHitem.Description);
+                        cmd.Parameters.AddWithValue("@QTY", wHitem.Stock);
+                        cmd.Parameters.AddWithValue("@UPDATEDON", wHitem.UpdatedOn);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                // Launch BarTender Designer and print the sticker
                 Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
                 SendKeys.SendWait("^p");
                 SendKeys.SendWait("{Enter}");
-                //ComeBackFromPrint();
+
+                // Bring back the focus to the main application
                 Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                MessageBox.Show("Sticker printing failed : " + e.Message);
+                MessageBox.Show($"Sticker printing failed : {ex.Message}");
             }
         }
+
         private void label3_Click(object sender, EventArgs e)
         {
             clearTextboxesOnSingleLabelClick(sender, textBox3);
@@ -551,7 +664,7 @@ namespace WH_Panel
             clearTextboxesOnSingleLabelClick(sender,textBox2);
         }
 
-        private void clearTextboxesOnSingleLabelClick(object sender,TextBox txtb)
+        private void clearTextboxesOnSingleLabelClick(object sender, TextBox txtb)
         {
             Label l = new Label();
             l = (Label)sender;
@@ -559,6 +672,7 @@ namespace WH_Panel
             l.BackColor = Color.LightGreen;
             txtb.Focus();
         }
+
 
         private void label2_DoubleClick(object sender, EventArgs e)
         {
@@ -626,7 +740,52 @@ namespace WH_Panel
         {
             txtbQtyToAdd.Focus();
         }
+        private void UpdateKitHistoryItem(string fp,KitHistoryItem itemToUpdate)
+        {
+            try
+            {
+                string normalizedPath = AddQuotesIfRequired(fp);
+                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + normalizedPath + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+                using (OleDbConnection conn = new OleDbConnection(constr))
+                {
+                    conn.Open();
+                    DataTable dbSchema = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+                    if (dbSchema == null || dbSchema.Rows.Count < 1)
+                    {
+                        throw new Exception("Error: Could not determine the name of the first worksheet.");
+                    }
+                    string firstSheetName = dbSchema.Rows[0]["TABLE_NAME"].ToString();
+                    
+                    string cleanedUpSheetName = firstSheetName.Substring(1).Substring(0, firstSheetName.Length - 3);
 
-        
+                    string kitColumnName = "KIT";
+                 
+
+                    OleDbCommand command = new OleDbCommand("UPDATE [" + cleanedUpSheetName + "$] SET ["+ kitColumnName +"] = @QtyInKit,[Calc] = @Calc WHERE [IPN] = @IPN AND [MFPN] = @MFPN", conn);
+                    command.Parameters.AddWithValue("@QtyInKit", itemToUpdate.QtyInKit);
+                    command.Parameters.AddWithValue("@Calc", itemToUpdate.Calc);
+                    command.Parameters.AddWithValue("@IPN", itemToUpdate.IPN);
+                    command.Parameters.AddWithValue("@MFPN", itemToUpdate.MFPN);
+                    
+                    int rowsAffected = command.ExecuteNonQuery();
+                    conn.Close();
+                    if (rowsAffected > 0)
+                    {
+                        MessageBox.Show("Kit history item updated successfully.");
+                    }
+                    else
+                    {
+                        MessageBox.Show("No rows were updated.");
+                    }
+                }
+            }
+            catch (IOException e)
+            {
+                MessageBox.Show(e.Message);
+            }
+        }
+
+
+
     }
 }

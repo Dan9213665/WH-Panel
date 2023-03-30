@@ -244,6 +244,11 @@ namespace WH_Panel
                 "%' AND [Description] LIKE '%" + textBox3.Text.ToString() + "%' ";
                 dataGridView1.DataSource = dv;
                 SetColumsOrder();
+
+
+                SetColumsOrder();
+
+
             }
             catch (Exception)
             {

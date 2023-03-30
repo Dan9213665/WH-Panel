@@ -100,7 +100,7 @@ namespace WH_Panel
                 {
                     countLoadedFIles++;
                     string Litem = Path.GetFileName(file);
-                    if(FileIsLocked(Litem))
+                    if(IsFileLocked(Litem))
                     {
                         DataLoader(file, Litem);
                     }
@@ -118,21 +118,37 @@ namespace WH_Panel
             textBox2.ReadOnly= false;
             textBox3.ReadOnly= false;
         }
-        public bool FileIsLocked(string strFullFileName)
+        //public bool IsFileLocked(string strFullFileName)
+        //{
+        //    bool blnReturn = false;
+        //    System.IO.FileStream fs;
+        //    try
+        //    {
+        //        fs = System.IO.File.Open(strFullFileName, System.IO.FileMode.Open, System.IO.FileAccess.Write, System.IO.FileShare.None);
+        //        fs.Close();
+        //        fs.Dispose();
+        //    }
+        //    catch (System.IO.IOException ex)
+        //    {
+        //        blnReturn = true;
+        //    }
+        //    return blnReturn;
+        //}
+        public bool IsFileLocked(string filePath)
         {
-            bool blnReturn = false;
-            System.IO.FileStream fs;
             try
             {
-                fs = System.IO.File.Open(strFullFileName, System.IO.FileMode.Open, System.IO.FileAccess.Write, System.IO.FileShare.None);
-                fs.Close();
-                fs.Dispose();
+                using (var stream = File.Open(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+                {
+                    stream.Close();
+                }
             }
-            catch (System.IO.IOException ex)
+            catch (IOException)
             {
-                blnReturn = true;
+                return true;
             }
-            return blnReturn;
+
+            return false;
         }
         private void SetColumsOrder(DataGridView dgw)
         {
