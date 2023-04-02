@@ -25,6 +25,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.Menu;
 using System.Xml.Serialization;
 using Label = System.Windows.Forms.Label;
 using System.Web;
+using Seagull.BarTender.Print;
 
 namespace WH_Panel
 {
@@ -51,6 +52,7 @@ namespace WH_Panel
         public FrmBOM()
         {
             InitializeComponent();
+            
             ResetViews();
         }
         private void ResetViews()
@@ -389,20 +391,7 @@ namespace WH_Panel
             }
         }
 
-        private static void txtbColorGreenOnEnter(object sender)
-        {
-            if (sender is TextBox tb)
-            {
-                tb.BackColor = Color.LightGreen;
-            }
-        }
-        private static void txtbColorWhiteOnLeave(object sender)
-        {
-            if (sender is TextBox tb)
-            {
-                tb.BackColor = Color.White;
-            }
-        }
+
         private void textBox1_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter((TextBox)sender);
@@ -443,7 +432,7 @@ namespace WH_Panel
         {
             txtbColorWhiteOnLeave((TextBox)sender);
         }
-      
+
         private void btnPrintSticker_Click(object sender, EventArgs e)
         {
             KitHistoryItem w = MissingItemsList.FirstOrDefault(r => r.IPN == txtbSelIPN.Text);
@@ -454,63 +443,20 @@ namespace WH_Panel
                     //w.QtyInKit += validQty;
                     //w.Delta = w.QtyInKit - (w.QtyPerUnit * orderQty);
                     updateQtyInBomFile(w, validQty);
+                if(checkBox1.Checked)
+                {
+                    WHitem itemToPrint = new WHitem();
+                    itemToPrint.IPN = w.IPN;
+                    itemToPrint.MFPN = w.MFPN;
+                    itemToPrint.Description = w.Description;
+                    itemToPrint.Stock = validQty;
+                    itemToPrint.UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
+                    printSticker(itemToPrint);
+                }
+              
             }
         }
-        //private void updateQtyInBomFile(KitHistoryItem w)
-        //{
-        //    if (w.Delta >= 0)
-        //    {
-        //        KitHistoryItem itemToUpdate = MissingItemsList.FirstOrDefault(r => r.IPN == w.IPN && r.QtyPerUnit == w.QtyPerUnit);
-        //        if (itemToUpdate != null)
-        //        {
-        //            if (itemToUpdate.QtyInKit > 0 && itemToUpdate.Calc == string.Empty)
-        //            {
-        //                itemToUpdate.Calc += itemToUpdate.QtyInKit.ToString() + "+" + validQty.ToString();
-        //            }
-        //            //else if (itemToUpdate.QtyInKit == 0)
-        //            //{
-        //            //    itemToUpdate.Calc += validQty.ToString();
-        //            //}
-        //            else
-        //            {
-        //                itemToUpdate.Calc += "+" + validQty.ToString();
-        //            }
-        //            MissingItemsList.Remove(itemToUpdate);
-        //            PopulateMissingGridView();
-        //            SufficientItemsList.Add(itemToUpdate);
-        //            sufficientCount++;
-        //            missingCount--;
-        //            PopulateSufficientGridView();
-        //            KitProgressUpdate(fileName);
-        //        }
-        //    }
-        //    else if (w.Delta < 0)
-        //    {
-        //        KitHistoryItem itemToUpdate = MissingItemsList.FirstOrDefault(r => r.IPN == w.IPN && r.QtyPerUnit == w.QtyPerUnit);
-        //        if (itemToUpdate != null)
-        //        {
-        //            itemToUpdate.QtyInKit = w.QtyInKit;
-
-        //            if (itemToUpdate.QtyInKit > 0 && itemToUpdate.Calc == string.Empty)
-        //            {
-        //                itemToUpdate.Calc += itemToUpdate.QtyInKit.ToString() + "+" + validQty.ToString();
-        //            }
-        //            else if (itemToUpdate.QtyInKit == 0)
-        //            {
-        //                itemToUpdate.Calc += validQty.ToString();
-        //            }
-        //            else
-        //            {
-        //                itemToUpdate.Calc += "+" + validQty.ToString();
-        //            }
-        //            PopulateMissingGridView();
-        //        }
-        //    }
-        //}
-
-
-
-
+     
         private void updateQtyInBomFile(KitHistoryItem w,int qtyToAdd)
         {
             KitHistoryItem itemToUpdate = MissingItemsList.FirstOrDefault(r => r.IPN == w.IPN && r.QtyPerUnit == w.QtyPerUnit);
@@ -744,34 +690,32 @@ namespace WH_Panel
         {
             try
             {
+
+               
+
                 string normalizedPath = AddQuotesIfRequired(fp);
                 string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + normalizedPath + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
                 using (OleDbConnection conn = new OleDbConnection(constr))
                 {
                     conn.Open();
                     DataTable dbSchema = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
-                    if (dbSchema == null || dbSchema.Rows.Count < 1)
+                  if (dbSchema == null || dbSchema.Rows.Count < 1)
                     {
                         throw new Exception("Error: Could not determine the name of the first worksheet.");
                     }
                     string firstSheetName = dbSchema.Rows[0]["TABLE_NAME"].ToString();
-                    
                     string cleanedUpSheetName = firstSheetName.Substring(1).Substring(0, firstSheetName.Length - 3);
-
-                    string kitColumnName = "KIT";
-                 
-
-                    OleDbCommand command = new OleDbCommand("UPDATE [" + cleanedUpSheetName + "$] SET ["+ kitColumnName +"] = @QtyInKit,[Calc] = @Calc WHERE [IPN] = @IPN AND [MFPN] = @MFPN", conn);
+                    string kitColumnName = getKitColIndex(fp);
+                    OleDbCommand command = new OleDbCommand("UPDATE [" + cleanedUpSheetName + "$] SET ["+ kitColumnName + "] = @QtyInKit,[Calc] = @Calc WHERE [IPN] = @IPN AND [MFPN] = @MFPN", conn);
                     command.Parameters.AddWithValue("@QtyInKit", itemToUpdate.QtyInKit);
                     command.Parameters.AddWithValue("@Calc", itemToUpdate.Calc);
                     command.Parameters.AddWithValue("@IPN", itemToUpdate.IPN);
                     command.Parameters.AddWithValue("@MFPN", itemToUpdate.MFPN);
-                    
                     int rowsAffected = command.ExecuteNonQuery();
                     conn.Close();
                     if (rowsAffected > 0)
                     {
-                        MessageBox.Show("Kit history item updated successfully.");
+                        //MessageBox.Show("BOM item was updated successfully.");
                     }
                     else
                     {
@@ -785,7 +729,55 @@ namespace WH_Panel
             }
         }
 
+        private string getKitColIndex(string fp)
+        {
+            string columnName = string.Empty;
+            string normalizedPath = AddQuotesIfRequired(fp);
+            string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + normalizedPath + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+            using (OleDbConnection conn = new OleDbConnection(constr))
+            {
+                conn.Open();
+                DataTable dbSchema = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+                if (dbSchema == null || dbSchema.Rows.Count < 1)
+                {
+                    throw new Exception("Error: Could not determine the name of the first worksheet.");
+                }
+                string firstSheetName = dbSchema.Rows[0]["TABLE_NAME"].ToString();
+                string cleanedUpSheetName = firstSheetName.Substring(1).Substring(0, firstSheetName.Length - 3);
+                OleDbCommand command = new OleDbCommand("Select * from [" + cleanedUpSheetName + "$]", conn);
+                command.Connection = conn;
+                OleDbDataReader reader = command.ExecuteReader();
+                DataTable schemaTable = reader.GetSchemaTable();
+                foreach (DataRow row in schemaTable.Rows)
+                {
+                    string currentColumnName = (string)row["ColumnName"];
+                    if (currentColumnName.StartsWith("KIT"))
+                    {
+                        columnName = currentColumnName;
+                        break;
+                    }
+                }
+                reader.Close();
+                conn.Close();
+            }
+            return columnName;
+        }
 
+      
+        private static void txtbColorGreenOnEnter(object sender)
+        {
+            if (sender is TextBox tb)
+            {
+                tb.BackColor = Color.LightGreen;
+            }
+        }
+        private static void txtbColorWhiteOnLeave(object sender)
+        {
+            if (sender is TextBox tb)
+            {
+                tb.BackColor = Color.White;
+            }
+        }
 
     }
 }
