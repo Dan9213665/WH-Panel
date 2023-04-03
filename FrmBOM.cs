@@ -102,23 +102,15 @@ namespace WH_Panel
                 DataLoader(fileName, Litem);
                 KitProgressUpdate(fileName);
                 button2.Enabled = true;
+                PopulateMissingGridView();
+                PopulateSufficientGridView();
             }
-            PopulateMissingGridView();
-            PopulateSufficientGridView();
+            
         }
-
-        //private void KitProgressUpdate(string fileName)
-        //{
-        //    double pers = double.Parse(countItems.ToString()) * 0.01;
-        //    percentageComplete = Math.Round((sufficientCount / pers), 2);
-        //    this.Text = fileName + " MIS:" + missingCount.ToString() + " / SUF:" + sufficientCount.ToString() + " of TOT:" + countItems + " (" + percentageComplete + "%)";
-        //    groupBox3.Text= "Missing Items "+ missingCount.ToString()+ " / " + countItems.ToString();
-        //    groupBox5.Text = "Sufficient Items " + sufficientCount.ToString()+" / " + countItems.ToString();
-        //}
 
         private void KitProgressUpdate(string fileName)
         {
-            double percentage = countItems * 100.0 / double.Parse(sufficientCount.ToString());
+            double percentage = double.Parse(sufficientCount.ToString())/ (countItems / 100.00) ;
             percentageComplete = Math.Round(percentage, 2);
 
             string text = $"{fileName} MIS:{missingCount} / SUF:{sufficientCount} of TOT:{countItems} ({percentageComplete}%)";
@@ -181,7 +173,7 @@ namespace WH_Panel
                                         Alts = reader[indAlts].ToString()
                                 };
                                     i++;
-                                    countItems = i;
+                                    countItems++;
                                     if (abc.Delta >= 0)
                                     {
                                         SufficientItemsList.Add(abc);

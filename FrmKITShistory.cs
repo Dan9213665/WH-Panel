@@ -171,7 +171,7 @@ namespace WH_Panel
                                     };
                                     countItems = i;
                                     label12.Text = "Loaded " + (countItems).ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{0:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
-                                if (countItems % 5000 == 0)
+                                if (countItems % 1000 == 0)
                                 { label12.Update(); }
                                 KitHistoryItemsList.Add(abc);
                                     i++;

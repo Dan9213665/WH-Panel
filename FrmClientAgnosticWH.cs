@@ -18,6 +18,7 @@ namespace WH_Panel
         }
         private void MasterReload(string avlParam, string stockParam)
         {
+            lblSendTo.Enabled = false;
             avlFile = avlParam;
             stockFile = stockParam;
             textBox8.ReadOnly= true;
@@ -312,10 +313,20 @@ namespace WH_Panel
             RadioButton rbtn = sender as RadioButton;
             if (rbtn.Checked == true)
             {
+                lblSendTo.Text="_Sent to_";
+                lblSendTo.Enabled = true;
                 textBox8.ReadOnly = true;
                 textBox9.ReadOnly = false;
                 textBox9.Focus();
             }
+            else
+            {
+                lblSendTo.ResetText();
+                lblSendTo.Enabled = false;
+                textBox9.ReadOnly = true;
+                textBox8.ReadOnly = false;
+            }
+                
         }
         private void btnMove_Click(object sender, EventArgs e)
         {
@@ -1113,6 +1124,22 @@ namespace WH_Panel
                     dataGridView2.Focus();
                 }
             }
+        }
+
+        private void lblSendTo_Click(object sender, EventArgs e)
+        {
+            lblSendTo.Text += comboBox3.Text.ToString()+" "+ DateTime.Now.ToString("yyyy-MM-dd");
+            textBox9.Text = lblSendTo.Text;
+        }
+
+        private void textBox9_KeyDown_1(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                LastInputFromUser.Clear();
+                LastInputFromUser.Focus();
+            }
+
         }
     }
 }

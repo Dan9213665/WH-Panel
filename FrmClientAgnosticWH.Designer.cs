@@ -80,6 +80,7 @@
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.textBox8 = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
+            this.lblSendTo = new System.Windows.Forms.Label();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
             dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
@@ -786,15 +787,17 @@
             // 
             this.tableLayoutPanel4.AutoSize = true;
             this.tableLayoutPanel4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel4.ColumnCount = 3;
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel4.ColumnCount = 4;
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
             this.tableLayoutPanel4.Controls.Add(this.label14, 2, 0);
             this.tableLayoutPanel4.Controls.Add(this.textBox9, 2, 1);
             this.tableLayoutPanel4.Controls.Add(this.comboBox2, 0, 1);
             this.tableLayoutPanel4.Controls.Add(this.textBox8, 1, 1);
             this.tableLayoutPanel4.Controls.Add(this.label12, 0, 0);
+            this.tableLayoutPanel4.Controls.Add(this.lblSendTo, 3, 0);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel4.Location = new System.Drawing.Point(3, 19);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
@@ -808,9 +811,9 @@
             // 
             this.label14.AutoSize = true;
             this.label14.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label14.Location = new System.Drawing.Point(787, 0);
+            this.label14.Location = new System.Drawing.Point(709, 0);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(388, 29);
+            this.label14.Size = new System.Drawing.Size(347, 29);
             this.label14.TabIndex = 4;
             this.label14.Text = "WO";
             this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -818,12 +821,13 @@
             // textBox9
             // 
             this.textBox9.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox9.Location = new System.Drawing.Point(787, 32);
+            this.textBox9.Location = new System.Drawing.Point(709, 32);
             this.textBox9.Name = "textBox9";
-            this.textBox9.Size = new System.Drawing.Size(388, 23);
+            this.textBox9.Size = new System.Drawing.Size(347, 23);
             this.textBox9.TabIndex = 1;
             this.textBox9.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.textBox9.Enter += new System.EventHandler(this.textBox9_Enter);
+            this.textBox9.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox9_KeyDown_1);
             this.textBox9.Leave += new System.EventHandler(this.textBox9_Leave);
             // 
             // comboBox2
@@ -840,16 +844,16 @@
             this.comboBox2.Location = new System.Drawing.Point(3, 32);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.comboBox2.Size = new System.Drawing.Size(386, 23);
+            this.comboBox2.Size = new System.Drawing.Size(347, 23);
             this.comboBox2.TabIndex = 5;
             this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
             // textBox8
             // 
             this.textBox8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox8.Location = new System.Drawing.Point(395, 32);
+            this.textBox8.Location = new System.Drawing.Point(356, 32);
             this.textBox8.Name = "textBox8";
-            this.textBox8.Size = new System.Drawing.Size(386, 23);
+            this.textBox8.Size = new System.Drawing.Size(347, 23);
             this.textBox8.TabIndex = 0;
             this.textBox8.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.textBox8.Enter += new System.EventHandler(this.textBox8_Enter);
@@ -863,10 +867,22 @@
             this.label12.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label12.Location = new System.Drawing.Point(3, 0);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(778, 29);
+            this.label12.Size = new System.Drawing.Size(700, 29);
             this.label12.TabIndex = 6;
             this.label12.Text = "Select GILT/WS/WR/SH/IF source";
             this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lblSendTo
+            // 
+            this.lblSendTo.AutoSize = true;
+            this.lblSendTo.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblSendTo.Location = new System.Drawing.Point(1062, 0);
+            this.lblSendTo.Name = "lblSendTo";
+            this.tableLayoutPanel4.SetRowSpan(this.lblSendTo, 2);
+            this.lblSendTo.Size = new System.Drawing.Size(113, 58);
+            this.lblSendTo.TabIndex = 7;
+            this.lblSendTo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblSendTo.Click += new System.EventHandler(this.lblSendTo_Click);
             // 
             // groupBox6
             // 
@@ -996,5 +1012,6 @@
         private Label label1;
         private Label label16;
         private TextBox txtbFiltAVLbyDESCR;
+        private Label lblSendTo;
     }
 }
