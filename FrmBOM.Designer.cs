@@ -51,6 +51,7 @@
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.button3 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.textBox11 = new System.Windows.Forms.TextBox();
@@ -253,6 +254,7 @@
             this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel4, 2, 0);
             this.tableLayoutPanel3.Controls.Add(this.button3, 3, 0);
             this.tableLayoutPanel3.Controls.Add(this.button2, 4, 0);
+            this.tableLayoutPanel3.Controls.Add(this.button4, 5, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 19);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -350,6 +352,17 @@
             this.button2.TabIndex = 4;
             this.button2.UseVisualStyleBackColor = false;
             this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // button4
+            // 
+            this.button4.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button4.BackgroundImage")));
+            this.button4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.button4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.button4.Location = new System.Drawing.Point(1063, 3);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(207, 38);
+            this.button4.TabIndex = 5;
+            this.button4.UseVisualStyleBackColor = true;
             // 
             // groupBox2
             // 
@@ -845,5 +858,6 @@
         private TextBox txtbSelDes;
         private TextBox txtbQtyToAdd;
         private Button button2;
+        private Button button4;
     }
 }

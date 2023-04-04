@@ -313,12 +313,14 @@
             // textBox9
             // 
             this.textBox9.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox9.Enabled = false;
             this.textBox9.Location = new System.Drawing.Point(1043, 18);
             this.textBox9.Name = "textBox9";
             this.textBox9.Size = new System.Drawing.Size(103, 23);
             this.textBox9.TabIndex = 17;
             this.textBox9.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.textBox9.TextChanged += new System.EventHandler(this.textBox9_TextChanged);
+            this.textBox9.Enter += new System.EventHandler(this.textBox9_Enter);
+            this.textBox9.Leave += new System.EventHandler(this.textBox9_Leave);
             // 
             // textBox8
             // 
@@ -403,6 +405,8 @@
             this.label9.TabIndex = 8;
             this.label9.Text = "ALTs";
             this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label9.Click += new System.EventHandler(this.label9_Click);
+            this.label9.DoubleClick += new System.EventHandler(this.label9_DoubleClick);
             // 
             // label8
             // 

@@ -81,6 +81,7 @@
             this.textBox8 = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
             this.lblSendTo = new System.Windows.Forms.Label();
+            this.lblRWK = new System.Windows.Forms.Label();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
             dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
@@ -798,6 +799,7 @@
             this.tableLayoutPanel4.Controls.Add(this.textBox8, 1, 1);
             this.tableLayoutPanel4.Controls.Add(this.label12, 0, 0);
             this.tableLayoutPanel4.Controls.Add(this.lblSendTo, 3, 0);
+            this.tableLayoutPanel4.Controls.Add(this.lblRWK, 3, 1);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel4.Location = new System.Drawing.Point(3, 19);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
@@ -878,11 +880,21 @@
             this.lblSendTo.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblSendTo.Location = new System.Drawing.Point(1062, 0);
             this.lblSendTo.Name = "lblSendTo";
-            this.tableLayoutPanel4.SetRowSpan(this.lblSendTo, 2);
-            this.lblSendTo.Size = new System.Drawing.Size(113, 58);
+            this.lblSendTo.Size = new System.Drawing.Size(113, 29);
             this.lblSendTo.TabIndex = 7;
             this.lblSendTo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblSendTo.Click += new System.EventHandler(this.lblSendTo_Click);
+            // 
+            // lblRWK
+            // 
+            this.lblRWK.AutoSize = true;
+            this.lblRWK.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblRWK.Location = new System.Drawing.Point(1062, 29);
+            this.lblRWK.Name = "lblRWK";
+            this.lblRWK.Size = new System.Drawing.Size(113, 29);
+            this.lblRWK.TabIndex = 8;
+            this.lblRWK.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblRWK.Click += new System.EventHandler(this.lblRWK_Click);
             // 
             // groupBox6
             // 
@@ -1013,5 +1025,6 @@
         private Label label16;
         private TextBox txtbFiltAVLbyDESCR;
         private Label lblSendTo;
+        private Label lblRWK;
     }
 }

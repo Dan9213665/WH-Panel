@@ -490,6 +490,7 @@
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel3.PerformLayout();
             this.ResumeLayout(false);
+
         }
         #endregion
         private TableLayoutPanel tableLayoutPanel1;

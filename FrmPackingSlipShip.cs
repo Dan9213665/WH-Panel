@@ -147,7 +147,6 @@ namespace WH_Panel
             {
                 return true;
             }
-
             return false;
         }
         private void SetColumsOrder(DataGridView dgw)
@@ -170,7 +169,7 @@ namespace WH_Panel
             dgw.Columns["QtyInKit"].DisplayIndex = 5;
             dgw.Columns["Delta"].DisplayIndex = 6;
             dgw.Columns["QtyPerUnit"].DisplayIndex = 7;
-            dgw.Columns["Notes"].DisplayIndex = 8;
+            dgw.Columns["Calc"].DisplayIndex = 8;
             dgw.Columns["Alts"].DisplayIndex = 9;
         }
         private void SetColumsOrderPackedItems(DataGridView dgw)

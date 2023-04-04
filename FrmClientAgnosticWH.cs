@@ -1,5 +1,6 @@
 ﻿using FastMember;
 using Seagull.BarTender.Print;
+using System.ComponentModel;
 using System.Data;
 using System.Data.OleDb;
 using DataTable = System.Data.DataTable;
@@ -66,14 +67,12 @@ namespace WH_Panel
         public string stockROBOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_STOCK.xlsm";
         public string avlFile;
         public string stockFile;
-
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboBox3.Text == "ROBOTRON")
             {
                 MasterReload(avlROBOTRON, stockROBOTRON);
             }
-
             else if(comboBox3.Text == "LEADER-TECH")
             {
                 MasterReload(avlLeader_Tech, stockLeader_Tech);
@@ -313,6 +312,7 @@ namespace WH_Panel
             RadioButton rbtn = sender as RadioButton;
             if (rbtn.Checked == true)
             {
+                lblRWK.Text = "_RWK_";
                 lblSendTo.Text="_Sent to_";
                 lblSendTo.Enabled = true;
                 textBox8.ReadOnly = true;
@@ -321,12 +321,12 @@ namespace WH_Panel
             }
             else
             {
+                lblRWK.ResetText();
                 lblSendTo.ResetText();
                 lblSendTo.Enabled = false;
                 textBox9.ReadOnly = true;
                 textBox8.ReadOnly = false;
             }
-                
         }
         private void btnMove_Click(object sender, EventArgs e)
         {
@@ -787,6 +787,8 @@ namespace WH_Panel
             dataGridView1.Columns["UpdatedOn"].DisplayIndex = 5;
             dataGridView1.Columns["CommentsWHitem"].DisplayIndex = 6;
             dataGridView1.Columns["SourceRequester"].DisplayIndex = 7;
+
+            dataGridView1.Sort(dataGridView1.Columns["UpdatedOn"], ListSortDirection.Descending);
         }
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
@@ -1068,7 +1070,6 @@ namespace WH_Panel
             dataGridView1.Update();
             SetSTOCKiewColumsOrder();
         }
-   
         private void textBox8_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -1088,18 +1089,14 @@ namespace WH_Panel
         {
             textBox8.Focus();
         }
-
         private void FrmClientAgnosticWH_Load(object sender, EventArgs e)
         {
-
         }
-
         private void txtbFiltAVLbyDESCR_TextChanged(object sender, EventArgs e)
         {
             label16.BackColor = Color.IndianRed;
             FilterAVLDataGridView();
         }
-
         private void label16_Click(object sender, EventArgs e)
         {
             txtbFiltAVLbyDESCR.Text = string.Empty;
@@ -1125,13 +1122,11 @@ namespace WH_Panel
                 }
             }
         }
-
         private void lblSendTo_Click(object sender, EventArgs e)
         {
             lblSendTo.Text += comboBox3.Text.ToString()+" "+ DateTime.Now.ToString("yyyy-MM-dd");
             textBox9.Text = lblSendTo.Text;
         }
-
         private void textBox9_KeyDown_1(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -1139,7 +1134,11 @@ namespace WH_Panel
                 LastInputFromUser.Clear();
                 LastInputFromUser.Focus();
             }
-
+        }
+        private void lblRWK_Click(object sender, EventArgs e)
+        {
+            lblRWK.Text +=  DateTime.Now.ToString("yyyy-MM-dd");
+            textBox9.Text = lblRWK.Text;
         }
     }
 }

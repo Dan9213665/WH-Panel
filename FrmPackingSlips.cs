@@ -130,7 +130,6 @@ namespace WH_Panel
                         }
                         string firstSheetName = excelFIleName;
                         string cleanedUpSheetName = "PACKING SLIP";
-
                         OleDbCommand command = new OleDbCommand("Select * from [" + cleanedUpSheetName + "$]", conn);
                         //OleDbCommand command = new OleDbCommand("Select * from [Sheet1$]", conn);
                         OleDbDataReader reader = command.ExecuteReader();
@@ -139,8 +138,6 @@ namespace WH_Panel
                             int j = 0;
                             while (reader.Read())
                             {
-                                
-
                                 if (j>11)
                                 {
                                     int qtyS = 0;
@@ -166,7 +163,6 @@ namespace WH_Panel
                                         i++;
                                     }
                                 }
-                                
                                 j++;
                             }
                         }
@@ -180,7 +176,6 @@ namespace WH_Panel
                         MessageBox.Show(e.Message);
                         label13.BackColor = Color.IndianRed;
                         label13.Update();
-
                         string er = fp;
                         listBox1.Items.Add(er);
                         listBox1.Update();

@@ -26,7 +26,6 @@ using System.Xml.Serialization;
 using Label = System.Windows.Forms.Label;
 using System.Web;
 using Seagull.BarTender.Print;
-
 namespace WH_Panel
 {
     public partial class FrmBOM : Form
@@ -52,7 +51,6 @@ namespace WH_Panel
         public FrmBOM()
         {
             InitializeComponent();
-            
             ResetViews();
         }
         private void ResetViews()
@@ -105,21 +103,16 @@ namespace WH_Panel
                 PopulateMissingGridView();
                 PopulateSufficientGridView();
             }
-            
         }
-
         private void KitProgressUpdate(string fileName)
         {
             double percentage = double.Parse(sufficientCount.ToString())/ (countItems / 100.00) ;
             percentageComplete = Math.Round(percentage, 2);
-
             string text = $"{fileName} MIS:{missingCount} / SUF:{sufficientCount} of TOT:{countItems} ({percentageComplete}%)";
             this.Text = text;
             groupBox3.Text = $"Missing Items {missingCount} / {countItems}";
             groupBox5.Text = $"Sufficient Items {sufficientCount} / {countItems}";
         }
-
-
         private void DataLoader(string fp, string excelFIleName)
         {
             TimeSpan ts = stopWatch.Elapsed;
@@ -149,7 +142,6 @@ namespace WH_Panel
                             int indQty = reader.GetOrdinal("Qty");
                             int indCalc = reader.GetOrdinal("Calc");
                             int indAlts = indQty + 2;
-                        
                                 while (reader.Read())
                             {
                                 int del = 0;
@@ -158,7 +150,6 @@ namespace WH_Panel
                                 bool qtkPar= int.TryParse(reader[indDELTA-1].ToString(), out qtk);
                                 int qpu = 0;
                                 bool qpuPar= int.TryParse(reader[indQty].ToString(), out qpu);
-
                                 KitHistoryItem abc = new KitHistoryItem
                                     {
                                         DateOfCreation = cleanedUpSheetName,
@@ -273,14 +264,57 @@ namespace WH_Panel
             FilterTheMissingDataGridView();
             FilterTheFoundDataGridView();
         }
+        public static string ExtractBetween(string inputString, string startString, string endString)
+        {
+            int startIndex = inputString.IndexOf(startString);
+            if (startIndex < 0)
+            {
+                return null;
+            }
+            startIndex += startString.Length;
+
+            int endIndex = inputString.IndexOf(endString, startIndex);
+            if (endIndex < 0)
+            {
+                return null;
+            }
+
+            return inputString.Substring(startIndex, endIndex - startIndex);
+        }
         private void FilterTheMissingDataGridView()
         {
             try
             {
+                string searchbyMFPN = textBox2.Text;
+                if (textBox2.Text.StartsWith("1P"))
+                {
+                    searchbyMFPN = textBox2.Text.Substring(2);
+                }
+                //LCLS QR decoder
+                else if (textBox2.Text.StartsWith("{pbn:"))
+                {
+                    searchbyMFPN = ExtractBetween((textBox2.Text), "pm:", ",qty");
+                }
+                else if (textBox2.Text.Contains("-") == true && textBox2.Text.Length > 6)
+                {
+                    string[] theSplit = textBox2.Text.ToString().Split("-");
+                    if (theSplit[0].Length == 3 || theSplit[0].Length >= 2|| textBox2.Text.Length>5)
+                    {
+                        searchbyMFPN = theSplit[1];
+                    }
+                    else
+                    {
+                        searchbyMFPN = textBox2.Text;
+                    }
+                }
+                else if (textBox2.Text.StartsWith("P") == true)
+                {
+                    searchbyMFPN = textBox2.Text.Substring(1);
+                }
                 DataView dv = missingUDtable.DefaultView;
                 dv.RowFilter = "[IPN] LIKE '%" + textBox1.Text.ToString() +
                 "%' AND [ProjectName] LIKE '%" + textBox11.Text.ToString() +
-                "%' AND [MFPN] LIKE '%" + textBox2.Text.ToString() +
+                "%' AND [MFPN] LIKE '%" + searchbyMFPN +
                 "%' AND [Alts] LIKE '%" + textBox9.Text.ToString() +
                 "%' AND [Description] LIKE '%" + textBox3.Text.ToString() + "%' ";
                 dataGridView1.DataSource = dv;
@@ -329,7 +363,6 @@ namespace WH_Panel
         {
             clearAllTextBoxesOnDoubleClick();
         }
-
         private void clearAllTextBoxesOnDoubleClick()
         {
             clearTextboxesOnSingleLabelClick(label1, textBox1);
@@ -337,7 +370,6 @@ namespace WH_Panel
             clearTextboxesOnSingleLabelClick(label3, textBox3);
             clearTextboxesOnSingleLabelClick(label9, textBox9);
         }
-
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
             if (dataGridView1.SelectedCells.Count >0)
@@ -365,11 +397,9 @@ namespace WH_Panel
         {
             JumpToQtyInput((TextBox)sender, e);
         }
-
         private void JumpToQtyInput(TextBox t, KeyEventArgs e)
         {
             lastTxtbInputFromUser = t;
-
             if (e.KeyCode == Keys.Enter)
             {
                 if (dataGridView1.Rows.Count == 1)
@@ -382,8 +412,6 @@ namespace WH_Panel
                 }
             }
         }
-
-
         private void textBox1_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter((TextBox)sender);
@@ -424,16 +452,18 @@ namespace WH_Panel
         {
             txtbColorWhiteOnLeave((TextBox)sender);
         }
-
         private void btnPrintSticker_Click(object sender, EventArgs e)
         {
             KitHistoryItem w = MissingItemsList.FirstOrDefault(r => r.IPN == txtbSelIPN.Text);
+            string inputQty = txtbQtyToAdd.Text.ToString();
+            if (inputQty.StartsWith("Q"))
+             {
+                inputQty= txtbQtyToAdd.Text.Substring(1);
+            }
             validQty = 0;
-            bool qtyOK = int.TryParse(txtbQtyToAdd.Text.ToString(),out validQty);
+            bool qtyOK = int.TryParse(inputQty, out validQty);
             if(qtyOK)
             {
-                    //w.QtyInKit += validQty;
-                    //w.Delta = w.QtyInKit - (w.QtyPerUnit * orderQty);
                     updateQtyInBomFile(w, validQty);
                 if(checkBox1.Checked)
                 {
@@ -445,14 +475,11 @@ namespace WH_Panel
                     itemToPrint.UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
                     printSticker(itemToPrint);
                 }
-              
             }
         }
-     
         private void updateQtyInBomFile(KitHistoryItem w,int qtyToAdd)
         {
             KitHistoryItem itemToUpdate = MissingItemsList.FirstOrDefault(r => r.IPN == w.IPN && r.QtyPerUnit == w.QtyPerUnit);
-
             if (itemToUpdate != null)
             {
                 if (itemToUpdate.QtyInKit > 0 && itemToUpdate.Calc == string.Empty)
@@ -472,16 +499,13 @@ namespace WH_Panel
                     itemToUpdate.QtyInKit = qtyToAdd;
                     itemToUpdate.Delta = itemToUpdate.QtyInKit - (itemToUpdate.QtyPerUnit * orderQty);
                 }
-
                 if (itemToUpdate.Delta >= 0)
                 {
                     MissingItemsList.Remove(itemToUpdate);
                     PopulateMissingGridView();
-
                     SufficientItemsList.Add(itemToUpdate);
                     sufficientCount++;
                     missingCount--;
-
                     PopulateSufficientGridView();
                     KitProgressUpdate(fileName);
                     UpdateKitHistoryItem(fileName,itemToUpdate);
@@ -494,11 +518,8 @@ namespace WH_Panel
             }
             else
             {
-
             }
-            
         }
-
         private void txtbQtyToAdd_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -524,38 +545,6 @@ namespace WH_Panel
             }
             txtbQtyToAdd.Focus();
         }
-        //private void printSticker(WHitem wHitem)
-        //{
-        //    try
-        //    {
-        //        string userName = Environment.UserName;
-        //        string fp = @"C:\\Users\\" + userName + "\\Desktop\\Print_Stickers.xlsx"; // //////Print_StickersWH.xlsm
-        //        string thesheetName = "Sheet1";
-        //        string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
-        //        OleDbConnection conn = new OleDbConnection(constr);
-        //        OleDbCommand cmd = new OleDbCommand();
-        //        cmd.Connection = conn;
-        //        cmd.CommandType = CommandType.Text;
-        //        cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @UPDATEDON";
-        //        cmd.Parameters.AddWithValue("@PN", wHitem.IPN);
-        //        cmd.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
-        //        cmd.Parameters.AddWithValue("@ItemDesc", wHitem.Description);
-        //        cmd.Parameters.AddWithValue("@QTY", wHitem.Stock);
-        //        cmd.Parameters.AddWithValue("@UPDATEDON", wHitem.UpdatedOn);
-        //        conn.Open();
-        //        cmd.ExecuteNonQuery();
-        //        conn.Close();
-        //        Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
-        //        SendKeys.SendWait("^p");
-        //        SendKeys.SendWait("{Enter}");
-        //        //ComeBackFromPrint();
-        //        Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        MessageBox.Show("Sticker printing failed : " + e.Message);
-        //    }
-        //}
         private void printSticker(WHitem wHitem)
         {
             try
@@ -577,12 +566,10 @@ namespace WH_Panel
                         cmd.ExecuteNonQuery();
                     }
                 }
-
                 // Launch BarTender Designer and print the sticker
                 Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
                 SendKeys.SendWait("^p");
                 SendKeys.SendWait("{Enter}");
-
                 // Bring back the focus to the main application
                 Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
             }
@@ -591,17 +578,14 @@ namespace WH_Panel
                 MessageBox.Show($"Sticker printing failed : {ex.Message}");
             }
         }
-
         private void label3_Click(object sender, EventArgs e)
         {
             clearTextboxesOnSingleLabelClick(sender, textBox3);
         }
-
         private void label2_Click(object sender, EventArgs e)
         {
             clearTextboxesOnSingleLabelClick(sender,textBox2);
         }
-
         private void clearTextboxesOnSingleLabelClick(object sender, TextBox txtb)
         {
             Label l = new Label();
@@ -610,18 +594,14 @@ namespace WH_Panel
             l.BackColor = Color.LightGreen;
             txtb.Focus();
         }
-
-
         private void label2_DoubleClick(object sender, EventArgs e)
         {
             clearAllTextBoxesOnDoubleClick();
         }
-
         private void label3_DoubleClick(object sender, EventArgs e)
         {
             clearAllTextBoxesOnDoubleClick();
         }
-
         private void button2_Click(object sender, EventArgs e)
         {
            AuthorizedExcelFileOpening(AddQuotesIfRequired(fileName));
@@ -651,29 +631,24 @@ namespace WH_Panel
                     "\"" + path + "\"" : path :
                     string.Empty;
         }
-
         private void button3_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\\Data\\DocumentsForProduction\\WORK_PROGRAM.xlsm";
             openWHexcelDB(fp);
         }
-
         private void textBox9_TextChanged(object sender, EventArgs e)
         {
             label9.BackColor = Color.IndianRed;
             FilterTheMissingDataGridView();
         }
-
         private void label9_Click(object sender, EventArgs e)
         {
             clearTextboxesOnSingleLabelClick(sender, textBox9);
         }
-
         private void label9_DoubleClick(object sender, EventArgs e)
         {
             clearAllTextBoxesOnDoubleClick();
         }
-
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             txtbQtyToAdd.Focus();
@@ -682,9 +657,6 @@ namespace WH_Panel
         {
             try
             {
-
-               
-
                 string normalizedPath = AddQuotesIfRequired(fp);
                 string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + normalizedPath + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
                 using (OleDbConnection conn = new OleDbConnection(constr))
@@ -720,7 +692,6 @@ namespace WH_Panel
                 MessageBox.Show(e.Message);
             }
         }
-
         private string getKitColIndex(string fp)
         {
             string columnName = string.Empty;
@@ -754,8 +725,6 @@ namespace WH_Panel
             }
             return columnName;
         }
-
-      
         private static void txtbColorGreenOnEnter(object sender)
         {
             if (sender is TextBox tb)
@@ -770,6 +739,5 @@ namespace WH_Panel
                 tb.BackColor = Color.White;
             }
         }
-
     }
 }
