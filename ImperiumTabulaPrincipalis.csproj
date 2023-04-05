@@ -10,6 +10,17 @@
     <ApplicationIcon>dbsearch.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <COMReference Include="Microsoft.Office.Core">
+      <WrapperTool>tlbimp</WrapperTool>
+      <VersionMinor>5</VersionMinor>
+      <VersionMajor>2</VersionMajor>
+      <Guid>2df8d04c-5bfa-101b-bde5-00aa0044de52</Guid>
+      <Lcid>0</Lcid>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="dbsearch.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -24,11 +35,17 @@
     <PackageReference Include="System.Data.OleDb" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Office.Interop.Access">
+      <HintPath>..\..\..\..\Windows\assembly\GAC_MSIL\Microsoft.Office.Interop.Access\15.0.0.0__71e9bce111e9429c\Microsoft.Office.Interop.Access.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Office.Interop.Excel">
       <HintPath>Binaries\excel\Microsoft.Office.Interop.Excel.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Office.Tools.Excel">
       <HintPath>Binaries\excel\Microsoft.Office.Tools.Excel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Tools.v9.0">
+      <HintPath>..\..\..\..\Windows\assembly\GAC_MSIL\Microsoft.Office.Tools.v9.0\9.0.0.0__b03f5f7f11d50a3a\Microsoft.Office.Tools.v9.0.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Vbe.Interop">
       <HintPath>..\..\..\..\Windows\assembly\GAC_MSIL\Microsoft.Vbe.Interop\15.0.0.0__71e9bce111e9429c\Microsoft.Vbe.Interop.dll</HintPath>

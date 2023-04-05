@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmFinishedGoodsLog));
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
@@ -48,10 +48,11 @@
             this.label4 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.label5 = new System.Windows.Forms.Label();
+            this.lblCounter = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.txtbComments = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
@@ -79,9 +80,10 @@
             this.tableLayoutPanel1.Controls.Add(this.comboBox3, 0, 5);
             this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel3, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.groupBox2, 1, 1);
-            this.tableLayoutPanel1.Controls.Add(this.label5, 2, 0);
+            this.tableLayoutPanel1.Controls.Add(this.lblCounter, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.button2, 0, 10);
             this.tableLayoutPanel1.Controls.Add(this.groupBox3, 0, 8);
+            this.tableLayoutPanel1.Controls.Add(this.label5, 1, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 19);
@@ -98,7 +100,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1023, 683);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1146, 709);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // comboBox1
@@ -150,6 +152,8 @@
             // 
             // button1
             // 
+            this.button1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button1.BackgroundImage")));
+            this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.button1.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.button1.Location = new System.Drawing.Point(3, 394);
@@ -236,7 +240,7 @@
             this.comboBox3.Name = "comboBox3";
             this.comboBox3.Size = new System.Drawing.Size(377, 40);
             this.comboBox3.TabIndex = 12;
-            this.comboBox3.Text = "select revision";
+            this.comboBox3.Text = "na";
             this.comboBox3.SelectionChangeCommitted += new System.EventHandler(this.comboBox3_SelectionChangeCommitted);
             // 
             // flowLayoutPanel3
@@ -280,7 +284,7 @@
             this.groupBox2.Location = new System.Drawing.Point(386, 41);
             this.groupBox2.Name = "groupBox2";
             this.tableLayoutPanel1.SetRowSpan(this.groupBox2, 10);
-            this.groupBox2.Size = new System.Drawing.Size(634, 656);
+            this.groupBox2.Size = new System.Drawing.Size(757, 665);
             this.groupBox2.TabIndex = 14;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Packed items list";
@@ -303,29 +307,33 @@
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowTemplate.Height = 25;
-            this.dataGridView1.Size = new System.Drawing.Size(628, 618);
+            this.dataGridView1.Size = new System.Drawing.Size(751, 627);
             this.dataGridView1.TabIndex = 0;
+            this.dataGridView1.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellDoubleClick);
             // 
-            // label5
+            // lblCounter
             // 
-            this.label5.AutoSize = true;
-            this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label5.Location = new System.Drawing.Point(953, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(67, 38);
-            this.label5.TabIndex = 15;
-            this.label5.Text = "QTY:";
-            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblCounter.AutoSize = true;
+            this.lblCounter.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblCounter.Location = new System.Drawing.Point(392, 0);
+            this.lblCounter.Name = "lblCounter";
+            this.lblCounter.Size = new System.Drawing.Size(751, 38);
+            this.lblCounter.TabIndex = 15;
+            this.lblCounter.Text = "QTY:";
+            this.lblCounter.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // button2
             // 
+            this.button2.BackgroundImage = global::WH_Panel.Properties.Resources.box_21467;
+            this.button2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.button2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.button2.Location = new System.Drawing.Point(3, 616);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(377, 81);
+            this.button2.Size = new System.Drawing.Size(377, 90);
             this.button2.TabIndex = 16;
-            this.button2.Text = "Finalize";
+            this.button2.Text = "Finalize shipment";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // groupBox3
             // 
@@ -348,13 +356,23 @@
             this.txtbComments.TabIndex = 0;
             this.txtbComments.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label5.Location = new System.Drawing.Point(386, 0);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(1, 38);
+            this.label5.TabIndex = 18;
+            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.tableLayoutPanel1);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1029, 705);
+            this.groupBox1.Size = new System.Drawing.Size(1152, 731);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Finished Goods Logger";
@@ -363,7 +381,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1029, 705);
+            this.ClientSize = new System.Drawing.Size(1152, 731);
             this.Controls.Add(this.groupBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmFinishedGoodsLog";
@@ -408,9 +426,10 @@
         private CheckBox checkBox3;
         private GroupBox groupBox2;
         private DataGridView dataGridView1;
-        private Label label5;
+        private Label lblCounter;
         private Button button2;
         private GroupBox groupBox3;
         private TextBox txtbComments;
+        private Label label5;
     }
 }

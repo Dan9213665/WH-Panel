@@ -1,4 +1,6 @@
 ﻿using FastMember;
+using Microsoft.Office.Interop.Excel;
+using Seagull.Framework.Extensions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,14 +12,16 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Range = Microsoft.Office.Interop.Excel.Range;
 
 namespace WH_Panel
 {
     public partial class FrmFinishedGoodsLog : Form
     {
-        public DataTable PackedItemsUDtable = new DataTable();
+        public System.Data.DataTable PackedItemsUDtable = new System.Data.DataTable();
         public List<FinishedGoodsItem> PackedItemsList = new List<FinishedGoodsItem>();
         public string initialPath= @"\\dbr1\Data\Aegis_NPI_Projects\";
+        public int counter = 0;
         public FrmFinishedGoodsLog()
         {
             InitializeComponent();
@@ -26,6 +30,7 @@ namespace WH_Panel
         public void populateComboBox(ComboBox cb, string path)
         {
             cb.Items.Clear();
+            cb.Text= string.Empty;
             //string path = @"\\dbr1\Data\Aegis_NPI_Projects\"; // replace with your folder path
             string[] folders = Directory.GetDirectories(path);
 
@@ -49,7 +54,7 @@ namespace WH_Panel
 
         private void checboxLockUnlock(object sender,ComboBox cbm)
         {
-            if (((CheckBox)sender).Checked)
+            if (((System.Windows.Forms.CheckBox)sender).Checked)
             {
                 cbm.Enabled = false;
             }
@@ -96,18 +101,29 @@ namespace WH_Panel
 
         private void addFinishedIGoodsItemToList()
         {
-            FinishedGoodsItem fg = new FinishedGoodsItem()
+            if (txtbSN.Text != string.Empty)
             {
-                Customer = comboBox1.Text,
-                Project = comboBox2.Text,
-                Revision = comboBox3.Text,
-                serialNumber = txtbSN.Text.ToString(),
-                packedDate = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss"),
-                Comments = txtbComments.Text.ToString()
+                FinishedGoodsItem fg = new FinishedGoodsItem()
+                {
+                    Customer = comboBox1.Text,
+                    Project = comboBox2.Text,
+                    Revision = comboBox3.Text,
+                    serialNumber = txtbSN.Text.ToString(),
+                    packedDate = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss"),
+                    Comments = txtbComments.Text.ToString()
 
-            };
-            PackedItemsList.Add(fg);
-            PopulatePackedItemsGridView();
+                };
+                PackedItemsList.Insert(0,fg);
+                counter++;
+                lblCounter.Text = string.Format("QTY: {0}", counter);
+                PopulatePackedItemsGridView();
+            }
+            else
+            {
+                MessageBox.Show("Input serial number !");
+                txtbSN.Focus();
+            }
+         
         }
 
         private void PopulatePackedItemsGridView()
@@ -144,6 +160,130 @@ namespace WH_Panel
             {
                 addFinishedIGoodsItemToList();
                 txtbSN.Clear();
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+         
+            string saveToPath = string.Empty;
+
+                if (comboBox3.SelectedIndex != -1)
+                {
+                    saveToPath = initialPath + comboBox1.SelectedItem.ToString() + "\\" + comboBox2.SelectedItem.ToString() + "\\" + comboBox3.SelectedItem.ToString();
+                    EXCELinserter(PackedItemsList, saveToPath);
+                }
+                else
+                {
+                    saveToPath = initialPath + comboBox1.SelectedItem.ToString() + "\\" + comboBox2.SelectedItem.ToString();
+                    EXCELinserter(PackedItemsList, saveToPath);
+                }
+         
+            
+
+            //MessageBox.Show(saveToPath);
+            //System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
+            //{
+            //    FileName = "\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\" + DateTime.Now.ToString("yyyy") + "\\" + DateTime.Now.ToString("yyyy.MM") + "",
+            //    FileName = saveToPath,
+            //    UseShellExecute = true,
+            //    Verb = "open"
+            //});
+        }
+
+        private void EXCELinserter(List<FinishedGoodsItem> lst,string saveToPa)
+        {
+            //string saveToPath = initialPath + comboBox1.SelectedItem.ToString() + "\\" + comboBox2.SelectedItem.ToString();
+            //MessageBox.Show(saveToPath);
+            try
+            {
+                lst.Sort((x, y) => string.Compare(x.serialNumber, y.serialNumber));
+                string client = lst[0].Customer;
+                string fp = "\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\_templateFinishedGoods.xlsm";
+                _Application docExcel = new Microsoft.Office.Interop.Excel.Application();
+                docExcel.Visible = false;
+                docExcel.DisplayAlerts = false;
+                _Workbook workbooksExcel = docExcel.Workbooks.Open(@fp, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+                //_Worksheet worksheetExcel = (_Worksheet)workbooksExcel;
+                _Worksheet worksheetExcel = (_Worksheet)workbooksExcel.Worksheets["FGR"];
+                int startRow = 12;
+                string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+                ((Range)worksheetExcel.Cells[1, "A"]).Value2 = "FGR_" + _fileTimeStamp;
+                ((Range)worksheetExcel.Cells[2, "D"]).Value2 = DateTime.Now.ToString("yyyy-MM-dd");
+                ((Range)worksheetExcel.Cells[8, "B"]).Value2 = client;
+                ((Range)worksheetExcel.Cells[8, "E"]).Value2 = counter;
+                for (int i = 0; i < lst.Count; i++)
+                {
+                    //((Range)worksheetExcel.Cells[startRow + i, "A"]).Value2 = lst[i].Customer.ToString();
+                    //((Range)worksheetExcel.Cells[startRow + i, "A"]).BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
+                    ((Range)worksheetExcel.Cells[startRow + i, "A"]).Value2 = lst[i].Project.ToString();
+                    ((Range)worksheetExcel.Cells[startRow + i, "A"]).BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
+                    ((Range)worksheetExcel.Cells[startRow + i, "B"]).Value2 = lst[i].Revision.ToString();
+                    ((Range)worksheetExcel.Cells[startRow + i, "B"]).BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
+                    ((Range)worksheetExcel.Cells[startRow + i, "C"]).Value2 = lst[i].serialNumber;
+                    ((Range)worksheetExcel.Cells[startRow + i, "C"]).BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
+                    ((Range)worksheetExcel.Cells[startRow + i, "D"]).Value2 = lst[i].packedDate;
+                    ((Range)worksheetExcel.Cells[startRow + i, "D"]).BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
+                    ((Range)worksheetExcel.Cells[startRow + i, "E"]).Value2 = lst[i].Comments;
+                    ((Range)worksheetExcel.Cells[startRow + i, "E"]).BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
+
+
+                }
+                ((Range)worksheetExcel.Cells[startRow + lst.Count + 1, "A"]).Value2 = "Comments:                                ";
+                worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 1, 1], worksheetExcel.Cells[startRow + lst.Count + 1, 5]].Merge();
+                worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 1, 1], worksheetExcel.Cells[startRow + lst.Count + 1, 5]].BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
+                ((Range)worksheetExcel.Cells[startRow + lst.Count + 2, "A"]).Value2 = "Signature_______________________ חתימה     DATE ______/______/2023  תאריך      NAME ________________________________  שם";
+                ((Range)worksheetExcel.Cells[startRow + lst.Count + 2, "A"]).WrapText = true;
+                worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 2, 1], worksheetExcel.Cells[startRow + lst.Count + 2, 5]].Merge();
+                worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 2, 1], worksheetExcel.Cells[startRow + lst.Count + 2, 5]].BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
+                worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 2, 1], worksheetExcel.Cells[startRow + lst.Count + 2, 5]].RowHeight = 40;
+                ((Range)worksheetExcel.Cells[startRow + lst.Count + 3, "A"]).Value2 = "Thank You";
+                worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 3, 1], worksheetExcel.Cells[startRow + lst.Count + 3, 5]].Merge();
+                worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 3, 1], worksheetExcel.Cells[startRow + lst.Count + 3, 5]].BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
+                ((Range)worksheetExcel.Cells[startRow + lst.Count + 4, "A"]).Value2 = "if you have any questions or concerns, please contact  Vlad Berezin, (972) 525118807, vlad@robotron.co.il";
+                ((Range)worksheetExcel.Cells[startRow + lst.Count + 4, "A"]).BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
+                worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 4, 1], worksheetExcel.Cells[startRow + lst.Count + 4, 5]].Merge();
+                worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 4, 1], worksheetExcel.Cells[startRow + lst.Count + 4, 5]].BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
+                //workbooksExcel.SaveAs("\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\" + DateTime.Now.ToString("yyyy") + "\\" + DateTime.Now.ToString("yyyy.MM") + "\\" + _fileTimeStamp + "_" + lst[0].Customer +"_"+ lst[0].Project + "_" + lst[0].Revision + "_"+counter.ToString()+"PCS"+".xlsm");
+                workbooksExcel.SaveAs(saveToPa + "\\" + _fileTimeStamp + "_" + lst[0].Customer + "_" + lst[0].Project + "_" + lst[0].Revision + "_" + counter.ToString() + "PCS" + ".xlsm");
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
+                {
+                    //FileName = "\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\" + DateTime.Now.ToString("yyyy") + "\\" + DateTime.Now.ToString("yyyy.MM") + "",
+                    //FileName = saveToPath + DateTime.Now.ToString("yyyy") + "\\" + DateTime.Now.ToString("yyyy.MM") + "",
+                    FileName= saveToPa,
+                    UseShellExecute = true,
+                    Verb = "open"
+                });
+                workbooksExcel.Close(false, Type.Missing, Type.Missing);
+                docExcel.Application.DisplayAlerts = false;
+                docExcel.Application.Quit();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+        }
+
+        private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            DialogResult dialogResult = MessageBox.Show("Remove the line ?", "DELETE the line from the list", MessageBoxButtons.YesNo);
+            if (dialogResult == DialogResult.Yes)
+            {
+                int rowindex = dataGridView1.CurrentCell.RowIndex;
+                int columnindex = dataGridView1.CurrentCell.ColumnIndex;
+                string cellValue = dataGridView1.Rows[rowindex].Cells[columnindex].Value.ToString();
+                string selIPN  = dataGridView1.Rows[rowindex].Cells["serialNumber"].Value.ToString();
+                string selMFPN = dataGridView1.Rows[rowindex].Cells["packedDate"].Value.ToString();
+                //int selStock = int.Parse(dataGridView2.Rows[rowindex].Cells["Stock"].Value.ToString());
+                PackedItemsList.Remove(PackedItemsList.Find(r => r.serialNumber == selIPN && r.packedDate == selMFPN ));
+                counter--;
+                lblCounter.Text = string.Format("QTY: {0}", counter);
+                PopulatePackedItemsGridView();
+                SetColumsOrder(dataGridView1);
+            }
+            else if (dialogResult == DialogResult.No)
+            {
+                txtbSN.Focus();
             }
         }
     }
