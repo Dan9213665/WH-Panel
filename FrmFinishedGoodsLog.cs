@@ -178,23 +178,10 @@ namespace WH_Panel
                     saveToPath = initialPath + comboBox1.SelectedItem.ToString() + "\\" + comboBox2.SelectedItem.ToString();
                     EXCELinserter(PackedItemsList, saveToPath);
                 }
-         
-            
-
-            //MessageBox.Show(saveToPath);
-            //System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
-            //{
-            //    FileName = "\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\" + DateTime.Now.ToString("yyyy") + "\\" + DateTime.Now.ToString("yyyy.MM") + "",
-            //    FileName = saveToPath,
-            //    UseShellExecute = true,
-            //    Verb = "open"
-            //});
         }
 
         private void EXCELinserter(List<FinishedGoodsItem> lst,string saveToPa)
         {
-            //string saveToPath = initialPath + comboBox1.SelectedItem.ToString() + "\\" + comboBox2.SelectedItem.ToString();
-            //MessageBox.Show(saveToPath);
             try
             {
                 lst.Sort((x, y) => string.Compare(x.serialNumber, y.serialNumber));
@@ -204,7 +191,6 @@ namespace WH_Panel
                 docExcel.Visible = false;
                 docExcel.DisplayAlerts = false;
                 _Workbook workbooksExcel = docExcel.Workbooks.Open(@fp, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
-                //_Worksheet worksheetExcel = (_Worksheet)workbooksExcel;
                 _Worksheet worksheetExcel = (_Worksheet)workbooksExcel.Worksheets["FGR"];
                 int startRow = 12;
                 string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
@@ -214,8 +200,6 @@ namespace WH_Panel
                 ((Range)worksheetExcel.Cells[8, "E"]).Value2 = counter;
                 for (int i = 0; i < lst.Count; i++)
                 {
-                    //((Range)worksheetExcel.Cells[startRow + i, "A"]).Value2 = lst[i].Customer.ToString();
-                    //((Range)worksheetExcel.Cells[startRow + i, "A"]).BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
                     ((Range)worksheetExcel.Cells[startRow + i, "A"]).Value2 = lst[i].Project.ToString();
                     ((Range)worksheetExcel.Cells[startRow + i, "A"]).BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
                     ((Range)worksheetExcel.Cells[startRow + i, "B"]).Value2 = lst[i].Revision.ToString();
@@ -244,12 +228,9 @@ namespace WH_Panel
                 ((Range)worksheetExcel.Cells[startRow + lst.Count + 4, "A"]).BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
                 worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 4, 1], worksheetExcel.Cells[startRow + lst.Count + 4, 5]].Merge();
                 worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 4, 1], worksheetExcel.Cells[startRow + lst.Count + 4, 5]].BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
-                //workbooksExcel.SaveAs("\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\" + DateTime.Now.ToString("yyyy") + "\\" + DateTime.Now.ToString("yyyy.MM") + "\\" + _fileTimeStamp + "_" + lst[0].Customer +"_"+ lst[0].Project + "_" + lst[0].Revision + "_"+counter.ToString()+"PCS"+".xlsm");
                 workbooksExcel.SaveAs(saveToPa + "\\" + _fileTimeStamp + "_" + lst[0].Customer + "_" + lst[0].Project + "_" + lst[0].Revision + "_" + counter.ToString() + "PCS" + ".xlsm");
                 System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
                 {
-                    //FileName = "\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\" + DateTime.Now.ToString("yyyy") + "\\" + DateTime.Now.ToString("yyyy.MM") + "",
-                    //FileName = saveToPath + DateTime.Now.ToString("yyyy") + "\\" + DateTime.Now.ToString("yyyy.MM") + "",
                     FileName= saveToPa,
                     UseShellExecute = true,
                     Verb = "open"
@@ -274,7 +255,6 @@ namespace WH_Panel
                 string cellValue = dataGridView1.Rows[rowindex].Cells[columnindex].Value.ToString();
                 string selIPN  = dataGridView1.Rows[rowindex].Cells["serialNumber"].Value.ToString();
                 string selMFPN = dataGridView1.Rows[rowindex].Cells["packedDate"].Value.ToString();
-                //int selStock = int.Parse(dataGridView2.Rows[rowindex].Cells["Stock"].Value.ToString());
                 PackedItemsList.Remove(PackedItemsList.Find(r => r.serialNumber == selIPN && r.packedDate == selMFPN ));
                 counter--;
                 lblCounter.Text = string.Format("QTY: {0}", counter);

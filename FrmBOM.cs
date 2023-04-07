@@ -739,5 +739,21 @@ namespace WH_Panel
                 tb.BackColor = Color.White;
             }
         }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if(MissingItemsList.Count>0)
+            {
+                FrmBomWHS wh = new FrmBomWHS();
+                wh.fromTheMainBom = new List<KitHistoryItem>();
+                wh.fromTheMainBom = MissingItemsList;
+                wh.Show();
+            }
+            else
+            {
+                MessageBox.Show("No missing items to search for !");
+            }
+            
+        }
     }
 }

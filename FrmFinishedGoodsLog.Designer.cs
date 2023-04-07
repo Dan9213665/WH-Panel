@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmFinishedGoodsLog));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
@@ -49,7 +49,7 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.lblCounter = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btbFinalizeShipment = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.txtbComments = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -81,7 +81,7 @@
             this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel3, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.groupBox2, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.lblCounter, 2, 0);
-            this.tableLayoutPanel1.Controls.Add(this.button2, 0, 10);
+            this.tableLayoutPanel1.Controls.Add(this.btbFinalizeShipment, 0, 10);
             this.tableLayoutPanel1.Controls.Add(this.groupBox3, 0, 8);
             this.tableLayoutPanel1.Controls.Add(this.label5, 1, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -294,14 +294,14 @@
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.Location = new System.Drawing.Point(3, 35);
             this.dataGridView1.Name = "dataGridView1";
@@ -322,18 +322,18 @@
             this.lblCounter.Text = "QTY:";
             this.lblCounter.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // button2
+            // btbFinalizeShipment
             // 
-            this.button2.BackgroundImage = global::WH_Panel.Properties.Resources.box_21467;
-            this.button2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.button2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button2.Location = new System.Drawing.Point(3, 616);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(377, 90);
-            this.button2.TabIndex = 16;
-            this.button2.Text = "Finalize shipment";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btbFinalizeShipment.BackgroundImage = global::WH_Panel.Properties.Resources.box_21467;
+            this.btbFinalizeShipment.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.btbFinalizeShipment.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btbFinalizeShipment.Location = new System.Drawing.Point(3, 616);
+            this.btbFinalizeShipment.Name = "btbFinalizeShipment";
+            this.btbFinalizeShipment.Size = new System.Drawing.Size(377, 90);
+            this.btbFinalizeShipment.TabIndex = 16;
+            this.btbFinalizeShipment.Text = "Finalize shipment";
+            this.btbFinalizeShipment.UseVisualStyleBackColor = true;
+            this.btbFinalizeShipment.Click += new System.EventHandler(this.button2_Click);
             // 
             // groupBox3
             // 
@@ -427,7 +427,7 @@
         private GroupBox groupBox2;
         private DataGridView dataGridView1;
         private Label lblCounter;
-        private Button button2;
+        private Button btbFinalizeShipment;
         private GroupBox groupBox3;
         private TextBox txtbComments;
         private Label label5;
