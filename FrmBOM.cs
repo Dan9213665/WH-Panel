@@ -503,7 +503,7 @@ namespace WH_Panel
                 {
                     MissingItemsList.Remove(itemToUpdate);
                     PopulateMissingGridView();
-                    SufficientItemsList.Add(itemToUpdate);
+                    SufficientItemsList.Insert(0,itemToUpdate);
                     sufficientCount++;
                     missingCount--;
                     PopulateSufficientGridView();
