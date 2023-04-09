@@ -186,6 +186,8 @@ namespace WH_Panel
             dgw.Columns["QtyPerUnit"].Visible = false;
             dgw.Columns["Calc"].DisplayIndex = 6;
             dgw.Columns["Alts"].DisplayIndex = 7;
+
+            dgw.Sort(dgw.Columns["IPN"], ListSortDirection.Ascending);
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -585,8 +587,9 @@ namespace WH_Panel
         }
         private void ExportToHTML(DataGridView dataGridView, string fileName)
         {
+            dataGridView.Columns["Calc"].Visible = false;
             List<WHitem> searchInstockList = new List<WHitem>();
-
+            searchInstockList.Clear();
             foreach (WHitem w in stockItems)
             {
                 int stk = 0;
@@ -651,7 +654,7 @@ namespace WH_Panel
 
 
             StringBuilder sb = new StringBuilder();
-
+           
             // Create HTML header
             sb.Append("<html>");
             sb.Append("<head>");
@@ -660,13 +663,17 @@ namespace WH_Panel
 
             // Create HTML body
             sb.Append("<body>");
-            sb.Append("<table border='1px' cellpadding='5' cellspacing='0'>");
-            sb.Append("<h1 style='text-align:center'>" + projectName + "</h1>");
+            sb.Append("<table border='1px' cellpadding='1' cellspacing='0' style='text-align:center'>");
+            sb.Append("<h2 style='text-align:center'>" + projectName + "</h2>");
             // Add header row
             sb.Append("<tr>");
+            //dataGridView.Columns["IPN"].DisplayIndex = 2;
+            //dataGridView.Columns["Delta"].DisplayIndex = 7;
+            
             foreach (DataGridViewColumn column in dataGridView.Columns)
             {
-                if(column.Visible)
+                
+                if (column.Visible)
                 {
                     sb.Append("<th>" + column.HeaderText + "</th>");
                 }
@@ -684,7 +691,7 @@ namespace WH_Panel
                 {
                     if(cell.Visible)
                     {
-                        sb.Append("<td><h3>" + cell.Value + "</h3></td>");
+                        sb.Append("<td><h4>" + cell.Value + "</h4></td>");
                       
                     }
                     
@@ -699,9 +706,12 @@ namespace WH_Panel
                 sb.Append("<tr>");
                 foreach (DataGridViewColumn column in dataGridView2.Columns)
                 {
+                    dataGridView2.Columns["SourceRequester"].Visible= false;
+                    dataGridView2.Columns["Manufacturer"].Visible = false;
+                    dataGridView2.Columns["Description"].Visible = false;
                     if (column.Visible)
                     {
-                        sb.Append("<th>" + column.HeaderText + "</th>");
+                        //sb.Append("<th>" + column.HeaderText + "</th>");
                     }
 
                 }
@@ -713,6 +723,7 @@ namespace WH_Panel
                     sb.Append("<tr>");
                         foreach (DataGridViewCell c2 in r2.Cells)
                         {
+                        if (c2.Visible)
                             sb.Append("<td>" + c2.Value + "</td>");
                         }
                     sb.Append("</tr>");
@@ -739,6 +750,13 @@ namespace WH_Panel
                 UseShellExecute = true
             };
             p.Start();
+
+            
+            //dataGridView.Columns["Calc"].Visible = true;
+            dataGridView2.Columns["SourceRequester"].Visible = true;
+            dataGridView2.Columns["Manufacturer"].Visible = true;
+            dataGridView2.Columns["Description"].Visible = true;
+            dataGridView.Columns["Calc"].Visible=true;
         }
 
     }
