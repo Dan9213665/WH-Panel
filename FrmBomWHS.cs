@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.OleDb;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -33,6 +34,7 @@ namespace WH_Panel
         public string stockROBOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_STOCK.xlsm";
         public string avlFile;
         public string stockFile;
+        public string projectName = string.Empty;
         public List<WHitem> avlItems = new List<WHitem>();
         public List<WHitem> stockItems = new List<WHitem>();
         public DataTable avlDTable = new DataTable();
@@ -65,11 +67,10 @@ namespace WH_Panel
                     Alts=it.Alts
                 };
                 misBOMItemsLST.Add(n);
-                
                 //misItemsLST.Add(it);
             }
             //MessageBox.Show(misItemsLST.Count.ToString());
-            
+            projectName = fromTheMainBom[0].ProjectName;
 
             comboBox1.SelectedItem = warehouseSelectorOnLoad();
             //MasterReload(avlFile, stockFile);
@@ -82,10 +83,8 @@ namespace WH_Panel
         public int calculateWBbalance(string IPN)
         {
             int balance = 0;
-            
                 try
                 {
-                    
                     DataView dv = stockDTable.DefaultView;
                     dv.RowFilter = "[IPN] LIKE '%" + IPN +
                         "%'";
@@ -113,8 +112,6 @@ namespace WH_Panel
                 {
 
                 }
-
-            
             return balance;
        }
         private string warehouseSelectorOnLoad()
@@ -300,7 +297,7 @@ namespace WH_Panel
                                 }
                                 WHitem abc = new WHitem
                                 {
-                                    IPN = reader[0].ToString(),
+                                    IPN = reader[0].ToString().Trim().Replace(" ", ""),
                                     Manufacturer = reader[1].ToString(),
                                     MFPN = reader[2].ToString(),
                                     Description = reader[3].ToString(),
@@ -481,6 +478,15 @@ namespace WH_Panel
 
         private void FilterInStockItemsOnly()
         {
+
+            //dataGridView2.DataSource = dv;
+            dataGridView2.DataSource=createFilteredInStockDataview();
+            dataGridView2.Update();
+            SetSTOCKiewColumsOrder();
+        }
+
+        private DataView createFilteredInStockDataview()
+        {
             List<WHitem> inWHstock = new List<WHitem>();
             for (int i = 0; i < dataGridView2.RowCount; i++)
             {
@@ -542,9 +548,8 @@ namespace WH_Panel
                 INWH.Load(reader);
             }
             DataView dv = INWH.DefaultView;
-            dataGridView2.DataSource = dv;
-            dataGridView2.Update();
-            SetSTOCKiewColumsOrder();
+
+            return dv;
         }
 
         private void chkBlockInWHonly_CheckedChanged(object sender, EventArgs e)
@@ -572,5 +577,169 @@ namespace WH_Panel
                 PopulateMissingGridView();
             
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+            ExportToHTML(dataGridView1, "\\\\dbr1\\Data\\WareHouse\\2023\\WHsearcher\\"+ _fileTimeStamp+"_"+projectName.Substring(0, projectName.Length - 5) + ".html");
+        }
+        private void ExportToHTML(DataGridView dataGridView, string fileName)
+        {
+            List<WHitem> searchInstockList = new List<WHitem>();
+
+            foreach (WHitem w in stockItems)
+            {
+                int stk = 0;
+                WHitem sil = new WHitem();
+                sil.IPN = w.IPN;
+                sil.Manufacturer= w.Manufacturer;
+                sil.MFPN= w.MFPN;
+                sil.Description= w.Description;
+                sil.SourceRequester= w.SourceRequester;
+                sil.CommentsWHitem= w.CommentsWHitem;
+
+                bool pOk = int.TryParse(w.Stock.ToString(), out stk);
+                    if(pOk)
+                {
+                    sil.Stock = stk;
+                }
+                else
+                {
+                    sil.Stock = 0;
+                }
+                sil.UpdatedOn = w.UpdatedOn;
+
+                searchInstockList.Add(sil);
+            }
+
+
+            List<WHitem> negatiVEQTYsWH = new List<WHitem>();
+            for (int i = 0; i < searchInstockList.Count; i++)
+            {
+                if (searchInstockList[i].Stock < 0)
+                {
+                    negatiVEQTYsWH.Add(searchInstockList[i]);
+                }
+            }
+            List<WHitem> positiveInWH2 = new List<WHitem>();
+            for (int k = 0; k < searchInstockList.Count; k++)
+            {
+                if (searchInstockList[k].Stock > 0)
+                {
+                    positiveInWH2.Add(searchInstockList[k]);
+                }
+            }
+            for (int i = 0; i < negatiVEQTYsWH.Count; i++)
+            {
+                for (int j = 0; j < positiveInWH2.Count; j++)
+                {
+                    if (Math.Abs(negatiVEQTYsWH[i].Stock) == positiveInWH2[j].Stock)
+                    {
+                        positiveInWH2.Remove((WHitem)positiveInWH2[j]);
+                        break;
+                    }
+                }
+            }
+
+            IEnumerable<WHitem> WHdata = positiveInWH2;
+            DataTable INWH = new DataTable();
+            using (var reader = ObjectReader.Create(WHdata))
+            {
+                INWH.Load(reader);
+            }
+            //DataView dv = INWH.DefaultView;
+
+
+            StringBuilder sb = new StringBuilder();
+
+            // Create HTML header
+            sb.Append("<html>");
+            sb.Append("<head>");
+            sb.Append("<title>" +projectName + "</title>");
+            sb.Append("</head>");
+
+            // Create HTML body
+            sb.Append("<body>");
+            sb.Append("<table border='1px' cellpadding='5' cellspacing='0'>");
+            sb.Append("<h1 style='text-align:center'>" + projectName + "</h1>");
+            // Add header row
+            sb.Append("<tr>");
+            foreach (DataGridViewColumn column in dataGridView.Columns)
+            {
+                if(column.Visible)
+                {
+                    sb.Append("<th>" + column.HeaderText + "</th>");
+                }
+                
+            }
+            sb.Append("</tr>");
+
+            // Add data rows
+            foreach (DataGridViewRow row in dataGridView.Rows)
+            {
+                
+                  
+                sb.Append("<tr>");
+                foreach (DataGridViewCell cell in row.Cells)
+                {
+                    if(cell.Visible)
+                    {
+                        sb.Append("<td><h3>" + cell.Value + "</h3></td>");
+                      
+                    }
+                    
+                }
+                sb.Append("</tr>");
+
+                DataView dv = INWH.DefaultView;
+
+                dv.RowFilter = "[IPN] LIKE '%" + row.Cells["IPN"].Value +"%'";
+                dataGridView2.DataSource = dv;
+
+                sb.Append("<tr>");
+                foreach (DataGridViewColumn column in dataGridView2.Columns)
+                {
+                    if (column.Visible)
+                    {
+                        sb.Append("<th>" + column.HeaderText + "</th>");
+                    }
+
+                }
+                sb.Append("</tr>");
+
+                foreach (DataGridViewRow r2 in dataGridView2.Rows)
+                {
+
+                    sb.Append("<tr>");
+                        foreach (DataGridViewCell c2 in r2.Cells)
+                        {
+                            sb.Append("<td>" + c2.Value + "</td>");
+                        }
+                    sb.Append("</tr>");
+                }
+
+
+
+            }
+
+            // Close HTML tags
+            sb.Append("</table>");
+            sb.Append("</body>");
+            sb.Append("</html>");
+
+            // Write HTML to file
+            File.WriteAllText(fileName, sb.ToString());
+
+            // Open HTML file in default browser
+            //System.Diagnostics.Process.Start(fileName);
+
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(@fileName)
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+        }
+
     }
 }
