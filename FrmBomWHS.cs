@@ -654,6 +654,7 @@ namespace WH_Panel
 
 
             StringBuilder sb = new StringBuilder();
+            sb.Clear();
            
             // Create HTML header
             sb.Append("<html>");
