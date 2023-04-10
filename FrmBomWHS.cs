@@ -33,7 +33,8 @@ namespace WH_Panel
         public string avlROBOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_AVL.xlsm";
         public string stockROBOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_STOCK.xlsm";
         public string avlFile;
-        public string stockFile;
+        public string stockFile { get; set; }
+
         public string projectName = string.Empty;
         public List<WHitem> avlItems = new List<WHitem>();
         public List<WHitem> stockItems = new List<WHitem>();

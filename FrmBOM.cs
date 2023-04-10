@@ -469,6 +469,9 @@ namespace WH_Panel
             if (qtyOK)
             {
                 updateQtyInBomFile(w, validQty);
+                
+                transferFromDatabaseToKit(w,validQty, theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));
+
                 if (checkBox1.Checked)
                 {
                     WHitem itemToPrint = new WHitem();
@@ -481,6 +484,9 @@ namespace WH_Panel
                 }
             }
         }
+
+     
+
         private void updateQtyInBomFile(KitHistoryItem w, int qtyToAdd)
         {
             KitHistoryItem itemToUpdate = MissingItemsList.FirstOrDefault(r => r.IPN == w.IPN && r.QtyPerUnit == w.QtyPerUnit);
@@ -789,6 +795,36 @@ namespace WH_Panel
             {
                 MessageBox.Show(e.Message);
             }
+        }
+        private void transferFromDatabaseToKit(KitHistoryItem w, int qtyToMove, string kitName)
+        {
+
+        }
+        private string warehouseSelectorOnLoad(KitHistoryItem w)
+        {
+            string selection = string.Empty;
+
+            if (w.IPN.StartsWith("C100") || w.IPN.StartsWith("A00"))
+            {
+                selection = "LEADER-TECH";
+            }
+            else if (w.IPN.StartsWith("NET"))
+            {
+                selection = "NETLINE";
+            }
+            else if (w.IPN.StartsWith("VAY"))
+            {
+                selection = "VAYYAR";
+            }
+            else if (w.IPN.StartsWith("VAL"))
+            {
+                selection = "VALENS";
+            }
+            else
+            {
+                selection = null;
+            }
+            return selection;
         }
     }
 }

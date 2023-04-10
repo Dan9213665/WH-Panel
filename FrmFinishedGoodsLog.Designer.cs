@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmFinishedGoodsLog));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.txtbSN = new System.Windows.Forms.TextBox();
+            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.button1 = new System.Windows.Forms.Button();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
@@ -48,11 +48,15 @@
             this.label4 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.lblCounter = new System.Windows.Forms.Label();
             this.btbFinalizeShipment = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.flowLayoutPanel4 = new System.Windows.Forms.FlowLayoutPanel();
+            this.checkBox4 = new System.Windows.Forms.CheckBox();
             this.txtbComments = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
+            this.lblCounter = new System.Windows.Forms.Label();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.lblLimit = new System.Windows.Forms.Label();
+            this.txtbSetLimit = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
@@ -61,80 +65,59 @@
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.groupBox3.SuspendLayout();
+            this.flowLayoutPanel4.SuspendLayout();
+            this.tableLayoutPanel2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 3;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.Controls.Add(this.comboBox1, 0, 1);
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
+            this.tableLayoutPanel1.Controls.Add(this.label3, 0, 8);
+            this.tableLayoutPanel1.Controls.Add(this.txtbSN, 0, 9);
             this.tableLayoutPanel1.Controls.Add(this.comboBox2, 0, 3);
-            this.tableLayoutPanel1.Controls.Add(this.label3, 0, 6);
-            this.tableLayoutPanel1.Controls.Add(this.txtbSN, 0, 7);
-            this.tableLayoutPanel1.Controls.Add(this.button1, 0, 9);
+            this.tableLayoutPanel1.Controls.Add(this.comboBox1, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.button1, 0, 11);
             this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel2, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.comboBox3, 0, 5);
             this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel3, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.groupBox2, 1, 1);
-            this.tableLayoutPanel1.Controls.Add(this.lblCounter, 2, 0);
-            this.tableLayoutPanel1.Controls.Add(this.btbFinalizeShipment, 0, 10);
-            this.tableLayoutPanel1.Controls.Add(this.groupBox3, 0, 8);
-            this.tableLayoutPanel1.Controls.Add(this.label5, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.btbFinalizeShipment, 1, 11);
+            this.tableLayoutPanel1.Controls.Add(this.groupBox3, 0, 6);
+            this.tableLayoutPanel1.Controls.Add(this.lblCounter, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 2, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 19);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 11;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowCount = 12;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.333333F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.333333F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.333333F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.333333F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.333333F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.333333F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.333333F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.333333F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.333333F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.333333F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.333333F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.333333F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1146, 709);
             this.tableLayoutPanel1.TabIndex = 0;
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.comboBox1.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(3, 41);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(377, 40);
-            this.comboBox1.TabIndex = 1;
-            this.comboBox1.Text = "select customer";
-            this.comboBox1.SelectionChangeCommitted += new System.EventHandler(this.comboBox1_SelectionChangeCommitted);
-            // 
-            // comboBox2
-            // 
-            this.comboBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.comboBox2.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(3, 125);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(377, 40);
-            this.comboBox2.TabIndex = 4;
-            this.comboBox2.Text = "select project";
-            this.comboBox2.SelectionChangeCommitted += new System.EventHandler(this.comboBox2_SelectionChangeCommitted);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label3.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label3.Location = new System.Drawing.Point(3, 252);
+            this.label3.Location = new System.Drawing.Point(3, 472);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(377, 32);
+            this.label3.Size = new System.Drawing.Size(375, 59);
             this.label3.TabIndex = 6;
             this.label3.Text = "Input S/N";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -143,12 +126,36 @@
             // 
             this.txtbSN.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtbSN.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.txtbSN.Location = new System.Drawing.Point(3, 287);
+            this.txtbSN.Location = new System.Drawing.Point(3, 534);
             this.txtbSN.Name = "txtbSN";
-            this.txtbSN.Size = new System.Drawing.Size(377, 39);
+            this.txtbSN.Size = new System.Drawing.Size(375, 39);
             this.txtbSN.TabIndex = 7;
             this.txtbSN.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.txtbSN.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtbSN_KeyDown);
+            // 
+            // comboBox2
+            // 
+            this.comboBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.comboBox2.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.Location = new System.Drawing.Point(3, 180);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(375, 40);
+            this.comboBox2.TabIndex = 4;
+            this.comboBox2.Text = "select project";
+            this.comboBox2.SelectionChangeCommitted += new System.EventHandler(this.comboBox2_SelectionChangeCommitted);
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.comboBox1.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(3, 62);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(375, 40);
+            this.comboBox1.TabIndex = 1;
+            this.comboBox1.Text = "select customer";
+            this.comboBox1.SelectionChangeCommitted += new System.EventHandler(this.comboBox1_SelectionChangeCommitted);
             // 
             // button1
             // 
@@ -156,9 +163,9 @@
             this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.button1.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.button1.Location = new System.Drawing.Point(3, 394);
+            this.button1.Location = new System.Drawing.Point(3, 652);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(377, 216);
+            this.button1.Size = new System.Drawing.Size(375, 54);
             this.button1.TabIndex = 8;
             this.button1.Text = "Add Item to shipment";
             this.button1.UseVisualStyleBackColor = true;
@@ -172,7 +179,7 @@
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 3);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(377, 32);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(375, 53);
             this.flowLayoutPanel1.TabIndex = 9;
             // 
             // checkBox1
@@ -204,9 +211,9 @@
             this.flowLayoutPanel2.Controls.Add(this.checkBox2);
             this.flowLayoutPanel2.Controls.Add(this.label2);
             this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 87);
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 121);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(377, 32);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(375, 53);
             this.flowLayoutPanel2.TabIndex = 10;
             // 
             // checkBox2
@@ -236,9 +243,9 @@
             // 
             this.comboBox3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.Location = new System.Drawing.Point(3, 209);
+            this.comboBox3.Location = new System.Drawing.Point(3, 298);
             this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(377, 40);
+            this.comboBox3.Size = new System.Drawing.Size(375, 40);
             this.comboBox3.TabIndex = 12;
             this.comboBox3.Text = "na";
             this.comboBox3.SelectionChangeCommitted += new System.EventHandler(this.comboBox3_SelectionChangeCommitted);
@@ -249,9 +256,9 @@
             this.flowLayoutPanel3.Controls.Add(this.checkBox3);
             this.flowLayoutPanel3.Controls.Add(this.label4);
             this.flowLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel3.Location = new System.Drawing.Point(3, 171);
+            this.flowLayoutPanel3.Location = new System.Drawing.Point(3, 239);
             this.flowLayoutPanel3.Name = "flowLayoutPanel3";
-            this.flowLayoutPanel3.Size = new System.Drawing.Size(377, 32);
+            this.flowLayoutPanel3.Size = new System.Drawing.Size(375, 53);
             this.flowLayoutPanel3.TabIndex = 13;
             // 
             // checkBox3
@@ -281,10 +288,10 @@
             this.tableLayoutPanel1.SetColumnSpan(this.groupBox2, 2);
             this.groupBox2.Controls.Add(this.dataGridView1);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox2.Location = new System.Drawing.Point(386, 41);
+            this.groupBox2.Location = new System.Drawing.Point(384, 62);
             this.groupBox2.Name = "groupBox2";
             this.tableLayoutPanel1.SetRowSpan(this.groupBox2, 10);
-            this.groupBox2.Size = new System.Drawing.Size(757, 665);
+            this.groupBox2.Size = new System.Drawing.Size(759, 584);
             this.groupBox2.TabIndex = 14;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Packed items list";
@@ -294,42 +301,32 @@
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.Location = new System.Drawing.Point(3, 35);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowTemplate.Height = 25;
-            this.dataGridView1.Size = new System.Drawing.Size(751, 627);
+            this.dataGridView1.Size = new System.Drawing.Size(753, 546);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellDoubleClick);
-            // 
-            // lblCounter
-            // 
-            this.lblCounter.AutoSize = true;
-            this.lblCounter.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblCounter.Location = new System.Drawing.Point(392, 0);
-            this.lblCounter.Name = "lblCounter";
-            this.lblCounter.Size = new System.Drawing.Size(751, 38);
-            this.lblCounter.TabIndex = 15;
-            this.lblCounter.Text = "QTY:";
-            this.lblCounter.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btbFinalizeShipment
             // 
             this.btbFinalizeShipment.BackgroundImage = global::WH_Panel.Properties.Resources.box_21467;
             this.btbFinalizeShipment.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.tableLayoutPanel1.SetColumnSpan(this.btbFinalizeShipment, 2);
             this.btbFinalizeShipment.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btbFinalizeShipment.Location = new System.Drawing.Point(3, 616);
+            this.btbFinalizeShipment.Location = new System.Drawing.Point(384, 652);
             this.btbFinalizeShipment.Name = "btbFinalizeShipment";
-            this.btbFinalizeShipment.Size = new System.Drawing.Size(377, 90);
+            this.btbFinalizeShipment.Size = new System.Drawing.Size(759, 54);
             this.btbFinalizeShipment.TabIndex = 16;
             this.btbFinalizeShipment.Text = "Finalize shipment";
             this.btbFinalizeShipment.UseVisualStyleBackColor = true;
@@ -337,34 +334,98 @@
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.txtbComments);
+            this.groupBox3.AutoSize = true;
+            this.groupBox3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.groupBox3.Controls.Add(this.flowLayoutPanel4);
             this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.groupBox3.Location = new System.Drawing.Point(3, 332);
+            this.groupBox3.Location = new System.Drawing.Point(3, 357);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(377, 56);
+            this.tableLayoutPanel1.SetRowSpan(this.groupBox3, 2);
+            this.groupBox3.Size = new System.Drawing.Size(375, 112);
             this.groupBox3.TabIndex = 17;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Comments";
             // 
+            // flowLayoutPanel4
+            // 
+            this.flowLayoutPanel4.Controls.Add(this.checkBox4);
+            this.flowLayoutPanel4.Controls.Add(this.txtbComments);
+            this.flowLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel4.Location = new System.Drawing.Point(3, 19);
+            this.flowLayoutPanel4.Name = "flowLayoutPanel4";
+            this.flowLayoutPanel4.Size = new System.Drawing.Size(369, 90);
+            this.flowLayoutPanel4.TabIndex = 0;
+            // 
+            // checkBox4
+            // 
+            this.checkBox4.AutoSize = true;
+            this.checkBox4.Location = new System.Drawing.Point(3, 3);
+            this.checkBox4.Name = "checkBox4";
+            this.checkBox4.Size = new System.Drawing.Size(115, 19);
+            this.checkBox4.TabIndex = 1;
+            this.checkBox4.Text = "Lock Comments";
+            this.checkBox4.UseVisualStyleBackColor = true;
+            this.checkBox4.CheckedChanged += new System.EventHandler(this.checkBox4_CheckedChanged);
+            // 
             // txtbComments
             // 
             this.txtbComments.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtbComments.Location = new System.Drawing.Point(3, 19);
+            this.txtbComments.Font = new System.Drawing.Font("Segoe UI Black", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.txtbComments.Location = new System.Drawing.Point(3, 28);
             this.txtbComments.Name = "txtbComments";
-            this.txtbComments.Size = new System.Drawing.Size(371, 23);
+            this.txtbComments.Size = new System.Drawing.Size(365, 29);
             this.txtbComments.TabIndex = 0;
             this.txtbComments.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtbComments.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtbComments_KeyDown);
             // 
-            // label5
+            // lblCounter
             // 
-            this.label5.AutoSize = true;
-            this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label5.Location = new System.Drawing.Point(386, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(1, 38);
-            this.label5.TabIndex = 18;
-            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblCounter.AutoSize = true;
+            this.lblCounter.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblCounter.Location = new System.Drawing.Point(384, 0);
+            this.lblCounter.Name = "lblCounter";
+            this.lblCounter.Size = new System.Drawing.Size(376, 59);
+            this.lblCounter.TabIndex = 15;
+            this.lblCounter.Text = "QTY:";
+            this.lblCounter.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // tableLayoutPanel2
+            // 
+            this.tableLayoutPanel2.AutoSize = true;
+            this.tableLayoutPanel2.ColumnCount = 2;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.Controls.Add(this.lblLimit, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.txtbSetLimit, 1, 0);
+            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(766, 3);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RowCount = 1;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(377, 53);
+            this.tableLayoutPanel2.TabIndex = 18;
+            // 
+            // lblLimit
+            // 
+            this.lblLimit.AutoSize = true;
+            this.lblLimit.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblLimit.Location = new System.Drawing.Point(3, 0);
+            this.lblLimit.Name = "lblLimit";
+            this.lblLimit.Size = new System.Drawing.Size(78, 53);
+            this.lblLimit.TabIndex = 0;
+            this.lblLimit.Text = "Limit:";
+            this.lblLimit.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // txtbSetLimit
+            // 
+            this.txtbSetLimit.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtbSetLimit.Location = new System.Drawing.Point(87, 3);
+            this.txtbSetLimit.Name = "txtbSetLimit";
+            this.txtbSetLimit.Size = new System.Drawing.Size(287, 39);
+            this.txtbSetLimit.TabIndex = 1;
+            this.txtbSetLimit.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtbSetLimit.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
             // 
             // groupBox1
             // 
@@ -399,7 +460,10 @@
             this.groupBox2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
+            this.flowLayoutPanel4.ResumeLayout(false);
+            this.flowLayoutPanel4.PerformLayout();
+            this.tableLayoutPanel2.ResumeLayout(false);
+            this.tableLayoutPanel2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -430,6 +494,10 @@
         private Button btbFinalizeShipment;
         private GroupBox groupBox3;
         private TextBox txtbComments;
-        private Label label5;
+        private FlowLayoutPanel flowLayoutPanel4;
+        private CheckBox checkBox4;
+        private TableLayoutPanel tableLayoutPanel2;
+        private Label lblLimit;
+        private TextBox txtbSetLimit;
     }
 }

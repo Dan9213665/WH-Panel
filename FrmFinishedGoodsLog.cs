@@ -101,29 +101,57 @@ namespace WH_Panel
 
         private void addFinishedIGoodsItemToList()
         {
-            if (txtbSN.Text != string.Empty)
+            if (string.IsNullOrEmpty(comboBox1.Text))
             {
-                FinishedGoodsItem fg = new FinishedGoodsItem()
-                {
-                    Customer = comboBox1.Text,
-                    Project = comboBox2.Text,
-                    Revision = comboBox3.Text,
-                    serialNumber = txtbSN.Text.ToString(),
-                    packedDate = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss"),
-                    Comments = txtbComments.Text.ToString()
+                MessageBox.Show("Please select a CUSTOMER !");
+                comboBox1.Focus();
+                comboBox1.DroppedDown=true;
+                return;
+            }
+            if (string.IsNullOrEmpty(comboBox2.Text))
+            {
+                MessageBox.Show("Please select a PROJECT !");
+                comboBox2.Focus();
+                comboBox2.DroppedDown = true;
+                return;
+            }
+            if (string.IsNullOrEmpty(comboBox3.Text)&&comboBox3.Items.Count!=0)
+            {
+                MessageBox.Show("Please select a REVISION !");
+                comboBox3.Focus();
+                comboBox3.DroppedDown = true;
+                return;
+            }
 
-                };
-                PackedItemsList.Insert(0,fg);
-                counter++;
-                lblCounter.Text = string.Format("QTY: {0}", counter);
-                PopulatePackedItemsGridView();
-            }
-            else
+            if (string.IsNullOrEmpty(txtbSN.Text))
             {
-                MessageBox.Show("Input serial number !");
+                MessageBox.Show("Please input a serial number!");
                 txtbSN.Focus();
+                return;
             }
-         
+            var serialNumber = txtbSN.Text.Trim();
+
+            if (PackedItemsList.Any(item => item.serialNumber == serialNumber))
+            {
+                MessageBox.Show($"Serial number '{serialNumber}' already exists!");
+                txtbSN.Focus();
+                return;
+            }
+
+            var fg = new FinishedGoodsItem
+            {
+                Customer = comboBox1.Text,
+                Project = comboBox2.Text,
+                Revision = comboBox3.Text,
+                serialNumber = txtbSN.Text.Trim(),
+                packedDate = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss"),
+                Comments = txtbComments.Text.Trim()
+            };
+
+            PackedItemsList.Insert(0, fg);
+            lblCounter.Text = $"QTY: {++counter}";
+            PopulatePackedItemsGridView();
+
         }
 
         private void PopulatePackedItemsGridView()
@@ -263,6 +291,45 @@ namespace WH_Panel
             }
             else if (dialogResult == DialogResult.No)
             {
+                txtbSN.Focus();
+            }
+        }
+
+        private void checkBox4_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox4.Checked)
+            {
+                txtbComments.ReadOnly = true;
+            }
+            else if(!checkBox4.Checked)
+            {
+                txtbComments.ReadOnly = false;
+            }
+        }
+
+        private void textBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            int limit = 0;
+
+            if (e.KeyCode == Keys.Enter)
+            {
+               bool limitOk = int.TryParse( txtbSetLimit.Text.ToString(), out limit);
+
+                if(limitOk)
+                {
+                    lblLimit.Text = String.Format("of {0}", limit.ToString());
+                    txtbSetLimit.Clear();
+                    txtbSetLimit.ReadOnly= true;
+                }
+                
+            }
+        }
+
+        private void txtbComments_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                checkBox4.Checked= true;
                 txtbSN.Focus();
             }
         }
