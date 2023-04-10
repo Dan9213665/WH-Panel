@@ -26,6 +26,8 @@ using System.Xml.Serialization;
 using Label = System.Windows.Forms.Label;
 using System.Web;
 using Seagull.BarTender.Print;
+using Range = Microsoft.Office.Interop.Excel.Range;
+
 namespace WH_Panel
 {
     public partial class FrmBOM : Form
@@ -41,13 +43,14 @@ namespace WH_Panel
         public int countLoadedFIles = 0;
         public string fileName = string.Empty;
         public int orderQty = 0;
-        public int validQty= 0;
+        public int validQty = 0;
         int i = 0;
         int loadingErrors = 0;
         public static Stopwatch stopWatch = new Stopwatch();
         public int colIpnFoundIndex;
         public int colMFPNFoundIndex;
         public TextBox lastTxtbInputFromUser = new TextBox();
+        public string theExcelFilePath = string.Empty;
         public FrmBOM()
         {
             InitializeComponent();
@@ -55,8 +58,8 @@ namespace WH_Panel
         }
         private void ResetViews()
         {
-            checkBox1.Checked= true;
-            checkBox1.BackColor= Color.LightGreen;
+            checkBox1.Checked = true;
+            checkBox1.BackColor = Color.LightGreen;
             listBox1.Items.Clear();
             listBox1.Update();
             label13.Text = "No Errors detected.";
@@ -88,13 +91,14 @@ namespace WH_Panel
         {
             ResetViews();
             var result = openFileDialog1.Title;
-            openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\2023\\"+ DateTime.Now.ToString("MM") + ".2023";
+            openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\2023\\" + DateTime.Now.ToString("MM") + ".2023";
             openFileDialog1.Filter = "BOM files(*.xlsm) | *.xlsm";
             openFileDialog1.Multiselect = false;
             List<KitHistoryItem> BomItemS = new List<KitHistoryItem>();
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 fileName = openFileDialog1.FileName;
+                theExcelFilePath = Path.GetFileName(fileName); 
                 string Litem = Path.GetFileName(fileName);
                 label12.Text += fileName.ToString() + "\n";
                 DataLoader(fileName, Litem);
@@ -106,7 +110,7 @@ namespace WH_Panel
         }
         private void KitProgressUpdate(string fileName)
         {
-            double percentage = double.Parse(sufficientCount.ToString())/ (countItems / 100.00) ;
+            double percentage = double.Parse(sufficientCount.ToString()) / (countItems / 100.00);
             percentageComplete = Math.Round(percentage, 2);
             string text = $"{fileName} MIS:{missingCount} / SUF:{sufficientCount} of TOT:{countItems} ({percentageComplete}%)";
             this.Text = text;
@@ -142,54 +146,54 @@ namespace WH_Panel
                             int indQty = reader.GetOrdinal("Qty");
                             int indCalc = reader.GetOrdinal("Calc");
                             int indAlts = indQty + 2;
-                                while (reader.Read())
+                            while (reader.Read())
                             {
                                 int del = 0;
                                 bool delPar = int.TryParse(reader[indDELTA].ToString(), out del);
                                 int qtk = 0;
-                                bool qtkPar= int.TryParse(reader[indDELTA-1].ToString(), out qtk);
+                                bool qtkPar = int.TryParse(reader[indDELTA - 1].ToString(), out qtk);
                                 int qpu = 0;
-                                bool qpuPar= int.TryParse(reader[indQty].ToString(), out qpu);
+                                bool qpuPar = int.TryParse(reader[indQty].ToString(), out qpu);
                                 KitHistoryItem abc = new KitHistoryItem
-                                    {
-                                        DateOfCreation = cleanedUpSheetName,
-                                        ProjectName = excelFIleName,
-                                        IPN = reader[indIPN].ToString(),
-                                        MFPN = reader[indMFPN].ToString(),
-                                        Description = reader[indDescription].ToString(),
-                                        QtyInKit = qtk,
-                                        Delta = del,
-                                        QtyPerUnit = qpu,
-                                        Calc = reader[indCalc].ToString(),
-                                        Alts = reader[indAlts].ToString()
+                                {
+                                    DateOfCreation = cleanedUpSheetName,
+                                    ProjectName = excelFIleName,
+                                    IPN = reader[indIPN].ToString(),
+                                    MFPN = reader[indMFPN].ToString(),
+                                    Description = reader[indDescription].ToString(),
+                                    QtyInKit = qtk,
+                                    Delta = del,
+                                    QtyPerUnit = qpu,
+                                    Calc = reader[indCalc].ToString(),
+                                    Alts = reader[indAlts].ToString()
                                 };
-                                    i++;
-                                    countItems++;
-                                    if (abc.Delta >= 0)
-                                    {
-                                        SufficientItemsList.Add(abc);
-                                        sufficientCount++;
-                                    }
-                                    else
-                                    {
-                                        MissingItemsList.Add(abc);
-                                        missingCount++;
-                                    }
+                                i++;
+                                countItems++;
+                                if (abc.Delta >= 0)
+                                {
+                                    SufficientItemsList.Add(abc);
+                                    sufficientCount++;
+                                }
+                                else
+                                {
+                                    MissingItemsList.Add(abc);
+                                    missingCount++;
+                                }
                             }
                         }
                         conn.Dispose();
                         conn.Close();
-                        string[] alltheNames=excelFIleName.Split("_");
+                        string[] alltheNames = excelFIleName.Split("_");
                         textBox11.Text = alltheNames[1];
-                        textBox6.Text= alltheNames[2].Substring(0, alltheNames[2].Length-5);
+                        textBox6.Text = alltheNames[2].Substring(0, alltheNames[2].Length - 5);
                         orderQty = int.Parse(alltheNames[2].Substring(0, alltheNames[2].Length - 8));
                         countLoadedFIles++;
                         label12.Text = "Loaded " + (countItems).ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{0:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
                         label12.Update();
-                        textBox1.ReadOnly= false;
-                        textBox2.ReadOnly= false;
-                        textBox3.ReadOnly= false;
-                        textBox9.ReadOnly= false;
+                        textBox1.ReadOnly = false;
+                        textBox2.ReadOnly = false;
+                        textBox3.ReadOnly = false;
+                        textBox9.ReadOnly = false;
                         textBox1.Focus();
                     }
                     catch (Exception)
@@ -298,7 +302,7 @@ namespace WH_Panel
                 else if (textBox2.Text.Contains("-") == true && textBox2.Text.Length > 6)
                 {
                     string[] theSplit = textBox2.Text.ToString().Split("-");
-                    if (theSplit[0].Length == 3 || theSplit[0].Length >= 2|| textBox2.Text.Length>5)
+                    if (theSplit[0].Length == 3 || theSplit[0].Length >= 2 || textBox2.Text.Length > 5)
                     {
                         searchbyMFPN = theSplit[1];
                     }
@@ -372,7 +376,7 @@ namespace WH_Panel
         }
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
-            if (dataGridView1.SelectedCells.Count >0)
+            if (dataGridView1.SelectedCells.Count > 0)
             {
                 int rowindex = dataGridView1.CurrentCell.RowIndex;
                 txtbSelIPN.Text = dataGridView1.Rows[rowindex].Cells["IPN"].Value.ToString();
@@ -383,7 +387,7 @@ namespace WH_Panel
         }
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
-            JumpToQtyInput((TextBox)sender,e);
+            JumpToQtyInput((TextBox)sender, e);
         }
         private void textBox2_KeyDown(object sender, KeyEventArgs e)
         {
@@ -457,15 +461,15 @@ namespace WH_Panel
             KitHistoryItem w = MissingItemsList.FirstOrDefault(r => r.IPN == txtbSelIPN.Text);
             string inputQty = txtbQtyToAdd.Text.ToString();
             if (inputQty.StartsWith("Q"))
-             {
-                inputQty= txtbQtyToAdd.Text.Substring(1);
+            {
+                inputQty = txtbQtyToAdd.Text.Substring(1);
             }
             validQty = 0;
             bool qtyOK = int.TryParse(inputQty, out validQty);
-            if(qtyOK)
+            if (qtyOK)
             {
-                    updateQtyInBomFile(w, validQty);
-                if(checkBox1.Checked)
+                updateQtyInBomFile(w, validQty);
+                if (checkBox1.Checked)
                 {
                     WHitem itemToPrint = new WHitem();
                     itemToPrint.IPN = w.IPN;
@@ -477,7 +481,7 @@ namespace WH_Panel
                 }
             }
         }
-        private void updateQtyInBomFile(KitHistoryItem w,int qtyToAdd)
+        private void updateQtyInBomFile(KitHistoryItem w, int qtyToAdd)
         {
             KitHistoryItem itemToUpdate = MissingItemsList.FirstOrDefault(r => r.IPN == w.IPN && r.QtyPerUnit == w.QtyPerUnit);
             if (itemToUpdate != null)
@@ -503,17 +507,17 @@ namespace WH_Panel
                 {
                     MissingItemsList.Remove(itemToUpdate);
                     PopulateMissingGridView();
-                    SufficientItemsList.Insert(0,itemToUpdate);
+                    SufficientItemsList.Insert(0, itemToUpdate);
                     sufficientCount++;
                     missingCount--;
                     PopulateSufficientGridView();
                     KitProgressUpdate(fileName);
-                    UpdateKitHistoryItem(fileName,itemToUpdate);
+                    UpdateKitHistoryItem(fileName, itemToUpdate);
                 }
                 else
                 {
                     PopulateMissingGridView();
-                    UpdateKitHistoryItem( fileName, itemToUpdate);
+                    UpdateKitHistoryItem(fileName, itemToUpdate);
                 }
             }
             else
@@ -584,7 +588,7 @@ namespace WH_Panel
         }
         private void label2_Click(object sender, EventArgs e)
         {
-            clearTextboxesOnSingleLabelClick(sender,textBox2);
+            clearTextboxesOnSingleLabelClick(sender, textBox2);
         }
         private void clearTextboxesOnSingleLabelClick(object sender, TextBox txtb)
         {
@@ -604,11 +608,11 @@ namespace WH_Panel
         }
         private void button2_Click(object sender, EventArgs e)
         {
-           AuthorizedExcelFileOpening(AddQuotesIfRequired(fileName));
+            AuthorizedExcelFileOpening(AddQuotesIfRequired(fileName));
         }
         private void AuthorizedExcelFileOpening(string fp)
         {
-            if (Environment.UserName == "lgt")
+            if (Environment.UserName == "lgt"|| Environment.UserName== "rbtwh")
             {
                 openWHexcelDB(fp);
             }
@@ -753,7 +757,38 @@ namespace WH_Panel
             {
                 MessageBox.Show("No missing items to search for !");
             }
-            
+        }
+
+        private void btnPrintKitLabel_Click(object sender, EventArgs e)
+        {
+            EXCELinserter(theExcelFilePath.Substring(0,theExcelFilePath.Length-5));
+        }
+        private void EXCELinserter(string kitName)
+        {
+            //MessageBox.Show(kitName);
+            try
+            {
+                string fp = "\\\\dbr1\\Data\\WareHouse\\KitLabel.xlsm";
+                _Application docExcel = new Microsoft.Office.Interop.Excel.Application();
+                docExcel.Visible = false;
+                docExcel.DisplayAlerts = false;
+                _Workbook workbooksExcel = docExcel.Workbooks.Open(@fp, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+                _Worksheet worksheetExcel = (_Worksheet)workbooksExcel.Worksheets[1];
+                ((Range)worksheetExcel.Cells[1, "B"]).Value2 = kitName;
+                ((Range)worksheetExcel.Columns["B"]).ColumnWidth = 51;
+                ((Range)worksheetExcel.Cells[3, "B"]).WrapText = true;
+                ((Range)worksheetExcel.Cells[6, "B"]).WrapText = true;
+                ((Range)worksheetExcel.Cells[9, "B"]).WrapText = true;
+                workbooksExcel.PrintOutEx(1, 1, 1);
+                workbooksExcel.Close(false, Type.Missing, Type.Missing);
+                docExcel.Application.DisplayAlerts = false;
+                docExcel.Application.Quit();
+                MessageBox.Show("Label Sent to printer");
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
         }
     }
 }

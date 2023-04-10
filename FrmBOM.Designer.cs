@@ -52,6 +52,7 @@
             this.button3 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
+            this.btnPrintKitLabel = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.textBox11 = new System.Windows.Forms.TextBox();
@@ -242,19 +243,21 @@
             // 
             this.tableLayoutPanel3.AutoSize = true;
             this.tableLayoutPanel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel3.ColumnCount = 6;
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.66666F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.66666F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.66666F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.66666F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.66666F));
+            this.tableLayoutPanel3.ColumnCount = 7;
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
             this.tableLayoutPanel3.Controls.Add(this.label12, 1, 0);
             this.tableLayoutPanel3.Controls.Add(this.button1, 0, 0);
-            this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel4, 2, 0);
-            this.tableLayoutPanel3.Controls.Add(this.button3, 3, 0);
-            this.tableLayoutPanel3.Controls.Add(this.button2, 4, 0);
-            this.tableLayoutPanel3.Controls.Add(this.button4, 5, 0);
+            this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel4, 3, 0);
+            this.tableLayoutPanel3.Controls.Add(this.button3, 4, 0);
+            this.tableLayoutPanel3.Controls.Add(this.button2, 5, 0);
+            this.tableLayoutPanel3.Controls.Add(this.button4, 6, 0);
+            this.tableLayoutPanel3.Controls.Add(this.btnPrintKitLabel, 2, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 19);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -267,9 +270,9 @@
             // 
             this.label12.AutoSize = true;
             this.label12.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label12.Location = new System.Drawing.Point(215, 0);
+            this.label12.Location = new System.Drawing.Point(184, 0);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(206, 44);
+            this.label12.Size = new System.Drawing.Size(175, 44);
             this.label12.TabIndex = 1;
             this.label12.Text = "loaded rows";
             this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -286,7 +289,7 @@
             this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.button1.Location = new System.Drawing.Point(3, 3);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(206, 38);
+            this.button1.Size = new System.Drawing.Size(175, 38);
             this.button1.TabIndex = 0;
             this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -299,12 +302,12 @@
             this.tableLayoutPanel4.Controls.Add(this.label13, 0, 0);
             this.tableLayoutPanel4.Controls.Add(this.listBox1, 0, 1);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(427, 3);
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(546, 3);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             this.tableLayoutPanel4.RowCount = 2;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(206, 38);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(175, 38);
             this.tableLayoutPanel4.TabIndex = 2;
             // 
             // label13
@@ -312,7 +315,7 @@
             this.label13.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label13.Location = new System.Drawing.Point(3, 0);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(200, 19);
+            this.label13.Size = new System.Drawing.Size(169, 19);
             this.label13.TabIndex = 2;
             this.label13.Text = "Loading Errors :";
             this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -324,17 +327,17 @@
             this.listBox1.ItemHeight = 15;
             this.listBox1.Location = new System.Drawing.Point(3, 22);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(200, 13);
+            this.listBox1.Size = new System.Drawing.Size(169, 13);
             this.listBox1.TabIndex = 3;
             // 
             // button3
             // 
             this.button3.BackgroundImage = global::WH_Panel.Properties.Resources._6_2;
-            this.button3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.button3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button3.Location = new System.Drawing.Point(639, 3);
+            this.button3.Location = new System.Drawing.Point(727, 3);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(206, 38);
+            this.button3.Size = new System.Drawing.Size(175, 38);
             this.button3.TabIndex = 3;
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
@@ -346,9 +349,9 @@
             this.button2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.button2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.button2.Enabled = false;
-            this.button2.Location = new System.Drawing.Point(851, 3);
+            this.button2.Location = new System.Drawing.Point(908, 3);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(206, 38);
+            this.button2.Size = new System.Drawing.Size(175, 38);
             this.button2.TabIndex = 4;
             this.button2.UseVisualStyleBackColor = false;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -358,12 +361,24 @@
             this.button4.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button4.BackgroundImage")));
             this.button4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.button4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button4.Location = new System.Drawing.Point(1063, 3);
+            this.button4.Location = new System.Drawing.Point(1089, 3);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(207, 38);
+            this.button4.Size = new System.Drawing.Size(181, 38);
             this.button4.TabIndex = 5;
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
+            // btnPrintKitLabel
+            // 
+            this.btnPrintKitLabel.BackgroundImage = global::WH_Panel.Properties.Resources.kitLabelPrint;
+            this.btnPrintKitLabel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.btnPrintKitLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnPrintKitLabel.Location = new System.Drawing.Point(365, 3);
+            this.btnPrintKitLabel.Name = "btnPrintKitLabel";
+            this.btnPrintKitLabel.Size = new System.Drawing.Size(175, 38);
+            this.btnPrintKitLabel.TabIndex = 6;
+            this.btnPrintKitLabel.UseVisualStyleBackColor = true;
+            this.btnPrintKitLabel.Click += new System.EventHandler(this.btnPrintKitLabel_Click);
             // 
             // groupBox2
             // 
@@ -860,5 +875,6 @@
         private TextBox txtbQtyToAdd;
         private Button button2;
         private Button button4;
+        private Button btnPrintKitLabel;
     }
 }
