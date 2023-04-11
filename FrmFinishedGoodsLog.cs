@@ -347,7 +347,8 @@ namespace WH_Panel
 
         private void lblLimit_DoubleClick(object sender, EventArgs e)
         {
-            txtbSetLimit.ReadOnly= false; txtbSetLimit.Focus();
+            txtbSetLimit.ReadOnly= false; 
+            txtbSetLimit.Focus();
         }
     }
 }

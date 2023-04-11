@@ -93,6 +93,7 @@ namespace WH_Panel
                     //dataGridView2.Update();
                     //SetSTOCKiewColumsOrder();
                     List<int> qtys = new List<int>();
+
                     for (int i = 0; i < dataGridView2.RowCount; i++)
                     {
                         int qty = 0;
