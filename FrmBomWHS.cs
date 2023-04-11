@@ -247,7 +247,7 @@ namespace WH_Panel
                                 Description = reader[4].ToString(),
                                 Stock = 0,
                                 UpdatedOn = string.Empty,
-                                CommentsWHitem = string.Empty,
+                                ReelBagTrayStick = string.Empty,
                                 SourceRequester = string.Empty
                             };
                             if (iAVL > 0)
@@ -306,7 +306,7 @@ namespace WH_Panel
                                     Description = reader[3].ToString(),
                                     Stock = toStk,
                                     UpdatedOn = reader[5].ToString(),
-                                    CommentsWHitem = reader[6].ToString(),
+                                    ReelBagTrayStick = reader[6].ToString(),
                                     SourceRequester = reader[7].ToString()
                                 };
                                 countStockItems = iStock;
@@ -364,7 +364,7 @@ namespace WH_Panel
             dataGridView2.Columns["Description"].DisplayIndex = 3;
             dataGridView2.Columns["Stock"].DisplayIndex = 4;
             dataGridView2.Columns["UpdatedOn"].DisplayIndex = 5;
-            dataGridView2.Columns["CommentsWHitem"].DisplayIndex = 6;
+            dataGridView2.Columns["ReelBagTrayStick"].DisplayIndex = 6;
             dataGridView2.Columns["SourceRequester"].DisplayIndex = 7;
 
             dataGridView2.Sort(dataGridView2.Columns["UpdatedOn"], ListSortDirection.Descending);
@@ -512,7 +512,7 @@ namespace WH_Panel
                     Description = dataGridView2.Rows[i].Cells[dataGridView2.Columns["Description"].Index].Value.ToString(),
                     Stock = toStk,
                     UpdatedOn = dataGridView2.Rows[i].Cells[dataGridView2.Columns["UpdatedOn"].Index].Value.ToString(),
-                    CommentsWHitem = dataGridView2.Rows[i].Cells[dataGridView2.Columns["CommentsWHitem"].Index].Value.ToString(),
+                    ReelBagTrayStick = dataGridView2.Rows[i].Cells[dataGridView2.Columns["ReelBagTrayStick"].Index].Value.ToString(),
                     SourceRequester = dataGridView2.Rows[i].Cells[dataGridView2.Columns["SourceRequester"].Index].Value.ToString()
                 };
                 inWHstock.Add(wHitemABC);
@@ -600,7 +600,7 @@ namespace WH_Panel
                 sil.MFPN= w.MFPN;
                 sil.Description= w.Description;
                 sil.SourceRequester= w.SourceRequester;
-                sil.CommentsWHitem= w.CommentsWHitem;
+                sil.ReelBagTrayStick= w.ReelBagTrayStick;
 
                 bool pOk = int.TryParse(w.Stock.ToString(), out stk);
                     if(pOk)

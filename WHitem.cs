@@ -14,7 +14,7 @@ namespace WH_Panel
         public string? Description{ get; set; }
         public int Stock{ get; set; }
         public string? UpdatedOn { get; set; }
-        public string? CommentsWHitem{ get; set; }
+        public string? ReelBagTrayStick{ get; set; }
         public string? SourceRequester { get; set; }
     }
 }

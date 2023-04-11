@@ -93,7 +93,7 @@ namespace WH_Panel
                                     Description = reader[3].ToString(),
                                     Stock = number,
                                     UpdatedOn = reader[5].ToString(),
-                                    CommentsWHitem = reader[6].ToString(),
+                                    ReelBagTrayStick = reader[6].ToString(),
                                     SourceRequester = reader[7].ToString()
                                 };
                                 if (i > 0)
@@ -145,7 +145,7 @@ namespace WH_Panel
             dataGridView1.Columns["Description"].DisplayIndex = 3;
             dataGridView1.Columns["Stock"].DisplayIndex = 4;
             dataGridView1.Columns["UpdatedOn"].DisplayIndex = 5;
-            dataGridView1.Columns["CommentsWHitem"].DisplayIndex = 6;
+            dataGridView1.Columns["ReelBagTrayStick"].DisplayIndex = 6;
             dataGridView1.Columns["SourceRequester"].DisplayIndex = 7;
         }
         private void button1_Click(object sender, EventArgs e)

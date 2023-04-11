@@ -27,6 +27,8 @@ using Label = System.Windows.Forms.Label;
 using System.Web;
 using Seagull.BarTender.Print;
 using Range = Microsoft.Office.Interop.Excel.Range;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
+using Application = Microsoft.Office.Interop.Excel.Application;
 
 namespace WH_Panel
 {
@@ -86,6 +88,7 @@ namespace WH_Panel
             sufficientUDtable.Clear();
             dataGridView2.DataSource = null;
             dataGridView2.Refresh();
+            cmbReelSelector.SelectedIndex = 1;
         }
         private void button1_Click(object sender, EventArgs e)
         {
@@ -97,6 +100,20 @@ namespace WH_Panel
             List<KitHistoryItem> BomItemS = new List<KitHistoryItem>();
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
+                //Application excel = new Application();
+                //Workbook workbook = excel.Workbooks.Open(openFileDialog1.FileName);
+
+                //// Recalculate all cells
+                //foreach (Worksheet worksheet in workbook.Worksheets)
+                //{
+                //    worksheet.Calculate();
+                //}
+
+                //// Save the changes
+                //workbook.Save();
+                //workbook.Close();
+                //excel.Quit();
+
                 fileName = openFileDialog1.FileName;
                 theExcelFilePath = Path.GetFileName(fileName); 
                 string Litem = Path.GetFileName(fileName);
@@ -798,33 +815,136 @@ namespace WH_Panel
         }
         private void transferFromDatabaseToKit(KitHistoryItem w, int qtyToMove, string kitName)
         {
+            try
+            {
+
+                WHitem itemToTransfer = new WHitem()
+                {
+                    IPN = w.IPN,
+                    Manufacturer = "",
+                    MFPN = w.MFPN,
+                    Description = w.Description,
+                    Stock = qtyToMove*(-1),
+                    UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss"),
+                    ReelBagTrayStick = cmbReelSelector.SelectedItem.ToString(),
+                    SourceRequester = kitName
+                };
+                DataInserter(warehouseSelectorBasedOnItem(w), "STOCK", itemToTransfer);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+                throw;
+            }
+            
 
         }
-        private string warehouseSelectorOnLoad(KitHistoryItem w)
+        private string avlSelectorBasedOnItem(KitHistoryItem w)
         {
             string selection = string.Empty;
 
             if (w.IPN.StartsWith("C100") || w.IPN.StartsWith("A00"))
             {
-                selection = "LEADER-TECH";
+                selection = @"\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\G.I.Leader_Tech\G.I.Leader_Tech_STOCK.xlsm";
             }
             else if (w.IPN.StartsWith("NET"))
             {
-                selection = "NETLINE";
+                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm";
             }
             else if (w.IPN.StartsWith("VAY"))
             {
-                selection = "VAYYAR";
+                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm";
             }
             else if (w.IPN.StartsWith("VAL"))
             {
-                selection = "VALENS";
+                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm";
             }
             else
             {
                 selection = null;
             }
             return selection;
+        }
+
+        private string warehouseSelectorBasedOnItem(KitHistoryItem w)
+        {
+            string selection = string.Empty;
+
+            if (w.IPN.StartsWith("C100") || w.IPN.StartsWith("A00"))
+            {
+                selection = @"\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\G.I.Leader_Tech\G.I.Leader_Tech_STOCK.xlsm"; 
+            }
+            else if (w.IPN.StartsWith("NET"))
+            {
+                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm";
+            }
+            else if (w.IPN.StartsWith("VAY"))
+            {
+                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm";
+            }
+            else if (w.IPN.StartsWith("VAL"))
+            {
+                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm";
+            }
+            else
+            {
+                selection = null;
+            }
+            return selection;
+        }
+        private void DataInserter(string fp, string thesheetName, WHitem wHitem)
+        {
+            
+            try
+            {
+                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+                using (OleDbConnection conn = new OleDbConnection(constr))
+                {
+                    conn.Open();
+                    OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$] (IPN,Manufacturer,MFPN,Description,Stock,Updated_on,Comments,Source_Requester) values('" + wHitem.IPN + "','" + wHitem.Manufacturer + "','" + wHitem.MFPN + "','" + wHitem.Description + "','" + wHitem.Stock + "','" + wHitem.UpdatedOn + "','" + wHitem.ReelBagTrayStick + "','" + wHitem.SourceRequester + "')", conn);
+                    command.ExecuteNonQuery();
+                    conn.Close();
+                }
+                txtbQtyToAdd.Clear();
+                lastTxtbInputFromUser.Clear();
+                label2.BackColor = Color.LightGreen;
+                label3.BackColor = Color.LightGreen;
+                lastTxtbInputFromUser.Focus();
+                    AutoClosingMessageBox.Show(wHitem.IPN + " Transferred to " + wHitem.SourceRequester, " Item Transferred to " + wHitem.SourceRequester, 1000);
+               }
+            catch (IOException)
+            {
+                MessageBox.Show("Error");
+            }
+        }
+        public class AutoClosingMessageBox
+        {
+            System.Threading.Timer _timeoutTimer;
+            string _caption;
+            AutoClosingMessageBox(string text, string caption, int timeout)
+            {
+                _caption = caption;
+                _timeoutTimer = new System.Threading.Timer(OnTimerElapsed,
+                    null, timeout, System.Threading.Timeout.Infinite);
+                using (_timeoutTimer)
+                    MessageBox.Show(text, caption, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            public static void Show(string text, string caption, int timeout)
+            {
+                new AutoClosingMessageBox(text, caption, timeout);
+            }
+            void OnTimerElapsed(object state)
+            {
+                IntPtr mbWnd = FindWindow("#32770", _caption); // lpClassName is #32770 for MessageBox
+                if (mbWnd != IntPtr.Zero)
+                    SendMessage(mbWnd, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+                _timeoutTimer.Dispose();
+            }
+            const int WM_CLOSE = 0x0010;
+            [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
+            static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+            [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Auto)]
+            static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
         }
     }
 }

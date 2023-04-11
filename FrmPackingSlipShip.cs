@@ -188,7 +188,7 @@ namespace WH_Panel
             dgw.Columns["Description"].DisplayIndex = 2;
             dgw.Columns["Stock"].DisplayIndex = 3;
             dgw.Columns["UpdatedOn"].DisplayIndex = 4;
-            dgw.Columns["CommentsWHitem"].Visible = false;
+            dgw.Columns["ReelBagTrayStick"].Visible = false;
             dgw.Columns["SourceRequester"].Visible = false;
             dgw.AutoResizeColumns();
         }
