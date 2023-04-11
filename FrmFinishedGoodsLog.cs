@@ -22,6 +22,7 @@ namespace WH_Panel
         public List<FinishedGoodsItem> PackedItemsList = new List<FinishedGoodsItem>();
         public string initialPath= @"\\dbr1\Data\Aegis_NPI_Projects\";
         public int counter = 0;
+        int limit = 0;
         public FrmFinishedGoodsLog()
         {
             InitializeComponent();
@@ -96,61 +97,70 @@ namespace WH_Panel
 
         private void button1_Click(object sender, EventArgs e)
         {
-            addFinishedIGoodsItemToList();
+                addFinishedIGoodsItemToList();
         }
 
         private void addFinishedIGoodsItemToList()
         {
-            if (string.IsNullOrEmpty(comboBox1.Text))
+            if (PackedItemsList.Count < limit)
             {
-                MessageBox.Show("Please select a CUSTOMER !");
-                comboBox1.Focus();
-                comboBox1.DroppedDown=true;
-                return;
+                if (string.IsNullOrEmpty(comboBox1.Text))
+                {
+                    MessageBox.Show("Please select a CUSTOMER !");
+                    comboBox1.Focus();
+                    comboBox1.DroppedDown = true;
+                    return;
+                }
+                if (string.IsNullOrEmpty(comboBox2.Text))
+                {
+                    MessageBox.Show("Please select a PROJECT !");
+                    comboBox2.Focus();
+                    comboBox2.DroppedDown = true;
+                    return;
+                }
+                if (string.IsNullOrEmpty(comboBox3.Text) && comboBox3.Items.Count != 0)
+                {
+                    MessageBox.Show("Please select a REVISION !");
+                    comboBox3.Focus();
+                    comboBox3.DroppedDown = true;
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(txtbSN.Text))
+                {
+                    MessageBox.Show("Please input a serial number!");
+                    txtbSN.Focus();
+                    return;
+                }
+                var serialNumber = txtbSN.Text.Trim();
+
+                if (PackedItemsList.Any(item => item.serialNumber == serialNumber))
+                {
+                    MessageBox.Show($"Serial number '{serialNumber}' already exists!");
+                    txtbSN.Focus();
+                    return;
+                }
+
+                var fg = new FinishedGoodsItem
+                {
+                    Customer = comboBox1.Text,
+                    Project = comboBox2.Text,
+                    Revision = comboBox3.Text,
+                    serialNumber = txtbSN.Text.Trim(),
+                    packedDate = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss"),
+                    Comments = txtbComments.Text.Trim()
+                };
+
+                PackedItemsList.Insert(0, fg);
+                lblCounter.Text = $"QTY: {++counter} / {limit}";
+                PopulatePackedItemsGridView();
+
             }
-            if (string.IsNullOrEmpty(comboBox2.Text))
+            else
             {
-                MessageBox.Show("Please select a PROJECT !");
-                comboBox2.Focus();
-                comboBox2.DroppedDown = true;
-                return;
-            }
-            if (string.IsNullOrEmpty(comboBox3.Text)&&comboBox3.Items.Count!=0)
-            {
-                MessageBox.Show("Please select a REVISION !");
-                comboBox3.Focus();
-                comboBox3.DroppedDown = true;
-                return;
+                MessageBox.Show(String.Format("Limit of {0} items reached !", limit));
             }
 
-            if (string.IsNullOrEmpty(txtbSN.Text))
-            {
-                MessageBox.Show("Please input a serial number!");
-                txtbSN.Focus();
-                return;
-            }
-            var serialNumber = txtbSN.Text.Trim();
-
-            if (PackedItemsList.Any(item => item.serialNumber == serialNumber))
-            {
-                MessageBox.Show($"Serial number '{serialNumber}' already exists!");
-                txtbSN.Focus();
-                return;
-            }
-
-            var fg = new FinishedGoodsItem
-            {
-                Customer = comboBox1.Text,
-                Project = comboBox2.Text,
-                Revision = comboBox3.Text,
-                serialNumber = txtbSN.Text.Trim(),
-                packedDate = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss"),
-                Comments = txtbComments.Text.Trim()
-            };
-
-            PackedItemsList.Insert(0, fg);
-            lblCounter.Text = $"QTY: {++counter}";
-            PopulatePackedItemsGridView();
 
         }
 
@@ -309,7 +319,7 @@ namespace WH_Panel
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
-            int limit = 0;
+           
 
             if (e.KeyCode == Keys.Enter)
             {
@@ -317,9 +327,10 @@ namespace WH_Panel
 
                 if(limitOk)
                 {
-                    lblLimit.Text = String.Format("of {0}", limit.ToString());
+                    lblCounter.Text = String.Format("QTY: {0} / {1}",counter, limit.ToString());
                     txtbSetLimit.Clear();
                     txtbSetLimit.ReadOnly= true;
+                    txtbSN.Focus();
                 }
                 
             }
@@ -330,8 +341,13 @@ namespace WH_Panel
             if (e.KeyCode == Keys.Enter)
             {
                 checkBox4.Checked= true;
-                txtbSN.Focus();
+                txtbSetLimit.Focus();
             }
+        }
+
+        private void lblLimit_DoubleClick(object sender, EventArgs e)
+        {
+            txtbSetLimit.ReadOnly= false; txtbSetLimit.Focus();
         }
     }
 }

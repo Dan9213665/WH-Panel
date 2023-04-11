@@ -76,8 +76,8 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
-            this.tableLayoutPanel1.Controls.Add(this.label3, 0, 8);
-            this.tableLayoutPanel1.Controls.Add(this.txtbSN, 0, 9);
+            this.tableLayoutPanel1.Controls.Add(this.label3, 0, 9);
+            this.tableLayoutPanel1.Controls.Add(this.txtbSN, 0, 10);
             this.tableLayoutPanel1.Controls.Add(this.comboBox2, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.comboBox1, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.button1, 0, 11);
@@ -89,7 +89,7 @@
             this.tableLayoutPanel1.Controls.Add(this.btbFinalizeShipment, 1, 11);
             this.tableLayoutPanel1.Controls.Add(this.groupBox3, 0, 6);
             this.tableLayoutPanel1.Controls.Add(this.lblCounter, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 2, 0);
+            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 8);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 19);
@@ -107,6 +107,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.333333F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.333333F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.333333F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1146, 709);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
@@ -115,7 +116,7 @@
             this.label3.AutoSize = true;
             this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label3.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label3.Location = new System.Drawing.Point(3, 472);
+            this.label3.Location = new System.Drawing.Point(3, 531);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(375, 59);
             this.label3.TabIndex = 6;
@@ -126,7 +127,7 @@
             // 
             this.txtbSN.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtbSN.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.txtbSN.Location = new System.Drawing.Point(3, 534);
+            this.txtbSN.Location = new System.Drawing.Point(3, 593);
             this.txtbSN.Name = "txtbSN";
             this.txtbSN.Size = new System.Drawing.Size(375, 39);
             this.txtbSN.TabIndex = 7;
@@ -399,11 +400,19 @@
             this.tableLayoutPanel2.Controls.Add(this.lblLimit, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.txtbSetLimit, 1, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(766, 3);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 475);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(377, 53);
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(375, 53);
             this.tableLayoutPanel2.TabIndex = 18;
             // 
             // lblLimit
@@ -416,6 +425,7 @@
             this.lblLimit.TabIndex = 0;
             this.lblLimit.Text = "Limit:";
             this.lblLimit.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblLimit.DoubleClick += new System.EventHandler(this.lblLimit_DoubleClick);
             // 
             // txtbSetLimit
             // 
