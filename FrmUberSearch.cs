@@ -16,6 +16,8 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Diagnostics;
 using Label = System.Windows.Forms.Label;
+using Microsoft.Office.Interop.Excel;
+using DataTable = System.Data.DataTable;
 namespace WH_Panel
 {
     public partial class FrmUberSearch : Form
@@ -53,7 +55,7 @@ namespace WH_Panel
             label1.BackColor = Color.IndianRed;
             var listOfWareHouses = new KeyValueList<string, string>
                    {
-                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm", "STOCK_VALENS" },
+                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm", "STOCK" },
                         {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm","STOCK" },
                         {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm","STOCK" },
                         {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\FIELDIN\\FIELDIN_STOCK.xlsm","STOCK" },
@@ -91,14 +93,15 @@ namespace WH_Panel
                                     Description = reader[3].ToString(),
                                     Stock = number,
                                     UpdatedOn = reader[5].ToString(),
-                                    CommentsWHitem = reader[6].ToString(),
+                                    ReelBagTrayStick = reader[6].ToString(),
                                     SourceRequester = reader[7].ToString()
                                 };
                                 if (i > 0)
                                 {
                                     countItems = i;
                                     label1.Text = "Rows:" + (countItems).ToString();
-                                    label1.Update();
+                                    if (countItems % 5000 == 0)
+                                    { label1.Update(); }
                                     wHitems.Add(abc);
                                 }
                                 i++;
@@ -125,8 +128,6 @@ namespace WH_Panel
             dataGridView1.DataSource = UDtable;
             SetColumsOrder();
             label1.BackColor = Color.LightGreen;
-            //dataGridView1.AutoResizeColumns();
-            //dataGridView1.Update();
         }
         private void SetColumsOrder()
         {
@@ -144,7 +145,7 @@ namespace WH_Panel
             dataGridView1.Columns["Description"].DisplayIndex = 3;
             dataGridView1.Columns["Stock"].DisplayIndex = 4;
             dataGridView1.Columns["UpdatedOn"].DisplayIndex = 5;
-            dataGridView1.Columns["CommentsWHitem"].DisplayIndex = 6;
+            dataGridView1.Columns["ReelBagTrayStick"].DisplayIndex = 6;
             dataGridView1.Columns["SourceRequester"].DisplayIndex = 7;
         }
         private void button1_Click(object sender, EventArgs e)
@@ -312,7 +313,7 @@ namespace WH_Panel
         {
             if (Environment.MachineName.ToString() == "RT12")
             {
-                var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_STOCK.xlsm";
+                var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm";
                 openWHexcelDB(fp);
             }
             else

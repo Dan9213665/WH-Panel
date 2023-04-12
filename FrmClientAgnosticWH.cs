@@ -1,53 +1,40 @@
 ﻿using FastMember;
-using Microsoft.Office.Interop.Excel;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+using Seagull.BarTender.Print;
 using System.ComponentModel;
 using System.Data;
 using System.Data.OleDb;
-using System.Drawing;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using DataTable = System.Data.DataTable;
-using Seagull.BarTender.Print;
-using static System.Windows.Forms.DataFormats;
-using System.Xml;
-using System.Threading;
-using static System.Threading.Mutex;
-using System.Security.AccessControl;
-using static System.Security.AccessControl.NativeObjectSecurity;
-using System;
-using System.Threading;
-using System.Security.Principal;
-using Microsoft.VisualBasic;
-using System.ComponentModel.Design;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using Microsoft.VisualBasic.Devices;
-using System.ComponentModel.Design.Serialization;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolBar;
-using TextBox = System.Windows.Forms.TextBox;
-using Seagull.BarTender.PrintServer.Tasks;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
-using System.Reflection.Emit;
 using RadioButton = System.Windows.Forms.RadioButton;
+using TextBox = System.Windows.Forms.TextBox;
 namespace WH_Panel
 {
-    public partial class FrmAddItemsToNetline : Form
+    public partial class FrmClientAgnosticWH : Form
     {
-        public FrmAddItemsToNetline()
+        public FrmClientAgnosticWH()
         {
             InitializeComponent();
+            //comboBox3.SelectedIndex = 0;
+            comboBox3.SelectedItem = "ROBOTRON";
+            MasterReload(avlROBOTRON, stockROBOTRON);
+        }
+        private void MasterReload(string avlParam, string stockParam)
+        {
+            lblSendTo.Enabled = false;
+            avlFile = avlParam;
+            stockFile = stockParam;
+            textBox8.ReadOnly= true;
             radioButton1.Checked = true;
             comboBox1.SelectedIndex = 1;
-            button2_Click_1(this, new EventArgs());
+            button2_Click(this, new EventArgs());
             button3_Click(this, new EventArgs());
+            comboBox2.Enabled = false;
+            textBox1.Clear();
+            textBox2.Clear();
+            textBox6.Clear();
+            textBox8.Clear();
+            textBox9.Clear();
+            label1.BackColor= Color.LightGreen;
+            label2.BackColor= Color.LightGreen;
             LastInputFromUser = textBox1;
             LastInputFromUser.Focus();
         }
@@ -61,12 +48,49 @@ namespace WH_Panel
         int iStock = 0;
         private object cmd;
         public TextBox LastInputFromUser = new TextBox();
-        public string avlSource = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_AVL.xlsx";
-        public string stockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm";
-        private void textBox9_TextChanged_1(object sender, EventArgs e)
+        public List<WHSettings> lstWHSettings = new List<WHSettings>() { };
+        public WHSettings net = new WHSettings
         {
+            ClientNameWH = "NETLINE",
+            avlFP = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_AVL.xlsx",
+            stockFP = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_AVL.xlsx"
+        };
+        public string avlNETLINE = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_AVL.xlsx";
+        public string stockNETLINE = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm";
+        public string stockLeader_Tech = @"\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\G.I.Leader_Tech\G.I.Leader_Tech_STOCK.xlsm";
+        public string avlLeader_Tech = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_AVL.xlsm";
+        public string avlVAYAR = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_AVL.xlsx";
+        public string stockVAYAR = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm";
+        public string avlVALENS = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_AVL.xlsx";
+        public string stockVALENS = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm";
+        public string avlROBOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_AVL.xlsm";
+        public string stockROBOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_STOCK.xlsm";
+        public string avlFile;
+        public string stockFile;
+        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox3.Text == "ROBOTRON")
+            {
+                MasterReload(avlROBOTRON, stockROBOTRON);
+            }
+            else if(comboBox3.Text == "LEADER-TECH")
+            {
+                MasterReload(avlLeader_Tech, stockLeader_Tech);
+            }
+            else if (comboBox3.Text == "NETLINE")
+            {
+                MasterReload(avlNETLINE, stockNETLINE);
+            }
+            else if (comboBox3.Text == "VAYYAR")
+            {
+                MasterReload(avlVAYAR, stockVAYAR);
+            }
+            else if (comboBox3.Text == "VALENS")
+            {
+                MasterReload(avlVALENS, stockVALENS);
+            }
         }
-        private void button2_Click_1(object sender, EventArgs e)
+        private void button2_Click(object sender, EventArgs e)
         {
             label1.BackColor = Color.IndianRed;
             avlItems.Clear();
@@ -74,7 +98,7 @@ namespace WH_Panel
             countAVLItems = 0;
             iAVL = 0;
             label1.Text = "RELOAD AVL";
-            DataLoaderAVL(avlSource, "AVL");
+            DataLoaderAVL(avlFile, "AVL");
             PopulateAVLGridView();
         }
         private void DataLoaderAVL(string fp, string thesheetName)
@@ -106,7 +130,10 @@ namespace WH_Panel
                             {
                                 countAVLItems = iAVL;
                                 label1.Text = "Rows in AVL: " + (countAVLItems).ToString();
-                                label1.Update();
+                                if(countAVLItems%1000==0)
+                                {
+                                    label1.Update();
+                                }
                                 avlItems.Add(abc);
                             }
                             iAVL++;
@@ -154,7 +181,7 @@ namespace WH_Panel
                 searchByIPN = textBox1.Text.Substring(0, 15);
             }
             string searchbyMFPN = textBox2.Text;
-            if (textBox2.Text.StartsWith("1P") == true)
+             if(textBox2.Text.StartsWith("1P") == true)
             {
                 searchbyMFPN = textBox2.Text.Substring(2);
             }
@@ -179,6 +206,7 @@ namespace WH_Panel
                 DataView dv = avlDTable.DefaultView;
                 dv.RowFilter = "[IPN] LIKE '%" + searchByIPN.ToString() +
                     "%' AND [MFPN] LIKE '%" + searchbyMFPN.ToString() +
+                    "%' AND [DESCRIPTION] LIKE '%" + txtbFiltAVLbyDESCR.Text.ToString() +
                     "%'";
                 dataGridView2.DataSource = dv;
                 SetColumsOrder();
@@ -205,17 +233,17 @@ namespace WH_Panel
             textBox1.Focus();
             label2.BackColor = Color.LightGreen;
         }
-        private void label3_Click_1(object sender, EventArgs e)
+        private void label3_Click(object sender, EventArgs e)
         {
             textBox2.Text = string.Empty;
             textBox2.Focus();
             label3.BackColor = Color.LightGreen;
         }
-        private void label2_DoubleClick_1(object sender, EventArgs e)
+        private void label2_DoubleClick(object sender, EventArgs e)
         {
             AvlClearFilters();
         }
-        private void label3_DoubleClick_1(object sender, EventArgs e)
+        private void label3_DoubleClick(object sender, EventArgs e)
         {
             AvlClearFilters();
         }
@@ -225,6 +253,8 @@ namespace WH_Panel
             label2.BackColor = Color.LightGreen;
             textBox2.Text = string.Empty;
             label3.BackColor = Color.LightGreen;
+            txtbFiltAVLbyDESCR.Text = string.Empty;
+            label16.BackColor = Color.LightGreen;
         }
         private void dataGridView2_SelectionChanged(object sender, EventArgs e)
         {
@@ -238,15 +268,16 @@ namespace WH_Panel
                 textBox4.Text = dataGridView2.Rows[rowindex].Cells["MFPN"].Value.ToString();
                 textBox5.Text = dataGridView2.Rows[rowindex].Cells["Description"].Value.ToString();
                 textBox6.Clear();
+                FilterStockDataGridView(textBox3.Text);
             }
         }
-        private void radioButton1_CheckedChanged_1(object sender, EventArgs e)
+        private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
             MoveByRadioColor(sender);
             RadioButton rbtn = sender as RadioButton;
             if (rbtn.Checked == true)
             {
-                textBox8.Text = string.Empty;   
+                textBox8.Text = string.Empty;
                 textBox8.ReadOnly = true;
                 textBox9.ReadOnly = true;
             }
@@ -263,52 +294,65 @@ namespace WH_Panel
                 btnMove.BackColor = Color.IndianRed;
             }
         }
-        private void radioButton2_CheckedChanged_1(object sender, EventArgs e)
+        private void radioButton2_CheckedChanged(object sender, EventArgs e)
         {
             MoveByRadioColor(sender);
             RadioButton rbtn = sender as RadioButton;
             if (rbtn.Checked == true)
             {
+                comboBox2.Enabled = true;
                 textBox8.ReadOnly = false;
                 textBox9.ReadOnly = true;
                 textBox8.Focus();
             }
         }
-        private void radioButton4_CheckedChanged_1(object sender, EventArgs e)
+        private void radioButton4_CheckedChanged(object sender, EventArgs e)
         {
             MoveByRadioColor(sender);
             RadioButton rbtn = sender as RadioButton;
             if (rbtn.Checked == true)
             {
+                lblRWK.Text = "_RWK_";
+                lblSendTo.Text="_Sent to_";
+                lblSendTo.Enabled = true;
                 textBox8.ReadOnly = true;
                 textBox9.ReadOnly = false;
+                textBox9.Focus();
+            }
+            else
+            {
+                lblRWK.ResetText();
+                lblSendTo.ResetText();
+                lblSendTo.Enabled = false;
+                textBox9.ReadOnly = true;
+                textBox8.ReadOnly = false;
             }
         }
         private void btnMove_Click(object sender, EventArgs e)
         {
             int qty = 0;
-        string sorce_req = string.Empty;
+            string sorce_req = string.Empty;
             if (radioButton1.Checked == true)
             {
                 bool toPrintMFG = true;
-        sorce_req = "MFG";
-                if (textBox6.Text != string.Empty )
+                sorce_req = "MFG";
+                if (textBox6.Text != string.Empty)
                 {
                     try
                     {
                         string qInqty = (string)textBox6.Text;
-        string inQty = string.Empty;
-                        if(qInqty.StartsWith("Q"))
+                        string inQty = string.Empty;
+                        if (qInqty.StartsWith("Q"))
                         {
                             inQty = qInqty.Substring(1);
                             MessageBox.Show(inQty);
                             int outNumberq;
-        bool successq = int.TryParse(inQty, out outNumberq);
-                            if (successq && outNumberq< 15001 && outNumberq> 0)
+                            bool successq = int.TryParse(inQty, out outNumberq);
+                            if (successq && outNumberq < 15001 && outNumberq > 0)
                             {
                                 MoveIntoDATABASE(outNumberq, sorce_req, toPrintMFG);
-        FilterStockDataGridView(textBox10.Text);
-    }
+                                FilterStockDataGridView(textBox10.Text);
+                            }
                             else
                             {
                                 MessageBox.Show("Input positive numeric values ONLY !");
@@ -317,106 +361,114 @@ namespace WH_Panel
                             }
                         }
                         else
-{
-    inQty = (string)textBox6.Text;
-    int outNumber;
-    bool success = int.TryParse(inQty, out outNumber);
-    if (success && outNumber < 15001 && outNumber > 0)
-    {
-        MoveIntoDATABASE(outNumber, sorce_req, toPrintMFG);
-        FilterStockDataGridView(textBox10.Text);
-    }
-    else
-    {
-        MessageBox.Show("Input positive numeric values ONLY !");
-        textBox6.Text = string.Empty;
-        textBox6.Focus();
-    }
-}
+                        {
+                            inQty = (string)textBox6.Text;
+                            int outNumber;
+                            bool success = int.TryParse(inQty, out outNumber);
+                            if (success && outNumber < 15001 && outNumber > 0)
+                            {
+                                MoveIntoDATABASE(outNumber, sorce_req, toPrintMFG);
+                                FilterStockDataGridView(textBox10.Text);
+                            }
+                            else
+                            {
+                                MessageBox.Show("Input positive numeric values ONLY !");
+                                textBox6.Text = string.Empty;
+                                textBox6.Focus();
+                            }
+                        }
                     }
                     catch (Exception)
-{
-    throw;
-}
+                    {
+                        throw;
+                    }
                 }
                 else
-{
-    MessageBox.Show("Input Qty !");
-    textBox6.Focus();
-}
+                {
+                    MessageBox.Show("Input Qty !");
+                    textBox6.Text = string.Empty;
+                    textBox6.Focus();
+                }
             }
             else if (radioButton2.Checked == true)
-{
-    bool toPrintGILT = true;
-    if (textBox8.Text != string.Empty)
-    {
-        sorce_req = label12.Text + textBox8.Text;
-        if (textBox6.Text.ToString().StartsWith("Q"))
-        {
-            int outNumberq;
-            bool successq = int.TryParse(textBox6.Text.ToString().Substring(1), out outNumberq);
-            if (successq && outNumberq < 15001 && outNumberq > 0)
             {
-                MoveIntoDATABASE(outNumberq, sorce_req, toPrintGILT);
-                FilterStockDataGridView(textBox10.Text);
+                bool toPrintGILT = true;
+                if (textBox8.Text != string.Empty)
+                {
+                    sorce_req = comboBox2.Text + textBox8.Text;
+                    if (textBox6.Text.ToString().StartsWith("Q"))
+                    {
+                        int outNumberq;
+                        bool successq = int.TryParse(textBox6.Text.ToString().Substring(1), out outNumberq);
+                        if (successq && outNumberq < 15001 && outNumberq > 0)
+                        {
+                            MoveIntoDATABASE(outNumberq, sorce_req, toPrintGILT);
+                            FilterStockDataGridView(textBox10.Text);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Input positive numeric values ONLY !");
+                            textBox6.Text = string.Empty;
+                            textBox6.Focus();
+                        }
+                    }
+                    else
+                    {
+                        int outNumber;
+                        bool success = int.TryParse(textBox6.Text.ToString(), out outNumber);
+                        if (success && outNumber < 15001 && outNumber > 0)
+                        {
+                            MoveIntoDATABASE(outNumber, sorce_req, toPrintGILT);
+                            FilterStockDataGridView(textBox10.Text);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Input positive numeric values ONLY !");
+                            textBox6.Text = string.Empty;
+                            textBox6.Focus();
+                        }
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Input " + comboBox2.Text + "_XXX ID !");
+                    textBox8.Focus();
+                }
             }
-            else
+            else if (radioButton4.Checked == true)
             {
-                MessageBox.Show("Input positive numeric values ONLY !");
-                textBox6.Text = string.Empty;
-                textBox6.Focus();
-            }
-        }
-        else
-        {
-            int outNumber;
-            bool success = int.TryParse(textBox6.Text.ToString(), out outNumber);
-            if (success && outNumber < 15001 && outNumber > 0)
-            {
-                MoveIntoDATABASE(outNumber, sorce_req, toPrintGILT);
-                FilterStockDataGridView(textBox10.Text);
-            }
-            else
-            {
-                MessageBox.Show("Input positive numeric values ONLY !");
-                textBox6.Text = string.Empty;
-                textBox6.Focus();
-            }
-        }
-    }
-    else
-    {
-        MessageBox.Show("Input " + label12.Text + "_XXX ID !");
-        textBox8.Focus();
-    }
-}
-else if (radioButton4.Checked == true)
-{
                 bool toPrintWO = false;
-                string[] theWOsplit = textBox9.Text.Split("_");
-                sorce_req = theWOsplit[1] + "_" + theWOsplit[2];
-    if (textBox9.Text != string.Empty)
-    {
-        int outNumber;
-        bool success = int.TryParse(textBox6.Text, out outNumber);
-        if (success && outNumber < 15001 && outNumber > 0)
-        {
-            int negQty = outNumber * (-1);
-            MoveIntoDATABASE(negQty, sorce_req, toPrintWO);
-            FilterStockDataGridView(textBox10.Text);
-        }
-        else
-        {
-            MessageBox.Show("Input Qty !");
-            textBox6.Focus();
-        }
-    }
-    else
-    {
-        MessageBox.Show("INPUT WO !");
-        textBox9.Focus();
-    }
-}
+                if (textBox9.Text != string.Empty)
+                {
+                    if (textBox9.Text.Contains("_"))
+                    {
+                        string[] theWOsplit = textBox9.Text.Split("_");
+                        sorce_req = theWOsplit[1] + "_" + theWOsplit[2];
+                    }
+                    else
+                    {
+                        sorce_req = textBox9.Text;
+                    }
+                    int outNumber;
+                    bool success = int.TryParse(textBox6.Text, out outNumber);
+                    if (success && outNumber < 15001 && outNumber > 0)
+                    {
+                        int negQty = outNumber * (-1);
+                        MoveIntoDATABASE(negQty, sorce_req, toPrintWO);
+                        FilterStockDataGridView(textBox10.Text);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Input Qty !");
+                        textBox6.Focus();
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("INPUT WO !");
+                    textBox9.Focus();
+                }
+            }
         }
         private void ComeBackFromPrint()
         {
@@ -437,9 +489,10 @@ else if (radioButton4.Checked == true)
                 ReelBagTrayStick = comboBox1.Text,
                 SourceRequester = sorce_req
             };
-            DataInserter(stockFile, "STOCK", inputWHitem, toPrint);
+            DataInserter(stockFile,"STOCK", inputWHitem, toPrint);
             stockItems.Add(inputWHitem);
             textBox10.Text = inputWHitem.IPN;
+            textBox10.BackColor = Color.LightGreen;
             PopulateStockView();
         }
         private void DataInserter(string fp, string thesheetName, WHitem wHitem, bool toPrintOrNotToPrint)
@@ -531,9 +584,9 @@ else if (radioButton4.Checked == true)
                 Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
                 SendKeys.SendWait("^p");
                 SendKeys.SendWait("{Enter}");
-                ComeBackFromPrint();
+                //ComeBackFromPrint();
                 Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
-                LastInputFromUser.Focus();
+                textBox1.Focus();
             }
             catch (Exception e)
             {
@@ -574,6 +627,13 @@ else if (radioButton4.Checked == true)
                 LastInputFromUser.Focus();
             }
         }
+        private void textBox9_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                LastInputFromUser.Focus();
+            }
+        }
         private void textBox6_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -581,9 +641,16 @@ else if (radioButton4.Checked == true)
                 btnMove_Click(this, new EventArgs());
             }
         }
-        private void dataGridView2_CellClick_1(object sender, DataGridViewCellEventArgs e)
+        private void dataGridView2_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             textBox6.Focus();
+            if (dataGridView2.SelectedCells.Count > 0)
+            {
+                int rowindex = dataGridView2.CurrentCell.RowIndex;
+                int columnindex = dataGridView2.CurrentCell.ColumnIndex;
+                string cellValue = dataGridView2.Rows[rowindex].Cells[dataGridView2.Columns["IPN"].Index].Value.ToString();
+                FilterStockDataGridView(cellValue);
+            }
         }
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
@@ -600,7 +667,7 @@ else if (radioButton4.Checked == true)
                 }
             }
         }
-        private void textBox2_KeyDown_1(object sender, KeyEventArgs e)
+        private void textBox2_KeyDown(object sender, KeyEventArgs e)
         {
             LastInputFromUser = (TextBox)sender;
             if (e.KeyCode == Keys.Enter)
@@ -638,7 +705,8 @@ else if (radioButton4.Checked == true)
                                 {
                                     toStk = res;
                                 }
-                                else {
+                                else
+                                {
                                     toStk = 0;
                                 }
                                 WHitem abc = new WHitem
@@ -652,10 +720,13 @@ else if (radioButton4.Checked == true)
                                     ReelBagTrayStick = reader[6].ToString(),
                                     SourceRequester = reader[7].ToString()
                                 };
-                                    countStockItems = iStock;
-                                    button3.Text = "Rows in STOCK: " + (countStockItems).ToString();
+                                countStockItems = iStock;
+                                button3.Text = "Rows in STOCK: " + (countStockItems).ToString();
+                                if(countStockItems%1000==0)
+                                {
                                     button3.Update();
-                                    stockItems.Add(abc);
+                                }
+                                stockItems.Add(abc);
                                 iStock++;
                             }
                             catch (Exception E)
@@ -716,6 +787,8 @@ else if (radioButton4.Checked == true)
             dataGridView1.Columns["UpdatedOn"].DisplayIndex = 5;
             dataGridView1.Columns["ReelBagTrayStick"].DisplayIndex = 6;
             dataGridView1.Columns["SourceRequester"].DisplayIndex = 7;
+
+            dataGridView1.Sort(dataGridView1.Columns["UpdatedOn"], ListSortDirection.Descending);
         }
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
@@ -738,7 +811,7 @@ else if (radioButton4.Checked == true)
                     {
                         int qty = 0;
                         int result;
-                        bool prs = int.TryParse(dataGridView1.Rows[i].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString(),out result);
+                        bool prs = int.TryParse(dataGridView1.Rows[i].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString(), out result);
                         if (prs)
                         {
                             qty = result;
@@ -875,6 +948,8 @@ else if (radioButton4.Checked == true)
         private void textBox6_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
+            textBox10.Text = textBox3.Text;
+            textBox10.BackColor = Color.IndianRed;
         }
         private void textBox6_Leave(object sender, EventArgs e)
         {
@@ -896,7 +971,15 @@ else if (radioButton4.Checked == true)
         {
             txtbColorWhiteOnLeave(sender);
         }
+        private void txtbFiltAVLbyDESCR_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave(sender);
+        }
         private void textBox9_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter(sender);
+        }
+        private void txtbFiltAVLbyDESCR_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
         }
@@ -917,12 +1000,12 @@ else if (radioButton4.Checked == true)
                 Manufacturer = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Manufacturer"].Index].Value.ToString(),
                 MFPN = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["MFPN"].Index].Value.ToString(),
                 Description = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Description"].Index].Value.ToString(),
-                Stock =int.Parse(dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString()),
+                Stock = int.Parse(dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString()),
                 UpdatedOn = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["UpdatedOn"].Index].Value.ToString(),
                 ReelBagTrayStick = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["ReelBagTrayStick"].Index].Value.ToString(),
                 SourceRequester = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["SourceRequester"].Index].Value.ToString()
             };
-            if(wHitemABCD.Stock>0)
+            if (wHitemABCD.Stock > 0)
             {
                 printSticker(wHitemABCD);
             }
@@ -930,6 +1013,132 @@ else if (radioButton4.Checked == true)
             {
                 MessageBox.Show("Can print only positive quantites !");
             }
+        }
+        private void button4_Click(object sender, EventArgs e)
+        {
+            List<WHitem> inWHstock = new List<WHitem>();
+            for (int i = 0; i < dataGridView1.RowCount; i++)
+            {
+                WHitem wHitemABC = new WHitem()
+                {
+                    IPN = dataGridView1.Rows[i].Cells[dataGridView1.Columns["IPN"].Index].Value.ToString(),
+                    Manufacturer = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Manufacturer"].Index].Value.ToString(),
+                    MFPN = dataGridView1.Rows[i].Cells[dataGridView1.Columns["MFPN"].Index].Value.ToString(),
+                    Description = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Description"].Index].Value.ToString(),
+                    Stock = int.Parse(dataGridView1.Rows[i].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString()),
+                    UpdatedOn = dataGridView1.Rows[i].Cells[dataGridView1.Columns["UpdatedOn"].Index].Value.ToString(),
+                    ReelBagTrayStick = dataGridView1.Rows[i].Cells[dataGridView1.Columns["ReelBagTrayStick"].Index].Value.ToString(),
+                    SourceRequester = dataGridView1.Rows[i].Cells[dataGridView1.Columns["SourceRequester"].Index].Value.ToString()
+                };
+                inWHstock.Add(wHitemABC);
+            }
+            List<WHitem> negatiVEQTYs = new List<WHitem>();
+            for (int i = 0; i < inWHstock.Count; i++)
+            {
+                if (inWHstock[i].Stock < 0)
+                {
+                    negatiVEQTYs.Add(inWHstock[i]);
+                }
+            }
+            List<WHitem> positiveInWH = new List<WHitem>();
+            for (int k = 0; k < inWHstock.Count; k++)
+            {
+                if (inWHstock[k].Stock > 0)
+                {
+                    positiveInWH.Add(inWHstock[k]);
+                }
+            }
+            for (int i = 0; i < negatiVEQTYs.Count; i++)
+            {
+                for (int j = 0; j < positiveInWH.Count; j++)
+                {
+                    if (Math.Abs(negatiVEQTYs[i].Stock) == positiveInWH[j].Stock)
+                    {
+                        positiveInWH.Remove((WHitem)positiveInWH[j]);
+                        break;
+                    }
+                }
+            }
+            IEnumerable<WHitem> WHdata = positiveInWH;
+            DataTable INWH = new DataTable();
+            using (var reader = ObjectReader.Create(WHdata))
+            {
+                INWH.Load(reader);
+            }
+            DataView dv = INWH.DefaultView;
+            dataGridView1.DataSource = dv;
+            dataGridView1.Update();
+            SetSTOCKiewColumsOrder();
+        }
+        private void textBox8_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if(comboBox2.SelectedIndex!=(-1))
+                {
+                    LastInputFromUser.Focus();
+                }
+                else
+                {
+                    MessageBox.Show("SELECT GILT/WS/WR/SH/IF source !");
+                    comboBox2.DroppedDown = true;
+                }
+            }
+        }
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            textBox8.Focus();
+        }
+        private void FrmClientAgnosticWH_Load(object sender, EventArgs e)
+        {
+        }
+        private void txtbFiltAVLbyDESCR_TextChanged(object sender, EventArgs e)
+        {
+            label16.BackColor = Color.IndianRed;
+            FilterAVLDataGridView();
+        }
+        private void label16_Click(object sender, EventArgs e)
+        {
+            txtbFiltAVLbyDESCR.Text = string.Empty;
+            txtbFiltAVLbyDESCR.Focus();
+            label16.BackColor = Color.LightGreen;
+        }
+        private void label16_DoubleClick(object sender, EventArgs e)
+        {
+            AvlClearFilters();
+        }
+        private void txtbFiltAVLbyDESCR_KeyDown(object sender, KeyEventArgs e)
+        {
+            LastInputFromUser = (TextBox)sender;
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (dataGridView2.Rows.Count == 1)
+                {
+                    textBox6.Focus();
+                }
+                else
+                {
+                    dataGridView2.Focus();
+                }
+            }
+        }
+        private void lblSendTo_Click(object sender, EventArgs e)
+        {
+            lblSendTo.Text += comboBox3.Text.ToString()+" "+ DateTime.Now.ToString("yyyy-MM-dd");
+            textBox9.Text = lblSendTo.Text;
+        }
+        private void textBox9_KeyDown_1(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                LastInputFromUser.Clear();
+                LastInputFromUser.Focus();
+            }
+        }
+        private void lblRWK_Click(object sender, EventArgs e)
+        {
+            lblRWK.Text +=  DateTime.Now.ToString("yyyy-MM-dd");
+            textBox9.Text = lblRWK.Text;
         }
     }
 }

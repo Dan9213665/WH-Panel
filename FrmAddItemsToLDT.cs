@@ -95,7 +95,7 @@ namespace WH_Panel
                                     Description = reader[4].ToString(),
                                     Stock = 0,
                                     UpdatedOn = string.Empty,
-                                    CommentsWHitem = string.Empty,
+                                    ReelBagTrayStick = string.Empty,
                                     SourceRequester = string.Empty
                                 };
                                 if (iAVL > 0)
@@ -158,10 +158,21 @@ namespace WH_Panel
                 searchByIPN = textBox1.Text.Substring(0, 15);
             }
             string searchbyMFPN = textBox2.Text;
-
             if (textBox2.Text.StartsWith("1P") == true)
             {
                 searchbyMFPN = textBox2.Text.Substring(2);
+            }
+            else if (textBox2.Text.Contains("-") == true&& textBox2.Text.Length>6)
+            {
+                string[] theSplit = textBox2.Text.ToString().Split("-");
+                if (theSplit[0].Length==3 && theSplit.Length==2)
+                {
+                    searchbyMFPN = theSplit[1];
+                }
+                else
+                {
+                    searchbyMFPN = textBox2.Text;
+                }
             }
             else if(textBox2.Text.StartsWith("P") == true)
             {
@@ -312,7 +323,6 @@ namespace WH_Panel
                                 textBox6.Text = string.Empty;
                                 textBox6.Focus();
                             }
-
                         }
                         else
                         {
@@ -367,7 +377,6 @@ namespace WH_Panel
                     }
                     else
                     {
-
                         int outNumber;
                         bool success = int.TryParse(textBox6.Text.ToString(), out outNumber);
                         if (success && outNumber < 15001 && outNumber > 0)
@@ -392,7 +401,8 @@ namespace WH_Panel
             else if (radioButton4.Checked == true)
             {
                 bool toPrintWO = false;
-                sorce_req = textBox9.Text;
+                string[] theWOsplit = textBox9.Text.Split("_");
+                sorce_req = theWOsplit[1]+"_"+ theWOsplit[2];
                 if(textBox9.Text != string.Empty)
                 {
                     int outNumber;
@@ -432,7 +442,7 @@ namespace WH_Panel
                 Description = textBox5.Text,
                 Stock = qty,
                 UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd")+" "+DateTime.Now.ToString("HH:mm:ss"), //tt
-                CommentsWHitem = comboBox1.Text,
+                ReelBagTrayStick = comboBox1.Text,
                 SourceRequester = sorce_req
             };
             DataInserter(stockFile, "STOCK", inputWHitem, toPrint);
@@ -449,7 +459,7 @@ namespace WH_Panel
                 using (OleDbConnection conn = new OleDbConnection(constr))
                 {
                     conn.Open();
-                    OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$] (IPN,Manufacturer,MFPN,Description,Stock,Updated_on,Comments,Source_Requester) values('" + wHitem.IPN + "','" + wHitem.Manufacturer + "','" + wHitem.MFPN + "','" + wHitem.Description + "','" + wHitem.Stock + "','" + wHitem.UpdatedOn + "','" + wHitem.CommentsWHitem + "','" + wHitem.SourceRequester + "')", conn);
+                    OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$] (IPN,Manufacturer,MFPN,Description,Stock,Updated_on,Comments,Source_Requester) values('" + wHitem.IPN + "','" + wHitem.Manufacturer + "','" + wHitem.MFPN + "','" + wHitem.Description + "','" + wHitem.Stock + "','" + wHitem.UpdatedOn + "','" + wHitem.ReelBagTrayStick + "','" + wHitem.SourceRequester + "')", conn);
                     // sql = "Insert into [Sheet1$] (id,name) values('5','e')";
                     command.ExecuteNonQuery();
                     conn.Close();
@@ -471,9 +481,8 @@ namespace WH_Panel
                 }
                 else
                 {
-                    AutoClosingMessageBox.Show(wHitem.Stock.ToString() + " PCS of " + wHitem.IPN + " in a " + wHitem.CommentsWHitem + " MOVED to DB ", "Item added to DB", 2000);
+                    AutoClosingMessageBox.Show(wHitem.Stock.ToString() + " PCS of " + wHitem.IPN + " in a " + wHitem.ReelBagTrayStick + " MOVED to DB ", "Item added to DB", 2000);
                 }
-               
             }
             catch (IOException)
             {
@@ -514,10 +523,7 @@ namespace WH_Panel
         {
             try
             {
-                
-               
                 string userName = Environment.UserName;
-
                 //MessageBox.Show(userName);
                 string fp = @"C:\\Users\\"+ userName + "\\Desktop\\Print_Stickers.xlsx"; // //////Print_StickersWH.xlsm
                 string thesheetName = "Sheet1";
@@ -647,7 +653,7 @@ namespace WH_Panel
                                 Description = reader[3].ToString(),
                                 Stock = int.Parse(reader[4].ToString()),
                                 UpdatedOn = reader[5].ToString(),
-                                CommentsWHitem = reader[6].ToString(),
+                                ReelBagTrayStick = reader[6].ToString(),
                                 SourceRequester = reader[7].ToString()
                             };
                             //if (iStock > 0)
@@ -709,7 +715,7 @@ namespace WH_Panel
             dataGridView1.Columns["Description"].DisplayIndex = 3;
             dataGridView1.Columns["Stock"].DisplayIndex = 4;
             dataGridView1.Columns["UpdatedOn"].DisplayIndex = 5;
-            dataGridView1.Columns["CommentsWHitem"].DisplayIndex = 6;
+            dataGridView1.Columns["ReelBagTrayStick"].DisplayIndex = 6;
             dataGridView1.Columns["SourceRequester"].DisplayIndex = 7;
         }
         private void textBox3_TextChanged(object sender, EventArgs e)
@@ -790,7 +796,7 @@ namespace WH_Panel
                     Description = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Description"].Index].Value.ToString(),
                     Stock = int.Parse(dataGridView1.Rows[i].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString()),
                     UpdatedOn = dataGridView1.Rows[i].Cells[dataGridView1.Columns["UpdatedOn"].Index].Value.ToString(),
-                    CommentsWHitem = dataGridView1.Rows[i].Cells[dataGridView1.Columns["CommentsWHitem"].Index].Value.ToString(),
+                    ReelBagTrayStick = dataGridView1.Rows[i].Cells[dataGridView1.Columns["ReelBagTrayStick"].Index].Value.ToString(),
                     SourceRequester = dataGridView1.Rows[i].Cells[dataGridView1.Columns["SourceRequester"].Index].Value.ToString()
                 };
                 inWHstock.Add(wHitemABC);
@@ -912,21 +918,20 @@ namespace WH_Panel
         {
             if (e.KeyCode == Keys.Enter)
             {
-                if (dataGridView2.Rows.Count == 1)
-                {
-                    textBox6.Focus();
-                }
-                else
-                {
-                    dataGridView2.Focus();
-                }
+                textBox2.Focus();
+                //if (dataGridView2.Rows.Count == 1)
+                //{
+                //    textBox6.Focus();
+                //}
+                //else
+                //{
+                //    dataGridView2.Focus();
+                //}
             }
         }
-
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             int rowindex = dataGridView1.CurrentCell.RowIndex;
-
             WHitem wHitemABCD = new WHitem()
             {
                 IPN = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["IPN"].Index].Value.ToString(),
@@ -935,10 +940,9 @@ namespace WH_Panel
                 Description = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Description"].Index].Value.ToString(),
                 Stock = int.Parse(dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString()),
                 UpdatedOn = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["UpdatedOn"].Index].Value.ToString(),
-                CommentsWHitem = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["CommentsWHitem"].Index].Value.ToString(),
+                ReelBagTrayStick = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["ReelBagTrayStick"].Index].Value.ToString(),
                 SourceRequester = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["SourceRequester"].Index].Value.ToString()
             };
-
             if (wHitemABCD.Stock > 0)
             {
                 printSticker(wHitemABCD);
@@ -947,7 +951,6 @@ namespace WH_Panel
             {
                 MessageBox.Show("Can print only positive quantites !");
             }
-
         }
     }
 }

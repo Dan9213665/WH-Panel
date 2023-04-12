@@ -16,9 +16,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
+using System.IO;
 using static System.Net.WebRequestMethods;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using DataTable = System.Data.DataTable;
+using TextBox = System.Windows.Forms.TextBox;
 namespace WH_Panel
 {
     public partial class FrmKITShistory : Form
@@ -34,6 +36,7 @@ namespace WH_Panel
         public int colMFPNFoundIndex;
         public List<string> listOfPaths = new List<string>()
             {
+                "\\\\dbr1\\Data\\WareHouse\\2022\\09.2022",
                 "\\\\dbr1\\Data\\WareHouse\\2022\\10.2022",
                 "\\\\dbr1\\Data\\WareHouse\\2022\\11.2022",
                 "\\\\dbr1\\Data\\WareHouse\\2022\\12.2022",
@@ -42,8 +45,6 @@ namespace WH_Panel
         public FrmKITShistory()
         {
             InitializeComponent();
-            //startUpLogic();
-            //SetColumsOrder();
         }
         private void button1_Click(object sender, EventArgs e)
         {
@@ -51,6 +52,7 @@ namespace WH_Panel
             ResetViews();
             startUpLogic();
             SetColumsOrder();
+            textBox1.Focus();
         }
         private void ResetViews()
         {
@@ -63,6 +65,7 @@ namespace WH_Panel
             label11.BackColor = Color.LightGreen;
             label2.BackColor = Color.LightGreen;
             label3.BackColor = Color.LightGreen;
+            label9.BackColor = Color.LightGreen;
             KitHistoryItemsList.Clear();
             countItems = 0;
             countLoadedFIles = 0;
@@ -73,13 +76,6 @@ namespace WH_Panel
             dataGridView1.DataSource = null;
             dataGridView1.Refresh();
         }
-        //public class KeyValueList<TKey, TValue> : List<KeyValuePair<TKey, TValue>>
-        //{
-        //    public void Add(TKey key, TValue value)
-        //    {
-        //        Add(new KeyValuePair<TKey, TValue>(key, value));
-        //    }
-        //}
         private void startUpLogic()
         {
             stopWatch.Start();
@@ -89,23 +85,47 @@ namespace WH_Panel
                 foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
                 {
                     countLoadedFIles++;
-                    //MessageBox.Show(file);
                     string Litem = Path.GetFileName(file);
-                    //MessageBox.Show(Litem);
-                    DataLoader(file, Litem);
-                    //listOfKitFiles.Add(@file);
+                    if (FileIsLocked(Litem))
+                    {
+                        DataLoader(file, Litem);
+                    }
+                    else
+                    {
+                        AddErrorousFilesToListOfErrors(Litem);
+                    }
                 }
             }
-            //MessageBox.Show(listOfKitFiles.Count.ToString());
-            //for (int i = 0; i < listOfKitFiles.Count; i++)
-            //{
-            //    //MessageBox.Show("i:"+i+" "+listOfKitFiles[i].ToString());
-            //    // DataLoader(listOfKitFiles[i].Key, listOfKitFiles[i].Value);
-            //    //DataLoader(listOfKitFiles[i]);
-            //}
             PopulateGridView();
             SetColumsOrder();
             stopWatch.Stop();
+        }
+        private void AddErrorousFilesToListOfErrors(string fp)
+        {
+            loadingErrors++;
+            label13.Text = loadingErrors.ToString() + " Loading Errors detected: ";
+            label13.BackColor = Color.IndianRed;
+            label13.Update();
+            string er = fp;
+            listBox1.Items.Add(er);
+            listBox1.Update();
+        }
+        public bool FileIsLocked(string strFullFileName)
+        {
+            bool blnReturn;
+            System.IO.FileStream fs;
+            try
+            {
+                fs = System.IO.File.Open(strFullFileName, System.IO.FileMode.Open, System.IO.FileAccess.Write, System.IO.FileShare.None);
+                fs.Close();
+                fs.Dispose();
+                blnReturn = false;
+            }
+            catch (System.IO.IOException ex)
+            {
+                blnReturn = true;
+            }
+            return blnReturn;
         }
         private void DataLoader(string fp,string excelFIleName)
         {
@@ -117,52 +137,26 @@ namespace WH_Panel
                 {
                     try
                     {
-                        conn.Open();
+                            conn.Open();
                             DataTable dbSchema = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
                             if (dbSchema == null || dbSchema.Rows.Count < 1)
                             {
                                 throw new Exception("Error: Could not determine the name of the first worksheet.");
                             }
                             string firstSheetName = dbSchema.Rows[0]["TABLE_NAME"].ToString();
-                            // string columnName = dbSchema.Columns.ToString();
-                            //label13.Text+=columnName;
                             string cleanedUpSheetName = firstSheetName.Substring(1).Substring(0, firstSheetName.Length - 3);
-                        //string cleanedUPfP = fp.Split("/",);
-                        //string[] cleanedUPfP = fp.Split(string.Empty);
-                        //MessageBox.Show(cleanedUPfP[0]+" "+ cleanedUPfP[1]);
-                        //MessageBox.Show(dbSchema.Rows[0]["COLUMN_NAME"].ToString());
-                        OleDbCommand command = new OleDbCommand("Select * from [" + cleanedUpSheetName + "$]", conn);
+                            OleDbCommand command = new OleDbCommand("Select * from [" + cleanedUpSheetName + "$]", conn);
                             OleDbDataReader reader = command.ExecuteReader();
                             if (reader.HasRows)
                             {
-                            //DataTable schemaTable = reader.GetSchemaTable();
-                            //MessageBox.Show(dbSchema.TableName[0].ToString());  
-                            //foreach (DataColumn column in schemaTable.Columns)
-                            //{
-                            //    if (column.ColumnName.ToString() == "IPN")
-                            //    {
-                            //        colIpnFoundIndex = column.Ordinal;
-                            //        MessageBox.Show(colIpnFoundIndex.ToString());
-                            //    }
-                            //}
                             while (reader.Read())
                                 {
-                                //    if (i==0)
-                                //{
-                                //    //for (int cIndex = 0; cIndex < reader.FieldCount; cIndex++)
-                                //    //{
-                                //    //    if (reader[cIndex].ToString() == "IPN")
-                                //    //    {
-                                //    //        colIpnFoundIndex = cIndex;
-                                //    //    }
-                                //    //    else if (reader[cIndex].ToString() == "MFPN")
-                                //    //    {
-                                //    //        colMFPNFoundIndex = cIndex;
-                                //    //    }
-                                //    //}
-                                //}
-                                //else if(i>0)
-                                //{
+                                int del = 0;
+                                bool delPar = int.TryParse(reader[5].ToString(), out del);
+                                int qtk = 0;
+                                bool qtkPar = int.TryParse(reader[4].ToString(), out qtk);
+                                int qpu = 0;
+                                bool qpuPar = int.TryParse(reader[7].ToString(), out qpu);
                                 KitHistoryItem abc = new KitHistoryItem
                                     {
                                         DateOfCreation = cleanedUpSheetName,
@@ -170,17 +164,17 @@ namespace WH_Panel
                                         IPN = reader[1].ToString(),
                                         MFPN = reader[2].ToString(),
                                         Description = reader[3].ToString(),
-                                        QtyInKit = reader[4].ToString(),
-                                        Delta = reader[5].ToString(),
-                                        QtyPerUnit = reader[7].ToString(),
-                                        Notes = reader[8].ToString(),
+                                        QtyInKit = qtk,
+                                        Delta = del,
+                                        QtyPerUnit = qpu,
+                                        Calc = reader[8].ToString(),
                                         Alts = reader[9].ToString()
                                     };
                                     countItems = i;
                                     label12.Text = "Loaded " + (countItems).ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{0:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
-                                    label12.Update();
-                                    KitHistoryItemsList.Add(abc);
-                                //}
+                                if (countItems % 1000 == 0)
+                                { label12.Update(); }
+                                KitHistoryItemsList.Add(abc);
                                     i++;
                                 }
                             }
@@ -189,30 +183,26 @@ namespace WH_Panel
                     }
                     catch (Exception)
                     {
-                        //MessageBox.Show(excelFIleName +" is open by another user !!!\n File can not be loaded ! \n"+ "Full path: " +fp , "Error loading "+ excelFIleName, MessageBoxButtons.OK,MessageBoxIcon.Stop);
-                        //label13.Text += "\n"+ "File can not be loaded ! " + fp ;
                         loadingErrors++;
                         label13.Text = loadingErrors.ToString() + " Loading Errors detected: ";
                         label13.BackColor = Color.IndianRed;
                         label13.Update();
-                        //string er =  "\n Access denied: " + fp;
                         string er = fp;
                         listBox1.Items.Add(er);
                         listBox1.Update();
+                        conn.Dispose();
                         conn.Close();
                     }
                 }
             }
-            catch (IOException)
+            catch (IOException e)
             {
-                throw;
+                MessageBox.Show(e.Message);
             }
         }
         private void PopulateGridView()
         {
-            //MessageBox.Show(.Count.ToString()); 
             IEnumerable<KitHistoryItem> data = KitHistoryItemsList;
-            //UDtable.Clear();
             using (var reader = ObjectReader.Create(data))
             {
                 UDtable.Load(reader);
@@ -220,8 +210,6 @@ namespace WH_Panel
             dataGridView1.DataSource = UDtable;
             SetColumsOrder();
             label12.BackColor = Color.LightGreen;
-            //dataGridView1.AutoResizeColumns();
-            //dataGridView1.Update();
         }
         private void SetColumsOrder()
         {
@@ -243,7 +231,7 @@ namespace WH_Panel
             dataGridView1.Columns["QtyInKit"].DisplayIndex = 5;
             dataGridView1.Columns["Delta"].DisplayIndex = 6;
             dataGridView1.Columns["QtyPerUnit"].DisplayIndex = 7;
-            dataGridView1.Columns["Notes"].DisplayIndex = 8;
+            dataGridView1.Columns["Calc"].DisplayIndex = 8;
             dataGridView1.Columns["Alts"].DisplayIndex = 9;
         }
         private void FilterTheDataGridView()
@@ -254,8 +242,10 @@ namespace WH_Panel
                 dv.RowFilter = "[IPN] LIKE '%" + textBox1.Text.ToString() +
                      "%' AND [ProjectName] LIKE '%" + textBox11.Text.ToString() +
                 "%' AND [MFPN] LIKE '%" + textBox2.Text.ToString() +
+                "%' AND [Alts] LIKE '%" + textBox9.Text.ToString() +
                 "%' AND [Description] LIKE '%" + textBox3.Text.ToString() + "%' ";
                 dataGridView1.DataSource = dv;
+                SetColumsOrder();
                 SetColumsOrder();
             }
             catch (Exception)
@@ -273,6 +263,7 @@ namespace WH_Panel
         {
             textBox1.Text = string.Empty;
             label1.BackColor = Color.LightGreen;
+            textBox1.Focus();
         }
         private void textBox11_TextChanged(object sender, EventArgs e)
         {
@@ -293,6 +284,7 @@ namespace WH_Panel
         {
             textBox2.Text = string.Empty;
             label2.BackColor = Color.LightGreen;
+            textBox2.Focus();
         }
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
@@ -306,9 +298,6 @@ namespace WH_Panel
         }
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //MessageBox.Show(listBox1.SelectedItem.ToString());
-            //var fpp = @listBox1.SelectedItem.ToString();
-            //openWHexcelDB(fpp);
         }
         private void openWHexcelDB(string thePathToFile)
         {
@@ -326,8 +315,6 @@ namespace WH_Panel
         }
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            //MessageBox.Show();
-            //openWHexcelDB(e.RowIndex);
             int rowindex = dataGridView1.CurrentCell.RowIndex;
             int columnindex = dataGridView1.CurrentCell.ColumnIndex;
             string fp = dataGridView1.Rows[rowindex].Cells["ProjectName"].Value.ToString();
@@ -336,13 +323,9 @@ namespace WH_Panel
             {
                 foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
                 {
-                    //countLoadedFIles++;
-                    //MessageBox.Show(file);
                     string Litem = Path.GetFileName(file);
-                    //MessageBox.Show(Litem);
                     if(Litem==fp)
                     {
-                        //MessageBox.Show(file);
                         string str = @file.ToString();
                         DialogResult result = MessageBox.Show("Open the file : " + str + " ?", "Open file", MessageBoxButtons.OKCancel);
                         if (result == DialogResult.OK)
@@ -351,14 +334,183 @@ namespace WH_Panel
                         }
                         else
                         {
-                            // Do something  
                         }
                     }
-                    //
-                    //listOfKitFiles.Add(@file);
                 }
             }
-            //
+        }
+        private void dataGridView1_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedCells.Count > 0)
+            {
+                int rowindex = dataGridView1.CurrentCell.RowIndex;
+                int columnindex = dataGridView1.CurrentCell.ColumnIndex;
+                string cellValue = dataGridView1.Rows[rowindex].Cells[columnindex].Value.ToString();
+                txtbIPN.Text = dataGridView1.Rows[rowindex].Cells["IPN"].Value.ToString();
+                txtbMFPN.Text = dataGridView1.Rows[rowindex].Cells["MFPN"].Value.ToString();
+                txtbDescription.Text = dataGridView1.Rows[rowindex].Cells["Description"].Value.ToString();
+                txtbQty.Clear();
+            }
+        }
+        private void txtbQty_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter(sender);
+        }
+        private void txtbQty_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave(sender);
+        }
+        private static void txtbColorGreenOnEnter(object sender)
+        {
+            TextBox? tb = (TextBox)sender;
+            tb.BackColor = Color.LightGreen;
+        }
+        private static void txtbColorWhiteOnLeave(object sender)
+        {
+            TextBox? tb = sender as TextBox;
+            tb.BackColor = Color.White;
+        }
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            txtbQty.Focus();
+        }
+        private void textBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            filterViewAndJump2Qty(e);
+        }
+        private void filterViewAndJump2Qty(KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (dataGridView1.Rows.Count == 1)
+                {
+                    txtbQty.Focus();
+                }
+                else
+                {
+                    dataGridView1.Focus();
+                }
+            }
+        }
+        private void textBox2_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter(sender);
+        }
+        private void textBox2_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave(sender);
+        }
+        private void textBox2_KeyDown(object sender, KeyEventArgs e)
+        {
+                filterViewAndJump2Qty(e);
+        }
+        private void textBox1_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter(sender);
+        }
+        private void textBox1_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave(sender);
+        }
+        private void btnPrintSticker_Click(object sender, EventArgs e)
+        {
+            int outNumber;
+            bool success = int.TryParse(txtbQty.Text, out outNumber);
+            if (success && outNumber < 15001 && outNumber > 0)
+            {
+                WHitem w = new WHitem() { IPN = txtbIPN.Text, MFPN = txtbMFPN.Text, Description = txtbDescription.Text, Stock = outNumber, UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss") };
+                printSticker(w);
+                ResetAllTexboxes(textBox1);
+            }
+            else
+            {
+                MessageBox.Show("Input valid QTY !");
+                txtbQty.Clear();
+                txtbQty.Focus();
+            }
+        }
+        private void printSticker(WHitem wHitem)
+        {
+            try
+            {
+                string userName = Environment.UserName;
+                string fp = @"C:\\Users\\" + userName + "\\Desktop\\Print_Stickers.xlsx"; // //////Print_StickersWH.xlsm
+                string thesheetName = "Sheet1";
+                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+                OleDbConnection conn = new OleDbConnection(constr);
+                OleDbCommand cmd = new OleDbCommand();
+                cmd.Connection = conn;
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @UPDATEDON";
+                cmd.Parameters.AddWithValue("@PN", wHitem.IPN);
+                cmd.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
+                cmd.Parameters.AddWithValue("@ItemDesc", wHitem.Description);
+                cmd.Parameters.AddWithValue("@QTY", wHitem.Stock);
+                cmd.Parameters.AddWithValue("@UPDATEDON", wHitem.UpdatedOn);
+                conn.Open();
+                cmd.ExecuteNonQuery();
+                conn.Close();
+                Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
+                SendKeys.SendWait("^p");
+                SendKeys.SendWait("{Enter}");
+                //ComeBackFromPrint();
+                Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
+                textBox1.Focus();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Sticker printing failed : " + e.Message);
+            }
+        }
+        private void txtbQty_KeyDown(object sender, KeyEventArgs e)
+        {
+                 if (e.KeyCode == Keys.Enter)
+            {
+                btnPrintSticker_Click(this, new EventArgs());
+            }
+        }
+        private void label1_DoubleClick(object sender, EventArgs e)
+        {
+            ResetAllTexboxes(textBox1);
+        }
+        private void ResetAllTexboxes(TextBox txtb)
+        {
+            textBox1.Clear();
+            textBox2.Clear();
+            txtbQty.Clear();
+            label1.BackColor = Color.LightGreen;
+            label2.BackColor = Color.LightGreen;
+            txtb.Focus();
+        }
+        private void label2_DoubleClick(object sender, EventArgs e)
+        {
+            ResetAllTexboxes(textBox2);
+        }
+
+        private void textBox9_TextChanged(object sender, EventArgs e)
+        {
+            label9.BackColor = Color.IndianRed;
+            FilterTheDataGridView();
+        }
+
+        private void label9_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label9_DoubleClick(object sender, EventArgs e)
+        {
+            ResetAllTexboxes(textBox9);
+        }
+
+        private void textBox9_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter(sender);
+        }
+
+        private void textBox9_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave(sender);
         }
     }
 }

@@ -78,20 +78,10 @@ namespace WH_Panel
                 foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
                 {
                     countLoadedFIles++;
-                    //MessageBox.Show(file);
                     string Litem = Path.GetFileName(file);
-                    //MessageBox.Show(Litem);
                     DataLoader(file, Litem);
-                    //listOfKitFiles.Add(@file);
                 }
             }
-            //MessageBox.Show(listOfKitFiles.Count.ToString());
-            //for (int i = 0; i < listOfKitFiles.Count; i++)
-            //{
-            //    //MessageBox.Show("i:"+i+" "+listOfKitFiles[i].ToString());
-            //    // DataLoader(listOfKitFiles[i].Key, listOfKitFiles[i].Value);
-            //    //DataLoader(listOfKitFiles[i]);
-            //}
             PopulateGridView();
             SetColumsOrderPS();
             stopWatch.Stop();
@@ -139,38 +129,39 @@ namespace WH_Panel
                             throw new Exception("Error: Could not determine the name of the first worksheet.");
                         }
                         string firstSheetName = excelFIleName;
-                        // string columnName = dbSchema.Columns.ToString();
-                        //label13.Text+=columnName;
                         string cleanedUpSheetName = "PACKING SLIP";
-                        //string cleanedUPfP = fp.Split("/",);
-                        //string[] cleanedUPfP = fp.Split(string.Empty);
-                        //MessageBox.Show(cleanedUPfP[0]+" "+ cleanedUPfP[1]);
-                        //MessageBox.Show(dbSchema.Rows[0]["COLUMN_NAME"].ToString());
                         OleDbCommand command = new OleDbCommand("Select * from [" + cleanedUpSheetName + "$]", conn);
+                        //OleDbCommand command = new OleDbCommand("Select * from [Sheet1$]", conn);
                         OleDbDataReader reader = command.ExecuteReader();
                         if (reader.HasRows)
                         {
                             int j = 0;
                             while (reader.Read())
                             {
-                                    string _ClientName=excelFIleName.Substring(13);
-                                    string thName= _ClientName.Substring(0, _ClientName.Length-5);
+                                if (j>11)
+                                {
+                                    int qtyS = 0;
+                                    bool parseOk = int.TryParse(reader[3].ToString(), out qtyS);
+                                    string _ClientName = excelFIleName.Substring(13);
+                                    string thName = _ClientName.Substring(0, _ClientName.Length - 5);
                                     PackingSlipItem abc = new PackingSlipItem
                                     {
-                                        ShipmentDate = excelFIleName.Substring(0,12),
+                                        ShipmentDate = excelFIleName.Substring(0, 12),
                                         ClientName = thName,
                                         IPN = reader[0].ToString(),
                                         MFPN = reader[1].ToString(),
                                         Description = reader[2].ToString(),
-                                        QtySent = reader[3].ToString()
+                                        QtySent = qtyS,
                                     };
                                     countItems = i;
                                     label12.Text = "Loaded " + (countItems).ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{0:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
-                                    label12.Update();
-                                    if(abc.IPN!=string.Empty&& !abc.IPN.StartsWith("Comments") && abc.IPN != "Thank You" && !abc.IPN.StartsWith("Signature") && !abc.IPN.StartsWith("if you") && j > 11)
+                                    if (countItems % 5000 == 0)
+                                    { label12.Update(); }
+                                    if (abc.IPN != string.Empty && !abc.IPN.StartsWith("Comments") && abc.IPN != "Thank You" && !abc.IPN.StartsWith("Signature") && !abc.IPN.StartsWith("if you") && j > 11)
                                     {
                                         PSItems.Add(abc);
-                                    i++;
+                                        i++;
+                                    }
                                 }
                                 j++;
                             }
@@ -178,15 +169,13 @@ namespace WH_Panel
                         conn.Dispose();
                         conn.Close();
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
-                        //MessageBox.Show(excelFIleName +" is open by another user !!!\n File can not be loaded ! \n"+ "Full path: " +fp , "Error loading "+ excelFIleName, MessageBoxButtons.OK,MessageBoxIcon.Stop);
-                        //label13.Text += "\n"+ "File can not be loaded ! " + fp ;
                         loadingErrors++;
                         label13.Text = loadingErrors.ToString() + " Loading Errors detected: ";
+                        MessageBox.Show(e.Message);
                         label13.BackColor = Color.IndianRed;
                         label13.Update();
-                        //string er =  "\n Access denied: " + fp;
                         string er = fp;
                         listBox1.Items.Add(er);
                         listBox1.Update();

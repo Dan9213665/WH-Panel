@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
-
 namespace WH_Panel
 {
     public partial class Form1 : Form
@@ -35,10 +34,8 @@ namespace WH_Panel
         private void button1_Click_1(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\NETLINE\NETLINE_STOCK.xlsm";
-
             AuthorizedExcelFileOpening(fp);
         }
-
         private void AuthorizedExcelFileOpening(string fp)
         {
             if (Environment.UserName == "lgt")
@@ -47,10 +44,9 @@ namespace WH_Panel
             }
             else
             {
-                MessageBox.Show("Unauthorized access denied");
+                MessageBox.Show("Unauthorized ! Access denied !", "Unauthorized ! Access denied !", MessageBoxButtons.OK,MessageBoxIcon.Stop);
             }
         }
-
         private void btnFIELDIN_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\FIELDIN\\FIELDIN_STOCK.xlsm";
@@ -89,8 +85,10 @@ namespace WH_Panel
             //Form f = new frmkitLabelPrint();
             //f.Show();
             //f.Focus();
-            var fp = @"\\\\dbr1\\Data\\WareHouse\\KitLabel.xlsm";
-            openWHexcelDB(fp);
+            //var fp = @"\\\\dbr1\\Data\\WareHouse\\KitLabel.xlsm";
+            //openWHexcelDB(fp);
+            frmkitLabelPrint frmkit = new frmkitLabelPrint();
+            frmkit.Show();
         }
         private void button2_Click(object sender, EventArgs e)
         {
@@ -138,11 +136,56 @@ namespace WH_Panel
             FrmAddItemsToNetline net= new FrmAddItemsToNetline();
             net.Show();
         }
-
         private void button12_Click(object sender, EventArgs e)
         {
             FrmAddItemsToVayyar frV = new FrmAddItemsToVayyar();
             frV.Show();
+        }
+        private void button11_Click(object sender, EventArgs e)
+        {
+            frmkitLabelPrint frmkit= new frmkitLabelPrint();
+            frmkit.Show();
+        }
+        private void button13_Click(object sender, EventArgs e)
+        {
+            FrmPackingSlipShip ps = new FrmPackingSlipShip();   
+            ps.Show();
+        }
+        private void button14_Click(object sender, EventArgs e)
+        {
+            FrmClientAgnosticWH cl = new FrmClientAgnosticWH();
+            cl.Show();
+        }
+        private void button11_Click_1(object sender, EventArgs e)
+        {
+            FrmBOM frmBOM = new FrmBOM();
+            frmBOM.Show();
+        }
+        private void button15_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_AVL.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+        private void button16_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_AVL.xlsx";
+            AuthorizedExcelFileOpening(fp);
+        }
+        private void button17_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\NETLINE\NETLINE_AVL.xlsx";
+            AuthorizedExcelFileOpening(fp);
+        }
+        private void button18_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_AVL.xlsx";
+            AuthorizedExcelFileOpening(fp);
+        }
+
+        private void button7_Click_1(object sender, EventArgs e)
+        {
+            FrmFinishedGoodsLog ff = new FrmFinishedGoodsLog();
+            ff.Show();
         }
     }
 }

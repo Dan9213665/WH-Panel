@@ -207,7 +207,7 @@
             // 
             // button6
             // 
-            this.button6.BackgroundImage = global::WH_Panel.Properties.Resources.CIS;
+            this.button6.BackgroundImage = global::WH_Panel.Properties.Resources.netline;
             this.button6.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.button6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.button6.Location = new System.Drawing.Point(743, 3);
