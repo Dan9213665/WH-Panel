@@ -213,10 +213,10 @@ namespace WH_Panel
                         textBox9.ReadOnly = false;
                         textBox1.Focus();
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
                         loadingErrors++;
-                        label13.Text = loadingErrors.ToString() + " Loading Errors detected: ";
+                        label13.Text = loadingErrors.ToString() + " Loading Errors detected: " + e.Message;
                         label13.BackColor = Color.IndianRed;
                         label13.Update();
                         string er = fp;
@@ -829,7 +829,11 @@ namespace WH_Panel
                     ReelBagTrayStick = cmbReelSelector.SelectedItem.ToString(),
                     SourceRequester = kitName
                 };
-                DataInserter(warehouseSelectorBasedOnItem(w), "STOCK", itemToTransfer);
+                if (!System.String.IsNullOrEmpty(warehouseSelectorBasedOnItem(w)))
+                {
+                    DataInserter(warehouseSelectorBasedOnItem(w), "STOCK", itemToTransfer);
+                }
+                
             }
             catch (Exception e)
             {
@@ -861,7 +865,7 @@ namespace WH_Panel
             }
             else
             {
-                selection = null;
+                selection = string.Empty;
             }
             return selection;
         }
@@ -888,7 +892,7 @@ namespace WH_Panel
             }
             else
             {
-                selection = null;
+                selection = string.Empty;
             }
             return selection;
         }
