@@ -181,7 +181,6 @@ namespace WH_Panel
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_AVL.xlsx";
             AuthorizedExcelFileOpening(fp);
         }
-
         private void button7_Click_1(object sender, EventArgs e)
         {
             FrmFinishedGoodsLog ff = new FrmFinishedGoodsLog();

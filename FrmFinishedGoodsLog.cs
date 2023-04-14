@@ -13,14 +13,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Range = Microsoft.Office.Interop.Excel.Range;
-
 namespace WH_Panel
 {
     public partial class FrmFinishedGoodsLog : Form
     {
         public System.Data.DataTable PackedItemsUDtable = new System.Data.DataTable();
         public List<FinishedGoodsItem> PackedItemsList = new List<FinishedGoodsItem>();
-        public string initialPath= @"\\dbr1\Data\Aegis_NPI_Projects\";
+        public string initialPath = @"\\dbr1\Data\Aegis_NPI_Projects\";
         public int counter = 0;
         int limit = 0;
         public FrmFinishedGoodsLog()
@@ -31,29 +30,26 @@ namespace WH_Panel
         public void populateComboBox(ComboBox cb, string path)
         {
             cb.Items.Clear();
-            cb.Text= string.Empty;
+            cb.Text = string.Empty;
             //string path = @"\\dbr1\Data\Aegis_NPI_Projects\"; // replace with your folder path
             string[] folders = Directory.GetDirectories(path);
-
             foreach (string folder in folders)
             {
                 cb.Items.Add(Path.GetFileName(folder));
             }
         }
-
         private void comboBox1_SelectionChangeCommitted(object sender, EventArgs e)
         {
-            checkBox1.Checked= true;
-            comboBox1.Enabled= false;
+            checkBox1.Checked = true;
+            comboBox1.Enabled = false;
             populateComboBox(comboBox2, initialPath + comboBox1.SelectedItem.ToString());
+            comboBox2.DroppedDown = true;
         }
-
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            checboxLockUnlock(sender,comboBox1);
+            checboxLockUnlock(sender, comboBox1);
         }
-
-        private void checboxLockUnlock(object sender,ComboBox cbm)
+        private void checboxLockUnlock(object sender, ComboBox cbm)
         {
             if (((System.Windows.Forms.CheckBox)sender).Checked)
             {
@@ -64,23 +60,25 @@ namespace WH_Panel
                 cbm.Enabled = true;
             }
         }
-
         private void comboBox2_SelectionChangeCommitted(object sender, EventArgs e)
         {
             checkBox2.Checked = true;
             comboBox2.Enabled = false;
-            populateComboBox(comboBox3,  initialPath+ comboBox1.SelectedItem.ToString()+"\\"+ comboBox2.SelectedItem.ToString());
+            populateComboBox(comboBox3, initialPath + comboBox1.SelectedItem.ToString() + "\\" + comboBox2.SelectedItem.ToString());
+            if (comboBox3.Items.Count > 0)
+            {
+                comboBox3.DroppedDown = true;
+            }
         }
-
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
         {
-            checboxLockUnlock(sender,comboBox2);
+            checboxLockUnlock(sender, comboBox2);
         }
-
         private void comboBox3_SelectionChangeCommitted(object sender, EventArgs e)
         {
             checkBox3.Checked = true;
             comboBox3.Enabled = false;
+            txtbComments.Focus();
         }
         public string AddQuotesIfRequired(string path)
         {
@@ -89,17 +87,14 @@ namespace WH_Panel
                     "\"" + path + "\"" : path :
                     string.Empty;
         }
-
         private void checkBox3_CheckedChanged(object sender, EventArgs e)
         {
             checboxLockUnlock(sender, comboBox3);
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
-                addFinishedIGoodsItemToList();
+            addFinishedIGoodsItemToList();
         }
-
         private void addFinishedIGoodsItemToList()
         {
             if (PackedItemsList.Count < limit)
@@ -125,7 +120,6 @@ namespace WH_Panel
                     comboBox3.DroppedDown = true;
                     return;
                 }
-
                 if (string.IsNullOrEmpty(txtbSN.Text))
                 {
                     MessageBox.Show("Please input a serial number!");
@@ -133,14 +127,12 @@ namespace WH_Panel
                     return;
                 }
                 var serialNumber = txtbSN.Text.Trim();
-
                 if (PackedItemsList.Any(item => item.serialNumber == serialNumber))
                 {
                     MessageBox.Show($"Serial number '{serialNumber}' already exists!");
                     txtbSN.Focus();
                     return;
                 }
-
                 var fg = new FinishedGoodsItem
                 {
                     Customer = comboBox1.Text,
@@ -150,20 +142,15 @@ namespace WH_Panel
                     packedDate = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss"),
                     Comments = txtbComments.Text.Trim()
                 };
-
                 PackedItemsList.Insert(0, fg);
                 lblCounter.Text = $"QTY: {++counter} / {limit}";
                 PopulatePackedItemsGridView();
-
             }
             else
             {
                 MessageBox.Show(String.Format("Limit of {0} items reached !", limit));
             }
-
-
         }
-
         private void PopulatePackedItemsGridView()
         {
             PackedItemsUDtable.Clear();
@@ -191,7 +178,6 @@ namespace WH_Panel
             dgw.Columns["packedDate"].DisplayIndex = 4;
             dgw.Columns["Comments"].DisplayIndex = 5;
         }
-
         private void txtbSN_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -200,25 +186,21 @@ namespace WH_Panel
                 txtbSN.Clear();
             }
         }
-
         private void button2_Click(object sender, EventArgs e)
         {
-         
             string saveToPath = string.Empty;
-
-                if (comboBox3.SelectedIndex != -1)
-                {
-                    saveToPath = initialPath + comboBox1.SelectedItem.ToString() + "\\" + comboBox2.SelectedItem.ToString() + "\\" + comboBox3.SelectedItem.ToString();
-                    EXCELinserter(PackedItemsList, saveToPath);
-                }
-                else
-                {
-                    saveToPath = initialPath + comboBox1.SelectedItem.ToString() + "\\" + comboBox2.SelectedItem.ToString();
-                    EXCELinserter(PackedItemsList, saveToPath);
-                }
+            if (comboBox3.SelectedIndex != -1)
+            {
+                saveToPath = initialPath + comboBox1.SelectedItem.ToString() + "\\" + comboBox2.SelectedItem.ToString() + "\\" + comboBox3.SelectedItem.ToString();
+                EXCELinserter(PackedItemsList, saveToPath);
+            }
+            else
+            {
+                saveToPath = initialPath + comboBox1.SelectedItem.ToString() + "\\" + comboBox2.SelectedItem.ToString();
+                EXCELinserter(PackedItemsList, saveToPath);
+            }
         }
-
-        private void EXCELinserter(List<FinishedGoodsItem> lst,string saveToPa)
+        private void EXCELinserter(List<FinishedGoodsItem> lst, string saveToPa)
         {
             try
             {
@@ -248,8 +230,6 @@ namespace WH_Panel
                     ((Range)worksheetExcel.Cells[startRow + i, "D"]).BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
                     ((Range)worksheetExcel.Cells[startRow + i, "E"]).Value2 = lst[i].Comments;
                     ((Range)worksheetExcel.Cells[startRow + i, "E"]).BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
-
-
                 }
                 ((Range)worksheetExcel.Cells[startRow + lst.Count + 1, "A"]).Value2 = "Comments:                                ";
                 worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 1, 1], worksheetExcel.Cells[startRow + lst.Count + 1, 5]].Merge();
@@ -269,7 +249,7 @@ namespace WH_Panel
                 workbooksExcel.SaveAs(saveToPa + "\\" + _fileTimeStamp + "_" + lst[0].Customer + "_" + lst[0].Project + "_" + lst[0].Revision + "_" + counter.ToString() + "PCS" + ".xlsm");
                 System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
                 {
-                    FileName= saveToPa,
+                    FileName = saveToPa,
                     UseShellExecute = true,
                     Verb = "open"
                 });
@@ -282,7 +262,6 @@ namespace WH_Panel
                 MessageBox.Show(e.Message);
             }
         }
-
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             DialogResult dialogResult = MessageBox.Show("Remove the line ?", "DELETE the line from the list", MessageBoxButtons.YesNo);
@@ -291,9 +270,9 @@ namespace WH_Panel
                 int rowindex = dataGridView1.CurrentCell.RowIndex;
                 int columnindex = dataGridView1.CurrentCell.ColumnIndex;
                 string cellValue = dataGridView1.Rows[rowindex].Cells[columnindex].Value.ToString();
-                string selIPN  = dataGridView1.Rows[rowindex].Cells["serialNumber"].Value.ToString();
+                string selIPN = dataGridView1.Rows[rowindex].Cells["serialNumber"].Value.ToString();
                 string selMFPN = dataGridView1.Rows[rowindex].Cells["packedDate"].Value.ToString();
-                PackedItemsList.Remove(PackedItemsList.Find(r => r.serialNumber == selIPN && r.packedDate == selMFPN ));
+                PackedItemsList.Remove(PackedItemsList.Find(r => r.serialNumber == selIPN && r.packedDate == selMFPN));
                 counter--;
                 lblCounter.Text = string.Format("QTY: {0}", counter);
                 PopulatePackedItemsGridView();
@@ -304,50 +283,42 @@ namespace WH_Panel
                 txtbSN.Focus();
             }
         }
-
         private void checkBox4_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox4.Checked)
             {
                 txtbComments.ReadOnly = true;
             }
-            else if(!checkBox4.Checked)
+            else if (!checkBox4.Checked)
             {
                 txtbComments.ReadOnly = false;
             }
         }
-
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
-           
-
             if (e.KeyCode == Keys.Enter)
             {
-               bool limitOk = int.TryParse( txtbSetLimit.Text.ToString(), out limit);
-
-                if(limitOk)
+                bool limitOk = int.TryParse(txtbSetLimit.Text.ToString(), out limit);
+                if (limitOk)
                 {
-                    lblCounter.Text = String.Format("QTY: {0} / {1}",counter, limit.ToString());
+                    lblCounter.Text = String.Format("QTY: {0} / {1}", counter, limit.ToString());
                     txtbSetLimit.Clear();
-                    txtbSetLimit.ReadOnly= true;
+                    txtbSetLimit.ReadOnly = true;
                     txtbSN.Focus();
                 }
-                
             }
         }
-
         private void txtbComments_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
-                checkBox4.Checked= true;
+                checkBox4.Checked = true;
                 txtbSetLimit.Focus();
             }
         }
-
         private void lblLimit_DoubleClick(object sender, EventArgs e)
         {
-            txtbSetLimit.ReadOnly= false; 
+            txtbSetLimit.ReadOnly = false;
             txtbSetLimit.Focus();
         }
     }

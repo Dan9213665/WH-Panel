@@ -12,8 +12,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
-
-
 namespace WH_Panel
 {
     public partial class FrmBomWHS : Form
@@ -34,7 +32,6 @@ namespace WH_Panel
         public string stockROBOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_STOCK.xlsm";
         public string avlFile;
         public string stockFile { get; set; }
-
         public string projectName = string.Empty;
         public List<WHitem> avlItems = new List<WHitem>();
         public List<WHitem> stockItems = new List<WHitem>();
@@ -47,11 +44,7 @@ namespace WH_Panel
         public FrmBomWHS()
         {
             InitializeComponent();
-
-
-
         }
-
         private void FrmBomWHS_Load(object sender, EventArgs e)
         {
             foreach (KitHistoryItem it in fromTheMainBom)
@@ -72,7 +65,6 @@ namespace WH_Panel
             }
             //MessageBox.Show(misItemsLST.Count.ToString());
             projectName = fromTheMainBom[0].ProjectName;
-
             comboBox1.SelectedItem = warehouseSelectorOnLoad();
             //MasterReload(avlFile, stockFile);
             foreach (BOMitem b in misBOMItemsLST)
@@ -93,7 +85,6 @@ namespace WH_Panel
             //    //dataGridView2.Update();
             //    //SetSTOCKiewColumsOrder();
             //    List<int> qtys = new List<int>();
-
             //    for (int i = 0; i < dataGridView2.RowCount; i++)
             //    {
             //        int qty = 0;
@@ -112,19 +103,15 @@ namespace WH_Panel
             //}
             //catch
             //{
-
             //}
             //return balance;
-
             int balance = 0;
             try
             {
                 var dv = stockDTable.DefaultView;
                 dv.RowFilter = $"[IPN] LIKE '%{IPN}%'";
                 dataGridView2.DataSource = dv;
-
                 var qtys = new List<int>();
-
                 foreach (DataGridViewRow row in dataGridView2.Rows)
                 {
                     if (int.TryParse(row.Cells["Stock"].Value?.ToString(), out int qty))
@@ -132,20 +119,17 @@ namespace WH_Panel
                         qtys.Add(qty);
                     }
                 }
-
                 balance = qtys.Sum();
             }
             catch (Exception ex)
             {
                 // Handle the exception
             }
-
             return balance;
         }
         private string warehouseSelectorOnLoad()
         {
             string selection = "ROBOTRON";
-
             if (misBOMItemsLST[0].IPN.StartsWith("C100") || misBOMItemsLST[0].IPN.StartsWith("A00"))
             {
                 selection = "LEADER-TECH";
@@ -171,9 +155,6 @@ namespace WH_Panel
                 selection = "ROBOTRON";
                 MasterReload(avlROBOTRON, stockROBOTRON);
             }
-
-
-
             return selection;
         }
         private void PopulateMissingGridView()
@@ -214,10 +195,8 @@ namespace WH_Panel
             dgw.Columns["QtyPerUnit"].Visible = false;
             dgw.Columns["Calc"].DisplayIndex = 6;
             dgw.Columns["Alts"].DisplayIndex = 7;
-
             dgw.Sort(dgw.Columns["IPN"], ListSortDirection.Ascending);
         }
-
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboBox1.Text == "ROBOTRON")
@@ -243,15 +222,12 @@ namespace WH_Panel
         }
         private void MasterReload(string avlParam, string stockParam)
         {
-
             avlFile = avlParam;
             stockFile = stockParam;
             label1.BackColor = Color.LightGreen;
             StockViewDataLoader(stockParam, "STOCK");
             button3_Click(this, new EventArgs());
-
         }
-
         private void DataLoaderAVL(string fp, string thesheetName)
         {
             try
@@ -373,7 +349,6 @@ namespace WH_Panel
             dataGridView2.DataSource = stockDTable;
             //dataGridView2.Update();
             SetSTOCKiewColumsOrder();
-
         }
         private void SetSTOCKiewColumsOrder()
         {
@@ -393,7 +368,6 @@ namespace WH_Panel
             dataGridView2.Columns["UpdatedOn"].DisplayIndex = 5;
             dataGridView2.Columns["ReelBagTrayStick"].DisplayIndex = 6;
             dataGridView2.Columns["SourceRequester"].DisplayIndex = 7;
-
             dataGridView2.Sort(dataGridView2.Columns["UpdatedOn"], ListSortDirection.Descending);
         }
         private void FilterStockDataGridView(string IPN)
@@ -403,7 +377,6 @@ namespace WH_Panel
                 DataView dv = stockDTable.DefaultView;
                 dv.RowFilter = $"[IPN] LIKE '%{IPN}%'";
                 dataGridView2.DataSource = dv;
-
                 List<int> qtys = new List<int>();
                 foreach (DataGridViewRow row in dataGridView2.Rows)
                 {
@@ -412,17 +385,14 @@ namespace WH_Panel
                         qtys.Add(qty);
                     }
                 }
-
                 int balance = qtys.Sum();
                 foreach (BOMitem bi in misBOMItemsLST.Where(bi => bi.IPN == IPN))
                 {
                     bi.WHbalance = balance;
                 }
-
                 label15.Text = $"BALANCE: {balance}";
                 label15.BackColor = balance > 0 ? Color.LightGreen : Color.IndianRed;
                 label15.Update();
-
                 SetSTOCKiewColumsOrder();
                 dataGridView2.Update();
             }
@@ -431,10 +401,7 @@ namespace WH_Panel
                 MessageBox.Show("Incorrect search pattern, remove invalid character and try again!");
                 throw;
             }
-
-
         }
-
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (dataGridView1.SelectedCells.Count > 0)
@@ -450,9 +417,7 @@ namespace WH_Panel
                 }
             }
         }
-
         private bool dataGridViewIsBound = false;
-
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
             if (dataGridViewIsBound && dataGridView1.SelectedCells.Count > 0)
@@ -463,18 +428,14 @@ namespace WH_Panel
                 FilterStockDataGridView(cellValue);
             }
         }
-
         private void dataGridView1_BindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
-
             if (e.ListChangedType == ListChangedType.Reset && dataGridView1.Rows.Count > 0)
             {
                 //dataGridView1.CurrentCell = dataGridView1.Rows[0].Cells[0];
                 dataGridViewIsBound = true;
             }
-
         }
-
         private void button3_Click(object sender, EventArgs e)
         {
             label1.BackColor = Color.IndianRed;
@@ -486,21 +447,17 @@ namespace WH_Panel
             StockViewDataLoader(stockFile, "STOCK");
             PopulateStockView();
         }
-
         private void button4_Click(object sender, EventArgs e)
         {
             FilterInStockItemsOnly();
         }
-
         private void FilterInStockItemsOnly()
         {
-
             //dataGridView2.DataSource = dv;
             dataGridView2.DataSource = createFilteredInStockDataview();
             dataGridView2.Update();
             SetSTOCKiewColumsOrder();
         }
-
         private DataView createFilteredInStockDataview()
         {
             List<WHitem> inWHstock = new List<WHitem>();
@@ -530,10 +487,8 @@ namespace WH_Panel
                 };
                 inWHstock.Add(wHitemABC);
             }
-
             var negativeQtys = inWHstock.Where(item => item.Stock < 0).ToList();
             var positiveQtys = inWHstock.Where(item => item.Stock > 0).ToList();
-
             foreach (var negQty in negativeQtys.ToList())
             {
                 foreach (var posQty in positiveQtys.ToList())
@@ -545,20 +500,15 @@ namespace WH_Panel
                     }
                 }
             }
-
             var inWHdata = positiveQtys.AsEnumerable();
             var inWHTable = new DataTable();
-
             using (var reader = ObjectReader.Create(inWHdata))
             {
                 inWHTable.Load(reader);
             }
-
             var dv = inWHTable.DefaultView;
             return dv;
-
         }
-
         private void chkBlockInWHonly_CheckedChanged(object sender, EventArgs e)
         {
             System.Windows.Forms.CheckBox chk = (System.Windows.Forms.CheckBox)sender;
@@ -572,7 +522,6 @@ namespace WH_Panel
                 StockViewDataLoader(stockFile, "STOCK");
             }
         }
-
         private void btnFound_Click(object sender, EventArgs e)
         {
             int rowindex = dataGridView1.CurrentCell.RowIndex;
@@ -582,9 +531,7 @@ namespace WH_Panel
             string selMFPN = dataGridView1.Rows[rowindex].Cells["MFPN"].Value.ToString();
             misBOMItemsLST.Remove(misBOMItemsLST.Find(r => r.IPN == selIPN && r.MFPN == selMFPN));
             PopulateMissingGridView();
-
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
@@ -592,10 +539,7 @@ namespace WH_Panel
             //ExportToHTML20(dataGridView1, "\\\\dbr1\\Data\\WareHouse\\2023\\WHsearcher\\" + _fileTimeStamp + "_" + projectName.Substring(0, projectName.Length - 5) + ".html");
             GenerateHTML();
         }
-        
-
 // ...
-
 private void GenerateHTML()
     {
             //string fileName = "output.html";
@@ -608,46 +552,37 @@ private void GenerateHTML()
             writer.WriteLine("<title>"+projectName.Substring(0, projectName.Length - 5)+"</title>");
             writer.WriteLine("</head>");
             writer.WriteLine("<body>");
-
             //writer.WriteLine("<h1>" + projectName.Substring(0, projectName.Length - 5) + "</h1>");
-
             writer.WriteLine("<table border='1'>");
-
-
                 for (int i = 0; i < dataGridView1.Rows.Count; i++)
             {
                     string IPN = dataGridView1.Rows[i].Cells["IPN"].Value.ToString();
-
                     writer.WriteLine("<tr>");
                     writer.WriteLine("<td colspan='" + dataGridView1.Columns.Count + "'>");
                     //writer.WriteLine("<h2>Movements log for IPN " + IPN + "</h2>");
-                    writer.WriteLine("<table border='1' style='text-align:center'>");
+                    writer.WriteLine("<table border='1' style='text-align:center; width:auto; margin-right: 0px;margin-left: auto;'>");
                     writer.WriteLine("</tr>");
-
+                    //writer.WriteLine("<tr>");
+                    //for (int j = 0; j < dataGridView1.Columns.Count; j++)
+                    //{
+                    //    if(dataGridView1.Columns[j].HeaderText.ToString()!= "ProjectName")
+                    //    {
+                    //        if (dataGridView1.Columns[j].HeaderText.ToString() != "DateOfCreation")
+                    //        {
+                    //            if (dataGridView1.Columns[j].HeaderText.ToString() != "QtyPerUnit")
+                    //            {
+                    //                if (dataGridView1.Columns[j].HeaderText.ToString() != "Calc")
+                    //                {
+                    //                    writer.WriteLine("<th>" + dataGridView1.Columns[j].HeaderText + "</th>");
+                    //                }
+                    //            }
+                    //        }
+                    //    }
+                    //}
+                    //writer.WriteLine("</tr>");
                     writer.WriteLine("<tr>");
                     for (int j = 0; j < dataGridView1.Columns.Count; j++)
                     {
-                        if(dataGridView1.Columns[j].HeaderText.ToString()!= "ProjectName")
-                        {
-                            if (dataGridView1.Columns[j].HeaderText.ToString() != "DateOfCreation")
-                            {
-                                if (dataGridView1.Columns[j].HeaderText.ToString() != "QtyPerUnit")
-                                {
-                                    if (dataGridView1.Columns[j].HeaderText.ToString() != "Calc")
-                                    {
-                                        writer.WriteLine("<th>" + dataGridView1.Columns[j].HeaderText + "</th>");
-                                    }
-                                }
-                            }
-                                
-                        }
-                        
-                    }
-                    writer.WriteLine("</tr>");
-
-                    writer.WriteLine("<tr>");
-                for (int j = 0; j < dataGridView1.Columns.Count; j++)
-                {
                         if (dataGridView1.Columns[j].HeaderText.ToString() != "ProjectName")
                         {
                             if (dataGridView1.Columns[j].HeaderText.ToString() != "DateOfCreation")
@@ -656,21 +591,27 @@ private void GenerateHTML()
                                 {
                                     if (dataGridView1.Columns[j].HeaderText.ToString() != "Calc")
                                     {
-                                        writer.WriteLine("<td><h3>" + dataGridView1.Rows[i].Cells[j].Value.ToString() + "</h3></td>");
+                                        if (dataGridView1.Columns[j].HeaderText.ToString() == "Description")
+                                        {
+                                            writer.WriteLine("<td style='font-size: x-small'>" + dataGridView1.Rows[i].Cells[j].Value.ToString() + "</td>");
+                                        }
+                                        else if (dataGridView1.Columns[j].HeaderText.ToString() == "MFPN")
+                                        {
+                                            writer.WriteLine("<td style='font-size: x-small'>" + dataGridView1.Rows[i].Cells[j].Value.ToString() + "</td>");
+                                        }
+                                        else
+                                        {
+                                            writer.WriteLine("<td style='align-vertical:middle;font-size:18px;font-weight: bold'>" + dataGridView1.Rows[i].Cells[j].Value.ToString() + "</td>");
+                                        }
                                     }
                                 }
                             }
                         }
-                }
-                writer.WriteLine("</tr>");
-
-             
-
+                    }
+                    writer.WriteLine("</tr>");
                     DataView dv = new DataView();
-
                     var negativeQtys = stockItems.Where(item =>item.IPN==IPN && item.Stock < 0).ToList();
                     var positiveQtys = stockItems.Where(item => item.IPN == IPN && item.Stock > 0).ToList();
-
                     foreach (var negQty in negativeQtys.ToList())
                     {
                         foreach (var posQty in positiveQtys.ToList())
@@ -683,27 +624,20 @@ private void GenerateHTML()
                         }
                     }
                     var inWHdata = positiveQtys.AsEnumerable();
-
                     var inWHTable = new DataTable();
-
                     using (var reader = ObjectReader.Create(inWHdata))
                     {
                         inWHTable.Load(reader);
                     }
                     DataTable filteredData = inWHTable;
                     filteredData.Columns["Manufacturer"].ColumnMapping = MappingType.Hidden;
-
-
-
-
-                    for (int k = 0; k < filteredData.Columns.Count; k++)
-                {
-                        if(filteredData.Columns[k].ColumnName!= "Manufacturer")
-                        {
-                            writer.WriteLine("<th>" + filteredData.Columns[k].ColumnName + "</th>");
-                        }
-                   
-                }
+                //    for (int k = 0; k < filteredData.Columns.Count; k++)
+                //{
+                //        if(filteredData.Columns[k].ColumnName!= "Manufacturer")
+                //        {
+                //            writer.WriteLine("<th>" + filteredData.Columns[k].ColumnName + "</th>");
+                //        }
+                //}
                 writer.WriteLine("</tr>");
                 for (int l = 0; l < filteredData.Rows.Count; l++)
                 {
@@ -712,7 +646,21 @@ private void GenerateHTML()
                     {
                             if (filteredData.Columns[m].ColumnName != "Manufacturer")
                             {
-                                writer.WriteLine("<td>" + filteredData.Rows[l][m].ToString() + "</td>");
+                                if (filteredData.Columns[m].ColumnName != "IPN")
+                                {
+                                    if (filteredData.Columns[m].ColumnName == "Description")
+                                    {
+                                        writer.WriteLine("<td style='font-size: x-small'>" + filteredData.Rows[l][m].ToString() + "</td>");
+                                    }
+                                    else if (filteredData.Columns[m].ColumnName == "MFPN")
+                                    {
+                                        writer.WriteLine("<td style='font-size: x-small'>" + filteredData.Rows[l][m].ToString() + "</td>");
+                                    }
+                                    else
+                                    {
+                                        writer.WriteLine("<td>" + filteredData.Rows[l][m].ToString() + "</td>");
+                                    }
+                                }
                             }
                     }
                     writer.WriteLine("</tr>");
@@ -722,14 +670,11 @@ private void GenerateHTML()
                 writer.WriteLine("</tr>");
             }
             writer.WriteLine("</table>");
-
             writer.WriteLine("</body>");
             writer.WriteLine("</html>");
         }
-
         // Open the file in default browser
        // Process.Start(fileName);
-
             var p = new Process();
             p.StartInfo = new ProcessStartInfo(filename)
             {
@@ -737,81 +682,56 @@ private void GenerateHTML()
             };
             p.Start();
         }
-
-
-
     private void ExportToHTML20(DataGridView dataGridView, string fileName)
         {
             dataGridView.Columns["Calc"].Visible = false;
-
-
             StringBuilder sb = new StringBuilder();
             sb.Clear();
-
             // Create HTML header
             sb.Append("<html>");
             sb.Append("<head>");
             sb.Append("<title>" + projectName + "</title>");
             sb.Append("</head>");
-
             // Create HTML body
             sb.Append("<body>");
             sb.Append("<table border='1px' cellpadding='1px' cellspacing='0' style='text-align:center;magrin-left:auto;margin-right:auto'>");
             sb.Append("<h2 style='text-align:center'>" + projectName + "</h2>");
             // Add header row
             sb.Append("<tr>");
-
             foreach (DataGridViewColumn column in dataGridView.Columns)
             {
-
                 if (column.Visible)
                 {
                     sb.Append("<th>" + column.HeaderText + "</th>");
                 }
-
             }
             sb.Append("</tr>");
-
             // Add data rows
-
             foreach (DataGridViewRow row in dataGridView.Rows)
             {
                 sb.Append("<tr>");
                 List<WHitem> filteredByIPN = new List<WHitem>();
-
-                
                 foreach (DataGridViewCell cell in row.Cells)
                 {
-                   
                     if (cell.Visible)
                     {
-                       
                         sb.Append("<td><h4>" + cell.Value + "</h4></td>");
-                       
                     }
                     sb.Append("</tr>");
-
                     if (cell.ColumnIndex == dataGridView.Columns["IPN"].Index)
                     {
                         filteredByIPN = stockItems.Where(n => n.IPN == cell.Value).ToList();
-
                         if (filteredByIPN.Count > 0)
                         {
-
                             List<WHitem> negativeStockWHItems = filteredByIPN.Where(item => item.Stock < 0).ToList();
-
                             List<WHitem> positiveStockWHItems = filteredByIPN.Where(item => item.Stock > 0).ToList();
-
                             positiveStockWHItems.RemoveAll(item => negativeStockWHItems.Any(negativeItem => Math.Abs(negativeItem.Stock) == item.Stock));
-
-
                             DataTable INWH = new DataTable();
                             using (var reader = ObjectReader.Create(positiveStockWHItems))
                             {
                                 INWH.Load(reader);
                             }
                             DataView dv = INWH.DefaultView;
-
                             dataGridView2.DataSource = dv;
                             foreach (DataGridViewRow r2 in dataGridView2.Rows)
                             {
@@ -825,32 +745,21 @@ private void GenerateHTML()
                             }
                         }
                     }
-
                 }
-                
-
-             
-                
-
                 // Close HTML tags
                 sb.Append("</table>");
                 sb.Append("</body>");
                 sb.Append("</html>");
-
                 // Write HTML to file
                 File.WriteAllText(fileName, sb.ToString());
-
                 // Open HTML file in default browser
                 //System.Diagnostics.Process.Start(fileName);
-
                 var p = new Process();
                 p.StartInfo = new ProcessStartInfo(@fileName)
                 {
                     UseShellExecute = true
                 };
                 p.Start();
-
-
                 //dataGridView.Columns["Calc"].Visible = true;
                 dataGridView2.Columns["SourceRequester"].Visible = true;
                 dataGridView2.Columns["Manufacturer"].Visible = true;
@@ -858,28 +767,22 @@ private void GenerateHTML()
                 dataGridView.Columns["Calc"].Visible = true;
             }
         }
-    
             private void ExportToHTML(DataGridView dataGridView, string fileName)
             {
                 dataGridView.Columns["Calc"].Visible = false;
-
-
                 StringBuilder sb = new StringBuilder();
                 sb.Clear();
-
                 // Create HTML header
                 sb.Append("<html>");
                 sb.Append("<head>");
                 sb.Append("<title>" + projectName + "</title>");
                 sb.Append("</head>");
-
                 // Create HTML body
                 sb.Append("<body>");
                 sb.Append("<table border='1px' cellpadding='1px' cellspacing='0' style='text-align:center;magrin-left:auto;margin-right:auto'>");
                 sb.Append("<h2 style='text-align:center;padding:0px'>" + projectName + "</h2>");
                 // Add header row
                 sb.Append("<tr>");
-
                 foreach (DataGridViewColumn column in dataGridView.Columns)
                 {
                     if (column.Visible)
@@ -898,18 +801,11 @@ private void GenerateHTML()
                         {
                             sb.Append("<td><h4>" + cell.Value + "</h4></td>");
                         }
-
                     }
                     sb.Append("</tr>");
-
                     //DataView dv = INWH.DefaultView;
-
-
                     sb.Append("<tr>");
-
-
                     //DataView dv = createFilteredInStockDataview();
-
                     List<WHitem> inWHstock = new List<WHitem>();
                     for (int i = 0; i < dataGridView2.RowCount; i++)
                     {
@@ -971,11 +867,8 @@ private void GenerateHTML()
                         INWH.Load(reader);
                     }
                     DataView dv = INWH.DefaultView;
-
-
                     dv.RowFilter = "[IPN] LIKE '%" + row.Cells["IPN"].Value + "%'";
                     dataGridView2.DataSource = dv;
-
                     foreach (DataGridViewColumn column in dataGridView2.Columns)
                     {
                         dataGridView2.Columns["SourceRequester"].Visible = false;
@@ -985,14 +878,10 @@ private void GenerateHTML()
                         {
                             //sb.Append("<th>" + column.HeaderText + "</th>");
                         }
-
                     }
                     sb.Append("</tr>");
-
-
                     foreach (DataGridViewRow r2 in dataGridView2.Rows)
                     {
-
                         sb.Append("<tr>");
                         foreach (DataGridViewCell c2 in r2.Cells)
                         {
@@ -1002,33 +891,25 @@ private void GenerateHTML()
                         sb.Append("</tr>");
                     }
                 }
-
                 // Close HTML tags
                 sb.Append("</table>");
                 sb.Append("</body>");
                 sb.Append("</html>");
-
                 // Write HTML to file
                 File.WriteAllText(fileName, sb.ToString());
-
                 // Open HTML file in default browser
                 //System.Diagnostics.Process.Start(fileName);
-
                 var p = new Process();
                 p.StartInfo = new ProcessStartInfo(@fileName)
                 {
                     UseShellExecute = true
                 };
                 p.Start();
-
-
                 //dataGridView.Columns["Calc"].Visible = true;
                 dataGridView2.Columns["SourceRequester"].Visible = true;
                 dataGridView2.Columns["Manufacturer"].Visible = true;
                 dataGridView2.Columns["Description"].Visible = true;
                 dataGridView.Columns["Calc"].Visible = true;
             }
-
         }
     }
-

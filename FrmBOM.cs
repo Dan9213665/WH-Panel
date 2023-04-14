@@ -29,7 +29,6 @@ using Seagull.BarTender.Print;
 using Range = Microsoft.Office.Interop.Excel.Range;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 using Application = Microsoft.Office.Interop.Excel.Application;
-
 namespace WH_Panel
 {
     public partial class FrmBOM : Form
@@ -102,20 +101,17 @@ namespace WH_Panel
             {
                 //Application excel = new Application();
                 //Workbook workbook = excel.Workbooks.Open(openFileDialog1.FileName);
-
                 //// Recalculate all cells
                 //foreach (Worksheet worksheet in workbook.Worksheets)
                 //{
                 //    worksheet.Calculate();
                 //}
-
                 //// Save the changes
                 //workbook.Save();
                 //workbook.Close();
                 //excel.Quit();
-
                 fileName = openFileDialog1.FileName;
-                theExcelFilePath = Path.GetFileName(fileName); 
+                theExcelFilePath = Path.GetFileName(fileName);
                 string Litem = Path.GetFileName(fileName);
                 label12.Text += fileName.ToString() + "\n";
                 DataLoader(fileName, Litem);
@@ -293,13 +289,11 @@ namespace WH_Panel
                 return null;
             }
             startIndex += startString.Length;
-
             int endIndex = inputString.IndexOf(endString, startIndex);
             if (endIndex < 0)
             {
                 return null;
             }
-
             return inputString.Substring(startIndex, endIndex - startIndex);
         }
         private void FilterTheMissingDataGridView()
@@ -486,9 +480,7 @@ namespace WH_Panel
             if (qtyOK)
             {
                 updateQtyInBomFile(w, validQty);
-                
-                transferFromDatabaseToKit(w,validQty, theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));
-
+                transferFromDatabaseToKit(w, validQty, theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));
                 if (checkBox1.Checked)
                 {
                     WHitem itemToPrint = new WHitem();
@@ -501,9 +493,6 @@ namespace WH_Panel
                 }
             }
         }
-
-     
-
         private void updateQtyInBomFile(KitHistoryItem w, int qtyToAdd)
         {
             KitHistoryItem itemToUpdate = MissingItemsList.FirstOrDefault(r => r.IPN == w.IPN && r.QtyPerUnit == w.QtyPerUnit);
@@ -635,7 +624,7 @@ namespace WH_Panel
         }
         private void AuthorizedExcelFileOpening(string fp)
         {
-            if (Environment.UserName == "lgt"|| Environment.UserName== "rbtwh")
+            if (Environment.UserName == "lgt" || Environment.UserName == "rbtwh")
             {
                 openWHexcelDB(fp);
             }
@@ -680,7 +669,7 @@ namespace WH_Panel
         {
             txtbQtyToAdd.Focus();
         }
-        private void UpdateKitHistoryItem(string fp,KitHistoryItem itemToUpdate)
+        private void UpdateKitHistoryItem(string fp, KitHistoryItem itemToUpdate)
         {
             try
             {
@@ -690,14 +679,14 @@ namespace WH_Panel
                 {
                     conn.Open();
                     DataTable dbSchema = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
-                  if (dbSchema == null || dbSchema.Rows.Count < 1)
+                    if (dbSchema == null || dbSchema.Rows.Count < 1)
                     {
                         throw new Exception("Error: Could not determine the name of the first worksheet.");
                     }
                     string firstSheetName = dbSchema.Rows[0]["TABLE_NAME"].ToString();
                     string cleanedUpSheetName = firstSheetName.Substring(1).Substring(0, firstSheetName.Length - 3);
                     string kitColumnName = getKitColIndex(fp);
-                    OleDbCommand command = new OleDbCommand("UPDATE [" + cleanedUpSheetName + "$] SET ["+ kitColumnName + "] = @QtyInKit,[Calc] = @Calc WHERE [IPN] = @IPN AND [MFPN] = @MFPN", conn);
+                    OleDbCommand command = new OleDbCommand("UPDATE [" + cleanedUpSheetName + "$] SET [" + kitColumnName + "] = @QtyInKit,[Calc] = @Calc WHERE [IPN] = @IPN AND [MFPN] = @MFPN", conn);
                     command.Parameters.AddWithValue("@QtyInKit", itemToUpdate.QtyInKit);
                     command.Parameters.AddWithValue("@Calc", itemToUpdate.Calc);
                     command.Parameters.AddWithValue("@IPN", itemToUpdate.IPN);
@@ -766,10 +755,9 @@ namespace WH_Panel
                 tb.BackColor = Color.White;
             }
         }
-
         private void button4_Click(object sender, EventArgs e)
         {
-            if(MissingItemsList.Count>0)
+            if (MissingItemsList.Count > 0)
             {
                 FrmBomWHS wh = new FrmBomWHS();
                 wh.fromTheMainBom = new List<KitHistoryItem>();
@@ -781,10 +769,9 @@ namespace WH_Panel
                 MessageBox.Show("No missing items to search for !");
             }
         }
-
         private void btnPrintKitLabel_Click(object sender, EventArgs e)
         {
-            EXCELinserter(theExcelFilePath.Substring(0,theExcelFilePath.Length-5));
+            EXCELinserter(theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));
         }
         private void EXCELinserter(string kitName)
         {
@@ -817,14 +804,13 @@ namespace WH_Panel
         {
             try
             {
-
                 WHitem itemToTransfer = new WHitem()
                 {
                     IPN = w.IPN,
                     Manufacturer = "",
                     MFPN = w.MFPN,
                     Description = w.Description,
-                    Stock = qtyToMove*(-1),
+                    Stock = qtyToMove * (-1),
                     UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss"),
                     ReelBagTrayStick = cmbReelSelector.SelectedItem.ToString(),
                     SourceRequester = kitName
@@ -833,20 +819,16 @@ namespace WH_Panel
                 {
                     DataInserter(warehouseSelectorBasedOnItem(w), "STOCK", itemToTransfer);
                 }
-                
             }
             catch (Exception e)
             {
                 MessageBox.Show(e.Message);
                 throw;
             }
-            
-
         }
         private string avlSelectorBasedOnItem(KitHistoryItem w)
         {
             string selection = string.Empty;
-
             if (w.IPN.StartsWith("C100") || w.IPN.StartsWith("A00"))
             {
                 selection = @"\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\G.I.Leader_Tech\G.I.Leader_Tech_STOCK.xlsm";
@@ -869,14 +851,12 @@ namespace WH_Panel
             }
             return selection;
         }
-
         private string warehouseSelectorBasedOnItem(KitHistoryItem w)
         {
             string selection = string.Empty;
-
             if (w.IPN.StartsWith("C100") || w.IPN.StartsWith("A00"))
             {
-                selection = @"\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\G.I.Leader_Tech\G.I.Leader_Tech_STOCK.xlsm"; 
+                selection = @"\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\G.I.Leader_Tech\G.I.Leader_Tech_STOCK.xlsm";
             }
             else if (w.IPN.StartsWith("NET"))
             {
@@ -898,7 +878,6 @@ namespace WH_Panel
         }
         private void DataInserter(string fp, string thesheetName, WHitem wHitem)
         {
-            
             try
             {
                 string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
@@ -914,8 +893,8 @@ namespace WH_Panel
                 label2.BackColor = Color.LightGreen;
                 label3.BackColor = Color.LightGreen;
                 lastTxtbInputFromUser.Focus();
-                    AutoClosingMessageBox.Show(wHitem.IPN + " Transferred to " + wHitem.SourceRequester, " Item Transferred to " + wHitem.SourceRequester, 1000);
-               }
+                AutoClosingMessageBox.Show(wHitem.IPN + " Transferred to " + wHitem.SourceRequester, " Item Transferred to " + wHitem.SourceRequester, 1000);
+            }
             catch (IOException)
             {
                 MessageBox.Show("Error");

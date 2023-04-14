@@ -486,28 +486,22 @@ namespace WH_Panel
         {
             ResetAllTexboxes(textBox2);
         }
-
         private void textBox9_TextChanged(object sender, EventArgs e)
         {
             label9.BackColor = Color.IndianRed;
             FilterTheDataGridView();
         }
-
         private void label9_Click(object sender, EventArgs e)
         {
-
         }
-
         private void label9_DoubleClick(object sender, EventArgs e)
         {
             ResetAllTexboxes(textBox9);
         }
-
         private void textBox9_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
         }
-
         private void textBox9_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(sender);

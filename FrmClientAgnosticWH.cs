@@ -787,7 +787,6 @@ namespace WH_Panel
             dataGridView1.Columns["UpdatedOn"].DisplayIndex = 5;
             dataGridView1.Columns["ReelBagTrayStick"].DisplayIndex = 6;
             dataGridView1.Columns["SourceRequester"].DisplayIndex = 7;
-
             dataGridView1.Sort(dataGridView1.Columns["UpdatedOn"], ListSortDirection.Descending);
         }
         private void textBox3_TextChanged(object sender, EventArgs e)
