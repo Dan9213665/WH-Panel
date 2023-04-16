@@ -49,7 +49,8 @@ namespace WH_Panel
         {
             foreach (KitHistoryItem it in fromTheMainBom)
             {
-                BOMitem n = new BOMitem {
+                BOMitem n = new BOMitem
+                {
                     IPN = it.IPN,
                     MFPN = it.MFPN,
                     Description = it.Description,
@@ -129,7 +130,8 @@ namespace WH_Panel
         }
         private string warehouseSelectorOnLoad()
         {
-            string selection = "ROBOTRON";
+            string selection = string.Empty;
+
             if (misBOMItemsLST[0].IPN.StartsWith("C100") || misBOMItemsLST[0].IPN.StartsWith("A00"))
             {
                 selection = "LEADER-TECH";
@@ -539,23 +541,23 @@ namespace WH_Panel
             //ExportToHTML20(dataGridView1, "\\\\dbr1\\Data\\WareHouse\\2023\\WHsearcher\\" + _fileTimeStamp + "_" + projectName.Substring(0, projectName.Length - 5) + ".html");
             GenerateHTML();
         }
-// ...
-private void GenerateHTML()
-    {
+        // ...
+        private void GenerateHTML()
+        {
             //string fileName = "output.html";
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
             string filename = "\\\\dbr1\\Data\\WareHouse\\2023\\WHsearcher\\" + _fileTimeStamp + "_" + projectName.Substring(0, projectName.Length - 5) + ".html";
-        using (StreamWriter writer = new StreamWriter(filename))
-        {
-            writer.WriteLine("<html style='text-align:center'>");
-            writer.WriteLine("<head>");
-            writer.WriteLine("<title>"+projectName.Substring(0, projectName.Length - 5)+"</title>");
-            writer.WriteLine("</head>");
-            writer.WriteLine("<body>");
-            //writer.WriteLine("<h1>" + projectName.Substring(0, projectName.Length - 5) + "</h1>");
-            writer.WriteLine("<table border='1'>");
-                for (int i = 0; i < dataGridView1.Rows.Count; i++)
+            using (StreamWriter writer = new StreamWriter(filename))
             {
+                writer.WriteLine("<html style='text-align:center'>");
+                writer.WriteLine("<head>");
+                writer.WriteLine("<title>" + projectName.Substring(0, projectName.Length - 5) + "</title>");
+                writer.WriteLine("</head>");
+                writer.WriteLine("<body>");
+                //writer.WriteLine("<h1>" + projectName.Substring(0, projectName.Length - 5) + "</h1>");
+                writer.WriteLine("<table border='1'>");
+                for (int i = 0; i < dataGridView1.Rows.Count; i++)
+                {
                     string IPN = dataGridView1.Rows[i].Cells["IPN"].Value.ToString();
                     writer.WriteLine("<tr>");
                     writer.WriteLine("<td colspan='" + dataGridView1.Columns.Count + "'>");
@@ -610,7 +612,7 @@ private void GenerateHTML()
                     }
                     writer.WriteLine("</tr>");
                     DataView dv = new DataView();
-                    var negativeQtys = stockItems.Where(item =>item.IPN==IPN && item.Stock < 0).ToList();
+                    var negativeQtys = stockItems.Where(item => item.IPN == IPN && item.Stock < 0).ToList();
                     var positiveQtys = stockItems.Where(item => item.IPN == IPN && item.Stock > 0).ToList();
                     foreach (var negQty in negativeQtys.ToList())
                     {
@@ -631,19 +633,19 @@ private void GenerateHTML()
                     }
                     DataTable filteredData = inWHTable;
                     filteredData.Columns["Manufacturer"].ColumnMapping = MappingType.Hidden;
-                //    for (int k = 0; k < filteredData.Columns.Count; k++)
-                //{
-                //        if(filteredData.Columns[k].ColumnName!= "Manufacturer")
-                //        {
-                //            writer.WriteLine("<th>" + filteredData.Columns[k].ColumnName + "</th>");
-                //        }
-                //}
-                writer.WriteLine("</tr>");
-                for (int l = 0; l < filteredData.Rows.Count; l++)
-                {
-                    writer.WriteLine("<tr>");
-                    for (int m = 0; m < filteredData.Columns.Count; m++)
+                    //    for (int k = 0; k < filteredData.Columns.Count; k++)
+                    //{
+                    //        if(filteredData.Columns[k].ColumnName!= "Manufacturer")
+                    //        {
+                    //            writer.WriteLine("<th>" + filteredData.Columns[k].ColumnName + "</th>");
+                    //        }
+                    //}
+                    writer.WriteLine("</tr>");
+                    for (int l = 0; l < filteredData.Rows.Count; l++)
                     {
+                        writer.WriteLine("<tr>");
+                        for (int m = 0; m < filteredData.Columns.Count; m++)
+                        {
                             if (filteredData.Columns[m].ColumnName != "Manufacturer")
                             {
                                 if (filteredData.Columns[m].ColumnName != "IPN")
@@ -662,19 +664,19 @@ private void GenerateHTML()
                                     }
                                 }
                             }
+                        }
+                        writer.WriteLine("</tr>");
                     }
+                    writer.WriteLine("</table>");
+                    writer.WriteLine("</td>");
                     writer.WriteLine("</tr>");
                 }
                 writer.WriteLine("</table>");
-                writer.WriteLine("</td>");
-                writer.WriteLine("</tr>");
+                writer.WriteLine("</body>");
+                writer.WriteLine("</html>");
             }
-            writer.WriteLine("</table>");
-            writer.WriteLine("</body>");
-            writer.WriteLine("</html>");
-        }
-        // Open the file in default browser
-       // Process.Start(fileName);
+            // Open the file in default browser
+            // Process.Start(fileName);
             var p = new Process();
             p.StartInfo = new ProcessStartInfo(filename)
             {
@@ -682,7 +684,7 @@ private void GenerateHTML()
             };
             p.Start();
         }
-    private void ExportToHTML20(DataGridView dataGridView, string fileName)
+        private void ExportToHTML20(DataGridView dataGridView, string fileName)
         {
             dataGridView.Columns["Calc"].Visible = false;
             StringBuilder sb = new StringBuilder();
@@ -767,149 +769,149 @@ private void GenerateHTML()
                 dataGridView.Columns["Calc"].Visible = true;
             }
         }
-            private void ExportToHTML(DataGridView dataGridView, string fileName)
+        private void ExportToHTML(DataGridView dataGridView, string fileName)
+        {
+            dataGridView.Columns["Calc"].Visible = false;
+            StringBuilder sb = new StringBuilder();
+            sb.Clear();
+            // Create HTML header
+            sb.Append("<html>");
+            sb.Append("<head>");
+            sb.Append("<title>" + projectName + "</title>");
+            sb.Append("</head>");
+            // Create HTML body
+            sb.Append("<body>");
+            sb.Append("<table border='1px' cellpadding='1px' cellspacing='0' style='text-align:center;magrin-left:auto;margin-right:auto'>");
+            sb.Append("<h2 style='text-align:center;padding:0px'>" + projectName + "</h2>");
+            // Add header row
+            sb.Append("<tr>");
+            foreach (DataGridViewColumn column in dataGridView.Columns)
             {
-                dataGridView.Columns["Calc"].Visible = false;
-                StringBuilder sb = new StringBuilder();
-                sb.Clear();
-                // Create HTML header
-                sb.Append("<html>");
-                sb.Append("<head>");
-                sb.Append("<title>" + projectName + "</title>");
-                sb.Append("</head>");
-                // Create HTML body
-                sb.Append("<body>");
-                sb.Append("<table border='1px' cellpadding='1px' cellspacing='0' style='text-align:center;magrin-left:auto;margin-right:auto'>");
-                sb.Append("<h2 style='text-align:center;padding:0px'>" + projectName + "</h2>");
-                // Add header row
-                sb.Append("<tr>");
-                foreach (DataGridViewColumn column in dataGridView.Columns)
+                if (column.Visible)
                 {
-                    if (column.Visible)
+                    sb.Append("<th>" + column.HeaderText + "</th>");
+                }
+            }
+            sb.Append("</tr>");
+            // Add data rows
+            foreach (DataGridViewRow row in dataGridView.Rows)
+            {
+                sb.Append("<tr>");
+                foreach (DataGridViewCell cell in row.Cells)
+                {
+                    if (cell.Visible)
                     {
-                        sb.Append("<th>" + column.HeaderText + "</th>");
+                        sb.Append("<td><h4>" + cell.Value + "</h4></td>");
                     }
                 }
                 sb.Append("</tr>");
-                // Add data rows
-                foreach (DataGridViewRow row in dataGridView.Rows)
+                //DataView dv = INWH.DefaultView;
+                sb.Append("<tr>");
+                //DataView dv = createFilteredInStockDataview();
+                List<WHitem> inWHstock = new List<WHitem>();
+                for (int i = 0; i < dataGridView2.RowCount; i++)
                 {
-                    sb.Append("<tr>");
-                    foreach (DataGridViewCell cell in row.Cells)
+                    int res = 0;
+                    int toStk;
+                    bool stk = int.TryParse(dataGridView2.Rows[i].Cells[dataGridView2.Columns["Stock"].Index].Value.ToString(), out res);
+                    if (stk)
                     {
-                        if (cell.Visible)
-                        {
-                            sb.Append("<td><h4>" + cell.Value + "</h4></td>");
-                        }
+                        toStk = res;
                     }
-                    sb.Append("</tr>");
-                    //DataView dv = INWH.DefaultView;
-                    sb.Append("<tr>");
-                    //DataView dv = createFilteredInStockDataview();
-                    List<WHitem> inWHstock = new List<WHitem>();
-                    for (int i = 0; i < dataGridView2.RowCount; i++)
+                    else
                     {
-                        int res = 0;
-                        int toStk;
-                        bool stk = int.TryParse(dataGridView2.Rows[i].Cells[dataGridView2.Columns["Stock"].Index].Value.ToString(), out res);
-                        if (stk)
-                        {
-                            toStk = res;
-                        }
-                        else
-                        {
-                            toStk = 0;
-                        }
-                        WHitem wHitemABC = new WHitem()
-                        {
-                            IPN = dataGridView2.Rows[i].Cells[dataGridView2.Columns["IPN"].Index].Value.ToString(),
-                            Manufacturer = dataGridView2.Rows[i].Cells[dataGridView2.Columns["Manufacturer"].Index].Value.ToString(),
-                            MFPN = dataGridView2.Rows[i].Cells[dataGridView2.Columns["MFPN"].Index].Value.ToString(),
-                            Description = dataGridView2.Rows[i].Cells[dataGridView2.Columns["Description"].Index].Value.ToString(),
-                            Stock = toStk,
-                            UpdatedOn = dataGridView2.Rows[i].Cells[dataGridView2.Columns["UpdatedOn"].Index].Value.ToString(),
-                            ReelBagTrayStick = dataGridView2.Rows[i].Cells[dataGridView2.Columns["ReelBagTrayStick"].Index].Value.ToString(),
-                            SourceRequester = dataGridView2.Rows[i].Cells[dataGridView2.Columns["SourceRequester"].Index].Value.ToString()
-                        };
-                        inWHstock.Add(wHitemABC);
+                        toStk = 0;
                     }
-                    List<WHitem> negatiVEQTYs = new List<WHitem>();
-                    for (int i = 0; i < inWHstock.Count; i++)
+                    WHitem wHitemABC = new WHitem()
                     {
-                        if (inWHstock[i].Stock < 0)
-                        {
-                            negatiVEQTYs.Add(inWHstock[i]);
-                        }
-                    }
-                    List<WHitem> positiveInWH = new List<WHitem>();
-                    for (int k = 0; k < inWHstock.Count; k++)
+                        IPN = dataGridView2.Rows[i].Cells[dataGridView2.Columns["IPN"].Index].Value.ToString(),
+                        Manufacturer = dataGridView2.Rows[i].Cells[dataGridView2.Columns["Manufacturer"].Index].Value.ToString(),
+                        MFPN = dataGridView2.Rows[i].Cells[dataGridView2.Columns["MFPN"].Index].Value.ToString(),
+                        Description = dataGridView2.Rows[i].Cells[dataGridView2.Columns["Description"].Index].Value.ToString(),
+                        Stock = toStk,
+                        UpdatedOn = dataGridView2.Rows[i].Cells[dataGridView2.Columns["UpdatedOn"].Index].Value.ToString(),
+                        ReelBagTrayStick = dataGridView2.Rows[i].Cells[dataGridView2.Columns["ReelBagTrayStick"].Index].Value.ToString(),
+                        SourceRequester = dataGridView2.Rows[i].Cells[dataGridView2.Columns["SourceRequester"].Index].Value.ToString()
+                    };
+                    inWHstock.Add(wHitemABC);
+                }
+                List<WHitem> negatiVEQTYs = new List<WHitem>();
+                for (int i = 0; i < inWHstock.Count; i++)
+                {
+                    if (inWHstock[i].Stock < 0)
                     {
-                        if (inWHstock[k].Stock > 0)
-                        {
-                            positiveInWH.Add(inWHstock[k]);
-                        }
-                    }
-                    for (int i = 0; i < negatiVEQTYs.Count; i++)
-                    {
-                        for (int j = 0; j < positiveInWH.Count; j++)
-                        {
-                            if (Math.Abs(negatiVEQTYs[i].Stock) == positiveInWH[j].Stock)
-                            {
-                                positiveInWH.Remove((WHitem)positiveInWH[j]);
-                                break;
-                            }
-                        }
-                    }
-                    IEnumerable<WHitem> WHdata = positiveInWH;
-                    DataTable INWH = new DataTable();
-                    using (var reader = ObjectReader.Create(WHdata))
-                    {
-                        INWH.Load(reader);
-                    }
-                    DataView dv = INWH.DefaultView;
-                    dv.RowFilter = "[IPN] LIKE '%" + row.Cells["IPN"].Value + "%'";
-                    dataGridView2.DataSource = dv;
-                    foreach (DataGridViewColumn column in dataGridView2.Columns)
-                    {
-                        dataGridView2.Columns["SourceRequester"].Visible = false;
-                        dataGridView2.Columns["Manufacturer"].Visible = false;
-                        dataGridView2.Columns["Description"].Visible = false;
-                        if (column.Visible)
-                        {
-                            //sb.Append("<th>" + column.HeaderText + "</th>");
-                        }
-                    }
-                    sb.Append("</tr>");
-                    foreach (DataGridViewRow r2 in dataGridView2.Rows)
-                    {
-                        sb.Append("<tr>");
-                        foreach (DataGridViewCell c2 in r2.Cells)
-                        {
-                            //if (c2.Visible)
-                                sb.Append("<td>" + c2.Value + "</td>");
-                        }
-                        sb.Append("</tr>");
+                        negatiVEQTYs.Add(inWHstock[i]);
                     }
                 }
-                // Close HTML tags
-                sb.Append("</table>");
-                sb.Append("</body>");
-                sb.Append("</html>");
-                // Write HTML to file
-                File.WriteAllText(fileName, sb.ToString());
-                // Open HTML file in default browser
-                //System.Diagnostics.Process.Start(fileName);
-                var p = new Process();
-                p.StartInfo = new ProcessStartInfo(@fileName)
+                List<WHitem> positiveInWH = new List<WHitem>();
+                for (int k = 0; k < inWHstock.Count; k++)
                 {
-                    UseShellExecute = true
-                };
-                p.Start();
-                //dataGridView.Columns["Calc"].Visible = true;
-                dataGridView2.Columns["SourceRequester"].Visible = true;
-                dataGridView2.Columns["Manufacturer"].Visible = true;
-                dataGridView2.Columns["Description"].Visible = true;
-                dataGridView.Columns["Calc"].Visible = true;
+                    if (inWHstock[k].Stock > 0)
+                    {
+                        positiveInWH.Add(inWHstock[k]);
+                    }
+                }
+                for (int i = 0; i < negatiVEQTYs.Count; i++)
+                {
+                    for (int j = 0; j < positiveInWH.Count; j++)
+                    {
+                        if (Math.Abs(negatiVEQTYs[i].Stock) == positiveInWH[j].Stock)
+                        {
+                            positiveInWH.Remove((WHitem)positiveInWH[j]);
+                            break;
+                        }
+                    }
+                }
+                IEnumerable<WHitem> WHdata = positiveInWH;
+                DataTable INWH = new DataTable();
+                using (var reader = ObjectReader.Create(WHdata))
+                {
+                    INWH.Load(reader);
+                }
+                DataView dv = INWH.DefaultView;
+                dv.RowFilter = "[IPN] LIKE '%" + row.Cells["IPN"].Value + "%'";
+                dataGridView2.DataSource = dv;
+                foreach (DataGridViewColumn column in dataGridView2.Columns)
+                {
+                    dataGridView2.Columns["SourceRequester"].Visible = false;
+                    dataGridView2.Columns["Manufacturer"].Visible = false;
+                    dataGridView2.Columns["Description"].Visible = false;
+                    if (column.Visible)
+                    {
+                        //sb.Append("<th>" + column.HeaderText + "</th>");
+                    }
+                }
+                sb.Append("</tr>");
+                foreach (DataGridViewRow r2 in dataGridView2.Rows)
+                {
+                    sb.Append("<tr>");
+                    foreach (DataGridViewCell c2 in r2.Cells)
+                    {
+                        //if (c2.Visible)
+                        sb.Append("<td>" + c2.Value + "</td>");
+                    }
+                    sb.Append("</tr>");
+                }
             }
+            // Close HTML tags
+            sb.Append("</table>");
+            sb.Append("</body>");
+            sb.Append("</html>");
+            // Write HTML to file
+            File.WriteAllText(fileName, sb.ToString());
+            // Open HTML file in default browser
+            //System.Diagnostics.Process.Start(fileName);
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(@fileName)
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+            //dataGridView.Columns["Calc"].Visible = true;
+            dataGridView2.Columns["SourceRequester"].Visible = true;
+            dataGridView2.Columns["Manufacturer"].Visible = true;
+            dataGridView2.Columns["Description"].Visible = true;
+            dataGridView.Columns["Calc"].Visible = true;
         }
     }
+}
