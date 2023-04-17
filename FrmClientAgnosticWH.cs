@@ -17,27 +17,7 @@ namespace WH_Panel
             comboBox3.SelectedItem = "ROBOTRON";
             MasterReload(avlROBOTRON, stockROBOTRON);
         }
-        private void MasterReload(string avlParam, string stockParam)
-        {
-            lblSendTo.Enabled = false;
-            avlFile = avlParam;
-            stockFile = stockParam;
-            textBox8.ReadOnly= true;
-            radioButton1.Checked = true;
-            comboBox1.SelectedIndex = 1;
-            button2_Click(this, new EventArgs());
-            button3_Click(this, new EventArgs());
-            comboBox2.Enabled = false;
-            textBox1.Clear();
-            textBox2.Clear();
-            textBox6.Clear();
-            textBox8.Clear();
-            textBox9.Clear();
-            label1.BackColor= Color.LightGreen;
-            label2.BackColor= Color.LightGreen;
-            LastInputFromUser = textBox1;
-            LastInputFromUser.Focus();
-        }
+
         public List<WHitem> avlItems = new List<WHitem>();
         public List<WHitem> stockItems = new List<WHitem>();
         public DataTable avlDTable = new DataTable();
@@ -67,13 +47,35 @@ namespace WH_Panel
         public string stockROBOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_STOCK.xlsm";
         public string avlFile;
         public string stockFile;
+
+        private void MasterReload(string avlParam, string stockParam)
+        {
+            lblSendTo.Enabled = false;
+            avlFile = avlParam;
+            stockFile = stockParam;
+            textBox8.ReadOnly = true;
+            radioButton1.Checked = true;
+            comboBox1.SelectedIndex = 1;
+            button2_Click(this, new EventArgs());
+            button3_Click(this, new EventArgs());
+            comboBox2.Enabled = false;
+            textBox1.Clear();
+            textBox2.Clear();
+            textBox6.Clear();
+            textBox8.Clear();
+            textBox9.Clear();
+            label1.BackColor = Color.LightGreen;
+            label2.BackColor = Color.LightGreen;
+            LastInputFromUser = textBox1;
+            LastInputFromUser.Focus();
+        }
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboBox3.Text == "ROBOTRON")
             {
                 MasterReload(avlROBOTRON, stockROBOTRON);
             }
-            else if(comboBox3.Text == "LEADER-TECH")
+            else if (comboBox3.Text == "LEADER-TECH")
             {
                 MasterReload(avlLeader_Tech, stockLeader_Tech);
             }
@@ -130,7 +132,7 @@ namespace WH_Panel
                             {
                                 countAVLItems = iAVL;
                                 label1.Text = "Rows in AVL: " + (countAVLItems).ToString();
-                                if(countAVLItems%1000==0)
+                                if (countAVLItems % 1000 == 0)
                                 {
                                     label1.Update();
                                 }
@@ -181,7 +183,7 @@ namespace WH_Panel
                 searchByIPN = textBox1.Text.Substring(0, 15);
             }
             string searchbyMFPN = textBox2.Text;
-             if(textBox2.Text.StartsWith("1P") == true)
+            if (textBox2.Text.StartsWith("1P") == true)
             {
                 searchbyMFPN = textBox2.Text.Substring(2);
             }
@@ -313,7 +315,7 @@ namespace WH_Panel
             if (rbtn.Checked == true)
             {
                 lblRWK.Text = "_RWK_";
-                lblSendTo.Text="_Sent to_";
+                lblSendTo.Text = "_Sent to_";
                 lblSendTo.Enabled = true;
                 textBox8.ReadOnly = true;
                 textBox9.ReadOnly = false;
@@ -345,7 +347,7 @@ namespace WH_Panel
                         if (qInqty.StartsWith("Q"))
                         {
                             inQty = qInqty.Substring(1);
-                            MessageBox.Show(inQty);
+                            //MessageBox.Show(inQty);
                             int outNumberq;
                             bool successq = int.TryParse(inQty, out outNumberq);
                             if (successq && outNumberq < 15001 && outNumberq > 0)
@@ -489,7 +491,7 @@ namespace WH_Panel
                 ReelBagTrayStick = comboBox1.Text,
                 SourceRequester = sorce_req
             };
-            DataInserter(stockFile,"STOCK", inputWHitem, toPrint);
+            DataInserter(stockFile, "STOCK", inputWHitem, toPrint);
             stockItems.Add(inputWHitem);
             textBox10.Text = inputWHitem.IPN;
             textBox10.BackColor = Color.LightGreen;
@@ -509,7 +511,7 @@ namespace WH_Panel
                     conn.Close();
                 }
                 textBox6.Clear();
-                LastInputFromUser.Clear();
+                LastInputFromUser.Text = string.Empty;
                 label2.BackColor = Color.LightGreen;
                 label3.BackColor = Color.LightGreen;
                 LastInputFromUser.Focus();
@@ -586,7 +588,7 @@ namespace WH_Panel
                 SendKeys.SendWait("{Enter}");
                 //ComeBackFromPrint();
                 Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
-                textBox1.Focus();
+                LastInputFromUser.Focus();
             }
             catch (Exception e)
             {
@@ -660,12 +662,11 @@ namespace WH_Panel
                 if (dataGridView2.Rows.Count == 1)
                 {
                     textBox6.Focus();
+                    return;
                 }
-                else
-                {
-                    dataGridView2.Focus();
-                }
+                dataGridView2.Focus();
             }
+
         }
         private void textBox2_KeyDown(object sender, KeyEventArgs e)
         {
@@ -675,12 +676,11 @@ namespace WH_Panel
                 if (dataGridView2.Rows.Count == 1)
                 {
                     textBox6.Focus();
+                    return;
                 }
-                else
-                {
-                    dataGridView2.Focus();
-                }
+                dataGridView2.Focus();
             }
+
         }
         private void StockViewDataLoader(string fp, string thesheetName)
         {
@@ -722,7 +722,7 @@ namespace WH_Panel
                                 };
                                 countStockItems = iStock;
                                 button3.Text = "Rows in STOCK: " + (countStockItems).ToString();
-                                if(countStockItems%1000==0)
+                                if (countStockItems % 1000 == 0)
                                 {
                                     button3.Update();
                                 }
@@ -1073,7 +1073,7 @@ namespace WH_Panel
         {
             if (e.KeyCode == Keys.Enter)
             {
-                if(comboBox2.SelectedIndex!=(-1))
+                if (comboBox2.SelectedIndex != (-1))
                 {
                     LastInputFromUser.Focus();
                 }
@@ -1123,20 +1123,20 @@ namespace WH_Panel
         }
         private void lblSendTo_Click(object sender, EventArgs e)
         {
-            lblSendTo.Text += comboBox3.Text.ToString()+" "+ DateTime.Now.ToString("yyyy-MM-dd");
+            lblSendTo.Text += comboBox3.Text.ToString() + " " + DateTime.Now.ToString("yyyy-MM-dd");
             textBox9.Text = lblSendTo.Text;
         }
         private void textBox9_KeyDown_1(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
-                LastInputFromUser.Clear();
+                LastInputFromUser.Text = string.Empty;
                 LastInputFromUser.Focus();
             }
         }
         private void lblRWK_Click(object sender, EventArgs e)
         {
-            lblRWK.Text +=  DateTime.Now.ToString("yyyy-MM-dd");
+            lblRWK.Text += DateTime.Now.ToString("yyyy-MM-dd");
             textBox9.Text = lblRWK.Text;
         }
     }

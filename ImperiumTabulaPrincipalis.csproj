@@ -17,7 +17,7 @@
       <Guid>2df8d04c-5bfa-101b-bde5-00aa0044de52</Guid>
       <Lcid>0</Lcid>
       <Isolated>false</Isolated>
-      <EmbedInteropTypes>true</EmbedInteropTypes>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
   <ItemGroup>
@@ -32,15 +32,10 @@
   <ItemGroup>
     <PackageReference Include="FastMember.Signed" Version="1.5.0" />
     <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
+    <PackageReference Include="Seagull" Version="2.3.5" />
     <PackageReference Include="System.Data.OleDb" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Office.Interop.Access">
-      <HintPath>..\..\..\..\Windows\assembly\GAC_MSIL\Microsoft.Office.Interop.Access\15.0.0.0__71e9bce111e9429c\Microsoft.Office.Interop.Access.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Office.Interop.Excel">
-      <HintPath>Binaries\excel\Microsoft.Office.Interop.Excel.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Office.Tools.Excel">
       <HintPath>Binaries\excel\Microsoft.Office.Tools.Excel.dll</HintPath>
     </Reference>

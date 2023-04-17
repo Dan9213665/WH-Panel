@@ -25,948 +25,928 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DateTimePicker dateTimePicker1;
+            DateTimePicker dateTimePicker1;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmClientAgnosticWH));
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.comboBox3 = new System.Windows.Forms.ComboBox();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.button2 = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label16 = new System.Windows.Forms.Label();
-            this.txtbFiltAVLbyDESCR = new System.Windows.Forms.TextBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.textBox7 = new System.Windows.Forms.TextBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.textBox4 = new System.Windows.Forms.TextBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.textBox5 = new System.Windows.Forms.TextBox();
-            this.textBox6 = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
-            this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
-            this.btnMove = new System.Windows.Forms.Button();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
-            this.radioButton4 = new System.Windows.Forms.RadioButton();
-            this.label13 = new System.Windows.Forms.Label();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
-            this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
-            this.label15 = new System.Windows.Forms.Label();
-            this.textBox10 = new System.Windows.Forms.TextBox();
-            this.button4 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.groupBox7 = new System.Windows.Forms.GroupBox();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
-            this.label14 = new System.Windows.Forms.Label();
-            this.textBox9 = new System.Windows.Forms.TextBox();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
-            this.textBox8 = new System.Windows.Forms.TextBox();
-            this.label12 = new System.Windows.Forms.Label();
-            this.lblSendTo = new System.Windows.Forms.Label();
-            this.lblRWK = new System.Windows.Forms.Label();
-            this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.dataGridView2 = new System.Windows.Forms.DataGridView();
-            dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
-            this.groupBox1.SuspendLayout();
-            this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            this.tableLayoutPanel1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.tableLayoutPanel3.SuspendLayout();
-            this.groupBox3.SuspendLayout();
-            this.tableLayoutPanel2.SuspendLayout();
-            this.tableLayoutPanel5.SuspendLayout();
-            this.groupBox4.SuspendLayout();
-            this.tableLayoutPanel6.SuspendLayout();
-            this.tableLayoutPanel7.SuspendLayout();
-            this.groupBox7.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            this.groupBox5.SuspendLayout();
-            this.tableLayoutPanel4.SuspendLayout();
-            this.groupBox6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
-            this.SuspendLayout();
+            groupBox1 = new GroupBox();
+            comboBox3 = new ComboBox();
+            tabControl1 = new TabControl();
+            tabPage1 = new TabPage();
+            tableLayoutPanel1 = new TableLayoutPanel();
+            groupBox2 = new GroupBox();
+            tableLayoutPanel3 = new TableLayoutPanel();
+            textBox2 = new TextBox();
+            textBox1 = new TextBox();
+            button2 = new Button();
+            label2 = new Label();
+            label3 = new Label();
+            label1 = new Label();
+            label16 = new Label();
+            txtbFiltAVLbyDESCR = new TextBox();
+            groupBox3 = new GroupBox();
+            tableLayoutPanel2 = new TableLayoutPanel();
+            textBox7 = new TextBox();
+            textBox3 = new TextBox();
+            textBox4 = new TextBox();
+            comboBox1 = new ComboBox();
+            textBox5 = new TextBox();
+            textBox6 = new TextBox();
+            label4 = new Label();
+            label5 = new Label();
+            label6 = new Label();
+            label7 = new Label();
+            label8 = new Label();
+            label9 = new Label();
+            label10 = new Label();
+            label11 = new Label();
+            tableLayoutPanel5 = new TableLayoutPanel();
+            btnMove = new Button();
+            radioButton1 = new RadioButton();
+            radioButton2 = new RadioButton();
+            radioButton4 = new RadioButton();
+            label13 = new Label();
+            groupBox4 = new GroupBox();
+            tableLayoutPanel6 = new TableLayoutPanel();
+            tableLayoutPanel7 = new TableLayoutPanel();
+            label15 = new Label();
+            textBox10 = new TextBox();
+            button4 = new Button();
+            button3 = new Button();
+            groupBox7 = new GroupBox();
+            dataGridView1 = new DataGridView();
+            groupBox5 = new GroupBox();
+            tableLayoutPanel4 = new TableLayoutPanel();
+            label14 = new Label();
+            textBox9 = new TextBox();
+            comboBox2 = new ComboBox();
+            textBox8 = new TextBox();
+            label12 = new Label();
+            lblSendTo = new Label();
+            lblRWK = new Label();
+            groupBox6 = new GroupBox();
+            dataGridView2 = new DataGridView();
+            dateTimePicker1 = new DateTimePicker();
+            groupBox1.SuspendLayout();
+            tabControl1.SuspendLayout();
+            tabPage1.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
+            groupBox2.SuspendLayout();
+            tableLayoutPanel3.SuspendLayout();
+            groupBox3.SuspendLayout();
+            tableLayoutPanel2.SuspendLayout();
+            tableLayoutPanel5.SuspendLayout();
+            groupBox4.SuspendLayout();
+            tableLayoutPanel6.SuspendLayout();
+            tableLayoutPanel7.SuspendLayout();
+            groupBox7.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            groupBox5.SuspendLayout();
+            tableLayoutPanel4.SuspendLayout();
+            groupBox6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
+            SuspendLayout();
             // 
             // dateTimePicker1
             // 
-            dateTimePicker1.Dock = System.Windows.Forms.DockStyle.Fill;
+            dateTimePicker1.Dock = DockStyle.Fill;
             dateTimePicker1.Enabled = false;
-            dateTimePicker1.Location = new System.Drawing.Point(588, 18);
+            dateTimePicker1.Location = new Point(588, 18);
             dateTimePicker1.Name = "dateTimePicker1";
-            dateTimePicker1.Size = new System.Drawing.Size(111, 23);
+            dateTimePicker1.Size = new Size(111, 23);
             dateTimePicker1.TabIndex = 5;
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.comboBox3);
-            this.groupBox1.Controls.Add(this.tabControl1);
-            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox1.Location = new System.Drawing.Point(0, 0);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1210, 785);
-            this.groupBox1.TabIndex = 5;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "AGNOSTIC WAREHOUSE";
+            groupBox1.Controls.Add(comboBox3);
+            groupBox1.Controls.Add(tabControl1);
+            groupBox1.Dock = DockStyle.Fill;
+            groupBox1.Location = new Point(0, 0);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(1210, 785);
+            groupBox1.TabIndex = 5;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "AGNOSTIC WAREHOUSE";
             // 
             // comboBox3
             // 
-            this.comboBox3.BackColor = System.Drawing.Color.DarkOrange;
-            this.comboBox3.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.comboBox3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox3.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.comboBox3.ForeColor = System.Drawing.Color.White;
-            this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.Items.AddRange(new object[] {
-            "LEADER-TECH",
-            "NETLINE",
-            "ROBOTRON",
-            "VALENS",
-            "VAYYAR"});
-            this.comboBox3.Location = new System.Drawing.Point(150, 0);
-            this.comboBox3.Name = "comboBox3";
-            this.comboBox3.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.comboBox3.Size = new System.Drawing.Size(321, 40);
-            this.comboBox3.Sorted = true;
-            this.comboBox3.TabIndex = 7;
-            this.comboBox3.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
+            comboBox3.BackColor = Color.DarkOrange;
+            comboBox3.Cursor = Cursors.Hand;
+            comboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBox3.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
+            comboBox3.ForeColor = Color.White;
+            comboBox3.FormattingEnabled = true;
+            comboBox3.Items.AddRange(new object[] { "LEADER-TECH", "NETLINE", "ROBOTRON", "VALENS", "VAYYAR" });
+            comboBox3.Location = new Point(150, 0);
+            comboBox3.Name = "comboBox3";
+            comboBox3.RightToLeft = RightToLeft.No;
+            comboBox3.Size = new Size(321, 40);
+            comboBox3.Sorted = true;
+            comboBox3.TabIndex = 7;
+            comboBox3.SelectedIndexChanged += comboBox3_SelectedIndexChanged;
             // 
             // tabControl1
             // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(3, 19);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1204, 763);
-            this.tabControl1.TabIndex = 0;
+            tabControl1.Controls.Add(tabPage1);
+            tabControl1.Dock = DockStyle.Fill;
+            tabControl1.Location = new Point(3, 19);
+            tabControl1.Name = "tabControl1";
+            tabControl1.SelectedIndex = 0;
+            tabControl1.Size = new Size(1204, 763);
+            tabControl1.TabIndex = 0;
             // 
             // tabPage1
             // 
-            this.tabPage1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.tabPage1.Controls.Add(this.tableLayoutPanel1);
-            this.tabPage1.Location = new System.Drawing.Point(4, 24);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1196, 735);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Agnostic";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            tabPage1.BackgroundImageLayout = ImageLayout.Zoom;
+            tabPage1.Controls.Add(tableLayoutPanel1);
+            tabPage1.Location = new Point(4, 24);
+            tabPage1.Name = "tabPage1";
+            tabPage1.Padding = new Padding(3);
+            tabPage1.Size = new Size(1196, 735);
+            tabPage1.TabIndex = 0;
+            tabPage1.Text = "Agnostic";
+            tabPage1.UseVisualStyleBackColor = true;
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.AutoSize = true;
-            this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this.groupBox2, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.groupBox3, 0, 3);
-            this.tableLayoutPanel1.Controls.Add(this.groupBox4, 0, 4);
-            this.tableLayoutPanel1.Controls.Add(this.groupBox5, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.groupBox6, 0, 1);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 5;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1190, 729);
-            this.tableLayoutPanel1.TabIndex = 1;
+            tableLayoutPanel1.AutoSize = true;
+            tableLayoutPanel1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            tableLayoutPanel1.ColumnCount = 1;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.Controls.Add(groupBox2, 0, 0);
+            tableLayoutPanel1.Controls.Add(groupBox3, 0, 3);
+            tableLayoutPanel1.Controls.Add(groupBox4, 0, 4);
+            tableLayoutPanel1.Controls.Add(groupBox5, 0, 2);
+            tableLayoutPanel1.Controls.Add(groupBox6, 0, 1);
+            tableLayoutPanel1.Dock = DockStyle.Fill;
+            tableLayoutPanel1.Location = new Point(3, 3);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 5;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.Size = new Size(1190, 729);
+            tableLayoutPanel1.TabIndex = 1;
             // 
             // groupBox2
             // 
-            this.groupBox2.AutoSize = true;
-            this.groupBox2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.groupBox2.Controls.Add(this.tableLayoutPanel3);
-            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox2.Location = new System.Drawing.Point(3, 3);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1184, 80);
-            this.groupBox2.TabIndex = 0;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "INPUT IPN / MFPN";
+            groupBox2.AutoSize = true;
+            groupBox2.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            groupBox2.Controls.Add(tableLayoutPanel3);
+            groupBox2.Dock = DockStyle.Fill;
+            groupBox2.Location = new Point(3, 3);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new Size(1184, 80);
+            groupBox2.TabIndex = 0;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "INPUT IPN / MFPN";
             // 
             // tableLayoutPanel3
             // 
-            this.tableLayoutPanel3.AutoSize = true;
-            this.tableLayoutPanel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel3.ColumnCount = 4;
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
-            this.tableLayoutPanel3.Controls.Add(this.textBox2, 2, 1);
-            this.tableLayoutPanel3.Controls.Add(this.textBox1, 1, 1);
-            this.tableLayoutPanel3.Controls.Add(this.button2, 0, 1);
-            this.tableLayoutPanel3.Controls.Add(this.label2, 1, 0);
-            this.tableLayoutPanel3.Controls.Add(this.label3, 2, 0);
-            this.tableLayoutPanel3.Controls.Add(this.label1, 0, 0);
-            this.tableLayoutPanel3.Controls.Add(this.label16, 3, 0);
-            this.tableLayoutPanel3.Controls.Add(this.txtbFiltAVLbyDESCR, 3, 1);
-            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 19);
-            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-            this.tableLayoutPanel3.RowCount = 2;
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(1178, 58);
-            this.tableLayoutPanel3.TabIndex = 3;
+            tableLayoutPanel3.AutoSize = true;
+            tableLayoutPanel3.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            tableLayoutPanel3.ColumnCount = 4;
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
+            tableLayoutPanel3.Controls.Add(textBox2, 2, 1);
+            tableLayoutPanel3.Controls.Add(textBox1, 1, 1);
+            tableLayoutPanel3.Controls.Add(button2, 0, 1);
+            tableLayoutPanel3.Controls.Add(label2, 1, 0);
+            tableLayoutPanel3.Controls.Add(label3, 2, 0);
+            tableLayoutPanel3.Controls.Add(label1, 0, 0);
+            tableLayoutPanel3.Controls.Add(label16, 3, 0);
+            tableLayoutPanel3.Controls.Add(txtbFiltAVLbyDESCR, 3, 1);
+            tableLayoutPanel3.Dock = DockStyle.Fill;
+            tableLayoutPanel3.Location = new Point(3, 19);
+            tableLayoutPanel3.Name = "tableLayoutPanel3";
+            tableLayoutPanel3.RowCount = 2;
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel3.Size = new Size(1178, 58);
+            tableLayoutPanel3.TabIndex = 3;
             // 
             // textBox2
             // 
-            this.textBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox2.Location = new System.Drawing.Point(473, 32);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(347, 23);
-            this.textBox2.TabIndex = 3;
-            this.textBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
-            this.textBox2.Enter += new System.EventHandler(this.textBox2_Enter);
-            this.textBox2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyDown);
-            this.textBox2.Leave += new System.EventHandler(this.textBox2_Leave);
+            textBox2.Dock = DockStyle.Fill;
+            textBox2.Location = new Point(473, 32);
+            textBox2.Name = "textBox2";
+            textBox2.Size = new Size(347, 23);
+            textBox2.TabIndex = 3;
+            textBox2.TextAlign = HorizontalAlignment.Center;
+            textBox2.TextChanged += textBox2_TextChanged;
+            textBox2.Enter += textBox2_Enter;
+            textBox2.KeyDown += textBox2_KeyDown;
+            textBox2.Leave += textBox2_Leave;
             // 
             // textBox1
             // 
-            this.textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox1.Location = new System.Drawing.Point(120, 32);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(347, 23);
-            this.textBox1.TabIndex = 0;
-            this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
-            this.textBox1.Enter += new System.EventHandler(this.textBox1_Enter);
-            this.textBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
-            this.textBox1.Leave += new System.EventHandler(this.textBox1_Leave);
+            textBox1.Dock = DockStyle.Fill;
+            textBox1.Location = new Point(120, 32);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(347, 23);
+            textBox1.TabIndex = 0;
+            textBox1.TextAlign = HorizontalAlignment.Center;
+            textBox1.TextChanged += textBox1_TextChanged;
+            textBox1.Enter += textBox1_Enter;
+            textBox1.KeyDown += textBox1_KeyDown;
+            textBox1.Leave += textBox1_Leave;
             // 
             // button2
             // 
-            this.button2.AutoSize = true;
-            this.button2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button2.BackgroundImage = global::WH_Panel.Properties.Resources.reloadDB;
-            this.button2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.button2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button2.Location = new System.Drawing.Point(3, 32);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(111, 23);
-            this.button2.TabIndex = 2;
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            button2.AutoSize = true;
+            button2.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            button2.BackgroundImage = Properties.Resources.reloadDB;
+            button2.BackgroundImageLayout = ImageLayout.Zoom;
+            button2.Dock = DockStyle.Fill;
+            button2.Location = new Point(3, 32);
+            button2.Name = "button2";
+            button2.Size = new Size(111, 23);
+            button2.TabIndex = 2;
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label2.Location = new System.Drawing.Point(120, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(347, 29);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Search in AVL by IPN";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label2.Click += new System.EventHandler(this.label2_Click);
-            this.label2.DoubleClick += new System.EventHandler(this.label2_DoubleClick);
+            label2.AutoSize = true;
+            label2.BackColor = Color.FromArgb(192, 255, 192);
+            label2.Dock = DockStyle.Fill;
+            label2.Location = new Point(120, 0);
+            label2.Name = "label2";
+            label2.Size = new Size(347, 29);
+            label2.TabIndex = 5;
+            label2.Text = "Search in AVL by IPN";
+            label2.TextAlign = ContentAlignment.MiddleCenter;
+            label2.Click += label2_Click;
+            label2.DoubleClick += label2_DoubleClick;
             // 
             // label3
             // 
-            this.label3.AutoSize = true;
-            this.label3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label3.Location = new System.Drawing.Point(473, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(347, 29);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "Search in AVL by MFPN";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label3.Click += new System.EventHandler(this.label3_Click);
-            this.label3.DoubleClick += new System.EventHandler(this.label3_DoubleClick);
+            label3.AutoSize = true;
+            label3.BackColor = Color.FromArgb(192, 255, 192);
+            label3.Dock = DockStyle.Fill;
+            label3.Location = new Point(473, 0);
+            label3.Name = "label3";
+            label3.Size = new Size(347, 29);
+            label3.TabIndex = 6;
+            label3.Text = "Search in AVL by MFPN";
+            label3.TextAlign = ContentAlignment.MiddleCenter;
+            label3.Click += label3_Click;
+            label3.DoubleClick += label3_DoubleClick;
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label1.Location = new System.Drawing.Point(3, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(111, 29);
-            this.label1.TabIndex = 7;
-            this.label1.Text = "RELOAD AVL";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            label1.AutoSize = true;
+            label1.Dock = DockStyle.Fill;
+            label1.Location = new Point(3, 0);
+            label1.Name = "label1";
+            label1.Size = new Size(111, 29);
+            label1.TabIndex = 7;
+            label1.Text = "RELOAD AVL";
+            label1.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // label16
             // 
-            this.label16.AutoSize = true;
-            this.label16.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.label16.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label16.Location = new System.Drawing.Point(826, 0);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(349, 29);
-            this.label16.TabIndex = 8;
-            this.label16.Text = "Search in AVL by DESCRIPTION";
-            this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label16.Click += new System.EventHandler(this.label16_Click);
-            this.label16.DoubleClick += new System.EventHandler(this.label16_DoubleClick);
+            label16.AutoSize = true;
+            label16.BackColor = Color.FromArgb(192, 255, 192);
+            label16.Dock = DockStyle.Fill;
+            label16.Location = new Point(826, 0);
+            label16.Name = "label16";
+            label16.Size = new Size(349, 29);
+            label16.TabIndex = 8;
+            label16.Text = "Search in AVL by DESCRIPTION";
+            label16.TextAlign = ContentAlignment.MiddleCenter;
+            label16.Click += label16_Click;
+            label16.DoubleClick += label16_DoubleClick;
             // 
             // txtbFiltAVLbyDESCR
             // 
-            this.txtbFiltAVLbyDESCR.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtbFiltAVLbyDESCR.Location = new System.Drawing.Point(826, 32);
-            this.txtbFiltAVLbyDESCR.Name = "txtbFiltAVLbyDESCR";
-            this.txtbFiltAVLbyDESCR.Size = new System.Drawing.Size(349, 23);
-            this.txtbFiltAVLbyDESCR.TabIndex = 9;
-            this.txtbFiltAVLbyDESCR.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.txtbFiltAVLbyDESCR.TextChanged += new System.EventHandler(this.txtbFiltAVLbyDESCR_TextChanged);
-            this.txtbFiltAVLbyDESCR.Enter += new System.EventHandler(this.txtbFiltAVLbyDESCR_Enter);
-            this.txtbFiltAVLbyDESCR.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtbFiltAVLbyDESCR_KeyDown);
-            this.txtbFiltAVLbyDESCR.Leave += new System.EventHandler(this.txtbFiltAVLbyDESCR_Leave);
+            txtbFiltAVLbyDESCR.Dock = DockStyle.Fill;
+            txtbFiltAVLbyDESCR.Location = new Point(826, 32);
+            txtbFiltAVLbyDESCR.Name = "txtbFiltAVLbyDESCR";
+            txtbFiltAVLbyDESCR.Size = new Size(349, 23);
+            txtbFiltAVLbyDESCR.TabIndex = 9;
+            txtbFiltAVLbyDESCR.TextAlign = HorizontalAlignment.Center;
+            txtbFiltAVLbyDESCR.TextChanged += txtbFiltAVLbyDESCR_TextChanged;
+            txtbFiltAVLbyDESCR.Enter += txtbFiltAVLbyDESCR_Enter;
+            txtbFiltAVLbyDESCR.KeyDown += txtbFiltAVLbyDESCR_KeyDown;
+            txtbFiltAVLbyDESCR.Leave += txtbFiltAVLbyDESCR_Leave;
             // 
             // groupBox3
             // 
-            this.groupBox3.AutoSize = true;
-            this.groupBox3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.groupBox3.Controls.Add(this.tableLayoutPanel2);
-            this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox3.Location = new System.Drawing.Point(3, 436);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(1184, 157);
-            this.groupBox3.TabIndex = 1;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Add selected item to STOCK";
+            groupBox3.AutoSize = true;
+            groupBox3.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            groupBox3.Controls.Add(tableLayoutPanel2);
+            groupBox3.Dock = DockStyle.Fill;
+            groupBox3.Location = new Point(3, 436);
+            groupBox3.Name = "groupBox3";
+            groupBox3.Size = new Size(1184, 157);
+            groupBox3.TabIndex = 1;
+            groupBox3.TabStop = false;
+            groupBox3.Text = "Add selected item to STOCK";
             // 
             // tableLayoutPanel2
             // 
-            this.tableLayoutPanel2.AutoSize = true;
-            this.tableLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel2.ColumnCount = 10;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.tableLayoutPanel2.Controls.Add(this.textBox7, 0, 1);
-            this.tableLayoutPanel2.Controls.Add(this.textBox3, 0, 1);
-            this.tableLayoutPanel2.Controls.Add(this.textBox4, 1, 1);
-            this.tableLayoutPanel2.Controls.Add(this.comboBox1, 6, 1);
-            this.tableLayoutPanel2.Controls.Add(dateTimePicker1, 5, 1);
-            this.tableLayoutPanel2.Controls.Add(this.textBox5, 3, 1);
-            this.tableLayoutPanel2.Controls.Add(this.textBox6, 4, 1);
-            this.tableLayoutPanel2.Controls.Add(this.label4, 0, 0);
-            this.tableLayoutPanel2.Controls.Add(this.label5, 1, 0);
-            this.tableLayoutPanel2.Controls.Add(this.label6, 3, 0);
-            this.tableLayoutPanel2.Controls.Add(this.label7, 4, 0);
-            this.tableLayoutPanel2.Controls.Add(this.label8, 5, 0);
-            this.tableLayoutPanel2.Controls.Add(this.label9, 6, 0);
-            this.tableLayoutPanel2.Controls.Add(this.label10, 7, 0);
-            this.tableLayoutPanel2.Controls.Add(this.label11, 2, 0);
-            this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel5, 7, 1);
-            this.tableLayoutPanel2.Controls.Add(this.label13, 9, 0);
-            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 19);
-            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 2;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(1178, 135);
-            this.tableLayoutPanel2.TabIndex = 7;
+            tableLayoutPanel2.AutoSize = true;
+            tableLayoutPanel2.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            tableLayoutPanel2.ColumnCount = 10;
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
+            tableLayoutPanel2.Controls.Add(textBox7, 0, 1);
+            tableLayoutPanel2.Controls.Add(textBox3, 0, 1);
+            tableLayoutPanel2.Controls.Add(textBox4, 1, 1);
+            tableLayoutPanel2.Controls.Add(comboBox1, 6, 1);
+            tableLayoutPanel2.Controls.Add(dateTimePicker1, 5, 1);
+            tableLayoutPanel2.Controls.Add(textBox5, 3, 1);
+            tableLayoutPanel2.Controls.Add(textBox6, 4, 1);
+            tableLayoutPanel2.Controls.Add(label4, 0, 0);
+            tableLayoutPanel2.Controls.Add(label5, 1, 0);
+            tableLayoutPanel2.Controls.Add(label6, 3, 0);
+            tableLayoutPanel2.Controls.Add(label7, 4, 0);
+            tableLayoutPanel2.Controls.Add(label8, 5, 0);
+            tableLayoutPanel2.Controls.Add(label9, 6, 0);
+            tableLayoutPanel2.Controls.Add(label10, 7, 0);
+            tableLayoutPanel2.Controls.Add(label11, 2, 0);
+            tableLayoutPanel2.Controls.Add(tableLayoutPanel5, 7, 1);
+            tableLayoutPanel2.Controls.Add(label13, 9, 0);
+            tableLayoutPanel2.Dock = DockStyle.Fill;
+            tableLayoutPanel2.Location = new Point(3, 19);
+            tableLayoutPanel2.Name = "tableLayoutPanel2";
+            tableLayoutPanel2.RowCount = 2;
+            tableLayoutPanel2.RowStyles.Add(new RowStyle());
+            tableLayoutPanel2.RowStyles.Add(new RowStyle());
+            tableLayoutPanel2.Size = new Size(1178, 135);
+            tableLayoutPanel2.TabIndex = 7;
             // 
             // textBox7
             // 
-            this.textBox7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox7.Location = new System.Drawing.Point(120, 18);
-            this.textBox7.Name = "textBox7";
-            this.textBox7.ReadOnly = true;
-            this.textBox7.Size = new System.Drawing.Size(111, 23);
-            this.textBox7.TabIndex = 1;
-            this.textBox7.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            textBox7.Dock = DockStyle.Fill;
+            textBox7.Location = new Point(120, 18);
+            textBox7.Name = "textBox7";
+            textBox7.ReadOnly = true;
+            textBox7.Size = new Size(111, 23);
+            textBox7.TabIndex = 1;
+            textBox7.TextAlign = HorizontalAlignment.Center;
             // 
             // textBox3
             // 
-            this.textBox3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox3.Location = new System.Drawing.Point(3, 18);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.ReadOnly = true;
-            this.textBox3.Size = new System.Drawing.Size(111, 23);
-            this.textBox3.TabIndex = 0;
-            this.textBox3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            textBox3.Dock = DockStyle.Fill;
+            textBox3.Location = new Point(3, 18);
+            textBox3.Name = "textBox3";
+            textBox3.ReadOnly = true;
+            textBox3.Size = new Size(111, 23);
+            textBox3.TabIndex = 0;
+            textBox3.TextAlign = HorizontalAlignment.Center;
             // 
             // textBox4
             // 
-            this.textBox4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox4.Location = new System.Drawing.Point(237, 18);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.ReadOnly = true;
-            this.textBox4.Size = new System.Drawing.Size(111, 23);
-            this.textBox4.TabIndex = 2;
-            this.textBox4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            textBox4.Dock = DockStyle.Fill;
+            textBox4.Location = new Point(237, 18);
+            textBox4.Name = "textBox4";
+            textBox4.ReadOnly = true;
+            textBox4.Size = new Size(111, 23);
+            textBox4.TabIndex = 2;
+            textBox4.TextAlign = HorizontalAlignment.Center;
             // 
             // comboBox1
             // 
-            this.comboBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
-            "5\"",
-            "7\"",
-            "10\"",
-            "13\"",
-            "15\"",
-            "Bag",
-            "Box",
-            "Stick",
-            "Stick_in_a_bag",
-            "Tray"});
-            this.comboBox1.Location = new System.Drawing.Point(705, 18);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(111, 23);
-            this.comboBox1.TabIndex = 6;
+            comboBox1.Dock = DockStyle.Fill;
+            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Items.AddRange(new object[] { "5\"", "7\"", "10\"", "13\"", "15\"", "Bag", "Box", "Stick", "Stick_in_a_bag", "Tray" });
+            comboBox1.Location = new Point(705, 18);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new Size(111, 23);
+            comboBox1.TabIndex = 6;
             // 
             // textBox5
             // 
-            this.textBox5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox5.Location = new System.Drawing.Point(354, 18);
-            this.textBox5.Multiline = true;
-            this.textBox5.Name = "textBox5";
-            this.textBox5.ReadOnly = true;
-            this.textBox5.Size = new System.Drawing.Size(111, 114);
-            this.textBox5.TabIndex = 3;
-            this.textBox5.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            textBox5.Dock = DockStyle.Fill;
+            textBox5.Location = new Point(354, 18);
+            textBox5.Multiline = true;
+            textBox5.Name = "textBox5";
+            textBox5.ReadOnly = true;
+            textBox5.Size = new Size(111, 114);
+            textBox5.TabIndex = 3;
+            textBox5.TextAlign = HorizontalAlignment.Center;
             // 
             // textBox6
             // 
-            this.textBox6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox6.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.textBox6.Location = new System.Drawing.Point(471, 18);
-            this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(111, 39);
-            this.textBox6.TabIndex = 4;
-            this.textBox6.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.textBox6.Enter += new System.EventHandler(this.textBox6_Enter);
-            this.textBox6.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox6_KeyDown);
-            this.textBox6.Leave += new System.EventHandler(this.textBox6_Leave);
+            textBox6.Dock = DockStyle.Fill;
+            textBox6.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
+            textBox6.Location = new Point(471, 18);
+            textBox6.Name = "textBox6";
+            textBox6.Size = new Size(111, 39);
+            textBox6.TabIndex = 4;
+            textBox6.TextAlign = HorizontalAlignment.Center;
+            textBox6.Enter += textBox6_Enter;
+            textBox6.KeyDown += textBox6_KeyDown;
+            textBox6.Leave += textBox6_Leave;
             // 
             // label4
             // 
-            this.label4.AutoSize = true;
-            this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label4.Location = new System.Drawing.Point(3, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(111, 15);
-            this.label4.TabIndex = 8;
-            this.label4.Text = "IPN";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            label4.AutoSize = true;
+            label4.Dock = DockStyle.Fill;
+            label4.Location = new Point(3, 0);
+            label4.Name = "label4";
+            label4.Size = new Size(111, 15);
+            label4.TabIndex = 8;
+            label4.Text = "IPN";
+            label4.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // label5
             // 
-            this.label5.AutoSize = true;
-            this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label5.Location = new System.Drawing.Point(120, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(111, 15);
-            this.label5.TabIndex = 8;
-            this.label5.Text = "Manufacturer";
-            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            label5.AutoSize = true;
+            label5.Dock = DockStyle.Fill;
+            label5.Location = new Point(120, 0);
+            label5.Name = "label5";
+            label5.Size = new Size(111, 15);
+            label5.TabIndex = 8;
+            label5.Text = "Manufacturer";
+            label5.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // label6
             // 
-            this.label6.AutoSize = true;
-            this.label6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label6.Location = new System.Drawing.Point(354, 0);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(111, 15);
-            this.label6.TabIndex = 8;
-            this.label6.Text = "Description";
-            this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            label6.AutoSize = true;
+            label6.Dock = DockStyle.Fill;
+            label6.Location = new Point(354, 0);
+            label6.Name = "label6";
+            label6.Size = new Size(111, 15);
+            label6.TabIndex = 8;
+            label6.Text = "Description";
+            label6.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // label7
             // 
-            this.label7.AutoSize = true;
-            this.label7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label7.Location = new System.Drawing.Point(471, 0);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(111, 15);
-            this.label7.TabIndex = 8;
-            this.label7.Text = "Quantity";
-            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            label7.AutoSize = true;
+            label7.Dock = DockStyle.Fill;
+            label7.Location = new Point(471, 0);
+            label7.Name = "label7";
+            label7.Size = new Size(111, 15);
+            label7.TabIndex = 8;
+            label7.Text = "Quantity";
+            label7.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // label8
             // 
-            this.label8.AutoSize = true;
-            this.label8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label8.Location = new System.Drawing.Point(588, 0);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(111, 15);
-            this.label8.TabIndex = 8;
-            this.label8.Text = "Date";
-            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            label8.AutoSize = true;
+            label8.Dock = DockStyle.Fill;
+            label8.Location = new Point(588, 0);
+            label8.Name = "label8";
+            label8.Size = new Size(111, 15);
+            label8.TabIndex = 8;
+            label8.Text = "Date";
+            label8.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // label9
             // 
-            this.label9.AutoSize = true;
-            this.label9.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label9.Location = new System.Drawing.Point(705, 0);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(111, 15);
-            this.label9.TabIndex = 8;
-            this.label9.Text = "Package type";
-            this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            label9.AutoSize = true;
+            label9.Dock = DockStyle.Fill;
+            label9.Location = new Point(705, 0);
+            label9.Name = "label9";
+            label9.Size = new Size(111, 15);
+            label9.TabIndex = 8;
+            label9.Text = "Package type";
+            label9.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // label10
             // 
-            this.label10.AutoSize = true;
-            this.tableLayoutPanel2.SetColumnSpan(this.label10, 2);
-            this.label10.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label10.Location = new System.Drawing.Point(822, 0);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(228, 15);
-            this.label10.TabIndex = 8;
-            this.label10.Text = "Source (IN)";
-            this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            label10.AutoSize = true;
+            tableLayoutPanel2.SetColumnSpan(label10, 2);
+            label10.Dock = DockStyle.Fill;
+            label10.Location = new Point(822, 0);
+            label10.Name = "label10";
+            label10.Size = new Size(228, 15);
+            label10.TabIndex = 8;
+            label10.Text = "Source (IN)";
+            label10.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // label11
             // 
-            this.label11.AutoSize = true;
-            this.label11.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label11.Location = new System.Drawing.Point(237, 0);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(111, 15);
-            this.label11.TabIndex = 9;
-            this.label11.Text = "MFPN";
-            this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            label11.AutoSize = true;
+            label11.Dock = DockStyle.Fill;
+            label11.Location = new Point(237, 0);
+            label11.Name = "label11";
+            label11.Size = new Size(111, 15);
+            label11.TabIndex = 9;
+            label11.Text = "MFPN";
+            label11.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // tableLayoutPanel5
             // 
-            this.tableLayoutPanel5.AutoSize = true;
-            this.tableLayoutPanel5.ColumnCount = 3;
-            this.tableLayoutPanel2.SetColumnSpan(this.tableLayoutPanel5, 3);
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel5.Controls.Add(this.btnMove, 0, 1);
-            this.tableLayoutPanel5.Controls.Add(this.radioButton1, 0, 0);
-            this.tableLayoutPanel5.Controls.Add(this.radioButton2, 1, 0);
-            this.tableLayoutPanel5.Controls.Add(this.radioButton4, 2, 0);
-            this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel5.Location = new System.Drawing.Point(822, 18);
-            this.tableLayoutPanel5.Name = "tableLayoutPanel5";
-            this.tableLayoutPanel5.RowCount = 2;
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(353, 114);
-            this.tableLayoutPanel5.TabIndex = 10;
+            tableLayoutPanel5.AutoSize = true;
+            tableLayoutPanel5.ColumnCount = 3;
+            tableLayoutPanel2.SetColumnSpan(tableLayoutPanel5, 3);
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33333F));
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33333F));
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33333F));
+            tableLayoutPanel5.Controls.Add(btnMove, 0, 1);
+            tableLayoutPanel5.Controls.Add(radioButton1, 0, 0);
+            tableLayoutPanel5.Controls.Add(radioButton2, 1, 0);
+            tableLayoutPanel5.Controls.Add(radioButton4, 2, 0);
+            tableLayoutPanel5.Dock = DockStyle.Fill;
+            tableLayoutPanel5.Location = new Point(822, 18);
+            tableLayoutPanel5.Name = "tableLayoutPanel5";
+            tableLayoutPanel5.RowCount = 2;
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel5.Size = new Size(353, 114);
+            tableLayoutPanel5.TabIndex = 10;
             // 
             // btnMove
             // 
-            this.btnMove.AutoSize = true;
-            this.btnMove.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnMove.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.tableLayoutPanel5.SetColumnSpan(this.btnMove, 3);
-            this.btnMove.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnMove.Location = new System.Drawing.Point(3, 60);
-            this.btnMove.Name = "btnMove";
-            this.btnMove.Size = new System.Drawing.Size(347, 51);
-            this.btnMove.TabIndex = 15;
-            this.btnMove.Text = "MOVE";
-            this.btnMove.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnMove.UseVisualStyleBackColor = true;
-            this.btnMove.Click += new System.EventHandler(this.btnMove_Click);
+            btnMove.AutoSize = true;
+            btnMove.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnMove.BackgroundImageLayout = ImageLayout.Zoom;
+            tableLayoutPanel5.SetColumnSpan(btnMove, 3);
+            btnMove.Dock = DockStyle.Fill;
+            btnMove.Location = new Point(3, 60);
+            btnMove.Name = "btnMove";
+            btnMove.Size = new Size(347, 51);
+            btnMove.TabIndex = 15;
+            btnMove.Text = "MOVE";
+            btnMove.TextAlign = ContentAlignment.MiddleLeft;
+            btnMove.UseVisualStyleBackColor = true;
+            btnMove.Click += btnMove_Click;
             // 
             // radioButton1
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.radioButton1.CheckAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.radioButton1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.radioButton1.Location = new System.Drawing.Point(3, 3);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(111, 51);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.Text = "MOVE IN (MFG)";
-            this.radioButton1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.radioButton1.UseVisualStyleBackColor = false;
-            this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
+            radioButton1.AutoSize = true;
+            radioButton1.BackColor = Color.FromArgb(192, 255, 192);
+            radioButton1.CheckAlign = ContentAlignment.TopCenter;
+            radioButton1.Dock = DockStyle.Fill;
+            radioButton1.Location = new Point(3, 3);
+            radioButton1.Name = "radioButton1";
+            radioButton1.Size = new Size(111, 51);
+            radioButton1.TabIndex = 0;
+            radioButton1.Text = "MOVE IN (MFG)";
+            radioButton1.TextAlign = ContentAlignment.MiddleCenter;
+            radioButton1.UseVisualStyleBackColor = false;
+            radioButton1.CheckedChanged += radioButton1_CheckedChanged;
             // 
             // radioButton2
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.radioButton2.CheckAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.radioButton2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.radioButton2.Location = new System.Drawing.Point(120, 3);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(111, 51);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.Text = "MOVE IN (source)";
-            this.radioButton2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.radioButton2.UseVisualStyleBackColor = false;
-            this.radioButton2.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
+            radioButton2.AutoSize = true;
+            radioButton2.BackColor = Color.FromArgb(192, 255, 192);
+            radioButton2.CheckAlign = ContentAlignment.TopCenter;
+            radioButton2.Dock = DockStyle.Fill;
+            radioButton2.Location = new Point(120, 3);
+            radioButton2.Name = "radioButton2";
+            radioButton2.Size = new Size(111, 51);
+            radioButton2.TabIndex = 1;
+            radioButton2.Text = "MOVE IN (source)";
+            radioButton2.TextAlign = ContentAlignment.MiddleCenter;
+            radioButton2.UseVisualStyleBackColor = false;
+            radioButton2.CheckedChanged += radioButton2_CheckedChanged;
             // 
             // radioButton4
             // 
-            this.radioButton4.AutoSize = true;
-            this.radioButton4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
-            this.radioButton4.CheckAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.radioButton4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.radioButton4.Location = new System.Drawing.Point(237, 3);
-            this.radioButton4.Name = "radioButton4";
-            this.radioButton4.Size = new System.Drawing.Size(113, 51);
-            this.radioButton4.TabIndex = 14;
-            this.radioButton4.Text = "MOVE OUT (to WO)";
-            this.radioButton4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.radioButton4.UseVisualStyleBackColor = false;
-            this.radioButton4.CheckedChanged += new System.EventHandler(this.radioButton4_CheckedChanged);
+            radioButton4.AutoSize = true;
+            radioButton4.BackColor = Color.FromArgb(255, 192, 192);
+            radioButton4.CheckAlign = ContentAlignment.BottomCenter;
+            radioButton4.Dock = DockStyle.Fill;
+            radioButton4.Location = new Point(237, 3);
+            radioButton4.Name = "radioButton4";
+            radioButton4.Size = new Size(113, 51);
+            radioButton4.TabIndex = 14;
+            radioButton4.Text = "MOVE OUT (to WO)";
+            radioButton4.TextAlign = ContentAlignment.MiddleCenter;
+            radioButton4.UseVisualStyleBackColor = false;
+            radioButton4.CheckedChanged += radioButton4_CheckedChanged;
             // 
             // label13
             // 
-            this.label13.AutoSize = true;
-            this.label13.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label13.Location = new System.Drawing.Point(1056, 0);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(119, 15);
-            this.label13.TabIndex = 12;
-            this.label13.Text = "Requester (OUT)";
-            this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            label13.AutoSize = true;
+            label13.Dock = DockStyle.Fill;
+            label13.Location = new Point(1056, 0);
+            label13.Name = "label13";
+            label13.Size = new Size(119, 15);
+            label13.TabIndex = 12;
+            label13.Text = "Requester (OUT)";
+            label13.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // groupBox4
             // 
-            this.groupBox4.AutoSize = true;
-            this.groupBox4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.groupBox4.Controls.Add(this.tableLayoutPanel6);
-            this.groupBox4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox4.Location = new System.Drawing.Point(3, 599);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(1184, 127);
-            this.groupBox4.TabIndex = 2;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Stock VIEW filtered by selected item";
+            groupBox4.AutoSize = true;
+            groupBox4.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            groupBox4.Controls.Add(tableLayoutPanel6);
+            groupBox4.Dock = DockStyle.Fill;
+            groupBox4.Location = new Point(3, 599);
+            groupBox4.Name = "groupBox4";
+            groupBox4.Size = new Size(1184, 127);
+            groupBox4.TabIndex = 2;
+            groupBox4.TabStop = false;
+            groupBox4.Text = "Stock VIEW filtered by selected item";
             // 
             // tableLayoutPanel6
             // 
-            this.tableLayoutPanel6.ColumnCount = 4;
-            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanel6.Controls.Add(this.tableLayoutPanel7, 1, 0);
-            this.tableLayoutPanel6.Controls.Add(this.button3, 0, 0);
-            this.tableLayoutPanel6.Controls.Add(this.groupBox7, 0, 1);
-            this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel6.Location = new System.Drawing.Point(3, 19);
-            this.tableLayoutPanel6.Name = "tableLayoutPanel6";
-            this.tableLayoutPanel6.RowCount = 2;
-            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel6.Size = new System.Drawing.Size(1178, 105);
-            this.tableLayoutPanel6.TabIndex = 1;
+            tableLayoutPanel6.ColumnCount = 4;
+            tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel6.Controls.Add(tableLayoutPanel7, 1, 0);
+            tableLayoutPanel6.Controls.Add(button3, 0, 0);
+            tableLayoutPanel6.Controls.Add(groupBox7, 0, 1);
+            tableLayoutPanel6.Dock = DockStyle.Fill;
+            tableLayoutPanel6.Location = new Point(3, 19);
+            tableLayoutPanel6.Name = "tableLayoutPanel6";
+            tableLayoutPanel6.RowCount = 2;
+            tableLayoutPanel6.RowStyles.Add(new RowStyle());
+            tableLayoutPanel6.RowStyles.Add(new RowStyle());
+            tableLayoutPanel6.Size = new Size(1178, 105);
+            tableLayoutPanel6.TabIndex = 1;
             // 
             // tableLayoutPanel7
             // 
-            this.tableLayoutPanel7.ColumnCount = 3;
-            this.tableLayoutPanel6.SetColumnSpan(this.tableLayoutPanel7, 3);
-            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel7.Controls.Add(this.label15, 1, 0);
-            this.tableLayoutPanel7.Controls.Add(this.textBox10, 0, 0);
-            this.tableLayoutPanel7.Controls.Add(this.button4, 2, 0);
-            this.tableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel7.Location = new System.Drawing.Point(297, 3);
-            this.tableLayoutPanel7.Name = "tableLayoutPanel7";
-            this.tableLayoutPanel7.RowCount = 1;
-            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel7.Size = new System.Drawing.Size(878, 39);
-            this.tableLayoutPanel7.TabIndex = 1;
+            tableLayoutPanel7.ColumnCount = 3;
+            tableLayoutPanel6.SetColumnSpan(tableLayoutPanel7, 3);
+            tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33333F));
+            tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33333F));
+            tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33333F));
+            tableLayoutPanel7.Controls.Add(label15, 1, 0);
+            tableLayoutPanel7.Controls.Add(textBox10, 0, 0);
+            tableLayoutPanel7.Controls.Add(button4, 2, 0);
+            tableLayoutPanel7.Dock = DockStyle.Fill;
+            tableLayoutPanel7.Location = new Point(297, 3);
+            tableLayoutPanel7.Name = "tableLayoutPanel7";
+            tableLayoutPanel7.RowCount = 1;
+            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel7.Size = new Size(878, 39);
+            tableLayoutPanel7.TabIndex = 1;
             // 
             // label15
             // 
-            this.label15.AutoSize = true;
-            this.label15.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label15.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label15.Location = new System.Drawing.Point(295, 0);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(286, 39);
-            this.label15.TabIndex = 5;
-            this.label15.Text = "BALANCE : ";
-            this.label15.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            label15.AutoSize = true;
+            label15.Dock = DockStyle.Fill;
+            label15.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point);
+            label15.Location = new Point(295, 0);
+            label15.Name = "label15";
+            label15.Size = new Size(286, 39);
+            label15.TabIndex = 5;
+            label15.Text = "BALANCE : ";
+            label15.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // textBox10
             // 
-            this.textBox10.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox10.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.textBox10.Location = new System.Drawing.Point(3, 3);
-            this.textBox10.Name = "textBox10";
-            this.textBox10.ReadOnly = true;
-            this.textBox10.Size = new System.Drawing.Size(286, 33);
-            this.textBox10.TabIndex = 3;
-            this.textBox10.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            textBox10.Dock = DockStyle.Fill;
+            textBox10.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point);
+            textBox10.Location = new Point(3, 3);
+            textBox10.Name = "textBox10";
+            textBox10.ReadOnly = true;
+            textBox10.Size = new Size(286, 33);
+            textBox10.TabIndex = 3;
+            textBox10.TextAlign = HorizontalAlignment.Center;
             // 
             // button4
             // 
-            this.button4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button4.Location = new System.Drawing.Point(587, 3);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(288, 33);
-            this.button4.TabIndex = 4;
-            this.button4.Text = "FIlter Current WH stock ONLY";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click_1);
+            button4.Dock = DockStyle.Fill;
+            button4.Location = new Point(587, 3);
+            button4.Name = "button4";
+            button4.Size = new Size(288, 33);
+            button4.TabIndex = 4;
+            button4.Text = "FIlter Current WH stock ONLY";
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += button4_Click_1;
             // 
             // button3
             // 
-            this.button3.AutoSize = true;
-            this.button3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button3.Location = new System.Drawing.Point(3, 3);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(288, 39);
-            this.button3.TabIndex = 1;
-            this.button3.Text = "LOAD STOCK";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            button3.AutoSize = true;
+            button3.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            button3.Dock = DockStyle.Fill;
+            button3.Location = new Point(3, 3);
+            button3.Name = "button3";
+            button3.Size = new Size(288, 39);
+            button3.TabIndex = 1;
+            button3.Text = "LOAD STOCK";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
             // 
             // groupBox7
             // 
-            this.tableLayoutPanel6.SetColumnSpan(this.groupBox7, 4);
-            this.groupBox7.Controls.Add(this.dataGridView1);
-            this.groupBox7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox7.Location = new System.Drawing.Point(3, 48);
-            this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(1172, 136);
-            this.groupBox7.TabIndex = 2;
-            this.groupBox7.TabStop = false;
-            this.groupBox7.Text = "Stock";
+            tableLayoutPanel6.SetColumnSpan(groupBox7, 4);
+            groupBox7.Controls.Add(dataGridView1);
+            groupBox7.Dock = DockStyle.Fill;
+            groupBox7.Location = new Point(3, 48);
+            groupBox7.Name = "groupBox7";
+            groupBox7.Size = new Size(1172, 136);
+            groupBox7.TabIndex = 2;
+            groupBox7.TabStop = false;
+            groupBox7.Text = "Stock";
             // 
             // dataGridView1
             // 
-            this.dataGridView1.AllowUserToAddRows = false;
-            this.dataGridView1.AllowUserToDeleteRows = false;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView1.Location = new System.Drawing.Point(3, 19);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.RowTemplate.Height = 25;
-            this.dataGridView1.Size = new System.Drawing.Size(1166, 114);
-            this.dataGridView1.TabIndex = 0;
-            this.dataGridView1.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellDoubleClick);
+            dataGridView1.AllowUserToAddRows = false;
+            dataGridView1.AllowUserToDeleteRows = false;
+            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView1.Dock = DockStyle.Fill;
+            dataGridView1.Location = new Point(3, 19);
+            dataGridView1.Name = "dataGridView1";
+            dataGridView1.ReadOnly = true;
+            dataGridView1.RowTemplate.Height = 25;
+            dataGridView1.Size = new Size(1166, 114);
+            dataGridView1.TabIndex = 0;
+            dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
             // 
             // groupBox5
             // 
-            this.groupBox5.AutoSize = true;
-            this.groupBox5.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.groupBox5.Controls.Add(this.tableLayoutPanel4);
-            this.groupBox5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox5.Location = new System.Drawing.Point(3, 350);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(1184, 80);
-            this.groupBox5.TabIndex = 3;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Source / Requester selector";
+            groupBox5.AutoSize = true;
+            groupBox5.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            groupBox5.Controls.Add(tableLayoutPanel4);
+            groupBox5.Dock = DockStyle.Fill;
+            groupBox5.Location = new Point(3, 350);
+            groupBox5.Name = "groupBox5";
+            groupBox5.Size = new Size(1184, 80);
+            groupBox5.TabIndex = 3;
+            groupBox5.TabStop = false;
+            groupBox5.Text = "Source / Requester selector";
             // 
             // tableLayoutPanel4
             // 
-            this.tableLayoutPanel4.AutoSize = true;
-            this.tableLayoutPanel4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel4.ColumnCount = 4;
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.tableLayoutPanel4.Controls.Add(this.label14, 2, 0);
-            this.tableLayoutPanel4.Controls.Add(this.textBox9, 2, 1);
-            this.tableLayoutPanel4.Controls.Add(this.comboBox2, 0, 1);
-            this.tableLayoutPanel4.Controls.Add(this.textBox8, 1, 1);
-            this.tableLayoutPanel4.Controls.Add(this.label12, 0, 0);
-            this.tableLayoutPanel4.Controls.Add(this.lblSendTo, 3, 0);
-            this.tableLayoutPanel4.Controls.Add(this.lblRWK, 3, 1);
-            this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(3, 19);
-            this.tableLayoutPanel4.Name = "tableLayoutPanel4";
-            this.tableLayoutPanel4.RowCount = 2;
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(1178, 58);
-            this.tableLayoutPanel4.TabIndex = 0;
+            tableLayoutPanel4.AutoSize = true;
+            tableLayoutPanel4.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            tableLayoutPanel4.ColumnCount = 4;
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
+            tableLayoutPanel4.Controls.Add(label14, 2, 0);
+            tableLayoutPanel4.Controls.Add(textBox9, 2, 1);
+            tableLayoutPanel4.Controls.Add(comboBox2, 0, 1);
+            tableLayoutPanel4.Controls.Add(textBox8, 1, 1);
+            tableLayoutPanel4.Controls.Add(label12, 0, 0);
+            tableLayoutPanel4.Controls.Add(lblSendTo, 3, 0);
+            tableLayoutPanel4.Controls.Add(lblRWK, 3, 1);
+            tableLayoutPanel4.Dock = DockStyle.Fill;
+            tableLayoutPanel4.Location = new Point(3, 19);
+            tableLayoutPanel4.Name = "tableLayoutPanel4";
+            tableLayoutPanel4.RowCount = 2;
+            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel4.Size = new Size(1178, 58);
+            tableLayoutPanel4.TabIndex = 0;
             // 
             // label14
             // 
-            this.label14.AutoSize = true;
-            this.label14.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label14.Location = new System.Drawing.Point(709, 0);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(347, 29);
-            this.label14.TabIndex = 4;
-            this.label14.Text = "WO";
-            this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            label14.AutoSize = true;
+            label14.Dock = DockStyle.Fill;
+            label14.Location = new Point(709, 0);
+            label14.Name = "label14";
+            label14.Size = new Size(347, 29);
+            label14.TabIndex = 4;
+            label14.Text = "WO";
+            label14.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // textBox9
             // 
-            this.textBox9.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox9.Location = new System.Drawing.Point(709, 32);
-            this.textBox9.Name = "textBox9";
-            this.textBox9.Size = new System.Drawing.Size(347, 23);
-            this.textBox9.TabIndex = 1;
-            this.textBox9.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.textBox9.Enter += new System.EventHandler(this.textBox9_Enter);
-            this.textBox9.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox9_KeyDown_1);
-            this.textBox9.Leave += new System.EventHandler(this.textBox9_Leave);
+            textBox9.Dock = DockStyle.Fill;
+            textBox9.Location = new Point(709, 32);
+            textBox9.Name = "textBox9";
+            textBox9.Size = new Size(347, 23);
+            textBox9.TabIndex = 1;
+            textBox9.TextAlign = HorizontalAlignment.Center;
+            textBox9.Enter += textBox9_Enter;
+            textBox9.KeyDown += textBox9_KeyDown_1;
+            textBox9.Leave += textBox9_Leave;
             // 
             // comboBox2
             // 
-            this.comboBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Items.AddRange(new object[] {
-            "GILT_",
-            "WS2300",
-            "WR2300",
-            "SH2300",
-            "IF"});
-            this.comboBox2.Location = new System.Drawing.Point(3, 32);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.comboBox2.Size = new System.Drawing.Size(347, 23);
-            this.comboBox2.TabIndex = 5;
-            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
+            comboBox2.Dock = DockStyle.Fill;
+            comboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBox2.FormattingEnabled = true;
+            comboBox2.Items.AddRange(new object[] { "GILT_", "WS2300", "WR2300", "SH2300", "IF" });
+            comboBox2.Location = new Point(3, 32);
+            comboBox2.Name = "comboBox2";
+            comboBox2.RightToLeft = RightToLeft.No;
+            comboBox2.Size = new Size(347, 23);
+            comboBox2.TabIndex = 5;
+            comboBox2.SelectedIndexChanged += comboBox2_SelectedIndexChanged;
             // 
             // textBox8
             // 
-            this.textBox8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox8.Location = new System.Drawing.Point(356, 32);
-            this.textBox8.Name = "textBox8";
-            this.textBox8.Size = new System.Drawing.Size(347, 23);
-            this.textBox8.TabIndex = 0;
-            this.textBox8.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.textBox8.Enter += new System.EventHandler(this.textBox8_Enter);
-            this.textBox8.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox8_KeyDown);
-            this.textBox8.Leave += new System.EventHandler(this.textBox8_Leave);
+            textBox8.Dock = DockStyle.Fill;
+            textBox8.Location = new Point(356, 32);
+            textBox8.Name = "textBox8";
+            textBox8.Size = new Size(347, 23);
+            textBox8.TabIndex = 0;
+            textBox8.TextAlign = HorizontalAlignment.Center;
+            textBox8.Enter += textBox8_Enter;
+            textBox8.KeyDown += textBox8_KeyDown;
+            textBox8.Leave += textBox8_Leave;
             // 
             // label12
             // 
-            this.label12.AutoSize = true;
-            this.tableLayoutPanel4.SetColumnSpan(this.label12, 2);
-            this.label12.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label12.Location = new System.Drawing.Point(3, 0);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(700, 29);
-            this.label12.TabIndex = 6;
-            this.label12.Text = "Select GILT/WS/WR/SH/IF source";
-            this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            label12.AutoSize = true;
+            tableLayoutPanel4.SetColumnSpan(label12, 2);
+            label12.Dock = DockStyle.Fill;
+            label12.Location = new Point(3, 0);
+            label12.Name = "label12";
+            label12.Size = new Size(700, 29);
+            label12.TabIndex = 6;
+            label12.Text = "Select GILT/WS/WR/SH/IF source";
+            label12.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblSendTo
             // 
-            this.lblSendTo.AutoSize = true;
-            this.lblSendTo.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblSendTo.Location = new System.Drawing.Point(1062, 0);
-            this.lblSendTo.Name = "lblSendTo";
-            this.lblSendTo.Size = new System.Drawing.Size(113, 29);
-            this.lblSendTo.TabIndex = 7;
-            this.lblSendTo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblSendTo.Click += new System.EventHandler(this.lblSendTo_Click);
+            lblSendTo.AutoSize = true;
+            lblSendTo.Dock = DockStyle.Fill;
+            lblSendTo.Location = new Point(1062, 0);
+            lblSendTo.Name = "lblSendTo";
+            lblSendTo.Size = new Size(113, 29);
+            lblSendTo.TabIndex = 7;
+            lblSendTo.TextAlign = ContentAlignment.MiddleCenter;
+            lblSendTo.Click += lblSendTo_Click;
             // 
             // lblRWK
             // 
-            this.lblRWK.AutoSize = true;
-            this.lblRWK.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblRWK.Location = new System.Drawing.Point(1062, 29);
-            this.lblRWK.Name = "lblRWK";
-            this.lblRWK.Size = new System.Drawing.Size(113, 29);
-            this.lblRWK.TabIndex = 8;
-            this.lblRWK.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblRWK.Click += new System.EventHandler(this.lblRWK_Click);
+            lblRWK.AutoSize = true;
+            lblRWK.Dock = DockStyle.Fill;
+            lblRWK.Location = new Point(1062, 29);
+            lblRWK.Name = "lblRWK";
+            lblRWK.Size = new Size(113, 29);
+            lblRWK.TabIndex = 8;
+            lblRWK.TextAlign = ContentAlignment.MiddleCenter;
+            lblRWK.Click += lblRWK_Click;
             // 
             // groupBox6
             // 
-            this.groupBox6.Controls.Add(this.dataGridView2);
-            this.groupBox6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox6.Location = new System.Drawing.Point(3, 89);
-            this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(1184, 255);
-            this.groupBox6.TabIndex = 4;
-            this.groupBox6.TabStop = false;
-            this.groupBox6.Text = "AVL view";
+            groupBox6.Controls.Add(dataGridView2);
+            groupBox6.Dock = DockStyle.Fill;
+            groupBox6.Location = new Point(3, 89);
+            groupBox6.Name = "groupBox6";
+            groupBox6.Size = new Size(1184, 255);
+            groupBox6.TabIndex = 4;
+            groupBox6.TabStop = false;
+            groupBox6.Text = "AVL view";
             // 
             // dataGridView2
             // 
-            this.dataGridView2.AllowUserToAddRows = false;
-            this.dataGridView2.AllowUserToDeleteRows = false;
-            this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView2.Location = new System.Drawing.Point(3, 19);
-            this.dataGridView2.MultiSelect = false;
-            this.dataGridView2.Name = "dataGridView2";
-            this.dataGridView2.ReadOnly = true;
-            this.dataGridView2.RowTemplate.Height = 25;
-            this.dataGridView2.Size = new System.Drawing.Size(1178, 233);
-            this.dataGridView2.TabIndex = 0;
-            this.dataGridView2.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellClick);
-            this.dataGridView2.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellDoubleClick);
-            this.dataGridView2.SelectionChanged += new System.EventHandler(this.dataGridView2_SelectionChanged);
+            dataGridView2.AllowUserToAddRows = false;
+            dataGridView2.AllowUserToDeleteRows = false;
+            dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView2.Dock = DockStyle.Fill;
+            dataGridView2.Location = new Point(3, 19);
+            dataGridView2.MultiSelect = false;
+            dataGridView2.Name = "dataGridView2";
+            dataGridView2.ReadOnly = true;
+            dataGridView2.RowTemplate.Height = 25;
+            dataGridView2.Size = new Size(1178, 233);
+            dataGridView2.TabIndex = 0;
+            dataGridView2.CellClick += dataGridView2_CellClick;
+            dataGridView2.CellDoubleClick += dataGridView2_CellDoubleClick;
+            dataGridView2.SelectionChanged += dataGridView2_SelectionChanged;
             // 
             // FrmClientAgnosticWH
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1210, 785);
-            this.Controls.Add(this.groupBox1);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "FrmClientAgnosticWH";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Client Agnostic WH";
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-            this.Load += new System.EventHandler(this.FrmClientAgnosticWH_Load);
-            this.groupBox1.ResumeLayout(false);
-            this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
-            this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            this.tableLayoutPanel3.ResumeLayout(false);
-            this.tableLayoutPanel3.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
-            this.tableLayoutPanel2.ResumeLayout(false);
-            this.tableLayoutPanel2.PerformLayout();
-            this.tableLayoutPanel5.ResumeLayout(false);
-            this.tableLayoutPanel5.PerformLayout();
-            this.groupBox4.ResumeLayout(false);
-            this.tableLayoutPanel6.ResumeLayout(false);
-            this.tableLayoutPanel6.PerformLayout();
-            this.tableLayoutPanel7.ResumeLayout(false);
-            this.tableLayoutPanel7.PerformLayout();
-            this.groupBox7.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
-            this.tableLayoutPanel4.ResumeLayout(false);
-            this.tableLayoutPanel4.PerformLayout();
-            this.groupBox6.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
-            this.ResumeLayout(false);
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(1210, 785);
+            Controls.Add(groupBox1);
+            Icon = (Icon)resources.GetObject("$this.Icon");
+            Name = "FrmClientAgnosticWH";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Client Agnostic WH";
+            WindowState = FormWindowState.Maximized;
+            Load += FrmClientAgnosticWH_Load;
+            groupBox1.ResumeLayout(false);
+            tabControl1.ResumeLayout(false);
+            tabPage1.ResumeLayout(false);
+            tabPage1.PerformLayout();
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
+            groupBox2.ResumeLayout(false);
+            groupBox2.PerformLayout();
+            tableLayoutPanel3.ResumeLayout(false);
+            tableLayoutPanel3.PerformLayout();
+            groupBox3.ResumeLayout(false);
+            groupBox3.PerformLayout();
+            tableLayoutPanel2.ResumeLayout(false);
+            tableLayoutPanel2.PerformLayout();
+            tableLayoutPanel5.ResumeLayout(false);
+            tableLayoutPanel5.PerformLayout();
+            groupBox4.ResumeLayout(false);
+            tableLayoutPanel6.ResumeLayout(false);
+            tableLayoutPanel6.PerformLayout();
+            tableLayoutPanel7.ResumeLayout(false);
+            tableLayoutPanel7.PerformLayout();
+            groupBox7.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            groupBox5.ResumeLayout(false);
+            groupBox5.PerformLayout();
+            tableLayoutPanel4.ResumeLayout(false);
+            tableLayoutPanel4.PerformLayout();
+            groupBox6.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
+            ResumeLayout(false);
         }
         #endregion
         private GroupBox groupBox1;

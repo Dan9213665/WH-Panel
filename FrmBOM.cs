@@ -59,8 +59,9 @@ namespace WH_Panel
         }
         private void ResetViews()
         {
-            checkBox1.Checked = true;
-            checkBox1.BackColor = Color.LightGreen;
+            checkBox1.Checked = false;
+            checkBox1.BackColor = Color.IndianRed;
+            checkBox1.Text = "No sticker needed";
             listBox1.Items.Clear();
             listBox1.Update();
             label13.Text = "No Errors detected.";
@@ -817,6 +818,8 @@ namespace WH_Panel
                 };
                 if (!System.String.IsNullOrEmpty(warehouseSelectorBasedOnItem(w)))
                 {
+                    itemToTransfer.Manufacturer = getTheManufacturerFromTheStock(warehouseSelectorBasedOnItem(w), itemToTransfer);
+                    itemToTransfer.ReelBagTrayStick = getTheReelBagTrayStickFromTheStock(warehouseSelectorBasedOnItem(w), itemToTransfer);
                     DataInserter(warehouseSelectorBasedOnItem(w), "STOCK", itemToTransfer);
                 }
             }
@@ -825,6 +828,67 @@ namespace WH_Panel
                 MessageBox.Show(e.Message);
                 throw;
             }
+        }
+        private string getTheManufacturerFromTheStock(string fp, WHitem itemTolookby)
+        {
+            string manufacturerFromStock = string.Empty;
+            try
+            {
+                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+                using (OleDbConnection conn = new OleDbConnection(constr))
+                {
+                    conn.Open();
+                    OleDbCommand command = new OleDbCommand("SELECT * FROM [STOCK$] WHERE IPN=? AND MFPN=? AND Stock=?", conn);
+                    command.Parameters.AddWithValue("@IPN", itemTolookby.IPN);
+                    command.Parameters.AddWithValue("@MFPN", itemTolookby.MFPN);
+                    command.Parameters.AddWithValue("@Stock", Math.Abs(itemTolookby.Stock));
+                    OleDbDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        //MessageBox.Show("Manufacturer from stock: " + reader["Manufacturer"].ToString());
+                        manufacturerFromStock = reader["Manufacturer"].ToString();
+                        break;
+                        // Add more code here to display other columns or perform other actions on each row
+                    }
+                    reader.Close();
+                    conn.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+            return manufacturerFromStock;
+        }
+        private string getTheReelBagTrayStickFromTheStock(string fp, WHitem itemTolookby)
+        {
+            string ReelBagTrayStickFromStock = string.Empty;
+            try
+            {
+                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+                using (OleDbConnection conn = new OleDbConnection(constr))
+                {
+                    conn.Open();
+                    OleDbCommand command = new OleDbCommand("SELECT * FROM [STOCK$] WHERE IPN=? AND MFPN=? AND Stock=?", conn);
+                    command.Parameters.AddWithValue("@IPN", itemTolookby.IPN);
+                    command.Parameters.AddWithValue("@MFPN", itemTolookby.MFPN);
+                    command.Parameters.AddWithValue("@Stock", Math.Abs(itemTolookby.Stock));
+                    OleDbDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        //MessageBox.Show("ReelBagTrayStick from stock: " + reader["Comments"].ToString());
+                        ReelBagTrayStickFromStock = reader["Comments"].ToString();
+                        break;
+                        // Add more code here to display other columns or perform other actions on each row
+                    }
+                    reader.Close();
+                    conn.Close();
+                }
+            }
+            catch
+            {
+            }
+            return ReelBagTrayStickFromStock;
         }
         private string avlSelectorBasedOnItem(KitHistoryItem w)
         {
@@ -890,6 +954,7 @@ namespace WH_Panel
                     conn.Open();
                     OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$] (IPN,Manufacturer,MFPN,Description,Stock,Updated_on,Comments,Source_Requester) values('" + wHitem.IPN + "','" + wHitem.Manufacturer + "','" + wHitem.MFPN + "','" + wHitem.Description + "','" + wHitem.Stock + "','" + wHitem.UpdatedOn + "','" + wHitem.ReelBagTrayStick + "','" + wHitem.SourceRequester + "')", conn);
                     command.ExecuteNonQuery();
+
                     conn.Close();
                 }
                 txtbQtyToAdd.Clear();
@@ -932,6 +997,26 @@ namespace WH_Panel
             static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
             [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Auto)]
             static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
+        }
+
+        private void dataGridView2_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            WHitem itemToPrint = new WHitem();
+            if (dataGridView2.SelectedCells.Count == 1)
+            {
+                int rowindex = dataGridView2.CurrentCell.RowIndex;
+                itemToPrint.IPN = dataGridView2.Rows[rowindex].Cells["IPN"].Value.ToString();
+                itemToPrint.MFPN = dataGridView2.Rows[rowindex].Cells["MFPN"].Value.ToString();
+                itemToPrint.Description = dataGridView2.Rows[rowindex].Cells["Description"].Value.ToString();
+                itemToPrint.Stock = int.Parse(dataGridView2.Rows[rowindex].Cells["QtyInKit"].Value.ToString());
+
+            }
+            printStickerCopy(itemToPrint);
+        }
+
+        private void printStickerCopy(WHitem itToPrint)
+        {
+            //MessageBox.Show("Test");
         }
     }
 }

@@ -203,6 +203,7 @@
             dataGridView2.RowTemplate.Height = 25;
             dataGridView2.Size = new Size(1273, 72);
             dataGridView2.TabIndex = 0;
+            dataGridView2.CellDoubleClick += dataGridView2_CellDoubleClick;
             // 
             // tableLayoutPanel1
             // 
@@ -777,8 +778,6 @@
             // checkBox1
             // 
             checkBox1.AutoSize = true;
-            checkBox1.Checked = true;
-            checkBox1.CheckState = CheckState.Checked;
             checkBox1.Dock = DockStyle.Fill;
             checkBox1.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
             checkBox1.Location = new Point(908, 3);
