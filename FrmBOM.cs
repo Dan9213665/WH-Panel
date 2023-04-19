@@ -100,18 +100,23 @@ namespace WH_Panel
             List<KitHistoryItem> BomItemS = new List<KitHistoryItem>();
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                //Application excel = new Application();
-                //Workbook workbook = excel.Workbooks.Open(openFileDialog1.FileName);
-                //// Recalculate all cells
-                //foreach (Worksheet worksheet in workbook.Worksheets)
-                //{
-                //    worksheet.Calculate();
-                //}
-                //// Save the changes
-                //workbook.Save();
-                //workbook.Close();
-                //excel.Quit();
-                fileName = openFileDialog1.FileName;
+                if (Environment.UserName != "lgt")
+                {
+                    Application excel = new Application();
+                    Workbook workbook = excel.Workbooks.Open(openFileDialog1.FileName);
+                    Worksheet firstSheet = (Worksheet)workbook.Worksheets[1]; // Cast the object to a Worksheet type
+                    firstSheet.Calculate(); // Calculate only the first sheet
+                                            // Save the changes
+                    workbook.Save();
+                    workbook.Close();
+                    excel.Quit();
+            }
+            else
+            {
+                //
+            }
+
+            fileName = openFileDialog1.FileName;
                 theExcelFilePath = Path.GetFileName(fileName);
                 string Litem = Path.GetFileName(fileName);
                 label12.Text += fileName.ToString() + "\n";
@@ -421,6 +426,12 @@ namespace WH_Panel
                 if (dataGridView1.Rows.Count == 1)
                 {
                     txtbQtyToAdd.Focus();
+                }
+                else if (dataGridView1.Rows.Count == 0)
+                {
+                    AutoClosingMessageBox.Show(lastTxtbInputFromUser.Text + " NOT FOUND !", "item not FOUND !", 1000);
+                    lastTxtbInputFromUser.Text = string.Empty;
+                    lastTxtbInputFromUser.Focus();
                 }
                 else
                 {
