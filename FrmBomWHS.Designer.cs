@@ -47,6 +47,8 @@
             label1 = new Label();
             comboBox1 = new ComboBox();
             button1 = new Button();
+            btnFontIncrease = new Button();
+            btnFontDecrease = new Button();
             groupBox2 = new GroupBox();
             dataGridView2 = new DataGridView();
             groupBox1.SuspendLayout();
@@ -74,12 +76,12 @@
             // 
             dataGridView1.AllowUserToAddRows = false;
             dataGridView1.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle1.Font = new Font("Microsoft Tai Le", 15.75F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle1.Font = new Font("Microsoft Tai Le", 9F, FontStyle.Regular, GraphicsUnit.Point);
             dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             dataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.Raised;
             dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = SystemColors.Control;
-            dataGridViewCellStyle2.Font = new Font("Microsoft Tai Le", 15.75F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle2.Font = new Font("Microsoft Tai Le", 9F, FontStyle.Regular, GraphicsUnit.Point);
             dataGridViewCellStyle2.ForeColor = SystemColors.WindowText;
             dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
             dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
@@ -88,7 +90,7 @@
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle3.BackColor = SystemColors.Window;
-            dataGridViewCellStyle3.Font = new Font("Microsoft Tai Le", 15.75F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle3.Font = new Font("Microsoft Tai Le", 9F, FontStyle.Regular, GraphicsUnit.Point);
             dataGridViewCellStyle3.ForeColor = SystemColors.ControlText;
             dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
             dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
@@ -241,13 +243,17 @@
             // 
             // tableLayoutPanel2
             // 
-            tableLayoutPanel2.ColumnCount = 3;
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33333F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33333F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33333F));
+            tableLayoutPanel2.ColumnCount = 5;
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
             tableLayoutPanel2.Controls.Add(label1, 0, 0);
             tableLayoutPanel2.Controls.Add(comboBox1, 1, 0);
-            tableLayoutPanel2.Controls.Add(button1, 2, 0);
+            tableLayoutPanel2.Controls.Add(button1, 4, 0);
+            tableLayoutPanel2.Controls.Add(btnFontIncrease, 2, 0);
+            tableLayoutPanel2.Controls.Add(btnFontDecrease, 3, 0);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.Location = new Point(3, 3);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -262,7 +268,7 @@
             label1.Dock = DockStyle.Fill;
             label1.Location = new Point(3, 0);
             label1.Name = "label1";
-            label1.Size = new Size(362, 66);
+            label1.Size = new Size(215, 66);
             label1.TabIndex = 0;
             label1.Text = "Select WAREHOUSE";
             label1.TextAlign = ContentAlignment.MiddleCenter;
@@ -273,9 +279,9 @@
             comboBox1.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
             comboBox1.FormattingEnabled = true;
             comboBox1.Items.AddRange(new object[] { "ENERCON", "LEADER-TECH", "NETLINE", "ROBOTRON", "VALENS", "VAYYAR" });
-            comboBox1.Location = new Point(371, 3);
+            comboBox1.Location = new Point(224, 3);
             comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(362, 40);
+            comboBox1.Size = new Size(436, 40);
             comboBox1.TabIndex = 1;
             comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
             // 
@@ -284,12 +290,36 @@
             button1.BackgroundImage = (Image)resources.GetObject("button1.BackgroundImage");
             button1.BackgroundImageLayout = ImageLayout.Zoom;
             button1.Dock = DockStyle.Fill;
-            button1.Location = new Point(739, 3);
+            button1.Location = new Point(886, 3);
             button1.Name = "button1";
-            button1.Size = new Size(364, 60);
+            button1.Size = new Size(217, 60);
             button1.TabIndex = 2;
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
+            // 
+            // btnFontIncrease
+            // 
+            btnFontIncrease.BackgroundImage = (Image)resources.GetObject("btnFontIncrease.BackgroundImage");
+            btnFontIncrease.BackgroundImageLayout = ImageLayout.Stretch;
+            btnFontIncrease.Dock = DockStyle.Fill;
+            btnFontIncrease.Location = new Point(666, 3);
+            btnFontIncrease.Name = "btnFontIncrease";
+            btnFontIncrease.Size = new Size(104, 60);
+            btnFontIncrease.TabIndex = 3;
+            btnFontIncrease.UseVisualStyleBackColor = true;
+            btnFontIncrease.Click += btnFontIncrease_Click;
+            // 
+            // btnFontDecrease
+            // 
+            btnFontDecrease.BackgroundImage = (Image)resources.GetObject("btnFontDecrease.BackgroundImage");
+            btnFontDecrease.BackgroundImageLayout = ImageLayout.Stretch;
+            btnFontDecrease.Dock = DockStyle.Fill;
+            btnFontDecrease.Location = new Point(776, 3);
+            btnFontDecrease.Name = "btnFontDecrease";
+            btnFontDecrease.Size = new Size(104, 60);
+            btnFontDecrease.TabIndex = 4;
+            btnFontDecrease.UseVisualStyleBackColor = true;
+            btnFontDecrease.Click += btnFontDecrease_Click;
             // 
             // groupBox2
             // 
@@ -306,11 +336,11 @@
             // 
             dataGridView2.AllowUserToAddRows = false;
             dataGridView2.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle4.Font = new Font("Microsoft Tai Le", 15.75F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle4.Font = new Font("Microsoft Tai Le", 9F, FontStyle.Regular, GraphicsUnit.Point);
             dataGridView2.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle4;
             dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle5.BackColor = SystemColors.Control;
-            dataGridViewCellStyle5.Font = new Font("Microsoft Tai Le", 15.75F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle5.Font = new Font("Microsoft Tai Le", 9F, FontStyle.Regular, GraphicsUnit.Point);
             dataGridViewCellStyle5.ForeColor = SystemColors.WindowText;
             dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
             dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
@@ -319,7 +349,7 @@
             dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle6.BackColor = SystemColors.Window;
-            dataGridViewCellStyle6.Font = new Font("Microsoft Tai Le", 15.75F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle6.Font = new Font("Microsoft Tai Le", 9F, FontStyle.Regular, GraphicsUnit.Point);
             dataGridViewCellStyle6.ForeColor = SystemColors.ControlText;
             dataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight;
             dataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText;
@@ -377,5 +407,7 @@
         private CheckBox chkBlockInWHonly;
         private Button btnFound;
         private Button button1;
+        private Button btnFontIncrease;
+        private Button btnFontDecrease;
     }
 }

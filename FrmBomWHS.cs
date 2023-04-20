@@ -890,5 +890,57 @@ namespace WH_Panel
             dataGridView2.Columns["Description"].Visible = true;
             dataGridView.Columns["Calc"].Visible = true;
         }
+
+        private void btnFontIncrease_Click(object sender, EventArgs e)
+        {
+            // Increase font size of DataGridView1 rows
+            dataGridView1.DefaultCellStyle.Font = new Font(dataGridView1.DefaultCellStyle.Font.FontFamily, dataGridView1.DefaultCellStyle.Font.Size + 1);
+            dataGridView1.RowsDefaultCellStyle.Font = dataGridView1.DefaultCellStyle.Font;
+            dataGridView1.AlternatingRowsDefaultCellStyle.Font = new Font(dataGridView1.DefaultCellStyle.Font.FontFamily, dataGridView1.DefaultCellStyle.Font.Size + 1);
+
+            // Increase font size of DataGridView1 headers
+            dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font(dataGridView1.ColumnHeadersDefaultCellStyle.Font.FontFamily, dataGridView1.ColumnHeadersDefaultCellStyle.Font.Size + 1);
+
+            // Update row height for DataGridView1
+            dataGridView1.RowTemplate.Height = (int)(dataGridView1.RowTemplate.Height * 1.2);
+
+            // Increase font size of DataGridView2 rows
+            dataGridView2.DefaultCellStyle.Font = new Font(dataGridView2.DefaultCellStyle.Font.FontFamily, dataGridView2.DefaultCellStyle.Font.Size + 1);
+            dataGridView2.RowsDefaultCellStyle.Font = dataGridView2.DefaultCellStyle.Font;
+            dataGridView2.AlternatingRowsDefaultCellStyle.Font = new Font(dataGridView2.DefaultCellStyle.Font.FontFamily, dataGridView2.DefaultCellStyle.Font.Size + 1);
+
+            // Increase font size of DataGridView2 headers
+            dataGridView2.ColumnHeadersDefaultCellStyle.Font = new Font(dataGridView2.ColumnHeadersDefaultCellStyle.Font.FontFamily, dataGridView2.ColumnHeadersDefaultCellStyle.Font.Size + 1);
+
+            // Update row height for DataGridView2
+            dataGridView2.RowTemplate.Height = (int)(dataGridView2.RowTemplate.Height * 1.2);
+
+        }
+
+        private void btnFontDecrease_Click(object sender, EventArgs e)
+        {
+            // Decrease font size of DataGridView1 rows
+            dataGridView1.DefaultCellStyle.Font = new Font(dataGridView1.DefaultCellStyle.Font.FontFamily, dataGridView1.DefaultCellStyle.Font.Size - 1);
+            dataGridView1.RowsDefaultCellStyle.Font = dataGridView1.DefaultCellStyle.Font;
+            dataGridView1.AlternatingRowsDefaultCellStyle.Font = new Font(dataGridView1.DefaultCellStyle.Font.FontFamily, dataGridView1.DefaultCellStyle.Font.Size - 1);
+
+            // Decrease font size of DataGridView1 headers
+            dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font(dataGridView1.ColumnHeadersDefaultCellStyle.Font.FontFamily, dataGridView1.ColumnHeadersDefaultCellStyle.Font.Size - 1);
+
+            // Update row height for DataGridView1
+            dataGridView1.RowTemplate.Height = (int)(dataGridView1.RowTemplate.Height / 1.2);
+
+            // Decrease font size of DataGridView2 rows
+            dataGridView2.DefaultCellStyle.Font = new Font(dataGridView2.DefaultCellStyle.Font.FontFamily, dataGridView2.DefaultCellStyle.Font.Size - 1);
+            dataGridView2.RowsDefaultCellStyle.Font = dataGridView2.DefaultCellStyle.Font;
+            dataGridView2.AlternatingRowsDefaultCellStyle.Font = new Font(dataGridView2.DefaultCellStyle.Font.FontFamily, dataGridView2.DefaultCellStyle.Font.Size - 1);
+
+            // Decrease font size of DataGridView2 headers
+            dataGridView2.ColumnHeadersDefaultCellStyle.Font = new Font(dataGridView2.ColumnHeadersDefaultCellStyle.Font.FontFamily, dataGridView2.ColumnHeadersDefaultCellStyle.Font.Size - 1);
+
+            // Update row height for DataGridView2
+            dataGridView2.RowTemplate.Height = (int)(dataGridView2.RowTemplate.Height / 1.2);
+
+        }
     }
 }
