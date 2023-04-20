@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 namespace WH_Panel
 {
@@ -30,6 +31,8 @@ namespace WH_Panel
         public string stockVALENS = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm";
         public string avlROBOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_AVL.xlsm";
         public string stockROBOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_STOCK.xlsm";
+        public string avlENERCON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_AVL.xlsx";
+        public string stockENERCON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_STOCK.xlsm";
         public string avlFile;
         public string stockFile { get; set; }
         public string projectName = string.Empty;
@@ -76,36 +79,6 @@ namespace WH_Panel
         }
         public int calculateWBbalance(string IPN)
         {
-            //int balance = 0;
-            //try
-            //{
-            //    DataView dv = stockDTable.DefaultView;
-            //    dv.RowFilter = "[IPN] LIKE '%" + IPN +
-            //        "%'";
-            //    dataGridView2.DataSource = dv;
-            //    //dataGridView2.Update();
-            //    //SetSTOCKiewColumsOrder();
-            //    List<int> qtys = new List<int>();
-            //    for (int i = 0; i < dataGridView2.RowCount; i++)
-            //    {
-            //        int qty = 0;
-            //        int result;
-            //        bool prs = int.TryParse(dataGridView2.Rows[i].Cells[dataGridView2.Columns["Stock"].Index].Value.ToString(), out result);
-            //        if (prs)
-            //        {
-            //            qty = result;
-            //        }
-            //        qtys.Add(qty);
-            //    }
-            //    foreach (int i in qtys)
-            //    {
-            //        balance += i;
-            //    }
-            //}
-            //catch
-            //{
-            //}
-            //return balance;
             int balance = 0;
             try
             {
@@ -151,6 +124,10 @@ namespace WH_Panel
             {
                 selection = "VALENS";
                 MasterReload(avlVALENS, stockVALENS);
+            }
+            else if (misBOMItemsLST[0].IPN.StartsWith("ENE"))
+            {
+                MasterReload(avlENERCON, stockENERCON);
             }
             else
             {

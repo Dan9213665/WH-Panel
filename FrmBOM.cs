@@ -110,13 +110,13 @@ namespace WH_Panel
                     workbook.Save();
                     workbook.Close();
                     excel.Quit();
-            }
-            else
-            {
-                //
-            }
+                }
+                else
+                {
+                    //
+                }
 
-            fileName = openFileDialog1.FileName;
+                fileName = openFileDialog1.FileName;
                 theExcelFilePath = Path.GetFileName(fileName);
                 string Litem = Path.GetFileName(fileName);
                 label12.Text += fileName.ToString() + "\n";

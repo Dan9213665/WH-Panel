@@ -116,31 +116,13 @@ namespace WH_Panel
             var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ST_MICRO\\ST_MICRO_STOCK.xlsm";
             AuthorizedExcelFileOpening(fp);
         }
-        private void button7_Click(object sender, EventArgs e)
-        {
-            FrmAddItemsToLDT addItemsToDBLDT = new FrmAddItemsToLDT();
-            addItemsToDBLDT.Show();
-        }
+      
         private void button8_Click(object sender, EventArgs e)
         {
             FrmPackingSlips fps = new FrmPackingSlips();
             fps.Show();
         }
-        private void button9_Click(object sender, EventArgs e)
-        {
-            FrmAddItemsTOValens val = new FrmAddItemsTOValens();
-            val.Show();
-        }
-        private void button10_Click(object sender, EventArgs e)
-        {
-            FrmAddItemsToNetline net= new FrmAddItemsToNetline();
-            net.Show();
-        }
-        private void button12_Click(object sender, EventArgs e)
-        {
-            FrmAddItemsToVayyar frV = new FrmAddItemsToVayyar();
-            frV.Show();
-        }
+     
         private void button11_Click(object sender, EventArgs e)
         {
             frmkitLabelPrint frmkit= new frmkitLabelPrint();

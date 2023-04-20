@@ -45,6 +45,8 @@ namespace WH_Panel
         public string stockVALENS = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm";
         public string avlROBOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_AVL.xlsm";
         public string stockROBOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_STOCK.xlsm";
+        public string avlENERCON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_AVL.xlsx";
+        public string stockENERCON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_STOCK.xlsm";
         public string avlFile;
         public string stockFile;
 
@@ -90,6 +92,10 @@ namespace WH_Panel
             else if (comboBox3.Text == "VALENS")
             {
                 MasterReload(avlVALENS, stockVALENS);
+            }
+            else if (comboBox3.Text == "ENERCON")
+            {
+                MasterReload(avlENERCON, stockENERCON);
             }
         }
         private void button2_Click(object sender, EventArgs e)
