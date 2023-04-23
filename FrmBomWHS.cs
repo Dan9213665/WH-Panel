@@ -21,20 +21,77 @@ namespace WH_Panel
         public DataTable misItemsDT = new DataTable();
         public List<KitHistoryItem> misItemsLST = new List<KitHistoryItem>();
         public List<BOMitem> misBOMItemsLST = new List<BOMitem>();
-        public string avlNETLINE = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_AVL.xlsx";
-        public string stockNETLINE = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm";
-        public string stockLeader_Tech = @"\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\G.I.Leader_Tech\G.I.Leader_Tech_STOCK.xlsm";
-        public string avlLeader_Tech = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_AVL.xlsm";
-        public string avlVAYAR = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_AVL.xlsx";
-        public string stockVAYAR = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm";
-        public string avlVALENS = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_AVL.xlsx";
-        public string stockVALENS = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm";
-        public string avlROBOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_AVL.xlsm";
-        public string stockROBOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_STOCK.xlsm";
-        public string avlENERCON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_AVL.xlsx";
-        public string stockENERCON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_STOCK.xlsm";
+        public List<ClientWarehouse> clList = new List<ClientWarehouse>()
+        {
+            {new ClientWarehouse
+                {
+                clName="NETLINE",
+                clSuffix="NET",
+                clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_AVL.xlsx",
+                clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm"
+                }
+            },
+              {new ClientWarehouse
+                {
+                clName="LEADER-TECH",
+                clSuffix="C100",
+                clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_AVL.xlsm",
+                clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm"
+                 }
+              }
+            ,
+              {new ClientWarehouse
+                {
+                clName="VAYYAR",
+                clSuffix="VAY",
+                clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_AVL.xlsx",
+                clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm"
+                }
+              },
+                 {new ClientWarehouse
+                {
+                clName="VALENS",
+                clSuffix="VAL",
+                clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_AVL.xlsx",
+                clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm"
+                }
+              }
+            ,
+                 {new ClientWarehouse
+                {
+                clName="ROBOTRON",
+                clSuffix="ROB",
+                clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_AVL.xlsm",
+                clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_STOCK.xlsm"
+                }
+              }
+            ,
+                 {new ClientWarehouse
+                {
+                clName="ENERCON",
+                clSuffix="ENE",
+                clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_AVL.xlsx",
+                clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_STOCK.xlsm"
+                }
+              }
+        };
+
+        //public string avlNETLINE = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_AVL.xlsx";
+        //public string stockNETLINE = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm";
+        //public string stockLeader_Tech = @"\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\G.I.Leader_Tech\G.I.Leader_Tech_STOCK.xlsm";
+        //public string avlLeader_Tech = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_AVL.xlsm";
+        //public string avlVAYAR = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_AVL.xlsx";
+        //public string stockVAYAR = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm";
+        //public string avlVALENS = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_AVL.xlsx";
+        //public string stockVALENS = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm";
+        //public string avlROBOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_AVL.xlsm";
+        //public string stockROBOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_STOCK.xlsm";
+        //public string avlENERCON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_AVL.xlsx";
+        //public string stockENERCON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_STOCK.xlsm";
+
         public string avlFile;
         public string stockFile { get; set; }
+
         public string projectName = string.Empty;
         public List<WHitem> avlItems = new List<WHitem>();
         public List<WHitem> stockItems = new List<WHitem>();
@@ -69,7 +126,8 @@ namespace WH_Panel
             }
             //MessageBox.Show(misItemsLST.Count.ToString());
             projectName = fromTheMainBom[0].ProjectName;
-            comboBox1.SelectedItem = warehouseSelectorOnLoad();
+            //comboBox1.SelectedItem = warehouseSelectorOnLoad();
+            comboBox1.SelectedItem = warehouseClWHSelectorOnLoad();
             //MasterReload(avlFile, stockFile);
             foreach (BOMitem b in misBOMItemsLST)
             {
@@ -101,41 +159,53 @@ namespace WH_Panel
             }
             return balance;
         }
-        private string warehouseSelectorOnLoad()
+        private string warehouseClWHSelectorOnLoad()
         {
             string selection = string.Empty;
-
-            if (misBOMItemsLST[0].IPN.StartsWith("C100") || misBOMItemsLST[0].IPN.StartsWith("A00"))
-            {
-                selection = "LEADER-TECH";
-                MasterReload(avlLeader_Tech, stockLeader_Tech);
-            }
-            else if (misBOMItemsLST[0].IPN.StartsWith("NET"))
-            {
-                selection = "NETLINE";
-                MasterReload(avlNETLINE, stockNETLINE);
-            }
-            else if (misBOMItemsLST[0].IPN.StartsWith("VAY"))
-            {
-                selection = "VAYYAR";
-                MasterReload(avlVAYAR, stockVAYAR);
-            }
-            else if (misBOMItemsLST[0].IPN.StartsWith("VAL"))
-            {
-                selection = "VALENS";
-                MasterReload(avlVALENS, stockVALENS);
-            }
-            else if (misBOMItemsLST[0].IPN.StartsWith("ENE"))
-            {
-                MasterReload(avlENERCON, stockENERCON);
-            }
-            else
-            {
-                selection = "ROBOTRON";
-                MasterReload(avlROBOTRON, stockROBOTRON);
-            }
+            foreach (ClientWarehouse clientWH in clList)
+                if (misBOMItemsLST[0].IPN.StartsWith(clientWH.clSuffix))
+                {
+                    selection = clientWH.clName;
+                    MasterReload(clientWH.clAvlFile, clientWH.clStockFile);
+                }
             return selection;
         }
+        //private string warehouseSelectorOnLoad()
+        //{
+        //    string selection = string.Empty;
+
+        //    if (misBOMItemsLST[0].IPN.StartsWith("C100") || misBOMItemsLST[0].IPN.StartsWith("A00"))
+        //    {
+        //        selection = "LEADER-TECH";
+        //        MasterReload(avlLeader_Tech, stockLeader_Tech);
+        //    }
+        //    else if (misBOMItemsLST[0].IPN.StartsWith("NET"))
+        //    {
+        //        selection = "NETLINE";
+        //        MasterReload(avlNETLINE, stockNETLINE);
+        //    }
+        //    else if (misBOMItemsLST[0].IPN.StartsWith("VAY"))
+        //    {
+        //        selection = "VAYYAR";
+        //        MasterReload(avlVAYAR, stockVAYAR);
+        //    }
+        //    else if (misBOMItemsLST[0].IPN.StartsWith("VAL"))
+        //    {
+        //        selection = "VALENS";
+        //        MasterReload(avlVALENS, stockVALENS);
+        //    }
+        //    else if (misBOMItemsLST[0].IPN.StartsWith("ENE"))
+        //    {
+        //        selection = "ENERCON";
+        //        MasterReload(avlENERCON, stockENERCON);
+        //    }
+        //    else
+        //    {
+        //        selection = "ROBOTRON";
+        //        MasterReload(avlROBOTRON, stockROBOTRON);
+        //    }
+        //    return selection;
+        //}
         private void PopulateMissingGridView()
         {
             misItemsDT.Clear();
@@ -178,26 +248,38 @@ namespace WH_Panel
         }
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBox1.Text == "ROBOTRON")
+            foreach (ClientWarehouse client in clList)
             {
-                MasterReload(avlROBOTRON, stockROBOTRON);
+                if (comboBox1.Text == client.clSuffix)
+                {
+                    MasterReload(client.clAvlFile, client.clStockFile);
+                    //break;
+                }
             }
-            else if (comboBox1.Text == "LEADER-TECH")
-            {
-                MasterReload(avlLeader_Tech, stockLeader_Tech);
-            }
-            else if (comboBox1.Text == "NETLINE")
-            {
-                MasterReload(avlNETLINE, stockNETLINE);
-            }
-            else if (comboBox1.Text == "VAYYAR")
-            {
-                MasterReload(avlVAYAR, stockVAYAR);
-            }
-            else if (comboBox1.Text == "VALENS")
-            {
-                MasterReload(avlVALENS, stockVALENS);
-            }
+            //if (comboBox1.Text == "ROBOTRON")
+            //{
+            //    MasterReload(avlROBOTRON, stockROBOTRON);
+            //}
+            //else if (comboBox1.Text == "LEADER-TECH")
+            //{
+            //    MasterReload(avlLeader_Tech, stockLeader_Tech);
+            //}
+            //else if (comboBox1.Text == "NETLINE")
+            //{
+            //    MasterReload(avlNETLINE, stockNETLINE);
+            //}
+            //else if (comboBox1.Text == "VAYYAR")
+            //{
+            //    MasterReload(avlVAYAR, stockVAYAR);
+            //}
+            //else if (comboBox1.Text == "VALENS")
+            //{
+            //    MasterReload(avlVALENS, stockVALENS);
+            //}
+            //else if (comboBox1.Text == "ENERCON")
+            //{
+            //    MasterReload(avlENERCON, stockENERCON);
+            //}
         }
         private void MasterReload(string avlParam, string stockParam)
         {
