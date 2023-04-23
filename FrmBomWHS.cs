@@ -73,6 +73,14 @@ namespace WH_Panel
                 clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_AVL.xlsx",
                 clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_STOCK.xlsm"
                 }
+              },
+                 {new ClientWarehouse
+                {
+                clName="DIGITRONIX",
+                clSuffix="DGT",
+                clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_AVL.xlsx",
+                clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_STOCK.xlsm"
+                }
               }
         };
 
@@ -127,6 +135,13 @@ namespace WH_Panel
             //MessageBox.Show(misItemsLST.Count.ToString());
             projectName = fromTheMainBom[0].ProjectName;
             //comboBox1.SelectedItem = warehouseSelectorOnLoad();
+
+            comboBox1.Items.Clear();
+            foreach (ClientWarehouse cw in clList)
+            {
+                comboBox1.Items.Add(cw.clName);
+            }
+            comboBox1.Sorted = true;
             comboBox1.SelectedItem = warehouseClWHSelectorOnLoad();
             //MasterReload(avlFile, stockFile);
             foreach (BOMitem b in misBOMItemsLST)
@@ -253,7 +268,7 @@ namespace WH_Panel
                 if (comboBox1.Text == client.clSuffix)
                 {
                     MasterReload(client.clAvlFile, client.clStockFile);
-                    //break;
+                    break;
                 }
             }
             //if (comboBox1.Text == "ROBOTRON")

@@ -28,13 +28,70 @@ namespace WH_Panel
         int iStock = 0;
         private object cmd;
         public TextBox LastInputFromUser = new TextBox();
-        public List<WHSettings> lstWHSettings = new List<WHSettings>() { };
-        public WHSettings net = new WHSettings
-        {
-            ClientNameWH = "NETLINE",
-            avlFP = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_AVL.xlsx",
-            stockFP = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_AVL.xlsx"
-        };
+
+        //public List<ClientWarehouse> clList = new List<ClientWarehouse>()
+        //{
+        //    {new ClientWarehouse
+        //        {
+        //        clName="NETLINE",
+        //        clSuffix="NET",
+        //        clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_AVL.xlsx",
+        //        clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm"
+        //        }
+        //    },
+        //      {new ClientWarehouse
+        //        {
+        //        clName="LEADER-TECH",
+        //        clSuffix="C100",
+        //        clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_AVL.xlsm",
+        //        clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm"
+        //         }
+        //      }
+        //    ,
+        //      {new ClientWarehouse
+        //        {
+        //        clName="VAYYAR",
+        //        clSuffix="VAY",
+        //        clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_AVL.xlsx",
+        //        clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm"
+        //        }
+        //      },
+        //         {new ClientWarehouse
+        //        {
+        //        clName="VALENS",
+        //        clSuffix="VAL",
+        //        clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_AVL.xlsx",
+        //        clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm"
+        //        }
+        //      }
+        //    ,
+        //         {new ClientWarehouse
+        //        {
+        //        clName="ROBOTRON",
+        //        clSuffix="ROB",
+        //        clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_AVL.xlsm",
+        //        clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_STOCK.xlsm"
+        //        }
+        //      }
+        //    ,
+        //         {new ClientWarehouse
+        //        {
+        //        clName="ENERCON",
+        //        clSuffix="ENE",
+        //        clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_AVL.xlsx",
+        //        clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_STOCK.xlsm"
+        //        }
+        //      },
+        //         {new ClientWarehouse
+        //        {
+        //        clName="DIGITRONIX",
+        //        clSuffix="DGT",
+        //        clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_AVL.xlsx",
+        //        clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_STOCK.xlsm"
+        //        }
+        //      }
+        //};
+
         public string avlNETLINE = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_AVL.xlsx";
         public string stockNETLINE = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm";
         public string stockLeader_Tech = @"\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\G.I.Leader_Tech\G.I.Leader_Tech_STOCK.xlsm";
@@ -47,6 +104,8 @@ namespace WH_Panel
         public string stockROBOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_STOCK.xlsm";
         public string avlENERCON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_AVL.xlsx";
         public string stockENERCON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_STOCK.xlsm";
+        public string avlDIGITRONIX = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_AVL.xlsx";
+        public string stockDIGITRONIX = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_STOCK.xlsm";
         public string avlFile;
         public string stockFile;
 
@@ -96,6 +155,10 @@ namespace WH_Panel
             else if (comboBox3.Text == "ENERCON")
             {
                 MasterReload(avlENERCON, stockENERCON);
+            }
+            else if (comboBox3.Text == "DIGITRONIX")
+            {
+                MasterReload(avlDIGITRONIX, stockDIGITRONIX);
             }
         }
         private void button2_Click(object sender, EventArgs e)

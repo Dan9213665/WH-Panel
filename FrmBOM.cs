@@ -219,6 +219,9 @@ namespace WH_Panel
                     {
                         loadingErrors++;
                         label13.Text = loadingErrors.ToString() + " Loading Errors detected: " + e.Message;
+                        listBox1.Items.Add(e.Message.ToString());
+                        listBox1.Height = 50;
+                        listBox1.Update();
                         label13.BackColor = Color.IndianRed;
                         label13.Update();
                         string er = fp;
