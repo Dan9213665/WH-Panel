@@ -899,42 +899,43 @@ namespace WH_Panel
                     conn.Close();
                 }
             }
-            catch
+            catch (Exception e)
             {
+                MessageBox.Show(e.Message);
             }
             return ReelBagTrayStickFromStock;
         }
-        private string avlSelectorBasedOnItem(KitHistoryItem w)
-        {
-            string selection = string.Empty;
-            if (w.IPN.StartsWith("C100") || w.IPN.StartsWith("A00"))
-            {
-                selection = @"\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\G.I.Leader_Tech\G.I.Leader_Tech_STOCK.xlsm";
-            }
-            else if (w.IPN.StartsWith("NET"))
-            {
-                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm";
-            }
-            else if (w.IPN.StartsWith("VAY"))
-            {
-                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm";
-            }
-            else if (w.IPN.StartsWith("VAL"))
-            {
-                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm";
-            }
-            else
-            {
-                selection = string.Empty;
-            }
-            return selection;
-        }
+        //private string avlSelectorBasedOnItem(KitHistoryItem w)
+        //{
+        //    string selection = string.Empty;
+        //    if (w.IPN.StartsWith("C100") || w.IPN.StartsWith("A00"))
+        //    {
+        //        selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm";
+        //    }
+        //    else if (w.IPN.StartsWith("NET"))
+        //    {
+        //        selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm";
+        //    }
+        //    else if (w.IPN.StartsWith("VAY"))
+        //    {
+        //        selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm";
+        //    }
+        //    else if (w.IPN.StartsWith("VAL"))
+        //    {
+        //        selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm";
+        //    }
+        //    else
+        //    {
+        //        selection = string.Empty;
+        //    }
+        //    return selection;
+        //}
         private string warehouseSelectorBasedOnItem(KitHistoryItem w)
         {
             string selection = string.Empty;
             if (w.IPN.StartsWith("C100") || w.IPN.StartsWith("A00"))
             {
-                selection = @"\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\G.I.Leader_Tech\G.I.Leader_Tech_STOCK.xlsm";
+                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm";
             }
             else if (w.IPN.StartsWith("NET"))
             {
@@ -955,6 +956,10 @@ namespace WH_Panel
             else if (w.IPN.StartsWith("ENE"))
             {
                 selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_STOCK.xlsm";
+            }
+            else if (w.IPN.StartsWith("DGT"))
+            {
+                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_STOCK.xlsm";
             }
             else
             {

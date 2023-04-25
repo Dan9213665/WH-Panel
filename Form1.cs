@@ -12,7 +12,7 @@ namespace WH_Panel
             //this.Location = new Point(-1040,1300);
             //DateTime fileCreatedDate = File.GetCreationTime(@"ImperiumTabulaPrincipalis.exe");
             DateTime fileModifiedDate = File.GetLastWriteTime(@"ImperiumTabulaPrincipalis.exe");
-            this.Text = "Imperium Tabula Principalis UPDATED "+ fileModifiedDate.ToString();
+            this.Text = "Imperium Tabula Principalis UPDATED " + fileModifiedDate.ToString();
         }
         private void openWHexcelDB(string thePathToFile)
         {
@@ -44,7 +44,7 @@ namespace WH_Panel
             }
             else
             {
-                MessageBox.Show("Unauthorized ! Access denied !", "Unauthorized ! Access denied !", MessageBoxButtons.OK,MessageBoxIcon.Stop);
+                MessageBox.Show("Unauthorized ! Access denied !", "Unauthorized ! Access denied !", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
         }
         private void btnFIELDIN_Click(object sender, EventArgs e)
@@ -108,7 +108,7 @@ namespace WH_Panel
         }
         private void button5_Click(object sender, EventArgs e)
         {
-            FrmKITShistory frmkit= new FrmKITShistory();
+            FrmKITShistory frmkit = new FrmKITShistory();
             frmkit.Show();
         }
         private void button6_Click(object sender, EventArgs e)
@@ -116,21 +116,21 @@ namespace WH_Panel
             var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ST_MICRO\\ST_MICRO_STOCK.xlsm";
             AuthorizedExcelFileOpening(fp);
         }
-      
+
         private void button8_Click(object sender, EventArgs e)
         {
             FrmPackingSlips fps = new FrmPackingSlips();
             fps.Show();
         }
-     
+
         private void button11_Click(object sender, EventArgs e)
         {
-            frmkitLabelPrint frmkit= new frmkitLabelPrint();
+            frmkitLabelPrint frmkit = new frmkitLabelPrint();
             frmkit.Show();
         }
         private void button13_Click(object sender, EventArgs e)
         {
-            FrmPackingSlipShip ps = new FrmPackingSlipShip();   
+            FrmPackingSlipShip ps = new FrmPackingSlipShip();
             ps.Show();
         }
         private void button14_Click(object sender, EventArgs e)
@@ -167,6 +167,18 @@ namespace WH_Panel
         {
             FrmFinishedGoodsLog ff = new FrmFinishedGoodsLog();
             ff.Show();
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_STOCK.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_AVL.xlsx";
+            AuthorizedExcelFileOpening(fp);
         }
     }
 }
