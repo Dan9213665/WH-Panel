@@ -776,6 +776,7 @@ namespace WH_Panel
             {
                 FrmBomWHS wh = new FrmBomWHS();
                 wh.fromTheMainBom = new List<KitHistoryItem>();
+                wh.fromTheMainBom.Clear();
                 wh.fromTheMainBom = MissingItemsList;
                 wh.Show();
             }
@@ -1040,6 +1041,27 @@ namespace WH_Panel
         private void printStickerCopy(WHitem itToPrint)
         {
             //MessageBox.Show("Test");
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            if (fileName != string.Empty)
+            {
+                ResetViews();
+                theExcelFilePath = Path.GetFileName(fileName);
+                string Litem = Path.GetFileName(fileName);
+                label12.Text += fileName.ToString() + "\n";
+                DataLoader(fileName, Litem);
+                KitProgressUpdate(fileName);
+                button2.Enabled = true;
+                PopulateMissingGridView();
+                PopulateSufficientGridView();
+            }
+            else
+            {
+                //
+            }
+
         }
     }
 }

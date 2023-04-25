@@ -53,6 +53,7 @@
             button2 = new Button();
             button4 = new Button();
             btnPrintKitLabel = new Button();
+            button5 = new Button();
             groupBox2 = new GroupBox();
             tableLayoutPanel2 = new TableLayoutPanel();
             textBox11 = new TextBox();
@@ -244,21 +245,23 @@
             // tableLayoutPanel3
             // 
             tableLayoutPanel3.AutoSize = true;
-            tableLayoutPanel3.ColumnCount = 7;
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 14.2857113F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 14.2857151F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 14.2857151F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 14.2857151F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 14.2857151F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 14.2857151F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 14.2857151F));
-            tableLayoutPanel3.Controls.Add(label12, 1, 0);
+            tableLayoutPanel3.ColumnCount = 8;
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 12.5F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 12.5F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 12.5F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 12.5F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 12.5F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 12.5F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 12.5F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 12.5F));
+            tableLayoutPanel3.Controls.Add(label12, 2, 0);
             tableLayoutPanel3.Controls.Add(button1, 0, 0);
-            tableLayoutPanel3.Controls.Add(tableLayoutPanel4, 3, 0);
-            tableLayoutPanel3.Controls.Add(button3, 4, 0);
-            tableLayoutPanel3.Controls.Add(button2, 5, 0);
-            tableLayoutPanel3.Controls.Add(button4, 6, 0);
-            tableLayoutPanel3.Controls.Add(btnPrintKitLabel, 2, 0);
+            tableLayoutPanel3.Controls.Add(tableLayoutPanel4, 4, 0);
+            tableLayoutPanel3.Controls.Add(button3, 5, 0);
+            tableLayoutPanel3.Controls.Add(button2, 6, 0);
+            tableLayoutPanel3.Controls.Add(button4, 7, 0);
+            tableLayoutPanel3.Controls.Add(btnPrintKitLabel, 3, 0);
+            tableLayoutPanel3.Controls.Add(button5, 1, 0);
             tableLayoutPanel3.Dock = DockStyle.Fill;
             tableLayoutPanel3.Location = new Point(3, 19);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -271,9 +274,9 @@
             // 
             label12.AutoSize = true;
             label12.Dock = DockStyle.Fill;
-            label12.Location = new Point(184, 0);
+            label12.Location = new Point(321, 0);
             label12.Name = "label12";
-            label12.Size = new Size(175, 44);
+            label12.Size = new Size(153, 44);
             label12.TabIndex = 1;
             label12.Text = "loaded rows";
             label12.TextAlign = ContentAlignment.MiddleCenter;
@@ -284,11 +287,11 @@
             button1.AutoSize = true;
             button1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             button1.BackColor = Color.Transparent;
-            button1.BackgroundImage = Properties.Resources.reloadDB;
+            button1.BackgroundImage = (Image)resources.GetObject("button1.BackgroundImage");
             button1.BackgroundImageLayout = ImageLayout.Zoom;
             button1.Location = new Point(3, 3);
             button1.Name = "button1";
-            button1.Size = new Size(175, 38);
+            button1.Size = new Size(153, 38);
             button1.TabIndex = 0;
             button1.UseVisualStyleBackColor = false;
             button1.Click += button1_Click;
@@ -302,12 +305,12 @@
             tableLayoutPanel4.Controls.Add(label13, 0, 0);
             tableLayoutPanel4.Controls.Add(listBox1, 0, 1);
             tableLayoutPanel4.Dock = DockStyle.Fill;
-            tableLayoutPanel4.Location = new Point(546, 3);
+            tableLayoutPanel4.Location = new Point(639, 3);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 2;
             tableLayoutPanel4.RowStyles.Add(new RowStyle());
             tableLayoutPanel4.RowStyles.Add(new RowStyle());
-            tableLayoutPanel4.Size = new Size(175, 38);
+            tableLayoutPanel4.Size = new Size(153, 38);
             tableLayoutPanel4.TabIndex = 2;
             // 
             // label13
@@ -315,7 +318,7 @@
             label13.Dock = DockStyle.Fill;
             label13.Location = new Point(3, 0);
             label13.Name = "label13";
-            label13.Size = new Size(169, 19);
+            label13.Size = new Size(147, 19);
             label13.TabIndex = 2;
             label13.Text = "Loading Errors :";
             label13.TextAlign = ContentAlignment.MiddleCenter;
@@ -327,7 +330,7 @@
             listBox1.ItemHeight = 15;
             listBox1.Location = new Point(3, 22);
             listBox1.Name = "listBox1";
-            listBox1.Size = new Size(169, 13);
+            listBox1.Size = new Size(147, 13);
             listBox1.TabIndex = 3;
             // 
             // button3
@@ -335,9 +338,9 @@
             button3.BackgroundImage = Properties.Resources._6_2;
             button3.BackgroundImageLayout = ImageLayout.Zoom;
             button3.Dock = DockStyle.Fill;
-            button3.Location = new Point(727, 3);
+            button3.Location = new Point(798, 3);
             button3.Name = "button3";
-            button3.Size = new Size(175, 38);
+            button3.Size = new Size(153, 38);
             button3.TabIndex = 3;
             button3.UseVisualStyleBackColor = true;
             button3.Click += button3_Click;
@@ -349,9 +352,9 @@
             button2.BackgroundImageLayout = ImageLayout.Zoom;
             button2.Dock = DockStyle.Fill;
             button2.Enabled = false;
-            button2.Location = new Point(908, 3);
+            button2.Location = new Point(957, 3);
             button2.Name = "button2";
-            button2.Size = new Size(175, 38);
+            button2.Size = new Size(153, 38);
             button2.TabIndex = 4;
             button2.UseVisualStyleBackColor = false;
             button2.Click += button2_Click;
@@ -361,9 +364,9 @@
             button4.BackgroundImage = (Image)resources.GetObject("button4.BackgroundImage");
             button4.BackgroundImageLayout = ImageLayout.Zoom;
             button4.Dock = DockStyle.Fill;
-            button4.Location = new Point(1089, 3);
+            button4.Location = new Point(1116, 3);
             button4.Name = "button4";
-            button4.Size = new Size(181, 38);
+            button4.Size = new Size(154, 38);
             button4.TabIndex = 5;
             button4.UseVisualStyleBackColor = true;
             button4.Click += button4_Click;
@@ -373,12 +376,24 @@
             btnPrintKitLabel.BackgroundImage = Properties.Resources.kitLabelPrint;
             btnPrintKitLabel.BackgroundImageLayout = ImageLayout.Zoom;
             btnPrintKitLabel.Dock = DockStyle.Fill;
-            btnPrintKitLabel.Location = new Point(365, 3);
+            btnPrintKitLabel.Location = new Point(480, 3);
             btnPrintKitLabel.Name = "btnPrintKitLabel";
-            btnPrintKitLabel.Size = new Size(175, 38);
+            btnPrintKitLabel.Size = new Size(153, 38);
             btnPrintKitLabel.TabIndex = 6;
             btnPrintKitLabel.UseVisualStyleBackColor = true;
             btnPrintKitLabel.Click += btnPrintKitLabel_Click;
+            // 
+            // button5
+            // 
+            button5.BackgroundImage = Properties.Resources.reloadDB;
+            button5.BackgroundImageLayout = ImageLayout.Zoom;
+            button5.Dock = DockStyle.Fill;
+            button5.Location = new Point(162, 3);
+            button5.Name = "button5";
+            button5.Size = new Size(153, 38);
+            button5.TabIndex = 7;
+            button5.UseVisualStyleBackColor = true;
+            button5.Click += button5_Click;
             // 
             // groupBox2
             // 
@@ -887,5 +902,6 @@
         private Button button4;
         private Button btnPrintKitLabel;
         private ComboBox cmbReelSelector;
+        private Button button5;
     }
 }
