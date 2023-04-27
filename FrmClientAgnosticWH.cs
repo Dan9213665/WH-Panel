@@ -3,6 +3,7 @@ using Seagull.BarTender.Print;
 using System.ComponentModel;
 using System.Data;
 using System.Data.OleDb;
+using System.Diagnostics;
 using DataTable = System.Data.DataTable;
 using RadioButton = System.Windows.Forms.RadioButton;
 using TextBox = System.Windows.Forms.TextBox;
@@ -1207,6 +1208,120 @@ namespace WH_Panel
         {
             lblRWK.Text += DateTime.Now.ToString("yyyy-MM-dd");
             textBox9.Text = lblRWK.Text;
+        }
+
+        private void btnLEADERTECH_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+        private void AuthorizedExcelFileOpening(string fp)
+        {
+            if (Environment.UserName == "lgt")
+            {
+                openWHexcelDB(fp);
+            }
+            else
+            {
+                MessageBox.Show("Unauthorized ! Access denied !", "Unauthorized ! Access denied !", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            }
+        }
+        private void openWHexcelDB(string thePathToFile)
+        {
+            Process excel = new Process();
+            excel.StartInfo.FileName = "C:\\Program Files\\Microsoft Office\\root\\Office16\\EXCEL.exe";
+            excel.StartInfo.Arguments = thePathToFile;
+            excel.Start();
+        }
+
+        private void button15_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_AVL.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+
+        private void btnValens_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+
+        private void button16_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_AVL.xlsx";
+            AuthorizedExcelFileOpening(fp);
+        }
+
+        private void btnNETLINE_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\NETLINE\NETLINE_STOCK.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+
+        private void button17_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\NETLINE\NETLINE_AVL.xlsx";
+            AuthorizedExcelFileOpening(fp);
+        }
+
+        private void btnVAYYAR_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+
+        private void button18_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_AVL.xlsx";
+            AuthorizedExcelFileOpening(fp);
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_STOCK.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_AVL.xlsx";
+            AuthorizedExcelFileOpening(fp);
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_STOCK.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_AVL.xlsx";
+            AuthorizedExcelFileOpening(fp);
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_STOCK.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ST_MICRO\\ST_MICRO_STOCK.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+
+        private void btnFIELDIN_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\FIELDIN\\FIELDIN_STOCK.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+
+        private void btnSHILAT_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_STOCK.xlsm";
+            AuthorizedExcelFileOpening(fp);
         }
     }
 }

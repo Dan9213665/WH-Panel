@@ -84,6 +84,30 @@
             lblRWK = new Label();
             groupBox6 = new GroupBox();
             dataGridView2 = new DataGridView();
+            tabPage2 = new TabPage();
+            flowLayoutPanel1 = new FlowLayoutPanel();
+            groupBox8 = new GroupBox();
+            button15 = new Button();
+            btnLEADERTECH = new Button();
+            groupBox9 = new GroupBox();
+            button16 = new Button();
+            btnValens = new Button();
+            groupBox10 = new GroupBox();
+            button17 = new Button();
+            btnNETLINE = new Button();
+            groupBox11 = new GroupBox();
+            button18 = new Button();
+            btnVAYYAR = new Button();
+            groupBox12 = new GroupBox();
+            button9 = new Button();
+            button10 = new Button();
+            groupBox13 = new GroupBox();
+            button1 = new Button();
+            button5 = new Button();
+            button6 = new Button();
+            button7 = new Button();
+            btnFIELDIN = new Button();
+            btnSHILAT = new Button();
             dateTimePicker1 = new DateTimePicker();
             groupBox1.SuspendLayout();
             tabControl1.SuspendLayout();
@@ -103,6 +127,14 @@
             tableLayoutPanel4.SuspendLayout();
             groupBox6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
+            tabPage2.SuspendLayout();
+            flowLayoutPanel1.SuspendLayout();
+            groupBox8.SuspendLayout();
+            groupBox9.SuspendLayout();
+            groupBox10.SuspendLayout();
+            groupBox11.SuspendLayout();
+            groupBox12.SuspendLayout();
+            groupBox13.SuspendLayout();
             SuspendLayout();
             // 
             // dateTimePicker1
@@ -146,6 +178,7 @@
             // tabControl1
             // 
             tabControl1.Controls.Add(tabPage1);
+            tabControl1.Controls.Add(tabPage2);
             tabControl1.Dock = DockStyle.Fill;
             tabControl1.Location = new Point(3, 19);
             tabControl1.Name = "tabControl1";
@@ -905,6 +938,299 @@
             dataGridView2.CellDoubleClick += dataGridView2_CellDoubleClick;
             dataGridView2.SelectionChanged += dataGridView2_SelectionChanged;
             // 
+            // tabPage2
+            // 
+            tabPage2.Controls.Add(flowLayoutPanel1);
+            tabPage2.Location = new Point(4, 24);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Size = new Size(1196, 735);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "DBM";
+            tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // flowLayoutPanel1
+            // 
+            flowLayoutPanel1.BackColor = Color.Black;
+            flowLayoutPanel1.Controls.Add(groupBox8);
+            flowLayoutPanel1.Controls.Add(groupBox9);
+            flowLayoutPanel1.Controls.Add(groupBox10);
+            flowLayoutPanel1.Controls.Add(groupBox11);
+            flowLayoutPanel1.Controls.Add(groupBox12);
+            flowLayoutPanel1.Controls.Add(groupBox13);
+            flowLayoutPanel1.Controls.Add(button6);
+            flowLayoutPanel1.Controls.Add(button7);
+            flowLayoutPanel1.Controls.Add(btnFIELDIN);
+            flowLayoutPanel1.Controls.Add(btnSHILAT);
+            flowLayoutPanel1.Dock = DockStyle.Fill;
+            flowLayoutPanel1.Location = new Point(0, 0);
+            flowLayoutPanel1.Name = "flowLayoutPanel1";
+            flowLayoutPanel1.Size = new Size(1196, 735);
+            flowLayoutPanel1.TabIndex = 0;
+            // 
+            // groupBox8
+            // 
+            groupBox8.Controls.Add(button15);
+            groupBox8.Controls.Add(btnLEADERTECH);
+            groupBox8.ForeColor = Color.White;
+            groupBox8.Location = new Point(3, 3);
+            groupBox8.Name = "groupBox8";
+            groupBox8.Size = new Size(134, 125);
+            groupBox8.TabIndex = 15;
+            groupBox8.TabStop = false;
+            groupBox8.Text = "LEADER TECH";
+            // 
+            // button15
+            // 
+            button15.BackgroundImage = (Image)resources.GetObject("button15.BackgroundImage");
+            button15.BackgroundImageLayout = ImageLayout.Stretch;
+            button15.Location = new Point(8, 77);
+            button15.Name = "button15";
+            button15.Size = new Size(120, 42);
+            button15.TabIndex = 14;
+            button15.UseVisualStyleBackColor = true;
+            button15.Click += button15_Click;
+            // 
+            // btnLEADERTECH
+            // 
+            btnLEADERTECH.BackColor = Color.White;
+            btnLEADERTECH.BackgroundImage = Properties.Resources.leadertech;
+            btnLEADERTECH.BackgroundImageLayout = ImageLayout.Zoom;
+            btnLEADERTECH.Cursor = Cursors.Hand;
+            btnLEADERTECH.Location = new Point(8, 16);
+            btnLEADERTECH.Name = "btnLEADERTECH";
+            btnLEADERTECH.Size = new Size(120, 59);
+            btnLEADERTECH.TabIndex = 4;
+            btnLEADERTECH.UseVisualStyleBackColor = false;
+            btnLEADERTECH.Click += btnLEADERTECH_Click;
+            // 
+            // groupBox9
+            // 
+            groupBox9.Controls.Add(button16);
+            groupBox9.Controls.Add(btnValens);
+            groupBox9.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            groupBox9.ForeColor = Color.White;
+            groupBox9.Location = new Point(143, 3);
+            groupBox9.Name = "groupBox9";
+            groupBox9.Size = new Size(132, 125);
+            groupBox9.TabIndex = 17;
+            groupBox9.TabStop = false;
+            groupBox9.Text = "VALENS";
+            // 
+            // button16
+            // 
+            button16.BackgroundImage = (Image)resources.GetObject("button16.BackgroundImage");
+            button16.BackgroundImageLayout = ImageLayout.Stretch;
+            button16.Location = new Point(6, 77);
+            button16.Name = "button16";
+            button16.Size = new Size(120, 42);
+            button16.TabIndex = 15;
+            button16.UseVisualStyleBackColor = true;
+            button16.Click += button16_Click;
+            // 
+            // btnValens
+            // 
+            btnValens.BackColor = SystemColors.ButtonHighlight;
+            btnValens.BackgroundImage = Properties.Resources.valens;
+            btnValens.BackgroundImageLayout = ImageLayout.Zoom;
+            btnValens.Cursor = Cursors.Hand;
+            btnValens.Location = new Point(6, 17);
+            btnValens.Name = "btnValens";
+            btnValens.Size = new Size(120, 58);
+            btnValens.TabIndex = 0;
+            btnValens.UseVisualStyleBackColor = false;
+            btnValens.Click += btnValens_Click;
+            // 
+            // groupBox10
+            // 
+            groupBox10.Controls.Add(button17);
+            groupBox10.Controls.Add(btnNETLINE);
+            groupBox10.ForeColor = Color.White;
+            groupBox10.Location = new Point(281, 3);
+            groupBox10.Name = "groupBox10";
+            groupBox10.Size = new Size(132, 125);
+            groupBox10.TabIndex = 18;
+            groupBox10.TabStop = false;
+            groupBox10.Text = "NETLINE";
+            // 
+            // button17
+            // 
+            button17.BackgroundImage = (Image)resources.GetObject("button17.BackgroundImage");
+            button17.BackgroundImageLayout = ImageLayout.Stretch;
+            button17.Location = new Point(6, 75);
+            button17.Name = "button17";
+            button17.Size = new Size(119, 44);
+            button17.TabIndex = 16;
+            button17.UseVisualStyleBackColor = true;
+            button17.Click += button17_Click;
+            // 
+            // btnNETLINE
+            // 
+            btnNETLINE.BackColor = Color.White;
+            btnNETLINE.BackgroundImage = Properties.Resources.netline;
+            btnNETLINE.BackgroundImageLayout = ImageLayout.Zoom;
+            btnNETLINE.Cursor = Cursors.Hand;
+            btnNETLINE.Location = new Point(6, 16);
+            btnNETLINE.Name = "btnNETLINE";
+            btnNETLINE.Size = new Size(120, 57);
+            btnNETLINE.TabIndex = 1;
+            btnNETLINE.UseVisualStyleBackColor = false;
+            btnNETLINE.Click += btnNETLINE_Click;
+            // 
+            // groupBox11
+            // 
+            groupBox11.Controls.Add(button18);
+            groupBox11.Controls.Add(btnVAYYAR);
+            groupBox11.ForeColor = Color.White;
+            groupBox11.Location = new Point(419, 3);
+            groupBox11.Name = "groupBox11";
+            groupBox11.Size = new Size(131, 125);
+            groupBox11.TabIndex = 21;
+            groupBox11.TabStop = false;
+            groupBox11.Text = "VAYYAR";
+            // 
+            // button18
+            // 
+            button18.BackgroundImage = (Image)resources.GetObject("button18.BackgroundImage");
+            button18.BackgroundImageLayout = ImageLayout.Stretch;
+            button18.Location = new Point(6, 77);
+            button18.Name = "button18";
+            button18.Size = new Size(119, 42);
+            button18.TabIndex = 16;
+            button18.UseVisualStyleBackColor = true;
+            button18.Click += button18_Click;
+            // 
+            // btnVAYYAR
+            // 
+            btnVAYYAR.BackColor = Color.White;
+            btnVAYYAR.BackgroundImage = Properties.Resources.vayyar;
+            btnVAYYAR.BackgroundImageLayout = ImageLayout.Zoom;
+            btnVAYYAR.Cursor = Cursors.Hand;
+            btnVAYYAR.Location = new Point(6, 17);
+            btnVAYYAR.Name = "btnVAYYAR";
+            btnVAYYAR.Size = new Size(119, 58);
+            btnVAYYAR.TabIndex = 5;
+            btnVAYYAR.UseVisualStyleBackColor = false;
+            btnVAYYAR.Click += btnVAYYAR_Click;
+            // 
+            // groupBox12
+            // 
+            groupBox12.Controls.Add(button9);
+            groupBox12.Controls.Add(button10);
+            groupBox12.ForeColor = Color.White;
+            groupBox12.Location = new Point(556, 3);
+            groupBox12.Name = "groupBox12";
+            groupBox12.Size = new Size(131, 125);
+            groupBox12.TabIndex = 25;
+            groupBox12.TabStop = false;
+            groupBox12.Text = "DIGITRONIX";
+            // 
+            // button9
+            // 
+            button9.BackgroundImage = (Image)resources.GetObject("button9.BackgroundImage");
+            button9.BackgroundImageLayout = ImageLayout.Stretch;
+            button9.Location = new Point(6, 77);
+            button9.Name = "button9";
+            button9.Size = new Size(119, 42);
+            button9.TabIndex = 16;
+            button9.UseVisualStyleBackColor = true;
+            button9.Click += button9_Click;
+            // 
+            // button10
+            // 
+            button10.BackColor = Color.White;
+            button10.BackgroundImage = (Image)resources.GetObject("button10.BackgroundImage");
+            button10.BackgroundImageLayout = ImageLayout.Zoom;
+            button10.Cursor = Cursors.Hand;
+            button10.Location = new Point(6, 17);
+            button10.Name = "button10";
+            button10.Size = new Size(119, 58);
+            button10.TabIndex = 5;
+            button10.UseVisualStyleBackColor = false;
+            button10.Click += button10_Click;
+            // 
+            // groupBox13
+            // 
+            groupBox13.Controls.Add(button1);
+            groupBox13.Controls.Add(button5);
+            groupBox13.ForeColor = Color.White;
+            groupBox13.Location = new Point(693, 3);
+            groupBox13.Name = "groupBox13";
+            groupBox13.Size = new Size(131, 125);
+            groupBox13.TabIndex = 26;
+            groupBox13.TabStop = false;
+            groupBox13.Text = "ENERCON";
+            // 
+            // button1
+            // 
+            button1.BackgroundImage = (Image)resources.GetObject("button1.BackgroundImage");
+            button1.BackgroundImageLayout = ImageLayout.Stretch;
+            button1.Location = new Point(6, 77);
+            button1.Name = "button1";
+            button1.Size = new Size(119, 42);
+            button1.TabIndex = 16;
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
+            // button5
+            // 
+            button5.BackColor = Color.White;
+            button5.BackgroundImage = (Image)resources.GetObject("button5.BackgroundImage");
+            button5.BackgroundImageLayout = ImageLayout.Zoom;
+            button5.Cursor = Cursors.Hand;
+            button5.Location = new Point(6, 17);
+            button5.Name = "button5";
+            button5.Size = new Size(119, 58);
+            button5.TabIndex = 5;
+            button5.UseVisualStyleBackColor = false;
+            button5.Click += button5_Click;
+            // 
+            // button6
+            // 
+            button6.BackgroundImage = Properties.Resources.CIS;
+            button6.BackgroundImageLayout = ImageLayout.Zoom;
+            button6.Location = new Point(830, 3);
+            button6.Name = "button6";
+            button6.Size = new Size(132, 59);
+            button6.TabIndex = 27;
+            button6.UseVisualStyleBackColor = true;
+            button6.Click += button6_Click;
+            // 
+            // button7
+            // 
+            button7.BackgroundImage = Properties.Resources.STM;
+            button7.BackgroundImageLayout = ImageLayout.Zoom;
+            button7.Location = new Point(968, 3);
+            button7.Name = "button7";
+            button7.Size = new Size(132, 59);
+            button7.TabIndex = 28;
+            button7.UseVisualStyleBackColor = true;
+            button7.Click += button7_Click;
+            // 
+            // btnFIELDIN
+            // 
+            btnFIELDIN.BackColor = Color.White;
+            btnFIELDIN.BackgroundImage = Properties.Resources.Fieldin;
+            btnFIELDIN.BackgroundImageLayout = ImageLayout.Zoom;
+            btnFIELDIN.Cursor = Cursors.Hand;
+            btnFIELDIN.Location = new Point(3, 134);
+            btnFIELDIN.Name = "btnFIELDIN";
+            btnFIELDIN.Size = new Size(132, 59);
+            btnFIELDIN.TabIndex = 29;
+            btnFIELDIN.UseVisualStyleBackColor = false;
+            btnFIELDIN.Click += btnFIELDIN_Click;
+            // 
+            // btnSHILAT
+            // 
+            btnSHILAT.BackColor = Color.White;
+            btnSHILAT.BackgroundImage = Properties.Resources.shilat1;
+            btnSHILAT.BackgroundImageLayout = ImageLayout.Zoom;
+            btnSHILAT.Location = new Point(141, 134);
+            btnSHILAT.Name = "btnSHILAT";
+            btnSHILAT.Size = new Size(132, 60);
+            btnSHILAT.TabIndex = 30;
+            btnSHILAT.UseVisualStyleBackColor = false;
+            btnSHILAT.Click += btnSHILAT_Click;
+            // 
             // FrmClientAgnosticWH
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -946,6 +1272,14 @@
             tableLayoutPanel4.PerformLayout();
             groupBox6.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
+            tabPage2.ResumeLayout(false);
+            flowLayoutPanel1.ResumeLayout(false);
+            groupBox8.ResumeLayout(false);
+            groupBox9.ResumeLayout(false);
+            groupBox10.ResumeLayout(false);
+            groupBox11.ResumeLayout(false);
+            groupBox12.ResumeLayout(false);
+            groupBox13.ResumeLayout(false);
             ResumeLayout(false);
         }
         #endregion
@@ -1006,5 +1340,29 @@
         private TextBox txtbFiltAVLbyDESCR;
         private Label lblSendTo;
         private Label lblRWK;
+        private TabPage tabPage2;
+        private FlowLayoutPanel flowLayoutPanel1;
+        private GroupBox groupBox8;
+        private Button button15;
+        private Button btnLEADERTECH;
+        private GroupBox groupBox9;
+        private Button button16;
+        private Button btnValens;
+        private GroupBox groupBox10;
+        private Button button17;
+        private Button btnNETLINE;
+        private GroupBox groupBox11;
+        private Button button18;
+        private Button btnVAYYAR;
+        private GroupBox groupBox12;
+        private Button button9;
+        private Button button10;
+        private GroupBox groupBox13;
+        private Button button1;
+        private Button button5;
+        private Button button6;
+        private Button button7;
+        private Button btnFIELDIN;
+        private Button btnSHILAT;
     }
 }
