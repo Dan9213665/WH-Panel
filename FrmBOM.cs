@@ -1033,9 +1033,11 @@ namespace WH_Panel
                 itemToPrint.MFPN = dataGridView2.Rows[rowindex].Cells["MFPN"].Value.ToString();
                 itemToPrint.Description = dataGridView2.Rows[rowindex].Cells["Description"].Value.ToString();
                 itemToPrint.Stock = int.Parse(dataGridView2.Rows[rowindex].Cells["QtyInKit"].Value.ToString());
+                itemToPrint.UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
 
             }
-            printStickerCopy(itemToPrint);
+            printSticker(itemToPrint);
+            //printStickerCopy(itemToPrint);
         }
 
         private void printStickerCopy(WHitem itToPrint)
