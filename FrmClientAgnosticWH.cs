@@ -1323,5 +1323,34 @@ namespace WH_Panel
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_STOCK.xlsm";
             AuthorizedExcelFileOpening(fp);
         }
+
+        private void textBox11_KeyDown(object sender, KeyEventArgs e)
+        {
+
+            if (e.KeyCode == Keys.Enter)
+            {
+                string inputStr = textBox11.Text;
+                string startStr = comboBox4.SelectedItem.ToString();
+                string endStr = comboBox5.SelectedItem.ToString();
+
+                int startIndex = inputStr.IndexOf(startStr);
+                if (startIndex != -1)
+                {
+                    startIndex += startStr.Length;
+                    int endIndex = inputStr.IndexOf(endStr, startIndex);
+                    if (endIndex != -1)
+                    {
+                        string extractedStr = inputStr.Substring(startIndex, endIndex - startIndex);
+                        textBox2.Text = extractedStr;
+                        textBox2.Focus();
+                    }
+                }
+            }
+        }
+
+        private void textBox11_Click(object sender, EventArgs e)
+        {
+            textBox11.Clear();
+        }
     }
 }
