@@ -56,6 +56,10 @@
             button5 = new Button();
             groupBox2 = new GroupBox();
             tableLayoutPanel2 = new TableLayoutPanel();
+            tableLayoutPanel8 = new TableLayoutPanel();
+            comboBox4 = new ComboBox();
+            comboBox5 = new ComboBox();
+            textBox12 = new TextBox();
             textBox11 = new TextBox();
             textBox8 = new TextBox();
             textBox4 = new TextBox();
@@ -91,6 +95,7 @@
             tableLayoutPanel4.SuspendLayout();
             groupBox2.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
+            tableLayoutPanel8.SuspendLayout();
             groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             groupBox4.SuspendLayout();
@@ -101,7 +106,7 @@
             // 
             textBox10.Dock = DockStyle.Fill;
             textBox10.Enabled = false;
-            textBox10.Location = new Point(3, 25);
+            textBox10.Location = new Point(3, 71);
             textBox10.Name = "textBox10";
             textBox10.ReadOnly = true;
             textBox10.Size = new Size(109, 23);
@@ -112,9 +117,9 @@
             // 
             label11.AutoSize = true;
             label11.Dock = DockStyle.Fill;
-            label11.Location = new Point(118, 0);
+            label11.Location = new Point(118, 34);
             label11.Name = "label11";
-            label11.Size = new Size(109, 22);
+            label11.Size = new Size(109, 34);
             label11.TabIndex = 19;
             label11.Text = "Project Name";
             label11.TextAlign = ContentAlignment.MiddleCenter;
@@ -123,9 +128,9 @@
             // 
             label10.AutoSize = true;
             label10.Dock = DockStyle.Fill;
-            label10.Location = new Point(3, 0);
+            label10.Location = new Point(3, 34);
             label10.Name = "label10";
-            label10.Size = new Size(109, 22);
+            label10.Size = new Size(109, 34);
             label10.TabIndex = 18;
             label10.Text = "DATE";
             label10.TextAlign = ContentAlignment.MiddleCenter;
@@ -133,7 +138,7 @@
             // textBox9
             // 
             textBox9.Dock = DockStyle.Fill;
-            textBox9.Location = new Point(1153, 25);
+            textBox9.Location = new Point(1153, 71);
             textBox9.Name = "textBox9";
             textBox9.ReadOnly = true;
             textBox9.Size = new Size(117, 23);
@@ -148,7 +153,7 @@
             // 
             textBox7.Dock = DockStyle.Fill;
             textBox7.Enabled = false;
-            textBox7.Location = new Point(923, 25);
+            textBox7.Location = new Point(923, 71);
             textBox7.Name = "textBox7";
             textBox7.ReadOnly = true;
             textBox7.Size = new Size(109, 23);
@@ -159,7 +164,7 @@
             // 
             textBox6.Dock = DockStyle.Fill;
             textBox6.Enabled = false;
-            textBox6.Location = new Point(808, 25);
+            textBox6.Location = new Point(808, 71);
             textBox6.Name = "textBox6";
             textBox6.ReadOnly = true;
             textBox6.Size = new Size(109, 23);
@@ -170,7 +175,7 @@
             // 
             textBox5.Dock = DockStyle.Fill;
             textBox5.Enabled = false;
-            textBox5.Location = new Point(693, 25);
+            textBox5.Location = new Point(693, 71);
             textBox5.Name = "textBox5";
             textBox5.ReadOnly = true;
             textBox5.Size = new Size(109, 23);
@@ -397,11 +402,13 @@
             // 
             // groupBox2
             // 
+            groupBox2.AutoSize = true;
+            groupBox2.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             groupBox2.Controls.Add(tableLayoutPanel2);
             groupBox2.Dock = DockStyle.Fill;
             groupBox2.Location = new Point(3, 75);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(1279, 66);
+            groupBox2.Size = new Size(1279, 127);
             groupBox2.TabIndex = 1;
             groupBox2.TabStop = false;
             groupBox2.Text = "Filters";
@@ -422,41 +429,95 @@
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 9.090908F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 9.090908F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 9.090908F));
-            tableLayoutPanel2.Controls.Add(textBox11, 1, 1);
-            tableLayoutPanel2.Controls.Add(textBox10, 0, 1);
-            tableLayoutPanel2.Controls.Add(label11, 1, 0);
-            tableLayoutPanel2.Controls.Add(label10, 0, 0);
-            tableLayoutPanel2.Controls.Add(textBox9, 10, 1);
-            tableLayoutPanel2.Controls.Add(textBox8, 9, 1);
-            tableLayoutPanel2.Controls.Add(textBox7, 8, 1);
-            tableLayoutPanel2.Controls.Add(textBox6, 7, 1);
-            tableLayoutPanel2.Controls.Add(textBox5, 6, 1);
-            tableLayoutPanel2.Controls.Add(textBox4, 5, 1);
-            tableLayoutPanel2.Controls.Add(textBox3, 4, 1);
-            tableLayoutPanel2.Controls.Add(textBox2, 3, 1);
-            tableLayoutPanel2.Controls.Add(label9, 10, 0);
-            tableLayoutPanel2.Controls.Add(label8, 9, 0);
-            tableLayoutPanel2.Controls.Add(label7, 8, 0);
-            tableLayoutPanel2.Controls.Add(label6, 7, 0);
-            tableLayoutPanel2.Controls.Add(label5, 6, 0);
-            tableLayoutPanel2.Controls.Add(label4, 5, 0);
-            tableLayoutPanel2.Controls.Add(label3, 4, 0);
-            tableLayoutPanel2.Controls.Add(label2, 3, 0);
-            tableLayoutPanel2.Controls.Add(label1, 2, 0);
-            tableLayoutPanel2.Controls.Add(textBox1, 2, 1);
+            tableLayoutPanel2.Controls.Add(tableLayoutPanel8, 2, 0);
+            tableLayoutPanel2.Controls.Add(textBox11, 1, 2);
+            tableLayoutPanel2.Controls.Add(textBox10, 0, 2);
+            tableLayoutPanel2.Controls.Add(label11, 1, 1);
+            tableLayoutPanel2.Controls.Add(label10, 0, 1);
+            tableLayoutPanel2.Controls.Add(textBox9, 10, 2);
+            tableLayoutPanel2.Controls.Add(textBox8, 9, 2);
+            tableLayoutPanel2.Controls.Add(textBox7, 8, 2);
+            tableLayoutPanel2.Controls.Add(textBox6, 7, 2);
+            tableLayoutPanel2.Controls.Add(textBox5, 6, 2);
+            tableLayoutPanel2.Controls.Add(textBox4, 5, 2);
+            tableLayoutPanel2.Controls.Add(textBox3, 4, 2);
+            tableLayoutPanel2.Controls.Add(textBox2, 3, 2);
+            tableLayoutPanel2.Controls.Add(label9, 10, 1);
+            tableLayoutPanel2.Controls.Add(label8, 9, 1);
+            tableLayoutPanel2.Controls.Add(label7, 8, 1);
+            tableLayoutPanel2.Controls.Add(label6, 7, 1);
+            tableLayoutPanel2.Controls.Add(label5, 6, 1);
+            tableLayoutPanel2.Controls.Add(label4, 5, 1);
+            tableLayoutPanel2.Controls.Add(label3, 4, 1);
+            tableLayoutPanel2.Controls.Add(label2, 3, 1);
+            tableLayoutPanel2.Controls.Add(label1, 2, 1);
+            tableLayoutPanel2.Controls.Add(textBox1, 2, 2);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.Location = new Point(3, 19);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
-            tableLayoutPanel2.RowCount = 2;
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel2.Size = new Size(1273, 44);
+            tableLayoutPanel2.RowCount = 3;
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel2.Size = new Size(1273, 105);
             tableLayoutPanel2.TabIndex = 0;
+            // 
+            // tableLayoutPanel8
+            // 
+            tableLayoutPanel8.AutoSize = true;
+            tableLayoutPanel8.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            tableLayoutPanel8.ColumnCount = 3;
+            tableLayoutPanel2.SetColumnSpan(tableLayoutPanel8, 3);
+            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel8.Controls.Add(comboBox4, 0, 0);
+            tableLayoutPanel8.Controls.Add(comboBox5, 2, 0);
+            tableLayoutPanel8.Controls.Add(textBox12, 1, 0);
+            tableLayoutPanel8.Dock = DockStyle.Fill;
+            tableLayoutPanel8.Location = new Point(233, 3);
+            tableLayoutPanel8.Name = "tableLayoutPanel8";
+            tableLayoutPanel8.RowCount = 1;
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel8.Size = new Size(339, 28);
+            tableLayoutPanel8.TabIndex = 22;
+            // 
+            // comboBox4
+            // 
+            comboBox4.Dock = DockStyle.Fill;
+            comboBox4.FormattingEnabled = true;
+            comboBox4.Items.AddRange(new object[] { "1P", "6P1P" });
+            comboBox4.Location = new Point(3, 3);
+            comboBox4.Name = "comboBox4";
+            comboBox4.Size = new Size(107, 23);
+            comboBox4.TabIndex = 0;
+            // 
+            // comboBox5
+            // 
+            comboBox5.Dock = DockStyle.Fill;
+            comboBox5.FormattingEnabled = true;
+            comboBox5.Items.AddRange(new object[] { "K1K", "6P2", "@d" });
+            comboBox5.Location = new Point(229, 3);
+            comboBox5.Name = "comboBox5";
+            comboBox5.Size = new Size(107, 23);
+            comboBox5.TabIndex = 1;
+            // 
+            // textBox12
+            // 
+            textBox12.Dock = DockStyle.Fill;
+            textBox12.Location = new Point(116, 3);
+            textBox12.Name = "textBox12";
+            textBox12.Size = new Size(107, 23);
+            textBox12.TabIndex = 2;
+            textBox12.TextAlign = HorizontalAlignment.Center;
+            textBox12.Click += textBox12_Click;
+            textBox12.KeyDown += textBox12_KeyDown;
             // 
             // textBox11
             // 
             textBox11.Dock = DockStyle.Fill;
-            textBox11.Location = new Point(118, 25);
+            textBox11.Location = new Point(118, 71);
             textBox11.Name = "textBox11";
             textBox11.ReadOnly = true;
             textBox11.Size = new Size(109, 23);
@@ -467,7 +528,7 @@
             // 
             textBox8.Dock = DockStyle.Fill;
             textBox8.Enabled = false;
-            textBox8.Location = new Point(1038, 25);
+            textBox8.Location = new Point(1038, 71);
             textBox8.Name = "textBox8";
             textBox8.ReadOnly = true;
             textBox8.Size = new Size(109, 23);
@@ -478,7 +539,7 @@
             // 
             textBox4.Dock = DockStyle.Fill;
             textBox4.Enabled = false;
-            textBox4.Location = new Point(578, 25);
+            textBox4.Location = new Point(578, 71);
             textBox4.Name = "textBox4";
             textBox4.ReadOnly = true;
             textBox4.Size = new Size(109, 23);
@@ -488,7 +549,7 @@
             // textBox3
             // 
             textBox3.Dock = DockStyle.Fill;
-            textBox3.Location = new Point(463, 25);
+            textBox3.Location = new Point(463, 71);
             textBox3.Name = "textBox3";
             textBox3.ReadOnly = true;
             textBox3.Size = new Size(109, 23);
@@ -502,7 +563,7 @@
             // textBox2
             // 
             textBox2.Dock = DockStyle.Fill;
-            textBox2.Location = new Point(348, 25);
+            textBox2.Location = new Point(348, 71);
             textBox2.Name = "textBox2";
             textBox2.ReadOnly = true;
             textBox2.Size = new Size(109, 23);
@@ -517,9 +578,9 @@
             // 
             label9.AutoSize = true;
             label9.Dock = DockStyle.Fill;
-            label9.Location = new Point(1153, 0);
+            label9.Location = new Point(1153, 34);
             label9.Name = "label9";
-            label9.Size = new Size(117, 22);
+            label9.Size = new Size(117, 34);
             label9.TabIndex = 8;
             label9.Text = "ALTs";
             label9.TextAlign = ContentAlignment.MiddleCenter;
@@ -530,9 +591,9 @@
             // 
             label8.AutoSize = true;
             label8.Dock = DockStyle.Fill;
-            label8.Location = new Point(1038, 0);
+            label8.Location = new Point(1038, 34);
             label8.Name = "label8";
-            label8.Size = new Size(109, 22);
+            label8.Size = new Size(109, 34);
             label8.TabIndex = 7;
             label8.Text = "NOTEs";
             label8.TextAlign = ContentAlignment.MiddleCenter;
@@ -541,9 +602,9 @@
             // 
             label7.AutoSize = true;
             label7.Dock = DockStyle.Fill;
-            label7.Location = new Point(923, 0);
+            label7.Location = new Point(923, 34);
             label7.Name = "label7";
-            label7.Size = new Size(109, 22);
+            label7.Size = new Size(109, 34);
             label7.TabIndex = 6;
             label7.Text = "QTY per UNIT";
             label7.TextAlign = ContentAlignment.MiddleCenter;
@@ -552,9 +613,9 @@
             // 
             label6.AutoSize = true;
             label6.Dock = DockStyle.Fill;
-            label6.Location = new Point(808, 0);
+            label6.Location = new Point(808, 34);
             label6.Name = "label6";
-            label6.Size = new Size(109, 22);
+            label6.Size = new Size(109, 34);
             label6.TabIndex = 5;
             label6.Text = "ORDER QTY";
             label6.TextAlign = ContentAlignment.MiddleCenter;
@@ -563,9 +624,9 @@
             // 
             label5.AutoSize = true;
             label5.Dock = DockStyle.Fill;
-            label5.Location = new Point(693, 0);
+            label5.Location = new Point(693, 34);
             label5.Name = "label5";
-            label5.Size = new Size(109, 22);
+            label5.Size = new Size(109, 34);
             label5.TabIndex = 4;
             label5.Text = "DELTA";
             label5.TextAlign = ContentAlignment.MiddleCenter;
@@ -574,9 +635,9 @@
             // 
             label4.AutoSize = true;
             label4.Dock = DockStyle.Fill;
-            label4.Location = new Point(578, 0);
+            label4.Location = new Point(578, 34);
             label4.Name = "label4";
-            label4.Size = new Size(109, 22);
+            label4.Size = new Size(109, 34);
             label4.TabIndex = 3;
             label4.Text = "Qty in KIT";
             label4.TextAlign = ContentAlignment.MiddleCenter;
@@ -585,9 +646,9 @@
             // 
             label3.AutoSize = true;
             label3.Dock = DockStyle.Fill;
-            label3.Location = new Point(463, 0);
+            label3.Location = new Point(463, 34);
             label3.Name = "label3";
-            label3.Size = new Size(109, 22);
+            label3.Size = new Size(109, 34);
             label3.TabIndex = 2;
             label3.Text = "Description";
             label3.TextAlign = ContentAlignment.MiddleCenter;
@@ -598,9 +659,9 @@
             // 
             label2.AutoSize = true;
             label2.Dock = DockStyle.Fill;
-            label2.Location = new Point(348, 0);
+            label2.Location = new Point(348, 34);
             label2.Name = "label2";
-            label2.Size = new Size(109, 22);
+            label2.Size = new Size(109, 34);
             label2.TabIndex = 1;
             label2.Text = "MFPN";
             label2.TextAlign = ContentAlignment.MiddleCenter;
@@ -611,9 +672,9 @@
             // 
             label1.AutoSize = true;
             label1.Dock = DockStyle.Fill;
-            label1.Location = new Point(233, 0);
+            label1.Location = new Point(233, 34);
             label1.Name = "label1";
-            label1.Size = new Size(109, 22);
+            label1.Size = new Size(109, 34);
             label1.TabIndex = 0;
             label1.Text = "IPN";
             label1.TextAlign = ContentAlignment.MiddleCenter;
@@ -623,7 +684,7 @@
             // textBox1
             // 
             textBox1.Dock = DockStyle.Fill;
-            textBox1.Location = new Point(233, 25);
+            textBox1.Location = new Point(233, 71);
             textBox1.Name = "textBox1";
             textBox1.ReadOnly = true;
             textBox1.Size = new Size(109, 23);
@@ -638,9 +699,9 @@
             // 
             groupBox3.Controls.Add(dataGridView1);
             groupBox3.Dock = DockStyle.Fill;
-            groupBox3.Location = new Point(3, 147);
+            groupBox3.Location = new Point(3, 208);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(1279, 370);
+            groupBox3.Size = new Size(1279, 309);
             groupBox3.TabIndex = 2;
             groupBox3.TabStop = false;
             groupBox3.Text = "Missing Items";
@@ -689,7 +750,7 @@
             dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle6;
             dataGridView1.RowTemplate.DefaultCellStyle.ForeColor = Color.White;
             dataGridView1.RowTemplate.Height = 25;
-            dataGridView1.Size = new Size(1273, 348);
+            dataGridView1.Size = new Size(1273, 287);
             dataGridView1.TabIndex = 0;
             dataGridView1.CellClick += dataGridView1_CellClick;
             dataGridView1.SelectionChanged += dataGridView1_SelectionChanged;
@@ -834,6 +895,7 @@
             groupBox5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
             tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             tableLayoutPanel3.ResumeLayout(false);
@@ -843,6 +905,8 @@
             groupBox2.PerformLayout();
             tableLayoutPanel2.ResumeLayout(false);
             tableLayoutPanel2.PerformLayout();
+            tableLayoutPanel8.ResumeLayout(false);
+            tableLayoutPanel8.PerformLayout();
             groupBox3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             groupBox4.ResumeLayout(false);
@@ -903,5 +967,9 @@
         private Button btnPrintKitLabel;
         private ComboBox cmbReelSelector;
         private Button button5;
+        private TableLayoutPanel tableLayoutPanel8;
+        private ComboBox comboBox4;
+        private ComboBox comboBox5;
+        private TextBox textBox12;
     }
 }

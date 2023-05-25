@@ -260,6 +260,31 @@ namespace WH_Panel
             dgw.Columns["Calc"].DisplayIndex = 6;
             dgw.Columns["Alts"].DisplayIndex = 7;
             dgw.Sort(dgw.Columns["IPN"], ListSortDirection.Ascending);
+            // Attach CellFormatting event handler
+            dgw.CellFormatting += Dgw_CellFormatting;
+        }
+        private void Dgw_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.ColumnIndex == dataGridView1.Columns["WHbalance"].Index && e.RowIndex >= 0)
+            {
+                var whbalanceCell = dataGridView1.Rows[e.RowIndex].Cells["WHbalance"];
+                var deltaCell = dataGridView1.Rows[e.RowIndex].Cells["Delta"];
+
+                if (whbalanceCell.Value != null && deltaCell.Value != null)
+                {
+                    var whbalanceValue = Convert.ToDecimal(whbalanceCell.Value);
+                    var deltaValue = Convert.ToDecimal(deltaCell.Value);
+
+                    if (whbalanceValue + deltaValue >= 0)
+                    {
+                        e.CellStyle.BackColor = Color.LightGreen;
+                    }
+                    else
+                    {
+                        e.CellStyle.BackColor = Color.IndianRed;
+                    }
+                }
+            }
         }
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
