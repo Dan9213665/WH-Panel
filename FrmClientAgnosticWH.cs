@@ -107,6 +107,8 @@ namespace WH_Panel
         public string stockENERCON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_STOCK.xlsm";
         public string avlDIGITRONIX = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_AVL.xlsx";
         public string stockDIGITRONIX = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_STOCK.xlsm";
+        public string avlHEPTAGON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_AVL.xlsx";
+        public string stockHEPTAGON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_STOCK.xlsm";
         public string avlFile;
         public string stockFile;
 
@@ -140,6 +142,10 @@ namespace WH_Panel
             else if (comboBox3.Text == "LEADER-TECH")
             {
                 MasterReload(avlLeader_Tech, stockLeader_Tech);
+            }
+            else if (comboBox3.Text == "HEPTAGON")
+            {
+                MasterReload(avlHEPTAGON, stockHEPTAGON);
             }
             else if (comboBox3.Text == "NETLINE")
             {

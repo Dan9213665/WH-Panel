@@ -1047,8 +1047,8 @@ namespace WH_Panel
             if (e.KeyCode == Keys.Enter)
             {
                 string inputStr = textBox12.Text;
-                string startStr = comboBox4.SelectedItem.ToString();
-                string endStr = comboBox5.SelectedItem.ToString();
+                string startStr = comboBox4.Text.ToString();
+                string endStr = comboBox5.Text.ToString();
 
                 int startIndex = inputStr.IndexOf(startStr);
                 if (startIndex != -1)
@@ -1059,7 +1059,9 @@ namespace WH_Panel
                     {
                         string extractedStr = inputStr.Substring(startIndex, endIndex - startIndex);
                         textBox2.Text = extractedStr;
+                        lastTxtbInputFromUser = textBox12;
                         textBox2.Focus();
+                        textBox2_KeyDown(sender, e);
                     }
                 }
             }

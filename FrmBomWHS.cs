@@ -74,6 +74,14 @@ namespace WH_Panel
                 clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_STOCK.xlsm"
                 }
               },
+                   {new ClientWarehouse
+                {
+                clName="HEPTAGON",
+                clSuffix="HEP",
+                clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_AVL.xlsx",
+                clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_STOCK.xlsm"
+                }
+              },
                  {new ClientWarehouse
                 {
                 clName="DIGITRONIX",
