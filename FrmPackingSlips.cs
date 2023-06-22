@@ -24,7 +24,7 @@ namespace WH_Panel
 {
     public partial class FrmPackingSlips : Form
     {
-        public List<PackingSlipItem> PSItems  = new List<PackingSlipItem>();
+        public List<PackingSlipItem> PSItems = new List<PackingSlipItem>();
         public DataTable PSIDtable = new DataTable();
         public int countItems = 0;
         public int countLoadedFIles = 0;
@@ -138,7 +138,7 @@ namespace WH_Panel
                             int j = 0;
                             while (reader.Read())
                             {
-                                if (j>11)
+                                if (j > 11)
                                 {
                                     int qtyS = 0;
                                     bool parseOk = int.TryParse(reader[3].ToString(), out qtyS);

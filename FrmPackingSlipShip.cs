@@ -82,9 +82,9 @@ namespace WH_Panel
             loadingErrors = 0;
             label12.Text = string.Empty;
             UDtable.Clear();
-            PackedItemsDtable.Clear();  
+            PackedItemsDtable.Clear();
             dataGridView1.DataSource = null;
-            dataGridView2.DataSource= null;
+            dataGridView2.DataSource = null;
             dataGridView1.Refresh();
             dataGridView2.Refresh();
             checkBox1.BackColor = Color.LightGreen;
@@ -100,7 +100,7 @@ namespace WH_Panel
                 {
                     countLoadedFIles++;
                     string Litem = Path.GetFileName(file);
-                    if(IsFileLocked(Litem))
+                    if (IsFileLocked(Litem))
                     {
                         DataLoader(file, Litem);
                     }
@@ -113,10 +113,10 @@ namespace WH_Panel
             PopulateGridView();
             SetColumsOrder(dataGridView1);
             stopWatch.Stop();
-            textBox1.ReadOnly= false;
-            textBox11.ReadOnly= false;
-            textBox2.ReadOnly= false;
-            textBox3.ReadOnly= false;
+            textBox1.ReadOnly = false;
+            textBox11.ReadOnly = false;
+            textBox2.ReadOnly = false;
+            textBox3.ReadOnly = false;
         }
         //public bool IsFileLocked(string strFullFileName)
         //{
@@ -237,7 +237,7 @@ namespace WH_Panel
                                 };
                                 countItems = i;
                                 label12.Text = "Loaded " + (countItems).ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{0:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
-                               if(countItems%100==0)
+                                if (countItems % 100 == 0)
                                 { label12.Update(); }
                                 KitHistoryItemsList.Add(abc);
                                 i++;
@@ -292,7 +292,7 @@ namespace WH_Panel
         }
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
-            filterViewAndJump2Qty(sender,e); ;
+            filterViewAndJump2Qty(sender, e); ;
         }
         private void filterViewAndJump2Qty(object sender, KeyEventArgs e)
         {
@@ -311,7 +311,7 @@ namespace WH_Panel
         }
         private void textBox2_KeyDown(object sender, KeyEventArgs e)
         {
-            filterViewAndJump2Qty(sender,e);
+            filterViewAndJump2Qty(sender, e);
         }
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
@@ -340,7 +340,7 @@ namespace WH_Panel
         {
             try
             {
-               // DataView dv = UDtable.Rows.AsQueryable;
+                // DataView dv = UDtable.Rows.AsQueryable;
                 //dv.RowFilter = "SELECT DISTINCT from [MFPN]";
                 //dataGridView1.DataSource = dv;
                 //SetColumsOrder(dataGridView1);
@@ -456,7 +456,7 @@ namespace WH_Panel
         {
             if (e.KeyCode == Keys.Enter)
             {
-                if(checkBox2.Checked==true)
+                if (checkBox2.Checked == true)
                 {
                     int rowindex = dataGridView2.CurrentCell.RowIndex;
                     int columnindex = dataGridView2.CurrentCell.ColumnIndex;
@@ -467,7 +467,7 @@ namespace WH_Panel
                     PackedItemsList.Remove(PackedItemsList.Find(r => r.IPN == selIPN && r.MFPN == selMFPN && r.Stock == selStock));
                     btnPrintSticker_Click(this, new EventArgs());
                     MessageBox.Show("QTY UPDATED");
-                    checkBox2.Checked= false;
+                    checkBox2.Checked = false;
                     LastInputFromUser.Clear();
                     LastInputFromUser.Focus();
                 }
@@ -484,7 +484,7 @@ namespace WH_Panel
             if (success && outNumber < 15001 && outNumber > 0)
             {
                 WHitem w = new WHitem() { IPN = txtbIPN.Text, MFPN = txtbMFPN.Text, Description = txtbDescription.Text, Stock = outNumber, UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss") };
-                if(checkBox1.Checked)
+                if (checkBox1.Checked)
                 {
                     printSticker(w);
                 }
@@ -547,10 +547,10 @@ namespace WH_Panel
         }
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-           if( checkBox1.Checked == true)
+            if (checkBox1.Checked == true)
             {
                 checkBox1.BackColor = Color.LightGreen;
-                checkBox1.Text="Print Sticker";
+                checkBox1.Text = "Print Sticker";
             }
             else
             {
@@ -605,7 +605,7 @@ namespace WH_Panel
                     ((Range)worksheetExcel.Cells[startRow + i, "D"]).Value2 = lst[i].Stock;
                     ((Range)worksheetExcel.Cells[startRow + i, "D"]).BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
                 }
-                ((Range)worksheetExcel.Cells[startRow + lst.Count+1, "A"]).Value2 = "Comments:                                ";
+                ((Range)worksheetExcel.Cells[startRow + lst.Count + 1, "A"]).Value2 = "Comments:                                ";
                 worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 1, 1], worksheetExcel.Cells[startRow + lst.Count + 1, 4]].Merge();
                 worksheetExcel.Range[worksheetExcel.Cells[startRow + lst.Count + 1, 1], worksheetExcel.Cells[startRow + lst.Count + 1, 4]].BorderAround(XlLineStyle.xlContinuous, XlBorderWeight.xlMedium, XlColorIndex.xlColorIndexAutomatic);
                 ((Range)worksheetExcel.Cells[startRow + lst.Count + 2, "A"]).Value2 = "Signature_______________________ חתימה     DATE ______/______/2023  תאריך      NAME ________________________________  שם";
@@ -636,7 +636,7 @@ namespace WH_Panel
                 MessageBox.Show(e.Message);
             }
         }
-        private void DataInserter(string fp, string thesheetName,List<WHitem>lst)
+        private void DataInserter(string fp, string thesheetName, List<WHitem> lst)
         {
             try
             {
@@ -645,20 +645,20 @@ namespace WH_Panel
                 {
                     conn.Open();
                     int startRow = 12;
-                    for ( int i =0; i< lst.Count;i++)
+                    for (int i = 0; i < lst.Count; i++)
                     {
-                        string stRowID = "A" + startRow+i + ":C" + startRow+i;
+                        string stRowID = "A" + startRow + i + ":C" + startRow + i;
                         //OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$" + stRowID +"] (IPN,MFPN,Description,Stock) values('" + lst[i].IPN + "','" + lst[i].MFPN + "','" + lst[i].Description + "','" + lst[i].Stock + "')", conn);
                         //OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$A12] (F1) VALUES"+lst[i].IPN +")", conn);
-                        OleDbCommand command=new OleDbCommand();
-                        command.Connection= conn;
-                        string sql= "INSERT INTO ["+ thesheetName + "$] (IPN,MFPN,Description,Qty) values('" + lst[i].IPN + "','" + lst[i].MFPN + "','" + lst[i].Description + "','" + lst[i].Stock + "')";
-                        command.CommandText= sql;   
+                        OleDbCommand command = new OleDbCommand();
+                        command.Connection = conn;
+                        string sql = "INSERT INTO [" + thesheetName + "$] (IPN,MFPN,Description,Qty) values('" + lst[i].IPN + "','" + lst[i].MFPN + "','" + lst[i].Description + "','" + lst[i].Stock + "')";
+                        command.CommandText = sql;
                         command.ExecuteNonQuery();
                     }
                     conn.Close();
                 }
-         }
+            }
             catch (IOException)
             {
                 MessageBox.Show("Error");
@@ -678,7 +678,7 @@ namespace WH_Panel
             string s = SerializeToXml(PackedItemsList);
             XmlDocument xdoc = new XmlDocument();
             string theTimeStamp = DateTime.Now.ToString("_yyMMdd");
-            string theLogFileName = "\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\PackedItemsInProgress" + theTimeStamp +"_"+ Environment.UserName+".log";
+            string theLogFileName = "\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\PackedItemsInProgress" + theTimeStamp + "_" + Environment.UserName + ".log";
             try
             {
                 xdoc.Load(theLogFileName);
@@ -735,7 +735,7 @@ namespace WH_Panel
         }
         private void dataGridView2_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if(checkBox2.Checked==true)
+            if (checkBox2.Checked == true)
             {
                 if (dataGridView2.SelectedCells.Count == 1)
                 {
@@ -785,16 +785,16 @@ namespace WH_Panel
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
         {
             CheckBox chkb = (CheckBox)sender;
-            if(chkb.Checked==true)
+            if (chkb.Checked == true)
             {
                 chkb.BackColor = Color.Yellow;
                 chkb.Text = "EDIT MODE enabled";
             }
             else
             {
-                chkb.BackColor=Color.LightGray;
+                chkb.BackColor = Color.LightGray;
                 chkb.Text = "EDIT disabled";
-                txtbQty.BackColor= Color.White;
+                txtbQty.BackColor = Color.White;
             }
         }
     }

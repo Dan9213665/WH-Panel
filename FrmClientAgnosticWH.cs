@@ -109,6 +109,8 @@ namespace WH_Panel
         public string stockDIGITRONIX = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_STOCK.xlsm";
         public string avlHEPTAGON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_AVL.xlsx";
         public string stockHEPTAGON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_STOCK.xlsm";
+        public string avlEPS = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_AVL.xlsx";
+        public string stockEPS = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_STOCK.xlsm";
         public string avlFile;
         public string stockFile;
 
@@ -138,6 +140,10 @@ namespace WH_Panel
             if (comboBox3.Text == "ROBOTRON")
             {
                 MasterReload(avlROBOTRON, stockROBOTRON);
+            }
+            else if (comboBox3.Text == "EPS")
+            {
+                MasterReload(avlEPS, stockEPS);
             }
             else if (comboBox3.Text == "LEADER-TECH")
             {
@@ -1329,7 +1335,26 @@ namespace WH_Panel
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_STOCK.xlsm";
             AuthorizedExcelFileOpening(fp);
         }
-
+        private void button11_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_STOCK.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+        private void button8_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_AVL.xlsx";
+            AuthorizedExcelFileOpening(fp);
+        }
+        private void button13_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_STOCK.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+        private void button12_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_AVL.xlsx";
+            AuthorizedExcelFileOpening(fp);
+        }
         private void textBox11_KeyDown(object sender, KeyEventArgs e)
         {
 
@@ -1358,5 +1383,7 @@ namespace WH_Panel
         {
             textBox11.Clear();
         }
+
+       
     }
 }
