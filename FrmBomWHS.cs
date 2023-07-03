@@ -246,8 +246,24 @@ namespace WH_Panel
                 misItemsDT.Load(reader);
             }
             dataGridView1.DataSource = misItemsDT;
+            int perCounter = 0;
+            foreach (BOMitem b in misBOMItemsLST)
+            {
+                if (b.WHbalance > (b.Delta * -1))
+                {
+                    perCounter++;
+                }
+                else
+                {
+                    //
+                }
+            }
+
             SetColumsOrder(dataGridView1);
-            groupBox1.Text = String.Format("Missing items : {0}", misBOMItemsLST.Count);
+            double percentageCalc = Convert.ToDouble(misBOMItemsLST.Count);
+            double kitPerSim = Math.Round((double)((perCounter / (percentageCalc / 100))), 2);
+
+            groupBox1.Text = String.Format("Missing items : {0} . In stock: {1}/{0} . Simulation:({2})%", misBOMItemsLST.Count, perCounter, kitPerSim);
         }
         private void SetColumsOrder(DataGridView dgw)
         {
