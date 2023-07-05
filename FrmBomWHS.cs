@@ -98,6 +98,24 @@ namespace WH_Panel
                 clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_STOCK.xlsm"
                 }
               }
+            ,
+                 {new ClientWarehouse
+                {
+                clName="SOS",
+                clSuffix="SOS",
+                clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_AVL.xlsx",
+                clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_STOCK.xlsm"
+                }
+              }
+            ,
+                 {new ClientWarehouse
+                {
+                clName="ARAN",
+                clSuffix="ARAN",
+                clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_AVL.xlsx",
+                clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_STOCK.xlsm"
+                }
+              }
         };
 
         //public string avlNETLINE = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_AVL.xlsx";

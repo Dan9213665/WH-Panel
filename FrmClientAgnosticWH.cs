@@ -111,6 +111,10 @@ namespace WH_Panel
         public string stockHEPTAGON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_STOCK.xlsm";
         public string avlEPS = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_AVL.xlsx";
         public string stockEPS = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_STOCK.xlsm";
+        public string avlSOS = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_AVL.xlsx";
+        public string stockSOS = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_STOCK.xlsm";
+        public string avlARAN = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_AVL.xlsx";
+        public string stockARAN = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_STOCK.xlsm";
         public string avlFile;
         public string stockFile;
 
@@ -141,9 +145,17 @@ namespace WH_Panel
             {
                 MasterReload(avlROBOTRON, stockROBOTRON);
             }
+            else if (comboBox3.Text == "ARAN")
+            {
+                MasterReload(avlARAN, stockARAN);
+            }
             else if (comboBox3.Text == "EPS")
             {
                 MasterReload(avlEPS, stockEPS);
+            }
+            else if (comboBox3.Text == "SOS")
+            {
+                MasterReload(avlSOS, stockSOS);
             }
             else if (comboBox3.Text == "LEADER-TECH")
             {

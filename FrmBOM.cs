@@ -946,6 +946,14 @@ namespace WH_Panel
             {
                 selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_STOCK.xlsm";
             }
+            else if (w.IPN.StartsWith("SOS"))
+            {
+                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_STOCK.xlsm";
+            }
+            else if (w.IPN.StartsWith("ARN"))
+            {
+                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_STOCK.xlsm";
+            }
             else
             {
                 selection = string.Empty;
