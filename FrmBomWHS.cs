@@ -111,7 +111,7 @@ namespace WH_Panel
                  {new ClientWarehouse
                 {
                 clName="ARAN",
-                clSuffix="ARAN",
+                clSuffix="ARN",
                 clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_AVL.xlsx",
                 clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_STOCK.xlsm"
                 }
