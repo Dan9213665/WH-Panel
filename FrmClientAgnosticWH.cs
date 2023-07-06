@@ -160,7 +160,7 @@ namespace WH_Panel
             {
                 MasterReload(avlSOS, stockSOS);
             }
-            else if (comboBox3.Text == "LEADER-TECH")
+            else if (comboBox3.Text == "G.I.Leader_Tech")
             {
                 MasterReload(avlLeader_Tech, stockLeader_Tech);
             }
