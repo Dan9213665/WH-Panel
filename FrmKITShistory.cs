@@ -61,7 +61,7 @@ namespace WH_Panel
             label13.Text = "No Errors detected.";
             label13.BackColor = Color.LightGreen;
             label13.Update();
-            label1.BackColor= Color.LightGreen;
+            label1.BackColor = Color.LightGreen;
             label11.BackColor = Color.LightGreen;
             label2.BackColor = Color.LightGreen;
             label3.BackColor = Color.LightGreen;
@@ -127,7 +127,7 @@ namespace WH_Panel
             }
             return blnReturn;
         }
-        private void DataLoader(string fp,string excelFIleName)
+        private void DataLoader(string fp, string excelFIleName)
         {
             TimeSpan ts = stopWatch.Elapsed;
             try
@@ -137,20 +137,20 @@ namespace WH_Panel
                 {
                     try
                     {
-                            conn.Open();
-                            DataTable dbSchema = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
-                            if (dbSchema == null || dbSchema.Rows.Count < 1)
-                            {
-                                throw new Exception("Error: Could not determine the name of the first worksheet.");
-                            }
-                            string firstSheetName = dbSchema.Rows[0]["TABLE_NAME"].ToString();
-                            string cleanedUpSheetName = firstSheetName.Substring(1).Substring(0, firstSheetName.Length - 3);
-                            OleDbCommand command = new OleDbCommand("Select * from [" + cleanedUpSheetName + "$]", conn);
-                            OleDbDataReader reader = command.ExecuteReader();
-                            if (reader.HasRows)
-                            {
+                        conn.Open();
+                        DataTable dbSchema = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+                        if (dbSchema == null || dbSchema.Rows.Count < 1)
+                        {
+                            throw new Exception("Error: Could not determine the name of the first worksheet.");
+                        }
+                        string firstSheetName = dbSchema.Rows[0]["TABLE_NAME"].ToString();
+                        string cleanedUpSheetName = firstSheetName.Substring(1).Substring(0, firstSheetName.Length - 3);
+                        OleDbCommand command = new OleDbCommand("Select * from [" + cleanedUpSheetName + "$]", conn);
+                        OleDbDataReader reader = command.ExecuteReader();
+                        if (reader.HasRows)
+                        {
                             while (reader.Read())
-                                {
+                            {
                                 int del = 0;
                                 bool delPar = int.TryParse(reader[5].ToString(), out del);
                                 int qtk = 0;
@@ -158,26 +158,26 @@ namespace WH_Panel
                                 int qpu = 0;
                                 bool qpuPar = int.TryParse(reader[7].ToString(), out qpu);
                                 KitHistoryItem abc = new KitHistoryItem
-                                    {
-                                        DateOfCreation = cleanedUpSheetName,
-                                        ProjectName = excelFIleName,
-                                        IPN = reader[1].ToString(),
-                                        MFPN = reader[2].ToString(),
-                                        Description = reader[3].ToString(),
-                                        QtyInKit = qtk,
-                                        Delta = del,
-                                        QtyPerUnit = qpu,
-                                        Calc = reader[8].ToString(),
-                                        Alts = reader[9].ToString()
-                                    };
-                                    countItems = i;
-                                    label12.Text = "Loaded " + (countItems).ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{0:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
+                                {
+                                    DateOfCreation = cleanedUpSheetName,
+                                    ProjectName = excelFIleName,
+                                    IPN = reader[1].ToString(),
+                                    MFPN = reader[2].ToString(),
+                                    Description = reader[3].ToString(),
+                                    QtyInKit = qtk,
+                                    Delta = del,
+                                    QtyPerUnit = qpu,
+                                    Calc = reader[8].ToString(),
+                                    Alts = reader[9].ToString()
+                                };
+                                countItems = i;
+                                label12.Text = "Loaded " + (countItems).ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{0:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
                                 if (countItems % 1000 == 0)
                                 { label12.Update(); }
                                 KitHistoryItemsList.Add(abc);
-                                    i++;
-                                }
+                                i++;
                             }
+                        }
                         conn.Dispose();
                         conn.Close();
                     }
@@ -217,7 +217,7 @@ namespace WH_Panel
             dataGridView1.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dataGridView1.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dataGridView1.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridView1.Columns[4].AutoSizeMode  =DataGridViewAutoSizeColumnMode.Fill;
+            dataGridView1.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dataGridView1.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dataGridView1.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dataGridView1.Columns[7].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -324,7 +324,7 @@ namespace WH_Panel
                 foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
                 {
                     string Litem = Path.GetFileName(file);
-                    if(Litem==fp)
+                    if (Litem == fp)
                     {
                         string str = @file.ToString();
                         DialogResult result = MessageBox.Show("Open the file : " + str + " ?", "Open file", MessageBoxButtons.OKCancel);
@@ -402,7 +402,7 @@ namespace WH_Panel
         }
         private void textBox2_KeyDown(object sender, KeyEventArgs e)
         {
-                filterViewAndJump2Qty(e);
+            filterViewAndJump2Qty(e);
         }
         private void textBox1_Enter(object sender, EventArgs e)
         {
@@ -464,7 +464,7 @@ namespace WH_Panel
         }
         private void txtbQty_KeyDown(object sender, KeyEventArgs e)
         {
-                 if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode == Keys.Enter)
             {
                 btnPrintSticker_Click(this, new EventArgs());
             }

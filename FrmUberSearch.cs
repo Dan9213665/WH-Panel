@@ -18,6 +18,8 @@ using System.Diagnostics;
 using Label = System.Windows.Forms.Label;
 using Microsoft.Office.Interop.Excel;
 using DataTable = System.Data.DataTable;
+using Button = System.Windows.Forms.Button;
+
 namespace WH_Panel
 {
     public partial class FrmUberSearch : Form
@@ -59,13 +61,65 @@ namespace WH_Panel
                         {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm","STOCK" },
                         {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm","STOCK" },
                         {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\FIELDIN\\FIELDIN_STOCK.xlsm","STOCK" },
-                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm","STOCK"}
+                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm","STOCK"},
+                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_STOCK.xlsm","STOCK"},
+                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_STOCK.xlsm","STOCK"},
+                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_STOCK.xlsm","STOCK"},
+                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_STOCK.xlsm","STOCK"},
+                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_STOCK.xlsm","STOCK"},
+                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_STOCK.xlsm","STOCK"}
+
+
                    };
             for (int i = 0; i < listOfWareHouses.Count; i++)
             {
                 DataLoader(listOfWareHouses[i].Key, listOfWareHouses[i].Value);
             }
             PopulateGridView();
+
+            // Create a list to hold the buttons
+            List<Button> buttons = new List<Button>();
+
+            // Create and add the buttons to the list
+            for (int i = 0; i < listOfWareHouses.Count; i++)
+            {
+                string warehousePath = listOfWareHouses[i].Key; // Get the warehouse path from the KeyValuePair
+
+                // Extract the warehouse name from the warehouse path
+                string[] pathParts = warehousePath.Split('\\');
+                string warehouseName = pathParts[pathParts.Length - 2];
+
+                Button button = new Button();
+                button.Text = warehouseName;
+                button.Tag = warehousePath;
+                button.AutoSize = true; // Adjust the button size based on the text length
+                button.Click += Button_Click; // Assign a common event handler for button click event
+
+                buttons.Add(button); // Add the button to the list
+            }
+
+            // Sort the buttons alphabetically based on their text
+            buttons.Sort((x, y) => x.Text.CompareTo(y.Text));
+
+            // Add the sorted buttons to the flowLayoutPanel1 control
+            foreach (Button button in buttons)
+            {
+                flowLayoutPanel1.Controls.Add(button); // Add the button to the FlowLayoutPanel
+            }
+        }
+        private void Button_Click(object sender, EventArgs e)
+        {
+            Button clickedButton = (Button)sender;
+            string warehousePath = (string)clickedButton.Tag;
+            string[] pathParts = warehousePath.Split('\\');
+            string warehouseName = pathParts[pathParts.Length - 2];
+
+            FrmClientAgnosticWH w = new FrmClientAgnosticWH();
+            w.Show();
+            w.Focus();
+
+            // Call the public method to set the ComboBox text
+            w.SetComboBoxText(warehouseName);
         }
         private void DataLoader(string fp, string thesheetName)
         {
@@ -208,55 +262,55 @@ namespace WH_Panel
             excel.StartInfo.Arguments = thePathToFile;
             excel.Start();
         }
-        private void button2_Click(object sender, EventArgs e)
-        {
-            //MessageBox.Show(Environment.MachineName.ToString());   
-            if (Environment.MachineName.ToString() == "RT12")
-            {
-                var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm";
-                openWHexcelDB(fp);
-            }
-            else
-            {
-                MessageBox.Show("ACCESS DENIED");
-            }
-        }
-        private void button3_Click(object sender, EventArgs e)
-        {
-            if (Environment.MachineName.ToString() == "RT12")
-            {
-                var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm";
-                openWHexcelDB(fp);
-            }
-            else
-            {
-                MessageBox.Show("ACCESS DENIED");
-            }
-        }
-        private void button4_Click(object sender, EventArgs e)
-        {
-            if (Environment.MachineName.ToString() == "RT12")
-            {
-                var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\FIELDIN\\FIELDIN_STOCK.xlsm";
-                openWHexcelDB(fp);
-            }
-            else
-            {
-                MessageBox.Show("ACCESS DENIED");
-            }
-        }
-        private void button5_Click(object sender, EventArgs e)
-        {
-            if (Environment.MachineName.ToString() == "RT12")
-            {
-                var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm";
-                openWHexcelDB(fp);
-            }
-            else
-            {
-                MessageBox.Show("ACCESS DENIED");
-            }
-        }
+        //private void button2_Click(object sender, EventArgs e)
+        //{
+        //    //MessageBox.Show(Environment.MachineName.ToString());   
+        //    if (Environment.MachineName.ToString() == "RT12")
+        //    {
+        //        var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm";
+        //        openWHexcelDB(fp);
+        //    }
+        //    else
+        //    {
+        //        MessageBox.Show("ACCESS DENIED");
+        //    }
+        //}
+        //private void button3_Click(object sender, EventArgs e)
+        //{
+        //    if (Environment.MachineName.ToString() == "RT12")
+        //    {
+        //        var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm";
+        //        openWHexcelDB(fp);
+        //    }
+        //    else
+        //    {
+        //        MessageBox.Show("ACCESS DENIED");
+        //    }
+        //}
+        //private void button4_Click(object sender, EventArgs e)
+        //{
+        //    if (Environment.MachineName.ToString() == "RT12")
+        //    {
+        //        var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\FIELDIN\\FIELDIN_STOCK.xlsm";
+        //        openWHexcelDB(fp);
+        //    }
+        //    else
+        //    {
+        //        MessageBox.Show("ACCESS DENIED");
+        //    }
+        //}
+        //private void button5_Click(object sender, EventArgs e)
+        //{
+        //    if (Environment.MachineName.ToString() == "RT12")
+        //    {
+        //        var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm";
+        //        openWHexcelDB(fp);
+        //    }
+        //    else
+        //    {
+        //        MessageBox.Show("ACCESS DENIED");
+        //    }
+        //}
         private void textBox9_TextChanged(object sender, EventArgs e)
         {
             label9.BackColor = Color.IndianRed;
@@ -286,7 +340,7 @@ namespace WH_Panel
         {
             clearAllsearchTextboxes();
         }
-        private  void clearAllsearchTextboxes()
+        private void clearAllsearchTextboxes()
         {
             textBox2.Text = "";
             textBox4.Text = "";

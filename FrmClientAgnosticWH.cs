@@ -117,7 +117,10 @@ namespace WH_Panel
         public string stockARAN = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_STOCK.xlsm";
         public string avlFile;
         public string stockFile;
-
+        public void SetComboBoxText(string text)
+        {
+            comboBox3.Text = text;
+        }
         private void MasterReload(string avlParam, string stockParam)
         {
             lblSendTo.Enabled = false;
