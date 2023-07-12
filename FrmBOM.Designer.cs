@@ -417,6 +417,7 @@
             // 
             tableLayoutPanel2.AutoSize = true;
             tableLayoutPanel2.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            tableLayoutPanel2.BackColor = SystemColors.Control;
             tableLayoutPanel2.ColumnCount = 11;
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 9.090908F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 9.090908F));
@@ -453,6 +454,7 @@
             tableLayoutPanel2.Controls.Add(label1, 2, 1);
             tableLayoutPanel2.Controls.Add(textBox1, 2, 2);
             tableLayoutPanel2.Dock = DockStyle.Fill;
+            tableLayoutPanel2.ForeColor = Color.Black;
             tableLayoutPanel2.Location = new Point(3, 19);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 3;

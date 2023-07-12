@@ -172,7 +172,7 @@ namespace WH_Panel
             {
                 MasterReload(avlNETLINE, stockNETLINE);
             }
-            else if (comboBox3.Text == "VAYYAR")
+            else if (comboBox3.Text == "VAYAR")
             {
                 MasterReload(avlVAYAR, stockVAYAR);
             }
@@ -1368,6 +1368,27 @@ namespace WH_Panel
         private void button12_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_AVL.xlsx";
+            AuthorizedExcelFileOpening(fp);
+        }
+        private void button19_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_STOCK.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+        private void button14_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_AVL.xlsx";
+            AuthorizedExcelFileOpening(fp);
+        }
+        private void button21_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_STOCK.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+        private void button20_Click(object sender, EventArgs e)
+        {
+
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_AVL.xlsx";
             AuthorizedExcelFileOpening(fp);
         }
         private void textBox11_KeyDown(object sender, KeyEventArgs e)
