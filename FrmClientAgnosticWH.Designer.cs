@@ -424,7 +424,7 @@
             // 
             comboBox5.Dock = DockStyle.Fill;
             comboBox5.FormattingEnabled = true;
-            comboBox5.Items.AddRange(new object[] { "K1K", "6P2" });
+            comboBox5.Items.AddRange(new object[] { "30P", "K1K", "6P2" });
             comboBox5.Location = new Point(233, 3);
             comboBox5.Name = "comboBox5";
             comboBox5.Size = new Size(111, 23);

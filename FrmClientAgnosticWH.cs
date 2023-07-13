@@ -1397,8 +1397,8 @@ namespace WH_Panel
             if (e.KeyCode == Keys.Enter)
             {
                 string inputStr = textBox11.Text;
-                string startStr = comboBox4.SelectedItem.ToString();
-                string endStr = comboBox5.SelectedItem.ToString();
+                string startStr = comboBox4.ToString();
+                string endStr = comboBox5.Text.ToString();
 
                 int startIndex = inputStr.IndexOf(startStr);
                 if (startIndex != -1)
