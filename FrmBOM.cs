@@ -1080,6 +1080,7 @@ namespace WH_Panel
                         textBox2_KeyDown(sender, e);
                     }
                 }
+
             }
         }
 

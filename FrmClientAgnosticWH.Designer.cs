@@ -74,6 +74,7 @@
             label15 = new Label();
             textBox10 = new TextBox();
             button4 = new Button();
+            button22 = new Button();
             button3 = new Button();
             groupBox7 = new GroupBox();
             dataGridView1 = new DataGridView();
@@ -776,19 +777,21 @@
             // 
             // tableLayoutPanel7
             // 
-            tableLayoutPanel7.ColumnCount = 3;
+            tableLayoutPanel7.ColumnCount = 4;
             tableLayoutPanel6.SetColumnSpan(tableLayoutPanel7, 3);
-            tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33333F));
-            tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33333F));
-            tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33333F));
+            tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
+            tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
+            tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
+            tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
             tableLayoutPanel7.Controls.Add(label15, 1, 0);
             tableLayoutPanel7.Controls.Add(textBox10, 0, 0);
             tableLayoutPanel7.Controls.Add(button4, 2, 0);
+            tableLayoutPanel7.Controls.Add(button22, 3, 0);
             tableLayoutPanel7.Dock = DockStyle.Fill;
             tableLayoutPanel7.Location = new Point(297, 3);
             tableLayoutPanel7.Name = "tableLayoutPanel7";
             tableLayoutPanel7.RowCount = 1;
-            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel7.Size = new Size(878, 39);
             tableLayoutPanel7.TabIndex = 1;
             // 
@@ -797,9 +800,9 @@
             label15.AutoSize = true;
             label15.Dock = DockStyle.Fill;
             label15.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point);
-            label15.Location = new Point(295, 0);
+            label15.Location = new Point(266, 0);
             label15.Name = "label15";
-            label15.Size = new Size(286, 39);
+            label15.Size = new Size(257, 39);
             label15.TabIndex = 5;
             label15.Text = "BALANCE : ";
             label15.TextAlign = ContentAlignment.MiddleCenter;
@@ -811,20 +814,33 @@
             textBox10.Location = new Point(3, 3);
             textBox10.Name = "textBox10";
             textBox10.ReadOnly = true;
-            textBox10.Size = new Size(286, 33);
+            textBox10.Size = new Size(257, 33);
             textBox10.TabIndex = 3;
             textBox10.TextAlign = HorizontalAlignment.Center;
             // 
             // button4
             // 
             button4.Dock = DockStyle.Fill;
-            button4.Location = new Point(587, 3);
+            button4.Location = new Point(529, 3);
             button4.Name = "button4";
-            button4.Size = new Size(288, 33);
+            button4.Size = new Size(257, 33);
             button4.TabIndex = 4;
             button4.Text = "FIlter Current WH stock ONLY";
             button4.UseVisualStyleBackColor = true;
             button4.Click += button4_Click_1;
+            // 
+            // button22
+            // 
+            button22.BackgroundImage = (Image)resources.GetObject("button22.BackgroundImage");
+            button22.BackgroundImageLayout = ImageLayout.Zoom;
+            button22.Dock = DockStyle.Fill;
+            button22.Location = new Point(792, 3);
+            button22.Name = "button22";
+            button22.Size = new Size(83, 33);
+            button22.TabIndex = 6;
+            button22.TextAlign = ContentAlignment.MiddleLeft;
+            button22.UseVisualStyleBackColor = true;
+            button22.Click += button22_Click;
             // 
             // button3
             // 
@@ -1609,5 +1625,6 @@
         private GroupBox groupBox17;
         private Button button20;
         private Button button21;
+        private Button button22;
     }
 }

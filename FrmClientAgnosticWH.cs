@@ -1397,7 +1397,7 @@ namespace WH_Panel
             if (e.KeyCode == Keys.Enter)
             {
                 string inputStr = textBox11.Text;
-                string startStr = comboBox4.ToString();
+                string startStr = comboBox4.Text.ToString();
                 string endStr = comboBox5.Text.ToString();
 
                 int startIndex = inputStr.IndexOf(startStr);
@@ -1410,6 +1410,7 @@ namespace WH_Panel
                         string extractedStr = inputStr.Substring(startIndex, endIndex - startIndex);
                         textBox2.Text = extractedStr;
                         textBox2.Focus();
+                        LastInputFromUser = textBox11;
                     }
                 }
             }
@@ -1420,6 +1421,150 @@ namespace WH_Panel
             textBox11.Clear();
         }
 
+        private void button22_Click(object sender, EventArgs e)
+        {
+            GenerateHTML();
+
+        }
+
+        private void GenerateHTML()
+        {
+            SetSTOCKiewColumsOrder();
+
+            string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+            string filename = @"\\dbr1\Data\WareHouse\2023\WHsearcher\" + fileTimeStamp + "_" + ".html";
+
+            using (StreamWriter writer = new StreamWriter(filename))
+            {
+                writer.WriteLine("<html style='text-align:center'>");
+                writer.WriteLine("<head>");
+                writer.WriteLine("<title>" + textBox10.Text + "</title>");
+                writer.WriteLine("</head>");
+                writer.WriteLine("<body style=\"background-color:#000;\">");
+                writer.WriteLine("<table border='1' style=\"background-color:  #D3D3D3;\">");
+
+                writer.WriteLine("<tr style='text-align:center'>");
+                writer.WriteLine("<td>" + "WAREHOUSE STOCK STATUS for : <b>" + textBox10.Text + "</b> UPDATED " + fileTimeStamp + "</td>");
+                if(label15.Text.Contains("BALANCE: 0"))
+                {
+                    writer.WriteLine("<td style=\"background-color:  #FF7F7F;\">" + label15.Text + "</td>");
+                }
+                else
+                {
+                    writer.WriteLine("<td style=\"background-color: lightgreen;\">" + label15.Text + "</td>");
+                }
+                
+                writer.WriteLine("</tr>");
+
+                writer.WriteLine("<tr style='text-align:center'>");
+
+                // Set column order and autosize mode
+                dataGridView1.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                dataGridView1.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                dataGridView1.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                dataGridView1.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                dataGridView1.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                dataGridView1.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                dataGridView1.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                dataGridView1.Columns[7].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+
+                // Add header from DataGridView with specified column order
+                writer.WriteLine("<th>" + dataGridView1.Columns["IPN"].HeaderText + "</th>");
+                writer.WriteLine("<th>" + dataGridView1.Columns["Manufacturer"].HeaderText + "</th>");
+                writer.WriteLine("<th>" + dataGridView1.Columns["MFPN"].HeaderText + "</th>");
+                writer.WriteLine("<th>" + dataGridView1.Columns["Description"].HeaderText + "</th>");
+                writer.WriteLine("<th>" + dataGridView1.Columns["Stock"].HeaderText + "</th>");
+                writer.WriteLine("<th>" + dataGridView1.Columns["UpdatedOn"].HeaderText + "</th>");
+                writer.WriteLine("<th>" + dataGridView1.Columns["ReelBagTrayStick"].HeaderText + "</th>");
+                writer.WriteLine("<th>" + dataGridView1.Columns["SourceRequester"].HeaderText + "</th>");
+
+                writer.WriteLine("</tr>");
+
+                // Iterate through the rows
+                foreach (DataGridViewRow row in dataGridView1.Rows)
+                {
+                    writer.WriteLine("<tr style='text-align:center'>");
+
+                    // Iterate through the cells in the specified column order
+                    writer.WriteLine("<td>" + row.Cells["IPN"].Value.ToString() + "</td>");
+                    writer.WriteLine("<td>" + row.Cells["Manufacturer"].Value.ToString() + "</td>");
+                    writer.WriteLine("<td>" + row.Cells["MFPN"].Value.ToString() + "</td>");
+                    writer.WriteLine("<td>" + row.Cells["Description"].Value.ToString() + "</td>");
+                    if (row.Cells["Stock"].Value.ToString().Contains("-"))
+                    {
+                        writer.WriteLine("<td style=\"background-color:  #FF7F7F;\">" + row.Cells["Stock"].Value.ToString() + "</td>");
+
+                    }
+                    else
+                    {
+                        writer.WriteLine("<td style=\"background-color: lightgreen;\">" + row.Cells["Stock"].Value.ToString() + "</td>");
+                    }
+
+                    writer.WriteLine("<td>" + row.Cells["UpdatedOn"].Value.ToString() + "</td>");
+                    writer.WriteLine("<td>" + row.Cells["ReelBagTrayStick"].Value.ToString() + "</td>");
+                    writer.WriteLine("<td>" + row.Cells["SourceRequester"].Value.ToString() + "</td>");
+
+                    writer.WriteLine("</tr>");
+                }
+
+                writer.WriteLine("</table>");
+                writer.WriteLine("</body>");
+                writer.WriteLine("</html>");
+            }
+
+            var process = new Process();
+            process.StartInfo = new ProcessStartInfo(filename)
+            {
+                UseShellExecute = true
+            };
+            process.Start();
+
+
+        }
+        //private void GenerateHTML()
+        //{
+        //    SetSTOCKiewColumsOrder();
+        //    string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+        //    string filename = "\\\\dbr1\\Data\\WareHouse\\2023\\WHsearcher\\" + _fileTimeStamp + "_" + ".html";
+
+        //    using (StreamWriter writer = new StreamWriter(filename))
+        //    {
+        //        writer.WriteLine("<html style='text-align:center'>");
+        //        writer.WriteLine("<head>");
+        //        writer.WriteLine("<title>" + textBox10.Text + "</title>");
+        //        writer.WriteLine("</head>");
+        //        writer.WriteLine("<body>");
+        //        writer.WriteLine("<table border='1'>");
+        //        writer.WriteLine("<tr>");
+        //        writer.WriteLine("<td>" + textBox10.Text + "</td>");
+        //        writer.WriteLine("<td>" + label15.Text + "</td>");
+        //        writer.WriteLine("</tr>");
+        //        // Iterate through the rows
+        //        for (int i = 0; i < dataGridView1.Rows.Count; i++)
+        //        {
+        //            writer.WriteLine("<tr>");
+
+        //            // Iterate through the columns
+        //            for (int j = 0; j < dataGridView1.Columns.Count; j++)
+        //            {
+        //                string cellValue = dataGridView1.Rows[i].Cells[j].Value.ToString();
+        //                writer.WriteLine("<td>" + cellValue + "</td>");
+        //            }
+
+        //            writer.WriteLine("</tr>");
+        //        }
+
+        //        writer.WriteLine("</table>");
+        //        writer.WriteLine("</body>");
+        //        writer.WriteLine("</html>");
+        //    }
+        //    var p = new Process();
+        //    p.StartInfo = new ProcessStartInfo(filename)
+        //    {
+        //        UseShellExecute = true
+        //    };
+        //    p.Start();
+        //}
 
     }
 }
