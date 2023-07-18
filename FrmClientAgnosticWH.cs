@@ -1244,7 +1244,7 @@ namespace WH_Panel
         }
         private void AuthorizedExcelFileOpening(string fp)
         {
-            if (Environment.UserName == "lgt")
+            if (Environment.UserName == "lgt" || Environment.UserName == "rbtwh")
             {
                 openWHexcelDB(fp);
             }
@@ -1445,7 +1445,7 @@ namespace WH_Panel
 
                 writer.WriteLine("<tr style='text-align:center'>");
                 writer.WriteLine("<td>" + "WAREHOUSE STOCK STATUS for : <b>" + textBox10.Text + "</b> UPDATED " + fileTimeStamp + "</td>");
-                if(label15.Text.Contains("BALANCE: 0"))
+                if (label15.Text.Contains("BALANCE: 0"))
                 {
                     writer.WriteLine("<td style=\"background-color:  #FF7F7F;\">" + label15.Text + "</td>");
                 }
@@ -1453,7 +1453,7 @@ namespace WH_Panel
                 {
                     writer.WriteLine("<td style=\"background-color: lightgreen;\">" + label15.Text + "</td>");
                 }
-                
+
                 writer.WriteLine("</tr>");
 
                 writer.WriteLine("<tr style='text-align:center'>");
