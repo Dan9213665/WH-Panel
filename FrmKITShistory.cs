@@ -21,6 +21,8 @@ using static System.Net.WebRequestMethods;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using DataTable = System.Data.DataTable;
 using TextBox = System.Windows.Forms.TextBox;
+using File = System.IO.File;
+
 namespace WH_Panel
 {
     public partial class FrmKITShistory : Form
@@ -86,9 +88,13 @@ namespace WH_Panel
                 {
                     countLoadedFIles++;
                     string Litem = Path.GetFileName(file);
+                    string fileName = Path.GetFileName(file);
                     if (FileIsLocked(Litem))
                     {
-                        DataLoader(file, Litem);
+                        string copyFilePath = CreateCopyOfFile(file);
+                        DataLoader(copyFilePath, fileName);
+                        DeleteFile(copyFilePath);
+                        //DataLoader(file, Litem);
                     }
                     else
                     {
@@ -99,6 +105,16 @@ namespace WH_Panel
             PopulateGridView();
             SetColumsOrder();
             stopWatch.Stop();
+        }
+        private string CreateCopyOfFile(string filePath)
+        {
+            string copyFilePath = Path.Combine(Path.GetDirectoryName(filePath), "Copy_" + Path.GetFileName(filePath));
+            File.Copy(filePath, copyFilePath, true);
+            return copyFilePath;
+        }
+        private void DeleteFile(string filePath)
+        {
+            File.Delete(filePath);
         }
         private void AddErrorousFilesToListOfErrors(string fp)
         {
