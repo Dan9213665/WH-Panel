@@ -1,5 +1,6 @@
 ﻿using FastMember;
 using Microsoft.Office.Interop.Excel;
+using Microsoft.Office.Interop.Outlook;
 using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,12 @@ using Seagull.BarTender.Print;
 using Range = Microsoft.Office.Interop.Excel.Range;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 using Application = Microsoft.Office.Interop.Excel.Application;
+using static Seagull.Framework.OS.ServiceControlManager;
+using System;
+using System.Windows.Forms;
+using Exception = System.Exception;
+using _Application = Microsoft.Office.Interop.Excel._Application;
+
 namespace WH_Panel
 {
     public partial class FrmBOM : Form
@@ -1088,5 +1095,174 @@ namespace WH_Panel
         {
             textBox12.Clear();
         }
+
+
+
+
+
+        // Event handler for the button click
+        private void btnSendEmail_Click(object sender, EventArgs e)
+        {
+            //// Get the contents of the DataGridView
+            //string contents = GetDataGridViewContents(dataGridView1); // Replace 'dataGridView1' with the name of your DataGridView control
+
+
+
+            //// Focus on the current instance of Outlook
+            //FocusOnOutlook();
+
+            //// Create a new email and paste the contents into the body
+            //CreateNewEmail();
+            //AndPaste(contents);
+        }
+
+        //Helper method to retrieve the contents of the DataGridView
+        //private string GetDataGridViewContents(DataGridView dataGridView)
+        //{
+        //    StringBuilder contents = new StringBuilder();
+
+        //    // Append column headers
+        //    foreach (DataGridViewColumn column in dataGridView.Columns)
+        //    {
+        //        contents.Append(column.HeaderText);
+        //        contents.Append("\t\t\t");
+        //    }
+        //    contents.AppendLine();
+
+        //    // Append row data
+        //    foreach (DataGridViewRow row in dataGridView.Rows)
+        //    {
+        //        foreach (DataGridViewCell cell in row.Cells)
+        //        {
+        //            contents.Append(cell.Value?.ToString() ?? "");
+        //            contents.Append("\t\t\t");
+        //        }
+        //        contents.AppendLine();
+        //    }
+
+        //    return contents.ToString();
+        //}
+
+        //private string GetDataGridViewContents(DataGridView dataGridView)
+        //{
+        //    string contents = "<table>";
+
+        //    // Append column headers
+        //    contents += "<tr>";
+        //    foreach (DataGridViewColumn column in dataGridView.Columns)
+        //    {
+        //        contents += $"<th>{column.HeaderText}</th>";
+        //    }
+        //    contents += "</tr>";
+
+        //    // Append row data
+        //    foreach (DataGridViewRow row in dataGridView.Rows)
+        //    {
+        //        contents += "<tr>";
+        //        foreach (DataGridViewCell cell in row.Cells)
+        //        {
+        //            contents += $"<td>{cell.Value?.ToString() ?? ""}</td>";
+        //        }
+        //        contents += "</tr>";
+        //    }
+
+        //    contents += "</table>";
+
+        //    return contents;
+        //}
+
+        // Helper method to focus on the current instance of Outlook
+        //private void FocusOnOutlook()
+        //{
+        //    Process[] processes = Process.GetProcessesByName("OUTLOOK");
+
+        //    if (processes.Length > 0)
+        //    {
+        //        IntPtr hWnd = processes[0].MainWindowHandle;
+        //        if (hWnd != IntPtr.Zero)
+        //        {
+        //            NativeMethods.SetForegroundWindow(hWnd);
+        //        }
+        //    }
+        //}
+
+        // Helper method to create a new email and paste the contents into the body
+        //private void CreateNewEmail()
+        //{
+        //    // Simulate key presses to create a new email and paste the contents
+        //    SendKeys.SendWait("^n"); // Press Ctrl+Alt+N to create a new email
+
+
+        //}
+        //private void AndPaste(string contents)
+        //{
+        //    // Create HTML table with the DataGridView contents
+        //    string htmlTable = "<body>" + contents + "</body>";
+
+        //    // Set clipboard data as HTML format
+        //    //Clipboard.SetData(DataFormats.Html, new DataObject(DataFormats.Html, htmlTable));
+
+        //    // Set the clipboard data as HTML format
+        //    string excelHtmlFormat = "HTML Format";
+        //    Clipboard.SetData(excelHtmlFormat, htmlTable);
+
+        //    //Clipboard.SetText(contents);
+        //    // Activate and focus on Outlook
+        //    Process[] processes = Process.GetProcessesByName("OUTLOOK");
+        //    if (processes.Length > 0)
+        //    {
+        //        IntPtr hWnd = processes[0].MainWindowHandle;
+        //        if (hWnd != IntPtr.Zero)
+        //        {
+        //            NativeMethods.SetForegroundWindow(hWnd);
+        //            NativeMethods.SetActiveWindow(hWnd);
+        //        }
+        //    }
+
+        //    // Wait for Outlook to activate
+        //    //System.Threading.Thread.Sleep(1000);
+
+        //    // Simulate key presses to navigate and paste the contents
+        //    SendKeys.SendWait("{TAB}");
+        //    SendKeys.SendWait("{TAB}");
+        //    SendKeys.SendWait("{TAB}");
+        //    SendKeys.SendWait("{TAB}");
+        //    SendKeys.SendWait("^v"); // Press Ctrl+V to paste the contents
+        //}
+        //private void AndPaste(string contents)
+        //{
+        //    string htmlTable = "<html><body>" + contents + "</body></html>";
+        //    string excelHtmlFormat = "HTML Format";
+
+        //    // Set the clipboard data as HTML format
+        //    Clipboard.SetData(excelHtmlFormat, htmlTable);
+
+        //    // Create a new Outlook application instance
+        //    Microsoft.Office.Interop.Outlook.Application outlookApp = new Microsoft.Office.Interop.Outlook.Application();
+
+        //    // Create a new email item
+        //    Microsoft.Office.Interop.Outlook.MailItem mailItem = (Microsoft.Office.Interop.Outlook.MailItem)outlookApp.CreateItem(Microsoft.Office.Interop.Outlook.OlItemType.olMailItem);
+
+        //    // Set the subject and body format
+        //    mailItem.Subject = "DataGridView Contents";
+        //    mailItem.BodyFormat = Microsoft.Office.Interop.Outlook.OlBodyFormat.olFormatHTML;
+
+        //    // Paste the contents (as Excel table) into the email body
+        //    mailItem.HTMLBody = "<body>" + Clipboard.GetText() + "</body>";
+
+        //    // Display the email compose window
+        //    mailItem.Display();
+        //}
+        // NativeMethods class to import SetForegroundWindow from user32.dll
+        // NativeMethods class to import SetForegroundWindow and SetActiveWindow from user32.dll
+        //private static class NativeMethods
+        //{
+        //    [System.Runtime.InteropServices.DllImport("user32.dll")]
+        //    public static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        //    [System.Runtime.InteropServices.DllImport("user32.dll")]
+        //    public static extern bool SetActiveWindow(IntPtr hWnd);
+        //}
+
     }
 }

@@ -38,10 +38,10 @@ namespace WH_Panel
         public int colMFPNFoundIndex;
         public List<string> listOfPaths = new List<string>()
             {
-                "\\\\dbr1\\Data\\WareHouse\\2022\\09.2022",
-                "\\\\dbr1\\Data\\WareHouse\\2022\\10.2022",
-                "\\\\dbr1\\Data\\WareHouse\\2022\\11.2022",
-                "\\\\dbr1\\Data\\WareHouse\\2022\\12.2022",
+               // "\\\\dbr1\\Data\\WareHouse\\2022\\09.2022",
+               // "\\\\dbr1\\Data\\WareHouse\\2022\\10.2022",
+               // "\\\\dbr1\\Data\\WareHouse\\2022\\11.2022",
+                //"\\\\dbr1\\Data\\WareHouse\\2022\\12.2022",
                 "\\\\dbr1\\Data\\WareHouse\\2023"
             };
         public FrmKITShistory()
@@ -167,24 +167,32 @@ namespace WH_Panel
                         {
                             while (reader.Read())
                             {
+                                int indIPN = reader.GetOrdinal("IPN");
+                                int indMFPN = reader.GetOrdinal("MFPN");
+                                int indDescription = reader.GetOrdinal("Description");
+                                int indDELTA = reader.GetOrdinal("DELTA");
+                                int indQty = indDELTA + 2;//reader.GetOrdinal("Qty");
+                                int indCalc = indDELTA + 3;//reader.GetOrdinal("Calc");
+                                int indAlts = indDELTA + 4;
+
                                 int del = 0;
-                                bool delPar = int.TryParse(reader[5].ToString(), out del);
+                                bool delPar = int.TryParse(reader[indDELTA].ToString(), out del);
                                 int qtk = 0;
-                                bool qtkPar = int.TryParse(reader[4].ToString(), out qtk);
+                                bool qtkPar = int.TryParse(reader[indDELTA - 1].ToString(), out qtk);
                                 int qpu = 0;
-                                bool qpuPar = int.TryParse(reader[7].ToString(), out qpu);
+                                bool qpuPar = int.TryParse(reader[indQty].ToString(), out qpu);
                                 KitHistoryItem abc = new KitHistoryItem
                                 {
                                     DateOfCreation = cleanedUpSheetName,
                                     ProjectName = excelFIleName,
-                                    IPN = reader[1].ToString(),
-                                    MFPN = reader[2].ToString(),
-                                    Description = reader[3].ToString(),
+                                    IPN = reader[indIPN].ToString(),
+                                    MFPN = reader[indMFPN].ToString(),
+                                    Description = reader[indDescription].ToString(),
                                     QtyInKit = qtk,
                                     Delta = del,
                                     QtyPerUnit = qpu,
-                                    Calc = reader[8].ToString(),
-                                    Alts = reader[9].ToString()
+                                    Calc = reader[indQty + 1].ToString(),
+                                    Alts = reader[indQty + 2].ToString()
                                 };
                                 countItems = i;
                                 label12.Text = "Loaded " + (countItems).ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{0:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
