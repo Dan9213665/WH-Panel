@@ -49,6 +49,7 @@
             button1 = new Button();
             btnFontIncrease = new Button();
             btnFontDecrease = new Button();
+            button2 = new Button();
             groupBox2 = new GroupBox();
             dataGridView2 = new DataGridView();
             groupBox1.SuspendLayout();
@@ -243,17 +244,19 @@
             // 
             // tableLayoutPanel2
             // 
-            tableLayoutPanel2.ColumnCount = 5;
+            tableLayoutPanel2.ColumnCount = 6;
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
             tableLayoutPanel2.Controls.Add(label1, 0, 0);
             tableLayoutPanel2.Controls.Add(comboBox1, 1, 0);
             tableLayoutPanel2.Controls.Add(button1, 4, 0);
             tableLayoutPanel2.Controls.Add(btnFontIncrease, 2, 0);
             tableLayoutPanel2.Controls.Add(btnFontDecrease, 3, 0);
+            tableLayoutPanel2.Controls.Add(button2, 5, 0);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.Location = new Point(3, 3);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -292,7 +295,7 @@
             button1.Dock = DockStyle.Fill;
             button1.Location = new Point(886, 3);
             button1.Name = "button1";
-            button1.Size = new Size(217, 60);
+            button1.Size = new Size(104, 60);
             button1.TabIndex = 2;
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
@@ -320,6 +323,18 @@
             btnFontDecrease.TabIndex = 4;
             btnFontDecrease.UseVisualStyleBackColor = true;
             btnFontDecrease.Click += btnFontDecrease_Click;
+            // 
+            // button2
+            // 
+            button2.BackgroundImage = (Image)resources.GetObject("button2.BackgroundImage");
+            button2.BackgroundImageLayout = ImageLayout.Stretch;
+            button2.Dock = DockStyle.Fill;
+            button2.Location = new Point(996, 3);
+            button2.Name = "button2";
+            button2.Size = new Size(107, 60);
+            button2.TabIndex = 5;
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
             // 
             // groupBox2
             // 
@@ -409,5 +424,6 @@
         private Button button1;
         private Button btnFontIncrease;
         private Button btnFontDecrease;
+        private Button button2;
     }
 }

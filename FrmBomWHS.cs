@@ -267,7 +267,7 @@ namespace WH_Panel
             int perCounter = 0;
             foreach (BOMitem b in misBOMItemsLST)
             {
-                if (b.WHbalance > (b.Delta * -1))
+                if (b.WHbalance >= (b.Delta * -1))
                 {
                     perCounter++;
                 }
@@ -1113,6 +1113,144 @@ namespace WH_Panel
             // Update row height for DataGridView2
             dataGridView2.RowTemplate.Height = (int)(dataGridView2.RowTemplate.Height / 1.2);
 
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            GenerateHTMLsim();
+        }
+        private void GenerateHTMLsim()
+        {
+            string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+            string filename = "\\\\dbr1\\Data\\WareHouse\\2023\\WHsim\\" + _fileTimeStamp + "_" + projectName.Substring(0, projectName.Length - 5) + ".html";
+
+            using (StreamWriter writer = new StreamWriter(filename))
+            {
+                StringBuilder htmlContent = new StringBuilder();
+
+                // Start writing the HTML table
+                htmlContent.AppendLine("<html>");
+                htmlContent.AppendLine("<head>");
+                htmlContent.AppendLine("<title>" + projectName.Substring(0, projectName.Length - 5) + " SIMULATION" + "</title>");
+                htmlContent.AppendLine("</head>");
+                htmlContent.AppendLine("<body>");
+                htmlContent.Append("<h2 style='text-align:center;padding:0px'>" + projectName.Substring(0, projectName.Length - 5) + "</h2>");
+                htmlContent.Append("<h3 style='text-align:center;padding:0px'>" + groupBox1.Text.ToString() + "</h3>");
+                htmlContent.AppendLine("<table border='1'>");
+
+                // Write the column headers
+                // Write the column headers in specific order
+                htmlContent.AppendLine("<tr>");
+                WriteHtmlHeaderCell(htmlContent, "IPN");
+                WriteHtmlHeaderCell(htmlContent, "MFPN");
+                WriteHtmlHeaderCell(htmlContent, "Description");
+                WriteHtmlHeaderCell(htmlContent, "WHbalance");
+                WriteHtmlHeaderCell(htmlContent, "Delta");
+                WriteHtmlHeaderCell(htmlContent, "DELTA");
+                htmlContent.AppendLine("</tr>");
+                htmlContent.AppendLine("</tr>");
+
+                // Map column names to their respective indices in dataGridView1
+                Dictionary<string, int> columnIndexMap = new Dictionary<string, int>();
+                foreach (DataGridViewColumn column in dataGridView1.Columns)
+                {
+                    string columnName = column.HeaderText;
+                    if (columnName == "IPN" || columnName == "MFPN" || columnName == "Description" || columnName == "WHbalance" || columnName == "Delta")
+                    {
+                        columnIndexMap[columnName] = column.Index;
+                    }
+                }
+
+                // Write the rows and data
+                foreach (DataGridViewRow row in dataGridView1.Rows)
+                {
+                    htmlContent.AppendLine("<tr>");
+                    WriteHtmlCell(htmlContent, row, columnIndexMap, "IPN");
+                    WriteHtmlCell(htmlContent, row, columnIndexMap, "MFPN");
+                    WriteHtmlCell(htmlContent, row, columnIndexMap, "Description");
+                    WriteHtmlCell(htmlContent, row, columnIndexMap, "WHbalance");
+                    WriteHtmlCell(htmlContent, row, columnIndexMap, "Delta");
+                    WriteMissingCell(htmlContent, row, columnIndexMap); // Write "Missing" cell
+                    htmlContent.AppendLine("</tr>");
+                }
+
+                // Finish writing the HTML table
+                htmlContent.AppendLine("</table>");
+
+                htmlContent.AppendLine(GenerateJavascript());
+
+                htmlContent.AppendLine("</body>");
+                htmlContent.AppendLine("</html>");
+
+                // Write the content to the file
+                writer.Write(htmlContent.ToString());
+
+                var p = new Process();
+                p.StartInfo = new ProcessStartInfo(@filename)
+                {
+                    UseShellExecute = true
+                };
+                p.Start();
+            }
+        }
+        private void WriteHtmlHeaderCell(StringBuilder sb, string headerText)
+        {
+            if (headerText == "Delta")
+            {
+                headerText = "REQUIRED";
+            }
+            sb.AppendLine("<th>" + headerText + "</th>");
+        }
+        private void WriteHtmlCell(StringBuilder sb, DataGridViewRow row, Dictionary<string, int> columnIndexMap, string columnName)
+        {
+            int columnIndex = columnIndexMap[columnName];
+            DataGridViewCell cell = row.Cells[columnIndex];
+            if (columnName == "Delta")
+            {
+                sb.AppendLine("<td>" + Math.Abs(int.Parse(cell.Value.ToString())) + "</td>");
+            }
+            else
+            {
+                sb.AppendLine("<td>" + cell.Value + "</td>");
+            }
+
+        }
+
+        private string GenerateJavascript()
+        {
+            StringBuilder jsContent = new StringBuilder();
+            jsContent.AppendLine("<script>");
+            jsContent.AppendLine("window.onload = function() {");
+            jsContent.AppendLine("var table = document.getElementsByTagName('table')[0];");
+            jsContent.AppendLine("for (var i = 1; i < table.rows.length; i++) {"); // Start from row index 1 to skip the header row
+            jsContent.AppendLine("var deltaCell = table.rows[i].cells[4];"); // Assuming the "Delta" column is the 5th column (index 4)
+            jsContent.AppendLine("var whBalanceCell = table.rows[i].cells[3];"); // Assuming the "WHbalance" column is the 4th column (index 3)
+            jsContent.AppendLine("var deltaValue = parseInt(deltaCell.textContent);");
+            jsContent.AppendLine("var whBalanceValue = parseInt(whBalanceCell.textContent);");
+            jsContent.AppendLine("if (Math.abs(deltaValue) <= whBalanceValue) {");
+            jsContent.AppendLine("table.rows[i].style.backgroundColor = 'lightgreen';");
+            jsContent.AppendLine("} else {");
+            jsContent.AppendLine("table.rows[i].style.backgroundColor = 'lightcoral';");
+            jsContent.AppendLine("}");
+            jsContent.AppendLine("}");
+            jsContent.AppendLine("}");
+            jsContent.AppendLine("</script>");
+
+            return jsContent.ToString();
+        }
+        private void WriteMissingCell(StringBuilder sb, DataGridViewRow row, Dictionary<string, int> columnIndexMap)
+        {
+            int whbalanceColumnIndex = columnIndexMap["WHbalance"];
+            int deltaColumnIndex = columnIndexMap["Delta"];
+
+            DataGridViewCell whbalanceCell = row.Cells[whbalanceColumnIndex];
+            DataGridViewCell deltaCell = row.Cells[deltaColumnIndex];
+
+            int whbalanceValue = Convert.ToInt32(whbalanceCell.Value);
+            int deltaValue = Convert.ToInt32(deltaCell.Value);
+            int missingValue = whbalanceValue - Math.Abs(deltaValue);
+
+            sb.AppendLine("<td>" + missingValue + "</td>");
         }
     }
 }
