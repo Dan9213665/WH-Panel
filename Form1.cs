@@ -1,4 +1,6 @@
+using System;
 using System.Diagnostics;
+using System.Windows.Forms;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 namespace WH_Panel
@@ -179,6 +181,22 @@ namespace WH_Panel
         {
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_AVL.xlsx";
             AuthorizedExcelFileOpening(fp);
+        }
+
+        private void button4_Click_1(object sender, EventArgs e)
+        {
+            OpenWebAppInBroser();
+
+            
+        }
+        static void OpenWebAppInBroser()
+        {
+            string url = "http://192.168.69.37:81/"; // Change this to the desired web address
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = url,
+                UseShellExecute = true
+            });
         }
     }
 }

@@ -38,6 +38,7 @@ namespace WH_Panel
             groupBox10 = new GroupBox();
             button11 = new Button();
             groupBox7 = new GroupBox();
+            button4 = new Button();
             button5 = new Button();
             button3 = new Button();
             groupBox3 = new GroupBox();
@@ -47,6 +48,7 @@ namespace WH_Panel
             groupBox11 = new GroupBox();
             button7 = new Button();
             notifyIcon1 = new NotifyIcon(components);
+            groupBox2 = new GroupBox();
             groupBox1.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
             groupBox6.SuspendLayout();
@@ -55,6 +57,7 @@ namespace WH_Panel
             groupBox7.SuspendLayout();
             groupBox3.SuspendLayout();
             groupBox11.SuspendLayout();
+            groupBox2.SuspendLayout();
             SuspendLayout();
             // 
             // groupBox1
@@ -79,6 +82,7 @@ namespace WH_Panel
             flowLayoutPanel1.Controls.Add(groupBox10);
             flowLayoutPanel1.Controls.Add(groupBox7);
             flowLayoutPanel1.Controls.Add(groupBox3);
+            flowLayoutPanel1.Controls.Add(groupBox2);
             flowLayoutPanel1.Controls.Add(groupBox11);
             flowLayoutPanel1.Dock = DockStyle.Fill;
             flowLayoutPanel1.FlowDirection = FlowDirection.TopDown;
@@ -173,7 +177,6 @@ namespace WH_Panel
             // 
             // groupBox7
             // 
-            groupBox7.Controls.Add(button5);
             groupBox7.Controls.Add(button3);
             groupBox7.ForeColor = Color.White;
             groupBox7.Location = new Point(283, 3);
@@ -181,12 +184,23 @@ namespace WH_Panel
             groupBox7.Size = new Size(134, 125);
             groupBox7.TabIndex = 19;
             groupBox7.TabStop = false;
-            groupBox7.Text = "Find";
+            groupBox7.Text = "PANDA-tabase";
+            // 
+            // button4
+            // 
+            button4.BackgroundImage = (Image)resources.GetObject("button4.BackgroundImage");
+            button4.BackgroundImageLayout = ImageLayout.Zoom;
+            button4.Location = new Point(82, 78);
+            button4.Name = "button4";
+            button4.Size = new Size(44, 41);
+            button4.TabIndex = 12;
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += button4_Click_1;
             // 
             // button5
             // 
             button5.Image = Properties.Resources.documents_files_history_64;
-            button5.Location = new Point(58, 59);
+            button5.Location = new Point(6, 19);
             button5.Name = "button5";
             button5.Size = new Size(70, 60);
             button5.TabIndex = 11;
@@ -197,7 +211,7 @@ namespace WH_Panel
             // 
             button3.BackgroundImage = Properties.Resources.search;
             button3.BackgroundImageLayout = ImageLayout.Zoom;
-            button3.Location = new Point(8, 16);
+            button3.Location = new Point(8, 21);
             button3.Name = "button3";
             button3.Size = new Size(62, 56);
             button3.TabIndex = 9;
@@ -255,7 +269,7 @@ namespace WH_Panel
             groupBox11.BackColor = Color.Black;
             groupBox11.Controls.Add(button7);
             groupBox11.ForeColor = Color.White;
-            groupBox11.Location = new Point(423, 3);
+            groupBox11.Location = new Point(423, 134);
             groupBox11.Name = "groupBox11";
             groupBox11.Size = new Size(135, 125);
             groupBox11.TabIndex = 23;
@@ -282,6 +296,18 @@ namespace WH_Panel
             notifyIcon1.MouseClick += notifyIcon1_MouseClick;
             notifyIcon1.MouseDoubleClick += notifyIcon1_MouseDoubleClick;
             // 
+            // groupBox2
+            // 
+            groupBox2.Controls.Add(button4);
+            groupBox2.Controls.Add(button5);
+            groupBox2.ForeColor = Color.White;
+            groupBox2.Location = new Point(423, 3);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new Size(135, 125);
+            groupBox2.TabIndex = 24;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "Excel Ripper";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -305,6 +331,7 @@ namespace WH_Panel
             groupBox7.ResumeLayout(false);
             groupBox3.ResumeLayout(false);
             groupBox11.ResumeLayout(false);
+            groupBox2.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -328,5 +355,7 @@ namespace WH_Panel
         private Button button11;
         private GroupBox groupBox11;
         private Button button7;
+        private Button button4;
+        private GroupBox groupBox2;
     }
 }

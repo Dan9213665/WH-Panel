@@ -1238,6 +1238,7 @@ namespace WH_Panel
 
             return jsContent.ToString();
         }
+
         private void WriteMissingCell(StringBuilder sb, DataGridViewRow row, Dictionary<string, int> columnIndexMap)
         {
             int whbalanceColumnIndex = columnIndexMap["WHbalance"];
