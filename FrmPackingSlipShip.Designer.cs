@@ -69,6 +69,7 @@
             listBox1 = new ListBox();
             button3 = new Button();
             button2 = new Button();
+            button4 = new Button();
             groupBox2 = new GroupBox();
             tableLayoutPanel2 = new TableLayoutPanel();
             label8 = new Label();
@@ -541,17 +542,19 @@
             // tableLayoutPanel3
             // 
             tableLayoutPanel3.AutoSize = true;
-            tableLayoutPanel3.ColumnCount = 5;
+            tableLayoutPanel3.ColumnCount = 6;
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
             tableLayoutPanel3.Controls.Add(button1, 0, 0);
-            tableLayoutPanel3.Controls.Add(label12, 1, 0);
-            tableLayoutPanel3.Controls.Add(tableLayoutPanel4, 2, 0);
-            tableLayoutPanel3.Controls.Add(button3, 4, 0);
-            tableLayoutPanel3.Controls.Add(button2, 3, 0);
+            tableLayoutPanel3.Controls.Add(label12, 2, 0);
+            tableLayoutPanel3.Controls.Add(tableLayoutPanel4, 3, 0);
+            tableLayoutPanel3.Controls.Add(button3, 5, 0);
+            tableLayoutPanel3.Controls.Add(button2, 4, 0);
+            tableLayoutPanel3.Controls.Add(button4, 1, 0);
             tableLayoutPanel3.Dock = DockStyle.Fill;
             tableLayoutPanel3.Location = new Point(3, 19);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -565,7 +568,7 @@
             button1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             button1.AutoSize = true;
             button1.BackColor = Color.Transparent;
-            button1.BackgroundImage = Properties.Resources.reloadDB;
+            button1.BackgroundImage = (Image)resources.GetObject("button1.BackgroundImage");
             button1.BackgroundImageLayout = ImageLayout.Zoom;
             button1.Location = new Point(3, 3);
             button1.Name = "button1";
@@ -578,9 +581,9 @@
             // 
             label12.AutoSize = true;
             label12.Dock = DockStyle.Fill;
-            label12.Location = new Point(128, 0);
+            label12.Location = new Point(253, 0);
             label12.Name = "label12";
-            label12.Size = new Size(119, 116);
+            label12.Size = new Size(622, 116);
             label12.TabIndex = 1;
             label12.Text = "loaded rows";
             label12.TextAlign = ContentAlignment.MiddleCenter;
@@ -593,12 +596,12 @@
             tableLayoutPanel4.Controls.Add(label13, 0, 0);
             tableLayoutPanel4.Controls.Add(listBox1, 0, 1);
             tableLayoutPanel4.Dock = DockStyle.Fill;
-            tableLayoutPanel4.Location = new Point(253, 3);
+            tableLayoutPanel4.Location = new Point(881, 3);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 2;
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel4.Size = new Size(747, 110);
+            tableLayoutPanel4.Size = new Size(119, 110);
             tableLayoutPanel4.TabIndex = 2;
             // 
             // label13
@@ -606,7 +609,7 @@
             label13.Dock = DockStyle.Fill;
             label13.Location = new Point(3, 0);
             label13.Name = "label13";
-            label13.Size = new Size(741, 55);
+            label13.Size = new Size(113, 55);
             label13.TabIndex = 2;
             label13.Text = "Loading Errors :";
             label13.TextAlign = ContentAlignment.MiddleCenter;
@@ -618,7 +621,7 @@
             listBox1.ItemHeight = 15;
             listBox1.Location = new Point(3, 58);
             listBox1.Name = "listBox1";
-            listBox1.Size = new Size(741, 49);
+            listBox1.Size = new Size(113, 49);
             listBox1.TabIndex = 3;
             // 
             // button3
@@ -646,6 +649,18 @@
             button2.TabIndex = 4;
             button2.UseVisualStyleBackColor = false;
             button2.Click += button2_Click;
+            // 
+            // button4
+            // 
+            button4.BackgroundImage = (Image)resources.GetObject("button4.BackgroundImage");
+            button4.BackgroundImageLayout = ImageLayout.Zoom;
+            button4.Dock = DockStyle.Fill;
+            button4.Location = new Point(128, 3);
+            button4.Name = "button4";
+            button4.Size = new Size(119, 110);
+            button4.TabIndex = 5;
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += button4_Click;
             // 
             // groupBox2
             // 
@@ -933,5 +948,6 @@
         private GroupBox groupBox6;
         private TableLayoutPanel tableLayoutPanel7;
         private CheckBox checkBox2;
+        private Button button4;
     }
 }

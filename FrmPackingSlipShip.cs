@@ -41,13 +41,14 @@ namespace WH_Panel
         public static Stopwatch stopWatch = new Stopwatch();
         public int colIpnFoundIndex;
         public int colMFPNFoundIndex;
-        public List<string> listOfPaths = new List<string>()
-            {
-                "\\\\dbr1\\Data\\WareHouse\\2022\\10.2022",
-                "\\\\dbr1\\Data\\WareHouse\\2022\\11.2022",
-                "\\\\dbr1\\Data\\WareHouse\\2022\\12.2022",
-                "\\\\dbr1\\Data\\WareHouse\\2023"
-            };
+        public List<string> listOfPaths = new List<string>() { };
+        //public List<string> listOfPaths = new List<string>()
+        //    {
+        //        "\\\\dbr1\\Data\\WareHouse\\2022\\10.2022",
+        //        "\\\\dbr1\\Data\\WareHouse\\2022\\11.2022",
+        //        "\\\\dbr1\\Data\\WareHouse\\2022\\12.2022",
+        //        "\\\\dbr1\\Data\\WareHouse\\2023"
+        //    };
         public FrmPackingSlipShip()
         {
             InitializeComponent();
@@ -56,7 +57,7 @@ namespace WH_Panel
         {
             stopWatch.Reset();
             ResetViews();
-            startUpLogic();
+            startUpLogic(2);
             SetColumsOrder(dataGridView1);
             textBox1.Focus();
             button2.Enabled = true;
@@ -90,10 +91,21 @@ namespace WH_Panel
             checkBox1.BackColor = Color.LightGreen;
             checkBox1.Checked = true;
         }
-        private void startUpLogic()
+        private void startUpLogic(int timeSpan)
         {
             stopWatch.Start();
             label12.BackColor = Color.IndianRed;
+
+            if (timeSpan == 2)
+            {
+                listOfPaths = listOfPathsAggregator(1);
+            }
+            else if (timeSpan == 6)
+            {
+                listOfPaths = listOfPathsAggregator(5);
+            }
+
+
             foreach (string path in listOfPaths)
             {
                 foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
@@ -118,6 +130,39 @@ namespace WH_Panel
             textBox2.ReadOnly = false;
             textBox3.ReadOnly = false;
         }
+        private List<string> listOfPathsAggregator(int numMonths)
+        {
+            List<string> list = new List<string>();
+
+            string main = "\\\\dbr1\\Data\\WareHouse\\";
+            DateTime d = DateTime.Now;
+
+            for (int i = 0; i < numMonths; i++)
+            {
+                string year = d.Year.ToString("D4");
+                int month = d.Month;
+
+                if (month == 1) // If it's January, adjust year and month accordingly
+                {
+                    year = (d.Year - 1).ToString("D4");
+                    month = 12; // Set month to December
+                }
+                else
+                {
+                    month--;
+                }
+
+                string previousMonthPath = $"{main}{year}\\{month:D2}.{year}";
+                list.Add(previousMonthPath);
+
+                d = d.AddMonths(-1); // Move to the previous month
+            }
+
+            list.Reverse(); // Since we're adding paths in reverse order, reverse the list
+
+            return list;
+        }
+
         //public bool IsFileLocked(string strFullFileName)
         //{
         //    bool blnReturn = false;
@@ -796,6 +841,18 @@ namespace WH_Panel
                 chkb.Text = "EDIT disabled";
                 txtbQty.BackColor = Color.White;
             }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+
+            stopWatch.Reset();
+            ResetViews();
+            startUpLogic(6);
+            SetColumsOrder(dataGridView1);
+            textBox1.Focus();
+            button2.Enabled = true;
+
         }
     }
 }

@@ -26,17 +26,18 @@
         private void InitializeComponent()
         {
             DateTimePicker dateTimePicker1;
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmKITShistory));
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmKITShistory));
             tableLayoutPanel1 = new TableLayoutPanel();
             groupBox1 = new GroupBox();
             tableLayoutPanel3 = new TableLayoutPanel();
             button1 = new Button();
-            label12 = new Label();
             tableLayoutPanel4 = new TableLayoutPanel();
             label13 = new Label();
             listBox1 = new ListBox();
+            label12 = new Label();
+            button2 = new Button();
             groupBox2 = new GroupBox();
             tableLayoutPanel2 = new TableLayoutPanel();
             textBox11 = new TextBox();
@@ -131,13 +132,15 @@
             // tableLayoutPanel3
             // 
             tableLayoutPanel3.AutoSize = true;
-            tableLayoutPanel3.ColumnCount = 3;
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 15F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel3.ColumnCount = 4;
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 9F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 9F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 22F));
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60F));
             tableLayoutPanel3.Controls.Add(button1, 0, 0);
-            tableLayoutPanel3.Controls.Add(label12, 1, 0);
-            tableLayoutPanel3.Controls.Add(tableLayoutPanel4, 2, 0);
+            tableLayoutPanel3.Controls.Add(tableLayoutPanel4, 4, 0);
+            tableLayoutPanel3.Controls.Add(label12, 2, 0);
+            tableLayoutPanel3.Controls.Add(button2, 1, 0);
             tableLayoutPanel3.Dock = DockStyle.Fill;
             tableLayoutPanel3.Location = new Point(3, 19);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -151,25 +154,14 @@
             button1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             button1.AutoSize = true;
             button1.BackColor = Color.Transparent;
-            button1.BackgroundImage = Properties.Resources.reloadDB;
+            button1.BackgroundImage = (Image)resources.GetObject("button1.BackgroundImage");
             button1.BackgroundImageLayout = ImageLayout.Zoom;
             button1.Location = new Point(3, 3);
             button1.Name = "button1";
-            button1.Size = new Size(166, 109);
+            button1.Size = new Size(97, 109);
             button1.TabIndex = 0;
             button1.UseVisualStyleBackColor = false;
             button1.Click += button1_Click;
-            // 
-            // label12
-            // 
-            label12.AutoSize = true;
-            label12.Dock = DockStyle.Fill;
-            label12.Location = new Point(175, 0);
-            label12.Name = "label12";
-            label12.Size = new Size(281, 115);
-            label12.TabIndex = 1;
-            label12.Text = "loaded rows";
-            label12.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // tableLayoutPanel4
             // 
@@ -179,12 +171,12 @@
             tableLayoutPanel4.Controls.Add(label13, 0, 0);
             tableLayoutPanel4.Controls.Add(listBox1, 0, 1);
             tableLayoutPanel4.Dock = DockStyle.Fill;
-            tableLayoutPanel4.Location = new Point(462, 3);
+            tableLayoutPanel4.Location = new Point(461, 3);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 2;
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel4.Size = new Size(684, 109);
+            tableLayoutPanel4.Size = new Size(685, 109);
             tableLayoutPanel4.TabIndex = 2;
             // 
             // label13
@@ -192,7 +184,7 @@
             label13.Dock = DockStyle.Fill;
             label13.Location = new Point(3, 0);
             label13.Name = "label13";
-            label13.Size = new Size(678, 54);
+            label13.Size = new Size(679, 54);
             label13.TabIndex = 2;
             label13.Text = "Loading Errors :";
             label13.TextAlign = ContentAlignment.MiddleCenter;
@@ -204,9 +196,32 @@
             listBox1.ItemHeight = 15;
             listBox1.Location = new Point(3, 57);
             listBox1.Name = "listBox1";
-            listBox1.Size = new Size(678, 49);
+            listBox1.Size = new Size(679, 49);
             listBox1.TabIndex = 3;
             listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
+            // 
+            // label12
+            // 
+            label12.AutoSize = true;
+            label12.Location = new Point(209, 0);
+            label12.Name = "label12";
+            label12.Size = new Size(71, 15);
+            label12.TabIndex = 1;
+            label12.Text = "loaded rows";
+            label12.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // button2
+            // 
+            button2.BackgroundImage = (Image)resources.GetObject("button2.BackgroundImage");
+            button2.BackgroundImageLayout = ImageLayout.Zoom;
+            button2.Dock = DockStyle.Fill;
+            button2.Location = new Point(106, 3);
+            button2.Name = "button2";
+            button2.Size = new Size(97, 109);
+            button2.TabIndex = 3;
+            button2.TextAlign = ContentAlignment.MiddleRight;
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
             // 
             // groupBox2
             // 
@@ -788,5 +803,6 @@
         private Label label18;
         private Label label21;
         private TextBox txtbIPN;
+        private Button button2;
     }
 }
