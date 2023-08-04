@@ -112,6 +112,89 @@ namespace WH_Panel
             SetColumsOrderPS();
             label12.BackColor = Color.LightGreen;
         }
+        //private void DataLoader(string fp, string excelFIleName)
+        //{
+        //    TimeSpan ts = stopWatch.Elapsed;
+        //    try
+        //    {
+        //        string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=1\"";
+        //        using (OleDbConnection conn = new OleDbConnection(constr))
+        //        {
+        //            try
+        //            {
+        //                conn.Open();
+        //                DataTable dbSchema = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+        //                if (dbSchema == null || dbSchema.Rows.Count < 1)
+        //                {
+        //                    throw new Exception("Error: Could not determine the name of the first worksheet.");
+        //                }
+        //                string firstSheetName = excelFIleName;
+        //                string cleanedUpSheetName = "PACKING SLIP";
+
+        //                //string firstSheetName = dbSchema.Rows[0]["TABLE_NAME"].ToString();
+        //                //firstSheetName = firstSheetName.Replace("$", ""); // Clean up the sheet name
+
+        //                ////string cleanedUpSheetName = firstSheetName.Substring(1).Substring(0, firstSheetName.Length - 3);
+
+        //                OleDbCommand command = new OleDbCommand("Select * from [" + cleanedUpSheetName + "$]", conn);
+        //                //OleDbCommand command = new OleDbCommand("Select * from [Sheet1$]", conn);
+        //                OleDbDataReader reader = command.ExecuteReader();
+        //                if (reader.HasRows)
+        //                {
+        //                    int j = 0;
+        //                    while (reader.Read())
+        //                    {
+        //                        if (j > 11)
+        //                        {
+        //                            int qtyS = 0;
+        //                            bool parseOk = int.TryParse(reader[3].ToString(), out qtyS);
+        //                            string _ClientName = excelFIleName.Substring(13);
+        //                            string thName = _ClientName.Substring(0, _ClientName.Length - 5);
+        //                            PackingSlipItem abc = new PackingSlipItem
+        //                            {
+        //                                ShipmentDate = excelFIleName.Substring(0, 12),
+        //                                ClientName = thName,
+        //                                IPN = reader[0].ToString(),
+        //                                MFPN = reader[1].ToString(),
+        //                                Description = reader[2].ToString(),
+        //                                QtySent = qtyS,
+        //                            };
+        //                            countItems = i;
+        //                            label12.Text = "Loaded " + (countItems).ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{0:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
+        //                            if (countItems % 5000 == 0)
+        //                            { label12.Update(); }
+        //                            if (abc.IPN != string.Empty && !abc.IPN.StartsWith("Comments") && abc.IPN != "Thank You" && !abc.IPN.StartsWith("Signature") && !abc.IPN.StartsWith("if you") && j > 11)
+        //                            {
+        //                                PSItems.Add(abc);
+        //                                i++;
+        //                            }
+        //                        }
+        //                        j++;
+        //                    }
+        //                }
+        //                conn.Dispose();
+        //                conn.Close();
+        //            }
+        //            catch (Exception e)
+        //            {
+        //                loadingErrors++;
+        //                label13.Text = loadingErrors.ToString() + " Loading Errors detected: ";
+        //                MessageBox.Show(e.Message);
+        //                label13.BackColor = Color.IndianRed;
+        //                label13.Update();
+        //                string er = fp;
+        //                listBox1.Items.Add(er);
+        //                listBox1.Update();
+        //                conn.Close();
+        //            }
+        //        }
+        //    }
+        //    catch (IOException)
+        //    {
+        //        throw;
+        //    }
+        //}
+
         private void DataLoader(string fp, string excelFIleName)
         {
             TimeSpan ts = stopWatch.Elapsed;
@@ -128,11 +211,30 @@ namespace WH_Panel
                         {
                             throw new Exception("Error: Could not determine the name of the first worksheet.");
                         }
-                        string firstSheetName = excelFIleName;
-                        string cleanedUpSheetName = "PACKING SLIP";
-                        OleDbCommand command = new OleDbCommand("Select * from [" + cleanedUpSheetName + "$]", conn);
-                        //OleDbCommand command = new OleDbCommand("Select * from [Sheet1$]", conn);
+
+                        string cleanedUpSheetNameWithSpace = "PACKING SLIP";
+                        string cleanedUpSheetNameWithUnderscore = "PACKING_SLIP";
+
+                        string selectedSheetName = null;
+
+                        if (SheetExists(conn, cleanedUpSheetNameWithSpace))
+                        {
+                            selectedSheetName = cleanedUpSheetNameWithSpace;
+                        }
+                        else if (SheetExists(conn, cleanedUpSheetNameWithUnderscore))
+                        {
+                            selectedSheetName = cleanedUpSheetNameWithUnderscore;
+                        }
+                        else
+                        {
+                            //Console.WriteLine("Neither 'PACKING SLIP' nor 'PACKING_SLIP' sheet found.");
+                            return;
+                        }
+
+                        OleDbCommand command = new OleDbCommand("SELECT * FROM [" + selectedSheetName + "$]", conn);
                         OleDbDataReader reader = command.ExecuteReader();
+
+                        // Rest of your data processing code...
                         if (reader.HasRows)
                         {
                             int j = 0;
@@ -166,6 +268,7 @@ namespace WH_Panel
                                 j++;
                             }
                         }
+
                         conn.Dispose();
                         conn.Close();
                     }
@@ -188,6 +291,22 @@ namespace WH_Panel
                 throw;
             }
         }
+
+        private bool SheetExists(OleDbConnection conn, string sheetName)
+        {
+            DataTable dbSchema = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+            foreach (DataRow row in dbSchema.Rows)
+            {
+                string tableName = row["TABLE_NAME"].ToString();
+                if (tableName.Equals(sheetName + "$", StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             label1.BackColor = Color.IndianRed;
