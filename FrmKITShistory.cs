@@ -536,7 +536,7 @@ namespace WH_Panel
         {
             int outNumber;
             bool success = int.TryParse(txtbQty.Text, out outNumber);
-            if (success && outNumber < 15001 && outNumber > 0)
+            if (success && outNumber < 50001 && outNumber > 0)
             {
                 WHitem w = new WHitem() { IPN = txtbIPN.Text, MFPN = txtbMFPN.Text, Description = txtbDescription.Text, Stock = outNumber, UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss") };
                 printSticker(w);

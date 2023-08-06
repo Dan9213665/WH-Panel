@@ -545,8 +545,8 @@
             tableLayoutPanel3.ColumnCount = 6;
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
             tableLayoutPanel3.Controls.Add(button1, 0, 0);
@@ -583,7 +583,7 @@
             label12.Dock = DockStyle.Fill;
             label12.Location = new Point(253, 0);
             label12.Name = "label12";
-            label12.Size = new Size(622, 116);
+            label12.Size = new Size(119, 116);
             label12.TabIndex = 1;
             label12.Text = "loaded rows";
             label12.TextAlign = ContentAlignment.MiddleCenter;
@@ -596,12 +596,12 @@
             tableLayoutPanel4.Controls.Add(label13, 0, 0);
             tableLayoutPanel4.Controls.Add(listBox1, 0, 1);
             tableLayoutPanel4.Dock = DockStyle.Fill;
-            tableLayoutPanel4.Location = new Point(881, 3);
+            tableLayoutPanel4.Location = new Point(378, 3);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 2;
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel4.Size = new Size(119, 110);
+            tableLayoutPanel4.Size = new Size(622, 110);
             tableLayoutPanel4.TabIndex = 2;
             // 
             // label13
@@ -609,7 +609,7 @@
             label13.Dock = DockStyle.Fill;
             label13.Location = new Point(3, 0);
             label13.Name = "label13";
-            label13.Size = new Size(113, 55);
+            label13.Size = new Size(616, 55);
             label13.TabIndex = 2;
             label13.Text = "Loading Errors :";
             label13.TextAlign = ContentAlignment.MiddleCenter;
@@ -621,7 +621,7 @@
             listBox1.ItemHeight = 15;
             listBox1.Location = new Point(3, 58);
             listBox1.Name = "listBox1";
-            listBox1.Size = new Size(113, 49);
+            listBox1.Size = new Size(616, 49);
             listBox1.TabIndex = 3;
             // 
             // button3

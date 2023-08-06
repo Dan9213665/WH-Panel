@@ -203,9 +203,10 @@
             // label12
             // 
             label12.AutoSize = true;
+            label12.Dock = DockStyle.Fill;
             label12.Location = new Point(209, 0);
             label12.Name = "label12";
-            label12.Size = new Size(71, 15);
+            label12.Size = new Size(246, 115);
             label12.TabIndex = 1;
             label12.Text = "loaded rows";
             label12.TextAlign = ContentAlignment.MiddleCenter;
