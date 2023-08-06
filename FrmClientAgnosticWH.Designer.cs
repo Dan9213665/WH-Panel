@@ -436,6 +436,7 @@
             textBox11.Dock = DockStyle.Fill;
             textBox11.Location = new Point(118, 3);
             textBox11.Name = "textBox11";
+            textBox11.PlaceholderText = "DIGIKEY decoder";
             textBox11.Size = new Size(109, 23);
             textBox11.TabIndex = 2;
             textBox11.TextAlign = HorizontalAlignment.Center;

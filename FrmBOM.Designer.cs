@@ -76,6 +76,7 @@
             label2 = new Label();
             label1 = new Label();
             textBox1 = new TextBox();
+            textBox13 = new TextBox();
             groupBox3 = new GroupBox();
             dataGridView1 = new DataGridView();
             groupBox4 = new GroupBox();
@@ -141,6 +142,7 @@
             textBox9.Dock = DockStyle.Fill;
             textBox9.Location = new Point(1183, 71);
             textBox9.Name = "textBox9";
+            textBox9.PlaceholderText = "Filter by ALTs";
             textBox9.ReadOnly = true;
             textBox9.Size = new Size(113, 23);
             textBox9.TabIndex = 17;
@@ -344,7 +346,7 @@
             // button3
             // 
             button3.BackgroundImage = Properties.Resources._6_2;
-            button3.BackgroundImageLayout = ImageLayout.Zoom;
+            button3.BackgroundImageLayout = ImageLayout.Stretch;
             button3.Dock = DockStyle.Fill;
             button3.Location = new Point(723, 3);
             button3.Name = "button3";
@@ -468,6 +470,7 @@
             tableLayoutPanel2.Controls.Add(label2, 3, 1);
             tableLayoutPanel2.Controls.Add(label1, 2, 1);
             tableLayoutPanel2.Controls.Add(textBox1, 2, 2);
+            tableLayoutPanel2.Controls.Add(textBox13, 1, 0);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.ForeColor = Color.Black;
             tableLayoutPanel2.Location = new Point(3, 19);
@@ -525,11 +528,14 @@
             textBox12.Dock = DockStyle.Fill;
             textBox12.Location = new Point(119, 3);
             textBox12.Name = "textBox12";
+            textBox12.PlaceholderText = "DIGIKEY decoder";
             textBox12.Size = new Size(110, 23);
             textBox12.TabIndex = 2;
             textBox12.TextAlign = HorizontalAlignment.Center;
             textBox12.Click += textBox12_Click;
+            textBox12.Enter += textBox12_Enter;
             textBox12.KeyDown += textBox12_KeyDown;
+            textBox12.Leave += textBox12_Leave;
             // 
             // textBox11
             // 
@@ -568,6 +574,7 @@
             textBox3.Dock = DockStyle.Fill;
             textBox3.Location = new Point(475, 71);
             textBox3.Name = "textBox3";
+            textBox3.PlaceholderText = "Filter by Description";
             textBox3.ReadOnly = true;
             textBox3.Size = new Size(112, 23);
             textBox3.TabIndex = 11;
@@ -582,6 +589,7 @@
             textBox2.Dock = DockStyle.Fill;
             textBox2.Location = new Point(357, 71);
             textBox2.Name = "textBox2";
+            textBox2.PlaceholderText = "Filter by MFPN";
             textBox2.ReadOnly = true;
             textBox2.Size = new Size(112, 23);
             textBox2.TabIndex = 10;
@@ -703,6 +711,7 @@
             textBox1.Dock = DockStyle.Fill;
             textBox1.Location = new Point(239, 71);
             textBox1.Name = "textBox1";
+            textBox1.PlaceholderText = "Filter by IPN";
             textBox1.ReadOnly = true;
             textBox1.Size = new Size(112, 23);
             textBox1.TabIndex = 9;
@@ -711,6 +720,20 @@
             textBox1.Enter += textBox1_Enter;
             textBox1.KeyDown += textBox1_KeyDown;
             textBox1.Leave += textBox1_Leave;
+            // 
+            // textBox13
+            // 
+            textBox13.Dock = DockStyle.Fill;
+            textBox13.Location = new Point(121, 3);
+            textBox13.Name = "textBox13";
+            textBox13.PlaceholderText = "MOUSER decoder";
+            textBox13.Size = new Size(112, 23);
+            textBox13.TabIndex = 23;
+            textBox13.TextAlign = HorizontalAlignment.Center;
+            textBox13.Click += textBox13_Click;
+            textBox13.Enter += textBox13_Enter;
+            textBox13.KeyDown += textBox13_KeyDown;
+            textBox13.Leave += textBox13_Leave;
             // 
             // groupBox3
             // 
@@ -848,6 +871,7 @@
             txtbQtyToAdd.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point);
             txtbQtyToAdd.Location = new Point(558, 3);
             txtbQtyToAdd.Name = "txtbQtyToAdd";
+            txtbQtyToAdd.PlaceholderText = "Input QTY";
             txtbQtyToAdd.Size = new Size(179, 35);
             txtbQtyToAdd.TabIndex = 3;
             txtbQtyToAdd.TextAlign = HorizontalAlignment.Center;
@@ -989,5 +1013,6 @@
         private ComboBox comboBox5;
         private TextBox textBox12;
         private Button btnSendEmail;
+        private TextBox textBox13;
     }
 }

@@ -326,18 +326,6 @@ namespace WH_Panel
                 {
                     searchbyMFPN = ExtractBetween((textBox2.Text), "pm:", ",qty");
                 }
-                else if (textBox2.Text.Contains("-") == true && textBox2.Text.Length > 6)
-                {
-                    string[] theSplit = textBox2.Text.ToString().Split("-");
-                    if (theSplit[0].Length == 3 || theSplit[0].Length >= 2 || textBox2.Text.Length > 5)
-                    {
-                        searchbyMFPN = theSplit[1];
-                    }
-                    else
-                    {
-                        searchbyMFPN = textBox2.Text;
-                    }
-                }
                 else if (textBox2.Text.StartsWith("P") == true)
                 {
                     searchbyMFPN = textBox2.Text.Substring(1);
@@ -1114,6 +1102,68 @@ namespace WH_Panel
             //// Create a new email and paste the contents into the body
             //CreateNewEmail();
             //AndPaste(contents);
+        }
+
+        private void textBox13_Click(object sender, EventArgs e)
+        {
+            textBox13.Clear();
+        }
+
+        private void textBox13_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                string searchbyMFPN = string.Empty;
+
+                if (textBox13.Text.Contains("-") == true && textBox13.Text.Length > 6)
+                {
+                    //string[] theSplit = textBox13.Text.ToString().Split("-");
+                    ////if (theSplit[0].Length == 3 || theSplit[0].Length >= 2 || textBox13.Text.Length > 5)
+                    //if (theSplit[0].Length >= 3)
+                    //{
+                    //    searchbyMFPN = theSplit[1];
+
+                    //}
+                    string[] theSplit = textBox13.Text.Split("-");
+                    if (theSplit.Length > 1)
+                    {
+                        searchbyMFPN = string.Join("-", theSplit, 1, theSplit.Length - 1);
+                    }
+                    else
+                    {
+                        searchbyMFPN = textBox13.Text;
+                    }
+
+                    textBox2.Text = searchbyMFPN;
+                }
+                else
+                {
+
+                }
+                lastTxtbInputFromUser = textBox13;
+                textBox2.Focus();
+                textBox2_KeyDown(sender, e);
+            }
+        }
+
+        private void textBox13_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter((TextBox)sender);
+        }
+
+        private void textBox12_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter((TextBox)sender);
+        }
+
+        private void textBox13_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave((TextBox)sender);
+        }
+
+        private void textBox12_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave((TextBox)sender);
         }
 
         //Helper method to retrieve the contents of the DataGridView
