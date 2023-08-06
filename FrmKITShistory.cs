@@ -87,11 +87,11 @@ namespace WH_Panel
 
             if (timeSpan == 2)
             {
-                listOfPaths = listOfPathsAggregator(1);
+                listOfPaths = listOfPathsAggregator(2);
             }
             else if (timeSpan == 6)
             {
-                listOfPaths = listOfPathsAggregator(5);
+                listOfPaths = listOfPathsAggregator(6);
             }
 
 
@@ -188,7 +188,7 @@ namespace WH_Panel
                 }
                 else
                 {
-                    month--;
+                    //month--;
                 }
 
                 string previousMonthPath = $"{main}{year}\\{month:D2}.{year}";
