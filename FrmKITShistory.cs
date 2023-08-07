@@ -93,6 +93,10 @@ namespace WH_Panel
             {
                 listOfPaths = listOfPathsAggregator(6);
             }
+            else if (timeSpan == 12)
+            {
+                listOfPaths = listOfPathsAggregator(12);
+            }
 
 
             foreach (string path in listOfPaths)
@@ -632,6 +636,15 @@ namespace WH_Panel
             stopWatch.Reset();
             ResetViews();
             startUpLogic(6);
+            SetColumsOrder();
+            textBox1.Focus();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            stopWatch.Reset();
+            ResetViews();
+            startUpLogic(12);
             SetColumsOrder();
             textBox1.Focus();
         }

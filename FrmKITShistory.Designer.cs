@@ -38,6 +38,7 @@
             listBox1 = new ListBox();
             label12 = new Label();
             button2 = new Button();
+            button3 = new Button();
             groupBox2 = new GroupBox();
             tableLayoutPanel2 = new TableLayoutPanel();
             textBox11 = new TextBox();
@@ -93,9 +94,9 @@
             // 
             dateTimePicker1.Dock = DockStyle.Fill;
             dateTimePicker1.Enabled = false;
-            dateTimePicker1.Location = new Point(767, 18);
+            dateTimePicker1.Location = new Point(827, 18);
             dateTimePicker1.Name = "dateTimePicker1";
-            dateTimePicker1.Size = new Size(185, 23);
+            dateTimePicker1.Size = new Size(200, 23);
             dateTimePicker1.TabIndex = 5;
             // 
             // tableLayoutPanel1
@@ -115,7 +116,7 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
-            tableLayoutPanel1.Size = new Size(1161, 572);
+            tableLayoutPanel1.Size = new Size(1251, 572);
             tableLayoutPanel1.TabIndex = 0;
             // 
             // groupBox1
@@ -124,7 +125,7 @@
             groupBox1.Dock = DockStyle.Fill;
             groupBox1.Location = new Point(3, 3);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(1155, 137);
+            groupBox1.Size = new Size(1245, 137);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "Controls";
@@ -132,21 +133,23 @@
             // tableLayoutPanel3
             // 
             tableLayoutPanel3.AutoSize = true;
-            tableLayoutPanel3.ColumnCount = 4;
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 9F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 9F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 22F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60F));
+            tableLayoutPanel3.ColumnCount = 5;
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10.635787F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10.6357822F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10.6357822F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 9.146773F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 58.9458733F));
             tableLayoutPanel3.Controls.Add(button1, 0, 0);
             tableLayoutPanel3.Controls.Add(tableLayoutPanel4, 4, 0);
-            tableLayoutPanel3.Controls.Add(label12, 2, 0);
+            tableLayoutPanel3.Controls.Add(label12, 3, 0);
             tableLayoutPanel3.Controls.Add(button2, 1, 0);
+            tableLayoutPanel3.Controls.Add(button3, 2, 0);
             tableLayoutPanel3.Dock = DockStyle.Fill;
             tableLayoutPanel3.Location = new Point(3, 19);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
             tableLayoutPanel3.RowCount = 1;
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel3.Size = new Size(1149, 115);
+            tableLayoutPanel3.Size = new Size(1239, 115);
             tableLayoutPanel3.TabIndex = 2;
             // 
             // button1
@@ -158,7 +161,7 @@
             button1.BackgroundImageLayout = ImageLayout.Zoom;
             button1.Location = new Point(3, 3);
             button1.Name = "button1";
-            button1.Size = new Size(97, 109);
+            button1.Size = new Size(125, 109);
             button1.TabIndex = 0;
             button1.UseVisualStyleBackColor = false;
             button1.Click += button1_Click;
@@ -171,12 +174,12 @@
             tableLayoutPanel4.Controls.Add(label13, 0, 0);
             tableLayoutPanel4.Controls.Add(listBox1, 0, 1);
             tableLayoutPanel4.Dock = DockStyle.Fill;
-            tableLayoutPanel4.Location = new Point(461, 3);
+            tableLayoutPanel4.Location = new Point(509, 3);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 2;
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel4.Size = new Size(685, 109);
+            tableLayoutPanel4.Size = new Size(727, 109);
             tableLayoutPanel4.TabIndex = 2;
             // 
             // label13
@@ -184,7 +187,7 @@
             label13.Dock = DockStyle.Fill;
             label13.Location = new Point(3, 0);
             label13.Name = "label13";
-            label13.Size = new Size(679, 54);
+            label13.Size = new Size(721, 54);
             label13.TabIndex = 2;
             label13.Text = "Loading Errors :";
             label13.TextAlign = ContentAlignment.MiddleCenter;
@@ -196,7 +199,7 @@
             listBox1.ItemHeight = 15;
             listBox1.Location = new Point(3, 57);
             listBox1.Name = "listBox1";
-            listBox1.Size = new Size(679, 49);
+            listBox1.Size = new Size(721, 49);
             listBox1.TabIndex = 3;
             listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
             // 
@@ -204,9 +207,9 @@
             // 
             label12.AutoSize = true;
             label12.Dock = DockStyle.Fill;
-            label12.Location = new Point(209, 0);
+            label12.Location = new Point(396, 0);
             label12.Name = "label12";
-            label12.Size = new Size(246, 115);
+            label12.Size = new Size(107, 115);
             label12.TabIndex = 1;
             label12.Text = "loaded rows";
             label12.TextAlign = ContentAlignment.MiddleCenter;
@@ -216,13 +219,25 @@
             button2.BackgroundImage = (Image)resources.GetObject("button2.BackgroundImage");
             button2.BackgroundImageLayout = ImageLayout.Zoom;
             button2.Dock = DockStyle.Fill;
-            button2.Location = new Point(106, 3);
+            button2.Location = new Point(134, 3);
             button2.Name = "button2";
-            button2.Size = new Size(97, 109);
+            button2.Size = new Size(125, 109);
             button2.TabIndex = 3;
             button2.TextAlign = ContentAlignment.MiddleRight;
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
+            // 
+            // button3
+            // 
+            button3.BackgroundImage = (Image)resources.GetObject("button3.BackgroundImage");
+            button3.BackgroundImageLayout = ImageLayout.Zoom;
+            button3.Dock = DockStyle.Fill;
+            button3.Location = new Point(265, 3);
+            button3.Name = "button3";
+            button3.Size = new Size(125, 109);
+            button3.TabIndex = 4;
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
             // 
             // groupBox2
             // 
@@ -230,7 +245,7 @@
             groupBox2.Dock = DockStyle.Fill;
             groupBox2.Location = new Point(3, 146);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(1155, 137);
+            groupBox2.Size = new Size(1245, 137);
             groupBox2.TabIndex = 1;
             groupBox2.TabStop = false;
             groupBox2.Text = "Filters";
@@ -278,15 +293,15 @@
             tableLayoutPanel2.RowCount = 2;
             tableLayoutPanel2.RowStyles.Add(new RowStyle());
             tableLayoutPanel2.RowStyles.Add(new RowStyle());
-            tableLayoutPanel2.Size = new Size(1149, 115);
+            tableLayoutPanel2.Size = new Size(1239, 115);
             tableLayoutPanel2.TabIndex = 0;
             // 
             // textBox11
             // 
             textBox11.Dock = DockStyle.Fill;
-            textBox11.Location = new Point(107, 18);
+            textBox11.Location = new Point(115, 18);
             textBox11.Name = "textBox11";
-            textBox11.Size = new Size(98, 23);
+            textBox11.Size = new Size(106, 23);
             textBox11.TabIndex = 21;
             textBox11.TextAlign = HorizontalAlignment.Center;
             textBox11.TextChanged += textBox11_TextChanged;
@@ -297,7 +312,7 @@
             textBox10.Enabled = false;
             textBox10.Location = new Point(3, 18);
             textBox10.Name = "textBox10";
-            textBox10.Size = new Size(98, 23);
+            textBox10.Size = new Size(106, 23);
             textBox10.TabIndex = 20;
             textBox10.TextAlign = HorizontalAlignment.Center;
             // 
@@ -305,9 +320,9 @@
             // 
             label11.AutoSize = true;
             label11.Dock = DockStyle.Fill;
-            label11.Location = new Point(107, 0);
+            label11.Location = new Point(115, 0);
             label11.Name = "label11";
-            label11.Size = new Size(98, 15);
+            label11.Size = new Size(106, 15);
             label11.TabIndex = 19;
             label11.Text = "Project Name";
             label11.TextAlign = ContentAlignment.MiddleCenter;
@@ -319,7 +334,7 @@
             label10.Dock = DockStyle.Fill;
             label10.Location = new Point(3, 0);
             label10.Name = "label10";
-            label10.Size = new Size(98, 15);
+            label10.Size = new Size(106, 15);
             label10.TabIndex = 18;
             label10.Text = "DATE";
             label10.TextAlign = ContentAlignment.MiddleCenter;
@@ -327,9 +342,9 @@
             // textBox9
             // 
             textBox9.Dock = DockStyle.Fill;
-            textBox9.Location = new Point(1043, 18);
+            textBox9.Location = new Point(1123, 18);
             textBox9.Name = "textBox9";
-            textBox9.Size = new Size(103, 23);
+            textBox9.Size = new Size(113, 23);
             textBox9.TabIndex = 17;
             textBox9.TextAlign = HorizontalAlignment.Center;
             textBox9.TextChanged += textBox9_TextChanged;
@@ -340,9 +355,9 @@
             // 
             textBox8.Dock = DockStyle.Fill;
             textBox8.Enabled = false;
-            textBox8.Location = new Point(939, 18);
+            textBox8.Location = new Point(1011, 18);
             textBox8.Name = "textBox8";
-            textBox8.Size = new Size(98, 23);
+            textBox8.Size = new Size(106, 23);
             textBox8.TabIndex = 16;
             textBox8.TextAlign = HorizontalAlignment.Center;
             // 
@@ -350,9 +365,9 @@
             // 
             textBox7.Dock = DockStyle.Fill;
             textBox7.Enabled = false;
-            textBox7.Location = new Point(835, 18);
+            textBox7.Location = new Point(899, 18);
             textBox7.Name = "textBox7";
-            textBox7.Size = new Size(98, 23);
+            textBox7.Size = new Size(106, 23);
             textBox7.TabIndex = 15;
             textBox7.TextAlign = HorizontalAlignment.Center;
             // 
@@ -360,9 +375,9 @@
             // 
             textBox6.Dock = DockStyle.Fill;
             textBox6.Enabled = false;
-            textBox6.Location = new Point(731, 18);
+            textBox6.Location = new Point(787, 18);
             textBox6.Name = "textBox6";
-            textBox6.Size = new Size(98, 23);
+            textBox6.Size = new Size(106, 23);
             textBox6.TabIndex = 14;
             textBox6.TextAlign = HorizontalAlignment.Center;
             // 
@@ -370,9 +385,9 @@
             // 
             textBox5.Dock = DockStyle.Fill;
             textBox5.Enabled = false;
-            textBox5.Location = new Point(627, 18);
+            textBox5.Location = new Point(675, 18);
             textBox5.Name = "textBox5";
-            textBox5.Size = new Size(98, 23);
+            textBox5.Size = new Size(106, 23);
             textBox5.TabIndex = 13;
             textBox5.TextAlign = HorizontalAlignment.Center;
             // 
@@ -380,18 +395,18 @@
             // 
             textBox4.Dock = DockStyle.Fill;
             textBox4.Enabled = false;
-            textBox4.Location = new Point(523, 18);
+            textBox4.Location = new Point(563, 18);
             textBox4.Name = "textBox4";
-            textBox4.Size = new Size(98, 23);
+            textBox4.Size = new Size(106, 23);
             textBox4.TabIndex = 12;
             textBox4.TextAlign = HorizontalAlignment.Center;
             // 
             // textBox3
             // 
             textBox3.Dock = DockStyle.Fill;
-            textBox3.Location = new Point(419, 18);
+            textBox3.Location = new Point(451, 18);
             textBox3.Name = "textBox3";
-            textBox3.Size = new Size(98, 23);
+            textBox3.Size = new Size(106, 23);
             textBox3.TabIndex = 11;
             textBox3.TextAlign = HorizontalAlignment.Center;
             textBox3.TextChanged += textBox3_TextChanged;
@@ -399,9 +414,9 @@
             // textBox2
             // 
             textBox2.Dock = DockStyle.Fill;
-            textBox2.Location = new Point(315, 18);
+            textBox2.Location = new Point(339, 18);
             textBox2.Name = "textBox2";
-            textBox2.Size = new Size(98, 23);
+            textBox2.Size = new Size(106, 23);
             textBox2.TabIndex = 10;
             textBox2.TextAlign = HorizontalAlignment.Center;
             textBox2.TextChanged += textBox2_TextChanged;
@@ -413,9 +428,9 @@
             // 
             label9.AutoSize = true;
             label9.Dock = DockStyle.Fill;
-            label9.Location = new Point(1043, 0);
+            label9.Location = new Point(1123, 0);
             label9.Name = "label9";
-            label9.Size = new Size(103, 15);
+            label9.Size = new Size(113, 15);
             label9.TabIndex = 8;
             label9.Text = "ALTs";
             label9.TextAlign = ContentAlignment.MiddleCenter;
@@ -426,9 +441,9 @@
             // 
             label8.AutoSize = true;
             label8.Dock = DockStyle.Fill;
-            label8.Location = new Point(939, 0);
+            label8.Location = new Point(1011, 0);
             label8.Name = "label8";
-            label8.Size = new Size(98, 15);
+            label8.Size = new Size(106, 15);
             label8.TabIndex = 7;
             label8.Text = "NOTEs";
             label8.TextAlign = ContentAlignment.MiddleCenter;
@@ -437,9 +452,9 @@
             // 
             label7.AutoSize = true;
             label7.Dock = DockStyle.Fill;
-            label7.Location = new Point(835, 0);
+            label7.Location = new Point(899, 0);
             label7.Name = "label7";
-            label7.Size = new Size(98, 15);
+            label7.Size = new Size(106, 15);
             label7.TabIndex = 6;
             label7.Text = "QTY per UNIT";
             label7.TextAlign = ContentAlignment.MiddleCenter;
@@ -448,9 +463,9 @@
             // 
             label6.AutoSize = true;
             label6.Dock = DockStyle.Fill;
-            label6.Location = new Point(731, 0);
+            label6.Location = new Point(787, 0);
             label6.Name = "label6";
-            label6.Size = new Size(98, 15);
+            label6.Size = new Size(106, 15);
             label6.TabIndex = 5;
             label6.Text = "ORDER QTY";
             label6.TextAlign = ContentAlignment.MiddleCenter;
@@ -459,9 +474,9 @@
             // 
             label5.AutoSize = true;
             label5.Dock = DockStyle.Fill;
-            label5.Location = new Point(627, 0);
+            label5.Location = new Point(675, 0);
             label5.Name = "label5";
-            label5.Size = new Size(98, 15);
+            label5.Size = new Size(106, 15);
             label5.TabIndex = 4;
             label5.Text = "DELTA";
             label5.TextAlign = ContentAlignment.MiddleCenter;
@@ -470,9 +485,9 @@
             // 
             label4.AutoSize = true;
             label4.Dock = DockStyle.Fill;
-            label4.Location = new Point(523, 0);
+            label4.Location = new Point(563, 0);
             label4.Name = "label4";
-            label4.Size = new Size(98, 15);
+            label4.Size = new Size(106, 15);
             label4.TabIndex = 3;
             label4.Text = "Qty in KIT";
             label4.TextAlign = ContentAlignment.MiddleCenter;
@@ -481,9 +496,9 @@
             // 
             label3.AutoSize = true;
             label3.Dock = DockStyle.Fill;
-            label3.Location = new Point(419, 0);
+            label3.Location = new Point(451, 0);
             label3.Name = "label3";
-            label3.Size = new Size(98, 15);
+            label3.Size = new Size(106, 15);
             label3.TabIndex = 2;
             label3.Text = "Description";
             label3.TextAlign = ContentAlignment.MiddleCenter;
@@ -493,9 +508,9 @@
             // 
             label2.AutoSize = true;
             label2.Dock = DockStyle.Fill;
-            label2.Location = new Point(315, 0);
+            label2.Location = new Point(339, 0);
             label2.Name = "label2";
-            label2.Size = new Size(98, 15);
+            label2.Size = new Size(106, 15);
             label2.TabIndex = 1;
             label2.Text = "MFPN";
             label2.TextAlign = ContentAlignment.MiddleCenter;
@@ -506,9 +521,9 @@
             // 
             label1.AutoSize = true;
             label1.Dock = DockStyle.Fill;
-            label1.Location = new Point(211, 0);
+            label1.Location = new Point(227, 0);
             label1.Name = "label1";
-            label1.Size = new Size(98, 15);
+            label1.Size = new Size(106, 15);
             label1.TabIndex = 0;
             label1.Text = "IPN";
             label1.TextAlign = ContentAlignment.MiddleCenter;
@@ -518,9 +533,9 @@
             // textBox1
             // 
             textBox1.Dock = DockStyle.Fill;
-            textBox1.Location = new Point(211, 18);
+            textBox1.Location = new Point(227, 18);
             textBox1.Name = "textBox1";
-            textBox1.Size = new Size(98, 23);
+            textBox1.Size = new Size(106, 23);
             textBox1.TabIndex = 9;
             textBox1.TextAlign = HorizontalAlignment.Center;
             textBox1.TextChanged += textBox1_TextChanged;
@@ -534,7 +549,7 @@
             groupBox3.Dock = DockStyle.Fill;
             groupBox3.Location = new Point(3, 432);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(1155, 137);
+            groupBox3.Size = new Size(1245, 137);
             groupBox3.TabIndex = 2;
             groupBox3.TabStop = false;
             groupBox3.Text = "Results";
@@ -563,7 +578,7 @@
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
             dataGridView1.RowTemplate.Height = 25;
-            dataGridView1.Size = new Size(1149, 115);
+            dataGridView1.Size = new Size(1239, 115);
             dataGridView1.TabIndex = 0;
             dataGridView1.CellClick += dataGridView1_CellClick;
             dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
@@ -575,7 +590,7 @@
             groupBox4.Dock = DockStyle.Fill;
             groupBox4.Location = new Point(3, 289);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(1155, 137);
+            groupBox4.Size = new Size(1245, 137);
             groupBox4.TabIndex = 3;
             groupBox4.TabStop = false;
             groupBox4.Text = "Print STIKER";
@@ -609,7 +624,7 @@
             tableLayoutPanel5.RowCount = 2;
             tableLayoutPanel5.RowStyles.Add(new RowStyle());
             tableLayoutPanel5.RowStyles.Add(new RowStyle());
-            tableLayoutPanel5.Size = new Size(1149, 115);
+            tableLayoutPanel5.Size = new Size(1239, 115);
             tableLayoutPanel5.TabIndex = 8;
             // 
             // btnPrintSticker
@@ -619,10 +634,10 @@
             btnPrintSticker.BackgroundImage = (Image)resources.GetObject("btnPrintSticker.BackgroundImage");
             btnPrintSticker.BackgroundImageLayout = ImageLayout.Stretch;
             btnPrintSticker.Dock = DockStyle.Fill;
-            btnPrintSticker.Location = new Point(958, 3);
+            btnPrintSticker.Location = new Point(1033, 3);
             btnPrintSticker.Name = "btnPrintSticker";
             tableLayoutPanel5.SetRowSpan(btnPrintSticker, 2);
-            btnPrintSticker.Size = new Size(188, 109);
+            btnPrintSticker.Size = new Size(203, 109);
             btnPrintSticker.TabIndex = 15;
             btnPrintSticker.TextAlign = ContentAlignment.MiddleLeft;
             btnPrintSticker.UseVisualStyleBackColor = true;
@@ -634,28 +649,28 @@
             txtbIPN.Location = new Point(3, 18);
             txtbIPN.Name = "txtbIPN";
             txtbIPN.ReadOnly = true;
-            txtbIPN.Size = new Size(185, 23);
+            txtbIPN.Size = new Size(200, 23);
             txtbIPN.TabIndex = 1;
             txtbIPN.TextAlign = HorizontalAlignment.Center;
             // 
             // txtbMFPN
             // 
             txtbMFPN.Dock = DockStyle.Fill;
-            txtbMFPN.Location = new Point(194, 18);
+            txtbMFPN.Location = new Point(209, 18);
             txtbMFPN.Name = "txtbMFPN";
             txtbMFPN.ReadOnly = true;
-            txtbMFPN.Size = new Size(185, 23);
+            txtbMFPN.Size = new Size(200, 23);
             txtbMFPN.TabIndex = 0;
             txtbMFPN.TextAlign = HorizontalAlignment.Center;
             // 
             // txtbDescription
             // 
             txtbDescription.Dock = DockStyle.Fill;
-            txtbDescription.Location = new Point(385, 18);
+            txtbDescription.Location = new Point(415, 18);
             txtbDescription.Multiline = true;
             txtbDescription.Name = "txtbDescription";
             txtbDescription.ReadOnly = true;
-            txtbDescription.Size = new Size(185, 94);
+            txtbDescription.Size = new Size(200, 94);
             txtbDescription.TabIndex = 3;
             txtbDescription.TextAlign = HorizontalAlignment.Center;
             // 
@@ -663,9 +678,9 @@
             // 
             txtbQty.Dock = DockStyle.Fill;
             txtbQty.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
-            txtbQty.Location = new Point(576, 18);
+            txtbQty.Location = new Point(621, 18);
             txtbQty.Name = "txtbQty";
-            txtbQty.Size = new Size(185, 39);
+            txtbQty.Size = new Size(200, 39);
             txtbQty.TabIndex = 4;
             txtbQty.TextAlign = HorizontalAlignment.Center;
             txtbQty.Enter += txtbQty_Enter;
@@ -678,7 +693,7 @@
             label14.Dock = DockStyle.Fill;
             label14.Location = new Point(3, 0);
             label14.Name = "label14";
-            label14.Size = new Size(185, 15);
+            label14.Size = new Size(200, 15);
             label14.TabIndex = 8;
             label14.Text = "IPN";
             label14.TextAlign = ContentAlignment.MiddleCenter;
@@ -687,9 +702,9 @@
             // 
             label16.AutoSize = true;
             label16.Dock = DockStyle.Fill;
-            label16.Location = new Point(385, 0);
+            label16.Location = new Point(415, 0);
             label16.Name = "label16";
-            label16.Size = new Size(185, 15);
+            label16.Size = new Size(200, 15);
             label16.TabIndex = 8;
             label16.Text = "Description";
             label16.TextAlign = ContentAlignment.MiddleCenter;
@@ -698,9 +713,9 @@
             // 
             label17.AutoSize = true;
             label17.Dock = DockStyle.Fill;
-            label17.Location = new Point(576, 0);
+            label17.Location = new Point(621, 0);
             label17.Name = "label17";
-            label17.Size = new Size(185, 15);
+            label17.Size = new Size(200, 15);
             label17.TabIndex = 8;
             label17.Text = "Quantity";
             label17.TextAlign = ContentAlignment.MiddleCenter;
@@ -709,9 +724,9 @@
             // 
             label18.AutoSize = true;
             label18.Dock = DockStyle.Fill;
-            label18.Location = new Point(767, 0);
+            label18.Location = new Point(827, 0);
             label18.Name = "label18";
-            label18.Size = new Size(185, 15);
+            label18.Size = new Size(200, 15);
             label18.TabIndex = 8;
             label18.Text = "Date";
             label18.TextAlign = ContentAlignment.MiddleCenter;
@@ -720,9 +735,9 @@
             // 
             label21.AutoSize = true;
             label21.Dock = DockStyle.Fill;
-            label21.Location = new Point(194, 0);
+            label21.Location = new Point(209, 0);
             label21.Name = "label21";
-            label21.Size = new Size(185, 15);
+            label21.Size = new Size(200, 15);
             label21.TabIndex = 9;
             label21.Text = "MFPN";
             label21.TextAlign = ContentAlignment.MiddleCenter;
@@ -731,7 +746,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1161, 572);
+            ClientSize = new Size(1251, 572);
             Controls.Add(tableLayoutPanel1);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FrmKITShistory";
@@ -805,5 +820,6 @@
         private Label label21;
         private TextBox txtbIPN;
         private Button button2;
+        private Button button3;
     }
 }
