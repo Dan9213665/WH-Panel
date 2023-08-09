@@ -187,7 +187,7 @@ namespace WH_Panel
         {
             OpenWebAppInBroser();
 
-            
+
         }
         static void OpenWebAppInBroser()
         {
@@ -197,6 +197,13 @@ namespace WH_Panel
                 FileName = url,
                 UseShellExecute = true
             });
+        }
+
+        private void button6_Click_1(object sender, EventArgs e)
+        {
+            FrmExcelFormatter fr  = new FrmExcelFormatter();
+            fr.Show();
+            fr.Focus();
         }
     }
 }
