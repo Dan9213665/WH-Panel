@@ -405,9 +405,21 @@ namespace WH_Panel
                     // Open the copied Excel package
                     using (var package = new OfficeOpenXml.ExcelPackage(new FileInfo(filePathToSave)))
                     {
-                        // Add a new worksheet
-                        OfficeOpenXml.ExcelWorksheet newWorksheet = package.Workbook.Worksheets.Add(tabLabel, package.Workbook.Worksheets[0]);
+                        // Determine the index of the last worksheet
+                        int lastWorksheetIndex = package.Workbook.Worksheets.Count;
 
+                        // Add a new worksheet after the last one
+                        OfficeOpenXml.ExcelWorksheet newWorksheet = package.Workbook.Worksheets.Add(tabLabel);
+                        package.Workbook.Worksheets.MoveAfter(newWorksheet.Name, package.Workbook.Worksheets[lastWorksheetIndex].Name);
+
+                        // Add a new worksheet
+                        //OfficeOpenXml.ExcelWorksheet newWorksheet = package.Workbook.Worksheets.Add(tabLabel, package.Workbook.Worksheets[1]);
+
+                        // Copy headers to the new worksheet
+                        for (int columnIndex = 0; columnIndex < lastGridView.Columns.Count; columnIndex++)
+                        {
+                            newWorksheet.Cells[1, columnIndex + 1].Value = lastGridView.Columns[columnIndex].HeaderText;
+                        }
                         // Write data rows to the new worksheet
                         for (int rowIndex = 0; rowIndex < lastGridView.Rows.Count; rowIndex++)
                         {
