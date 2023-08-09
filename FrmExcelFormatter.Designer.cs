@@ -78,12 +78,15 @@
             // 
             // btnGetSourceFile
             // 
+            btnGetSourceFile.BackgroundImage = Properties.Resources.documents_files_history_64;
+            btnGetSourceFile.BackgroundImageLayout = ImageLayout.Zoom;
             btnGetSourceFile.Dock = DockStyle.Fill;
             btnGetSourceFile.Location = new Point(3, 3);
             btnGetSourceFile.Name = "btnGetSourceFile";
             btnGetSourceFile.Size = new Size(461, 34);
             btnGetSourceFile.TabIndex = 0;
             btnGetSourceFile.Text = "Get Source FIle";
+            btnGetSourceFile.TextAlign = ContentAlignment.MiddleLeft;
             btnGetSourceFile.UseVisualStyleBackColor = true;
             btnGetSourceFile.Click += btnGetSourceFile_Click;
             // 
@@ -117,7 +120,6 @@
             tabPage1.Padding = new Padding(3);
             tabPage1.Size = new Size(1381, 304);
             tabPage1.TabIndex = 0;
-            tabPage1.Text = "P1";
             tabPage1.UseVisualStyleBackColor = true;
             // 
             // dataGridView1
@@ -134,23 +136,29 @@
             // 
             // btnSetDataHeader
             // 
+            btnSetDataHeader.BackgroundImage = (Image)resources.GetObject("btnSetDataHeader.BackgroundImage");
+            btnSetDataHeader.BackgroundImageLayout = ImageLayout.Zoom;
             btnSetDataHeader.Dock = DockStyle.Fill;
             btnSetDataHeader.Location = new Point(470, 3);
             btnSetDataHeader.Name = "btnSetDataHeader";
             btnSetDataHeader.Size = new Size(461, 34);
             btnSetDataHeader.TabIndex = 2;
             btnSetDataHeader.Text = "Set Header";
+            btnSetDataHeader.TextAlign = ContentAlignment.MiddleLeft;
             btnSetDataHeader.UseVisualStyleBackColor = true;
             btnSetDataHeader.Click += btnSetDataHeader_Click;
             // 
             // btnSaveAs
             // 
+            btnSaveAs.BackgroundImage = (Image)resources.GetObject("btnSaveAs.BackgroundImage");
+            btnSaveAs.BackgroundImageLayout = ImageLayout.Zoom;
             btnSaveAs.Dock = DockStyle.Fill;
             btnSaveAs.Location = new Point(937, 3);
             btnSaveAs.Name = "btnSaveAs";
             btnSaveAs.Size = new Size(461, 34);
             btnSaveAs.TabIndex = 3;
             btnSaveAs.Text = "Save XLSX";
+            btnSaveAs.TextAlign = ContentAlignment.MiddleLeft;
             btnSaveAs.UseVisualStyleBackColor = true;
             btnSaveAs.Click += btnSaveAs_Click;
             // 

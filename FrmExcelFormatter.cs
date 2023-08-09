@@ -158,7 +158,7 @@ namespace WH_Panel
                 DataGridView dataGridView = sender as DataGridView;
                 DataGridViewCell cell = dataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex];
 
-                List<string>IPNfilter = new List<string>() { "Catalog","PN"};
+                List<string> IPNfilter = new List<string>() { "Catalog", "PN" };
                 foreach (string filter in IPNfilter)
                 {
                     if (cell.Value != null && cell.Value.ToString() == filter)
@@ -210,7 +210,7 @@ namespace WH_Panel
         {
             runFormattingLogic();
             // Specify the desired column order
-          
+
 
         }
         private void ReorderColumns(DataGridView gridView, List<string> columnOrder)
@@ -267,7 +267,7 @@ namespace WH_Panel
                         }
                     }
 
-                 
+
                     // Copy non-empty rows from startRowIndex to endRowIndex, excluding the header row
                     for (int rowIndex = startRowIndex; rowIndex <= endRowIndex; rowIndex++)
                     {
@@ -306,7 +306,7 @@ namespace WH_Panel
 
                     newTab.Controls.Add(newGridView);
 
-                   
+
 
                     tabControl1.SelectedTab = newTab;
 
