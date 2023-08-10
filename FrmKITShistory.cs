@@ -371,6 +371,8 @@ namespace WH_Panel
                 dataGridView1.DataSource = dv;
                 SetColumsOrder();
                 SetColumsOrder();
+                ColorTheDelta(dataGridView1);
+                //dataGridView1.Update();
             }
             catch (Exception)
             {
@@ -378,6 +380,54 @@ namespace WH_Panel
                 throw;
             }
         }
+
+        private void DataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            // Check if the current column is "DELTA" and the cell is not a header cell.
+            if (e.ColumnIndex == dataGridView1.Columns["DELTA"].Index && e.RowIndex >= 0)
+            {
+                DataGridViewCell cell = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                if (cell.Value != null && cell.Value != DBNull.Value)
+                {
+                    double deltaValue = Convert.ToDouble(cell.Value);
+
+                    // Set the background color based on the delta value.
+                    if (deltaValue < 0)
+                    {
+                        cell.Style.BackColor = Color.IndianRed;
+                    }
+                    else
+                    {
+                        //cell.Style.BackColor = Color.LightGreen;
+                    }
+                }
+            }
+        }
+
+        private void ColorTheDelta(DataGridView dw)
+        {
+            // This method can be used to initially color the cells.
+            // You can call it with your DataGridView object.
+            foreach (DataGridViewRow row in dw.Rows)
+            {
+                DataGridViewCell cell = row.Cells["DELTA"];
+                if (cell.Value != null && cell.Value != DBNull.Value)
+                {
+                    double deltaValue = Convert.ToDouble(cell.Value);
+
+                    // Set the background color based on the delta value.
+                    if (deltaValue < 0)
+                    {
+                        cell.Style.BackColor = Color.IndianRed;
+                    }
+                    else
+                    {
+                        //cell.Style.BackColor = Color.LightGreen;
+                    }
+                }
+            }
+        }
+
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             label1.BackColor = Color.IndianRed;
@@ -647,6 +697,16 @@ namespace WH_Panel
             startUpLogic(12);
             SetColumsOrder();
             textBox1.Focus();
+        }
+
+        private void textBox11_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter(sender);
+        }
+
+        private void textBox11_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave(sender);
         }
     }
 }

@@ -301,10 +301,13 @@
             textBox11.Dock = DockStyle.Fill;
             textBox11.Location = new Point(115, 18);
             textBox11.Name = "textBox11";
+            textBox11.PlaceholderText = "Filter by Project";
             textBox11.Size = new Size(106, 23);
             textBox11.TabIndex = 21;
             textBox11.TextAlign = HorizontalAlignment.Center;
             textBox11.TextChanged += textBox11_TextChanged;
+            textBox11.Enter += textBox11_Enter;
+            textBox11.Leave += textBox11_Leave;
             // 
             // textBox10
             // 
@@ -344,6 +347,7 @@
             textBox9.Dock = DockStyle.Fill;
             textBox9.Location = new Point(1123, 18);
             textBox9.Name = "textBox9";
+            textBox9.PlaceholderText = "Filter by ALT";
             textBox9.Size = new Size(113, 23);
             textBox9.TabIndex = 17;
             textBox9.TextAlign = HorizontalAlignment.Center;
@@ -406,6 +410,7 @@
             textBox3.Dock = DockStyle.Fill;
             textBox3.Location = new Point(451, 18);
             textBox3.Name = "textBox3";
+            textBox3.PlaceholderText = "Filter by Description";
             textBox3.Size = new Size(106, 23);
             textBox3.TabIndex = 11;
             textBox3.TextAlign = HorizontalAlignment.Center;
@@ -416,6 +421,7 @@
             textBox2.Dock = DockStyle.Fill;
             textBox2.Location = new Point(339, 18);
             textBox2.Name = "textBox2";
+            textBox2.PlaceholderText = "Filter by MFPN";
             textBox2.Size = new Size(106, 23);
             textBox2.TabIndex = 10;
             textBox2.TextAlign = HorizontalAlignment.Center;
@@ -535,6 +541,7 @@
             textBox1.Dock = DockStyle.Fill;
             textBox1.Location = new Point(227, 18);
             textBox1.Name = "textBox1";
+            textBox1.PlaceholderText = "Filter by IPN";
             textBox1.Size = new Size(106, 23);
             textBox1.TabIndex = 9;
             textBox1.TextAlign = HorizontalAlignment.Center;
@@ -680,6 +687,7 @@
             txtbQty.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
             txtbQty.Location = new Point(621, 18);
             txtbQty.Name = "txtbQty";
+            txtbQty.PlaceholderText = "Input QTY";
             txtbQty.Size = new Size(200, 39);
             txtbQty.TabIndex = 4;
             txtbQty.TextAlign = HorizontalAlignment.Center;

@@ -31,19 +31,21 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmExcelFormatter));
             groupBox1 = new GroupBox();
             tableLayoutPanel1 = new TableLayoutPanel();
-            btnGetSourceFile = new Button();
             groupBox2 = new GroupBox();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
             dataGridView1 = new DataGridView();
+            btnGetSourceFile = new Button();
             btnSetDataHeader = new Button();
             btnSaveAs = new Button();
+            tableLayoutPanel2 = new TableLayoutPanel();
             groupBox1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             groupBox2.SuspendLayout();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            tableLayoutPanel2.SuspendLayout();
             SuspendLayout();
             // 
             // groupBox1
@@ -59,14 +61,13 @@
             // 
             // tableLayoutPanel1
             // 
-            tableLayoutPanel1.ColumnCount = 3;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel1.Controls.Add(btnGetSourceFile, 0, 0);
+            tableLayoutPanel1.ColumnCount = 4;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
             tableLayoutPanel1.Controls.Add(groupBox2, 0, 1);
-            tableLayoutPanel1.Controls.Add(btnSetDataHeader, 1, 0);
-            tableLayoutPanel1.Controls.Add(btnSaveAs, 2, 0);
+            tableLayoutPanel1.Controls.Add(tableLayoutPanel2, 0, 0);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(3, 19);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -76,23 +77,9 @@
             tableLayoutPanel1.Size = new Size(1401, 400);
             tableLayoutPanel1.TabIndex = 2;
             // 
-            // btnGetSourceFile
-            // 
-            btnGetSourceFile.BackgroundImage = Properties.Resources.documents_files_history_64;
-            btnGetSourceFile.BackgroundImageLayout = ImageLayout.Zoom;
-            btnGetSourceFile.Dock = DockStyle.Fill;
-            btnGetSourceFile.Location = new Point(3, 3);
-            btnGetSourceFile.Name = "btnGetSourceFile";
-            btnGetSourceFile.Size = new Size(461, 34);
-            btnGetSourceFile.TabIndex = 0;
-            btnGetSourceFile.Text = "Get Source FIle";
-            btnGetSourceFile.TextAlign = ContentAlignment.MiddleLeft;
-            btnGetSourceFile.UseVisualStyleBackColor = true;
-            btnGetSourceFile.Click += btnGetSourceFile_Click;
-            // 
             // groupBox2
             // 
-            tableLayoutPanel1.SetColumnSpan(groupBox2, 3);
+            tableLayoutPanel1.SetColumnSpan(groupBox2, 4);
             groupBox2.Controls.Add(tabControl1);
             groupBox2.Dock = DockStyle.Fill;
             groupBox2.Location = new Point(3, 43);
@@ -134,33 +121,67 @@
             dataGridView1.TabIndex = 0;
             dataGridView1.CellClick += dataGridView1_CellClick;
             // 
+            // btnGetSourceFile
+            // 
+            btnGetSourceFile.AutoSize = true;
+            btnGetSourceFile.BackgroundImage = Properties.Resources.documents_files_history_64;
+            btnGetSourceFile.BackgroundImageLayout = ImageLayout.Zoom;
+            btnGetSourceFile.Dock = DockStyle.Fill;
+            btnGetSourceFile.Location = new Point(3, 3);
+            btnGetSourceFile.Name = "btnGetSourceFile";
+            btnGetSourceFile.Size = new Size(108, 28);
+            btnGetSourceFile.TabIndex = 0;
+            btnGetSourceFile.Tag = "";
+            btnGetSourceFile.TextAlign = ContentAlignment.MiddleLeft;
+            btnGetSourceFile.UseVisualStyleBackColor = true;
+            btnGetSourceFile.Click += btnGetSourceFile_Click;
+            // 
             // btnSetDataHeader
             // 
+            btnSetDataHeader.AutoSize = true;
             btnSetDataHeader.BackgroundImage = (Image)resources.GetObject("btnSetDataHeader.BackgroundImage");
             btnSetDataHeader.BackgroundImageLayout = ImageLayout.Zoom;
             btnSetDataHeader.Dock = DockStyle.Fill;
-            btnSetDataHeader.Location = new Point(470, 3);
+            btnSetDataHeader.Location = new Point(117, 3);
             btnSetDataHeader.Name = "btnSetDataHeader";
-            btnSetDataHeader.Size = new Size(461, 34);
+            btnSetDataHeader.Size = new Size(108, 28);
             btnSetDataHeader.TabIndex = 2;
-            btnSetDataHeader.Text = "Set Header";
+            btnSetDataHeader.Tag = "";
             btnSetDataHeader.TextAlign = ContentAlignment.MiddleLeft;
             btnSetDataHeader.UseVisualStyleBackColor = true;
             btnSetDataHeader.Click += btnSetDataHeader_Click;
             // 
             // btnSaveAs
             // 
+            btnSaveAs.AutoSize = true;
             btnSaveAs.BackgroundImage = (Image)resources.GetObject("btnSaveAs.BackgroundImage");
             btnSaveAs.BackgroundImageLayout = ImageLayout.Zoom;
             btnSaveAs.Dock = DockStyle.Fill;
-            btnSaveAs.Location = new Point(937, 3);
+            btnSaveAs.Location = new Point(231, 3);
             btnSaveAs.Name = "btnSaveAs";
-            btnSaveAs.Size = new Size(461, 34);
+            btnSaveAs.Size = new Size(110, 28);
             btnSaveAs.TabIndex = 3;
-            btnSaveAs.Text = "Save XLSX";
+            btnSaveAs.Tag = "";
             btnSaveAs.TextAlign = ContentAlignment.MiddleLeft;
             btnSaveAs.UseVisualStyleBackColor = true;
             btnSaveAs.Click += btnSaveAs_Click;
+            // 
+            // tableLayoutPanel2
+            // 
+            tableLayoutPanel2.ColumnCount = 3;
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel2.Controls.Add(btnSaveAs, 2, 0);
+            tableLayoutPanel2.Controls.Add(btnSetDataHeader, 1, 0);
+            tableLayoutPanel2.Controls.Add(btnGetSourceFile, 0, 0);
+            tableLayoutPanel2.Dock = DockStyle.Fill;
+            tableLayoutPanel2.Location = new Point(3, 3);
+            tableLayoutPanel2.Name = "tableLayoutPanel2";
+            tableLayoutPanel2.RowCount = 1;
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel2.Size = new Size(344, 34);
+            tableLayoutPanel2.TabIndex = 5;
             // 
             // FrmExcelFormatter
             // 
@@ -180,6 +201,8 @@
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            tableLayoutPanel2.ResumeLayout(false);
+            tableLayoutPanel2.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -194,5 +217,6 @@
         private TabPage tabPage1;
         private Button btnSetDataHeader;
         private Button btnSaveAs;
+        private TableLayoutPanel tableLayoutPanel2;
     }
 }
