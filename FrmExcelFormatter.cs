@@ -31,14 +31,15 @@ namespace WH_Panel
             //AttachRightClickHandlerToDataGridViews(this);
             toolTip.SetToolTip(btnGetSourceFile, "1_Get Source FIle");
             toolTip.SetToolTip(btnSetDataHeader, "2_Process file");
-            toolTip.SetToolTip(btnSaveAs, "3_Save XLSX");
+            toolTip.SetToolTip(button1, "3_Set Order");
+            toolTip.SetToolTip(btnSaveAs, "4_Save XLSX");
             btnGetSourceFile_Click(btnGetSourceFile, EventArgs.Empty);
         }
         private ContextMenuStrip columnHeaderContextMenu;
         public string clientName = string.Empty;
         public string projectName = string.Empty;
         public string filePath = string.Empty;
-        List<string> desiredColumnOrder = new List<string> { "CC","#","IPN", "MFPN", "Description", "Qty","Calc","Alts","Manufacturer" /*, Add more column names here */ };
+        List<string> desiredColumnOrder = new List<string> { "CC", "#", "IPN", "MFPN", "Description", "Qty", "Calc", "Alts", "Manufacturer","Footprint", "RefDes" /*, Add more column names here */ };
         private void btnGetSourceFile_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
@@ -106,7 +107,6 @@ namespace WH_Panel
                 menuItem.Click += ContextMenuItem_Click; // Attach click event handler
                 columnHeaderContextMenu.Items.Add(menuItem);
             }
-
             // Attach the context menu to the ColumnHeaderMouseClick event
             dataGridView.ColumnHeaderMouseClick += (sender, e) =>
             {
@@ -183,20 +183,6 @@ namespace WH_Panel
                     {
                         newGridView.Columns.Add(column.Clone() as DataGridViewColumn);
                     }
-                    // Locate the header row with specific values and clone it
-                    //DataGridViewRow headerRow = null;
-                    //foreach (DataGridViewRow row in currentGridView.Rows)
-                    //{
-                    //    if (row.Cells.Cast<DataGridViewCell>().Any(cell => cell.Value != null &&
-                    //                                                        (cell.Value.ToString() == "IPN" ||
-                    //                                                         cell.Value.ToString() == "MFPN" ||
-                    //                                                         cell.Value.ToString() == "Qty")))
-                    //    {
-                    //        headerRow = row;
-                    //        break;
-                    //    }
-                    //}
-                    // Copy non-empty rows from startRowIndex to endRowIndex, excluding the header row
                     for (int rowIndex = startRowIndex; rowIndex <= endRowIndex; rowIndex++)
                     {
                         DataGridViewRow row = currentGridView.Rows[rowIndex];
@@ -220,27 +206,8 @@ namespace WH_Panel
                             newGridView.Rows.Add(newRow);
                         }
                     }
-                    //Assign headers from the header row
-                    //if (headerRow != null)
-                    //{
-                    //    for (int columnIndex = 0; columnIndex < headerRow.Cells.Count; columnIndex++)
-                    //    {
-                    //        newGridView.Columns[columnIndex].HeaderText = headerRow.Cells[columnIndex].Value.ToString();
-                    //    }
-                    //}
-                    //Assign headers from the header row
-                    //if (headerRow != null)
-                    //{
-                    //    for (int columnIndex = 0; columnIndex < headerRow.Cells.Count; columnIndex++)
-                    //    {
-                    //        if (newGridView.Columns[columnIndex].HeaderText != "CC") // Exclude the "CC" header
-                    //        {
-                    //            newGridView.Columns[columnIndex].HeaderText = headerRow.Cells[columnIndex].Value.ToString();
-                    //        }
-                    //    }
-                    //}
                     RemoveEmptyAndCCColumns(newGridView);
-                    OrderColumnsAccordingToDesiredList(newGridView,desiredColumnOrder);
+                    newGridView.AllowUserToOrderColumns = true; // Enable column reordering
                     newTab.Controls.Add(newGridView);
                     AttachRightClickHandlerToDataGridViews(this);
                     tabControl1.SelectedTab = newTab;
@@ -252,7 +219,7 @@ namespace WH_Panel
             List<DataGridViewColumn> columnsToRemove = new List<DataGridViewColumn>();
             foreach (DataGridViewColumn column in dataGridView.Columns)
             {
-                if ( column.HeaderText == "CC")
+                if (column.HeaderText == "CC")
                 {
                     columnsToRemove.Add(column);
                 }
@@ -275,7 +242,7 @@ namespace WH_Panel
                         emptyCellCount++;
                     }
                 }
-                if (emptyCellCount < row.Cells.Count / 2) // Adjust this threshold as needed
+                if (emptyCellCount < row.Cells.Count / 3) // Adjust this threshold as needed
                 {
                     return rowIndex;
                 }
@@ -308,6 +275,7 @@ namespace WH_Panel
             {
                 TabPage lastTab = tabControl1.TabPages[tabControl1.TabPages.Count - 1];
                 DataGridView lastGridView = lastTab.Controls.OfType<DataGridView>().FirstOrDefault();
+                lastGridView.Refresh();
                 if (lastGridView != null)
                 {
                     string tabLabel = DateTime.Now.ToString("yyyyMMddHHmm");
@@ -328,7 +296,7 @@ namespace WH_Panel
                     // Original file path (replace this with the actual path to your template file)
                     string originalFilePath = filePath;
                     // Create a copy of the original file
-                    File.Copy(originalFilePath, filePathToSave, true);
+                    //File.Copy(originalFilePath, filePathToSave, true);
                     // Open the copied Excel package
                     using (var package = new OfficeOpenXml.ExcelPackage(new FileInfo(filePathToSave)))
                     {
@@ -351,7 +319,32 @@ namespace WH_Panel
                             for (int columnIndex = 0; columnIndex < row.Cells.Count; columnIndex++)
                             {
                                 newWorksheet.Cells[rowIndex + 2, columnIndex + 1].Value = row.Cells[columnIndex].Value;
+                                ExcelRange cell = newWorksheet.Cells[rowIndex + 2, columnIndex + 1];
+                                //cell.Value = row.Cells[columnIndex].Value;
+                                // Check if the column is "#" or "Qty"
+                                // Convert the value to a number if it's in the "#" column
+                                if (lastGridView.Columns[columnIndex].HeaderText == "#")
+                                {
+                                    if (row.Cells[columnIndex].Value != null && int.TryParse(row.Cells[columnIndex].Value.ToString(), out int numericValue))
+                                    {
+                                        cell.Value = numericValue;
+                                    }
+                                    else
+                                    {
+                                        cell.Value = row.Cells[columnIndex].Value;
+                                    }
+                                }
+                                else
+                                {
+                                    cell.Value = row.Cells[columnIndex].Value;
+                                }
+                                if (lastGridView.Columns[columnIndex].HeaderText == "#"|| lastGridView.Columns[columnIndex].HeaderText == "Qty")
+                                {
+                                    cell.Style.Numberformat.Format = "0"; // Set numeric format
+                                }
                             }
+                            // Apply autofilters to the header row
+                            newWorksheet.Cells[1, 1, 1, lastGridView.Columns.Count].AutoFilter = true;
                         }
                         // Save the Excel package
                         package.Save();
@@ -362,9 +355,98 @@ namespace WH_Panel
                 }
             }
         }
-        private void OrderColumnsAccordingToDesiredList(DataGridView dataGridView, List<string> desiredColumnOrder)
+        private DataGridView GetSelectedDataGridView()
         {
-            
+            if (tabControl1.SelectedTab != null)
+            {
+                DataGridView dataGridView = tabControl1.SelectedTab.Controls.OfType<DataGridView>().FirstOrDefault();
+                return dataGridView;
+            }
+            return null;
+        }
+        private DataGridView GetLastDataGridView()
+        {
+            if (tabControl1.TabPages.Count > 0)
+            {
+                TabPage lastTab = tabControl1.TabPages[tabControl1.TabPages.Count - 1];
+                DataGridView dataGridView = lastTab.Controls.OfType<DataGridView>().FirstOrDefault();
+                return dataGridView;
+            }
+            return null;
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            DataGridView selectedDataGridView = GetLastDataGridView();
+            if (selectedDataGridView != null)
+            {
+                CopyAndAddDataGridViewToNewTab(selectedDataGridView, desiredColumnOrder);
+            }
+        }
+        private void CopyAndAddDataGridViewToNewTab(DataGridView originalDataGridView, List<string> desiredColumnOrder)
+        {
+            DataGridView newGridView = new DataGridView();
+            newGridView.Dock = DockStyle.Fill;
+            Dictionary<string, int> columnIndices = new Dictionary<string, int>();
+            // Store the current display indices of the columns
+            for (int columnIndex = 0; columnIndex < originalDataGridView.Columns.Count; columnIndex++)
+            {
+                columnIndices[originalDataGridView.Columns[columnIndex].HeaderText] = columnIndex;
+            }
+            foreach (string columnName in desiredColumnOrder)
+            {
+                if (columnIndices.TryGetValue(columnName, out int columnIndex))
+                {
+                    DataGridViewColumn newColumn = originalDataGridView.Columns[columnIndex].Clone() as DataGridViewColumn;
+                    newGridView.Columns.Add(newColumn);
+                    newColumn.DisplayIndex = newGridView.Columns.Count - 1; // Set display index
+                    columnIndices.Remove(columnName);
+                }
+            }
+            foreach (int columnIndex in columnIndices.Values)
+            {
+                DataGridViewColumn newColumn = originalDataGridView.Columns[columnIndex].Clone() as DataGridViewColumn;
+                newGridView.Columns.Add(newColumn);
+                newColumn.DisplayIndex = newGridView.Columns.Count - 1; // Set display index
+            }
+            // Copy the data
+            foreach (DataGridViewRow row in originalDataGridView.Rows)
+            {
+                DataGridViewRow newRow = new DataGridViewRow();
+                newRow.CreateCells(newGridView);
+                for (int columnIndex = 0; columnIndex < row.Cells.Count; columnIndex++)
+                {
+                    newRow.Cells[columnIndex].Value = row.Cells[columnIndex].Value;
+                }
+                newGridView.Rows.Add(newRow);
+            }
+            TabPage newTab = new TabPage("OrderedColumns"); // You can set the tab title accordingly
+            newTab.Controls.Add(newGridView);
+            tabControl1.TabPages.Add(newTab);
+        }
+        private void btnOpenOriginal_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                openWHexcelDB(filePath);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        private void openWHexcelDB(string thePathToFile)
+        {
+            Process excel = new Process();
+            excel.StartInfo.FileName = "C:\\Program Files\\Microsoft Office\\root\\Office16\\EXCEL.exe";
+            excel.StartInfo.Arguments = AddQuotesIfRequired(thePathToFile);
+            excel.Start();
+        }
+        public string AddQuotesIfRequired(string path)
+        {
+            return !string.IsNullOrWhiteSpace(path) ?
+                path.Contains(" ") && (!path.StartsWith("\"") && !path.EndsWith("\"")) ?
+                    "\"" + path + "\"" : path :
+                    string.Empty;
         }
     }
 }
