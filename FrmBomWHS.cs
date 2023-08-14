@@ -1141,12 +1141,14 @@ namespace WH_Panel
                 // Write the column headers
                 // Write the column headers in specific order
                 htmlContent.AppendLine("<tr>");
-                WriteHtmlHeaderCell(htmlContent, "IPN");
+                //WriteHtmlHeaderCell(htmlContent, "IPN");
+                WriteHtmlHeaderCell(htmlContent, "IPN", "ipnHeader"); //
                 WriteHtmlHeaderCell(htmlContent, "MFPN");
                 WriteHtmlHeaderCell(htmlContent, "Description");
                 WriteHtmlHeaderCell(htmlContent, "WHbalance");
-                WriteHtmlHeaderCell(htmlContent, "Delta");
-                WriteHtmlHeaderCell(htmlContent, "DELTA");
+                //WriteHtmlHeaderCell(htmlContent, "Delta");
+                WriteHtmlHeaderCell(htmlContent, "Delta"); //
+                WriteHtmlHeaderCell(htmlContent, "DELTA", "deltaHeader");
                 htmlContent.AppendLine("</tr>");
                 htmlContent.AppendLine("</tr>");
 
@@ -1165,6 +1167,7 @@ namespace WH_Panel
                 foreach (DataGridViewRow row in dataGridView1.Rows)
                 {
                     htmlContent.AppendLine("<tr>");
+
                     WriteHtmlCell(htmlContent, row, columnIndexMap, "IPN");
                     WriteHtmlCell(htmlContent, row, columnIndexMap, "MFPN");
                     WriteHtmlCell(htmlContent, row, columnIndexMap, "Description");
@@ -1193,14 +1196,76 @@ namespace WH_Panel
                 p.Start();
             }
         }
-        private void WriteHtmlHeaderCell(StringBuilder sb, string headerText)
+        //private void WriteHtmlHeaderCell(StringBuilder sb, string headerText)
+        //{
+        //    if (headerText == "Delta")
+        //    {
+        //        headerText = "REQUIRED";
+        //    }
+        //    sb.AppendLine("<th>" + headerText + "</th>");
+        //}
+        //private void WriteHtmlHeaderCell(StringBuilder htmlContent, string text, string id = "")
+        //{
+        //    htmlContent.Append("<th");
+        //    if (!string.IsNullOrEmpty(id))
+        //    {
+        //        htmlContent.AppendFormat(" id='{0}'", id);
+        //    }
+
+        //    htmlContent.AppendFormat(">{0}</th>", text);
+        //}
+        //private void WriteHtmlHeaderCell(StringBuilder htmlContent, string text, string id = "")
+        //{
+        //    htmlContent.Append("<th");
+        //    if (!string.IsNullOrEmpty(id))
+        //    {
+        //        htmlContent.AppendFormat(" id='{0}'", id);
+        //    }
+
+        //    if (id == "ipnHeader" || id == "deltaHeader")
+        //    {
+        //        htmlContent.AppendFormat(" onclick='sortTableByColumn({0})'", id == "ipnHeader" ? 0 : 4);
+        //    }
+
+        //    htmlContent.AppendFormat(">{0}</th>", text);
+        //}
+        private void WriteHtmlHeaderCell(StringBuilder htmlContent, string text, string id = "")
         {
-            if (headerText == "Delta")
+            htmlContent.Append("<th");
+            if (!string.IsNullOrEmpty(id))
             {
-                headerText = "REQUIRED";
+                htmlContent.AppendFormat(" id='{0}'", id);
             }
-            sb.AppendLine("<th>" + headerText + "</th>");
+            if (text == "Delta")
+            {
+                text = "REQUIRED";
+            }
+            if (id == "ipnHeader" || id == "deltaHeader")
+            {
+                htmlContent.AppendFormat("><a href='#' onclick='sortTableByColumn({0}); return false;'>{1}</a>", id == "ipnHeader" ? 0 : 4, text);
+            }
+            else
+            {
+                htmlContent.AppendFormat(">{0}", text);
+            }
+
+            htmlContent.Append("</th>");
         }
+        //private void WriteHtmlHeaderCell(StringBuilder htmlContent, string headerText, string text, string id = "")
+        //{
+        //    htmlContent.Append("<th");
+        //    if (!string.IsNullOrEmpty(id))
+        //    {
+        //        htmlContent.AppendFormat(" id='{0}'", id);
+        //    }
+
+        //    if (headerText == "Delta")
+        //    {
+        //        headerText = "REQUIRED"; // Change "Delta" header text to "REQUIRED"
+        //    }
+
+        //    htmlContent.AppendFormat(">{0}</th>", text);
+        //}
         private void WriteHtmlCell(StringBuilder sb, DataGridViewRow row, Dictionary<string, int> columnIndexMap, string columnName)
         {
             int columnIndex = columnIndexMap[columnName];
@@ -1216,15 +1281,62 @@ namespace WH_Panel
 
         }
 
+        //private string GenerateJavascript()
+        //{
+        //    StringBuilder jsContent = new StringBuilder();
+        //    jsContent.AppendLine("<script>");
+        //    jsContent.AppendLine("window.onload = function() {");
+        //    jsContent.AppendLine("var table = document.getElementsByTagName('table')[0];");
+        //    jsContent.AppendLine("for (var i = 1; i < table.rows.length; i++) {"); // Start from row index 1 to skip the header row
+        //    jsContent.AppendLine("var deltaCell = table.rows[i].cells[4];"); // Assuming the "Delta" column is the 5th column (index 4)
+        //    jsContent.AppendLine("var whBalanceCell = table.rows[i].cells[3];"); // Assuming the "WHbalance" column is the 4th column (index 3)
+        //    jsContent.AppendLine("var deltaValue = parseInt(deltaCell.textContent);");
+        //    jsContent.AppendLine("var whBalanceValue = parseInt(whBalanceCell.textContent);");
+        //    jsContent.AppendLine("if (Math.abs(deltaValue) <= whBalanceValue) {");
+        //    jsContent.AppendLine("table.rows[i].style.backgroundColor = 'lightgreen';");
+        //    jsContent.AppendLine("} else {");
+        //    jsContent.AppendLine("table.rows[i].style.backgroundColor = 'lightcoral';");
+        //    jsContent.AppendLine("}");
+        //    jsContent.AppendLine("}");
+        //    jsContent.AppendLine("}");
+        //    jsContent.AppendLine("</script>");
+
+        //    return jsContent.ToString();
+        //}
         private string GenerateJavascript()
         {
             StringBuilder jsContent = new StringBuilder();
             jsContent.AppendLine("<script>");
             jsContent.AppendLine("window.onload = function() {");
             jsContent.AppendLine("var table = document.getElementsByTagName('table')[0];");
-            jsContent.AppendLine("for (var i = 1; i < table.rows.length; i++) {"); // Start from row index 1 to skip the header row
-            jsContent.AppendLine("var deltaCell = table.rows[i].cells[4];"); // Assuming the "Delta" column is the 5th column (index 4)
-            jsContent.AppendLine("var whBalanceCell = table.rows[i].cells[3];"); // Assuming the "WHbalance" column is the 4th column (index 3)
+            jsContent.AppendLine("var deltaHeader = table.rows[0].cells[5];"); // Delta column header cell
+            jsContent.AppendLine("var ipnHeader = table.rows[0].cells[1];"); // IPN column header cell
+
+            // Add click event listeners to enable sorting
+            jsContent.AppendLine("deltaHeader.addEventListener('click', function() {");
+            jsContent.AppendLine("sortTableByColumn(table, 5);"); // Sort by Delta column (index 4)
+            jsContent.AppendLine("});");
+            jsContent.AppendLine("ipnHeader.addEventListener('click', function() {");
+            jsContent.AppendLine("sortTableByColumn(table, 1);"); // Sort by IPN column (index 1)
+            jsContent.AppendLine("});");
+
+            // Sorting function
+            jsContent.AppendLine("function sortTableByColumn(table, columnIndex) {");
+            jsContent.AppendLine("var rows = Array.from(table.rows).slice(1);"); // Skip the header row
+            jsContent.AppendLine("rows.sort(function(a, b) {");
+            jsContent.AppendLine("var aValue = a.cells[columnIndex].textContent;");
+            jsContent.AppendLine("var bValue = b.cells[columnIndex].textContent;");
+            jsContent.AppendLine("return aValue.localeCompare(bValue, undefined, { numeric: true, sensitivity: 'base' });"); // Numeric sorting
+            jsContent.AppendLine("});");
+            jsContent.AppendLine("for (var i = 0; i < rows.length; i++) {");
+            jsContent.AppendLine("table.appendChild(rows[i]);");
+            jsContent.AppendLine("}");
+            jsContent.AppendLine("}");
+
+            // Rest of your existing code
+            jsContent.AppendLine("for (var i = 1; i < table.rows.length; i++) {");
+            jsContent.AppendLine("var deltaCell = table.rows[i].cells[4];");
+            jsContent.AppendLine("var whBalanceCell = table.rows[i].cells[3];");
             jsContent.AppendLine("var deltaValue = parseInt(deltaCell.textContent);");
             jsContent.AppendLine("var whBalanceValue = parseInt(whBalanceCell.textContent);");
             jsContent.AppendLine("if (Math.abs(deltaValue) <= whBalanceValue) {");
@@ -1233,6 +1345,7 @@ namespace WH_Panel
             jsContent.AppendLine("table.rows[i].style.backgroundColor = 'lightcoral';");
             jsContent.AppendLine("}");
             jsContent.AppendLine("}");
+
             jsContent.AppendLine("}");
             jsContent.AppendLine("</script>");
 
