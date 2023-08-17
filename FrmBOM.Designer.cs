@@ -871,7 +871,6 @@
             txtbQtyToAdd.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point);
             txtbQtyToAdd.Location = new Point(558, 3);
             txtbQtyToAdd.Name = "txtbQtyToAdd";
-            txtbQtyToAdd.PlaceholderText = "Input QTY";
             txtbQtyToAdd.Size = new Size(179, 35);
             txtbQtyToAdd.TabIndex = 3;
             txtbQtyToAdd.TextAlign = HorizontalAlignment.Center;

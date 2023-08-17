@@ -123,56 +123,7 @@ namespace WH_Panel
             SetColumsOrder();
             stopWatch.Stop();
         }
-        //private List<string> listOfPathsAggregator2()
-        //{
-        //    List<string> list = new List<string>();
 
-        //    string main = "\\\\dbr1\\Data\\WareHouse\\";
-        //    DateTime d = DateTime.Now;
-
-        //    string year = d.Year.ToString("D4");
-        //    int month = d.Month;
-
-        //    string previousMonthPath = $"{main}{year}\\{(month - 1):D2}.{year}";
-        //    string thisMonthPath = $"{main}{year}\\{month:D2}.{year}";
-
-        //    list.Add(previousMonthPath);
-        //    list.Add(thisMonthPath);
-
-        //    return list;
-        //}
-        //private List<string> listOfPathsAggregator6()
-        //{
-        //    List<string> list = new List<string>();
-
-        //    string main = "\\\\dbr1\\Data\\WareHouse\\";
-        //    DateTime d = DateTime.Now;
-
-        //    for (int i = 0; i < 6; i++)
-        //    {
-        //        string year = d.Year.ToString("D4");
-        //        int month = d.Month;
-
-        //        if (month == 1) // If it's January, adjust year and month accordingly
-        //        {
-        //            year = (d.Year - 1).ToString("D4");
-        //            month = 12; // Set month to December
-        //        }
-        //        else
-        //        {
-        //            month--;
-        //        }
-
-        //        string previousMonthPath = $"{main}{year}\\{month:D2}.{year}";
-        //        list.Add(previousMonthPath);
-
-        //        d = d.AddMonths(-1); // Move to the previous month
-        //    }
-
-        //    list.Reverse(); // Since we're adding paths in reverse order, reverse the list
-
-        //    return list;
-        //}
         private List<string> listOfPathsAggregator(int numMonths)
         {
             List<string> list = new List<string>();

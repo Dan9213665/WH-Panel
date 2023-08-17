@@ -8,6 +8,7 @@ using System.Data;
 using System.Data.Common;
 using System.Data.OleDb;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -200,7 +201,7 @@ namespace WH_Panel
             TimeSpan ts = stopWatch.Elapsed;
             try
             {
-                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=1\"";
+                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
                 using (OleDbConnection conn = new OleDbConnection(constr))
                 {
                     try
@@ -232,6 +233,7 @@ namespace WH_Panel
                         }
 
                         OleDbCommand command = new OleDbCommand("SELECT * FROM [" + selectedSheetName + "$]", conn);
+                        //OleDbCommand command = new OleDbCommand("SELECT * FROM [" + cleanedUpSheetNameWithUnderscore + "$]", conn);
                         OleDbDataReader reader = command.ExecuteReader();
 
                         // Rest of your data processing code...
@@ -242,8 +244,32 @@ namespace WH_Panel
                             {
                                 if (j > 11)
                                 {
-                                    int qtyS = 0;
-                                    bool parseOk = int.TryParse(reader[3].ToString(), out qtyS);
+                                    //int qtyS = 0;
+                                    //int qty = 0;
+                                    //bool parseOk = int.TryParse(reader[3].ToString(), out qtyS);
+                                    //if (parseOk)
+                                    //{
+                                    //    qty = qtyS;
+                                    //}
+                                    //string _ClientName = excelFIleName.Substring(13);
+                                    //string thName = _ClientName.Substring(0, _ClientName.Length - 5);
+                                    //PackingSlipItem abc = new PackingSlipItem
+                                    //{
+                                    //    ShipmentDate = excelFIleName.Substring(0, 12),
+                                    //    ClientName = thName,
+                                    //    IPN = reader[0].ToString(),
+                                    //    MFPN = reader[1].ToString(),
+                                    //    Description = reader[2].ToString(),
+                                    //    QtySent = qty,
+                                    //};
+                                    int qty = 0;
+                                    bool parseOk = int.TryParse(reader[3].ToString(), out qty);
+                                    if (!parseOk)
+                                    {
+                                        // Handle parsing failure, perhaps log an error or set qty to a default value
+                                        // For example: qty = 0;
+                                    }
+
                                     string _ClientName = excelFIleName.Substring(13);
                                     string thName = _ClientName.Substring(0, _ClientName.Length - 5);
                                     PackingSlipItem abc = new PackingSlipItem
@@ -253,7 +279,7 @@ namespace WH_Panel
                                         IPN = reader[0].ToString(),
                                         MFPN = reader[1].ToString(),
                                         Description = reader[2].ToString(),
-                                        QtySent = qtyS,
+                                        QtySent = qty, // Assign the parsed quantity value
                                     };
                                     countItems = i;
                                     label12.Text = "Loaded " + (countItems).ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{0:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
@@ -265,7 +291,12 @@ namespace WH_Panel
                                         i++;
                                     }
                                 }
-                                j++;
+                                else
+                                {
+                                    j++;
+                                }
+
+
                             }
                         }
 
@@ -368,6 +399,11 @@ namespace WH_Panel
             Label? lbl = sender as Label;
             textBox3.Clear();
             lbl.BackColor = Color.LightGreen;
+        }
+
+        private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }

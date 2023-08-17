@@ -112,9 +112,13 @@ namespace WH_Panel
                 {
                     countLoadedFIles++;
                     string Litem = Path.GetFileName(file);
+                    string fileName = Path.GetFileName(file);
                     if (IsFileLocked(Litem))
                     {
-                        DataLoader(file, Litem);
+                        string copyFilePath = CreateCopyOfFile(file);
+                        //DataLoader(file, Litem);
+                        DataLoader(copyFilePath, fileName);
+                        DeleteFile(copyFilePath);
                     }
                     else
                     {
@@ -129,6 +133,16 @@ namespace WH_Panel
             textBox11.ReadOnly = false;
             textBox2.ReadOnly = false;
             textBox3.ReadOnly = false;
+        }
+        private string CreateCopyOfFile(string filePath)
+        {
+            string copyFilePath = Path.Combine(Path.GetDirectoryName(filePath), "Copy_" + Path.GetFileName(filePath));
+            File.Copy(filePath, copyFilePath, true);
+            return copyFilePath;
+        }
+        private void DeleteFile(string filePath)
+        {
+            File.Delete(filePath);
         }
         private List<string> listOfPathsAggregator(int numMonths)
         {
@@ -237,6 +251,7 @@ namespace WH_Panel
             dgw.Columns["SourceRequester"].Visible = false;
             dgw.AutoResizeColumns();
         }
+
         private void DataLoader(string fp, string excelFIleName)
         {
             TimeSpan ts = stopWatch.Elapsed;
