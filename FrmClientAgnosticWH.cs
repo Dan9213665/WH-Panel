@@ -9,16 +9,18 @@ using RadioButton = System.Windows.Forms.RadioButton;
 using TextBox = System.Windows.Forms.TextBox;
 namespace WH_Panel
 {
+
     public partial class FrmClientAgnosticWH : Form
     {
         public FrmClientAgnosticWH()
         {
             InitializeComponent();
             //comboBox3.SelectedIndex = 0;
+            button23.Enabled = false;
             comboBox3.SelectedItem = "ROBOTRON";
             MasterReload(avlROBOTRON, stockROBOTRON);
         }
-
+        public WHitem wHitemToSplit = new WHitem();
         public List<WHitem> avlItems = new List<WHitem>();
         public List<WHitem> stockItems = new List<WHitem>();
         public DataTable avlDTable = new DataTable();
@@ -1521,50 +1523,73 @@ namespace WH_Panel
 
 
         }
-        //private void GenerateHTML()
-        //{
-        //    SetSTOCKiewColumsOrder();
-        //    string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-        //    string filename = "\\\\dbr1\\Data\\WareHouse\\2023\\WHsearcher\\" + _fileTimeStamp + "_" + ".html";
 
-        //    using (StreamWriter writer = new StreamWriter(filename))
-        //    {
-        //        writer.WriteLine("<html style='text-align:center'>");
-        //        writer.WriteLine("<head>");
-        //        writer.WriteLine("<title>" + textBox10.Text + "</title>");
-        //        writer.WriteLine("</head>");
-        //        writer.WriteLine("<body>");
-        //        writer.WriteLine("<table border='1'>");
-        //        writer.WriteLine("<tr>");
-        //        writer.WriteLine("<td>" + textBox10.Text + "</td>");
-        //        writer.WriteLine("<td>" + label15.Text + "</td>");
-        //        writer.WriteLine("</tr>");
-        //        // Iterate through the rows
-        //        for (int i = 0; i < dataGridView1.Rows.Count; i++)
-        //        {
-        //            writer.WriteLine("<tr>");
+        private void button23_Click(object sender, EventArgs e)
+        {
+            using (FrmSplit fs = new FrmSplit())
+            {
+                fs.wHitemToSplitFromTheMainForm = wHitemToSplit;
 
-        //            // Iterate through the columns
-        //            for (int j = 0; j < dataGridView1.Columns.Count; j++)
-        //            {
-        //                string cellValue = dataGridView1.Rows[i].Cells[j].Value.ToString();
-        //                writer.WriteLine("<td>" + cellValue + "</td>");
-        //            }
+                // Calculate the difference in width
+                int widthDifference = Screen.PrimaryScreen.WorkingArea.Width - fs.Width;
 
-        //            writer.WriteLine("</tr>");
-        //        }
+                // Adjust the form's width without changing the height
+                fs.Width += widthDifference;
 
-        //        writer.WriteLine("</table>");
-        //        writer.WriteLine("</body>");
-        //        writer.WriteLine("</html>");
-        //    }
-        //    var p = new Process();
-        //    p.StartInfo = new ProcessStartInfo(filename)
-        //    {
-        //        UseShellExecute = true
-        //    };
-        //    p.Start();
-        //}
+                // Subscribe to the AdjustmentCompleted event
+                fs.AdjustmentCompleted += SubForm_AdjustmentCompleted;
 
+                // Show the subform
+                fs.ShowDialog();
+            }
+        }
+        private void SubForm_AdjustmentCompleted(object sender, AdjustmentEventArgs e)
+        {
+            // Construct the message to display all properties of each object
+            string message =
+                "Original Item:\n" +
+                GetObjectPropertiesAsString(e.OriginalItem) +
+                "\n\nAdjusted Item A:\n" +
+                GetObjectPropertiesAsString(e.AdjustedItemA) +
+                "\n\nAdjusted Item B:\n" +
+                GetObjectPropertiesAsString(e.AdjustedItemB);
+
+            MessageBox.Show(message);
+        }
+        private string GetObjectPropertiesAsString(WHitem item)
+        {
+            // Get all properties of the WHitem object and format them as a string
+            string properties =
+                $"IPN: {item.IPN}\n" +
+                $"Manufacturer: {item.Manufacturer}\n" +
+                $"MFPN: {item.MFPN}\n" +
+                $"Description: {item.Description}\n" +
+                $"Stock: {item.Stock}\n" +
+                $"UpdatedOn: {item.UpdatedOn}\n" +
+                $"ReelBagTrayStick: {item.ReelBagTrayStick}\n" +
+                $"SourceRequester: {item.SourceRequester}";
+
+            return properties;
+        }
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            button23.Enabled = true;
+            int rowindex = dataGridView1.CurrentCell.RowIndex;
+            WHitem whi = new WHitem()
+            {
+                IPN = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["IPN"].Index].Value.ToString(),
+                Manufacturer = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Manufacturer"].Index].Value.ToString(),
+                MFPN = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["MFPN"].Index].Value.ToString(),
+                Description = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Description"].Index].Value.ToString(),
+                Stock = int.Parse(dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString()),
+                UpdatedOn = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["UpdatedOn"].Index].Value.ToString(),
+                ReelBagTrayStick = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["ReelBagTrayStick"].Index].Value.ToString(),
+                SourceRequester = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["SourceRequester"].Index].Value.ToString()
+            };
+
+            wHitemToSplit = whi;
+            //MessageBox.Show(whi.IPN.ToString() + " whi " + whi.Stock.ToString());
+            //MessageBox.Show(wHitemToSplit.IPN.ToString() + " wHitemToSplit " + wHitemToSplit.Stock.ToString());
+        }
     }
 }
