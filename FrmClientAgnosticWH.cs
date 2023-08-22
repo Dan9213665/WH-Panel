@@ -752,8 +752,11 @@ namespace WH_Panel
                 cmd.ExecuteNonQuery();
                 conn.Close();
                 Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
+                Thread.Sleep(500);
                 SendKeys.SendWait("^p");
+                Thread.Sleep(500);
                 SendKeys.SendWait("{Enter}");
+                Thread.Sleep(500);
                 //ComeBackFromPrint();
                 //Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
                 //LastInputFromUser.Focus();
@@ -1624,21 +1627,22 @@ namespace WH_Panel
 
             DataInserterSplitter(stockFile, "STOCK", e.AdjustedItemA, true);
             stockItems.Add(e.AdjustedItemA);
+
             DataInserterSplitter(stockFile, "STOCK", e.AdjustedItemB, true);
             stockItems.Add(e.AdjustedItemB);
 
             PopulateStockView();
 
             // Construct the message to display all properties of each object
-            string message =
-                "Original Item:\n" +
-                GetObjectPropertiesAsString(e.OriginalItem) +
-                "\n\nAdjusted Item A:\n" +
-                GetObjectPropertiesAsString(e.AdjustedItemA) +
-                "\n\nAdjusted Item B:\n" +
-                GetObjectPropertiesAsString(e.AdjustedItemB);
+            //string message =
+            //    "Original Item:\n" +
+            //    GetObjectPropertiesAsString(e.OriginalItem) +
+            //    "\n\nAdjusted Item A:\n" +
+            //    GetObjectPropertiesAsString(e.AdjustedItemA) +
+            //    "\n\nAdjusted Item B:\n" +
+            //    GetObjectPropertiesAsString(e.AdjustedItemB);
 
-            MessageBox.Show(message);
+            //MessageBox.Show(message);
         }
         private string GetObjectPropertiesAsString(WHitem item)
         {
