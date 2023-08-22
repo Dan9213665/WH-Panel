@@ -1619,15 +1619,18 @@ namespace WH_Panel
         {
             e.OriginalItem.SourceRequester = "SPLIT";
             e.OriginalItem.Stock = e.OriginalItem.Stock * (-1);
-
+            e.OriginalItem.UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
             DataInserterSplitter(stockFile, "STOCK", e.OriginalItem, false);
             stockItems.Add(e.OriginalItem);
+            Thread.Sleep(1000);
             //textBox10.Text = e.OriginalItem.IPN;
             //textBox10.BackColor = Color.LightGreen;
 
+            e.AdjustedItemA.UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
             DataInserterSplitter(stockFile, "STOCK", e.AdjustedItemA, true);
             stockItems.Add(e.AdjustedItemA);
 
+            e.AdjustedItemB.UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
             DataInserterSplitter(stockFile, "STOCK", e.AdjustedItemB, true);
             stockItems.Add(e.AdjustedItemB);
 
