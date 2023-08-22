@@ -231,7 +231,6 @@
             Name = "FrmSplit";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Split Warehouse Item";
-            TopMost = true;
             Load += FrmSplit_Load;
             groupBox1.ResumeLayout(false);
             tableLayoutPanel1.ResumeLayout(false);

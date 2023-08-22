@@ -632,6 +632,42 @@ namespace WH_Panel
                 MessageBox.Show("Error");
             }
         }
+        private void DataInserterSplitter(string fp, string thesheetName, WHitem wHitem, bool toPrintOrNotToPrint)
+        {
+            bool toPrint = toPrintOrNotToPrint;
+            try
+            {
+                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+                using (OleDbConnection conn = new OleDbConnection(constr))
+                {
+                    conn.Open();
+                    OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$] (IPN,Manufacturer,MFPN,Description,Stock,Updated_on,Comments,Source_Requester) values('" + wHitem.IPN + "','" + wHitem.Manufacturer + "','" + wHitem.MFPN + "','" + wHitem.Description + "','" + wHitem.Stock + "','" + wHitem.UpdatedOn + "','" + wHitem.ReelBagTrayStick + "','" + wHitem.SourceRequester + "')", conn);
+                    command.ExecuteNonQuery();
+                    conn.Close();
+                }
+                //textBox6.Clear();
+                //LastInputFromUser.Text = string.Empty;
+                //label2.BackColor = Color.LightGreen;
+                // label3.BackColor = Color.LightGreen;
+                //LastInputFromUser.Focus();
+                if (toPrintOrNotToPrint)
+                {
+                    printStickerSplitter(wHitem);
+                }
+                //if (radioButton4.Checked == true)
+                //{
+                //    AutoClosingMessageBox.Show(wHitem.IPN + " MOVED to " + textBox9.Text.ToString(), " Item added to " + textBox9.Text.ToString(), 1000);
+                //}
+                //else
+                //{
+                //    AutoClosingMessageBox.Show(wHitem.Stock.ToString() + " PCS of " + wHitem.IPN + " in a " + wHitem.ReelBagTrayStick + " MOVED to DB ", "Item added to DB", 2000);
+                //}
+            }
+            catch (IOException)
+            {
+                MessageBox.Show("Error");
+            }
+        }
         public class AutoClosingMessageBox
         {
             System.Threading.Timer _timeoutTimer;
@@ -688,6 +724,39 @@ namespace WH_Panel
                 //ComeBackFromPrint();
                 Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
                 LastInputFromUser.Focus();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Sticker printing failed : " + e.Message);
+            }
+        }
+        private void printStickerSplitter(WHitem wHitem)
+        {
+            try
+            {
+                string userName = Environment.UserName;
+                string fp = @"C:\\Users\\" + userName + "\\Desktop\\Print_Stickers.xlsx"; // //////Print_StickersWH.xlsm
+                string thesheetName = "Sheet1";
+                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+                OleDbConnection conn = new OleDbConnection(constr);
+                OleDbCommand cmd = new OleDbCommand();
+                cmd.Connection = conn;
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @UPDATEDON";
+                cmd.Parameters.AddWithValue("@PN", wHitem.IPN);
+                cmd.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
+                cmd.Parameters.AddWithValue("@ItemDesc", wHitem.Description);
+                cmd.Parameters.AddWithValue("@QTY", wHitem.Stock);
+                cmd.Parameters.AddWithValue("@UPDATEDON", wHitem.UpdatedOn);
+                conn.Open();
+                cmd.ExecuteNonQuery();
+                conn.Close();
+                Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
+                SendKeys.SendWait("^p");
+                SendKeys.SendWait("{Enter}");
+                //ComeBackFromPrint();
+                //Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
+                //LastInputFromUser.Focus();
             }
             catch (Exception e)
             {
@@ -1545,6 +1614,21 @@ namespace WH_Panel
         }
         private void SubForm_AdjustmentCompleted(object sender, AdjustmentEventArgs e)
         {
+            e.OriginalItem.SourceRequester = "SPLIT";
+            e.OriginalItem.Stock = e.OriginalItem.Stock * (-1);
+
+            DataInserterSplitter(stockFile, "STOCK", e.OriginalItem, false);
+            stockItems.Add(e.OriginalItem);
+            //textBox10.Text = e.OriginalItem.IPN;
+            //textBox10.BackColor = Color.LightGreen;
+
+            DataInserterSplitter(stockFile, "STOCK", e.AdjustedItemA, true);
+            stockItems.Add(e.AdjustedItemA);
+            DataInserterSplitter(stockFile, "STOCK", e.AdjustedItemB, true);
+            stockItems.Add(e.AdjustedItemB);
+
+            PopulateStockView();
+
             // Construct the message to display all properties of each object
             string message =
                 "Original Item:\n" +
