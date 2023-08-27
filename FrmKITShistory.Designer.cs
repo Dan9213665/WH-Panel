@@ -63,6 +63,10 @@
             label2 = new Label();
             label1 = new Label();
             textBox1 = new TextBox();
+            textBox12 = new TextBox();
+            textBox13 = new TextBox();
+            comboBox1 = new ComboBox();
+            comboBox2 = new ComboBox();
             groupBox3 = new GroupBox();
             dataGridView1 = new DataGridView();
             groupBox4 = new GroupBox();
@@ -265,41 +269,46 @@
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 9.090908F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 9.090908F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 9.090908F));
-            tableLayoutPanel2.Controls.Add(textBox11, 1, 1);
-            tableLayoutPanel2.Controls.Add(textBox10, 0, 1);
-            tableLayoutPanel2.Controls.Add(label11, 1, 0);
-            tableLayoutPanel2.Controls.Add(label10, 0, 0);
-            tableLayoutPanel2.Controls.Add(textBox9, 10, 1);
-            tableLayoutPanel2.Controls.Add(textBox8, 9, 1);
-            tableLayoutPanel2.Controls.Add(textBox7, 8, 1);
-            tableLayoutPanel2.Controls.Add(textBox6, 7, 1);
-            tableLayoutPanel2.Controls.Add(textBox5, 6, 1);
-            tableLayoutPanel2.Controls.Add(textBox4, 5, 1);
-            tableLayoutPanel2.Controls.Add(textBox3, 4, 1);
-            tableLayoutPanel2.Controls.Add(textBox2, 3, 1);
-            tableLayoutPanel2.Controls.Add(label9, 10, 0);
-            tableLayoutPanel2.Controls.Add(label8, 9, 0);
-            tableLayoutPanel2.Controls.Add(label7, 8, 0);
-            tableLayoutPanel2.Controls.Add(label6, 7, 0);
-            tableLayoutPanel2.Controls.Add(label5, 6, 0);
-            tableLayoutPanel2.Controls.Add(label4, 5, 0);
-            tableLayoutPanel2.Controls.Add(label3, 4, 0);
-            tableLayoutPanel2.Controls.Add(label2, 3, 0);
-            tableLayoutPanel2.Controls.Add(label1, 2, 0);
-            tableLayoutPanel2.Controls.Add(textBox1, 2, 1);
+            tableLayoutPanel2.Controls.Add(textBox11, 1, 2);
+            tableLayoutPanel2.Controls.Add(textBox10, 0, 2);
+            tableLayoutPanel2.Controls.Add(label11, 1, 1);
+            tableLayoutPanel2.Controls.Add(label10, 0, 1);
+            tableLayoutPanel2.Controls.Add(textBox9, 10, 2);
+            tableLayoutPanel2.Controls.Add(textBox8, 9, 2);
+            tableLayoutPanel2.Controls.Add(textBox7, 8, 2);
+            tableLayoutPanel2.Controls.Add(textBox6, 7, 2);
+            tableLayoutPanel2.Controls.Add(textBox5, 6, 2);
+            tableLayoutPanel2.Controls.Add(textBox4, 5, 2);
+            tableLayoutPanel2.Controls.Add(textBox3, 4, 2);
+            tableLayoutPanel2.Controls.Add(textBox2, 3, 2);
+            tableLayoutPanel2.Controls.Add(label9, 10, 1);
+            tableLayoutPanel2.Controls.Add(label8, 9, 1);
+            tableLayoutPanel2.Controls.Add(label7, 8, 1);
+            tableLayoutPanel2.Controls.Add(label6, 7, 1);
+            tableLayoutPanel2.Controls.Add(label5, 6, 1);
+            tableLayoutPanel2.Controls.Add(label4, 5, 1);
+            tableLayoutPanel2.Controls.Add(label3, 4, 1);
+            tableLayoutPanel2.Controls.Add(label2, 3, 1);
+            tableLayoutPanel2.Controls.Add(label1, 2, 1);
+            tableLayoutPanel2.Controls.Add(textBox1, 2, 2);
+            tableLayoutPanel2.Controls.Add(textBox12, 1, 0);
+            tableLayoutPanel2.Controls.Add(textBox13, 3, 0);
+            tableLayoutPanel2.Controls.Add(comboBox1, 2, 0);
+            tableLayoutPanel2.Controls.Add(comboBox2, 4, 0);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.Location = new Point(3, 19);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
-            tableLayoutPanel2.RowCount = 2;
-            tableLayoutPanel2.RowStyles.Add(new RowStyle());
-            tableLayoutPanel2.RowStyles.Add(new RowStyle());
+            tableLayoutPanel2.RowCount = 3;
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel2.Size = new Size(1239, 115);
             tableLayoutPanel2.TabIndex = 0;
             // 
             // textBox11
             // 
             textBox11.Dock = DockStyle.Fill;
-            textBox11.Location = new Point(115, 18);
+            textBox11.Location = new Point(115, 79);
             textBox11.Name = "textBox11";
             textBox11.PlaceholderText = "Filter by Project";
             textBox11.Size = new Size(106, 23);
@@ -313,7 +322,7 @@
             // 
             textBox10.Dock = DockStyle.Fill;
             textBox10.Enabled = false;
-            textBox10.Location = new Point(3, 18);
+            textBox10.Location = new Point(3, 79);
             textBox10.Name = "textBox10";
             textBox10.Size = new Size(106, 23);
             textBox10.TabIndex = 20;
@@ -323,9 +332,9 @@
             // 
             label11.AutoSize = true;
             label11.Dock = DockStyle.Fill;
-            label11.Location = new Point(115, 0);
+            label11.Location = new Point(115, 38);
             label11.Name = "label11";
-            label11.Size = new Size(106, 15);
+            label11.Size = new Size(106, 38);
             label11.TabIndex = 19;
             label11.Text = "Project Name";
             label11.TextAlign = ContentAlignment.MiddleCenter;
@@ -335,9 +344,9 @@
             // 
             label10.AutoSize = true;
             label10.Dock = DockStyle.Fill;
-            label10.Location = new Point(3, 0);
+            label10.Location = new Point(3, 38);
             label10.Name = "label10";
-            label10.Size = new Size(106, 15);
+            label10.Size = new Size(106, 38);
             label10.TabIndex = 18;
             label10.Text = "DATE";
             label10.TextAlign = ContentAlignment.MiddleCenter;
@@ -345,7 +354,7 @@
             // textBox9
             // 
             textBox9.Dock = DockStyle.Fill;
-            textBox9.Location = new Point(1123, 18);
+            textBox9.Location = new Point(1123, 79);
             textBox9.Name = "textBox9";
             textBox9.PlaceholderText = "Filter by ALT";
             textBox9.Size = new Size(113, 23);
@@ -359,7 +368,7 @@
             // 
             textBox8.Dock = DockStyle.Fill;
             textBox8.Enabled = false;
-            textBox8.Location = new Point(1011, 18);
+            textBox8.Location = new Point(1011, 79);
             textBox8.Name = "textBox8";
             textBox8.Size = new Size(106, 23);
             textBox8.TabIndex = 16;
@@ -369,7 +378,7 @@
             // 
             textBox7.Dock = DockStyle.Fill;
             textBox7.Enabled = false;
-            textBox7.Location = new Point(899, 18);
+            textBox7.Location = new Point(899, 79);
             textBox7.Name = "textBox7";
             textBox7.Size = new Size(106, 23);
             textBox7.TabIndex = 15;
@@ -379,7 +388,7 @@
             // 
             textBox6.Dock = DockStyle.Fill;
             textBox6.Enabled = false;
-            textBox6.Location = new Point(787, 18);
+            textBox6.Location = new Point(787, 79);
             textBox6.Name = "textBox6";
             textBox6.Size = new Size(106, 23);
             textBox6.TabIndex = 14;
@@ -389,7 +398,7 @@
             // 
             textBox5.Dock = DockStyle.Fill;
             textBox5.Enabled = false;
-            textBox5.Location = new Point(675, 18);
+            textBox5.Location = new Point(675, 79);
             textBox5.Name = "textBox5";
             textBox5.Size = new Size(106, 23);
             textBox5.TabIndex = 13;
@@ -399,7 +408,7 @@
             // 
             textBox4.Dock = DockStyle.Fill;
             textBox4.Enabled = false;
-            textBox4.Location = new Point(563, 18);
+            textBox4.Location = new Point(563, 79);
             textBox4.Name = "textBox4";
             textBox4.Size = new Size(106, 23);
             textBox4.TabIndex = 12;
@@ -408,7 +417,7 @@
             // textBox3
             // 
             textBox3.Dock = DockStyle.Fill;
-            textBox3.Location = new Point(451, 18);
+            textBox3.Location = new Point(451, 79);
             textBox3.Name = "textBox3";
             textBox3.PlaceholderText = "Filter by Description";
             textBox3.Size = new Size(106, 23);
@@ -419,7 +428,7 @@
             // textBox2
             // 
             textBox2.Dock = DockStyle.Fill;
-            textBox2.Location = new Point(339, 18);
+            textBox2.Location = new Point(339, 79);
             textBox2.Name = "textBox2";
             textBox2.PlaceholderText = "Filter by MFPN";
             textBox2.Size = new Size(106, 23);
@@ -434,9 +443,9 @@
             // 
             label9.AutoSize = true;
             label9.Dock = DockStyle.Fill;
-            label9.Location = new Point(1123, 0);
+            label9.Location = new Point(1123, 38);
             label9.Name = "label9";
-            label9.Size = new Size(113, 15);
+            label9.Size = new Size(113, 38);
             label9.TabIndex = 8;
             label9.Text = "ALTs";
             label9.TextAlign = ContentAlignment.MiddleCenter;
@@ -447,9 +456,9 @@
             // 
             label8.AutoSize = true;
             label8.Dock = DockStyle.Fill;
-            label8.Location = new Point(1011, 0);
+            label8.Location = new Point(1011, 38);
             label8.Name = "label8";
-            label8.Size = new Size(106, 15);
+            label8.Size = new Size(106, 38);
             label8.TabIndex = 7;
             label8.Text = "NOTEs";
             label8.TextAlign = ContentAlignment.MiddleCenter;
@@ -458,9 +467,9 @@
             // 
             label7.AutoSize = true;
             label7.Dock = DockStyle.Fill;
-            label7.Location = new Point(899, 0);
+            label7.Location = new Point(899, 38);
             label7.Name = "label7";
-            label7.Size = new Size(106, 15);
+            label7.Size = new Size(106, 38);
             label7.TabIndex = 6;
             label7.Text = "QTY per UNIT";
             label7.TextAlign = ContentAlignment.MiddleCenter;
@@ -469,9 +478,9 @@
             // 
             label6.AutoSize = true;
             label6.Dock = DockStyle.Fill;
-            label6.Location = new Point(787, 0);
+            label6.Location = new Point(787, 38);
             label6.Name = "label6";
-            label6.Size = new Size(106, 15);
+            label6.Size = new Size(106, 38);
             label6.TabIndex = 5;
             label6.Text = "ORDER QTY";
             label6.TextAlign = ContentAlignment.MiddleCenter;
@@ -480,9 +489,9 @@
             // 
             label5.AutoSize = true;
             label5.Dock = DockStyle.Fill;
-            label5.Location = new Point(675, 0);
+            label5.Location = new Point(675, 38);
             label5.Name = "label5";
-            label5.Size = new Size(106, 15);
+            label5.Size = new Size(106, 38);
             label5.TabIndex = 4;
             label5.Text = "DELTA";
             label5.TextAlign = ContentAlignment.MiddleCenter;
@@ -491,9 +500,9 @@
             // 
             label4.AutoSize = true;
             label4.Dock = DockStyle.Fill;
-            label4.Location = new Point(563, 0);
+            label4.Location = new Point(563, 38);
             label4.Name = "label4";
-            label4.Size = new Size(106, 15);
+            label4.Size = new Size(106, 38);
             label4.TabIndex = 3;
             label4.Text = "Qty in KIT";
             label4.TextAlign = ContentAlignment.MiddleCenter;
@@ -502,9 +511,9 @@
             // 
             label3.AutoSize = true;
             label3.Dock = DockStyle.Fill;
-            label3.Location = new Point(451, 0);
+            label3.Location = new Point(451, 38);
             label3.Name = "label3";
-            label3.Size = new Size(106, 15);
+            label3.Size = new Size(106, 38);
             label3.TabIndex = 2;
             label3.Text = "Description";
             label3.TextAlign = ContentAlignment.MiddleCenter;
@@ -514,9 +523,9 @@
             // 
             label2.AutoSize = true;
             label2.Dock = DockStyle.Fill;
-            label2.Location = new Point(339, 0);
+            label2.Location = new Point(339, 38);
             label2.Name = "label2";
-            label2.Size = new Size(106, 15);
+            label2.Size = new Size(106, 38);
             label2.TabIndex = 1;
             label2.Text = "MFPN";
             label2.TextAlign = ContentAlignment.MiddleCenter;
@@ -527,9 +536,9 @@
             // 
             label1.AutoSize = true;
             label1.Dock = DockStyle.Fill;
-            label1.Location = new Point(227, 0);
+            label1.Location = new Point(227, 38);
             label1.Name = "label1";
-            label1.Size = new Size(106, 15);
+            label1.Size = new Size(106, 38);
             label1.TabIndex = 0;
             label1.Text = "IPN";
             label1.TextAlign = ContentAlignment.MiddleCenter;
@@ -539,7 +548,7 @@
             // textBox1
             // 
             textBox1.Dock = DockStyle.Fill;
-            textBox1.Location = new Point(227, 18);
+            textBox1.Location = new Point(227, 79);
             textBox1.Name = "textBox1";
             textBox1.PlaceholderText = "Filter by IPN";
             textBox1.Size = new Size(106, 23);
@@ -549,6 +558,54 @@
             textBox1.Enter += textBox1_Enter;
             textBox1.KeyDown += textBox1_KeyDown;
             textBox1.Leave += textBox1_Leave;
+            // 
+            // textBox12
+            // 
+            textBox12.Dock = DockStyle.Fill;
+            textBox12.Location = new Point(115, 3);
+            textBox12.Name = "textBox12";
+            textBox12.PlaceholderText = "MOUSER decoder";
+            textBox12.Size = new Size(106, 23);
+            textBox12.TabIndex = 22;
+            textBox12.TextAlign = HorizontalAlignment.Center;
+            textBox12.Click += textBox12_Click;
+            textBox12.Enter += textBox12_Enter;
+            textBox12.KeyDown += textBox12_KeyDown;
+            textBox12.Leave += textBox12_Leave;
+            // 
+            // textBox13
+            // 
+            textBox13.Dock = DockStyle.Fill;
+            textBox13.Location = new Point(339, 3);
+            textBox13.Name = "textBox13";
+            textBox13.PlaceholderText = "DIGIKEY decoder";
+            textBox13.Size = new Size(106, 23);
+            textBox13.TabIndex = 23;
+            textBox13.TextAlign = HorizontalAlignment.Center;
+            textBox13.Click += textBox13_Click;
+            textBox13.Enter += textBox13_Enter;
+            textBox13.KeyDown += textBox13_KeyDown;
+            textBox13.Leave += textBox13_Leave;
+            // 
+            // comboBox1
+            // 
+            comboBox1.Dock = DockStyle.Fill;
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Items.AddRange(new object[] { "1P", "6P1P" });
+            comboBox1.Location = new Point(227, 3);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new Size(106, 23);
+            comboBox1.TabIndex = 24;
+            // 
+            // comboBox2
+            // 
+            comboBox2.Dock = DockStyle.Fill;
+            comboBox2.FormattingEnabled = true;
+            comboBox2.Items.AddRange(new object[] { "30P", "K1K", "6P2" });
+            comboBox2.Location = new Point(451, 3);
+            comboBox2.Name = "comboBox2";
+            comboBox2.Size = new Size(106, 23);
+            comboBox2.TabIndex = 25;
             // 
             // groupBox3
             // 
@@ -829,5 +886,9 @@
         private TextBox txtbIPN;
         private Button button2;
         private Button button3;
+        private TextBox textBox12;
+        private TextBox textBox13;
+        private ComboBox comboBox1;
+        private ComboBox comboBox2;
     }
 }

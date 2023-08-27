@@ -1518,7 +1518,32 @@ namespace WH_Panel
                 writer.WriteLine("<table border='1' style=\"background-color:  #D3D3D3;\">");
 
                 writer.WriteLine("<tr style='text-align:center'>");
-                writer.WriteLine("<td>" + "WAREHOUSE STOCK STATUS for : <b>" + textBox10.Text + "</b> UPDATED " + fileTimeStamp + "</td>");
+                // Assuming you have a reference to the selected DataGridViewCell
+                DataGridViewCell selectedCell = dataGridView1.SelectedCells[0];
+
+                // Getting the value of the selected cell
+                //string cellValue = selectedCell.Value != null ? selectedCell.Value.ToString() : "";
+
+                // Creating the HTML string
+                //string htmlString = "<td>WAREHOUSE STOCK STATUS for: <b>" + cellValue + "</b> UPDATED " + fileTimeStamp + "</td>";
+
+                // Getting the value of the first cell in the first row
+                //string cellValue = dataGridView1.Rows[0].Cells[0].Value != null
+                //    ? dataGridView1.Rows[0].Cells[0].Value.ToString()
+                //    : "";
+
+                int ipnColumnIndex = dataGridView1.Columns["IPN"].Index; // Replace "IPN" with the actual column name
+
+                string cellValue = string.Empty;
+                if (dataGridView1.Rows.Count > 0 && ipnColumnIndex >= 0)
+                {
+                    // Getting the value of the cell in the first row and "IPN" column
+                    cellValue = dataGridView1.Rows[0].Cells[ipnColumnIndex].Value != null
+                       ? dataGridView1.Rows[0].Cells[ipnColumnIndex].Value.ToString()
+                       : "";
+                }
+
+                writer.WriteLine("<td>" + "WAREHOUSE STOCK STATUS for : <b>" + cellValue + "</b> UPDATED " + fileTimeStamp + "</td>");
                 if (label15.Text.Contains("BALANCE: 0"))
                 {
                     writer.WriteLine("<td style=\"background-color:  #FF7F7F;\">" + label15.Text + "</td>");

@@ -22,6 +22,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using DataTable = System.Data.DataTable;
 using TextBox = System.Windows.Forms.TextBox;
 using File = System.IO.File;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace WH_Panel
 {
@@ -658,6 +659,97 @@ namespace WH_Panel
         private void textBox11_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(sender);
+        }
+
+        private void textBox12_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter(sender);
+        }
+
+        private void textBox13_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter(sender);
+        }
+
+        private void textBox12_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave(sender);
+        }
+
+        private void textBox13_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave(sender);
+        }
+
+        private void textBox13_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                string inputStr = textBox13.Text;
+                string startStr = comboBox1.Text.ToString();
+                string endStr = comboBox2.Text.ToString();
+
+                int startIndex = inputStr.IndexOf(startStr);
+                if (startIndex != -1)
+                {
+                    startIndex += startStr.Length;
+                    int endIndex = inputStr.IndexOf(endStr, startIndex);
+                    if (endIndex != -1)
+                    {
+                        string extractedStr = inputStr.Substring(startIndex, endIndex - startIndex);
+                        textBox2.Text = extractedStr;
+                        textBox2.Focus();
+                        textBox2_KeyDown(sender, e);
+                    }
+                }
+
+            }
+        }
+
+        private void textBox13_Click(object sender, EventArgs e)
+        {
+            textBox13.Clear();
+        }
+
+        private void textBox12_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                string searchbyMFPN = string.Empty;
+
+                if (textBox12.Text.Contains("-") == true && textBox12.Text.Length > 6)
+                {
+                    //string[] theSplit = textBox13.Text.ToString().Split("-");
+                    ////if (theSplit[0].Length == 3 || theSplit[0].Length >= 2 || textBox13.Text.Length > 5)
+                    //if (theSplit[0].Length >= 3)
+                    //{
+                    //    searchbyMFPN = theSplit[1];
+
+                    //}
+                    string[] theSplit = textBox12.Text.Split("-");
+                    if (theSplit.Length > 1)
+                    {
+                        searchbyMFPN = string.Join("-", theSplit, 1, theSplit.Length - 1);
+                    }
+                    else
+                    {
+                        searchbyMFPN = textBox12.Text;
+                    }
+
+                    textBox2.Text = searchbyMFPN;
+                }
+                else
+                {
+
+                }
+                textBox2.Focus();
+                textBox2_KeyDown(sender, e);
+            }
+        }
+
+        private void textBox12_Click(object sender, EventArgs e)
+        {
+            textBox12.Clear();
         }
     }
 }
