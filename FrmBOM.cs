@@ -136,6 +136,22 @@ namespace WH_Panel
                 PopulateSufficientGridView();
             }
         }
+        public void ExternalLinktoFile(string externalPathToExcelFIle)
+        {
+            List<KitHistoryItem> BomItemS = new List<KitHistoryItem>();
+            if (externalPathToExcelFIle != null)
+            {
+                fileName = externalPathToExcelFIle;
+                theExcelFilePath = Path.GetFileName(fileName);
+                string Litem = Path.GetFileName(fileName);
+                label12.Text += fileName.ToString() + "\n";
+                DataLoader(fileName, Litem);
+                KitProgressUpdate(fileName);
+                button2.Enabled = true;
+                PopulateMissingGridView();
+                PopulateSufficientGridView();
+            }
+        }
         private void KitProgressUpdate(string fileName)
         {
             double percentage = double.Parse(sufficientCount.ToString()) / (countItems / 100.00);

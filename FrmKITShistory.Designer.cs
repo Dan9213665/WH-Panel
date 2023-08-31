@@ -646,6 +646,7 @@
             dataGridView1.TabIndex = 0;
             dataGridView1.CellClick += dataGridView1_CellClick;
             dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
+            dataGridView1.CellMouseDown += dataGridView1_CellMouseDown;
             dataGridView1.SelectionChanged += dataGridView1_SelectionChanged;
             // 
             // groupBox4

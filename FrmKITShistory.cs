@@ -751,5 +751,48 @@ namespace WH_Panel
         {
             textBox12.Clear();
         }
+
+        private void dataGridView1_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                // Left mouse click logic
+                txtbQty.Focus();
+                // Additional left-click logic
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                int rowindex = dataGridView1.CurrentCell.RowIndex;
+                int columnindex = dataGridView1.CurrentCell.ColumnIndex;
+                string fp = dataGridView1.Rows[rowindex].Cells["ProjectName"].Value.ToString();
+                string fullpath = string.Empty;
+                foreach (string path in listOfPaths)
+                {
+                    foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
+                    {
+                        string Litem = Path.GetFileName(file);
+                        if (Litem == fp)
+                        {
+                            string str = @file.ToString();
+                            DialogResult result = MessageBox.Show("Open the file : " + str + " ?", "Open file", MessageBoxButtons.OKCancel);
+                            if (result == DialogResult.OK)
+                            {
+                                FrmBOM frmBOM = new FrmBOM();
+                                frmBOM.ExternalLinktoFile(@str);
+                                frmBOM.Show();
+                                //openWHexcelDB(@str);
+                            }
+                            else
+                            {
+                                //
+                            }
+                        }
+                    }
+                }
+                // Right mouse click logic
+                // Additional right-click logic
+                //MessageBox.Show("Test");
+            }
+        }
     }
 }
