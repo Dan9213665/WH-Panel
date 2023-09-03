@@ -1707,5 +1707,42 @@ namespace WH_Panel
             //MessageBox.Show(whi.IPN.ToString() + " whi " + whi.Stock.ToString());
             //MessageBox.Show(wHitemToSplit.IPN.ToString() + " wHitemToSplit " + wHitemToSplit.Stock.ToString());
         }
+
+        private void textBox12_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                string searchbyMFPN = string.Empty;
+
+                if (textBox12.Text.Contains("-") == true && textBox12.Text.Length > 6)
+                {
+                    //string[] theSplit = textBox13.Text.ToString().Split("-");
+                    ////if (theSplit[0].Length == 3 || theSplit[0].Length >= 2 || textBox13.Text.Length > 5)
+                    //if (theSplit[0].Length >= 3)
+                    //{
+                    //    searchbyMFPN = theSplit[1];
+
+                    //}
+                    string[] theSplit = textBox12.Text.Split("-");
+                    if (theSplit.Length > 1)
+                    {
+                        searchbyMFPN = string.Join("-", theSplit, 1, theSplit.Length - 1);
+                    }
+                    else
+                    {
+                        searchbyMFPN = textBox12.Text;
+                    }
+
+                    textBox2.Text = searchbyMFPN;
+                }
+                else
+                {
+
+                }
+                //lastTxtbInputFromUser = textBox13;
+                textBox2.Focus();
+                textBox2_KeyDown(sender, e);
+            }
+        }
     }
 }

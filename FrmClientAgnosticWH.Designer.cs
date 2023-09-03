@@ -46,6 +46,8 @@
             comboBox4 = new ComboBox();
             comboBox5 = new ComboBox();
             textBox11 = new TextBox();
+            tableLayoutPanel9 = new TableLayoutPanel();
+            textBox12 = new TextBox();
             groupBox3 = new GroupBox();
             tableLayoutPanel2 = new TableLayoutPanel();
             textBox7 = new TextBox();
@@ -134,6 +136,7 @@
             groupBox2.SuspendLayout();
             tableLayoutPanel3.SuspendLayout();
             tableLayoutPanel8.SuspendLayout();
+            tableLayoutPanel9.SuspendLayout();
             groupBox3.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
             tableLayoutPanel5.SuspendLayout();
@@ -268,12 +271,13 @@
             tableLayoutPanel3.Controls.Add(textBox2, 2, 2);
             tableLayoutPanel3.Controls.Add(textBox1, 1, 2);
             tableLayoutPanel3.Controls.Add(button2, 0, 1);
-            tableLayoutPanel3.Controls.Add(label2, 1, 0);
+            tableLayoutPanel3.Controls.Add(label2, 1, 1);
             tableLayoutPanel3.Controls.Add(label3, 2, 1);
             tableLayoutPanel3.Controls.Add(label1, 0, 0);
             tableLayoutPanel3.Controls.Add(label16, 3, 0);
             tableLayoutPanel3.Controls.Add(txtbFiltAVLbyDESCR, 3, 2);
             tableLayoutPanel3.Controls.Add(tableLayoutPanel8, 2, 0);
+            tableLayoutPanel3.Controls.Add(tableLayoutPanel9, 1, 0);
             tableLayoutPanel3.Dock = DockStyle.Fill;
             tableLayoutPanel3.Location = new Point(3, 19);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -330,10 +334,9 @@
             label2.AutoSize = true;
             label2.BackColor = Color.FromArgb(192, 255, 192);
             label2.Dock = DockStyle.Fill;
-            label2.Location = new Point(123, 0);
+            label2.Location = new Point(123, 34);
             label2.Name = "label2";
-            tableLayoutPanel3.SetRowSpan(label2, 2);
-            label2.Size = new Size(355, 68);
+            label2.Size = new Size(355, 34);
             label2.TabIndex = 5;
             label2.Text = "Search in AVL by IPN";
             label2.TextAlign = ContentAlignment.MiddleCenter;
@@ -443,6 +446,31 @@
             textBox11.TextAlign = HorizontalAlignment.Center;
             textBox11.Click += textBox11_Click;
             textBox11.KeyDown += textBox11_KeyDown;
+            // 
+            // tableLayoutPanel9
+            // 
+            tableLayoutPanel9.AutoSize = true;
+            tableLayoutPanel9.ColumnCount = 1;
+            tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel9.Controls.Add(textBox12, 0, 0);
+            tableLayoutPanel9.Dock = DockStyle.Fill;
+            tableLayoutPanel9.Location = new Point(123, 3);
+            tableLayoutPanel9.Name = "tableLayoutPanel9";
+            tableLayoutPanel9.RowCount = 1;
+            tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel9.Size = new Size(355, 28);
+            tableLayoutPanel9.TabIndex = 11;
+            // 
+            // textBox12
+            // 
+            textBox12.Dock = DockStyle.Fill;
+            textBox12.Location = new Point(3, 3);
+            textBox12.Name = "textBox12";
+            textBox12.PlaceholderText = "MOUSER decoder";
+            textBox12.Size = new Size(349, 23);
+            textBox12.TabIndex = 0;
+            textBox12.TextAlign = HorizontalAlignment.Center;
+            textBox12.KeyDown += textBox12_KeyDown;
             // 
             // groupBox3
             // 
@@ -1512,6 +1540,8 @@
             tableLayoutPanel3.PerformLayout();
             tableLayoutPanel8.ResumeLayout(false);
             tableLayoutPanel8.PerformLayout();
+            tableLayoutPanel9.ResumeLayout(false);
+            tableLayoutPanel9.PerformLayout();
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
             tableLayoutPanel2.ResumeLayout(false);
@@ -1645,5 +1675,7 @@
         private Button button21;
         private Button button22;
         private Button button23;
+        private TableLayoutPanel tableLayoutPanel9;
+        private TextBox textBox12;
     }
 }
