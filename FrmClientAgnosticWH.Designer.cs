@@ -470,6 +470,7 @@
             textBox12.Size = new Size(349, 23);
             textBox12.TabIndex = 0;
             textBox12.TextAlign = HorizontalAlignment.Center;
+            textBox12.Click += textBox12_Click;
             textBox12.KeyDown += textBox12_KeyDown;
             // 
             // groupBox3

@@ -513,6 +513,23 @@ namespace WH_Panel
                             textBox6.Focus();
                         }
                     }
+                    else if (textBox6.Text.ToString().Contains(","))
+                    {
+                        ;
+                        int outNumberq;
+                        bool successq = int.TryParse(textBox6.Text.Replace(",", ""), out outNumberq);
+                        if (successq && outNumberq < 15001 && outNumberq > 0)
+                        {
+                            MoveIntoDATABASE(outNumberq, sorce_req, toPrintGILT);
+                            FilterStockDataGridView(textBox10.Text);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Input positive numeric values ONLY !");
+                            textBox6.Text = string.Empty;
+                            textBox6.Focus();
+                        }
+                    }
                     else
                     {
                         int outNumber;
@@ -1743,6 +1760,11 @@ namespace WH_Panel
                 textBox2.Focus();
                 textBox2_KeyDown(sender, e);
             }
+        }
+
+        private void textBox12_Click(object sender, EventArgs e)
+        {
+            textBox12.Clear();
         }
     }
 }
