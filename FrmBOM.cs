@@ -101,6 +101,11 @@ namespace WH_Panel
         }
         private void button1_Click(object sender, EventArgs e)
         {
+            btn1ClickLogic();
+        }
+
+        private void btn1ClickLogic()
+        {
             ResetViews();
             var result = openFileDialog1.Title;
             openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\2023\\" + DateTime.Now.ToString("MM") + ".2023";
@@ -136,8 +141,10 @@ namespace WH_Panel
                 PopulateSufficientGridView();
             }
         }
+
         public void ExternalLinktoFile(string externalPathToExcelFIle)
         {
+            ResetViews();
             List<KitHistoryItem> BomItemS = new List<KitHistoryItem>();
             if (externalPathToExcelFIle != null)
             {
@@ -1120,7 +1127,14 @@ namespace WH_Panel
             //MessageBox.Show("Test");
         }
 
+
         private void button5_Click(object sender, EventArgs e)
+        {
+            ReloadLogic();
+
+        }
+
+        public void ReloadLogic()
         {
             if (fileName != string.Empty)
             {
@@ -1138,7 +1152,6 @@ namespace WH_Panel
             {
                 //
             }
-
         }
 
         private void textBox12_KeyDown(object sender, KeyEventArgs e)

@@ -780,6 +780,7 @@ namespace WH_Panel
                                 FrmBOM frmBOM = new FrmBOM();
                                 frmBOM.ExternalLinktoFile(@str);
                                 frmBOM.Show();
+                                frmBOM.ReloadLogic();
                                 //openWHexcelDB(@str);
                             }
                             else
