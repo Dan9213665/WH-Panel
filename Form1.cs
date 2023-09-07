@@ -201,9 +201,15 @@ namespace WH_Panel
 
         private void button6_Click_1(object sender, EventArgs e)
         {
-            FrmExcelFormatter fr  = new FrmExcelFormatter();
+            FrmExcelFormatter fr = new FrmExcelFormatter();
             fr.Show();
             fr.Focus();
+        }
+
+        private void button9_Click_1(object sender, EventArgs e)
+        {
+            FrmQRPrint fq = new FrmQRPrint();   
+            fq.Show();
         }
     }
 }

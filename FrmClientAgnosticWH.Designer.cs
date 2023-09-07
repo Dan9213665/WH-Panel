@@ -445,7 +445,9 @@
             textBox11.TabIndex = 2;
             textBox11.TextAlign = HorizontalAlignment.Center;
             textBox11.Click += textBox11_Click;
+            textBox11.Enter += textBox11_Enter;
             textBox11.KeyDown += textBox11_KeyDown;
+            textBox11.Leave += textBox11_Leave;
             // 
             // tableLayoutPanel9
             // 
@@ -471,7 +473,9 @@
             textBox12.TabIndex = 0;
             textBox12.TextAlign = HorizontalAlignment.Center;
             textBox12.Click += textBox12_Click;
+            textBox12.Enter += textBox12_Enter;
             textBox12.KeyDown += textBox12_KeyDown;
+            textBox12.Leave += textBox12_Leave;
             // 
             // groupBox3
             // 

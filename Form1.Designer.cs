@@ -39,6 +39,7 @@ namespace WH_Panel
             button6 = new Button();
             button11 = new Button();
             groupBox7 = new GroupBox();
+            button9 = new Button();
             button3 = new Button();
             groupBox3 = new GroupBox();
             button13 = new Button();
@@ -190,6 +191,7 @@ namespace WH_Panel
             // 
             // groupBox7
             // 
+            groupBox7.Controls.Add(button9);
             groupBox7.Controls.Add(button3);
             groupBox7.ForeColor = Color.White;
             groupBox7.Location = new Point(283, 3);
@@ -198,6 +200,18 @@ namespace WH_Panel
             groupBox7.TabIndex = 19;
             groupBox7.TabStop = false;
             groupBox7.Text = "PANDA-tabase";
+            // 
+            // button9
+            // 
+            button9.BackgroundImage = (Image)resources.GetObject("button9.BackgroundImage");
+            button9.BackgroundImageLayout = ImageLayout.Stretch;
+            button9.ForeColor = Color.Black;
+            button9.Location = new Point(74, 78);
+            button9.Name = "button9";
+            button9.Size = new Size(54, 41);
+            button9.TabIndex = 10;
+            button9.UseVisualStyleBackColor = true;
+            button9.Click += button9_Click_1;
             // 
             // button3
             // 
@@ -371,5 +385,6 @@ namespace WH_Panel
         private Button button4;
         private GroupBox groupBox2;
         private Button button6;
+        private Button button9;
     }
 }

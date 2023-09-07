@@ -15,6 +15,7 @@ namespace WH_Panel
         public FrmClientAgnosticWH()
         {
             InitializeComponent();
+            UpdateControlColors(this);
             //comboBox3.SelectedIndex = 0;
             button23.Enabled = false;
             comboBox3.SelectedItem = "ROBOTRON";
@@ -32,6 +33,86 @@ namespace WH_Panel
         private object cmd;
         public TextBox LastInputFromUser = new TextBox();
 
+        //private void UpdateControlColors(Control parentControl)
+        //{
+        //    foreach (Control control in parentControl.Controls)
+        //    {
+        //        // Update control colors based on your criteria
+        //        control.BackColor = Color.Black;
+        //        control.ForeColor = Color.White;
+
+        //        // Recursively update controls within containers
+        //        if (control.Controls.Count > 0)
+        //        {
+        //            UpdateControlColors(control);
+        //        }
+        //    }
+        //}
+        private void UpdateControlColors(Control parentControl)
+        {
+            foreach (Control control in parentControl.Controls)
+            {
+                // Update control colors based on your criteria
+                control.BackColor = Color.Gray;
+                control.ForeColor = Color.White;
+
+                // Handle Button controls separately
+                if (control is Button button)
+                {
+                    button.FlatStyle = FlatStyle.Flat; // Set FlatStyle to Flat
+                    button.FlatAppearance.BorderColor = Color.DarkGray; // Change border color
+                }
+
+                // Handle TextBox controls separately
+                if (control is TextBox textBox)
+                {
+                    textBox.BorderStyle = BorderStyle.FixedSingle; // Set border style to FixedSingle
+                    textBox.BackColor = Color.DarkGray; // Change background color
+                    textBox.ForeColor = Color.White; // Change text color
+                }
+
+                // Handle Label controls separately
+                if (control is Label label)
+                {
+                    label.BorderStyle = BorderStyle.FixedSingle; // Set border style to FixedSingle
+                    label.BackColor = Color.Black; // Change background color
+                    label.ForeColor = Color.DarkGray; // Change text color
+                }
+
+
+                // Handle TabControl controls separately
+                if (control is TabControl tabControl)
+                {
+                    tabControl.BackColor = Color.Black; // Change TabControl background color
+
+                    // Handle each TabPage within the TabControl
+                    foreach (TabPage tabPage in tabControl.TabPages)
+                    {
+                        tabPage.BackColor = Color.Black; // Change TabPage background color
+                        tabPage.ForeColor = Color.White; // Change TabPage text color
+                    }
+                }
+
+                // Handle DataGridView controls separately
+                if (control is DataGridView dataGridView)
+                {
+                    // Update DataGridView styles
+                    dataGridView.BackgroundColor = Color.DarkGray;
+                    dataGridView.ColumnHeadersDefaultCellStyle.BackColor = Color.Black;
+                    dataGridView.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+                    dataGridView.DefaultCellStyle.BackColor = Color.Gray;
+                    dataGridView.DefaultCellStyle.ForeColor = Color.White;
+                    dataGridView.DefaultCellStyle.SelectionBackColor = Color.Blue;
+                    dataGridView.DefaultCellStyle.SelectionForeColor = Color.White;
+                }
+
+                // Recursively update controls within containers
+                if (control.Controls.Count > 0)
+                {
+                    UpdateControlColors(control);
+                }
+            }
+        }
         //public List<ClientWarehouse> clList = new List<ClientWarehouse>()
         //{
         //    {new ClientWarehouse
@@ -1130,7 +1211,7 @@ namespace WH_Panel
         private static void txtbColorWhiteOnLeave(object sender)
         {
             TextBox? tb = sender as TextBox;
-            tb.BackColor = Color.White;
+            tb.BackColor = Color.Gray;
         }
         private void textBox6_Enter(object sender, EventArgs e)
         {
@@ -1765,6 +1846,26 @@ namespace WH_Panel
         private void textBox12_Click(object sender, EventArgs e)
         {
             textBox12.Clear();
+        }
+
+        private void textBox12_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter(textBox12);
+        }
+
+        private void textBox11_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter(textBox11);
+        }
+
+        private void textBox12_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave(textBox12);
+        }
+
+        private void textBox11_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave(textBox11);
         }
     }
 }
