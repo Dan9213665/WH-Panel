@@ -27,6 +27,7 @@
         {
             DateTimePicker dateTimePicker1;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmClientAgnosticWH));
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             groupBox1 = new GroupBox();
             comboBox3 = new ComboBox();
             tabControl1 = new TabControl();
@@ -318,7 +319,7 @@
             // 
             button2.AutoSize = true;
             button2.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            button2.BackgroundImage = Properties.Resources.reloadDB;
+            button2.BackgroundImage = (Image)resources.GetObject("button2.BackgroundImage");
             button2.BackgroundImageLayout = ImageLayout.Zoom;
             button2.Dock = DockStyle.Fill;
             button2.Location = new Point(3, 37);
@@ -1067,12 +1068,21 @@
             // 
             dataGridView2.AllowUserToAddRows = false;
             dataGridView2.AllowUserToDeleteRows = false;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = SystemColors.ControlDark;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dataGridView2.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView2.Dock = DockStyle.Fill;
             dataGridView2.Location = new Point(3, 19);
             dataGridView2.MultiSelect = false;
             dataGridView2.Name = "dataGridView2";
             dataGridView2.ReadOnly = true;
+            dataGridView2.RowTemplate.DefaultCellStyle.ForeColor = Color.FromArgb(224, 224, 224);
             dataGridView2.RowTemplate.Height = 25;
             dataGridView2.Size = new Size(1204, 233);
             dataGridView2.TabIndex = 0;

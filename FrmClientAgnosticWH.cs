@@ -75,8 +75,8 @@ namespace WH_Panel
                 if (control is Label label)
                 {
                     label.BorderStyle = BorderStyle.FixedSingle; // Set border style to FixedSingle
-                    label.BackColor = Color.Black; // Change background color
-                    label.ForeColor = Color.DarkGray; // Change text color
+                    label.BackColor = Color.Gray; // Change background color
+                    label.ForeColor = Color.White; // Change text color
                 }
 
 
@@ -88,7 +88,7 @@ namespace WH_Panel
                     // Handle each TabPage within the TabControl
                     foreach (TabPage tabPage in tabControl.TabPages)
                     {
-                        tabPage.BackColor = Color.Black; // Change TabPage background color
+                        tabPage.BackColor = Color.Gray; // Change TabPage background color
                         tabPage.ForeColor = Color.White; // Change TabPage text color
                     }
                 }
@@ -97,15 +97,37 @@ namespace WH_Panel
                 if (control is DataGridView dataGridView)
                 {
                     // Update DataGridView styles
+                    dataGridView.EnableHeadersVisualStyles = false;
                     dataGridView.BackgroundColor = Color.DarkGray;
-                    dataGridView.ColumnHeadersDefaultCellStyle.BackColor = Color.Black;
+                    dataGridView.ColumnHeadersDefaultCellStyle.BackColor = Color.Gray;
                     dataGridView.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+                    dataGridView.RowHeadersDefaultCellStyle.BackColor = Color.Gray;
                     dataGridView.DefaultCellStyle.BackColor = Color.Gray;
                     dataGridView.DefaultCellStyle.ForeColor = Color.White;
-                    dataGridView.DefaultCellStyle.SelectionBackColor = Color.Blue;
+                    dataGridView.DefaultCellStyle.SelectionBackColor = Color.Green;
                     dataGridView.DefaultCellStyle.SelectionForeColor = Color.White;
+                    // Change the header cell styles for each column
+                    foreach (DataGridViewColumn column in dataGridView.Columns)
+                    {
+                        column.HeaderCell.Style.BackColor = Color.DarkGray;
+                        column.HeaderCell.Style.ForeColor = Color.White;
+                    }
                 }
-
+                // Handle ComboBox controls separately
+                if (control is ComboBox comboBox)
+                {
+                    comboBox.FlatStyle = FlatStyle.Flat; // Set FlatStyle to Flat
+                    comboBox.BackColor = Color.DarkGray; // Change ComboBox background color
+                    comboBox.ForeColor = Color.White; // Change ComboBox text color
+                }
+                // Handle DateTimePicker controls separately
+                if (control is DateTimePicker dateTimePicker)
+                {
+                    // Change DateTimePicker's custom properties here
+                    dateTimePicker.BackColor = Color.DarkGray; // Change DateTimePicker background color
+                    dateTimePicker.ForeColor = Color.White; // Change DateTimePicker text color
+                                                            // Customize other DateTimePicker properties as needed
+                }
                 // Recursively update controls within containers
                 if (control.Controls.Count > 0)
                 {
@@ -1198,15 +1220,18 @@ namespace WH_Panel
         private void textBox1_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
+            label2.BackColor = Color.LightGreen;
         }
         private static void txtbColorGreenOnEnter(object sender)
         {
             TextBox? tb = (TextBox)sender;
             tb.BackColor = Color.LightGreen;
+
         }
         private void textBox1_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(sender);
+            label2.BackColor = Color.Gray;
         }
         private static void txtbColorWhiteOnLeave(object sender)
         {
@@ -1226,10 +1251,12 @@ namespace WH_Panel
         private void textBox2_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
+            label3.BackColor = Color.LightGreen;
         }
         private void textBox2_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(sender);
+            label3.BackColor = Color.Gray;
         }
         private void textBox8_Enter(object sender, EventArgs e)
         {
@@ -1242,6 +1269,8 @@ namespace WH_Panel
         private void txtbFiltAVLbyDESCR_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(sender);
+
+            label16.BackColor = Color.Gray;
         }
         private void textBox9_Enter(object sender, EventArgs e)
         {
@@ -1250,6 +1279,7 @@ namespace WH_Panel
         private void txtbFiltAVLbyDESCR_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
+            label16.BackColor = Color.LightGreen;
         }
         private void textBox9_Leave(object sender, EventArgs e)
         {
