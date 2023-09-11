@@ -1267,7 +1267,63 @@ namespace WH_Panel
             txtbColorWhiteOnLeave((TextBox)sender);
         }
 
+        private void textBox14_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                string searchbyMFPN = textBox14.Text.Trim(); // Get the text from textBox14
 
+                // Remove [)> characters from the search string
+                searchbyMFPN = searchbyMFPN.Replace("[)>", "");
 
+                if (!string.IsNullOrEmpty(searchbyMFPN))
+                {
+                    // Loop through the DataGridView rows and filter based on MFPN
+                    foreach (DataGridViewRow row in dataGridView1.Rows)
+                    {
+                        if (row.Cells["MFPN"].Value != null)
+                        {
+                            string cellValue = row.Cells["MFPN"].Value.ToString();
+                            // Check if the search text contains the cell value
+                            if (searchbyMFPN.Contains(cellValue))
+                            {
+                                textBox2.Text = cellValue;
+                            }
+                            else
+                            {
+                                //row.Visible = false;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    // If the search text is empty, show all rows
+                    foreach (DataGridViewRow row in dataGridView1.Rows)
+                    {
+                        row.Visible = true;
+                    }
+                }
+
+                lastTxtbInputFromUser = textBox14;
+                textBox2.Focus();
+                textBox2_KeyDown(sender, e);
+            }
+        }
+
+        private void textBox14_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter((TextBox)sender);
+        }
+
+        private void textBox14_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave((TextBox)sender);
+        }
+
+        private void textBox14_Click(object sender, EventArgs e)
+        {
+            textBox14.Clear();
+        }
     }
 }

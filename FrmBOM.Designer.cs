@@ -77,6 +77,7 @@
             label1 = new Label();
             textBox1 = new TextBox();
             textBox13 = new TextBox();
+            textBox14 = new TextBox();
             groupBox3 = new GroupBox();
             dataGridView1 = new DataGridView();
             groupBox4 = new GroupBox();
@@ -471,6 +472,7 @@
             tableLayoutPanel2.Controls.Add(label1, 2, 1);
             tableLayoutPanel2.Controls.Add(textBox1, 2, 2);
             tableLayoutPanel2.Controls.Add(textBox13, 1, 0);
+            tableLayoutPanel2.Controls.Add(textBox14, 5, 0);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.ForeColor = Color.Black;
             tableLayoutPanel2.Location = new Point(3, 19);
@@ -734,6 +736,21 @@
             textBox13.Enter += textBox13_Enter;
             textBox13.KeyDown += textBox13_KeyDown;
             textBox13.Leave += textBox13_Leave;
+            // 
+            // textBox14
+            // 
+            tableLayoutPanel2.SetColumnSpan(textBox14, 2);
+            textBox14.Dock = DockStyle.Fill;
+            textBox14.Location = new Point(593, 3);
+            textBox14.Name = "textBox14";
+            textBox14.PlaceholderText = "Extravertic decoder";
+            textBox14.Size = new Size(230, 23);
+            textBox14.TabIndex = 24;
+            textBox14.TextAlign = HorizontalAlignment.Center;
+            textBox14.Click += textBox14_Click;
+            textBox14.Enter += textBox14_Enter;
+            textBox14.KeyDown += textBox14_KeyDown;
+            textBox14.Leave += textBox14_Leave;
             // 
             // groupBox3
             // 
@@ -1013,5 +1030,6 @@
         private TextBox textBox12;
         private Button btnSendEmail;
         private TextBox textBox13;
+        private TextBox textBox14;
     }
 }

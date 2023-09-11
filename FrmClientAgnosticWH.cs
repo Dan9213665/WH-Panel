@@ -61,6 +61,7 @@ namespace WH_Panel
                 {
                     button.FlatStyle = FlatStyle.Flat; // Set FlatStyle to Flat
                     button.FlatAppearance.BorderColor = Color.DarkGray; // Change border color
+                    button.ForeColor = Color.Black;
                 }
 
                 // Handle TextBox controls separately
@@ -68,7 +69,7 @@ namespace WH_Panel
                 {
                     textBox.BorderStyle = BorderStyle.FixedSingle; // Set border style to FixedSingle
                     textBox.BackColor = Color.DarkGray; // Change background color
-                    textBox.ForeColor = Color.White; // Change text color
+                    textBox.ForeColor = Color.Black; // Change text color
                 }
 
                 // Handle Label controls separately
@@ -76,7 +77,7 @@ namespace WH_Panel
                 {
                     label.BorderStyle = BorderStyle.FixedSingle; // Set border style to FixedSingle
                     label.BackColor = Color.Gray; // Change background color
-                    label.ForeColor = Color.White; // Change text color
+                    label.ForeColor = Color.Black; // Change text color
                 }
 
 
@@ -118,7 +119,7 @@ namespace WH_Panel
                 {
                     comboBox.FlatStyle = FlatStyle.Flat; // Set FlatStyle to Flat
                     comboBox.BackColor = Color.DarkGray; // Change ComboBox background color
-                    comboBox.ForeColor = Color.White; // Change ComboBox text color
+                    comboBox.ForeColor = Color.Black; // Change ComboBox text color
                 }
                 // Handle DateTimePicker controls separately
                 if (control is DateTimePicker dateTimePicker)

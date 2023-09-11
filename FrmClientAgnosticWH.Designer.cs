@@ -168,6 +168,7 @@
             // 
             dateTimePicker1.Dock = DockStyle.Fill;
             dateTimePicker1.Enabled = false;
+            dateTimePicker1.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
             dateTimePicker1.Location = new Point(603, 18);
             dateTimePicker1.Name = "dateTimePicker1";
             dateTimePicker1.Size = new Size(114, 23);
@@ -566,11 +567,12 @@
             // 
             comboBox1.Dock = DockStyle.Fill;
             comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBox1.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
             comboBox1.FormattingEnabled = true;
             comboBox1.Items.AddRange(new object[] { "5\"", "7\"", "10\"", "13\"", "15\"", "Bag", "Box", "Stick", "Stick_in_a_bag", "Tray" });
             comboBox1.Location = new Point(723, 18);
             comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(114, 23);
+            comboBox1.Size = new Size(114, 40);
             comboBox1.TabIndex = 6;
             // 
             // textBox5
@@ -586,6 +588,7 @@
             // 
             // textBox6
             // 
+            textBox6.Cursor = Cursors.Cross;
             textBox6.Dock = DockStyle.Fill;
             textBox6.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
             textBox6.Location = new Point(483, 18);
