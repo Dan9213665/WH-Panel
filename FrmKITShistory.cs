@@ -26,6 +26,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using ComboBox = System.Windows.Forms.ComboBox;
 using Label = System.Windows.Forms.Label;
 using Button = System.Windows.Forms.Button;
+using GroupBox = System.Windows.Forms.GroupBox;
 
 namespace WH_Panel
 {
@@ -59,7 +60,7 @@ namespace WH_Panel
             foreach (Control control in parentControl.Controls)
             {
                 // Update control colors based on your criteria
-                control.BackColor = Color.Gray;
+                control.BackColor = Color.LightGray;
                 control.ForeColor = Color.White;
 
                 // Handle Button controls separately
@@ -67,14 +68,22 @@ namespace WH_Panel
                 {
                     button.FlatStyle = FlatStyle.Flat; // Set FlatStyle to Flat
                     button.FlatAppearance.BorderColor = Color.DarkGray; // Change border color
+                    button.ForeColor = Color.Black;
+                }
+
+                // Handle Button controls separately
+                if (control is GroupBox groupbox)
+                {
+                    groupbox.FlatStyle = FlatStyle.Flat; // Set FlatStyle to Flat
+                    groupbox.ForeColor = Color.Black;
                 }
 
                 // Handle TextBox controls separately
                 if (control is TextBox textBox)
                 {
                     textBox.BorderStyle = BorderStyle.FixedSingle; // Set border style to FixedSingle
-                    textBox.BackColor = Color.DarkGray; // Change background color
-                    textBox.ForeColor = Color.White; // Change text color
+                    textBox.BackColor = Color.LightGray; // Change background color
+                    textBox.ForeColor = Color.Black; // Change text color
                 }
 
                 // Handle Label controls separately
@@ -82,20 +91,20 @@ namespace WH_Panel
                 {
                     label.BorderStyle = BorderStyle.FixedSingle; // Set border style to FixedSingle
                     label.BackColor = Color.Gray; // Change background color
-                    label.ForeColor = Color.White; // Change text color
+                    label.ForeColor = Color.Black; // Change text color
                 }
 
 
                 // Handle TabControl controls separately
                 if (control is TabControl tabControl)
                 {
-                    tabControl.BackColor = Color.Black; // Change TabControl background color
-
+                    //tabControl.BackColor = Color.Black; // Change TabControl background color
+                    tabControl.ForeColor = Color.Black;
                     // Handle each TabPage within the TabControl
                     foreach (TabPage tabPage in tabControl.TabPages)
                     {
                         tabPage.BackColor = Color.Gray; // Change TabPage background color
-                        tabPage.ForeColor = Color.White; // Change TabPage text color
+                        tabPage.ForeColor = Color.Black; // Change TabPage text color
                     }
                 }
 
@@ -116,7 +125,7 @@ namespace WH_Panel
                     foreach (DataGridViewColumn column in dataGridView.Columns)
                     {
                         column.HeaderCell.Style.BackColor = Color.DarkGray;
-                        column.HeaderCell.Style.ForeColor = Color.White;
+                        column.HeaderCell.Style.ForeColor = Color.Black;
                     }
                 }
                 // Handle ComboBox controls separately
@@ -124,7 +133,7 @@ namespace WH_Panel
                 {
                     comboBox.FlatStyle = FlatStyle.Flat; // Set FlatStyle to Flat
                     comboBox.BackColor = Color.DarkGray; // Change ComboBox background color
-                    comboBox.ForeColor = Color.White; // Change ComboBox text color
+                    comboBox.ForeColor = Color.Black; // Change ComboBox text color
                 }
                 // Handle DateTimePicker controls separately
                 if (control is DateTimePicker dateTimePicker)

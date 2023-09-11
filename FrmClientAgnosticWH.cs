@@ -53,7 +53,7 @@ namespace WH_Panel
             foreach (Control control in parentControl.Controls)
             {
                 // Update control colors based on your criteria
-                control.BackColor = Color.Gray;
+                control.BackColor = Color.LightGray;
                 control.ForeColor = Color.White;
 
                 // Handle Button controls separately
@@ -64,11 +64,18 @@ namespace WH_Panel
                     button.ForeColor = Color.Black;
                 }
 
+                // Handle Button controls separately
+                if (control is GroupBox groupbox)
+                {
+                    groupbox.FlatStyle = FlatStyle.Flat; // Set FlatStyle to Flat
+                    groupbox.ForeColor = Color.Black;
+                }
+
                 // Handle TextBox controls separately
                 if (control is TextBox textBox)
                 {
                     textBox.BorderStyle = BorderStyle.FixedSingle; // Set border style to FixedSingle
-                    textBox.BackColor = Color.DarkGray; // Change background color
+                    textBox.BackColor = Color.LightGray; // Change background color
                     textBox.ForeColor = Color.Black; // Change text color
                 }
 
@@ -84,13 +91,13 @@ namespace WH_Panel
                 // Handle TabControl controls separately
                 if (control is TabControl tabControl)
                 {
-                    tabControl.BackColor = Color.Black; // Change TabControl background color
-
+                    //tabControl.BackColor = Color.Black; // Change TabControl background color
+                    tabControl.ForeColor = Color.Black;
                     // Handle each TabPage within the TabControl
                     foreach (TabPage tabPage in tabControl.TabPages)
                     {
                         tabPage.BackColor = Color.Gray; // Change TabPage background color
-                        tabPage.ForeColor = Color.White; // Change TabPage text color
+                        tabPage.ForeColor = Color.Black; // Change TabPage text color
                     }
                 }
 
@@ -111,7 +118,7 @@ namespace WH_Panel
                     foreach (DataGridViewColumn column in dataGridView.Columns)
                     {
                         column.HeaderCell.Style.BackColor = Color.DarkGray;
-                        column.HeaderCell.Style.ForeColor = Color.White;
+                        column.HeaderCell.Style.ForeColor = Color.Black;
                     }
                 }
                 // Handle ComboBox controls separately
@@ -1237,7 +1244,7 @@ namespace WH_Panel
         private static void txtbColorWhiteOnLeave(object sender)
         {
             TextBox? tb = sender as TextBox;
-            tb.BackColor = Color.Gray;
+            tb.BackColor = Color.LightGray;
         }
         private void textBox6_Enter(object sender, EventArgs e)
         {
