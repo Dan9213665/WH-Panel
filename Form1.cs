@@ -208,7 +208,7 @@ namespace WH_Panel
 
         private void button9_Click_1(object sender, EventArgs e)
         {
-            FrmQRPrint fq = new FrmQRPrint();   
+            FrmQRPrint fq = new FrmQRPrint();
             fq.Show();
         }
     }
