@@ -50,6 +50,7 @@
             btnFontIncrease = new Button();
             btnFontDecrease = new Button();
             button2 = new Button();
+            button5 = new Button();
             groupBox2 = new GroupBox();
             dataGridView2 = new DataGridView();
             groupBox1.SuspendLayout();
@@ -244,19 +245,21 @@
             // 
             // tableLayoutPanel2
             // 
-            tableLayoutPanel2.ColumnCount = 6;
+            tableLayoutPanel2.ColumnCount = 7;
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
             tableLayoutPanel2.Controls.Add(label1, 0, 0);
             tableLayoutPanel2.Controls.Add(comboBox1, 1, 0);
-            tableLayoutPanel2.Controls.Add(button1, 4, 0);
-            tableLayoutPanel2.Controls.Add(btnFontIncrease, 2, 0);
-            tableLayoutPanel2.Controls.Add(btnFontDecrease, 3, 0);
-            tableLayoutPanel2.Controls.Add(button2, 5, 0);
+            tableLayoutPanel2.Controls.Add(button1, 5, 0);
+            tableLayoutPanel2.Controls.Add(btnFontIncrease, 3, 0);
+            tableLayoutPanel2.Controls.Add(btnFontDecrease, 4, 0);
+            tableLayoutPanel2.Controls.Add(button2, 6, 0);
+            tableLayoutPanel2.Controls.Add(button5, 2, 0);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.Location = new Point(3, 3);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -284,7 +287,7 @@
             comboBox1.Items.AddRange(new object[] { "ARAN", "DIGITRONIX", "ENERCON", "EPS", "HEPTAGON", "LEADER-TECH", "NETLINE", "ROBOTRON", "SOS", "VALENS", "VAYYAR" });
             comboBox1.Location = new Point(224, 3);
             comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(436, 40);
+            comboBox1.Size = new Size(325, 40);
             comboBox1.TabIndex = 1;
             comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
             // 
@@ -293,7 +296,7 @@
             button1.BackgroundImage = (Image)resources.GetObject("button1.BackgroundImage");
             button1.BackgroundImageLayout = ImageLayout.Zoom;
             button1.Dock = DockStyle.Fill;
-            button1.Location = new Point(886, 3);
+            button1.Location = new Point(885, 3);
             button1.Name = "button1";
             button1.Size = new Size(104, 60);
             button1.TabIndex = 2;
@@ -305,7 +308,7 @@
             btnFontIncrease.BackgroundImage = (Image)resources.GetObject("btnFontIncrease.BackgroundImage");
             btnFontIncrease.BackgroundImageLayout = ImageLayout.Stretch;
             btnFontIncrease.Dock = DockStyle.Fill;
-            btnFontIncrease.Location = new Point(666, 3);
+            btnFontIncrease.Location = new Point(665, 3);
             btnFontIncrease.Name = "btnFontIncrease";
             btnFontIncrease.Size = new Size(104, 60);
             btnFontIncrease.TabIndex = 3;
@@ -317,7 +320,7 @@
             btnFontDecrease.BackgroundImage = (Image)resources.GetObject("btnFontDecrease.BackgroundImage");
             btnFontDecrease.BackgroundImageLayout = ImageLayout.Stretch;
             btnFontDecrease.Dock = DockStyle.Fill;
-            btnFontDecrease.Location = new Point(776, 3);
+            btnFontDecrease.Location = new Point(775, 3);
             btnFontDecrease.Name = "btnFontDecrease";
             btnFontDecrease.Size = new Size(104, 60);
             btnFontDecrease.TabIndex = 4;
@@ -329,12 +332,24 @@
             button2.BackgroundImage = (Image)resources.GetObject("button2.BackgroundImage");
             button2.BackgroundImageLayout = ImageLayout.Stretch;
             button2.Dock = DockStyle.Fill;
-            button2.Location = new Point(996, 3);
+            button2.Location = new Point(995, 3);
             button2.Name = "button2";
-            button2.Size = new Size(107, 60);
+            button2.Size = new Size(108, 60);
             button2.TabIndex = 5;
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
+            // 
+            // button5
+            // 
+            button5.BackgroundImage = (Image)resources.GetObject("button5.BackgroundImage");
+            button5.BackgroundImageLayout = ImageLayout.Zoom;
+            button5.Dock = DockStyle.Fill;
+            button5.Location = new Point(555, 3);
+            button5.Name = "button5";
+            button5.Size = new Size(104, 60);
+            button5.TabIndex = 6;
+            button5.UseVisualStyleBackColor = true;
+            button5.Click += button5_Click;
             // 
             // groupBox2
             // 
@@ -425,5 +440,6 @@
         private Button btnFontIncrease;
         private Button btnFontDecrease;
         private Button button2;
+        private Button button5;
     }
 }

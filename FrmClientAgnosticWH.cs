@@ -234,7 +234,7 @@ namespace WH_Panel
         {
             comboBox3.Text = text;
         }
-        private void MasterReload(string avlParam, string stockParam)
+        public void MasterReload(string avlParam, string stockParam)
         {
             lblSendTo.Enabled = false;
             avlFile = avlParam;

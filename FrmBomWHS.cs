@@ -216,6 +216,7 @@ namespace WH_Panel
                 {
                     selection = clientWH.clName;
                     MasterReload(clientWH.clAvlFile, clientWH.clStockFile);
+
                 }
             return selection;
         }
@@ -1296,6 +1297,21 @@ namespace WH_Panel
             int missingValue = whbalanceValue - Math.Abs(deltaValue);
 
             sb.AppendLine("<td>" + missingValue + "</td>");
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            FrmClientAgnosticWH h = new FrmClientAgnosticWH();
+            foreach (ClientWarehouse cw in clList)
+            {
+                if (cw != null && comboBox1.Text == cw.clName)
+                {
+                    h.SetComboBoxText(cw.clName);
+                    h.MasterReload(cw.clAvlFile, cw.clStockFile);
+                    h.Show();
+                }
+            }
+
         }
     }
 }
