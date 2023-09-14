@@ -396,7 +396,7 @@
             // 
             // button5
             // 
-            button5.BackgroundImage = Properties.Resources.reloadDB;
+            button5.BackgroundImage = (Image)resources.GetObject("button5.BackgroundImage");
             button5.BackgroundImageLayout = ImageLayout.Zoom;
             button5.Dock = DockStyle.Fill;
             button5.Location = new Point(147, 3);
@@ -769,7 +769,7 @@
             dataGridView1.AllowUserToDeleteRows = false;
             dataGridViewCellStyle2.BackColor = Color.IndianRed;
             dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            dataGridViewCellStyle2.ForeColor = Color.White;
+            dataGridViewCellStyle2.ForeColor = Color.FromArgb(128, 255, 128);
             dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
             dataGridView1.BackgroundColor = Color.LightCoral;
             dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
