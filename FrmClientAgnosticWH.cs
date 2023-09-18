@@ -1953,11 +1953,13 @@ namespace WH_Panel
         private void textBox13_Click(object sender, EventArgs e)
         {
             textBox13.Clear();
+            textBox2.Clear();
         }
 
         private void textBox13_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(textBox13);
+            textBox2.Clear();
         }
 
         private void textBox13_Leave(object sender, EventArgs e)
