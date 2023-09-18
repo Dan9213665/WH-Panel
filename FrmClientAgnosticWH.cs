@@ -228,6 +228,8 @@ namespace WH_Panel
         public string stockSOS = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_STOCK.xlsm";
         public string avlARAN = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_AVL.xlsx";
         public string stockARAN = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_STOCK.xlsm";
+        public string avlSOLANIUM = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_AVL.xlsm";
+        public string stockSOLANIUM = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_STOCK.xlsm";
         public string avlFile;
         public string stockFile;
         public void SetComboBoxText(string text)
@@ -300,6 +302,10 @@ namespace WH_Panel
             else if (comboBox3.Text == "DIGITRONIX")
             {
                 MasterReload(avlDIGITRONIX, stockDIGITRONIX);
+            }
+            else if (comboBox3.Text == "SOLANIUM")
+            {
+                MasterReload(avlSOLANIUM, stockSOLANIUM);
             }
         }
         private void button2_Click(object sender, EventArgs e)
@@ -1601,6 +1607,16 @@ namespace WH_Panel
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_AVL.xlsx";
             AuthorizedExcelFileOpening(fp);
         }
+        private void button24_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_STOCK.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+        private void button25_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_AVL.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
         private void textBox11_KeyDown(object sender, KeyEventArgs e)
         {
 
@@ -1966,5 +1982,7 @@ namespace WH_Panel
         {
             txtbColorWhiteOnLeave(textBox13);
         }
+
+
     }
 }

@@ -120,6 +120,9 @@
             groupBox17 = new GroupBox();
             button20 = new Button();
             button21 = new Button();
+            groupBox18 = new GroupBox();
+            button25 = new Button();
+            button24 = new Button();
             groupBox9 = new GroupBox();
             button16 = new Button();
             btnValens = new Button();
@@ -161,6 +164,7 @@
             groupBox14.SuspendLayout();
             groupBox10.SuspendLayout();
             groupBox17.SuspendLayout();
+            groupBox18.SuspendLayout();
             groupBox9.SuspendLayout();
             groupBox11.SuspendLayout();
             SuspendLayout();
@@ -195,7 +199,7 @@
             comboBox3.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
             comboBox3.ForeColor = Color.White;
             comboBox3.FormattingEnabled = true;
-            comboBox3.Items.AddRange(new object[] { "ARAN", "DIGITRONIX", "ENERCON", "EPS", "G.I.Leader_Tech", "HEPTAGON", "NETLINE", "ROBOTRON", "SOS", "VALENS", "VAYAR" });
+            comboBox3.Items.AddRange(new object[] { "ARAN", "DIGITRONIX", "ENERCON", "EPS", "G.I.Leader_Tech", "HEPTAGON", "NETLINE", "ROBOTRON", "SOLANIUM", "SOS", "VALENS", "VAYAR" });
             comboBox3.Location = new Point(150, 0);
             comboBox3.Name = "comboBox3";
             comboBox3.RightToLeft = RightToLeft.No;
@@ -1129,6 +1133,7 @@
             flowLayoutPanel1.Controls.Add(groupBox14);
             flowLayoutPanel1.Controls.Add(groupBox10);
             flowLayoutPanel1.Controls.Add(groupBox17);
+            flowLayoutPanel1.Controls.Add(groupBox18);
             flowLayoutPanel1.Controls.Add(groupBox9);
             flowLayoutPanel1.Controls.Add(groupBox11);
             flowLayoutPanel1.Controls.Add(btnFIELDIN);
@@ -1429,13 +1434,47 @@
             button21.UseVisualStyleBackColor = false;
             button21.Click += button21_Click;
             // 
+            // groupBox18
+            // 
+            groupBox18.Controls.Add(button25);
+            groupBox18.Controls.Add(button24);
+            groupBox18.ForeColor = Color.White;
+            groupBox18.Location = new Point(3, 134);
+            groupBox18.Name = "groupBox18";
+            groupBox18.Size = new Size(131, 125);
+            groupBox18.TabIndex = 35;
+            groupBox18.TabStop = false;
+            groupBox18.Text = "SOLANIUM";
+            // 
+            // button25
+            // 
+            button25.BackgroundImage = (Image)resources.GetObject("button25.BackgroundImage");
+            button25.BackgroundImageLayout = ImageLayout.Stretch;
+            button25.Location = new Point(6, 77);
+            button25.Name = "button25";
+            button25.Size = new Size(119, 42);
+            button25.TabIndex = 1;
+            button25.UseVisualStyleBackColor = true;
+            button25.Click += button25_Click;
+            // 
+            // button24
+            // 
+            button24.BackgroundImage = (Image)resources.GetObject("button24.BackgroundImage");
+            button24.BackgroundImageLayout = ImageLayout.Zoom;
+            button24.Location = new Point(6, 17);
+            button24.Name = "button24";
+            button24.Size = new Size(119, 58);
+            button24.TabIndex = 0;
+            button24.UseVisualStyleBackColor = true;
+            button24.Click += button24_Click;
+            // 
             // groupBox9
             // 
             groupBox9.Controls.Add(button16);
             groupBox9.Controls.Add(btnValens);
             groupBox9.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
             groupBox9.ForeColor = Color.White;
-            groupBox9.Location = new Point(3, 134);
+            groupBox9.Location = new Point(140, 134);
             groupBox9.Name = "groupBox9";
             groupBox9.Size = new Size(132, 125);
             groupBox9.TabIndex = 17;
@@ -1471,7 +1510,7 @@
             groupBox11.Controls.Add(button18);
             groupBox11.Controls.Add(btnVAYYAR);
             groupBox11.ForeColor = Color.White;
-            groupBox11.Location = new Point(141, 134);
+            groupBox11.Location = new Point(278, 134);
             groupBox11.Name = "groupBox11";
             groupBox11.Size = new Size(131, 125);
             groupBox11.TabIndex = 21;
@@ -1508,7 +1547,7 @@
             btnFIELDIN.BackgroundImage = Properties.Resources.Fieldin;
             btnFIELDIN.BackgroundImageLayout = ImageLayout.Zoom;
             btnFIELDIN.Cursor = Cursors.Hand;
-            btnFIELDIN.Location = new Point(278, 134);
+            btnFIELDIN.Location = new Point(415, 134);
             btnFIELDIN.Name = "btnFIELDIN";
             btnFIELDIN.Size = new Size(132, 59);
             btnFIELDIN.TabIndex = 29;
@@ -1519,7 +1558,7 @@
             // 
             button6.BackgroundImage = Properties.Resources.CIS;
             button6.BackgroundImageLayout = ImageLayout.Zoom;
-            button6.Location = new Point(416, 134);
+            button6.Location = new Point(553, 134);
             button6.Name = "button6";
             button6.Size = new Size(132, 59);
             button6.TabIndex = 27;
@@ -1531,7 +1570,7 @@
             btnSHILAT.BackColor = Color.White;
             btnSHILAT.BackgroundImage = Properties.Resources.shilat1;
             btnSHILAT.BackgroundImageLayout = ImageLayout.Zoom;
-            btnSHILAT.Location = new Point(554, 134);
+            btnSHILAT.Location = new Point(691, 134);
             btnSHILAT.Name = "btnSHILAT";
             btnSHILAT.Size = new Size(132, 60);
             btnSHILAT.TabIndex = 30;
@@ -1542,7 +1581,7 @@
             // 
             button7.BackgroundImage = Properties.Resources.STM;
             button7.BackgroundImageLayout = ImageLayout.Zoom;
-            button7.Location = new Point(692, 134);
+            button7.Location = new Point(829, 134);
             button7.Name = "button7";
             button7.Size = new Size(132, 59);
             button7.TabIndex = 28;
@@ -1604,6 +1643,7 @@
             groupBox14.ResumeLayout(false);
             groupBox10.ResumeLayout(false);
             groupBox17.ResumeLayout(false);
+            groupBox18.ResumeLayout(false);
             groupBox9.ResumeLayout(false);
             groupBox11.ResumeLayout(false);
             ResumeLayout(false);
@@ -1711,5 +1751,8 @@
         private TableLayoutPanel tableLayoutPanel9;
         private TextBox textBox12;
         private TextBox textBox13;
+        private GroupBox groupBox18;
+        private Button button25;
+        private Button button24;
     }
 }

@@ -115,6 +115,15 @@ namespace WH_Panel
             ,
                  {new ClientWarehouse
                 {
+                clName="SOLANIUM",
+                clSuffix="BAN",
+                clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_AVL.xlsm",
+                clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_STOCK.xlsm"
+                }
+              }
+            ,
+                 {new ClientWarehouse
+                {
                 clName="ARAN",
                 clSuffix="ARN",
                 clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_AVL.xlsx",
