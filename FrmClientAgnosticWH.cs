@@ -1905,5 +1905,64 @@ namespace WH_Panel
         {
             txtbColorWhiteOnLeave(textBox11);
         }
+
+        private void textBox13_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                string searchbyMFPN = textBox13.Text.Trim(); // Get the text from textBox14
+
+                // Remove [)> characters from the search string
+                searchbyMFPN = searchbyMFPN.Replace("[)>", "");
+
+                if (!string.IsNullOrEmpty(searchbyMFPN))
+                {
+                    // Loop through the DataGridView rows and filter based on MFPN
+                    foreach (DataGridViewRow row in dataGridView2.Rows)
+                    {
+                        if (row.Cells["MFPN"].Value != null)
+                        {
+                            string cellValue = row.Cells["MFPN"].Value.ToString();
+                            // Check if the search text contains the cell value
+                            if (searchbyMFPN.Contains(cellValue))
+                            {
+                                textBox2.Text = cellValue;
+                            }
+                            else
+                            {
+                                //row.Visible = false;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    //// If the search text is empty, show all rows
+                    //foreach (DataGridViewRow row in dataGridView2.Rows)
+                    //{
+                    //    row.Visible = true;
+                    //}
+                }
+
+                LastInputFromUser = textBox13;
+                textBox2.Focus();
+                textBox2_KeyDown(sender, e);
+            }
+        }
+
+        private void textBox13_Click(object sender, EventArgs e)
+        {
+            textBox13.Clear();
+        }
+
+        private void textBox13_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter(textBox13);
+        }
+
+        private void textBox13_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave(textBox13);
+        }
     }
 }

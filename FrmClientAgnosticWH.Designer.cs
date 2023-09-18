@@ -49,6 +49,7 @@
             textBox11 = new TextBox();
             tableLayoutPanel9 = new TableLayoutPanel();
             textBox12 = new TextBox();
+            textBox13 = new TextBox();
             groupBox3 = new GroupBox();
             tableLayoutPanel2 = new TableLayoutPanel();
             textBox7 = new TextBox();
@@ -276,10 +277,11 @@
             tableLayoutPanel3.Controls.Add(label2, 1, 1);
             tableLayoutPanel3.Controls.Add(label3, 2, 1);
             tableLayoutPanel3.Controls.Add(label1, 0, 0);
-            tableLayoutPanel3.Controls.Add(label16, 3, 0);
+            tableLayoutPanel3.Controls.Add(label16, 3, 1);
             tableLayoutPanel3.Controls.Add(txtbFiltAVLbyDESCR, 3, 2);
             tableLayoutPanel3.Controls.Add(tableLayoutPanel8, 2, 0);
             tableLayoutPanel3.Controls.Add(tableLayoutPanel9, 1, 0);
+            tableLayoutPanel3.Controls.Add(textBox13, 3, 0);
             tableLayoutPanel3.Dock = DockStyle.Fill;
             tableLayoutPanel3.Location = new Point(3, 19);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -375,10 +377,9 @@
             label16.AutoSize = true;
             label16.BackColor = Color.FromArgb(192, 255, 192);
             label16.Dock = DockStyle.Fill;
-            label16.Location = new Point(845, 0);
+            label16.Location = new Point(845, 34);
             label16.Name = "label16";
-            tableLayoutPanel3.SetRowSpan(label16, 2);
-            label16.Size = new Size(356, 68);
+            label16.Size = new Size(356, 34);
             label16.TabIndex = 8;
             label16.Text = "Search in AVL by DESCRIPTION";
             label16.TextAlign = ContentAlignment.MiddleCenter;
@@ -478,6 +479,20 @@
             textBox12.Enter += textBox12_Enter;
             textBox12.KeyDown += textBox12_KeyDown;
             textBox12.Leave += textBox12_Leave;
+            // 
+            // textBox13
+            // 
+            textBox13.Dock = DockStyle.Fill;
+            textBox13.Location = new Point(845, 3);
+            textBox13.Name = "textBox13";
+            textBox13.PlaceholderText = "Extravertic decoder";
+            textBox13.Size = new Size(356, 23);
+            textBox13.TabIndex = 12;
+            textBox13.TextAlign = HorizontalAlignment.Center;
+            textBox13.Click += textBox13_Click;
+            textBox13.Enter += textBox13_Enter;
+            textBox13.KeyDown += textBox13_KeyDown;
+            textBox13.Leave += textBox13_Leave;
             // 
             // groupBox3
             // 
@@ -1695,5 +1710,6 @@
         private Button button23;
         private TableLayoutPanel tableLayoutPanel9;
         private TextBox textBox12;
+        private TextBox textBox13;
     }
 }
