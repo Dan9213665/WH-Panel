@@ -54,6 +54,7 @@
             tableLayoutPanel2 = new TableLayoutPanel();
             lblLimit = new Label();
             txtbSetLimit = new TextBox();
+            checkBox5 = new CheckBox();
             groupBox1 = new GroupBox();
             tableLayoutPanel1.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
@@ -70,9 +71,9 @@
             // tableLayoutPanel1
             // 
             tableLayoutPanel1.ColumnCount = 3;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33333F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33334F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33334F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
             tableLayoutPanel1.Controls.Add(label3, 0, 9);
             tableLayoutPanel1.Controls.Add(txtbSN, 0, 10);
             tableLayoutPanel1.Controls.Add(comboBox2, 0, 3);
@@ -92,19 +93,18 @@
             tableLayoutPanel1.Location = new Point(3, 19);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 12;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333333F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333332F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333332F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333332F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333332F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333332F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333332F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333332F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333332F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333332F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333332F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333332F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333332F));
             tableLayoutPanel1.Size = new Size(1146, 709);
             tableLayoutPanel1.TabIndex = 0;
             // 
@@ -115,7 +115,7 @@
             label3.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
             label3.Location = new Point(3, 531);
             label3.Name = "label3";
-            label3.Size = new Size(375, 59);
+            label3.Size = new Size(223, 59);
             label3.TabIndex = 6;
             label3.Text = "Input S/N";
             label3.TextAlign = ContentAlignment.MiddleCenter;
@@ -126,7 +126,7 @@
             txtbSN.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
             txtbSN.Location = new Point(3, 593);
             txtbSN.Name = "txtbSN";
-            txtbSN.Size = new Size(375, 39);
+            txtbSN.Size = new Size(223, 39);
             txtbSN.TabIndex = 7;
             txtbSN.TextAlign = HorizontalAlignment.Center;
             txtbSN.KeyDown += txtbSN_KeyDown;
@@ -138,7 +138,7 @@
             comboBox2.FormattingEnabled = true;
             comboBox2.Location = new Point(3, 180);
             comboBox2.Name = "comboBox2";
-            comboBox2.Size = new Size(375, 40);
+            comboBox2.Size = new Size(223, 40);
             comboBox2.TabIndex = 4;
             comboBox2.Text = "select project";
             comboBox2.SelectionChangeCommitted += comboBox2_SelectionChangeCommitted;
@@ -150,7 +150,7 @@
             comboBox1.FormattingEnabled = true;
             comboBox1.Location = new Point(3, 62);
             comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(375, 40);
+            comboBox1.Size = new Size(223, 40);
             comboBox1.TabIndex = 1;
             comboBox1.Text = "select customer";
             comboBox1.SelectionChangeCommitted += comboBox1_SelectionChangeCommitted;
@@ -163,7 +163,7 @@
             button1.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
             button1.Location = new Point(3, 652);
             button1.Name = "button1";
-            button1.Size = new Size(375, 54);
+            button1.Size = new Size(223, 54);
             button1.TabIndex = 8;
             button1.Text = "Add Item to shipment";
             button1.UseVisualStyleBackColor = true;
@@ -177,7 +177,7 @@
             flowLayoutPanel1.Dock = DockStyle.Fill;
             flowLayoutPanel1.Location = new Point(3, 3);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(375, 53);
+            flowLayoutPanel1.Size = new Size(223, 53);
             flowLayoutPanel1.TabIndex = 9;
             // 
             // checkBox1
@@ -196,7 +196,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
-            label1.Location = new Point(117, 0);
+            label1.Location = new Point(3, 25);
             label1.Name = "label1";
             label1.Size = new Size(149, 32);
             label1.TabIndex = 0;
@@ -211,7 +211,7 @@
             flowLayoutPanel2.Dock = DockStyle.Fill;
             flowLayoutPanel2.Location = new Point(3, 121);
             flowLayoutPanel2.Name = "flowLayoutPanel2";
-            flowLayoutPanel2.Size = new Size(375, 53);
+            flowLayoutPanel2.Size = new Size(223, 53);
             flowLayoutPanel2.TabIndex = 10;
             // 
             // checkBox2
@@ -230,7 +230,7 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
-            label2.Location = new Point(104, 0);
+            label2.Location = new Point(3, 25);
             label2.Name = "label2";
             label2.Size = new Size(123, 32);
             label2.TabIndex = 3;
@@ -243,7 +243,7 @@
             comboBox3.FormattingEnabled = true;
             comboBox3.Location = new Point(3, 298);
             comboBox3.Name = "comboBox3";
-            comboBox3.Size = new Size(375, 40);
+            comboBox3.Size = new Size(223, 40);
             comboBox3.TabIndex = 12;
             comboBox3.Text = "na";
             comboBox3.SelectionChangeCommitted += comboBox3_SelectionChangeCommitted;
@@ -256,7 +256,7 @@
             flowLayoutPanel3.Dock = DockStyle.Fill;
             flowLayoutPanel3.Location = new Point(3, 239);
             flowLayoutPanel3.Name = "flowLayoutPanel3";
-            flowLayoutPanel3.Size = new Size(375, 53);
+            flowLayoutPanel3.Size = new Size(223, 53);
             flowLayoutPanel3.TabIndex = 13;
             // 
             // checkBox3
@@ -274,7 +274,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(111, 0);
+            label4.Location = new Point(3, 25);
             label4.Name = "label4";
             label4.Size = new Size(125, 32);
             label4.TabIndex = 11;
@@ -286,10 +286,10 @@
             tableLayoutPanel1.SetColumnSpan(groupBox2, 2);
             groupBox2.Controls.Add(dataGridView1);
             groupBox2.Dock = DockStyle.Fill;
-            groupBox2.Location = new Point(384, 62);
+            groupBox2.Location = new Point(232, 62);
             groupBox2.Name = "groupBox2";
             tableLayoutPanel1.SetRowSpan(groupBox2, 10);
-            groupBox2.Size = new Size(759, 584);
+            groupBox2.Size = new Size(911, 584);
             groupBox2.TabIndex = 14;
             groupBox2.TabStop = false;
             groupBox2.Text = "Packed items list";
@@ -312,7 +312,7 @@
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
             dataGridView1.RowTemplate.Height = 25;
-            dataGridView1.Size = new Size(753, 546);
+            dataGridView1.Size = new Size(905, 546);
             dataGridView1.TabIndex = 0;
             dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
             // 
@@ -322,11 +322,12 @@
             btbFinalizeShipment.BackgroundImageLayout = ImageLayout.Zoom;
             tableLayoutPanel1.SetColumnSpan(btbFinalizeShipment, 2);
             btbFinalizeShipment.Dock = DockStyle.Fill;
-            btbFinalizeShipment.Location = new Point(384, 652);
+            btbFinalizeShipment.Location = new Point(232, 652);
             btbFinalizeShipment.Name = "btbFinalizeShipment";
-            btbFinalizeShipment.Size = new Size(759, 54);
+            btbFinalizeShipment.Size = new Size(911, 54);
             btbFinalizeShipment.TabIndex = 16;
             btbFinalizeShipment.Text = "Finalize shipment";
+            btbFinalizeShipment.TextAlign = ContentAlignment.MiddleRight;
             btbFinalizeShipment.UseVisualStyleBackColor = true;
             btbFinalizeShipment.Click += button2_Click;
             // 
@@ -340,7 +341,7 @@
             groupBox3.Location = new Point(3, 357);
             groupBox3.Name = "groupBox3";
             tableLayoutPanel1.SetRowSpan(groupBox3, 2);
-            groupBox3.Size = new Size(375, 112);
+            groupBox3.Size = new Size(223, 112);
             groupBox3.TabIndex = 17;
             groupBox3.TabStop = false;
             groupBox3.Text = "PO / Comments";
@@ -352,7 +353,7 @@
             flowLayoutPanel4.Dock = DockStyle.Fill;
             flowLayoutPanel4.Location = new Point(3, 19);
             flowLayoutPanel4.Name = "flowLayoutPanel4";
-            flowLayoutPanel4.Size = new Size(369, 90);
+            flowLayoutPanel4.Size = new Size(217, 90);
             flowLayoutPanel4.TabIndex = 0;
             // 
             // checkBox4
@@ -381,9 +382,9 @@
             // 
             lblCounter.AutoSize = true;
             lblCounter.Dock = DockStyle.Fill;
-            lblCounter.Location = new Point(384, 0);
+            lblCounter.Location = new Point(232, 0);
             lblCounter.Name = "lblCounter";
-            lblCounter.Size = new Size(376, 59);
+            lblCounter.Size = new Size(452, 59);
             lblCounter.TabIndex = 15;
             lblCounter.Text = "QTY:";
             lblCounter.TextAlign = ContentAlignment.MiddleRight;
@@ -394,45 +395,52 @@
             tableLayoutPanel2.ColumnCount = 2;
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle());
-            tableLayoutPanel2.Controls.Add(lblLimit, 0, 0);
+            tableLayoutPanel2.Controls.Add(lblLimit, 0, 1);
             tableLayoutPanel2.Controls.Add(txtbSetLimit, 1, 0);
+            tableLayoutPanel2.Controls.Add(checkBox5, 0, 0);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.Location = new Point(3, 475);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
-            tableLayoutPanel2.RowCount = 1;
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel2.Size = new Size(375, 53);
+            tableLayoutPanel2.RowCount = 2;
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel2.Size = new Size(223, 53);
             tableLayoutPanel2.TabIndex = 18;
             // 
             // lblLimit
             // 
             lblLimit.AutoSize = true;
             lblLimit.Dock = DockStyle.Fill;
-            lblLimit.Location = new Point(3, 0);
+            lblLimit.Location = new Point(3, 26);
             lblLimit.Name = "lblLimit";
-            lblLimit.Size = new Size(78, 53);
+            lblLimit.Size = new Size(125, 27);
             lblLimit.TabIndex = 0;
-            lblLimit.Text = "Limit:";
+            lblLimit.Text = "SET Limit:";
             lblLimit.TextAlign = ContentAlignment.MiddleLeft;
             lblLimit.DoubleClick += lblLimit_DoubleClick;
             // 
             // txtbSetLimit
             // 
             txtbSetLimit.Dock = DockStyle.Fill;
-            txtbSetLimit.Location = new Point(87, 3);
+            txtbSetLimit.Location = new Point(134, 3);
             txtbSetLimit.Name = "txtbSetLimit";
-            txtbSetLimit.Size = new Size(287, 39);
+            tableLayoutPanel2.SetRowSpan(txtbSetLimit, 2);
+            txtbSetLimit.Size = new Size(238, 39);
             txtbSetLimit.TabIndex = 1;
             txtbSetLimit.TextAlign = HorizontalAlignment.Center;
             txtbSetLimit.KeyDown += textBox1_KeyDown;
+            // 
+            // checkBox5
+            // 
+            checkBox5.AutoSize = true;
+            checkBox5.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            checkBox5.Location = new Point(3, 3);
+            checkBox5.Name = "checkBox5";
+            checkBox5.Size = new Size(83, 19);
+            checkBox5.TabIndex = 2;
+            checkBox5.Text = "Lock Limit";
+            checkBox5.UseVisualStyleBackColor = true;
+            checkBox5.CheckedChanged += checkBox5_CheckedChanged;
             // 
             // groupBox1
             // 
@@ -503,5 +511,6 @@
         private TableLayoutPanel tableLayoutPanel2;
         private Label lblLimit;
         private TextBox txtbSetLimit;
+        private CheckBox checkBox5;
     }
 }
