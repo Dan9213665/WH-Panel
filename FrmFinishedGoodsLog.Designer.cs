@@ -105,7 +105,7 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333332F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333332F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8.333332F));
-            tableLayoutPanel1.Size = new Size(1146, 709);
+            tableLayoutPanel1.Size = new Size(1236, 635);
             tableLayoutPanel1.TabIndex = 0;
             // 
             // label3
@@ -113,9 +113,9 @@
             label3.AutoSize = true;
             label3.Dock = DockStyle.Fill;
             label3.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
-            label3.Location = new Point(3, 531);
+            label3.Location = new Point(3, 468);
             label3.Name = "label3";
-            label3.Size = new Size(223, 59);
+            label3.Size = new Size(241, 52);
             label3.TabIndex = 6;
             label3.Text = "Input S/N";
             label3.TextAlign = ContentAlignment.MiddleCenter;
@@ -124,9 +124,9 @@
             // 
             txtbSN.Dock = DockStyle.Fill;
             txtbSN.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
-            txtbSN.Location = new Point(3, 593);
+            txtbSN.Location = new Point(3, 523);
             txtbSN.Name = "txtbSN";
-            txtbSN.Size = new Size(223, 39);
+            txtbSN.Size = new Size(241, 39);
             txtbSN.TabIndex = 7;
             txtbSN.TextAlign = HorizontalAlignment.Center;
             txtbSN.KeyDown += txtbSN_KeyDown;
@@ -136,9 +136,9 @@
             comboBox2.Dock = DockStyle.Fill;
             comboBox2.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
             comboBox2.FormattingEnabled = true;
-            comboBox2.Location = new Point(3, 180);
+            comboBox2.Location = new Point(3, 159);
             comboBox2.Name = "comboBox2";
-            comboBox2.Size = new Size(223, 40);
+            comboBox2.Size = new Size(241, 40);
             comboBox2.TabIndex = 4;
             comboBox2.Text = "select project";
             comboBox2.SelectionChangeCommitted += comboBox2_SelectionChangeCommitted;
@@ -148,9 +148,9 @@
             comboBox1.Dock = DockStyle.Fill;
             comboBox1.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
             comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(3, 62);
+            comboBox1.Location = new Point(3, 55);
             comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(223, 40);
+            comboBox1.Size = new Size(241, 40);
             comboBox1.TabIndex = 1;
             comboBox1.Text = "select customer";
             comboBox1.SelectionChangeCommitted += comboBox1_SelectionChangeCommitted;
@@ -161,9 +161,9 @@
             button1.BackgroundImageLayout = ImageLayout.Zoom;
             button1.Dock = DockStyle.Fill;
             button1.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
-            button1.Location = new Point(3, 652);
+            button1.Location = new Point(3, 575);
             button1.Name = "button1";
-            button1.Size = new Size(223, 54);
+            button1.Size = new Size(241, 57);
             button1.TabIndex = 8;
             button1.Text = "Add Item to shipment";
             button1.UseVisualStyleBackColor = true;
@@ -177,7 +177,7 @@
             flowLayoutPanel1.Dock = DockStyle.Fill;
             flowLayoutPanel1.Location = new Point(3, 3);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(223, 53);
+            flowLayoutPanel1.Size = new Size(241, 46);
             flowLayoutPanel1.TabIndex = 9;
             // 
             // checkBox1
@@ -209,9 +209,9 @@
             flowLayoutPanel2.Controls.Add(checkBox2);
             flowLayoutPanel2.Controls.Add(label2);
             flowLayoutPanel2.Dock = DockStyle.Fill;
-            flowLayoutPanel2.Location = new Point(3, 121);
+            flowLayoutPanel2.Location = new Point(3, 107);
             flowLayoutPanel2.Name = "flowLayoutPanel2";
-            flowLayoutPanel2.Size = new Size(223, 53);
+            flowLayoutPanel2.Size = new Size(241, 46);
             flowLayoutPanel2.TabIndex = 10;
             // 
             // checkBox2
@@ -230,7 +230,7 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
-            label2.Location = new Point(3, 25);
+            label2.Location = new Point(104, 0);
             label2.Name = "label2";
             label2.Size = new Size(123, 32);
             label2.TabIndex = 3;
@@ -241,9 +241,9 @@
             // 
             comboBox3.Dock = DockStyle.Fill;
             comboBox3.FormattingEnabled = true;
-            comboBox3.Location = new Point(3, 298);
+            comboBox3.Location = new Point(3, 263);
             comboBox3.Name = "comboBox3";
-            comboBox3.Size = new Size(223, 40);
+            comboBox3.Size = new Size(241, 40);
             comboBox3.TabIndex = 12;
             comboBox3.Text = "na";
             comboBox3.SelectionChangeCommitted += comboBox3_SelectionChangeCommitted;
@@ -254,9 +254,9 @@
             flowLayoutPanel3.Controls.Add(checkBox3);
             flowLayoutPanel3.Controls.Add(label4);
             flowLayoutPanel3.Dock = DockStyle.Fill;
-            flowLayoutPanel3.Location = new Point(3, 239);
+            flowLayoutPanel3.Location = new Point(3, 211);
             flowLayoutPanel3.Name = "flowLayoutPanel3";
-            flowLayoutPanel3.Size = new Size(223, 53);
+            flowLayoutPanel3.Size = new Size(241, 46);
             flowLayoutPanel3.TabIndex = 13;
             // 
             // checkBox3
@@ -274,7 +274,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(3, 25);
+            label4.Location = new Point(111, 0);
             label4.Name = "label4";
             label4.Size = new Size(125, 32);
             label4.TabIndex = 11;
@@ -286,10 +286,10 @@
             tableLayoutPanel1.SetColumnSpan(groupBox2, 2);
             groupBox2.Controls.Add(dataGridView1);
             groupBox2.Dock = DockStyle.Fill;
-            groupBox2.Location = new Point(232, 62);
+            groupBox2.Location = new Point(250, 55);
             groupBox2.Name = "groupBox2";
             tableLayoutPanel1.SetRowSpan(groupBox2, 10);
-            groupBox2.Size = new Size(911, 584);
+            groupBox2.Size = new Size(983, 514);
             groupBox2.TabIndex = 14;
             groupBox2.TabStop = false;
             groupBox2.Text = "Packed items list";
@@ -312,7 +312,7 @@
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
             dataGridView1.RowTemplate.Height = 25;
-            dataGridView1.Size = new Size(905, 546);
+            dataGridView1.Size = new Size(977, 476);
             dataGridView1.TabIndex = 0;
             dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
             // 
@@ -322,9 +322,9 @@
             btbFinalizeShipment.BackgroundImageLayout = ImageLayout.Zoom;
             tableLayoutPanel1.SetColumnSpan(btbFinalizeShipment, 2);
             btbFinalizeShipment.Dock = DockStyle.Fill;
-            btbFinalizeShipment.Location = new Point(232, 652);
+            btbFinalizeShipment.Location = new Point(250, 575);
             btbFinalizeShipment.Name = "btbFinalizeShipment";
-            btbFinalizeShipment.Size = new Size(911, 54);
+            btbFinalizeShipment.Size = new Size(983, 57);
             btbFinalizeShipment.TabIndex = 16;
             btbFinalizeShipment.Text = "Finalize shipment";
             btbFinalizeShipment.TextAlign = ContentAlignment.MiddleRight;
@@ -338,10 +338,10 @@
             groupBox3.Controls.Add(flowLayoutPanel4);
             groupBox3.Dock = DockStyle.Fill;
             groupBox3.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            groupBox3.Location = new Point(3, 357);
+            groupBox3.Location = new Point(3, 315);
             groupBox3.Name = "groupBox3";
             tableLayoutPanel1.SetRowSpan(groupBox3, 2);
-            groupBox3.Size = new Size(223, 112);
+            groupBox3.Size = new Size(241, 98);
             groupBox3.TabIndex = 17;
             groupBox3.TabStop = false;
             groupBox3.Text = "PO / Comments";
@@ -353,7 +353,7 @@
             flowLayoutPanel4.Dock = DockStyle.Fill;
             flowLayoutPanel4.Location = new Point(3, 19);
             flowLayoutPanel4.Name = "flowLayoutPanel4";
-            flowLayoutPanel4.Size = new Size(217, 90);
+            flowLayoutPanel4.Size = new Size(235, 76);
             flowLayoutPanel4.TabIndex = 0;
             // 
             // checkBox4
@@ -373,7 +373,7 @@
             txtbComments.Font = new Font("Segoe UI Black", 12F, FontStyle.Bold, GraphicsUnit.Point);
             txtbComments.Location = new Point(3, 28);
             txtbComments.Name = "txtbComments";
-            txtbComments.Size = new Size(365, 29);
+            txtbComments.Size = new Size(229, 29);
             txtbComments.TabIndex = 0;
             txtbComments.TextAlign = HorizontalAlignment.Center;
             txtbComments.KeyDown += txtbComments_KeyDown;
@@ -382,9 +382,9 @@
             // 
             lblCounter.AutoSize = true;
             lblCounter.Dock = DockStyle.Fill;
-            lblCounter.Location = new Point(232, 0);
+            lblCounter.Location = new Point(250, 0);
             lblCounter.Name = "lblCounter";
-            lblCounter.Size = new Size(452, 59);
+            lblCounter.Size = new Size(488, 52);
             lblCounter.TabIndex = 15;
             lblCounter.Text = "QTY:";
             lblCounter.TextAlign = ContentAlignment.MiddleRight;
@@ -396,24 +396,24 @@
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel2.Controls.Add(lblLimit, 0, 1);
-            tableLayoutPanel2.Controls.Add(txtbSetLimit, 1, 0);
+            tableLayoutPanel2.Controls.Add(txtbSetLimit, 1, 1);
             tableLayoutPanel2.Controls.Add(checkBox5, 0, 0);
             tableLayoutPanel2.Dock = DockStyle.Fill;
-            tableLayoutPanel2.Location = new Point(3, 475);
+            tableLayoutPanel2.Location = new Point(3, 419);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 2;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel2.Size = new Size(223, 53);
+            tableLayoutPanel2.Size = new Size(241, 46);
             tableLayoutPanel2.TabIndex = 18;
             // 
             // lblLimit
             // 
             lblLimit.AutoSize = true;
             lblLimit.Dock = DockStyle.Fill;
-            lblLimit.Location = new Point(3, 26);
+            lblLimit.Location = new Point(3, 23);
             lblLimit.Name = "lblLimit";
-            lblLimit.Size = new Size(125, 27);
+            lblLimit.Size = new Size(125, 23);
             lblLimit.TabIndex = 0;
             lblLimit.Text = "SET Limit:";
             lblLimit.TextAlign = ContentAlignment.MiddleLeft;
@@ -422,10 +422,9 @@
             // txtbSetLimit
             // 
             txtbSetLimit.Dock = DockStyle.Fill;
-            txtbSetLimit.Location = new Point(134, 3);
+            txtbSetLimit.Location = new Point(134, 26);
             txtbSetLimit.Name = "txtbSetLimit";
-            tableLayoutPanel2.SetRowSpan(txtbSetLimit, 2);
-            txtbSetLimit.Size = new Size(238, 39);
+            txtbSetLimit.Size = new Size(104, 39);
             txtbSetLimit.TabIndex = 1;
             txtbSetLimit.TextAlign = HorizontalAlignment.Center;
             txtbSetLimit.KeyDown += textBox1_KeyDown;
@@ -436,7 +435,7 @@
             checkBox5.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
             checkBox5.Location = new Point(3, 3);
             checkBox5.Name = "checkBox5";
-            checkBox5.Size = new Size(83, 19);
+            checkBox5.Size = new Size(83, 17);
             checkBox5.TabIndex = 2;
             checkBox5.Text = "Lock Limit";
             checkBox5.UseVisualStyleBackColor = true;
@@ -448,7 +447,7 @@
             groupBox1.Dock = DockStyle.Fill;
             groupBox1.Location = new Point(0, 0);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(1152, 731);
+            groupBox1.Size = new Size(1242, 657);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Finished Goods Logger";
@@ -457,7 +456,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1152, 731);
+            ClientSize = new Size(1242, 657);
             Controls.Add(groupBox1);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FrmFinishedGoodsLog";
