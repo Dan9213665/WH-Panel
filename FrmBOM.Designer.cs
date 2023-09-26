@@ -767,11 +767,11 @@
             // 
             dataGridView1.AllowUserToAddRows = false;
             dataGridView1.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle2.BackColor = Color.IndianRed;
+            dataGridViewCellStyle2.BackColor = Color.Gray;
             dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
             dataGridViewCellStyle2.ForeColor = Color.FromArgb(128, 255, 128);
             dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
-            dataGridView1.BackgroundColor = Color.LightCoral;
+            dataGridView1.BackgroundColor = Color.Gray;
             dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle3.BackColor = SystemColors.Control;
             dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
@@ -790,7 +790,7 @@
             dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
             dataGridView1.DefaultCellStyle = dataGridViewCellStyle4;
             dataGridView1.Dock = DockStyle.Fill;
-            dataGridView1.GridColor = Color.LightCoral;
+            dataGridView1.GridColor = Color.Gray;
             dataGridView1.Location = new Point(3, 19);
             dataGridView1.MultiSelect = false;
             dataGridView1.Name = "dataGridView1";
@@ -803,7 +803,7 @@
             dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
             dataGridViewCellStyle5.WrapMode = DataGridViewTriState.True;
             dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
-            dataGridViewCellStyle6.BackColor = Color.IndianRed;
+            dataGridViewCellStyle6.BackColor = Color.Gray;
             dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle6;
             dataGridView1.RowTemplate.DefaultCellStyle.ForeColor = Color.White;
             dataGridView1.RowTemplate.Height = 25;
