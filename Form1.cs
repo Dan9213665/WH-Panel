@@ -97,21 +97,52 @@ namespace WH_Panel
             var fp = @"\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\_template.xlsm";
             openWHexcelDB(fp);
         }
+        private FrmUberSearch openUberSearchForm = null;
+
+        //private void button3_Click(object sender, EventArgs e)
+        //{
+        //    if (openUberSearchForm != null && !openUberSearchForm.IsDisposed)
+        //    {
+        //        openUberSearchForm.Close();
+        //    }
+
+        //    FrmUberSearch frmUber = new FrmUberSearch();
+        //    frmUber.Show();
+
+        //    openUberSearchForm = frmUber; // Set the reference to the newly opened form
+        //}
+        private FrmUberSearch frmUberSearch = null;
+
         private void button3_Click(object sender, EventArgs e)
         {
-            //this.TopMost = false;
-            FrmUberSearch frmUber = new FrmUberSearch();
-            frmUber.Show();
+            if (frmUberSearch == null || frmUberSearch.IsDisposed)
+            {
+                frmUberSearch = new FrmUberSearch();
+                frmUberSearch.Show();
+            }
+            else
+            {
+                frmUberSearch.BringToFront();
+            }
         }
         private void button4_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_STOCK.xlsm";
             AuthorizedExcelFileOpening(fp);
         }
+        private FrmKITShistory openKITShistoryForm = null;
+
         private void button5_Click(object sender, EventArgs e)
         {
-            FrmKITShistory frmkit = new FrmKITShistory();
-            frmkit.Show();
+            if (openKITShistoryForm == null || openKITShistoryForm.IsDisposed)
+            {
+                openKITShistoryForm = new FrmKITShistory();
+                openKITShistoryForm.Show();
+            }
+            else
+            {
+                openKITShistoryForm.BringToFront();
+            }
         }
         private void button6_Click(object sender, EventArgs e)
         {

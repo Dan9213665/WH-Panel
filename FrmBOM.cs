@@ -889,8 +889,14 @@ namespace WH_Panel
                 tb.BackColor = Color.White;
             }
         }
+        private FrmBomWHS openBomWHSForm = null;
         private void button4_Click(object sender, EventArgs e)
         {
+            if (openBomWHSForm != null && !openBomWHSForm.IsDisposed)
+            {
+                openBomWHSForm.Close();
+            }
+
             if (MissingItemsList.Count > 0)
             {
                 FrmBomWHS wh = new FrmBomWHS();
@@ -898,6 +904,8 @@ namespace WH_Panel
                 wh.fromTheMainBom.Clear();
                 wh.fromTheMainBom = MissingItemsList;
                 wh.Show();
+
+                openBomWHSForm = wh; // Set the reference to the newly opened form
             }
             else
             {
