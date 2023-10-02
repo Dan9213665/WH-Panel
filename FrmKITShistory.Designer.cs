@@ -137,15 +137,16 @@
             // tableLayoutPanel3
             // 
             tableLayoutPanel3.AutoSize = true;
-            tableLayoutPanel3.ColumnCount = 5;
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10.635787F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10.6357822F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10.6357822F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 9.146773F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 58.9458733F));
+            tableLayoutPanel3.ColumnCount = 6;
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel3.Controls.Add(button1, 0, 0);
-            tableLayoutPanel3.Controls.Add(tableLayoutPanel4, 4, 0);
-            tableLayoutPanel3.Controls.Add(label12, 3, 0);
+            tableLayoutPanel3.Controls.Add(tableLayoutPanel4, 5, 0);
+            tableLayoutPanel3.Controls.Add(label12, 4, 0);
             tableLayoutPanel3.Controls.Add(button2, 1, 0);
             tableLayoutPanel3.Controls.Add(button3, 2, 0);
             tableLayoutPanel3.Dock = DockStyle.Fill;
@@ -165,7 +166,7 @@
             button1.BackgroundImageLayout = ImageLayout.Zoom;
             button1.Location = new Point(3, 3);
             button1.Name = "button1";
-            button1.Size = new Size(125, 109);
+            button1.Size = new Size(117, 109);
             button1.TabIndex = 0;
             button1.UseVisualStyleBackColor = false;
             button1.Click += button1_Click;
@@ -178,12 +179,12 @@
             tableLayoutPanel4.Controls.Add(label13, 0, 0);
             tableLayoutPanel4.Controls.Add(listBox1, 0, 1);
             tableLayoutPanel4.Dock = DockStyle.Fill;
-            tableLayoutPanel4.Location = new Point(509, 3);
+            tableLayoutPanel4.Location = new Point(618, 3);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 2;
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel4.Size = new Size(727, 109);
+            tableLayoutPanel4.Size = new Size(618, 109);
             tableLayoutPanel4.TabIndex = 2;
             // 
             // label13
@@ -191,7 +192,7 @@
             label13.Dock = DockStyle.Fill;
             label13.Location = new Point(3, 0);
             label13.Name = "label13";
-            label13.Size = new Size(721, 54);
+            label13.Size = new Size(612, 54);
             label13.TabIndex = 2;
             label13.Text = "Loading Errors :";
             label13.TextAlign = ContentAlignment.MiddleCenter;
@@ -203,7 +204,7 @@
             listBox1.ItemHeight = 15;
             listBox1.Location = new Point(3, 57);
             listBox1.Name = "listBox1";
-            listBox1.Size = new Size(721, 49);
+            listBox1.Size = new Size(612, 49);
             listBox1.TabIndex = 3;
             listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
             // 
@@ -211,9 +212,9 @@
             // 
             label12.AutoSize = true;
             label12.Dock = DockStyle.Fill;
-            label12.Location = new Point(396, 0);
+            label12.Location = new Point(495, 0);
             label12.Name = "label12";
-            label12.Size = new Size(107, 115);
+            label12.Size = new Size(117, 115);
             label12.TabIndex = 1;
             label12.Text = "loaded rows";
             label12.TextAlign = ContentAlignment.MiddleCenter;
@@ -223,9 +224,9 @@
             button2.BackgroundImage = (Image)resources.GetObject("button2.BackgroundImage");
             button2.BackgroundImageLayout = ImageLayout.Zoom;
             button2.Dock = DockStyle.Fill;
-            button2.Location = new Point(134, 3);
+            button2.Location = new Point(126, 3);
             button2.Name = "button2";
-            button2.Size = new Size(125, 109);
+            button2.Size = new Size(117, 109);
             button2.TabIndex = 3;
             button2.TextAlign = ContentAlignment.MiddleRight;
             button2.UseVisualStyleBackColor = true;
@@ -236,9 +237,9 @@
             button3.BackgroundImage = (Image)resources.GetObject("button3.BackgroundImage");
             button3.BackgroundImageLayout = ImageLayout.Zoom;
             button3.Dock = DockStyle.Fill;
-            button3.Location = new Point(265, 3);
+            button3.Location = new Point(249, 3);
             button3.Name = "button3";
-            button3.Size = new Size(125, 109);
+            button3.Size = new Size(117, 109);
             button3.TabIndex = 4;
             button3.UseVisualStyleBackColor = true;
             button3.Click += button3_Click;

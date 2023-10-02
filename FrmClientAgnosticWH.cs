@@ -230,6 +230,8 @@ namespace WH_Panel
         public string stockARAN = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_STOCK.xlsm";
         public string avlSOLANIUM = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_AVL.xlsm";
         public string stockSOLANIUM = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_STOCK.xlsm";
+        public string avlSONOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_AVL.xlsm";
+        public string stockSONOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_STOCK.xlsm";
         public string avlFile;
         public string stockFile;
         public void SetComboBoxText(string text)
@@ -306,6 +308,10 @@ namespace WH_Panel
             else if (comboBox3.Text == "SOLANIUM")
             {
                 MasterReload(avlSOLANIUM, stockSOLANIUM);
+            }
+            else if (comboBox3.Text == "SONOTRON")
+            {
+                MasterReload(avlSONOTRON, stockSONOTRON);
             }
         }
         private void button2_Click(object sender, EventArgs e)

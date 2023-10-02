@@ -225,6 +225,38 @@ namespace WH_Panel
             stopWatch.Stop();
         }
 
+        //private List<string> listOfPathsAggregator(int numMonths)
+        //{
+        //    List<string> list = new List<string>();
+
+        //    string main = "\\\\dbr1\\Data\\WareHouse\\";
+        //    DateTime d = DateTime.Now;
+
+        //    for (int i = 0; i < numMonths; i++)
+        //    {
+        //        string year = d.Year.ToString("D4");
+        //        int month = d.Month;
+
+        //        if (month == 1) // If it's January, adjust year and month accordingly
+        //        {
+        //            year = (d.Year - 1).ToString("D4");
+        //            month = 12; // Set month to December
+        //        }
+        //        else
+        //        {
+        //            //month--;
+        //        }
+
+        //        string previousMonthPath = $"{main}{year}\\{month:D2}.{year}";
+        //        list.Add(previousMonthPath);
+
+        //        d = d.AddMonths(-1); // Move to the previous month
+        //    }
+
+        //    list.Reverse(); // Since we're adding paths in reverse order, reverse the list
+
+        //    return list;
+        //}
         private List<string> listOfPathsAggregator(int numMonths)
         {
             List<string> list = new List<string>();
@@ -244,7 +276,7 @@ namespace WH_Panel
                 }
                 else
                 {
-                    //month--;
+                    month--;
                 }
 
                 string previousMonthPath = $"{main}{year}\\{month:D2}.{year}";
@@ -751,6 +783,7 @@ namespace WH_Panel
             textBox1.Focus();
         }
 
+
         private void textBox11_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
@@ -895,5 +928,7 @@ namespace WH_Panel
                 //MessageBox.Show("Test");
             }
         }
+
+
     }
 }
