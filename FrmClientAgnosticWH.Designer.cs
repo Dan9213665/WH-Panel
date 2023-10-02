@@ -129,6 +129,9 @@
             groupBox11 = new GroupBox();
             button18 = new Button();
             btnVAYYAR = new Button();
+            groupBox19 = new GroupBox();
+            button27 = new Button();
+            button26 = new Button();
             btnFIELDIN = new Button();
             button6 = new Button();
             btnSHILAT = new Button();
@@ -167,6 +170,7 @@
             groupBox18.SuspendLayout();
             groupBox9.SuspendLayout();
             groupBox11.SuspendLayout();
+            groupBox19.SuspendLayout();
             SuspendLayout();
             // 
             // dateTimePicker1
@@ -1136,6 +1140,7 @@
             flowLayoutPanel1.Controls.Add(groupBox18);
             flowLayoutPanel1.Controls.Add(groupBox9);
             flowLayoutPanel1.Controls.Add(groupBox11);
+            flowLayoutPanel1.Controls.Add(groupBox19);
             flowLayoutPanel1.Controls.Add(btnFIELDIN);
             flowLayoutPanel1.Controls.Add(button6);
             flowLayoutPanel1.Controls.Add(btnSHILAT);
@@ -1541,13 +1546,47 @@
             btnVAYYAR.UseVisualStyleBackColor = false;
             btnVAYYAR.Click += btnVAYYAR_Click;
             // 
+            // groupBox19
+            // 
+            groupBox19.Controls.Add(button27);
+            groupBox19.Controls.Add(button26);
+            groupBox19.ForeColor = Color.White;
+            groupBox19.Location = new Point(415, 134);
+            groupBox19.Name = "groupBox19";
+            groupBox19.Size = new Size(130, 125);
+            groupBox19.TabIndex = 36;
+            groupBox19.TabStop = false;
+            groupBox19.Text = "SONOTRON";
+            // 
+            // button27
+            // 
+            button27.BackgroundImage = (Image)resources.GetObject("button27.BackgroundImage");
+            button27.BackgroundImageLayout = ImageLayout.Stretch;
+            button27.Location = new Point(5, 77);
+            button27.Name = "button27";
+            button27.Size = new Size(119, 42);
+            button27.TabIndex = 1;
+            button27.UseVisualStyleBackColor = true;
+            button27.Click += button27_Click;
+            // 
+            // button26
+            // 
+            button26.BackgroundImage = (Image)resources.GetObject("button26.BackgroundImage");
+            button26.BackgroundImageLayout = ImageLayout.Stretch;
+            button26.Location = new Point(6, 17);
+            button26.Name = "button26";
+            button26.Size = new Size(118, 58);
+            button26.TabIndex = 0;
+            button26.UseVisualStyleBackColor = true;
+            button26.Click += button26_Click;
+            // 
             // btnFIELDIN
             // 
             btnFIELDIN.BackColor = Color.White;
             btnFIELDIN.BackgroundImage = Properties.Resources.Fieldin;
             btnFIELDIN.BackgroundImageLayout = ImageLayout.Zoom;
             btnFIELDIN.Cursor = Cursors.Hand;
-            btnFIELDIN.Location = new Point(415, 134);
+            btnFIELDIN.Location = new Point(551, 134);
             btnFIELDIN.Name = "btnFIELDIN";
             btnFIELDIN.Size = new Size(132, 59);
             btnFIELDIN.TabIndex = 29;
@@ -1558,7 +1597,7 @@
             // 
             button6.BackgroundImage = Properties.Resources.CIS;
             button6.BackgroundImageLayout = ImageLayout.Zoom;
-            button6.Location = new Point(553, 134);
+            button6.Location = new Point(689, 134);
             button6.Name = "button6";
             button6.Size = new Size(132, 59);
             button6.TabIndex = 27;
@@ -1570,7 +1609,7 @@
             btnSHILAT.BackColor = Color.White;
             btnSHILAT.BackgroundImage = Properties.Resources.shilat1;
             btnSHILAT.BackgroundImageLayout = ImageLayout.Zoom;
-            btnSHILAT.Location = new Point(691, 134);
+            btnSHILAT.Location = new Point(827, 134);
             btnSHILAT.Name = "btnSHILAT";
             btnSHILAT.Size = new Size(132, 60);
             btnSHILAT.TabIndex = 30;
@@ -1581,7 +1620,7 @@
             // 
             button7.BackgroundImage = Properties.Resources.STM;
             button7.BackgroundImageLayout = ImageLayout.Zoom;
-            button7.Location = new Point(829, 134);
+            button7.Location = new Point(965, 134);
             button7.Name = "button7";
             button7.Size = new Size(132, 59);
             button7.TabIndex = 28;
@@ -1646,6 +1685,7 @@
             groupBox18.ResumeLayout(false);
             groupBox9.ResumeLayout(false);
             groupBox11.ResumeLayout(false);
+            groupBox19.ResumeLayout(false);
             ResumeLayout(false);
         }
         #endregion
@@ -1754,5 +1794,8 @@
         private GroupBox groupBox18;
         private Button button25;
         private Button button24;
+        private GroupBox groupBox19;
+        private Button button27;
+        private Button button26;
     }
 }

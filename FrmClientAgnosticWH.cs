@@ -1623,6 +1623,16 @@ namespace WH_Panel
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_AVL.xlsm";
             AuthorizedExcelFileOpening(fp);
         }
+        private void button26_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_STOCK.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+        private void button27_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_AVL.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
         private void textBox11_KeyDown(object sender, KeyEventArgs e)
         {
 
