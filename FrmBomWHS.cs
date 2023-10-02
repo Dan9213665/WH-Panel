@@ -133,6 +133,15 @@ namespace WH_Panel
             ,
                  {new ClientWarehouse
                 {
+                clName="ASIO",
+                clSuffix="ASO",
+                clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_AVL.xlsm",
+                clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_STOCK.xlsm"
+                }
+              }
+            ,
+                 {new ClientWarehouse
+                {
                 clName="ARAN",
                 clSuffix="ARN",
                 clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_AVL.xlsx",

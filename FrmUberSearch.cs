@@ -89,6 +89,7 @@ namespace WH_Panel
             label1.BackColor = Color.IndianRed;
             var listOfWareHouses = new KeyValueList<string, string>
                    {
+                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_STOCK.xlsm", "STOCK" },
                         {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm", "STOCK" },
                         {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm","STOCK" },
                         {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm","STOCK" },

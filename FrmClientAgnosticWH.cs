@@ -232,6 +232,8 @@ namespace WH_Panel
         public string stockSOLANIUM = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_STOCK.xlsm";
         public string avlSONOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_AVL.xlsm";
         public string stockSONOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_STOCK.xlsm";
+        public string avlASIO = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_AVL.xlsm";
+        public string stockASIO = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_STOCK.xlsm";
         public string avlFile;
         public string stockFile;
         public void SetComboBoxText(string text)
@@ -312,6 +314,10 @@ namespace WH_Panel
             else if (comboBox3.Text == "SONOTRON")
             {
                 MasterReload(avlSONOTRON, stockSONOTRON);
+            }
+            else if (comboBox3.Text == "ASIO")
+            {
+                MasterReload(avlASIO, stockASIO);
             }
         }
         private void button2_Click(object sender, EventArgs e)
@@ -1630,6 +1636,18 @@ namespace WH_Panel
         private void button27_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_AVL.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+
+        private void button29_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_AVL.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+
+        private void button28_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_STOCK.xlsm";
             AuthorizedExcelFileOpening(fp);
         }
         private void textBox11_KeyDown(object sender, KeyEventArgs e)

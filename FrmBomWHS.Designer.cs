@@ -284,7 +284,7 @@
             comboBox1.Dock = DockStyle.Fill;
             comboBox1.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
             comboBox1.FormattingEnabled = true;
-            comboBox1.Items.AddRange(new object[] { "ARAN", "DIGITRONIX", "ENERCON", "EPS", "HEPTAGON", "LEADER-TECH", "NETLINE", "ROBOTRON", "SOS", "SONOTRON", "SOLANIUM", "VALENS", "VAYYAR" });
+            comboBox1.Items.AddRange(new object[] { "ARAN", "ASIO", "DIGITRONIX", "ENERCON", "EPS", "HEPTAGON", "LEADER-TECH", "NETLINE", "ROBOTRON", "SOS", "SONOTRON", "SOLANIUM", "VALENS", "VAYYAR" });
             comboBox1.Location = new Point(224, 3);
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(325, 40);
