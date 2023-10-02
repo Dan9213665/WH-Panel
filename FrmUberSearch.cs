@@ -19,6 +19,9 @@ using Label = System.Windows.Forms.Label;
 using Microsoft.Office.Interop.Excel;
 using DataTable = System.Data.DataTable;
 using Button = System.Windows.Forms.Button;
+using GroupBox = System.Windows.Forms.GroupBox;
+using TextBox = System.Windows.Forms.TextBox;
+using ComboBox = System.Windows.Forms.ComboBox;
 
 namespace WH_Panel
 {
@@ -27,16 +30,19 @@ namespace WH_Panel
         public FrmUberSearch()
         {
             InitializeComponent();
-            List<Label> _seachableFieldsLabels = new List<Label>();
-            _seachableFieldsLabels.Add(label2);
-            _seachableFieldsLabels.Add(label4);
-            _seachableFieldsLabels.Add(label5);
-            _seachableFieldsLabels.Add(label9);
-            foreach (Label l in _seachableFieldsLabels)
-            {
-                l.BackColor = Color.LightGreen;
-            }
+
         }
+
+        private void TextBox_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter((TextBox)sender);
+        }
+
+        private void TextBox_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave((TextBox)sender);
+        }
+
         public List<WHitem> wHitems = new List<WHitem>();
         public DataTable UDtable = new DataTable();
         public int countItems = 0;
@@ -50,10 +56,36 @@ namespace WH_Panel
         }
         private void FrmUberSearch_Load(object sender, EventArgs e)
         {
+            UpdateControlColors(this);
             startUpLogic();
+
         }
         private void startUpLogic()
         {
+            List<Label> _seachableFieldsLabels = new List<Label>();
+            _seachableFieldsLabels.Add(label2);
+            _seachableFieldsLabels.Add(label4);
+            _seachableFieldsLabels.Add(label5);
+            _seachableFieldsLabels.Add(label9);
+            foreach (Label l in _seachableFieldsLabels)
+            {
+                l.BackColor = Color.LightGreen;
+            }
+
+
+
+            List<TextBox> _searchableFieldsTextBoxes = new List<TextBox>();
+            _searchableFieldsTextBoxes.Add(textBox2);
+            _searchableFieldsTextBoxes.Add(textBox4);
+            _searchableFieldsTextBoxes.Add(textBox5);
+            _searchableFieldsTextBoxes.Add(textBox9);
+
+            foreach (TextBox textBox in _searchableFieldsTextBoxes)
+            {
+                textBox.Enter += TextBox_Enter;
+                textBox.Leave += TextBox_Leave;
+            }
+
             label1.BackColor = Color.IndianRed;
             var listOfWareHouses = new KeyValueList<string, string>
                    {
@@ -67,9 +99,9 @@ namespace WH_Panel
                         {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_STOCK.xlsm","STOCK"},
                         {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_STOCK.xlsm","STOCK"},
                         {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_STOCK.xlsm","STOCK"},
+                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_STOCK.xlsm","STOCK"},
+                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_STOCK.xlsm","STOCK"},
                         {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_STOCK.xlsm","STOCK"}
-
-
                    };
             for (int i = 0; i < listOfWareHouses.Count; i++)
             {
@@ -101,6 +133,7 @@ namespace WH_Panel
             // Sort the buttons alphabetically based on their text
             buttons.Sort((x, y) => x.Text.CompareTo(y.Text));
 
+            flowLayoutPanel1.Controls.Clear();
             // Add the sorted buttons to the flowLayoutPanel1 control
             foreach (Button button in buttons)
             {
@@ -374,6 +407,132 @@ namespace WH_Panel
             {
                 MessageBox.Show("ACCESS DENIED");
             }
+        }
+
+        private void UpdateControlColors(Control parentControl)
+        {
+            foreach (Control control in parentControl.Controls)
+            {
+                // Update control colors based on your criteria
+                control.BackColor = Color.LightGray;
+                control.ForeColor = Color.White;
+
+                // Handle Button controls separately
+                if (control is Button button)
+                {
+                    button.FlatStyle = FlatStyle.Flat; // Set FlatStyle to Flat
+                    button.FlatAppearance.BorderColor = Color.DarkGray; // Change border color
+                    button.ForeColor = Color.Black;
+                }
+
+                // Handle Button controls separately
+                if (control is GroupBox groupbox)
+                {
+                    groupbox.FlatStyle = FlatStyle.Flat; // Set FlatStyle to Flat
+                    groupbox.ForeColor = Color.Black;
+                }
+
+                // Handle TextBox controls separately
+                if (control is TextBox textBox)
+                {
+                    textBox.BorderStyle = BorderStyle.FixedSingle; // Set border style to FixedSingle
+                    textBox.BackColor = Color.LightGray; // Change background color
+                    textBox.ForeColor = Color.Black; // Change text color
+                }
+
+                // Handle Label controls separately
+                if (control is Label label)
+                {
+                    label.BorderStyle = BorderStyle.FixedSingle; // Set border style to FixedSingle
+                    label.BackColor = Color.Gray; // Change background color
+                    label.ForeColor = Color.Black; // Change text color
+                }
+
+
+                // Handle TabControl controls separately
+                if (control is TabControl tabControl)
+                {
+                    //tabControl.BackColor = Color.Black; // Change TabControl background color
+                    tabControl.ForeColor = Color.Black;
+                    // Handle each TabPage within the TabControl
+                    foreach (TabPage tabPage in tabControl.TabPages)
+                    {
+                        tabPage.BackColor = Color.Gray; // Change TabPage background color
+                        tabPage.ForeColor = Color.Black; // Change TabPage text color
+                    }
+                }
+
+                // Handle DataGridView controls separately
+                if (control is DataGridView dataGridView)
+                {
+                    // Update DataGridView styles
+                    dataGridView.EnableHeadersVisualStyles = false;
+                    dataGridView.BackgroundColor = Color.DarkGray;
+                    dataGridView.ColumnHeadersDefaultCellStyle.BackColor = Color.Gray;
+                    dataGridView.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+                    dataGridView.RowHeadersDefaultCellStyle.BackColor = Color.Gray;
+                    dataGridView.DefaultCellStyle.BackColor = Color.Gray;
+                    dataGridView.DefaultCellStyle.ForeColor = Color.White;
+                    dataGridView.DefaultCellStyle.SelectionBackColor = Color.Green;
+                    dataGridView.DefaultCellStyle.SelectionForeColor = Color.White;
+                    // Change the header cell styles for each column
+                    foreach (DataGridViewColumn column in dataGridView.Columns)
+                    {
+                        column.HeaderCell.Style.BackColor = Color.DarkGray;
+                        column.HeaderCell.Style.ForeColor = Color.Black;
+                    }
+                }
+                // Handle ComboBox controls separately
+                if (control is ComboBox comboBox)
+                {
+                    comboBox.FlatStyle = FlatStyle.Flat; // Set FlatStyle to Flat
+                    comboBox.BackColor = Color.DarkGray; // Change ComboBox background color
+                    comboBox.ForeColor = Color.Black; // Change ComboBox text color
+                }
+                // Handle DateTimePicker controls separately
+                if (control is DateTimePicker dateTimePicker)
+                {
+                    // Change DateTimePicker's custom properties here
+                    dateTimePicker.BackColor = Color.DarkGray; // Change DateTimePicker background color
+                    dateTimePicker.ForeColor = Color.White; // Change DateTimePicker text color
+                                                            // Customize other DateTimePicker properties as needed
+                }
+                // Recursively update controls within containers
+                if (control.Controls.Count > 0)
+                {
+                    UpdateControlColors(control);
+                }
+            }
+        }
+
+        private void textBox3_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter(sender);
+        }
+        private static void txtbColorGreenOnEnter(object sender)
+        {
+            TextBox? tb = (TextBox)sender;
+            tb.BackColor = Color.LightGreen;
+        }
+        private static void txtbColorWhiteOnLeave(object sender)
+        {
+            TextBox? tb = sender as TextBox;
+            tb.BackColor = Color.LightGray;
+        }
+
+        private void textBox3_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave(sender);
+        }
+
+        private void textBox4_Enter(object sender, EventArgs e)
+        {
+            txtbColorGreenOnEnter(sender);
+        }
+
+        private void textBox4_Leave(object sender, EventArgs e)
+        {
+            txtbColorWhiteOnLeave(sender);
         }
         //private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         //{

@@ -124,6 +124,15 @@ namespace WH_Panel
             ,
                  {new ClientWarehouse
                 {
+                clName="SONOTRON",
+                clSuffix="SON",
+                clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_AVL.xlsm",
+                clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_STOCK.xlsm"
+                }
+              }
+            ,
+                 {new ClientWarehouse
+                {
                 clName="ARAN",
                 clSuffix="ARN",
                 clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_AVL.xlsx",

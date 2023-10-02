@@ -1246,7 +1246,6 @@ namespace WH_Panel
         {
             TextBox? tb = (TextBox)sender;
             tb.BackColor = Color.LightGreen;
-
         }
         private void textBox1_Leave(object sender, EventArgs e)
         {

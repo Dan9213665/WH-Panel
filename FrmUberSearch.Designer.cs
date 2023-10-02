@@ -119,7 +119,7 @@
             // 
             // button1
             // 
-            button1.BackgroundImage = Properties.Resources.reloadDB;
+            button1.BackgroundImage = (Image)resources.GetObject("button1.BackgroundImage");
             button1.BackgroundImageLayout = ImageLayout.Zoom;
             button1.Dock = DockStyle.Fill;
             button1.Location = new Point(3, 3);
@@ -325,6 +325,8 @@
             textBox3.Size = new Size(136, 23);
             textBox3.TabIndex = 9;
             textBox3.TextAlign = HorizontalAlignment.Center;
+            textBox3.Enter += textBox3_Enter;
+            textBox3.Leave += textBox3_Leave;
             // 
             // textBox4
             // 
@@ -335,6 +337,8 @@
             textBox4.TabIndex = 9;
             textBox4.TextAlign = HorizontalAlignment.Center;
             textBox4.TextChanged += textBox4_TextChanged;
+            textBox4.Enter += textBox4_Enter;
+            textBox4.Leave += textBox4_Leave;
             // 
             // textBox5
             // 
