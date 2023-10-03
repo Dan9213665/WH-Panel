@@ -234,6 +234,8 @@ namespace WH_Panel
         public string stockSONOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_STOCK.xlsm";
         public string avlASIO = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_AVL.xlsm";
         public string stockASIO = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_STOCK.xlsm";
+        public string avlSHILAT = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_AVL.xlsm";
+        public string stockSHILAT = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_STOCK.xlsm";
         public string avlFile;
         public string stockFile;
         public void SetComboBoxText(string text)
@@ -319,6 +321,12 @@ namespace WH_Panel
             {
                 MasterReload(avlASIO, stockASIO);
             }
+            else if (comboBox3.Text == "SHILAT")
+            {
+                MasterReload(avlSHILAT, stockSHILAT);
+            }
+
+
         }
         private void button2_Click(object sender, EventArgs e)
         {
@@ -542,7 +550,7 @@ namespace WH_Panel
             RadioButton rbtn = sender as RadioButton;
             if (rbtn.Checked == true)
             {
-                lblRWK.Text = "_RWK_";
+                lblRWK.Text = "_RWK Yuri_";
                 lblSendTo.Text = "_Sent to_";
                 lblSendTo.Enabled = true;
                 textBox8.ReadOnly = true;
@@ -1575,6 +1583,12 @@ namespace WH_Panel
         private void btnSHILAT_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_STOCK.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+
+        private void button33_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_AVL.xlsm";
             AuthorizedExcelFileOpening(fp);
         }
         private void button11_Click(object sender, EventArgs e)

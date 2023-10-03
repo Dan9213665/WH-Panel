@@ -140,6 +140,15 @@ namespace WH_Panel
                 }
               }
             ,
+                  {new ClientWarehouse
+                {
+                clName="SHILAT",
+                clSuffix="SHT",
+                clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_AVL.xlsm",
+                clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_STOCK.xlsm"
+                }
+              }
+            ,
                  {new ClientWarehouse
                 {
                 clName="ARAN",
