@@ -156,15 +156,17 @@
             groupBox2.Size = new Size(230, 108);
             groupBox2.TabIndex = 1;
             groupBox2.TabStop = false;
-            groupBox2.Text = "Available Number";
+            groupBox2.Text = "Next Available Number";
             // 
             // textBox1
             // 
             textBox1.Dock = DockStyle.Fill;
             textBox1.Location = new Point(3, 19);
             textBox1.Name = "textBox1";
+            textBox1.ReadOnly = true;
             textBox1.Size = new Size(224, 23);
             textBox1.TabIndex = 0;
+            textBox1.TextAlign = HorizontalAlignment.Center;
             textBox1.KeyUp += textBox1_KeyUp;
             // 
             // groupBox1
