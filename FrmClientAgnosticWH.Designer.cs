@@ -50,6 +50,7 @@
             tableLayoutPanel9 = new TableLayoutPanel();
             textBox12 = new TextBox();
             textBox13 = new TextBox();
+            button30 = new Button();
             groupBox3 = new GroupBox();
             tableLayoutPanel2 = new TableLayoutPanel();
             textBox7 = new TextBox();
@@ -135,6 +136,9 @@
             groupBox19 = new GroupBox();
             button27 = new Button();
             button26 = new Button();
+            groupBox21 = new GroupBox();
+            button32 = new Button();
+            button31 = new Button();
             btnFIELDIN = new Button();
             button6 = new Button();
             btnSHILAT = new Button();
@@ -175,6 +179,7 @@
             groupBox9.SuspendLayout();
             groupBox11.SuspendLayout();
             groupBox19.SuspendLayout();
+            groupBox21.SuspendLayout();
             SuspendLayout();
             // 
             // dateTimePicker1
@@ -270,7 +275,7 @@
             groupBox2.Dock = DockStyle.Fill;
             groupBox2.Location = new Point(3, 3);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(1210, 127);
+            groupBox2.Size = new Size(1210, 151);
             groupBox2.TabIndex = 0;
             groupBox2.TabStop = false;
             groupBox2.Text = "INPUT IPN / MFPN";
@@ -278,11 +283,12 @@
             // tableLayoutPanel3
             // 
             tableLayoutPanel3.AutoSize = true;
-            tableLayoutPanel3.ColumnCount = 4;
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
+            tableLayoutPanel3.ColumnCount = 5;
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 5F));
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 5F));
             tableLayoutPanel3.Controls.Add(textBox2, 2, 2);
             tableLayoutPanel3.Controls.Add(textBox1, 1, 2);
             tableLayoutPanel3.Controls.Add(button2, 0, 1);
@@ -294,20 +300,21 @@
             tableLayoutPanel3.Controls.Add(tableLayoutPanel8, 2, 0);
             tableLayoutPanel3.Controls.Add(tableLayoutPanel9, 1, 0);
             tableLayoutPanel3.Controls.Add(textBox13, 3, 0);
+            tableLayoutPanel3.Controls.Add(button30, 4, 0);
             tableLayoutPanel3.Dock = DockStyle.Fill;
             tableLayoutPanel3.Location = new Point(3, 19);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
             tableLayoutPanel3.RowCount = 3;
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel3.Size = new Size(1204, 105);
+            tableLayoutPanel3.RowStyles.Add(new RowStyle());
+            tableLayoutPanel3.RowStyles.Add(new RowStyle());
+            tableLayoutPanel3.RowStyles.Add(new RowStyle());
+            tableLayoutPanel3.Size = new Size(1204, 129);
             tableLayoutPanel3.TabIndex = 3;
             // 
             // textBox2
             // 
             textBox2.Dock = DockStyle.Fill;
-            textBox2.Location = new Point(484, 71);
+            textBox2.Location = new Point(424, 53);
             textBox2.Name = "textBox2";
             textBox2.Size = new Size(355, 23);
             textBox2.TabIndex = 3;
@@ -320,7 +327,7 @@
             // textBox1
             // 
             textBox1.Dock = DockStyle.Fill;
-            textBox1.Location = new Point(123, 71);
+            textBox1.Location = new Point(63, 53);
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(355, 23);
             textBox1.TabIndex = 0;
@@ -337,10 +344,10 @@
             button2.BackgroundImage = (Image)resources.GetObject("button2.BackgroundImage");
             button2.BackgroundImageLayout = ImageLayout.Zoom;
             button2.Dock = DockStyle.Fill;
-            button2.Location = new Point(3, 37);
+            button2.Location = new Point(3, 38);
             button2.Name = "button2";
             tableLayoutPanel3.SetRowSpan(button2, 2);
-            button2.Size = new Size(114, 65);
+            button2.Size = new Size(54, 88);
             button2.TabIndex = 2;
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
@@ -350,9 +357,9 @@
             label2.AutoSize = true;
             label2.BackColor = Color.FromArgb(192, 255, 192);
             label2.Dock = DockStyle.Fill;
-            label2.Location = new Point(123, 34);
+            label2.Location = new Point(63, 35);
             label2.Name = "label2";
-            label2.Size = new Size(355, 34);
+            label2.Size = new Size(355, 15);
             label2.TabIndex = 5;
             label2.Text = "Search in AVL by IPN";
             label2.TextAlign = ContentAlignment.MiddleCenter;
@@ -364,9 +371,9 @@
             label3.AutoSize = true;
             label3.BackColor = Color.FromArgb(192, 255, 192);
             label3.Dock = DockStyle.Fill;
-            label3.Location = new Point(484, 34);
+            label3.Location = new Point(424, 35);
             label3.Name = "label3";
-            label3.Size = new Size(355, 34);
+            label3.Size = new Size(355, 15);
             label3.TabIndex = 6;
             label3.Text = "Search in AVL by MFPN";
             label3.TextAlign = ContentAlignment.MiddleCenter;
@@ -379,7 +386,7 @@
             label1.Dock = DockStyle.Fill;
             label1.Location = new Point(3, 0);
             label1.Name = "label1";
-            label1.Size = new Size(114, 34);
+            label1.Size = new Size(54, 35);
             label1.TabIndex = 7;
             label1.Text = "RELOAD AVL";
             label1.TextAlign = ContentAlignment.MiddleCenter;
@@ -389,9 +396,9 @@
             label16.AutoSize = true;
             label16.BackColor = Color.FromArgb(192, 255, 192);
             label16.Dock = DockStyle.Fill;
-            label16.Location = new Point(845, 34);
+            label16.Location = new Point(785, 35);
             label16.Name = "label16";
-            label16.Size = new Size(356, 34);
+            label16.Size = new Size(355, 15);
             label16.TabIndex = 8;
             label16.Text = "Search in AVL by DESCRIPTION";
             label16.TextAlign = ContentAlignment.MiddleCenter;
@@ -401,9 +408,9 @@
             // txtbFiltAVLbyDESCR
             // 
             txtbFiltAVLbyDESCR.Dock = DockStyle.Fill;
-            txtbFiltAVLbyDESCR.Location = new Point(845, 71);
+            txtbFiltAVLbyDESCR.Location = new Point(785, 53);
             txtbFiltAVLbyDESCR.Name = "txtbFiltAVLbyDESCR";
-            txtbFiltAVLbyDESCR.Size = new Size(356, 23);
+            txtbFiltAVLbyDESCR.Size = new Size(355, 23);
             txtbFiltAVLbyDESCR.TabIndex = 9;
             txtbFiltAVLbyDESCR.TextAlign = HorizontalAlignment.Center;
             txtbFiltAVLbyDESCR.TextChanged += txtbFiltAVLbyDESCR_TextChanged;
@@ -423,11 +430,11 @@
             tableLayoutPanel8.Controls.Add(comboBox5, 2, 0);
             tableLayoutPanel8.Controls.Add(textBox11, 1, 0);
             tableLayoutPanel8.Dock = DockStyle.Fill;
-            tableLayoutPanel8.Location = new Point(484, 3);
+            tableLayoutPanel8.Location = new Point(424, 3);
             tableLayoutPanel8.Name = "tableLayoutPanel8";
             tableLayoutPanel8.RowCount = 1;
             tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel8.Size = new Size(355, 28);
+            tableLayoutPanel8.Size = new Size(355, 29);
             tableLayoutPanel8.TabIndex = 10;
             // 
             // comboBox4
@@ -471,11 +478,11 @@
             tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel9.Controls.Add(textBox12, 0, 0);
             tableLayoutPanel9.Dock = DockStyle.Fill;
-            tableLayoutPanel9.Location = new Point(123, 3);
+            tableLayoutPanel9.Location = new Point(63, 3);
             tableLayoutPanel9.Name = "tableLayoutPanel9";
             tableLayoutPanel9.RowCount = 1;
             tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel9.Size = new Size(355, 28);
+            tableLayoutPanel9.Size = new Size(355, 29);
             tableLayoutPanel9.TabIndex = 11;
             // 
             // textBox12
@@ -495,10 +502,10 @@
             // textBox13
             // 
             textBox13.Dock = DockStyle.Fill;
-            textBox13.Location = new Point(845, 3);
+            textBox13.Location = new Point(785, 3);
             textBox13.Name = "textBox13";
             textBox13.PlaceholderText = "Extravertic decoder";
-            textBox13.Size = new Size(356, 23);
+            textBox13.Size = new Size(355, 23);
             textBox13.TabIndex = 12;
             textBox13.TextAlign = HorizontalAlignment.Center;
             textBox13.Click += textBox13_Click;
@@ -506,13 +513,27 @@
             textBox13.KeyDown += textBox13_KeyDown;
             textBox13.Leave += textBox13_Leave;
             // 
+            // button30
+            // 
+            button30.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            button30.BackgroundImage = (Image)resources.GetObject("button30.BackgroundImage");
+            button30.BackgroundImageLayout = ImageLayout.Stretch;
+            button30.Dock = DockStyle.Fill;
+            button30.Location = new Point(1146, 3);
+            button30.Name = "button30";
+            tableLayoutPanel3.SetRowSpan(button30, 3);
+            button30.Size = new Size(55, 123);
+            button30.TabIndex = 13;
+            button30.UseVisualStyleBackColor = true;
+            button30.Click += button30_Click;
+            // 
             // groupBox3
             // 
             groupBox3.AutoSize = true;
             groupBox3.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             groupBox3.Controls.Add(tableLayoutPanel2);
             groupBox3.Dock = DockStyle.Fill;
-            groupBox3.Location = new Point(3, 483);
+            groupBox3.Location = new Point(3, 488);
             groupBox3.Name = "groupBox3";
             groupBox3.Size = new Size(1210, 157);
             groupBox3.TabIndex = 1;
@@ -830,9 +851,9 @@
             groupBox4.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             groupBox4.Controls.Add(tableLayoutPanel6);
             groupBox4.Dock = DockStyle.Fill;
-            groupBox4.Location = new Point(3, 646);
+            groupBox4.Location = new Point(3, 651);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(1210, 159);
+            groupBox4.Size = new Size(1210, 154);
             groupBox4.TabIndex = 2;
             groupBox4.TabStop = false;
             groupBox4.Text = "Stock VIEW filtered by selected item";
@@ -853,7 +874,7 @@
             tableLayoutPanel6.RowCount = 2;
             tableLayoutPanel6.RowStyles.Add(new RowStyle());
             tableLayoutPanel6.RowStyles.Add(new RowStyle());
-            tableLayoutPanel6.Size = new Size(1204, 137);
+            tableLayoutPanel6.Size = new Size(1204, 132);
             tableLayoutPanel6.TabIndex = 1;
             // 
             // tableLayoutPanel7
@@ -943,7 +964,7 @@
             groupBox7.Dock = DockStyle.Fill;
             groupBox7.Location = new Point(3, 48);
             groupBox7.Name = "groupBox7";
-            groupBox7.Size = new Size(1198, 136);
+            groupBox7.Size = new Size(1198, 206);
             groupBox7.TabIndex = 2;
             groupBox7.TabStop = false;
             groupBox7.Text = "Stock";
@@ -958,7 +979,7 @@
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
             dataGridView1.RowTemplate.Height = 25;
-            dataGridView1.Size = new Size(1192, 114);
+            dataGridView1.Size = new Size(1192, 184);
             dataGridView1.TabIndex = 0;
             dataGridView1.CellClick += dataGridView1_CellClick;
             dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
@@ -969,7 +990,7 @@
             groupBox5.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             groupBox5.Controls.Add(tableLayoutPanel4);
             groupBox5.Dock = DockStyle.Fill;
-            groupBox5.Location = new Point(3, 397);
+            groupBox5.Location = new Point(3, 402);
             groupBox5.Name = "groupBox5";
             groupBox5.Size = new Size(1210, 80);
             groupBox5.TabIndex = 3;
@@ -1087,9 +1108,9 @@
             // 
             groupBox6.Controls.Add(dataGridView2);
             groupBox6.Dock = DockStyle.Fill;
-            groupBox6.Location = new Point(3, 136);
+            groupBox6.Location = new Point(3, 160);
             groupBox6.Name = "groupBox6";
-            groupBox6.Size = new Size(1210, 255);
+            groupBox6.Size = new Size(1210, 236);
             groupBox6.TabIndex = 4;
             groupBox6.TabStop = false;
             groupBox6.Text = "AVL view";
@@ -1114,7 +1135,7 @@
             dataGridView2.ReadOnly = true;
             dataGridView2.RowTemplate.DefaultCellStyle.ForeColor = Color.FromArgb(224, 224, 224);
             dataGridView2.RowTemplate.Height = 25;
-            dataGridView2.Size = new Size(1204, 233);
+            dataGridView2.Size = new Size(1204, 214);
             dataGridView2.TabIndex = 0;
             dataGridView2.CellClick += dataGridView2_CellClick;
             dataGridView2.CellDoubleClick += dataGridView2_CellDoubleClick;
@@ -1146,6 +1167,7 @@
             flowLayoutPanel1.Controls.Add(groupBox9);
             flowLayoutPanel1.Controls.Add(groupBox11);
             flowLayoutPanel1.Controls.Add(groupBox19);
+            flowLayoutPanel1.Controls.Add(groupBox21);
             flowLayoutPanel1.Controls.Add(btnFIELDIN);
             flowLayoutPanel1.Controls.Add(button6);
             flowLayoutPanel1.Controls.Add(btnSHILAT);
@@ -1619,13 +1641,49 @@
             button26.UseVisualStyleBackColor = true;
             button26.Click += button26_Click;
             // 
+            // groupBox21
+            // 
+            groupBox21.BackColor = Color.Black;
+            groupBox21.CausesValidation = false;
+            groupBox21.Controls.Add(button32);
+            groupBox21.Controls.Add(button31);
+            groupBox21.ForeColor = Color.White;
+            groupBox21.Location = new Point(688, 134);
+            groupBox21.Name = "groupBox21";
+            groupBox21.Size = new Size(131, 125);
+            groupBox21.TabIndex = 38;
+            groupBox21.TabStop = false;
+            groupBox21.Text = "ROBOTRON";
+            // 
+            // button32
+            // 
+            button32.BackgroundImage = (Image)resources.GetObject("button32.BackgroundImage");
+            button32.BackgroundImageLayout = ImageLayout.Stretch;
+            button32.Location = new Point(8, 77);
+            button32.Name = "button32";
+            button32.Size = new Size(117, 42);
+            button32.TabIndex = 1;
+            button32.UseVisualStyleBackColor = true;
+            button32.Click += button32_Click;
+            // 
+            // button31
+            // 
+            button31.BackgroundImage = (Image)resources.GetObject("button31.BackgroundImage");
+            button31.BackgroundImageLayout = ImageLayout.Zoom;
+            button31.Location = new Point(6, 17);
+            button31.Name = "button31";
+            button31.Size = new Size(119, 58);
+            button31.TabIndex = 0;
+            button31.UseVisualStyleBackColor = true;
+            button31.Click += button31_Click;
+            // 
             // btnFIELDIN
             // 
             btnFIELDIN.BackColor = Color.White;
             btnFIELDIN.BackgroundImage = Properties.Resources.Fieldin;
             btnFIELDIN.BackgroundImageLayout = ImageLayout.Zoom;
             btnFIELDIN.Cursor = Cursors.Hand;
-            btnFIELDIN.Location = new Point(688, 134);
+            btnFIELDIN.Location = new Point(825, 134);
             btnFIELDIN.Name = "btnFIELDIN";
             btnFIELDIN.Size = new Size(132, 59);
             btnFIELDIN.TabIndex = 29;
@@ -1636,7 +1694,7 @@
             // 
             button6.BackgroundImage = Properties.Resources.CIS;
             button6.BackgroundImageLayout = ImageLayout.Zoom;
-            button6.Location = new Point(826, 134);
+            button6.Location = new Point(963, 134);
             button6.Name = "button6";
             button6.Size = new Size(132, 59);
             button6.TabIndex = 27;
@@ -1648,7 +1706,7 @@
             btnSHILAT.BackColor = Color.White;
             btnSHILAT.BackgroundImage = Properties.Resources.shilat1;
             btnSHILAT.BackgroundImageLayout = ImageLayout.Zoom;
-            btnSHILAT.Location = new Point(964, 134);
+            btnSHILAT.Location = new Point(3, 265);
             btnSHILAT.Name = "btnSHILAT";
             btnSHILAT.Size = new Size(132, 60);
             btnSHILAT.TabIndex = 30;
@@ -1659,7 +1717,7 @@
             // 
             button7.BackgroundImage = Properties.Resources.STM;
             button7.BackgroundImageLayout = ImageLayout.Zoom;
-            button7.Location = new Point(3, 265);
+            button7.Location = new Point(141, 265);
             button7.Name = "button7";
             button7.Size = new Size(132, 59);
             button7.TabIndex = 28;
@@ -1726,6 +1784,7 @@
             groupBox9.ResumeLayout(false);
             groupBox11.ResumeLayout(false);
             groupBox19.ResumeLayout(false);
+            groupBox21.ResumeLayout(false);
             ResumeLayout(false);
         }
         #endregion
@@ -1840,5 +1899,9 @@
         private GroupBox groupBox20;
         private Button button29;
         private Button button28;
+        private Button button30;
+        private GroupBox groupBox21;
+        private Button button32;
+        private Button button31;
     }
 }

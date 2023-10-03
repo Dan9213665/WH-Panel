@@ -1650,6 +1650,16 @@ namespace WH_Panel
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_STOCK.xlsm";
             AuthorizedExcelFileOpening(fp);
         }
+        private void button31_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_STOCK.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+        private void button32_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_AVL.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
         private void textBox11_KeyDown(object sender, KeyEventArgs e)
         {
 
@@ -2014,6 +2024,39 @@ namespace WH_Panel
         private void textBox13_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(textBox13);
+        }
+
+        private void button30_Click(object sender, EventArgs e)
+        {
+            if (comboBox3.SelectedItem.ToString() == "ROBOTRON")
+            {
+                string prefix = string.Empty;
+                try
+                {
+                    if (avlItems[0].IPN.Contains("_"))
+                    {
+                        List<string> sp = avlItems[0].IPN.Split('_').ToList();
+                        prefix = sp[0];
+                    }
+                    else if (avlItems[0].IPN.Contains("-"))
+                    {
+                        List<string> sp = avlItems[0].IPN.Split('-').ToList();
+                        prefix = sp[0];
+                    }
+
+
+                    FrmIPNgenerator gen = new FrmIPNgenerator(avlItems, prefix);
+                    gen.Show();
+
+                }
+                catch
+                {
+
+                }
+            }
+
+
+
         }
 
 
