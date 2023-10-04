@@ -143,69 +143,6 @@ namespace WH_Panel
                 }
             }
         }
-        //public List<ClientWarehouse> clList = new List<ClientWarehouse>()
-        //{
-        //    {new ClientWarehouse
-        //        {
-        //        clName="NETLINE",
-        //        clSuffix="NET",
-        //        clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_AVL.xlsx",
-        //        clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm"
-        //        }
-        //    },
-        //      {new ClientWarehouse
-        //        {
-        //        clName="LEADER-TECH",
-        //        clSuffix="C100",
-        //        clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_AVL.xlsm",
-        //        clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm"
-        //         }
-        //      }
-        //    ,
-        //      {new ClientWarehouse
-        //        {
-        //        clName="VAYYAR",
-        //        clSuffix="VAY",
-        //        clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_AVL.xlsx",
-        //        clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm"
-        //        }
-        //      },
-        //         {new ClientWarehouse
-        //        {
-        //        clName="VALENS",
-        //        clSuffix="VAL",
-        //        clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_AVL.xlsx",
-        //        clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm"
-        //        }
-        //      }
-        //    ,
-        //         {new ClientWarehouse
-        //        {
-        //        clName="ROBOTRON",
-        //        clSuffix="ROB",
-        //        clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_AVL.xlsm",
-        //        clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_STOCK.xlsm"
-        //        }
-        //      }
-        //    ,
-        //         {new ClientWarehouse
-        //        {
-        //        clName="ENERCON",
-        //        clSuffix="ENE",
-        //        clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_AVL.xlsx",
-        //        clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_STOCK.xlsm"
-        //        }
-        //      },
-        //         {new ClientWarehouse
-        //        {
-        //        clName="DIGITRONIX",
-        //        clSuffix="DGT",
-        //        clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_AVL.xlsx",
-        //        clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_STOCK.xlsm"
-        //        }
-        //      }
-        //};
-
         public string avlNETLINE = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_AVL.xlsx";
         public string stockNETLINE = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm";
         public string stockLeader_Tech = @"\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\G.I.Leader_Tech\G.I.Leader_Tech_STOCK.xlsm";
@@ -236,6 +173,8 @@ namespace WH_Panel
         public string stockASIO = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_STOCK.xlsm";
         public string avlSHILAT = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_AVL.xlsm";
         public string stockSHILAT = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_STOCK.xlsm";
+        public string avlTRILOGICAL = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_AVL.xlsm";
+        public string stockTRILOGICAL = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_STOCK.xlsm";
         public string avlFile;
         public string stockFile;
         public void SetComboBoxText(string text)
@@ -320,6 +259,10 @@ namespace WH_Panel
             else if (comboBox3.Text == "ASIO")
             {
                 MasterReload(avlASIO, stockASIO);
+            }
+            else if (comboBox3.Text == "TRILOGICAL")
+            {
+                MasterReload(avlTRILOGICAL, stockTRILOGICAL);
             }
             else if (comboBox3.Text == "SHILAT")
             {

@@ -100,6 +100,7 @@
             // richTextBox1
             // 
             richTextBox1.Dock = DockStyle.Fill;
+            richTextBox1.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
             richTextBox1.Location = new Point(3, 19);
             richTextBox1.Name = "richTextBox1";
             richTextBox1.Size = new Size(227, 86);
@@ -120,10 +121,12 @@
             // textBox2
             // 
             textBox2.Dock = DockStyle.Fill;
+            textBox2.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
             textBox2.Location = new Point(3, 19);
             textBox2.Name = "textBox2";
-            textBox2.Size = new Size(224, 23);
+            textBox2.Size = new Size(224, 39);
             textBox2.TabIndex = 1;
+            textBox2.TextAlign = HorizontalAlignment.Center;
             // 
             // groupBox3
             // 
@@ -141,10 +144,11 @@
             comboBox2.AutoCompleteMode = AutoCompleteMode.Suggest;
             comboBox2.AutoCompleteSource = AutoCompleteSource.ListItems;
             comboBox2.Dock = DockStyle.Fill;
+            comboBox2.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
             comboBox2.FormattingEnabled = true;
             comboBox2.Location = new Point(3, 19);
             comboBox2.Name = "comboBox2";
-            comboBox2.Size = new Size(224, 23);
+            comboBox2.Size = new Size(224, 40);
             comboBox2.TabIndex = 1;
             // 
             // groupBox2
@@ -161,10 +165,11 @@
             // textBox1
             // 
             textBox1.Dock = DockStyle.Fill;
+            textBox1.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
             textBox1.Location = new Point(3, 19);
             textBox1.Name = "textBox1";
             textBox1.ReadOnly = true;
-            textBox1.Size = new Size(224, 23);
+            textBox1.Size = new Size(224, 39);
             textBox1.TabIndex = 0;
             textBox1.TextAlign = HorizontalAlignment.Center;
             textBox1.KeyUp += textBox1_KeyUp;
@@ -183,10 +188,11 @@
             // comboBox1
             // 
             comboBox1.Dock = DockStyle.Fill;
+            comboBox1.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
             comboBox1.FormattingEnabled = true;
             comboBox1.Location = new Point(3, 19);
             comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(224, 23);
+            comboBox1.Size = new Size(224, 40);
             comboBox1.TabIndex = 0;
             comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged_1;
             // 

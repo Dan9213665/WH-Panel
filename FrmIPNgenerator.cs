@@ -614,7 +614,9 @@ namespace WH_Panel
             itemToAddToAvl.MFPN = textBox2.Text.ToString();
             itemToAddToAvl.Description = richTextBox1.Text.ToString();
             DataInserter(avlROBOTRON, "AVL", itemToAddToAvl);
+            this.Dispose();
             this.Close();
+
         }
         private void DataInserter(string fp, string thesheetName, WHitem wHitem)
         {

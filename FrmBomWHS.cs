@@ -149,6 +149,15 @@ namespace WH_Panel
                 }
               }
             ,
+                   {new ClientWarehouse
+                {
+                clName="TRILOGICAL",
+                clSuffix="UTR",
+                clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_AVL.xlsm",
+                clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_STOCK.xlsm"
+                }
+              }
+            ,
                  {new ClientWarehouse
                 {
                 clName="ARAN",
@@ -357,42 +366,7 @@ namespace WH_Panel
                 }
             return selection;
         }
-        //private string warehouseSelectorOnLoad()
-        //{
-        //    string selection = string.Empty;
 
-        //    if (misBOMItemsLST[0].IPN.StartsWith("C100") || misBOMItemsLST[0].IPN.StartsWith("A00"))
-        //    {
-        //        selection = "LEADER-TECH";
-        //        MasterReload(avlLeader_Tech, stockLeader_Tech);
-        //    }
-        //    else if (misBOMItemsLST[0].IPN.StartsWith("NET"))
-        //    {
-        //        selection = "NETLINE";
-        //        MasterReload(avlNETLINE, stockNETLINE);
-        //    }
-        //    else if (misBOMItemsLST[0].IPN.StartsWith("VAY"))
-        //    {
-        //        selection = "VAYYAR";
-        //        MasterReload(avlVAYAR, stockVAYAR);
-        //    }
-        //    else if (misBOMItemsLST[0].IPN.StartsWith("VAL"))
-        //    {
-        //        selection = "VALENS";
-        //        MasterReload(avlVALENS, stockVALENS);
-        //    }
-        //    else if (misBOMItemsLST[0].IPN.StartsWith("ENE"))
-        //    {
-        //        selection = "ENERCON";
-        //        MasterReload(avlENERCON, stockENERCON);
-        //    }
-        //    else
-        //    {
-        //        selection = "ROBOTRON";
-        //        MasterReload(avlROBOTRON, stockROBOTRON);
-        //    }
-        //    return selection;
-        //}
         private void PopulateMissingGridView()
         {
             misItemsDT.Clear();
@@ -484,30 +458,6 @@ namespace WH_Panel
                     break;
                 }
             }
-            //if (comboBox1.Text == "ROBOTRON")
-            //{
-            //    MasterReload(avlROBOTRON, stockROBOTRON);
-            //}
-            //else if (comboBox1.Text == "LEADER-TECH")
-            //{
-            //    MasterReload(avlLeader_Tech, stockLeader_Tech);
-            //}
-            //else if (comboBox1.Text == "NETLINE")
-            //{
-            //    MasterReload(avlNETLINE, stockNETLINE);
-            //}
-            //else if (comboBox1.Text == "VAYYAR")
-            //{
-            //    MasterReload(avlVAYAR, stockVAYAR);
-            //}
-            //else if (comboBox1.Text == "VALENS")
-            //{
-            //    MasterReload(avlVALENS, stockVALENS);
-            //}
-            //else if (comboBox1.Text == "ENERCON")
-            //{
-            //    MasterReload(avlENERCON, stockENERCON);
-            //}
         }
         private void MasterReload(string avlParam, string stockParam)
         {
