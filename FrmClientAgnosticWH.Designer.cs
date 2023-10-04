@@ -26,8 +26,8 @@
         private void InitializeComponent()
         {
             DateTimePicker dateTimePicker1;
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmClientAgnosticWH));
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             groupBox1 = new GroupBox();
             comboBox3 = new ComboBox();
             tabControl1 = new TabControl();
@@ -145,6 +145,9 @@
             btnFIELDIN = new Button();
             button6 = new Button();
             button7 = new Button();
+            groupBox23 = new GroupBox();
+            button34 = new Button();
+            button35 = new Button();
             dateTimePicker1 = new DateTimePicker();
             groupBox1.SuspendLayout();
             tabControl1.SuspendLayout();
@@ -183,6 +186,7 @@
             groupBox19.SuspendLayout();
             groupBox21.SuspendLayout();
             groupBox22.SuspendLayout();
+            groupBox23.SuspendLayout();
             SuspendLayout();
             // 
             // dateTimePicker1
@@ -1122,14 +1126,14 @@
             // 
             dataGridView2.AllowUserToAddRows = false;
             dataGridView2.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = SystemColors.ControlDark;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            dataGridView2.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = SystemColors.ControlDark;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle2.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dataGridView2.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView2.Dock = DockStyle.Fill;
             dataGridView2.Location = new Point(3, 19);
@@ -1172,6 +1176,7 @@
             flowLayoutPanel1.Controls.Add(groupBox19);
             flowLayoutPanel1.Controls.Add(groupBox21);
             flowLayoutPanel1.Controls.Add(groupBox22);
+            flowLayoutPanel1.Controls.Add(groupBox23);
             flowLayoutPanel1.Controls.Add(btnFIELDIN);
             flowLayoutPanel1.Controls.Add(button6);
             flowLayoutPanel1.Controls.Add(button7);
@@ -1721,7 +1726,7 @@
             btnFIELDIN.BackgroundImage = Properties.Resources.Fieldin;
             btnFIELDIN.BackgroundImageLayout = ImageLayout.Zoom;
             btnFIELDIN.Cursor = Cursors.Hand;
-            btnFIELDIN.Location = new Point(825, 134);
+            btnFIELDIN.Location = new Point(962, 134);
             btnFIELDIN.Name = "btnFIELDIN";
             btnFIELDIN.Size = new Size(132, 59);
             btnFIELDIN.TabIndex = 29;
@@ -1732,7 +1737,7 @@
             // 
             button6.BackgroundImage = Properties.Resources.CIS;
             button6.BackgroundImageLayout = ImageLayout.Zoom;
-            button6.Location = new Point(963, 134);
+            button6.Location = new Point(1100, 134);
             button6.Name = "button6";
             button6.Size = new Size(132, 59);
             button6.TabIndex = 27;
@@ -1743,12 +1748,47 @@
             // 
             button7.BackgroundImage = Properties.Resources.STM;
             button7.BackgroundImageLayout = ImageLayout.Zoom;
-            button7.Location = new Point(1101, 134);
+            button7.Location = new Point(3, 265);
             button7.Name = "button7";
             button7.Size = new Size(132, 59);
             button7.TabIndex = 28;
             button7.UseVisualStyleBackColor = true;
             button7.Click += button7_Click;
+            // 
+            // groupBox23
+            // 
+            groupBox23.BackColor = Color.Black;
+            groupBox23.Controls.Add(button35);
+            groupBox23.Controls.Add(button34);
+            groupBox23.ForeColor = Color.White;
+            groupBox23.Location = new Point(825, 134);
+            groupBox23.Name = "groupBox23";
+            groupBox23.Size = new Size(131, 125);
+            groupBox23.TabIndex = 40;
+            groupBox23.TabStop = false;
+            groupBox23.Text = "TRILOGICAL";
+            // 
+            // button34
+            // 
+            button34.BackgroundImage = (Image)resources.GetObject("button34.BackgroundImage");
+            button34.BackgroundImageLayout = ImageLayout.Zoom;
+            button34.Location = new Point(6, 17);
+            button34.Name = "button34";
+            button34.Size = new Size(119, 58);
+            button34.TabIndex = 0;
+            button34.UseVisualStyleBackColor = true;
+            button34.Click += button34_Click;
+            // 
+            // button35
+            // 
+            button35.BackgroundImage = (Image)resources.GetObject("button35.BackgroundImage");
+            button35.BackgroundImageLayout = ImageLayout.Stretch;
+            button35.Location = new Point(6, 77);
+            button35.Name = "button35";
+            button35.Size = new Size(119, 42);
+            button35.TabIndex = 1;
+            button35.UseVisualStyleBackColor = true;
+            button35.Click += button35_Click;
             // 
             // FrmClientAgnosticWH
             // 
@@ -1812,6 +1852,7 @@
             groupBox19.ResumeLayout(false);
             groupBox21.ResumeLayout(false);
             groupBox22.ResumeLayout(false);
+            groupBox23.ResumeLayout(false);
             ResumeLayout(false);
         }
         #endregion
@@ -1932,5 +1973,8 @@
         private Button button31;
         private GroupBox groupBox22;
         private Button button33;
+        private GroupBox groupBox23;
+        private Button button35;
+        private Button button34;
     }
 }

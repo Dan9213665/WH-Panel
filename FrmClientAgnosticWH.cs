@@ -1617,6 +1617,17 @@ namespace WH_Panel
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_AVL.xlsm";
             AuthorizedExcelFileOpening(fp);
         }
+        private void button34_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_STOCK.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+
+        private void button35_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_AVL.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
         private void textBox11_KeyDown(object sender, KeyEventArgs e)
         {
 
@@ -2016,6 +2027,6 @@ namespace WH_Panel
 
         }
 
-
+     
     }
 }
