@@ -188,15 +188,15 @@ namespace WH_Panel
 
             if (timeSpan == 2)
             {
-                listOfPaths = listOfPathsAggregator(2);
+                listOfPaths = listOfPathsAggregator(1);
             }
             else if (timeSpan == 6)
             {
-                listOfPaths = listOfPathsAggregator(6);
+                listOfPaths = listOfPathsAggregator(5);
             }
             else if (timeSpan == 12)
             {
-                listOfPaths = listOfPathsAggregator(12);
+                listOfPaths = listOfPathsAggregator(11);
             }
 
 
@@ -268,6 +268,9 @@ namespace WH_Panel
             {
                 string year = d.Year.ToString("D4");
                 int month = d.Month;
+
+                string currentMonthPath = $"{main}{year}\\{month:D2}.{year}";
+                list.Add(currentMonthPath);
 
                 if (month == 1) // If it's January, adjust year and month accordingly
                 {
