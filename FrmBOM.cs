@@ -1158,6 +1158,10 @@ namespace WH_Panel
             {
                 selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_STOCK.xlsm";
             }
+            else if (w.IPN.StartsWith("UTR"))
+            {
+                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_STOCK.xlsm";
+            }
             else
             {
                 selection = string.Empty;

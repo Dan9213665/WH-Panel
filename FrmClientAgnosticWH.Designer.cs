@@ -26,8 +26,8 @@
         private void InitializeComponent()
         {
             DateTimePicker dateTimePicker1;
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmClientAgnosticWH));
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             groupBox1 = new GroupBox();
             comboBox3 = new ComboBox();
             tabControl1 = new TabControl();
@@ -142,12 +142,12 @@
             groupBox22 = new GroupBox();
             button33 = new Button();
             btnSHILAT = new Button();
+            groupBox23 = new GroupBox();
+            button35 = new Button();
+            button34 = new Button();
             btnFIELDIN = new Button();
             button6 = new Button();
             button7 = new Button();
-            groupBox23 = new GroupBox();
-            button34 = new Button();
-            button35 = new Button();
             dateTimePicker1 = new DateTimePicker();
             groupBox1.SuspendLayout();
             tabControl1.SuspendLayout();
@@ -1126,14 +1126,14 @@
             // 
             dataGridView2.AllowUserToAddRows = false;
             dataGridView2.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = SystemColors.ControlDark;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            dataGridViewCellStyle2.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
-            dataGridView2.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = SystemColors.ControlDark;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dataGridView2.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView2.Dock = DockStyle.Fill;
             dataGridView2.Location = new Point(3, 19);
@@ -1720,6 +1720,41 @@
             btnSHILAT.UseVisualStyleBackColor = false;
             btnSHILAT.Click += btnSHILAT_Click;
             // 
+            // groupBox23
+            // 
+            groupBox23.BackColor = Color.Black;
+            groupBox23.Controls.Add(button35);
+            groupBox23.Controls.Add(button34);
+            groupBox23.ForeColor = Color.White;
+            groupBox23.Location = new Point(825, 134);
+            groupBox23.Name = "groupBox23";
+            groupBox23.Size = new Size(131, 125);
+            groupBox23.TabIndex = 40;
+            groupBox23.TabStop = false;
+            groupBox23.Text = "TRILOGICAL";
+            // 
+            // button35
+            // 
+            button35.BackgroundImage = (Image)resources.GetObject("button35.BackgroundImage");
+            button35.BackgroundImageLayout = ImageLayout.Stretch;
+            button35.Location = new Point(6, 77);
+            button35.Name = "button35";
+            button35.Size = new Size(119, 42);
+            button35.TabIndex = 1;
+            button35.UseVisualStyleBackColor = true;
+            button35.Click += button35_Click;
+            // 
+            // button34
+            // 
+            button34.BackgroundImage = (Image)resources.GetObject("button34.BackgroundImage");
+            button34.BackgroundImageLayout = ImageLayout.Zoom;
+            button34.Location = new Point(6, 17);
+            button34.Name = "button34";
+            button34.Size = new Size(119, 58);
+            button34.TabIndex = 0;
+            button34.UseVisualStyleBackColor = true;
+            button34.Click += button34_Click;
+            // 
             // btnFIELDIN
             // 
             btnFIELDIN.BackColor = Color.White;
@@ -1754,41 +1789,6 @@
             button7.TabIndex = 28;
             button7.UseVisualStyleBackColor = true;
             button7.Click += button7_Click;
-            // 
-            // groupBox23
-            // 
-            groupBox23.BackColor = Color.Black;
-            groupBox23.Controls.Add(button35);
-            groupBox23.Controls.Add(button34);
-            groupBox23.ForeColor = Color.White;
-            groupBox23.Location = new Point(825, 134);
-            groupBox23.Name = "groupBox23";
-            groupBox23.Size = new Size(131, 125);
-            groupBox23.TabIndex = 40;
-            groupBox23.TabStop = false;
-            groupBox23.Text = "TRILOGICAL";
-            // 
-            // button34
-            // 
-            button34.BackgroundImage = (Image)resources.GetObject("button34.BackgroundImage");
-            button34.BackgroundImageLayout = ImageLayout.Zoom;
-            button34.Location = new Point(6, 17);
-            button34.Name = "button34";
-            button34.Size = new Size(119, 58);
-            button34.TabIndex = 0;
-            button34.UseVisualStyleBackColor = true;
-            button34.Click += button34_Click;
-            // 
-            // button35
-            // 
-            button35.BackgroundImage = (Image)resources.GetObject("button35.BackgroundImage");
-            button35.BackgroundImageLayout = ImageLayout.Stretch;
-            button35.Location = new Point(6, 77);
-            button35.Name = "button35";
-            button35.Size = new Size(119, 42);
-            button35.TabIndex = 1;
-            button35.UseVisualStyleBackColor = true;
-            button35.Click += button35_Click;
             // 
             // FrmClientAgnosticWH
             // 
