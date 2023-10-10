@@ -175,6 +175,8 @@ namespace WH_Panel
         public string stockSHILAT = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_STOCK.xlsm";
         public string avlTRILOGICAL = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_AVL.xlsm";
         public string stockTRILOGICAL = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_STOCK.xlsm";
+        public string avlCIS = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_AVL.xlsm";
+        public string stockCIS = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_STOCK.xlsm";
         public string avlFile;
         public string stockFile;
         public void SetComboBoxText(string text)
@@ -267,6 +269,10 @@ namespace WH_Panel
             else if (comboBox3.Text == "SHILAT")
             {
                 MasterReload(avlSHILAT, stockSHILAT);
+            }
+            else if (comboBox3.Text == "CIS")
+            {
+                MasterReload(avlCIS, stockCIS);
             }
 
 
@@ -1508,6 +1514,11 @@ namespace WH_Panel
         private void button6_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_STOCK.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+        private void button36_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_AVL.xlsm";
             AuthorizedExcelFileOpening(fp);
         }
 

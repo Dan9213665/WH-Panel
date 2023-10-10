@@ -145,8 +145,10 @@
             groupBox23 = new GroupBox();
             button35 = new Button();
             button34 = new Button();
-            btnFIELDIN = new Button();
+            groupBox24 = new GroupBox();
+            button36 = new Button();
             button6 = new Button();
+            btnFIELDIN = new Button();
             button7 = new Button();
             dateTimePicker1 = new DateTimePicker();
             groupBox1.SuspendLayout();
@@ -187,6 +189,7 @@
             groupBox21.SuspendLayout();
             groupBox22.SuspendLayout();
             groupBox23.SuspendLayout();
+            groupBox24.SuspendLayout();
             SuspendLayout();
             // 
             // dateTimePicker1
@@ -219,7 +222,7 @@
             comboBox3.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
             comboBox3.ForeColor = Color.White;
             comboBox3.FormattingEnabled = true;
-            comboBox3.Items.AddRange(new object[] { "ARAN", "ASIO", "DIGITRONIX", "ENERCON", "EPS", "G.I.Leader_Tech", "HEPTAGON", "NETLINE", "ROBOTRON", "SHILAT", "SOLANIUM", "SONOTRON", "SOS", "TRILOGICAL", "VALENS", "VAYAR" });
+            comboBox3.Items.AddRange(new object[] { "ARAN", "ASIO", "CIS", "DIGITRONIX", "ENERCON", "EPS", "G.I.Leader_Tech", "HEPTAGON", "NETLINE", "ROBOTRON", "SHILAT", "SOLANIUM", "SONOTRON", "SOS", "TRILOGICAL", "VALENS", "VAYAR" });
             comboBox3.Location = new Point(150, 0);
             comboBox3.Name = "comboBox3";
             comboBox3.RightToLeft = RightToLeft.No;
@@ -1177,8 +1180,8 @@
             flowLayoutPanel1.Controls.Add(groupBox21);
             flowLayoutPanel1.Controls.Add(groupBox22);
             flowLayoutPanel1.Controls.Add(groupBox23);
+            flowLayoutPanel1.Controls.Add(groupBox24);
             flowLayoutPanel1.Controls.Add(btnFIELDIN);
-            flowLayoutPanel1.Controls.Add(button6);
             flowLayoutPanel1.Controls.Add(button7);
             flowLayoutPanel1.Dock = DockStyle.Fill;
             flowLayoutPanel1.Location = new Point(0, 0);
@@ -1755,29 +1758,52 @@
             button34.UseVisualStyleBackColor = true;
             button34.Click += button34_Click;
             // 
+            // groupBox24
+            // 
+            groupBox24.Controls.Add(button36);
+            groupBox24.Controls.Add(button6);
+            groupBox24.ForeColor = Color.White;
+            groupBox24.Location = new Point(962, 134);
+            groupBox24.Name = "groupBox24";
+            groupBox24.Size = new Size(132, 125);
+            groupBox24.TabIndex = 41;
+            groupBox24.TabStop = false;
+            groupBox24.Text = "CIS";
+            // 
+            // button36
+            // 
+            button36.BackgroundImage = (Image)resources.GetObject("button36.BackgroundImage");
+            button36.BackgroundImageLayout = ImageLayout.Stretch;
+            button36.Location = new Point(6, 77);
+            button36.Name = "button36";
+            button36.Size = new Size(119, 42);
+            button36.TabIndex = 28;
+            button36.UseVisualStyleBackColor = true;
+            button36.Click += button36_Click;
+            // 
+            // button6
+            // 
+            button6.BackgroundImage = Properties.Resources.CIS;
+            button6.BackgroundImageLayout = ImageLayout.Zoom;
+            button6.Location = new Point(6, 17);
+            button6.Name = "button6";
+            button6.Size = new Size(120, 58);
+            button6.TabIndex = 27;
+            button6.UseVisualStyleBackColor = true;
+            button6.Click += button6_Click;
+            // 
             // btnFIELDIN
             // 
             btnFIELDIN.BackColor = Color.White;
             btnFIELDIN.BackgroundImage = Properties.Resources.Fieldin;
             btnFIELDIN.BackgroundImageLayout = ImageLayout.Zoom;
             btnFIELDIN.Cursor = Cursors.Hand;
-            btnFIELDIN.Location = new Point(962, 134);
+            btnFIELDIN.Location = new Point(1100, 134);
             btnFIELDIN.Name = "btnFIELDIN";
             btnFIELDIN.Size = new Size(132, 59);
             btnFIELDIN.TabIndex = 29;
             btnFIELDIN.UseVisualStyleBackColor = false;
             btnFIELDIN.Click += btnFIELDIN_Click;
-            // 
-            // button6
-            // 
-            button6.BackgroundImage = Properties.Resources.CIS;
-            button6.BackgroundImageLayout = ImageLayout.Zoom;
-            button6.Location = new Point(1100, 134);
-            button6.Name = "button6";
-            button6.Size = new Size(132, 59);
-            button6.TabIndex = 27;
-            button6.UseVisualStyleBackColor = true;
-            button6.Click += button6_Click;
             // 
             // button7
             // 
@@ -1853,6 +1879,7 @@
             groupBox21.ResumeLayout(false);
             groupBox22.ResumeLayout(false);
             groupBox23.ResumeLayout(false);
+            groupBox24.ResumeLayout(false);
             ResumeLayout(false);
         }
         #endregion
@@ -1976,5 +2003,7 @@
         private GroupBox groupBox23;
         private Button button35;
         private Button button34;
+        private GroupBox groupBox24;
+        private Button button36;
     }
 }

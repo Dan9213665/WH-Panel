@@ -31,7 +31,7 @@ namespace WH_Panel
             {new ClientWarehouse
                 {
                 clName="NETLINE",
-                clSuffix="NET",
+                clPrefix="NET",
                 clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_AVL.xlsx",
                 clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm"
                 }
@@ -39,7 +39,7 @@ namespace WH_Panel
               {new ClientWarehouse
                 {
                 clName="LEADER-TECH",
-                clSuffix="C100",
+                clPrefix="C100",
                 clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_AVL.xlsm",
                 clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm"
                  }
@@ -48,7 +48,7 @@ namespace WH_Panel
               {new ClientWarehouse
                 {
                 clName="VAYYAR",
-                clSuffix="VAY",
+                clPrefix="VAY",
                 clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_AVL.xlsx",
                 clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm"
                 }
@@ -56,7 +56,7 @@ namespace WH_Panel
                  {new ClientWarehouse
                 {
                 clName="VALENS",
-                clSuffix="VAL",
+                clPrefix="VAL",
                 clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_AVL.xlsx",
                 clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm"
                 }
@@ -65,7 +65,7 @@ namespace WH_Panel
                  {new ClientWarehouse
                 {
                 clName="ROBOTRON",
-                clSuffix="ROB",
+                clPrefix="ROB",
                 clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_AVL.xlsm",
                 clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_STOCK.xlsm"
                 }
@@ -74,7 +74,7 @@ namespace WH_Panel
                  {new ClientWarehouse
                 {
                 clName="ENERCON",
-                clSuffix="ENE",
+                clPrefix="ENE",
                 clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_AVL.xlsx",
                 clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_STOCK.xlsm"
                 }
@@ -82,7 +82,7 @@ namespace WH_Panel
                    {new ClientWarehouse
                 {
                 clName="HEPTAGON",
-                clSuffix="HEP",
+                clPrefix="HEP",
                 clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_AVL.xlsx",
                 clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_STOCK.xlsm"
                 }
@@ -90,7 +90,7 @@ namespace WH_Panel
                  {new ClientWarehouse
                 {
                 clName="DIGITRONIX",
-                clSuffix="DGT",
+                clPrefix="DGT",
                 clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_AVL.xlsx",
                 clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_STOCK.xlsm"
                 }
@@ -98,7 +98,7 @@ namespace WH_Panel
                  {new ClientWarehouse
                 {
                 clName="EPS",
-                clSuffix="EPS",
+                clPrefix="EPS",
                 clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_AVL.xlsx",
                 clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_STOCK.xlsm"
                 }
@@ -107,7 +107,7 @@ namespace WH_Panel
                  {new ClientWarehouse
                 {
                 clName="SOS",
-                clSuffix="SOS",
+                clPrefix="SOS",
                 clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_AVL.xlsx",
                 clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_STOCK.xlsm"
                 }
@@ -116,7 +116,7 @@ namespace WH_Panel
                  {new ClientWarehouse
                 {
                 clName="SOLANIUM",
-                clSuffix="BAN",
+                clPrefix="BAN",
                 clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_AVL.xlsm",
                 clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_STOCK.xlsm"
                 }
@@ -125,7 +125,7 @@ namespace WH_Panel
                  {new ClientWarehouse
                 {
                 clName="SONOTRON",
-                clSuffix="SON",
+                clPrefix="SON",
                 clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_AVL.xlsm",
                 clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_STOCK.xlsm"
                 }
@@ -134,7 +134,7 @@ namespace WH_Panel
                  {new ClientWarehouse
                 {
                 clName="ASIO",
-                clSuffix="ASO",
+                clPrefix="ASO",
                 clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_AVL.xlsm",
                 clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_STOCK.xlsm"
                 }
@@ -143,7 +143,7 @@ namespace WH_Panel
                   {new ClientWarehouse
                 {
                 clName="SHILAT",
-                clSuffix="SHT",
+                clPrefix="SHT",
                 clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_AVL.xlsm",
                 clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_STOCK.xlsm"
                 }
@@ -152,16 +152,25 @@ namespace WH_Panel
                    {new ClientWarehouse
                 {
                 clName="TRILOGICAL",
-                clSuffix="UTR",
+                clPrefix="UTR",
                 clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_AVL.xlsm",
                 clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_STOCK.xlsm"
+                }
+              }
+            ,
+                     {new ClientWarehouse
+                {
+                clName="CIS",
+                clPrefix="CIS",
+                clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_AVL.xlsm",
+                clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_STOCK.xlsm"
                 }
               }
             ,
                  {new ClientWarehouse
                 {
                 clName="ARAN",
-                clSuffix="ARN",
+                clPrefix="ARN",
                 clAvlFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_AVL.xlsx",
                 clStockFile="\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_STOCK.xlsm"
                 }
@@ -358,7 +367,7 @@ namespace WH_Panel
         {
             string selection = string.Empty;
             foreach (ClientWarehouse clientWH in clList)
-                if (misBOMItemsLST[0].IPN.StartsWith(clientWH.clSuffix))
+                if (misBOMItemsLST[0].IPN.StartsWith(clientWH.clPrefix))
                 {
                     selection = clientWH.clName;
                     MasterReload(clientWH.clAvlFile, clientWH.clStockFile);
@@ -452,7 +461,7 @@ namespace WH_Panel
         {
             foreach (ClientWarehouse client in clList)
             {
-                if (comboBox1.Text == client.clSuffix)
+                if (comboBox1.Text == client.clPrefix)
                 {
                     MasterReload(client.clAvlFile, client.clStockFile);
                     break;

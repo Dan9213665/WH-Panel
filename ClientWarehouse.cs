@@ -9,7 +9,7 @@ namespace WH_Panel
     public class ClientWarehouse
     {
         public string? clName { get; set; }
-        public string? clSuffix { get; set; }
+        public string? clPrefix { get; set; }
         public string? clAvlFile { get; set; }
         public string? clStockFile { get; set; }
     }
