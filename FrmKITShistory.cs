@@ -264,13 +264,17 @@ namespace WH_Panel
             string main = "\\\\dbr1\\Data\\WareHouse\\";
             DateTime d = DateTime.Now;
 
+            string cyear = d.Year.ToString("D4");
+            int cmonth = d.Month;
+            string currentMonthPath = $"{main}{cyear}\\{cmonth:D2}.{cyear}";
+            list.Add(currentMonthPath);
+
             for (int i = 0; i < numMonths; i++)
             {
                 string year = d.Year.ToString("D4");
                 int month = d.Month;
 
-                string currentMonthPath = $"{main}{year}\\{month:D2}.{year}";
-                list.Add(currentMonthPath);
+
 
                 if (month == 1) // If it's January, adjust year and month accordingly
                 {
