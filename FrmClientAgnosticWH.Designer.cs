@@ -953,6 +953,8 @@
             button22.TextAlign = ContentAlignment.MiddleLeft;
             button22.UseVisualStyleBackColor = true;
             button22.Click += button22_Click;
+            button22.MouseClick += button22_MouseClick;
+            button22.MouseDown += button22_MouseDown;
             // 
             // button3
             // 

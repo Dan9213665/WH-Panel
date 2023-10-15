@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.OleDb;
 using System.Diagnostics;
+using System.Text;
+using System.Windows.Forms;
 using DataTable = System.Data.DataTable;
 using RadioButton = System.Windows.Forms.RadioButton;
 using TextBox = System.Windows.Forms.TextBox;
@@ -16,10 +18,12 @@ namespace WH_Panel
         {
             InitializeComponent();
             UpdateControlColors(this);
+
             //comboBox3.SelectedIndex = 0;
             button23.Enabled = false;
             comboBox3.SelectedItem = "ROBOTRON";
             MasterReload(avlROBOTRON, stockROBOTRON);
+
         }
         public WHitem wHitemToSplit = new WHitem();
         public List<WHitem> avlItems = new List<WHitem>();
@@ -203,6 +207,7 @@ namespace WH_Panel
             label2.BackColor = Color.LightGreen;
             LastInputFromUser = textBox1;
             LastInputFromUser.Focus();
+            button22.MouseClick += new MouseEventHandler(button22_MouseClick);
         }
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -1671,9 +1676,241 @@ namespace WH_Panel
 
         private void button22_Click(object sender, EventArgs e)
         {
-            GenerateHTML();
+            //GenerateHTML();
 
         }
+        private void button22_MouseClick(object sender, MouseEventArgs e)
+        {
+            //if (e.Button == MouseButtons.Left)
+            //{
+            //    MessageBox.Show("left");
+            //    GenerateHTML();
+            //}
+            //else if (e.Button == MouseButtons.Right)
+            //{
+            //    MessageBox.Show("right");
+            //    GenerateHTMLwareHouseBalance();
+            //}
+        }
+        private void button22_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                //MessageBox.Show("left");
+                GenerateHTML();
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                //MessageBox.Show("right");
+                GenerateHTMLwareHouseBalance();
+            }
+        }
+        private void GenerateHTMLwareHouseBalance()
+        {
+            string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+            string filename = @"\\dbr1\Data\WareHouse\2023\WHsearcher\" + fileTimeStamp + "_" + comboBox3.SelectedItem.ToString() + "_wh_Balance" + ".html";
+
+            using (StreamWriter writer = new StreamWriter(filename))
+            {
+                writer.WriteLine("<html style='background-color: black;'>");
+                writer.WriteLine("<head>");
+
+
+                writer.WriteLine("<h1 id='stickyHeader' style='position: sticky; top: 0; background-color: lightgreen; text-align: center;'>");
+                writer.WriteLine($"{fileTimeStamp}_{comboBox3.SelectedItem}");
+                writer.WriteLine("<br>");
+                writer.WriteLine("<input type='text' id='filterInput' onkeyup='filterItems()' placeholder='Filter IPNs...' style='text-align:center;margin: 10px;'>");
+                writer.WriteLine("<button onclick='clearFilter()' style='margin: 10px;'>CLEAR</button>");
+                writer.WriteLine("</h1>");
+
+                writer.WriteLine("<style>");
+
+                writer.WriteLine("<button onclick='openAllAccordions()' style='margin: 10px;'>Open All Accordions</button>");
+
+                writer.WriteLine(".accordion {");
+                writer.WriteLine("background-color: black;");
+                writer.WriteLine("color: #444;");
+                writer.WriteLine("cursor: pointer;");
+                writer.WriteLine("padding: 18px;");
+                writer.WriteLine("width: 100%;");
+                writer.WriteLine("text-align: center;");
+                writer.WriteLine("border: 1px;");
+                writer.WriteLine("outline: none;");
+                writer.WriteLine("transition: 0.4s;");
+                writer.WriteLine("}");
+
+                writer.WriteLine(".active, .accordion:hover {");
+                writer.WriteLine("background-color: #ccc;");
+                writer.WriteLine("}");
+
+                writer.WriteLine(".panel {");
+                writer.WriteLine("padding: 0 18px;");
+                writer.WriteLine("display: none;");
+                writer.WriteLine("background-color: black;");
+                writer.WriteLine("overflow: hidden;");
+                writer.WriteLine("}");
+                writer.WriteLine("</style>");
+                writer.WriteLine("</head>");
+                writer.WriteLine("<body>");
+
+                var orderedStockItems = stockItems.OrderBy(item => item.IPN).ToList();
+                // Group items by IPN and calculate the total stock for each unique IPN
+                var groupedItems = orderedStockItems.GroupBy(item => item.IPN)
+                                            .Select(group => new
+                                            {
+                                                IPN = group.Key,
+                                                TotalStock = group.Sum(item => item.Stock),
+                                                Items = group.Select(item => new
+                                                {
+                                                    item.Manufacturer,
+                                                    item.MFPN,
+                                                    item.Description,
+                                                    item.Stock,
+                                                    item.UpdatedOn,
+                                                    item.ReelBagTrayStick,
+                                                    item.SourceRequester
+                                                })
+                                            });
+
+                foreach (var group in groupedItems)
+                {
+                    // Generate the HTML accordion structure for each unique IPN
+
+                    string stockColorBut = group.TotalStock > 0 ? "lightgreen" : "#FF7F7F";
+
+                    writer.WriteLine("<button class='accordion' style='background-color: " + stockColorBut + ";'>");
+                    writer.WriteLine($"<strong>{group.IPN}</strong> - Current Balance: <strong>{group.TotalStock}</strong></button>");
+                    writer.WriteLine("<div class='panel'><p>");
+
+
+                    writer.WriteLine("<table style='width:100%; text-align:center;' border='1'>");
+                    writer.WriteLine("<tr style='background-color: lightgray;'><th>Manufacturer</th><th>MFPN</th><th>Description</th><th>Stock</th><th>Updated On</th><th>ReelBagTrayStick</th><th>Source Requester</th></tr>");
+
+                    foreach (var item in group.Items)
+                    {
+                        string stockColor = item.Stock > 0 ? "lightgreen" : "#FF7F7F";
+
+                        writer.WriteLine("<tr style='background-color: lightgray;'>");
+                        writer.WriteLine($"<td>{item.Manufacturer}</td>");
+                        writer.WriteLine($"<td>{item.MFPN}</td>");
+                        writer.WriteLine($"<td>{item.Description}</td>");
+                        writer.WriteLine($"<td style='background-color: {stockColor}'>{item.Stock}</td>");
+                        writer.WriteLine($"<td>{item.UpdatedOn}</td>");
+                        writer.WriteLine($"<td>{item.ReelBagTrayStick}</td>");
+                        writer.WriteLine($"<td>{item.SourceRequester}</td>");
+                        writer.WriteLine("</tr>");
+                    }
+
+                    writer.WriteLine("</table>");
+
+
+                    writer.WriteLine("</p></div>");
+                }
+
+                writer.WriteLine("<script>");
+
+                //writer.WriteLine("var acc = document.getElementsByClassName('accordion');");
+                //writer.WriteLine("var i;");
+                //writer.WriteLine("for (i = 0; i < acc.length; i++) {");
+                //writer.WriteLine("acc[i].addEventListener('click', function() {");
+                //writer.WriteLine("this.classList.toggle('active');");
+                //writer.WriteLine("var panel = this.nextElementSibling;");
+                //writer.WriteLine("if (panel.style.display === 'block') {");
+                //writer.WriteLine("panel.style.display = 'none';");
+                //writer.WriteLine("} else {");
+                //writer.WriteLine("panel.style.display = 'block';");
+                //writer.WriteLine("}");
+                //writer.WriteLine("});");
+                //writer.WriteLine("}");
+
+                writer.WriteLine("var acc = document.getElementsByClassName('accordion');");
+                writer.WriteLine("var i;");
+                writer.WriteLine("for (i = 0; i < acc.length; i++) {");
+                writer.WriteLine("acc[i].addEventListener('click', function() {");
+                writer.WriteLine("this.classList.toggle('active');");
+                writer.WriteLine("var panel = this.nextElementSibling;");
+                writer.WriteLine("if (panel.style.display === 'block') {");
+                writer.WriteLine("panel.style.display = 'none';");
+                writer.WriteLine("this.style.fontSize = '90%';");
+                writer.WriteLine("} else {");
+                writer.WriteLine("panel.style.display = 'block';");
+                writer.WriteLine("this.style.fontSize = '150%';");
+                writer.WriteLine("}");
+                writer.WriteLine("});");
+                writer.WriteLine("}");
+
+                writer.WriteLine("</script>");
+
+                // Add the JavaScript to open all accordions
+                writer.WriteLine("<script>");
+                writer.WriteLine("function openAllAccordions() {");
+                writer.WriteLine("var acc = document.getElementsByClassName('accordion');");
+                writer.WriteLine("var i;");
+                writer.WriteLine("for (i = 0; i < acc.length; i++) {");
+                writer.WriteLine("var panel = acc[i].nextElementSibling;");
+                writer.WriteLine("panel.style.display = 'block';");
+                writer.WriteLine("}");
+                writer.WriteLine("}");
+                writer.WriteLine("</script>");
+
+                //writer.WriteLine("<script>");
+                //writer.WriteLine("function filterItems() {");
+                //writer.WriteLine("var input, filter, accordions, panels, i, ipn;");
+                //writer.WriteLine("input = document.getElementById('filterInput');");
+                //writer.WriteLine("filter = input.value.toUpperCase();");
+                //writer.WriteLine("accordions = document.getElementsByClassName('accordion');");
+                //writer.WriteLine("for (i = 0; i < accordions.length; i++) {");
+                //writer.WriteLine("ipn = accordions[i].getElementsByTagName('strong')[0].innerText;");
+                //writer.WriteLine("if (ipn.toUpperCase().indexOf(filter) > -1) {");
+                //writer.WriteLine("accordions[i].style.display = '';");
+                //writer.WriteLine("} else {");
+                //writer.WriteLine("accordions[i].style.display = 'none';");
+                //writer.WriteLine("}");
+                //writer.WriteLine("}");
+                //writer.WriteLine("}");
+                //writer.WriteLine("</script>");
+
+                writer.WriteLine("<script>");
+                writer.WriteLine("function filterItems() {");
+                writer.WriteLine("var input, filter, accordions, panels, i, ipn;");
+                writer.WriteLine("input = document.getElementById('filterInput');");
+                writer.WriteLine("filter = input.value.toUpperCase();");
+                writer.WriteLine("accordions = document.getElementsByClassName('accordion');");
+                writer.WriteLine("for (i = 0; i < accordions.length; i++) {");
+                writer.WriteLine("ipn = accordions[i].getElementsByTagName('strong')[0].innerText;");
+                writer.WriteLine("if (ipn.toUpperCase().indexOf(filter) > -1) {");
+                writer.WriteLine("accordions[i].style.display = '';");
+                writer.WriteLine("} else {");
+                writer.WriteLine("accordions[i].style.display = 'none';");
+                writer.WriteLine("}");
+                writer.WriteLine("}");
+                writer.WriteLine("}");
+
+                writer.WriteLine("function clearFilter() {");
+                writer.WriteLine("var input, accordions, i;");
+                writer.WriteLine("input = document.getElementById('filterInput');");
+                writer.WriteLine("input.value = '';");
+                writer.WriteLine("accordions = document.getElementsByClassName('accordion');");
+                writer.WriteLine("for (i = 0; i < accordions.length; i++) {");
+                writer.WriteLine("accordions[i].style.display = '';");
+                writer.WriteLine("}");
+                writer.WriteLine("}");
+                writer.WriteLine("</script>");
+
+
+
+                writer.WriteLine("</body>");
+                writer.WriteLine("</html>");
+            }
+
+            var process = new Process();
+            process.StartInfo = new ProcessStartInfo(filename)
+            {
+                UseShellExecute = true
+            };
+            process.Start();
+        }
+
 
         private void GenerateHTML()
         {
@@ -1695,16 +1932,6 @@ namespace WH_Panel
                 // Assuming you have a reference to the selected DataGridViewCell
                 DataGridViewCell selectedCell = dataGridView1.SelectedCells[0];
 
-                // Getting the value of the selected cell
-                //string cellValue = selectedCell.Value != null ? selectedCell.Value.ToString() : "";
-
-                // Creating the HTML string
-                //string htmlString = "<td>WAREHOUSE STOCK STATUS for: <b>" + cellValue + "</b> UPDATED " + fileTimeStamp + "</td>";
-
-                // Getting the value of the first cell in the first row
-                //string cellValue = dataGridView1.Rows[0].Cells[0].Value != null
-                //    ? dataGridView1.Rows[0].Cells[0].Value.ToString()
-                //    : "";
 
                 int ipnColumnIndex = dataGridView1.Columns["IPN"].Index; // Replace "IPN" with the actual column name
 
