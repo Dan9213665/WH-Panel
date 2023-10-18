@@ -49,7 +49,6 @@
             groupBox6 = new GroupBox();
             tableLayoutPanel2 = new TableLayoutPanel();
             dataGridView1 = new DataGridView();
-            dgvWHBom1 = new DataGridView();
             button2 = new Button();
             openFileDialog1 = new OpenFileDialog();
             tableLayoutPanel1.SuspendLayout();
@@ -66,15 +65,14 @@
             groupBox6.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)dgvWHBom1).BeginInit();
             SuspendLayout();
             // 
             // tableLayoutPanel1
             // 
             tableLayoutPanel1.ColumnCount = 3;
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333359F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333359F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel1.Controls.Add(groupBox1, 0, 0);
             tableLayoutPanel1.Controls.Add(groupBox2, 0, 1);
             tableLayoutPanel1.Controls.Add(groupBox3, 1, 1);
@@ -273,11 +271,9 @@
             // 
             // tableLayoutPanel2
             // 
-            tableLayoutPanel2.ColumnCount = 2;
+            tableLayoutPanel2.ColumnCount = 1;
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 80F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
             tableLayoutPanel2.Controls.Add(dataGridView1, 0, 0);
-            tableLayoutPanel2.Controls.Add(dgvWHBom1, 1, 0);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.Location = new Point(3, 19);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -296,21 +292,8 @@
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
             dataGridView1.RowTemplate.Height = 25;
-            dataGridView1.Size = new Size(336, 258);
+            dataGridView1.Size = new Size(422, 258);
             dataGridView1.TabIndex = 0;
-            // 
-            // dgvWHBom1
-            // 
-            dgvWHBom1.AllowUserToAddRows = false;
-            dgvWHBom1.AllowUserToDeleteRows = false;
-            dgvWHBom1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvWHBom1.Dock = DockStyle.Fill;
-            dgvWHBom1.Location = new Point(345, 3);
-            dgvWHBom1.Name = "dgvWHBom1";
-            dgvWHBom1.ReadOnly = true;
-            dgvWHBom1.RowTemplate.Height = 25;
-            dgvWHBom1.Size = new Size(80, 258);
-            dgvWHBom1.TabIndex = 2;
             // 
             // button2
             // 
@@ -352,7 +335,6 @@
             groupBox6.ResumeLayout(false);
             tableLayoutPanel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)dgvWHBom1).EndInit();
             ResumeLayout(false);
         }
 
@@ -379,7 +361,6 @@
         private OpenFileDialog openFileDialog1;
         private RichTextBox richTextBox1;
         private TableLayoutPanel tableLayoutPanel2;
-        private DataGridView dgvWHBom1;
         private Button button2;
     }
 }

@@ -357,7 +357,7 @@ namespace WH_Panel
             var result = openFileDialog1.Title;
             openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\2023\\" + DateTime.Now.ToString("MM") + ".2023";
             openFileDialog1.Filter = "BOM files(*.xlsm) | *.xlsm";
-            openFileDialog1.Multiselect = false;
+            openFileDialog1.Multiselect = true;
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -567,8 +567,9 @@ namespace WH_Panel
                     StockViewDataLoader(w.clStockFile, "STOCK");
                 }
             }
+            PopulateStockView();
         }
-       
+
 
         private void StockViewDataLoader(string fp, string thesheetName)
         {
@@ -627,19 +628,118 @@ namespace WH_Panel
 
 
         }
+
+        
         private void PopulateStockView()
         {
+            var sumRequiredByIPN = BOMs.SelectMany(bom => bom.Items)
+                                      .GroupBy(item => item.IPN)
+                                      .Select(group => new
+                                      {
+                                          IPN = group.Key,
+                                          TotalRequired = group.Sum(item => item.Delta)
+                                      });
+       
 
-            IEnumerable<WHitem> data = stockItems;
+            var stockData = BOMs.SelectMany(bom => bom.Items)
+                   .GroupBy(item => item.IPN)
+                   .Select(group => new
+                   {
+                       IPN = group.Key,
+                       MFPN = group.Select(x => x.MFPN).FirstOrDefault(),
+                       Description = group.Select(x => x.Description).FirstOrDefault(),
+                       TotalRequired = group.Sum(item => item.Delta)
+                   })
+                   .GroupJoin(stockItems,
+                              sumItem => sumItem.IPN,
+                              stockItem => stockItem.IPN,
+                              (sumItem, stockItemGroup) => new
+                              {
+                                  IPN = sumItem.IPN,
+                                  MFPN = sumItem.MFPN,
+                                  Description = sumItem.Description,
+                                  StockQuantity = stockItemGroup.Sum(item => item.Stock),
+                                  TotalRequired = sumItem.TotalRequired
+                              })
+                   .OrderBy(item => item.IPN);
 
+            // Generating the HTML content
+            string htmlContent = @"<!DOCTYPE html>
+                        <html style='background-color: gray;'>
+                        <head>
+                        <style>
+                        .lightcoral { background-color: lightcoral; }
+                        .lightgreen { background-color: lightgreen; }
+                        </style>
+                     <script>
+                    function sortTable() {
+                        var table, rows, switching, i, x, y, shouldSwitch;
+                        table = document.getElementById('stockTable');
+                        switching = true;
+                        while (switching) {
+                            switching = false;
+                            rows = table.rows;
+                            for (i = 1; i < (rows.length - 1); i++) {
+                                x = rows[i].getElementsByTagName('TD')[5];
+                                y = rows[i + 1].getElementsByTagName('TD')[5];
+                                if (Number(x.innerHTML) > Number(y.innerHTML)) {
+                                    shouldSwitch = true;
+                                    break;
+                                }
+                            }
+                            if (shouldSwitch) {
+                                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                                switching = true;
+                            }
+                        }
+                    }
+                    </script>
+                        </head>
+                        <body>
+                        <div style='text-align: center;'>
+                            <h2>Warehouse stock simulation for";
 
-            DataTable stockDTable = new DataTable();
-            stockDTable.Clear();
-            using (var reader = ObjectReader.Create(data))
+            htmlContent += "<br>";
+
+            // Adding BOMs names to the HTML content
+            foreach (var bom in BOMs)
             {
-                stockDTable.Load(reader);
+                htmlContent += $"{bom.Name}<br>";
             }
-            dgvWHBom1.DataSource = stockDTable;
+
+            // Removing the last comma
+            htmlContent = htmlContent.TrimEnd(',');
+
+            // Continuing the HTML content
+            htmlContent += @"</h2>
+                <table id='stockTable' border='1'>
+                <tr><th>IPN</th><th>MFPN</th><th>Description</th><th>Stock Quantity</th><th>KITs BALANCE</th><th onclick='sortTable()'>DELTA</th></tr>";
+
+            
+            foreach (var item in stockData)
+            {
+                var rowColorClass = item.StockQuantity + item.TotalRequired < 0 ? "lightcoral" : "lightgreen";
+                htmlContent += $"<tr class='{rowColorClass}'><td>{item.IPN}</td><td>{item.MFPN}</td><td>{item.Description}</td><td>{item.StockQuantity}</td><td>{item.TotalRequired}</td><td>{item.StockQuantity + item.TotalRequired}</td></tr>";
+            }
+            htmlContent += "</table></div></body></html>";
+
+            // Writing the HTML content to a file
+            string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+            string filename = @"\\dbr1\Data\WareHouse\2023\WHsearcher\" + fileTimeStamp + "_" + ".html";
+
+            using (StreamWriter writer = new StreamWriter(filename))
+            {
+                writer.Write(htmlContent);
+            }
+
+            // Opening the HTML file in the default browser
+            var process = new Process();
+            process.StartInfo = new ProcessStartInfo(filename)
+            {
+                UseShellExecute = true
+            };
+            process.Start();
         }
+
     }
 }
