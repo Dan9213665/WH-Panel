@@ -242,5 +242,11 @@ namespace WH_Panel
             FrmQRPrint fq = new FrmQRPrint();
             fq.Show();
         }
+
+        private void button10_Click_1(object sender, EventArgs e)
+        {
+            FrmLinkSimulator frm = new FrmLinkSimulator();
+            frm.Show();
+        }
     }
 }

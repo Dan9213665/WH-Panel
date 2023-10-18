@@ -1162,6 +1162,10 @@ namespace WH_Panel
             {
                 selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_STOCK.xlsm";
             }
+            else if (w.IPN.StartsWith("BAN"))
+            {
+                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_STOCK.xlsm";
+            }
             else
             {
                 selection = string.Empty;
