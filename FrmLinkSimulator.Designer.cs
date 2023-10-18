@@ -42,12 +42,15 @@
             comboBox3 = new ComboBox();
             groupBox5 = new GroupBox();
             comboBox4 = new ComboBox();
-            groupBox6 = new GroupBox();
-            dataGridView1 = new DataGridView();
             groupBox7 = new GroupBox();
             dataGridView2 = new DataGridView();
             groupBox8 = new GroupBox();
             dataGridView3 = new DataGridView();
+            groupBox6 = new GroupBox();
+            tableLayoutPanel2 = new TableLayoutPanel();
+            dataGridView1 = new DataGridView();
+            dgvWHBom1 = new DataGridView();
+            button2 = new Button();
             openFileDialog1 = new OpenFileDialog();
             tableLayoutPanel1.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -56,12 +59,14 @@
             groupBox3.SuspendLayout();
             groupBox4.SuspendLayout();
             groupBox5.SuspendLayout();
-            groupBox6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             groupBox7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
             groupBox8.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView3).BeginInit();
+            groupBox6.SuspendLayout();
+            tableLayoutPanel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvWHBom1).BeginInit();
             SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -75,9 +80,10 @@
             tableLayoutPanel1.Controls.Add(groupBox3, 1, 1);
             tableLayoutPanel1.Controls.Add(groupBox4, 2, 1);
             tableLayoutPanel1.Controls.Add(groupBox5, 1, 0);
-            tableLayoutPanel1.Controls.Add(groupBox6, 0, 2);
             tableLayoutPanel1.Controls.Add(groupBox7, 1, 2);
             tableLayoutPanel1.Controls.Add(groupBox8, 2, 2);
+            tableLayoutPanel1.Controls.Add(groupBox6, 0, 2);
+            tableLayoutPanel1.Controls.Add(button2, 2, 0);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -212,27 +218,6 @@
             comboBox4.Size = new Size(428, 23);
             comboBox4.TabIndex = 0;
             // 
-            // groupBox6
-            // 
-            groupBox6.Controls.Add(dataGridView1);
-            groupBox6.Dock = DockStyle.Fill;
-            groupBox6.Location = new Point(3, 159);
-            groupBox6.Name = "groupBox6";
-            groupBox6.Size = new Size(434, 286);
-            groupBox6.TabIndex = 5;
-            groupBox6.TabStop = false;
-            groupBox6.Text = "BOM1";
-            // 
-            // dataGridView1
-            // 
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Dock = DockStyle.Fill;
-            dataGridView1.Location = new Point(3, 19);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.RowTemplate.Height = 25;
-            dataGridView1.Size = new Size(428, 264);
-            dataGridView1.TabIndex = 0;
-            // 
             // groupBox7
             // 
             groupBox7.Controls.Add(dataGridView2);
@@ -275,6 +260,69 @@
             dataGridView3.Size = new Size(430, 264);
             dataGridView3.TabIndex = 0;
             // 
+            // groupBox6
+            // 
+            groupBox6.Controls.Add(tableLayoutPanel2);
+            groupBox6.Dock = DockStyle.Fill;
+            groupBox6.Location = new Point(3, 159);
+            groupBox6.Name = "groupBox6";
+            groupBox6.Size = new Size(434, 286);
+            groupBox6.TabIndex = 5;
+            groupBox6.TabStop = false;
+            groupBox6.Text = "BOM1";
+            // 
+            // tableLayoutPanel2
+            // 
+            tableLayoutPanel2.ColumnCount = 2;
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 80F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tableLayoutPanel2.Controls.Add(dataGridView1, 0, 0);
+            tableLayoutPanel2.Controls.Add(dgvWHBom1, 1, 0);
+            tableLayoutPanel2.Dock = DockStyle.Fill;
+            tableLayoutPanel2.Location = new Point(3, 19);
+            tableLayoutPanel2.Name = "tableLayoutPanel2";
+            tableLayoutPanel2.RowCount = 1;
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel2.Size = new Size(428, 264);
+            tableLayoutPanel2.TabIndex = 1;
+            // 
+            // dataGridView1
+            // 
+            dataGridView1.AllowUserToAddRows = false;
+            dataGridView1.AllowUserToDeleteRows = false;
+            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView1.Dock = DockStyle.Fill;
+            dataGridView1.Location = new Point(3, 3);
+            dataGridView1.Name = "dataGridView1";
+            dataGridView1.ReadOnly = true;
+            dataGridView1.RowTemplate.Height = 25;
+            dataGridView1.Size = new Size(336, 258);
+            dataGridView1.TabIndex = 0;
+            // 
+            // dgvWHBom1
+            // 
+            dgvWHBom1.AllowUserToAddRows = false;
+            dgvWHBom1.AllowUserToDeleteRows = false;
+            dgvWHBom1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvWHBom1.Dock = DockStyle.Fill;
+            dgvWHBom1.Location = new Point(345, 3);
+            dgvWHBom1.Name = "dgvWHBom1";
+            dgvWHBom1.ReadOnly = true;
+            dgvWHBom1.RowTemplate.Height = 25;
+            dgvWHBom1.Size = new Size(80, 258);
+            dgvWHBom1.TabIndex = 2;
+            // 
+            // button2
+            // 
+            button2.BackgroundImage = (Image)resources.GetObject("button2.BackgroundImage");
+            button2.BackgroundImageLayout = ImageLayout.Zoom;
+            button2.Location = new Point(883, 3);
+            button2.Name = "button2";
+            button2.Size = new Size(114, 80);
+            button2.TabIndex = 8;
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
+            // 
             // openFileDialog1
             // 
             openFileDialog1.FileName = "openFileDialog1";
@@ -289,6 +337,7 @@
             Name = "FrmLinkSimulator";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "FrmLinkSimulator";
+            WindowState = FormWindowState.Maximized;
             tableLayoutPanel1.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
             flowLayoutPanel1.ResumeLayout(false);
@@ -296,12 +345,14 @@
             groupBox3.ResumeLayout(false);
             groupBox4.ResumeLayout(false);
             groupBox5.ResumeLayout(false);
-            groupBox6.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             groupBox7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
             groupBox8.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView3).EndInit();
+            groupBox6.ResumeLayout(false);
+            tableLayoutPanel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvWHBom1).EndInit();
             ResumeLayout(false);
         }
 
@@ -327,5 +378,8 @@
         private DataGridView dataGridView3;
         private OpenFileDialog openFileDialog1;
         private RichTextBox richTextBox1;
+        private TableLayoutPanel tableLayoutPanel2;
+        private DataGridView dgvWHBom1;
+        private Button button2;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using FastMember;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,18 +13,24 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolBar;
+using Button = System.Windows.Forms.Button;
 using ComboBox = System.Windows.Forms.ComboBox;
+using Label = System.Windows.Forms.Label;
+using TextBox = System.Windows.Forms.TextBox;
 
 namespace WH_Panel
 {
     public partial class FrmLinkSimulator : Form
     {
         List<ClientWarehouse> warehouses = new List<ClientWarehouse>();
+        public List<WHitem> stockItems = new List<WHitem>();
         public FrmLinkSimulator()
         {
             InitializeComponent();
             InitializeComboBoxes();
             IntitializeWarehouses();
+            UpdateControlColors(this);
             BOMs = new List<BOMList>();
 
 
@@ -44,7 +51,7 @@ namespace WH_Panel
     new ClientWarehouse
     {
         clName = "Leader_Tech",
-        clPrefix = "C00",
+        clPrefix = "C100",
         clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_AVL.xlsm",
         clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm"
     },
@@ -176,6 +183,103 @@ namespace WH_Panel
             comboBox2.SelectedIndexChanged += ComboBoxes_SelectedIndexChanged;
             comboBox3.SelectedIndexChanged += ComboBoxes_SelectedIndexChanged;
         }
+
+        private void UpdateControlColors(Control parentControl)
+        {
+            foreach (Control control in parentControl.Controls)
+            {
+                // Update control colors based on your criteria
+                control.BackColor = Color.LightGray;
+                control.ForeColor = Color.Black;
+
+                // Handle Button controls separately
+                if (control is Button button)
+                {
+                    button.FlatStyle = FlatStyle.Flat; // Set FlatStyle to Flat
+                    button.FlatAppearance.BorderColor = Color.DarkGray; // Change border color
+                    button.ForeColor = Color.Black;
+                }
+
+                // Handle Button controls separately
+                if (control is GroupBox groupbox)
+                {
+                    groupbox.FlatStyle = FlatStyle.Flat; // Set FlatStyle to Flat
+                    groupbox.ForeColor = Color.Black;
+                }
+
+                // Handle TextBox controls separately
+                if (control is TextBox textBox)
+                {
+                    textBox.BorderStyle = BorderStyle.FixedSingle; // Set border style to FixedSingle
+                    textBox.BackColor = Color.LightGray; // Change background color
+                    textBox.ForeColor = Color.Black; // Change text color
+                }
+
+                // Handle Label controls separately
+                if (control is Label label)
+                {
+                    label.BorderStyle = BorderStyle.FixedSingle; // Set border style to FixedSingle
+                    label.BackColor = Color.Gray; // Change background color
+                    label.ForeColor = Color.Black; // Change text color
+                }
+
+
+                // Handle TabControl controls separately
+                if (control is TabControl tabControl)
+                {
+                    //tabControl.BackColor = Color.Black; // Change TabControl background color
+                    tabControl.ForeColor = Color.Black;
+                    // Handle each TabPage within the TabControl
+                    foreach (TabPage tabPage in tabControl.TabPages)
+                    {
+                        tabPage.BackColor = Color.Gray; // Change TabPage background color
+                        tabPage.ForeColor = Color.Black; // Change TabPage text color
+                    }
+                }
+
+                // Handle DataGridView controls separately
+                if (control is DataGridView dataGridView)
+                {
+                    // Update DataGridView styles
+                    dataGridView.EnableHeadersVisualStyles = false;
+                    dataGridView.BackgroundColor = Color.DarkGray;
+                    dataGridView.ColumnHeadersDefaultCellStyle.BackColor = Color.Gray;
+                    dataGridView.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
+                    dataGridView.RowHeadersDefaultCellStyle.BackColor = Color.Gray;
+                    dataGridView.DefaultCellStyle.BackColor = Color.LightGray;
+                    dataGridView.DefaultCellStyle.ForeColor = Color.Black;
+                    dataGridView.DefaultCellStyle.SelectionBackColor = Color.Green;
+                    dataGridView.DefaultCellStyle.SelectionForeColor = Color.White;
+                    // Change the header cell styles for each column
+                    foreach (DataGridViewColumn column in dataGridView.Columns)
+                    {
+                        column.HeaderCell.Style.BackColor = Color.DarkGray;
+                        column.HeaderCell.Style.ForeColor = Color.Black;
+                    }
+                }
+                // Handle ComboBox controls separately
+                if (control is ComboBox comboBox)
+                {
+                    comboBox.FlatStyle = FlatStyle.Flat; // Set FlatStyle to Flat
+                    comboBox.BackColor = Color.DarkGray; // Change ComboBox background color
+                    comboBox.ForeColor = Color.Black; // Change ComboBox text color
+                }
+                // Handle DateTimePicker controls separately
+                if (control is DateTimePicker dateTimePicker)
+                {
+                    // Change DateTimePicker's custom properties here
+                    dateTimePicker.BackColor = Color.DarkGray; // Change DateTimePicker background color
+                    dateTimePicker.ForeColor = Color.White; // Change DateTimePicker text color
+                                                            // Customize other DateTimePicker properties as needed
+                }
+                // Recursively update controls within containers
+                if (control.Controls.Count > 0)
+                {
+                    UpdateControlColors(control);
+                }
+            }
+        }
+
         public class BOMList
         {
             public string Name { get; set; }
@@ -247,7 +351,7 @@ namespace WH_Panel
                 }
             }
         }
-       
+
         private void button1_Click(object sender, EventArgs e)
         {
             var result = openFileDialog1.Title;
@@ -416,12 +520,13 @@ namespace WH_Panel
             dgw.Columns["Description"].Visible = false;
             dgw.Columns["Calc"].Visible = false;
             dgw.Columns["Alts"].Visible = false;
+            dgw.Columns["MFPN"].Visible = false;
+            dgw.Columns["QtyPerUnit"].Visible = false;
 
             dgw.Columns["IPN"].DisplayIndex = 0;
-            dgw.Columns["MFPN"].DisplayIndex = 1;
-            dgw.Columns["QtyInKit"].DisplayIndex = 2;
-            dgw.Columns["Delta"].DisplayIndex = 3;
-            dgw.Columns["QtyPerUnit"].DisplayIndex = 4;
+            dgw.Columns["QtyInKit"].DisplayIndex = 1;
+            dgw.Columns["Delta"].DisplayIndex = 2;
+
 
             // Set AutoSizeMode for the displayed columns
             foreach (DataGridViewColumn column in dgw.Columns)
@@ -431,7 +536,110 @@ namespace WH_Panel
                     column.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                 }
             }
+            // Handling the CellFormatting event
+            dgw.CellFormatting += (sender, e) =>
+            {
+                if (e.ColumnIndex == dgw.Columns["Delta"].Index && e.Value != null)
+                {
+                    // Change the cell color based on the value
+                    var deltaValue = Convert.ToDecimal(e.Value);
+                    if (deltaValue >= 0)
+                    {
+                        e.CellStyle.BackColor = Color.LightGreen;
+                    }
+                    else
+                    {
+                        e.CellStyle.BackColor = Color.IndianRed;
+                    }
+                }
+            };
+            // Sorting by Delta column
+            dgw.Sort(dgw.Columns["Delta"], ListSortDirection.Ascending);
+        }
 
+        private void button2_Click(object sender, EventArgs e)
+        {
+            foreach (ClientWarehouse w in warehouses)
+            {
+                if (comboBox4.SelectedItem == w.clName)
+                {
+
+                    StockViewDataLoader(w.clStockFile, "STOCK");
+                }
+            }
+        }
+       
+
+        private void StockViewDataLoader(string fp, string thesheetName)
+        {
+            try
+            {
+                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+                using (OleDbConnection conn = new OleDbConnection(constr))
+                {
+                    conn.Open();
+                    OleDbCommand command = new OleDbCommand("Select * from [" + thesheetName + "$]", conn);
+                    OleDbDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            try
+                            {
+                                int res = 0;
+                                int toStk;
+                                bool stk = int.TryParse(reader[4].ToString(), out res);
+                                if (stk)
+                                {
+                                    toStk = res;
+                                }
+                                else
+                                {
+                                    toStk = 0;
+                                }
+                                WHitem abc = new WHitem
+                                {
+                                    IPN = reader[0].ToString(),
+                                    Manufacturer = reader[1].ToString(),
+                                    MFPN = reader[2].ToString(),
+                                    Description = reader[3].ToString(),
+                                    Stock = toStk,
+                                    UpdatedOn = reader[5].ToString(),
+                                    ReelBagTrayStick = reader[6].ToString(),
+                                    SourceRequester = reader[7].ToString()
+                                };
+                                stockItems.Add(abc);
+                            }
+                            catch (Exception E)
+                            {
+                                MessageBox.Show(E.Message);
+                                throw;
+                            }
+                        }
+                    }
+                    conn.Close();
+                }
+            }
+            catch (IOException)
+            {
+                MessageBox.Show("Error");
+            }
+
+
+        }
+        private void PopulateStockView()
+        {
+
+            IEnumerable<WHitem> data = stockItems;
+
+
+            DataTable stockDTable = new DataTable();
+            stockDTable.Clear();
+            using (var reader = ObjectReader.Create(data))
+            {
+                stockDTable.Load(reader);
+            }
+            dgvWHBom1.DataSource = stockDTable;
         }
     }
 }
