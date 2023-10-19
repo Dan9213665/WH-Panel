@@ -696,29 +696,36 @@ namespace WH_Panel
         var headerBottom = headerElement.offsetTop + headerElement.offsetHeight;
         tableElement.style.marginTop = Math.max(headerBottom, headerElement.offsetHeight) + 'px';
     };
-                    function sortTable() {
-                        var table, rows, switching, i, x, y, shouldSwitch;
-                        table = document.getElementById('stockTable');
-                        switching = true;
-                        while (switching) {
-                            switching = false;
-                            rows = table.rows;
-                            for (i = 1; i < (rows.length - 1); i++) {
-                                x = rows[i].getElementsByTagName('TD')[5];
-                                y = rows[i + 1].getElementsByTagName('TD')[5];
-                                if (Number(x.innerHTML) > Number(y.innerHTML)) {
-                                    shouldSwitch = true;
-                                    break;
-                                }
-                            }
-                            if (shouldSwitch) {
-                                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-                                switching = true;
-                            }
-                        }
-                    }
+                    function sortTable(columnIndex) {{
+        var table, rows, switching, i, x, y, shouldSwitch;
+        table = document.getElementById('stockTable');
+        switching = true;
+        while (switching) {{
+            switching = false;
+            rows = table.rows;
+            for (i = 1; i < (rows.length - 1); i++) {{
+                x = rows[i].getElementsByTagName('TD')[columnIndex];
+                y = rows[i + 1].getElementsByTagName('TD')[columnIndex];
+                if (isNaN(x.innerHTML) || isNaN(y.innerHTML)) {{
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {{
+                        shouldSwitch = true;
+                        break;
+                    }}
+                }} else {{
+                    if (Number(x.innerHTML) > Number(y.innerHTML)) {{
+                        shouldSwitch = true;
+                        break;
+                    }}
+                }}
+            }}
+            if (shouldSwitch) {{
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+            }}
+        }}
+    }}
 
-  function filterTable() {{
+      function filterTable() {{
         var input, filter, table, tr, td, i, txtValue;
         input = document.getElementById('searchInput');
         filter = input.value.toUpperCase();
@@ -726,10 +733,12 @@ namespace WH_Panel
         tr = table.getElementsByTagName('tr');
 
         for (i = 0; i < tr.length; i++) {{
-            td = tr[i].getElementsByTagName('td')[0];
-            if (td) {{
-                txtValue = td.textContent || td.innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {{
+            tdIPN = tr[i].getElementsByTagName('td')[0];
+            tdMFPN = tr[i].getElementsByTagName('td')[1];
+            if (tdIPN || tdMFPN) {{
+                txtValueIPN = tdIPN.textContent || tdIPN.innerText;
+                txtValueMFPN = tdMFPN.textContent || tdMFPN.innerText;
+                if (txtValueIPN.toUpperCase().indexOf(filter) > -1 || txtValueMFPN.toUpperCase().indexOf(filter) > -1) {{
                     tr[i].style.display = '';
                 }} else {{
                     tr[i].style.display = 'none';
@@ -738,7 +747,7 @@ namespace WH_Panel
         }}
     }}
 
-    function clearFilter() {{
+     function clearFilter() {{
         document.getElementById('searchInput').value = '';
         var table = document.getElementById('stockTable');
         var tr = table.getElementsByTagName('tr');
@@ -779,10 +788,13 @@ namespace WH_Panel
 
             // Continuing the HTML content
             htmlContent += @"</h2>
-              <input type='text' id=""searchInput"" placeholder=""filter by IPN"" onkeyup=""filterTable()"" />
+         
+<input type='text' id=""searchInput"" placeholder=""Search for IPN or MFPN.."" onkeyup=""filterTable()"" />
+
+
 <button onclick=""clearFilter()"">Clear Filter</button>
                 <table id='stockTable' border='1'>
-                <tr><th>IPN</th><th>MFPN</th><th>Description</th><th>Stock Quantity</th><th>KITs BALANCE</th><th onclick='sortTable()'>DELTA</th></tr>";
+                <tr><th onclick='sortTable(0)'>IPN</th><th onclick='sortTable(1)'>MFPN</th><th onclick='sortTable(2)'>Description</th><th onclick='sortTable(3)'>Stock Quantity</th><th onclick='sortTable(4)'>KITs BALANCE</th><th onclick='sortTable(5)'>DELTA</th></tr>";
 
             
             foreach (var item in stockData)
