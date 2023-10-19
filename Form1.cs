@@ -1,5 +1,7 @@
 using System;
+using System.Data.Common;
 using System.Diagnostics;
+using System.IO;
 using System.Windows.Forms;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
@@ -247,6 +249,23 @@ namespace WH_Panel
         {
             FrmLinkSimulator frm = new FrmLinkSimulator();
             frm.Show();
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            //// Close any open file streams
+            //if (fileStream != null)
+            //{
+            //    fileStream.Close();
+            //    fileStream.Dispose();
+            //}
+
+            //// Close any open database connections
+            //if (dbConnection != null)
+            //{
+            //    dbConnection.Close();
+            //    dbConnection.Dispose();
+            //}
         }
     }
 }

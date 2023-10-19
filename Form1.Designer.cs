@@ -378,6 +378,7 @@ namespace WH_Panel
             Name = "Form1";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Imperium Tabula Principalis UPDATED 202212231139";
+            FormClosing += Form1_FormClosing;
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             flowLayoutPanel1.ResumeLayout(false);

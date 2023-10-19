@@ -670,8 +670,32 @@ namespace WH_Panel
                         <style>
                         .lightcoral { background-color: lightcoral; }
                         .lightgreen { background-color: lightgreen; }
+                         .sticky {
+        position: sticky;
+        top: 0;
+        background-color: gray;
+        z-index: 0;
+    }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th {
+        position: sticky;
+        top: calc(0rem + 1px);
+        border: 1px solid black;
+        background-color: gray;
+        z-index: 1;
+    }
                         </style>
                      <script>
+                         window.onload = function() {
+        var headerElement = document.getElementById('myHeader');
+        var tableElement = document.getElementById('stockTable');
+
+        var headerBottom = headerElement.offsetTop + headerElement.offsetHeight;
+        tableElement.style.marginTop = Math.max(headerBottom, headerElement.offsetHeight) + 'px';
+    };
                     function sortTable() {
                         var table, rows, switching, i, x, y, shouldSwitch;
                         table = document.getElementById('stockTable');
@@ -693,6 +717,36 @@ namespace WH_Panel
                             }
                         }
                     }
+
+  function filterTable() {{
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById('searchInput');
+        filter = input.value.toUpperCase();
+        table = document.getElementById('stockTable');
+        tr = table.getElementsByTagName('tr');
+
+        for (i = 0; i < tr.length; i++) {{
+            td = tr[i].getElementsByTagName('td')[0];
+            if (td) {{
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {{
+                    tr[i].style.display = '';
+                }} else {{
+                    tr[i].style.display = 'none';
+                }}
+            }}
+        }}
+    }}
+
+    function clearFilter() {{
+        document.getElementById('searchInput').value = '';
+        var table = document.getElementById('stockTable');
+        var tr = table.getElementsByTagName('tr');
+        for (var i = 0; i < tr.length; i++) {{
+            tr[i].style.display = '';
+        }}
+    }}
+
                     </script>
                         </head>
                         <body>
@@ -725,6 +779,8 @@ namespace WH_Panel
 
             // Continuing the HTML content
             htmlContent += @"</h2>
+              <input type='text' id=""searchInput"" placeholder=""filter by IPN"" onkeyup=""filterTable()"" />
+<button onclick=""clearFilter()"">Clear Filter</button>
                 <table id='stockTable' border='1'>
                 <tr><th>IPN</th><th>MFPN</th><th>Description</th><th>Stock Quantity</th><th>KITs BALANCE</th><th onclick='sortTable()'>DELTA</th></tr>";
 
