@@ -380,7 +380,7 @@
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FrmLinkSimulator";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "FrmLinkSimulator";
+            Text = "BOM Link Simulator";
             WindowState = FormWindowState.Maximized;
             tableLayoutPanel1.ResumeLayout(false);
             groupBox1.ResumeLayout(false);

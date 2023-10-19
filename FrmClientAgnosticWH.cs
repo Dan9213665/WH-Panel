@@ -37,21 +37,6 @@ namespace WH_Panel
         private object cmd;
         public TextBox LastInputFromUser = new TextBox();
 
-        //private void UpdateControlColors(Control parentControl)
-        //{
-        //    foreach (Control control in parentControl.Controls)
-        //    {
-        //        // Update control colors based on your criteria
-        //        control.BackColor = Color.Black;
-        //        control.ForeColor = Color.White;
-
-        //        // Recursively update controls within containers
-        //        if (control.Controls.Count > 0)
-        //        {
-        //            UpdateControlColors(control);
-        //        }
-        //    }
-        //}
         private void UpdateControlColors(Control parentControl)
         {
             foreach (Control control in parentControl.Controls)

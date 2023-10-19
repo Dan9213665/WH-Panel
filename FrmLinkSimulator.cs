@@ -360,26 +360,53 @@ namespace WH_Panel
             }
         }
 
+        //private void button1_Click(object sender, EventArgs e)
+        //{
+        //    var result = openFileDialog1.Title;
+        //    openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\2023\\" + DateTime.Now.ToString("MM") + ".2023";
+        //    openFileDialog1.Filter = "BOM files(*.xlsm) | *.xlsm";
+        //    openFileDialog1.Multiselect = true;
+
+        //    if (openFileDialog1.ShowDialog() == DialogResult.OK)
+        //    {
+        //        fileName = openFileDialog1.FileName;
+        //        theExcelFilePath = Path.GetFileName(fileName);
+        //        string Litem = Path.GetFileName(fileName);
+
+        //        if (IsFileLoaded(theExcelFilePath))
+        //        {
+        //            MessageBox.Show("File already loaded!");
+        //        }
+        //        else
+        //        {
+        //            DataLoader(fileName, Litem);
+        //        }
+        //    }
+        //}
         private void button1_Click(object sender, EventArgs e)
         {
-            var result = openFileDialog1.Title;
-            openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\2023\\" + DateTime.Now.ToString("MM") + ".2023";
+            openFileDialog1.Title = "Select BOM File";
+            openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\2023\\" + DateTime.Now.ToString("MM.yyyy");
             openFileDialog1.Filter = "BOM files(*.xlsm) | *.xlsm";
             openFileDialog1.Multiselect = true;
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                fileName = openFileDialog1.FileName;
-                theExcelFilePath = Path.GetFileName(fileName);
-                string Litem = Path.GetFileName(fileName);
+                string[] fileNames = openFileDialog1.FileNames; // Get all selected file names
 
-                if (IsFileLoaded(theExcelFilePath))
+                foreach (string fileName in fileNames)
                 {
-                    MessageBox.Show("File already loaded!");
-                }
-                else
-                {
-                    DataLoader(fileName, Litem);
+                    string theExcelFilePath = Path.GetFileName(fileName);
+                    string Litem = Path.GetFileName(fileName);
+
+                    if (IsFileLoaded(theExcelFilePath))
+                    {
+                        MessageBox.Show("File already loaded!");
+                    }
+                    else
+                    {
+                        DataLoader(fileName, Litem);
+                    }
                 }
             }
         }
