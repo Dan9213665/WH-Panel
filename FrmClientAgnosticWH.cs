@@ -37,6 +37,7 @@ namespace WH_Panel
         private object cmd;
         public TextBox LastInputFromUser = new TextBox();
 
+
         private void UpdateControlColors(Control parentControl)
         {
             foreach (Control control in parentControl.Controls)
