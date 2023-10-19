@@ -41,7 +41,7 @@
             groupBox4 = new GroupBox();
             comboBox3 = new ComboBox();
             groupBox5 = new GroupBox();
-            comboBox4 = new ComboBox();
+            comboBox5 = new ComboBox();
             groupBox7 = new GroupBox();
             dataGridView2 = new DataGridView();
             groupBox8 = new GroupBox();
@@ -50,6 +50,10 @@
             tableLayoutPanel2 = new TableLayoutPanel();
             dataGridView1 = new DataGridView();
             button2 = new Button();
+            groupBox9 = new GroupBox();
+            comboBox4 = new ComboBox();
+            groupBox10 = new GroupBox();
+            dataGridView4 = new DataGridView();
             openFileDialog1 = new OpenFileDialog();
             tableLayoutPanel1.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -65,14 +69,18 @@
             groupBox6.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            groupBox9.SuspendLayout();
+            groupBox10.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridView4).BeginInit();
             SuspendLayout();
             // 
             // tableLayoutPanel1
             // 
-            tableLayoutPanel1.ColumnCount = 3;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel1.ColumnCount = 4;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
             tableLayoutPanel1.Controls.Add(groupBox1, 0, 0);
             tableLayoutPanel1.Controls.Add(groupBox2, 0, 1);
             tableLayoutPanel1.Controls.Add(groupBox3, 1, 1);
@@ -82,6 +90,8 @@
             tableLayoutPanel1.Controls.Add(groupBox8, 2, 2);
             tableLayoutPanel1.Controls.Add(groupBox6, 0, 2);
             tableLayoutPanel1.Controls.Add(button2, 2, 0);
+            tableLayoutPanel1.Controls.Add(groupBox9, 3, 1);
+            tableLayoutPanel1.Controls.Add(groupBox10, 3, 2);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -98,7 +108,7 @@
             groupBox1.Dock = DockStyle.Fill;
             groupBox1.Location = new Point(3, 3);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(434, 86);
+            groupBox1.Size = new Size(324, 86);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "Actions";
@@ -110,7 +120,7 @@
             flowLayoutPanel1.Dock = DockStyle.Fill;
             flowLayoutPanel1.Location = new Point(3, 19);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(428, 64);
+            flowLayoutPanel1.Size = new Size(318, 64);
             flowLayoutPanel1.TabIndex = 0;
             // 
             // button1
@@ -125,7 +135,7 @@
             // 
             // richTextBox1
             // 
-            richTextBox1.Location = new Point(98, 3);
+            richTextBox1.Location = new Point(3, 67);
             richTextBox1.Name = "richTextBox1";
             richTextBox1.ReadOnly = true;
             richTextBox1.Size = new Size(327, 58);
@@ -138,7 +148,7 @@
             groupBox2.Dock = DockStyle.Fill;
             groupBox2.Location = new Point(3, 95);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(434, 58);
+            groupBox2.Size = new Size(324, 100);
             groupBox2.TabIndex = 1;
             groupBox2.TabStop = false;
             groupBox2.Text = "First BOM";
@@ -150,16 +160,16 @@
             comboBox1.FormattingEnabled = true;
             comboBox1.Location = new Point(3, 19);
             comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(428, 23);
+            comboBox1.Size = new Size(318, 23);
             comboBox1.TabIndex = 0;
             // 
             // groupBox3
             // 
             groupBox3.Controls.Add(comboBox2);
             groupBox3.Dock = DockStyle.Fill;
-            groupBox3.Location = new Point(443, 95);
+            groupBox3.Location = new Point(333, 95);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(434, 58);
+            groupBox3.Size = new Size(324, 100);
             groupBox3.TabIndex = 2;
             groupBox3.TabStop = false;
             groupBox3.Text = "Second BOM";
@@ -171,16 +181,16 @@
             comboBox2.FormattingEnabled = true;
             comboBox2.Location = new Point(3, 19);
             comboBox2.Name = "comboBox2";
-            comboBox2.Size = new Size(428, 23);
+            comboBox2.Size = new Size(318, 23);
             comboBox2.TabIndex = 0;
             // 
             // groupBox4
             // 
             groupBox4.Controls.Add(comboBox3);
             groupBox4.Dock = DockStyle.Fill;
-            groupBox4.Location = new Point(883, 95);
+            groupBox4.Location = new Point(663, 95);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(436, 58);
+            groupBox4.Size = new Size(324, 100);
             groupBox4.TabIndex = 3;
             groupBox4.TabStop = false;
             groupBox4.Text = "Third BOM";
@@ -192,79 +202,85 @@
             comboBox3.FormattingEnabled = true;
             comboBox3.Location = new Point(3, 19);
             comboBox3.Name = "comboBox3";
-            comboBox3.Size = new Size(430, 23);
+            comboBox3.Size = new Size(318, 23);
             comboBox3.TabIndex = 0;
             // 
             // groupBox5
             // 
-            groupBox5.Controls.Add(comboBox4);
+            groupBox5.Controls.Add(comboBox5);
             groupBox5.Dock = DockStyle.Fill;
-            groupBox5.Location = new Point(443, 3);
+            groupBox5.Location = new Point(333, 3);
             groupBox5.Name = "groupBox5";
-            groupBox5.Size = new Size(434, 86);
+            groupBox5.Size = new Size(324, 86);
             groupBox5.TabIndex = 4;
             groupBox5.TabStop = false;
             groupBox5.Text = "Warehouse";
             // 
-            // comboBox4
+            // comboBox5
             // 
-            comboBox4.Dock = DockStyle.Fill;
-            comboBox4.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBox4.FormattingEnabled = true;
-            comboBox4.Location = new Point(3, 19);
-            comboBox4.Name = "comboBox4";
-            comboBox4.Size = new Size(428, 23);
-            comboBox4.TabIndex = 0;
+            comboBox5.Dock = DockStyle.Fill;
+            comboBox5.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBox5.FormattingEnabled = true;
+            comboBox5.Location = new Point(3, 19);
+            comboBox5.Name = "comboBox5";
+            comboBox5.Size = new Size(318, 23);
+            comboBox5.TabIndex = 0;
             // 
             // groupBox7
             // 
             groupBox7.Controls.Add(dataGridView2);
             groupBox7.Dock = DockStyle.Fill;
-            groupBox7.Location = new Point(443, 159);
+            groupBox7.Location = new Point(333, 201);
             groupBox7.Name = "groupBox7";
-            groupBox7.Size = new Size(434, 286);
+            groupBox7.Size = new Size(324, 286);
             groupBox7.TabIndex = 6;
             groupBox7.TabStop = false;
             groupBox7.Text = "BOM2";
             // 
             // dataGridView2
             // 
+            dataGridView2.AllowUserToAddRows = false;
+            dataGridView2.AllowUserToDeleteRows = false;
             dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView2.Dock = DockStyle.Fill;
             dataGridView2.Location = new Point(3, 19);
             dataGridView2.Name = "dataGridView2";
+            dataGridView2.ReadOnly = true;
             dataGridView2.RowTemplate.Height = 25;
-            dataGridView2.Size = new Size(428, 264);
+            dataGridView2.Size = new Size(318, 264);
             dataGridView2.TabIndex = 0;
             // 
             // groupBox8
             // 
             groupBox8.Controls.Add(dataGridView3);
             groupBox8.Dock = DockStyle.Fill;
-            groupBox8.Location = new Point(883, 159);
+            groupBox8.Location = new Point(663, 201);
             groupBox8.Name = "groupBox8";
-            groupBox8.Size = new Size(436, 286);
+            groupBox8.Size = new Size(324, 286);
             groupBox8.TabIndex = 7;
             groupBox8.TabStop = false;
             groupBox8.Text = "BOM3";
             // 
             // dataGridView3
             // 
+            dataGridView3.AllowUserToAddRows = false;
+            dataGridView3.AllowUserToDeleteRows = false;
             dataGridView3.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView3.Dock = DockStyle.Fill;
             dataGridView3.Location = new Point(3, 19);
             dataGridView3.Name = "dataGridView3";
+            dataGridView3.ReadOnly = true;
             dataGridView3.RowTemplate.Height = 25;
-            dataGridView3.Size = new Size(430, 264);
+            dataGridView3.Size = new Size(318, 264);
             dataGridView3.TabIndex = 0;
             // 
             // groupBox6
             // 
             groupBox6.Controls.Add(tableLayoutPanel2);
             groupBox6.Dock = DockStyle.Fill;
-            groupBox6.Location = new Point(3, 159);
+            groupBox6.Location = new Point(3, 201);
             groupBox6.Name = "groupBox6";
-            groupBox6.Size = new Size(434, 286);
+            groupBox6.Size = new Size(324, 286);
             groupBox6.TabIndex = 5;
             groupBox6.TabStop = false;
             groupBox6.Text = "BOM1";
@@ -279,7 +295,7 @@
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 1;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel2.Size = new Size(428, 264);
+            tableLayoutPanel2.Size = new Size(318, 264);
             tableLayoutPanel2.TabIndex = 1;
             // 
             // dataGridView1
@@ -292,19 +308,64 @@
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
             dataGridView1.RowTemplate.Height = 25;
-            dataGridView1.Size = new Size(422, 258);
+            dataGridView1.Size = new Size(312, 258);
             dataGridView1.TabIndex = 0;
             // 
             // button2
             // 
             button2.BackgroundImage = (Image)resources.GetObject("button2.BackgroundImage");
             button2.BackgroundImageLayout = ImageLayout.Zoom;
-            button2.Location = new Point(883, 3);
+            button2.Location = new Point(663, 3);
             button2.Name = "button2";
             button2.Size = new Size(114, 80);
             button2.TabIndex = 8;
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
+            // 
+            // groupBox9
+            // 
+            groupBox9.Controls.Add(comboBox4);
+            groupBox9.Dock = DockStyle.Fill;
+            groupBox9.Location = new Point(993, 95);
+            groupBox9.Name = "groupBox9";
+            groupBox9.Size = new Size(326, 100);
+            groupBox9.TabIndex = 9;
+            groupBox9.TabStop = false;
+            groupBox9.Text = "Fourth BOM";
+            // 
+            // comboBox4
+            // 
+            comboBox4.Dock = DockStyle.Fill;
+            comboBox4.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBox4.FormattingEnabled = true;
+            comboBox4.Location = new Point(3, 19);
+            comboBox4.Name = "comboBox4";
+            comboBox4.Size = new Size(320, 23);
+            comboBox4.TabIndex = 0;
+            // 
+            // groupBox10
+            // 
+            groupBox10.Controls.Add(dataGridView4);
+            groupBox10.Dock = DockStyle.Fill;
+            groupBox10.Location = new Point(993, 201);
+            groupBox10.Name = "groupBox10";
+            groupBox10.Size = new Size(326, 286);
+            groupBox10.TabIndex = 10;
+            groupBox10.TabStop = false;
+            groupBox10.Text = "BOM4";
+            // 
+            // dataGridView4
+            // 
+            dataGridView4.AllowUserToAddRows = false;
+            dataGridView4.AllowUserToDeleteRows = false;
+            dataGridView4.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView4.Dock = DockStyle.Fill;
+            dataGridView4.Location = new Point(3, 19);
+            dataGridView4.Name = "dataGridView4";
+            dataGridView4.ReadOnly = true;
+            dataGridView4.RowTemplate.Height = 25;
+            dataGridView4.Size = new Size(320, 264);
+            dataGridView4.TabIndex = 0;
             // 
             // openFileDialog1
             // 
@@ -335,6 +396,9 @@
             groupBox6.ResumeLayout(false);
             tableLayoutPanel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            groupBox9.ResumeLayout(false);
+            groupBox10.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dataGridView4).EndInit();
             ResumeLayout(false);
         }
 
@@ -351,7 +415,7 @@
         private GroupBox groupBox4;
         private ComboBox comboBox3;
         private GroupBox groupBox5;
-        private ComboBox comboBox4;
+        private ComboBox comboBox5;
         private GroupBox groupBox6;
         private GroupBox groupBox7;
         private GroupBox groupBox8;
@@ -362,5 +426,9 @@
         private RichTextBox richTextBox1;
         private TableLayoutPanel tableLayoutPanel2;
         private Button button2;
+        private GroupBox groupBox9;
+        private ComboBox comboBox4;
+        private GroupBox groupBox10;
+        private DataGridView dataGridView4;
     }
 }

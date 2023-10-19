@@ -172,7 +172,7 @@ namespace WH_Panel
             // Adding clNames to comboBox4
             foreach (ClientWarehouse warehouse in warehouses)
             {
-                comboBox4.Items.Add(warehouse.clName);
+                comboBox5.Items.Add(warehouse.clName);
             }
         }
         private void InitializeComboBoxes()
@@ -182,6 +182,7 @@ namespace WH_Panel
             comboBox1.SelectedIndexChanged += ComboBoxes_SelectedIndexChanged;
             comboBox2.SelectedIndexChanged += ComboBoxes_SelectedIndexChanged;
             comboBox3.SelectedIndexChanged += ComboBoxes_SelectedIndexChanged;
+            comboBox4.SelectedIndexChanged += ComboBoxes_SelectedIndexChanged;
         }
 
         private void UpdateControlColors(Control parentControl)
@@ -318,9 +319,13 @@ namespace WH_Panel
             {
                 groupBox8.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox8";
             }
+            else if (selectedComboBox == comboBox4)
+            {
+                groupBox10.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox10";
+            }
 
             // Remove the selected item from other ComboBoxes
-            foreach (ComboBox comboBox in new[] { comboBox1, comboBox2, comboBox3 }.Where(c => c != selectedComboBox))
+            foreach (ComboBox comboBox in new[] { comboBox1, comboBox2, comboBox3, comboBox4 }.Where(c => c != selectedComboBox))
             {
                 if (comboBox.SelectedItem == selectedComboBox.SelectedItem)
                 {
@@ -333,8 +338,11 @@ namespace WH_Panel
         }
         private void LoadDataIntoDataGridViews()
         {
-            for (int i = 0; i < 3; i++)
+
+            for (int i = 0; i < 4; i++)
             {
+                //if (i == 3) continue; // Skip the processing for ComboBox4 and DataGridView4
+
                 ComboBox currentComboBox = Controls.Find($"comboBox{i + 1}", true).FirstOrDefault() as ComboBox;
                 DataGridView currentDataGridView = Controls.Find($"dataGridView{i + 1}", true).FirstOrDefault() as DataGridView;
 
@@ -392,12 +400,11 @@ namespace WH_Panel
 
 
             BOMList a = new BOMList(excelFIleName);
-            //comboBox1.Items.Add(a.Name);
-            //comboBox1.SelectedIndex = comboBox1.Items.Count - 1;
-            //groupBox6.Text = a.Name;
+
             comboBox1.Items.Add(a.Name);
             comboBox2.Items.Add(a.Name);
             comboBox3.Items.Add(a.Name);
+            comboBox4.Items.Add(a.Name);
             richTextBox1.Text += a.Name + "\n";
 
 
@@ -407,6 +414,7 @@ namespace WH_Panel
             comboBox1.SelectedIndex = comboBox1.Items.Count - 1;
             comboBox2.SelectedIndex = comboBox2.Items.Count - 1;
             comboBox3.SelectedIndex = comboBox3.Items.Count - 1;
+            comboBox4.SelectedIndex = comboBox4.Items.Count - 1;
             try
             {
                 string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=1\"";
@@ -489,7 +497,7 @@ namespace WH_Panel
             {
                 if (firstIPN.StartsWith(warehouse.clPrefix))
                 {
-                    comboBox4.SelectedItem = warehouse.clName;
+                    comboBox5.SelectedItem = warehouse.clName;
                     break;
                 }
             }
@@ -497,6 +505,8 @@ namespace WH_Panel
 
         private void PopulateBOMGridView(int selectedIndex, DataGridView dataGridView)
         {
+            //if (dataGridView.Name == "dataGridView4") return; // Skip Populating DataGridView4
+
             dataGridView.DataSource = null;
             dataGridView.Rows.Clear();
             dataGridView.Refresh();
@@ -561,7 +571,7 @@ namespace WH_Panel
         {
             foreach (ClientWarehouse w in warehouses)
             {
-                if (comboBox4.SelectedItem == w.clName)
+                if (comboBox5.SelectedItem == w.clName)
                 {
 
                     StockViewDataLoader(w.clStockFile, "STOCK");
@@ -629,7 +639,7 @@ namespace WH_Panel
 
         }
 
-        
+
         private void PopulateStockView()
         {
             var sumRequiredByIPN = BOMs.SelectMany(bom => bom.Items)
@@ -639,7 +649,7 @@ namespace WH_Panel
                                           IPN = group.Key,
                                           TotalRequired = group.Sum(item => item.Delta)
                                       });
-       
+
 
             var stockData = BOMs.SelectMany(bom => bom.Items)
                    .GroupBy(item => item.IPN)
@@ -747,14 +757,15 @@ namespace WH_Panel
         }}
     }}
 
-     function clearFilter() {{
-        document.getElementById('searchInput').value = '';
-        var table = document.getElementById('stockTable');
-        var tr = table.getElementsByTagName('tr');
-        for (var i = 0; i < tr.length; i++) {{
-            tr[i].style.display = '';
-        }}
-    }}
+     function clearFilter() {
+    document.getElementById('searchInput').value = '';
+    var table = document.getElementById('stockTable');
+    var tr = table.getElementsByTagName('tr');
+    for (var i = 0; i < tr.length; i++) {
+        tr[i].style.display = '';
+    }
+    document.getElementById('searchInput').focus();
+}
 
                     </script>
                         </head>
@@ -767,6 +778,7 @@ namespace WH_Panel
             string selectedText1 = comboBox1.SelectedItem?.ToString()?.TrimEnd(".xlsm".ToCharArray());
             string selectedText2 = comboBox2.SelectedItem?.ToString()?.TrimEnd(".xlsm".ToCharArray());
             string selectedText3 = comboBox3.SelectedItem?.ToString()?.TrimEnd(".xlsm".ToCharArray());
+            string selectedText4 = comboBox4.SelectedItem?.ToString()?.TrimEnd(".xlsm".ToCharArray());
 
             if (!string.IsNullOrEmpty(selectedText1))
             {
@@ -782,6 +794,10 @@ namespace WH_Panel
             {
                 htmlContent += $"{selectedText3}<br>";
             }
+            if (!string.IsNullOrEmpty(selectedText4))
+            {
+                htmlContent += $"{selectedText4}<br>";
+            }
 
             // Removing the last comma
             htmlContent = htmlContent.TrimEnd(',');
@@ -794,9 +810,9 @@ namespace WH_Panel
 
 <button onclick=""clearFilter()"">Clear Filter</button>
                 <table id='stockTable' border='1'>
-                <tr><th onclick='sortTable(0)'>IPN</th><th onclick='sortTable(1)'>MFPN</th><th onclick='sortTable(2)'>Description</th><th onclick='sortTable(3)'>Stock Quantity</th><th onclick='sortTable(4)'>KITs BALANCE</th><th onclick='sortTable(5)'>DELTA</th></tr>";
+                <tr><th onclick='sortTable(0)'>IPN</th><th onclick='sortTable(1)'>MFPN</th><th onclick='sortTable(2)'>Description</th><th onclick='sortTable(3)'>WH Qty</th><th onclick='sortTable(4)'>KITs BALANCE</th><th onclick='sortTable(5)'>DELTA</th></tr>";
 
-            
+
             foreach (var item in stockData)
             {
                 var rowColorClass = item.StockQuantity + item.TotalRequired < 0 ? "lightcoral" : "lightgreen";
