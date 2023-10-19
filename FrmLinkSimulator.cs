@@ -701,10 +701,23 @@ namespace WH_Panel
 
             htmlContent += "<br>";
 
-            // Adding BOMs names to the HTML content
-            foreach (var bom in BOMs)
+            string selectedText1 = comboBox1.SelectedItem?.ToString()?.TrimEnd(".xlsm".ToCharArray());
+            string selectedText2 = comboBox2.SelectedItem?.ToString()?.TrimEnd(".xlsm".ToCharArray());
+            string selectedText3 = comboBox3.SelectedItem?.ToString()?.TrimEnd(".xlsm".ToCharArray());
+
+            if (!string.IsNullOrEmpty(selectedText1))
             {
-                htmlContent += $"{bom.Name}<br>";
+                htmlContent += $"{selectedText1}<br>";
+            }
+
+            if (!string.IsNullOrEmpty(selectedText2))
+            {
+                htmlContent += $"{selectedText2}<br>";
+            }
+
+            if (!string.IsNullOrEmpty(selectedText3))
+            {
+                htmlContent += $"{selectedText3}<br>";
             }
 
             // Removing the last comma
