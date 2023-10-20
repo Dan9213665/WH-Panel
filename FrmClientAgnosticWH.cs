@@ -1794,6 +1794,26 @@ namespace WH_Panel
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_AVL.xlsm";
             AuthorizedExcelFileOpening(fp);
         }
+        private void button37_Click(object sender, EventArgs e)
+        {
+
+            var war = warehouses.FirstOrDefault(w => w.clName == "QUANTUM-MACHINES");
+
+            if (war != null)
+            {
+                AuthorizedExcelFileOpening(war.clStockFile);
+            }
+        }
+
+        private void button38_Click(object sender, EventArgs e)
+        {
+            var war = warehouses.FirstOrDefault(w => w.clName == "QUANTUM-MACHINES");
+
+            if (war != null)
+            {
+                AuthorizedExcelFileOpening(war.clAvlFile);
+            }
+        }
         private void textBox11_KeyDown(object sender, KeyEventArgs e)
         {
 
