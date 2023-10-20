@@ -222,7 +222,6 @@
             comboBox3.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
             comboBox3.ForeColor = Color.White;
             comboBox3.FormattingEnabled = true;
-            comboBox3.Items.AddRange(new object[] { "ARAN", "ASIO", "CIS", "DIGITRONIX", "ENERCON", "EPS", "G.I.Leader_Tech", "HEPTAGON", "NETLINE", "ROBOTRON", "SHILAT", "SOLANIUM", "SONOTRON", "SOS", "TRILOGICAL", "VALENS", "VAYAR" });
             comboBox3.Location = new Point(150, 0);
             comboBox3.Name = "comboBox3";
             comboBox3.RightToLeft = RightToLeft.No;
