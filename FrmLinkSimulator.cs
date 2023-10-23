@@ -25,6 +25,7 @@ namespace WH_Panel
     {
         List<ClientWarehouse> warehouses = new List<ClientWarehouse>();
         public List<WHitem> stockItems = new List<WHitem>();
+        List<string> selectedFileNames = new List<string>();
         public FrmLinkSimulator()
         {
             InitializeComponent();
@@ -50,7 +51,7 @@ namespace WH_Panel
     },
     new ClientWarehouse
     {
-        clName = "Leader_Tech",
+        clName = "LEADER-TECH",
         clPrefix = "C100",
         clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_AVL.xlsm",
         clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm"
@@ -173,14 +174,13 @@ namespace WH_Panel
     // Add more entries for each warehouse as needed
 };
 
-
             // Ordering the warehouses list by clName
             warehouses = warehouses.OrderBy(warehouse => warehouse.clName).ToList();
 
-            // Adding clNames to comboBox4
+            // Adding clNames to comboBox of warehouse name
             foreach (ClientWarehouse warehouse in warehouses)
             {
-                comboBox5.Items.Add(warehouse.clName);
+                comboBox6.Items.Add(warehouse.clName);
             }
         }
         private void InitializeComboBoxes()
@@ -191,6 +191,7 @@ namespace WH_Panel
             comboBox2.SelectedIndexChanged += ComboBoxes_SelectedIndexChanged;
             comboBox3.SelectedIndexChanged += ComboBoxes_SelectedIndexChanged;
             comboBox4.SelectedIndexChanged += ComboBoxes_SelectedIndexChanged;
+            comboBox5.SelectedIndexChanged += ComboBoxes_SelectedIndexChanged;
         }
 
         private void UpdateControlColors(Control parentControl)
@@ -314,26 +315,57 @@ namespace WH_Panel
         {
             ComboBox selectedComboBox = (ComboBox)sender;
 
+            //// Update the GroupBox texts based on the selected items in the ComboBoxes
+            //if (selectedComboBox == comboBox1)
+            //{
+            //    groupBox6.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox6";
+            //}
+            //else if (selectedComboBox == comboBox2)
+            //{
+            //    groupBox7.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox7";
+            //}
+            //else if (selectedComboBox == comboBox3)
+            //{
+            //    groupBox8.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox8";
+            //}
+            //else if (selectedComboBox == comboBox4)
+            //{
+            //    groupBox10.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox10";
+            //}
+            //else if (selectedComboBox == comboBox5)
+            //{
+            //    groupBox12.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox12";
+            //}
+
             // Update the GroupBox texts based on the selected items in the ComboBoxes
             if (selectedComboBox == comboBox1)
             {
                 groupBox6.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox6";
+                UpdateLabelBasedOnComboBoxSelection(label1, selectedComboBox);
             }
             else if (selectedComboBox == comboBox2)
             {
                 groupBox7.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox7";
+                UpdateLabelBasedOnComboBoxSelection(label2, selectedComboBox);
             }
             else if (selectedComboBox == comboBox3)
             {
                 groupBox8.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox8";
+                UpdateLabelBasedOnComboBoxSelection(label3, selectedComboBox);
             }
             else if (selectedComboBox == comboBox4)
             {
                 groupBox10.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox10";
+                UpdateLabelBasedOnComboBoxSelection(label4, selectedComboBox);
+            }
+            else if (selectedComboBox == comboBox5)
+            {
+                groupBox12.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox12";
+                UpdateLabelBasedOnComboBoxSelection(label5, selectedComboBox);
             }
 
             // Remove the selected item from other ComboBoxes
-            foreach (ComboBox comboBox in new[] { comboBox1, comboBox2, comboBox3, comboBox4 }.Where(c => c != selectedComboBox))
+            foreach (ComboBox comboBox in new[] { comboBox1, comboBox2, comboBox3, comboBox4, comboBox5 }.Where(c => c != selectedComboBox))
             {
                 if (comboBox.SelectedItem == selectedComboBox.SelectedItem)
                 {
@@ -344,10 +376,107 @@ namespace WH_Panel
             // Load data based on the selected items in the ComboBoxes
             LoadDataIntoDataGridViews();
         }
+
+        //private void ComboBoxes_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    ComboBox selectedComboBox = (ComboBox)sender;
+
+        //    // Update the GroupBox texts based on the selected items in the ComboBoxes
+        //    if (selectedComboBox == comboBox1)
+        //    {
+        //        groupBox6.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox6";
+        //        UpdateLabelBasedOnComboBoxSelection(label1, selectedComboBox, 0);
+        //    }
+        //    else if (selectedComboBox == comboBox2)
+        //    {
+        //        groupBox7.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox7";
+        //        UpdateLabelBasedOnComboBoxSelection(label2, selectedComboBox, 1);
+        //    }
+        //    else if (selectedComboBox == comboBox3)
+        //    {
+        //        groupBox8.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox8";
+        //        UpdateLabelBasedOnComboBoxSelection(label3, selectedComboBox, 2);
+        //    }
+        //    else if (selectedComboBox == comboBox4)
+        //    {
+        //        groupBox10.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox10";
+        //        UpdateLabelBasedOnComboBoxSelection(label4, selectedComboBox, 3);
+        //    }
+        //    else if (selectedComboBox == comboBox5)
+        //    {
+        //        groupBox12.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox12";
+        //        UpdateLabelBasedOnComboBoxSelection(label5, selectedComboBox, 4);
+        //    }
+
+        //    // Remove the selected item from other ComboBoxes
+        //    foreach (ComboBox comboBox in new[] { comboBox1, comboBox2, comboBox3, comboBox4, comboBox5 }.Where(c => c != selectedComboBox))
+        //    {
+        //        if (comboBox.SelectedItem == selectedComboBox.SelectedItem)
+        //        {
+        //            comboBox.SelectedItem = null;
+        //        }
+        //    }
+
+        //    // Load data based on the selected items in the ComboBoxes
+        //    LoadDataIntoDataGridViews();
+        //}
+
+        private void UpdateLabelBasedOnComboBoxSelection(Label label, ComboBox selectedComboBox)
+        {
+            int selectedComboBoxIndex = Array.IndexOf(new[] { comboBox1, comboBox2, comboBox3, comboBox4, comboBox5 }, selectedComboBox);
+
+            if (selectedComboBoxIndex >= 0 && selectedComboBoxIndex < BOMs.Count)
+            {
+                int totalRows = BOMs[selectedComboBoxIndex].Items.Count;
+                int positiveCount = BOMs[selectedComboBoxIndex].Items.Count(item => (item.Delta ?? 0) >= 0);
+                double positivePercentage = (double)positiveCount / totalRows * 100;
+                label.Text = $"Positive Delta Percentage: {positivePercentage:F2}%";
+            }
+        }
+
+        //private void UpdateLabelBasedOnComboBoxSelection(Label label, ComboBox selectedComboBox, int index)
+        //{
+        //    int totalRows = BOMs[index].Items.Count;
+        //    int positiveCount = BOMs[index].Items.Count(item => (item.Delta ?? 0) > 0);
+        //    double positivePercentage = totalRows == 0 ? 0 : ((double)positiveCount / totalRows) * 100;
+        //    label.Text = $"Positive Delta Percentage: {positivePercentage:F2}%";
+        //}
+        //private void UpdateLabelBasedOnComboBoxSelection(Label label, ComboBox selectedComboBox)
+        //{
+        //    int selectedComboBoxIndex = -1;
+        //    if (selectedComboBox == comboBox1)
+        //    {
+        //        selectedComboBoxIndex = 0;
+        //    }
+        //    else if (selectedComboBox == comboBox2)
+        //    {
+        //        selectedComboBoxIndex = 1;
+        //    }
+        //    else if (selectedComboBox == comboBox3)
+        //    {
+        //        selectedComboBoxIndex = 2;
+        //    }
+        //    else if (selectedComboBox == comboBox4)
+        //    {
+        //        selectedComboBoxIndex = 3;
+        //    }
+        //    else if (selectedComboBox == comboBox5)
+        //    {
+        //        selectedComboBoxIndex = 4;
+        //    }
+
+        //    if (selectedComboBoxIndex >= 0 && selectedComboBoxIndex < BOMs.Count)
+        //    {
+        //        int totalRows = BOMs[selectedComboBoxIndex].Items.Count;
+        //        int positiveCount = BOMs[selectedComboBoxIndex].Items.Count(item => (item.Delta ?? 0) > 0);
+        //        double positivePercentage = (double)positiveCount / totalRows * 100;
+        //        label.Text = $"Positive Delta Percentage: {positivePercentage:F2}%";
+        //    }
+        //}
         private void LoadDataIntoDataGridViews()
         {
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 5; i++)
             {
                 //if (i == 3) continue; // Skip the processing for ComboBox4 and DataGridView4
 
@@ -368,7 +497,7 @@ namespace WH_Panel
             }
         }
 
-     
+
         private void button1_Click(object sender, EventArgs e)
         {
             openFileDialog1.Title = "Select BOM File";
@@ -391,10 +520,21 @@ namespace WH_Panel
                     }
                     else
                     {
-                        DataLoader(fileName, Litem);
+                        DataLoader(fileName, theExcelFilePath);
+                        // Add the selected file path to the list
+                        selectedFileNames.Add(theExcelFilePath);
                     }
                 }
             }
+        }
+        private void SetComboBoxItems(List<string> fileNames)
+        {
+            // Set the ComboBox items in the order of selected file paths
+            comboBox1.SelectedItem = fileNames.Count > 0 ? fileNames[0] : null;
+            comboBox2.SelectedItem = fileNames.Count > 1 ? fileNames[1] : null;
+            comboBox3.SelectedItem = fileNames.Count > 2 ? fileNames[2] : null;
+            comboBox4.SelectedItem = fileNames.Count > 3 ? fileNames[3] : null;
+            comboBox5.SelectedItem = fileNames.Count > 4 ? fileNames[4] : null;
         }
         private bool IsFileLoaded(string fileName)
         {
@@ -418,6 +558,7 @@ namespace WH_Panel
             comboBox2.Items.Add(a.Name);
             comboBox3.Items.Add(a.Name);
             comboBox4.Items.Add(a.Name);
+            comboBox5.Items.Add(a.Name);
             richTextBox1.Text += a.Name + "\n";
 
 
@@ -428,6 +569,10 @@ namespace WH_Panel
             comboBox2.SelectedIndex = comboBox2.Items.Count - 1;
             comboBox3.SelectedIndex = comboBox3.Items.Count - 1;
             comboBox4.SelectedIndex = comboBox4.Items.Count - 1;
+            comboBox5.SelectedIndex = comboBox5.Items.Count - 1;
+
+
+
             try
             {
                 string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=1\"";
@@ -510,7 +655,7 @@ namespace WH_Panel
             {
                 if (firstIPN.StartsWith(warehouse.clPrefix))
                 {
-                    comboBox5.SelectedItem = warehouse.clName;
+                    comboBox6.SelectedItem = warehouse.clName;
                     break;
                 }
             }
@@ -584,13 +729,13 @@ namespace WH_Panel
         {
             foreach (ClientWarehouse w in warehouses)
             {
-                if (comboBox5.SelectedItem == w.clName)
+                if (comboBox6.SelectedItem == w.clName)
                 {
 
                     StockViewDataLoader(w.clStockFile, "STOCK");
                 }
             }
-            PopulateStockView();
+            GenerateHtmlReport(true);
         }
 
 
@@ -653,7 +798,7 @@ namespace WH_Panel
         }
 
 
-        private void PopulateStockView()
+        private void GenerateHtmlReport(bool limitOrNot)
         {
             var sumRequiredByIPN = BOMs.SelectMany(bom => bom.Items)
                                       .GroupBy(item => item.IPN)
@@ -788,32 +933,71 @@ namespace WH_Panel
 
             htmlContent += "<br>";
 
-            string selectedText1 = comboBox1.SelectedItem?.ToString()?.TrimEnd(".xlsm".ToCharArray());
-            string selectedText2 = comboBox2.SelectedItem?.ToString()?.TrimEnd(".xlsm".ToCharArray());
-            string selectedText3 = comboBox3.SelectedItem?.ToString()?.TrimEnd(".xlsm".ToCharArray());
-            string selectedText4 = comboBox4.SelectedItem?.ToString()?.TrimEnd(".xlsm".ToCharArray());
-
-            if (!string.IsNullOrEmpty(selectedText1))
+            if(limitOrNot)
             {
-                htmlContent += $"{selectedText1}<br>";
-            }
+                string[] comboBoxItems = new string[] {
+                                        comboBox1.SelectedItem?.ToString(),
+                                        comboBox2.SelectedItem?.ToString(),
+                                        comboBox3.SelectedItem?.ToString(),
+                                        comboBox4.SelectedItem?.ToString(),
+                                        comboBox5.SelectedItem?.ToString() };
 
-            if (!string.IsNullOrEmpty(selectedText2))
-            {
-                htmlContent += $"{selectedText2}<br>";
+                foreach (string item in comboBoxItems)
+                {
+                    string selectedText = item?.TrimEnd(".xlsm".ToCharArray());
+                    if (!string.IsNullOrEmpty(selectedText))
+                    {
+                        htmlContent += $"{selectedText}<br>";
+                    }
+                }
+                // Removing the last comma
+                htmlContent = htmlContent.TrimEnd(',');
             }
-
-            if (!string.IsNullOrEmpty(selectedText3))
+            else
             {
-                htmlContent += $"{selectedText3}<br>";
+                //var Bomnames = BOMs.SelectMany(bom => bom.Name).ToList();
+                //foreach (var item in Bomnames)
+                //{
+                //    var itemString = item.ToString(); // Convert character to string
+                //    if (itemString.EndsWith(".xlsm"))
+                //    {
+                //        string selectedText = itemString.TrimEnd(".xlsm".ToCharArray());
+                //        if (!string.IsNullOrEmpty(selectedText))
+                //        {
+                //            htmlContent += $"{selectedText}<br>";
+                //        }
+                //    }
+                //}
+                //var Bomnames = BOMs.SelectMany(bom => bom.Name).ToList();
+                //foreach (var item in Bomnames)
+                //{
+                //    var itemString = item.ToString(); // Convert character to string
+                //    if (itemString.EndsWith(".xlsm"))
+                //    {
+                //        string selectedText = itemString.TrimEnd(".xlsm".ToCharArray());
+                //        if (!string.IsNullOrEmpty(selectedText))
+                //        {
+                //            htmlContent += $"{selectedText}<br>";
+                //        }
+                //    }
+                //}
+                foreach (var bom in BOMs)
+                {
+                    htmlContent += $"{bom.Name}<br>";
+                }
+                // Removing the last <br>
+                if (!string.IsNullOrEmpty(htmlContent))
+                {
+                    htmlContent = htmlContent.Substring(0, htmlContent.Length - 4); // Assuming <br> is of length 4
+                }
+                // Removing the last <br>
+                //if (!string.IsNullOrEmpty(htmlContent))
+                //{
+                //    htmlContent = htmlContent.Substring(0, htmlContent.Length - 4); // Assuming <br> is of length 4
+                //}
+                htmlContent = htmlContent.TrimEnd(',');
             }
-            if (!string.IsNullOrEmpty(selectedText4))
-            {
-                htmlContent += $"{selectedText4}<br>";
-            }
-
-            // Removing the last comma
-            htmlContent = htmlContent.TrimEnd(',');
+            
 
             // Continuing the HTML content
             htmlContent += @"</h2>
@@ -851,5 +1035,121 @@ namespace WH_Panel
             process.Start();
         }
 
+        private void button3_Click(object sender, EventArgs e)
+        {
+            OptimizeBOMOrder();
+        }
+        //private void OptimizeBOMOrder()
+        //{
+        //    if (BOMs.Count >= 2)
+        //    {
+        //        int maxDeltaIndex = -1;
+        //        int maxDeltaValue = int.MinValue; // Changed variable name here
+
+        //        for (int i = 0; i < BOMs[1].Items.Count; i++)
+        //        {
+        //            int currentItemDelta = BOMs[1].Items[i].Delta ?? 0; // Changed variable name here
+
+        //            if (currentItemDelta > maxDeltaValue)
+        //            {
+        //                maxDeltaValue = currentItemDelta;
+        //                maxDeltaIndex = i;
+        //            }
+        //        }
+
+        //        if (maxDeltaIndex != -1)
+        //        {
+        //            // Swap the BOMLists in the data grid views
+        //            BOMList temp = BOMs[0];
+        //            BOMs[0] = BOMs[1];
+        //            BOMs[1] = temp;
+
+        //            // Reload the data in the respective DataGridViews
+        //            // Assuming dataGridView1 and dataGridView2 are the names of your DataGridView controls
+        //            comboBox1.SelectedItem = BOMs[0].Name; 
+        //            comboBox2.SelectedItem = BOMs[1].Name;
+        //        }
+        //    }
+        //}
+        //private void OptimizeBOMOrder()
+        //{
+        //    if (BOMs.Count >= 2)
+        //    {
+        //        int maxDeltaIndex = -1;
+        //        int maxDeltaValue = int.MinValue;
+
+        //        for (int j = 1; j < BOMs.Count; j++)
+        //        {
+        //            for (int i = 0; i < BOMs[j].Items.Count; i++)
+        //            {
+        //                int currentItemDelta = BOMs[j].Items[i].Delta ?? 0;
+
+        //                if (currentItemDelta > maxDeltaValue)
+        //                {
+        //                    maxDeltaValue = currentItemDelta;
+        //                    maxDeltaIndex = j;
+        //                }
+        //            }
+        //        }
+
+        //        if (maxDeltaIndex != -1 && maxDeltaIndex != 0)
+        //        {
+        //            // Swap the BOMLists in the data grid views
+        //            BOMList temp = BOMs[0];
+        //            BOMs[0] = BOMs[maxDeltaIndex];
+        //            BOMs[maxDeltaIndex] = temp;
+
+        //            // Reload the data in the respective ComboBoxes
+        //            ComboBox[] comboBoxes = new ComboBox[] { comboBox1, comboBox2, comboBox3, comboBox4, comboBox5 };
+
+        //            for (int i = 0; i < Math.Min(BOMs.Count, 5); i++)
+        //            {
+        //                comboBoxes[i].SelectedItem = BOMs[i].Name;
+        //            }
+        //        }
+        //    }
+        //}
+        private void OptimizeBOMOrder()
+        {
+            if (BOMs.Count >= 2)
+            {
+                int maxPositivePercentageIndex = -1;
+                double maxPositivePercentage = 0;
+
+                for (int j = 1; j < BOMs.Count; j++)
+                {
+                    int totalRows = BOMs[j].Items.Count;
+                    int positiveCount = BOMs[j].Items.Count(item => (item.Delta ?? 0) > 0);
+                    double currentPositivePercentage = (double)positiveCount / totalRows;
+
+                    if (currentPositivePercentage > maxPositivePercentage)
+                    {
+                        maxPositivePercentage = currentPositivePercentage;
+                        maxPositivePercentageIndex = j;
+                    }
+                }
+
+                if (maxPositivePercentageIndex != -1 && maxPositivePercentageIndex != 0)
+                {
+                    // Swap the BOMLists in the data grid views
+                    BOMList temp = BOMs[0];
+                    BOMs[0] = BOMs[maxPositivePercentageIndex];
+                    BOMs[maxPositivePercentageIndex] = temp;
+
+                    // Reload the data in the respective ComboBoxes
+                    ComboBox[] comboBoxes = new ComboBox[] { comboBox1, comboBox2, comboBox3, comboBox4, comboBox5 };
+
+                    for (int i = 0; i < Math.Min(BOMs.Count, 5); i++)
+                    {
+                        comboBoxes[i].SelectedItem = BOMs[i].Name;
+                    }
+                }
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            GenerateHtmlReport(false);
+        }
     }
 }
