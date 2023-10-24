@@ -917,35 +917,7 @@ namespace WH_Panel
             EXCELinserter(theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));
             //ExcelInserterUsingEPPlus(theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));
         }
-        //private void ExcelInserterUsingOleDb(string kitName)
-        //{
-        //    try
-        //    {
-        //        string filePath = @"\\dbr1\Data\WareHouse\KitLabelAuto.xlsx";
-        //        string connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={filePath};Extended Properties='Excel 12.0 Macro;HDR=NO;IMEX=1;'";
-
-        //        using (OleDbConnection connection = new OleDbConnection(connectionString))
-        //        {
-        //            connection.Open();
-
-        //            // Open the first worksheet
-        //            string sheetName = "Sheet1$"; // Update this based on your Excel sheet name
-        //            string updateQuery = $"UPDATE [{sheetName}] SET [ColumnB] = @kitName";
-
-        //            using (OleDbCommand command = new OleDbCommand(updateQuery, connection))
-        //            {
-        //                command.Parameters.AddWithValue("@kitName", kitName);
-        //                command.ExecuteNonQuery();
-        //            }
-
-        //            MessageBox.Show("Data Updated in .xlsx file");
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        MessageBox.Show(e.Message);
-        //    }
-        //}
+        
 
         private void ExcelInserterUsingEPPlus(string kitName)
         {
@@ -1165,6 +1137,10 @@ namespace WH_Panel
             else if (w.IPN.StartsWith("BAN"))
             {
                 selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_STOCK.xlsm";
+            }
+            else if (w.IPN.StartsWith("SHT"))
+            {
+                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_STOCK.xlsm";
             }
             else
             {
