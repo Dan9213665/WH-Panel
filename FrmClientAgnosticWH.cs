@@ -268,6 +268,14 @@ namespace WH_Panel
         clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\QUANTUM-MACHINES\\QUANTUM-MACHINES_AVL.xlsm",
         clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\QUANTUM-MACHINES\\QUANTUM-MACHINES_STOCK.xlsm"
     }
+                        ,
+                    new ClientWarehouse
+    {
+        clName = "GASNGO",
+        clPrefix = "GNG",
+        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\GASNGO\\GASNGO_AVL.xlsm",
+        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\GASNGO\\GASNGO_STOCK.xlsm"
+    }
     // Add more entries for each warehouse as needed
 };
 
