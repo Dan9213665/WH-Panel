@@ -337,7 +337,7 @@ namespace WH_Panel
                         textBox6.Text = alltheNames[2].Substring(0, alltheNames[2].Length - 5);
                         orderQty = int.Parse(alltheNames[2].Substring(0, alltheNames[2].Length - 8));
                         countLoadedFIles++;
-                        label12.Text = "Loaded " + (countItems).ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{0:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
+                        label12.Text = "Loaded " + (countItems).ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{0:00}.{1:000}{2:000} Seconds", ts.Seconds, ts.Milliseconds, ts.Nanoseconds);
                         label12.Update();
                         textBox1.ReadOnly = false;
                         textBox2.ReadOnly = false;
@@ -917,7 +917,7 @@ namespace WH_Panel
             EXCELinserter(theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));
             //ExcelInserterUsingEPPlus(theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));
         }
-        
+
 
         private void ExcelInserterUsingEPPlus(string kitName)
         {
@@ -1141,6 +1141,10 @@ namespace WH_Panel
             else if (w.IPN.StartsWith("SHT"))
             {
                 selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_STOCK.xlsm";
+            }
+            else if (w.IPN.StartsWith("GNG"))
+            {
+                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\GASNGO\\GASNGO_STOCK.xlsm";
             }
             else
             {

@@ -1,4 +1,5 @@
 ﻿using FastMember;
+using Seagull.Framework.Extensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -340,27 +341,27 @@ namespace WH_Panel
             // Update the GroupBox texts based on the selected items in the ComboBoxes
             if (selectedComboBox == comboBox1)
             {
-                groupBox6.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox6";
+                groupBox6.Text = selectedComboBox.SelectedItem?.ToString() ?? "Select BOM in the combobox above";
                 UpdateLabelBasedOnComboBoxSelection(label1, selectedComboBox);
             }
             else if (selectedComboBox == comboBox2)
             {
-                groupBox7.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox7";
+                groupBox7.Text = selectedComboBox.SelectedItem?.ToString() ?? "Select BOM in the combobox above";
                 UpdateLabelBasedOnComboBoxSelection(label2, selectedComboBox);
             }
             else if (selectedComboBox == comboBox3)
             {
-                groupBox8.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox8";
+                groupBox8.Text = selectedComboBox.SelectedItem?.ToString() ?? "Select BOM in the combobox above";
                 UpdateLabelBasedOnComboBoxSelection(label3, selectedComboBox);
             }
             else if (selectedComboBox == comboBox4)
             {
-                groupBox10.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox10";
+                groupBox10.Text = selectedComboBox.SelectedItem?.ToString() ?? "Select BOM in the combobox above";
                 UpdateLabelBasedOnComboBoxSelection(label4, selectedComboBox);
             }
             else if (selectedComboBox == comboBox5)
             {
-                groupBox12.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox12";
+                groupBox12.Text = selectedComboBox.SelectedItem?.ToString() ?? "Select BOM in the combobox above";
                 UpdateLabelBasedOnComboBoxSelection(label5, selectedComboBox);
             }
 
@@ -377,49 +378,7 @@ namespace WH_Panel
             LoadDataIntoDataGridViews();
         }
 
-        //private void ComboBoxes_SelectedIndexChanged(object sender, EventArgs e)
-        //{
-        //    ComboBox selectedComboBox = (ComboBox)sender;
 
-        //    // Update the GroupBox texts based on the selected items in the ComboBoxes
-        //    if (selectedComboBox == comboBox1)
-        //    {
-        //        groupBox6.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox6";
-        //        UpdateLabelBasedOnComboBoxSelection(label1, selectedComboBox, 0);
-        //    }
-        //    else if (selectedComboBox == comboBox2)
-        //    {
-        //        groupBox7.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox7";
-        //        UpdateLabelBasedOnComboBoxSelection(label2, selectedComboBox, 1);
-        //    }
-        //    else if (selectedComboBox == comboBox3)
-        //    {
-        //        groupBox8.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox8";
-        //        UpdateLabelBasedOnComboBoxSelection(label3, selectedComboBox, 2);
-        //    }
-        //    else if (selectedComboBox == comboBox4)
-        //    {
-        //        groupBox10.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox10";
-        //        UpdateLabelBasedOnComboBoxSelection(label4, selectedComboBox, 3);
-        //    }
-        //    else if (selectedComboBox == comboBox5)
-        //    {
-        //        groupBox12.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox12";
-        //        UpdateLabelBasedOnComboBoxSelection(label5, selectedComboBox, 4);
-        //    }
-
-        //    // Remove the selected item from other ComboBoxes
-        //    foreach (ComboBox comboBox in new[] { comboBox1, comboBox2, comboBox3, comboBox4, comboBox5 }.Where(c => c != selectedComboBox))
-        //    {
-        //        if (comboBox.SelectedItem == selectedComboBox.SelectedItem)
-        //        {
-        //            comboBox.SelectedItem = null;
-        //        }
-        //    }
-
-        //    // Load data based on the selected items in the ComboBoxes
-        //    LoadDataIntoDataGridViews();
-        //}
 
         private void UpdateLabelBasedOnComboBoxSelection(Label label, ComboBox selectedComboBox)
         {
@@ -434,45 +393,6 @@ namespace WH_Panel
             }
         }
 
-        //private void UpdateLabelBasedOnComboBoxSelection(Label label, ComboBox selectedComboBox, int index)
-        //{
-        //    int totalRows = BOMs[index].Items.Count;
-        //    int positiveCount = BOMs[index].Items.Count(item => (item.Delta ?? 0) > 0);
-        //    double positivePercentage = totalRows == 0 ? 0 : ((double)positiveCount / totalRows) * 100;
-        //    label.Text = $"Positive Delta Percentage: {positivePercentage:F2}%";
-        //}
-        //private void UpdateLabelBasedOnComboBoxSelection(Label label, ComboBox selectedComboBox)
-        //{
-        //    int selectedComboBoxIndex = -1;
-        //    if (selectedComboBox == comboBox1)
-        //    {
-        //        selectedComboBoxIndex = 0;
-        //    }
-        //    else if (selectedComboBox == comboBox2)
-        //    {
-        //        selectedComboBoxIndex = 1;
-        //    }
-        //    else if (selectedComboBox == comboBox3)
-        //    {
-        //        selectedComboBoxIndex = 2;
-        //    }
-        //    else if (selectedComboBox == comboBox4)
-        //    {
-        //        selectedComboBoxIndex = 3;
-        //    }
-        //    else if (selectedComboBox == comboBox5)
-        //    {
-        //        selectedComboBoxIndex = 4;
-        //    }
-
-        //    if (selectedComboBoxIndex >= 0 && selectedComboBoxIndex < BOMs.Count)
-        //    {
-        //        int totalRows = BOMs[selectedComboBoxIndex].Items.Count;
-        //        int positiveCount = BOMs[selectedComboBoxIndex].Items.Count(item => (item.Delta ?? 0) > 0);
-        //        double positivePercentage = (double)positiveCount / totalRows * 100;
-        //        label.Text = $"Positive Delta Percentage: {positivePercentage:F2}%";
-        //    }
-        //}
         private void LoadDataIntoDataGridViews()
         {
 
@@ -831,7 +751,31 @@ namespace WH_Panel
                               })
                    .OrderBy(item => item.IPN);
 
+            //        var stockData = BOMs
+            //.SelectMany(bom => bom.Items)
+            //.GroupBy(item => item.IPN)
+            //.Select(group => new
+            //{
+            //    IPN = group.Key,
+            //    Items = group.ToList()
+            //})
+            //.Select(itemGroup => new
+            //{
+            //    IPN = itemGroup.IPN,
+            //    MFPN = itemGroup.Items.FirstOrDefault()?.MFPN,
+            //    Description = itemGroup.Items.FirstOrDefault()?.Description,
+            //    TotalRequired = itemGroup.Items.Sum(item => item.Delta),
+            //    StockQuantity = stockItems.Where(si => si.IPN == itemGroup.IPN).Sum(si => si.Stock)
+            //})
+            //.OrderBy(item => item.IPN)
+            //.ToList();
+
+            string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+
             // Generating the HTML content
+
+            // <link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'>
+
             string htmlContent = @"<!DOCTYPE html>
                         <html style='background-color: gray;'>
                         <head>
@@ -856,6 +800,7 @@ namespace WH_Panel
         z-index: 1;
     }
                         </style>
+                    
                      <script>
                          window.onload = function() {
         var headerElement = document.getElementById('myHeader');
@@ -929,11 +874,11 @@ namespace WH_Panel
                         </head>
                         <body>
                         <div style='text-align: center;'>
-                            <h2>Warehouse stock simulation for";
+                            <h2>UPDATED_" + fileTimeStamp+"<br> Multi-BOM simulation for:";
 
             htmlContent += "<br>";
 
-            if(limitOrNot)
+            if (limitOrNot)
             {
                 string[] comboBoxItems = new string[] {
                                         comboBox1.SelectedItem?.ToString(),
@@ -955,50 +900,17 @@ namespace WH_Panel
             }
             else
             {
-                //var Bomnames = BOMs.SelectMany(bom => bom.Name).ToList();
-                //foreach (var item in Bomnames)
-                //{
-                //    var itemString = item.ToString(); // Convert character to string
-                //    if (itemString.EndsWith(".xlsm"))
-                //    {
-                //        string selectedText = itemString.TrimEnd(".xlsm".ToCharArray());
-                //        if (!string.IsNullOrEmpty(selectedText))
-                //        {
-                //            htmlContent += $"{selectedText}<br>";
-                //        }
-                //    }
-                //}
-                //var Bomnames = BOMs.SelectMany(bom => bom.Name).ToList();
-                //foreach (var item in Bomnames)
-                //{
-                //    var itemString = item.ToString(); // Convert character to string
-                //    if (itemString.EndsWith(".xlsm"))
-                //    {
-                //        string selectedText = itemString.TrimEnd(".xlsm".ToCharArray());
-                //        if (!string.IsNullOrEmpty(selectedText))
-                //        {
-                //            htmlContent += $"{selectedText}<br>";
-                //        }
-                //    }
-                //}
                 foreach (var bom in BOMs)
                 {
-                    htmlContent += $"{bom.Name}<br>";
+                    htmlContent += $"{bom.Name.TrimEnd(".xlsm".ToCharArray())}<br>";
                 }
                 // Removing the last <br>
                 if (!string.IsNullOrEmpty(htmlContent))
                 {
                     htmlContent = htmlContent.Substring(0, htmlContent.Length - 4); // Assuming <br> is of length 4
                 }
-                // Removing the last <br>
-                //if (!string.IsNullOrEmpty(htmlContent))
-                //{
-                //    htmlContent = htmlContent.Substring(0, htmlContent.Length - 4); // Assuming <br> is of length 4
-                //}
                 htmlContent = htmlContent.TrimEnd(',');
             }
-            
-
             // Continuing the HTML content
             htmlContent += @"</h2>
          
@@ -1017,9 +929,61 @@ namespace WH_Panel
             }
             htmlContent += "</table></div></body></html>";
 
-            // Writing the HTML content to a file
-            string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-            string filename = @"\\dbr1\Data\WareHouse\2023\WHsearcher\" + fileTimeStamp + "_" + ".html";
+            //htmlContent += "<div class='container'><table class='table table-striped'>";
+
+            //foreach (var item in stockData)
+            //{
+            //    var rowColorClass = item.StockQuantity + item.TotalRequired < 0 ? "lightcoral" : "lightgreen";
+            //    htmlContent += $"<tr class='{rowColorClass}'><td><a href='#' data-toggle='modal' data-target='#modal-{item.IPN}'>{item.IPN}</a></td><td>{item.MFPN}</td><td>{item.Description}</td><td>{item.StockQuantity}</td><td>{item.TotalRequired}</td><td>{item.StockQuantity + item.TotalRequired}</td></tr>";
+
+            //    // Find all the BOMs containing the specific IPN
+            //    var relevantBOMs = BOMs.Where(bom => bom.Items.Any(bomItem => bomItem.IPN == item.IPN));
+
+            //    // Modal content
+            //    htmlContent += $"<div class='modal fade' id='modal-{item.IPN}' tabindex='-1' role='dialog' aria-labelledby='modal-{item.IPN}-label' aria-hidden='true'>";
+            //    htmlContent += "<div class='modal-dialog' role='document'><div class='modal-content'>";
+            //    htmlContent += "<div class='modal-header'><h5 class='modal-title' id='modal-{item.IPN}-label'>BOMs Information</h5>";
+            //    htmlContent += "<button type='button' class='close' data-dismiss='modal' aria-label='Close'>";
+            //    htmlContent += "<span aria-hidden='true'>&times;</span></button></div><div class='modal-body'><ul>";
+
+            //    foreach (var bom in relevantBOMs)
+            //    {
+            //        var quantityInBOM = bom.Items.Where(bomItem => bomItem.IPN == item.IPN).Sum(bomItem => bomItem.QtyInKit);
+            //        htmlContent += $"<li>{bom.Name} - Quantity in BOM: {quantityInBOM}</li>";
+            //    }
+
+            //    htmlContent += "</ul></div><div class='modal-footer'>";
+            //    htmlContent += "<button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button></div></div></div></div>";
+            //}
+
+            //htmlContent += "</table></div></body></html>";
+
+            //htmlContent += "<div class='container'><table class='table table-striped'>";
+
+            //foreach (var item in stockData)
+            //{
+            //    var rowColorClass = item.StockQuantity + item.TotalRequired < 0 ? "lightcoral" : "lightgreen";
+            //    htmlContent += $"<tr class='{rowColorClass}'><td>{item.IPN}</td><td>{item.MFPN}</td><td>{item.Description}</td><td>{item.StockQuantity}</td><td>{item.TotalRequired}</td><td>{item.StockQuantity + item.TotalRequired}</td></tr>";
+
+            //    // Find all the BOMs containing the specific IPN
+            //    var relevantBOMs = BOMs.Where(bom => bom.Items.Any(bomItem => bomItem.IPN == item.IPN));
+
+            //    htmlContent += "<tr><td colspan='6'><ul>";
+            //    foreach (var bom in relevantBOMs)
+            //    {
+            //        var quantityInBOM = bom.Items.Where(bomItem => bomItem.IPN == item.IPN).Sum(bomItem => bomItem.QtyInKit);
+            //        htmlContent += $"<li>{bom.Name} - Quantity in BOM: {quantityInBOM}</li>";
+            //    }
+            //    htmlContent += "</ul></td></tr>";
+            //}
+
+            //htmlContent += "</table></div></body></html>";
+
+
+
+
+
+            string filename = @"\\dbr1\Data\WareHouse\2023\WHsearcher\" + fileTimeStamp + "_BOMs_sim" + ".html";
 
             using (StreamWriter writer = new StreamWriter(filename))
             {
@@ -1039,76 +1003,6 @@ namespace WH_Panel
         {
             OptimizeBOMOrder();
         }
-        //private void OptimizeBOMOrder()
-        //{
-        //    if (BOMs.Count >= 2)
-        //    {
-        //        int maxDeltaIndex = -1;
-        //        int maxDeltaValue = int.MinValue; // Changed variable name here
-
-        //        for (int i = 0; i < BOMs[1].Items.Count; i++)
-        //        {
-        //            int currentItemDelta = BOMs[1].Items[i].Delta ?? 0; // Changed variable name here
-
-        //            if (currentItemDelta > maxDeltaValue)
-        //            {
-        //                maxDeltaValue = currentItemDelta;
-        //                maxDeltaIndex = i;
-        //            }
-        //        }
-
-        //        if (maxDeltaIndex != -1)
-        //        {
-        //            // Swap the BOMLists in the data grid views
-        //            BOMList temp = BOMs[0];
-        //            BOMs[0] = BOMs[1];
-        //            BOMs[1] = temp;
-
-        //            // Reload the data in the respective DataGridViews
-        //            // Assuming dataGridView1 and dataGridView2 are the names of your DataGridView controls
-        //            comboBox1.SelectedItem = BOMs[0].Name; 
-        //            comboBox2.SelectedItem = BOMs[1].Name;
-        //        }
-        //    }
-        //}
-        //private void OptimizeBOMOrder()
-        //{
-        //    if (BOMs.Count >= 2)
-        //    {
-        //        int maxDeltaIndex = -1;
-        //        int maxDeltaValue = int.MinValue;
-
-        //        for (int j = 1; j < BOMs.Count; j++)
-        //        {
-        //            for (int i = 0; i < BOMs[j].Items.Count; i++)
-        //            {
-        //                int currentItemDelta = BOMs[j].Items[i].Delta ?? 0;
-
-        //                if (currentItemDelta > maxDeltaValue)
-        //                {
-        //                    maxDeltaValue = currentItemDelta;
-        //                    maxDeltaIndex = j;
-        //                }
-        //            }
-        //        }
-
-        //        if (maxDeltaIndex != -1 && maxDeltaIndex != 0)
-        //        {
-        //            // Swap the BOMLists in the data grid views
-        //            BOMList temp = BOMs[0];
-        //            BOMs[0] = BOMs[maxDeltaIndex];
-        //            BOMs[maxDeltaIndex] = temp;
-
-        //            // Reload the data in the respective ComboBoxes
-        //            ComboBox[] comboBoxes = new ComboBox[] { comboBox1, comboBox2, comboBox3, comboBox4, comboBox5 };
-
-        //            for (int i = 0; i < Math.Min(BOMs.Count, 5); i++)
-        //            {
-        //                comboBoxes[i].SelectedItem = BOMs[i].Name;
-        //            }
-        //        }
-        //    }
-        //}
         private void OptimizeBOMOrder()
         {
             if (BOMs.Count >= 2)
@@ -1149,6 +1043,14 @@ namespace WH_Panel
 
         private void button4_Click(object sender, EventArgs e)
         {
+            foreach (ClientWarehouse w in warehouses)
+            {
+                if (comboBox6.SelectedItem == w.clName)
+                {
+
+                    StockViewDataLoader(w.clStockFile, "STOCK");
+                }
+            }
             GenerateHtmlReport(false);
         }
     }

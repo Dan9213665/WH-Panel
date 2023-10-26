@@ -64,8 +64,8 @@
             groupBox12 = new GroupBox();
             dataGridView5 = new DataGridView();
             button3 = new Button();
-            openFileDialog1 = new OpenFileDialog();
             button4 = new Button();
+            openFileDialog1 = new OpenFileDialog();
             tableLayoutPanel1.SuspendLayout();
             groupBox1.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
@@ -178,9 +178,8 @@
             label1.AutoSize = true;
             label1.Location = new Point(109, 55);
             label1.Name = "label1";
-            label1.Size = new Size(38, 15);
+            label1.Size = new Size(0, 15);
             label1.TabIndex = 1;
-            label1.Text = "label1";
             // 
             // comboBox1
             // 
@@ -209,9 +208,8 @@
             label2.AutoSize = true;
             label2.Location = new Point(112, 55);
             label2.Name = "label2";
-            label2.Size = new Size(38, 15);
+            label2.Size = new Size(0, 15);
             label2.TabIndex = 1;
-            label2.Text = "label2";
             // 
             // comboBox2
             // 
@@ -240,9 +238,8 @@
             label3.AutoSize = true;
             label3.Location = new Point(109, 55);
             label3.Name = "label3";
-            label3.Size = new Size(38, 15);
+            label3.Size = new Size(0, 15);
             label3.TabIndex = 1;
-            label3.Text = "label3";
             // 
             // comboBox3
             // 
@@ -389,9 +386,8 @@
             label4.AutoSize = true;
             label4.Location = new Point(109, 55);
             label4.Name = "label4";
-            label4.Size = new Size(38, 15);
+            label4.Size = new Size(0, 15);
             label4.TabIndex = 1;
-            label4.Text = "label4";
             // 
             // comboBox4
             // 
@@ -444,9 +440,8 @@
             label5.AutoSize = true;
             label5.Location = new Point(115, 55);
             label5.Name = "label5";
-            label5.Size = new Size(38, 15);
+            label5.Size = new Size(0, 15);
             label5.TabIndex = 1;
-            label5.Text = "label5";
             // 
             // comboBox5
             // 
@@ -494,10 +489,6 @@
             button3.UseVisualStyleBackColor = true;
             button3.Click += button3_Click;
             // 
-            // openFileDialog1
-            // 
-            openFileDialog1.FileName = "openFileDialog1";
-            // 
             // button4
             // 
             button4.BackgroundImage = (Image)resources.GetObject("button4.BackgroundImage");
@@ -509,6 +500,10 @@
             button4.TabIndex = 14;
             button4.UseVisualStyleBackColor = true;
             button4.Click += button4_Click;
+            // 
+            // openFileDialog1
+            // 
+            openFileDialog1.FileName = "openFileDialog1";
             // 
             // FrmLinkSimulator
             // 
