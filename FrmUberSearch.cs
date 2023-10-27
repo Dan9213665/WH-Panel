@@ -32,7 +32,7 @@ namespace WH_Panel
             InitializeComponent();
 
         }
-
+        List<ClientWarehouse> warehouses { get; set; }
         private void TextBox_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter((TextBox)sender);
@@ -56,9 +56,154 @@ namespace WH_Panel
         }
         private void FrmUberSearch_Load(object sender, EventArgs e)
         {
+            InitializeWarehouses();
             UpdateControlColors(this);
             startUpLogic();
 
+        }
+        public void InitializeWarehouses()
+        {
+            warehouses = new List<ClientWarehouse>
+{
+    new ClientWarehouse
+    {
+        clName = "NETLINE",
+        clPrefix = "NET",
+        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_AVL.xlsx",
+        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm"
+    },
+    new ClientWarehouse
+    {
+        clName = "Leader_Tech",
+        clPrefix = "C100",
+        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_AVL.xlsm",
+        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm"
+    },
+    // Add more warehouses following the same format
+    new ClientWarehouse
+    {
+        clName = "VAYYAR",
+        clPrefix = "VAY",
+        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_AVL.xlsx",
+        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm"
+    },
+     new ClientWarehouse
+    {
+        clName = "CIS",
+        clPrefix = "CIS",
+        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_AVL.xlsm",
+        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_STOCK.xlsm"
+    },
+       new ClientWarehouse
+    {
+        clName = "VALENS",
+        clPrefix = "VAL",
+        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_AVL.xlsx",
+        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm"
+    },
+          new ClientWarehouse
+    {
+        clName = "ROBOTRON",
+        clPrefix = "ROB",
+        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_AVL.xlsm",
+        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_STOCK.xlsm"
+    },
+             new ClientWarehouse
+    {
+        clName = "ENERCON",
+        clPrefix = "ENE",
+        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_AVL.xlsx",
+        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_STOCK.xlsm"
+    },
+               new ClientWarehouse
+    {
+        clName = "DIGITRONIX",
+        clPrefix = "DIG",
+        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_AVL.xlsx",
+        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_STOCK.xlsm"
+    },
+                 new ClientWarehouse
+    {
+        clName = "HEPTAGON",
+        clPrefix = "HEP",
+        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_AVL.xlsx",
+        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_STOCK.xlsm"
+    },
+                   new ClientWarehouse
+    {
+        clName = "EPS",
+        clPrefix = "EPS",
+        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_AVL.xlsx",
+        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_STOCK.xlsm"
+    },
+                   new ClientWarehouse
+    {
+        clName = "SOS",
+        clPrefix = "SOS",
+        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_AVL.xlsx",
+        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_STOCK.xlsm"
+    },
+                    new ClientWarehouse
+    {
+        clName = "ARAN",
+        clPrefix = "ARN",
+        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_AVL.xlsx",
+        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_STOCK.xlsm"
+    },
+                    new ClientWarehouse
+    {
+        clName = "SOLANIUM",
+        clPrefix = "BAN",
+        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_AVL.xlsm",
+        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_STOCK.xlsm"
+    },
+                    new ClientWarehouse
+    {
+        clName = "SONOTRON",
+        clPrefix = "SON",
+        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_AVL.xlsm",
+        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_STOCK.xlsm"
+    },
+                    new ClientWarehouse
+    {
+        clName = "ASIO",
+        clPrefix = "ASO",
+        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_AVL.xlsm",
+        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_STOCK.xlsm"
+    },
+                    new ClientWarehouse
+    {
+        clName = "SHILAT",
+        clPrefix = "SHT",
+        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_AVL.xlsm",
+        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_STOCK.xlsm"
+    }
+                    ,
+                    new ClientWarehouse
+    {
+        clName = "TRILOGICAL",
+        clPrefix = "UTR",
+        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_AVL.xlsm",
+        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_STOCK.xlsm"
+    }
+                     ,
+                    new ClientWarehouse
+    {
+        clName = "QUANTUM-MACHINES",
+        clPrefix = "QNT",
+        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\QUANTUM-MACHINES\\QUANTUM-MACHINES_AVL.xlsm",
+        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\QUANTUM-MACHINES\\QUANTUM-MACHINES_STOCK.xlsm"
+    }
+                        ,
+                    new ClientWarehouse
+    {
+        clName = "GASNGO",
+        clPrefix = "GNG",
+        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\GASNGO\\GASNGO_AVL.xlsm",
+        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\GASNGO\\GASNGO_STOCK.xlsm"
+    }
+    // Add more entries for each warehouse as needed
+};
         }
         private void startUpLogic()
         {
@@ -87,40 +232,64 @@ namespace WH_Panel
             }
 
             label1.BackColor = Color.IndianRed;
-            var listOfWareHouses = new KeyValueList<string, string>
-                   {
-                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_STOCK.xlsm", "STOCK" },
-                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm", "STOCK" },
-                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm","STOCK" },
-                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm","STOCK" },
-                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\FIELDIN\\FIELDIN_STOCK.xlsm","STOCK" },
-                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm","STOCK"},
-                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_STOCK.xlsm","STOCK"},
-                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_STOCK.xlsm","STOCK"},
-                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_STOCK.xlsm","STOCK"},
-                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_STOCK.xlsm","STOCK"},
-                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_STOCK.xlsm","STOCK"},
-                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_STOCK.xlsm","STOCK"},
-                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_STOCK.xlsm","STOCK"},
-                        {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_STOCK.xlsm","STOCK"}
-                   };
-            for (int i = 0; i < listOfWareHouses.Count; i++)
+
+            //var listOfWareHouses = new KeyValueList<string, string>
+            //       {
+            //            {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_STOCK.xlsm", "STOCK" },
+            //            {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm", "STOCK" },
+            //            {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm","STOCK" },
+            //            {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm","STOCK" },
+            //            {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\FIELDIN\\FIELDIN_STOCK.xlsm","STOCK" },
+            //            {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm","STOCK"},
+            //            {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_STOCK.xlsm","STOCK"},
+            //            {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_STOCK.xlsm","STOCK"},
+            //            {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_STOCK.xlsm","STOCK"},
+            //            {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_STOCK.xlsm","STOCK"},
+            //            {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_STOCK.xlsm","STOCK"},
+            //            {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_STOCK.xlsm","STOCK"},
+            //            {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_STOCK.xlsm","STOCK"},
+            //            {"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_STOCK.xlsm","STOCK"}
+            //       };
+            foreach (ClientWarehouse warehouse in warehouses)
             {
-                DataLoader(listOfWareHouses[i].Key, listOfWareHouses[i].Value);
+                DataLoader(warehouse.clStockFile, "STOCK");
             }
             PopulateGridView();
+
+            //for (int i = 0; i < listOfWareHouses.Count; i++)
+            //{
+            //    DataLoader(listOfWareHouses[i].Key, listOfWareHouses[i].Value);
+            //}
+
 
             // Create a list to hold the buttons
             List<Button> buttons = new List<Button>();
 
             // Create and add the buttons to the list
-            for (int i = 0; i < listOfWareHouses.Count; i++)
+            //for (int i = 0; i < listOfWareHouses.Count; i++)
+            //{
+            //    string warehousePath = listOfWareHouses[i].Key; // Get the warehouse path from the KeyValuePair
+
+            //    // Extract the warehouse name from the warehouse path
+            //    string[] pathParts = warehousePath.Split('\\');
+            //    string warehouseName = pathParts[pathParts.Length - 2];
+
+            //    Button button = new Button();
+            //    button.Text = warehouseName;
+            //    button.Tag = warehousePath;
+            //    button.AutoSize = true; // Adjust the button size based on the text length
+            //    button.Click += Button_Click; // Assign a common event handler for button click event
+
+            //    buttons.Add(button); // Add the button to the list
+            //}
+
+            for (int i = 0; i < warehouses.Count; i++)
             {
-                string warehousePath = listOfWareHouses[i].Key; // Get the warehouse path from the KeyValuePair
+                string warehousePath = warehouses[i].clStockFile; // Get the warehouse path from the KeyValuePair
 
                 // Extract the warehouse name from the warehouse path
                 string[] pathParts = warehousePath.Split('\\');
-                string warehouseName = pathParts[pathParts.Length - 2];
+                string warehouseName = warehouses[i].clName;
 
                 Button button = new Button();
                 button.Text = warehouseName;
@@ -130,6 +299,8 @@ namespace WH_Panel
 
                 buttons.Add(button); // Add the button to the list
             }
+
+
 
             // Sort the buttons alphabetically based on their text
             buttons.Sort((x, y) => x.Text.CompareTo(y.Text));
