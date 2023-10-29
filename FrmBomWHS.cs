@@ -164,6 +164,13 @@ namespace WH_Panel
         clPrefix = "GNG",
         clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\GASNGO\\GASNGO_AVL.xlsm",
         clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\GASNGO\\GASNGO_STOCK.xlsm"
+    }   ,
+                    new ClientWarehouse
+    {
+        clName = "MS-TECH",
+        clPrefix = "MST",
+        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\MS-TECH\\MS-TECH_AVL.xlsm",
+        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\MS-TECH\\MS-TECH_STOCK.xlsm"
     }
         };
         private void UpdateControlColors(Control parentControl)

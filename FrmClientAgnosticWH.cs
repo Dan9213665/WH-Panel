@@ -280,6 +280,14 @@ namespace WH_Panel
         clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\GASNGO\\GASNGO_AVL.xlsm",
         clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\GASNGO\\GASNGO_STOCK.xlsm"
     }
+                    ,
+                    new ClientWarehouse
+    {
+        clName = "MS-TECH",
+        clPrefix = "MST",
+        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\MS-TECH\\MS-TECH_AVL.xlsm",
+        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\MS-TECH\\MS-TECH_STOCK.xlsm"
+    }
     // Add more entries for each warehouse as needed
 };
 
@@ -293,43 +301,6 @@ namespace WH_Panel
                 comboBox3.Items.Add(warehouse.clName);
             }
         }
-
-        //public string avlNETLINE = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_AVL.xlsx";
-        //public string stockNETLINE = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm";
-        //public string stockLeader_Tech = @"\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\G.I.Leader_Tech\G.I.Leader_Tech_STOCK.xlsm";
-        //public string avlLeader_Tech = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_AVL.xlsm";
-        //public string avlVAYAR = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_AVL.xlsx";
-        //public string stockVAYAR = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm";
-        //public string avlVALENS = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_AVL.xlsx";
-        //public string stockVALENS = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm";
-        //public string avlROBOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_AVL.xlsm";
-        //public string stockROBOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_STOCK.xlsm";
-        //public string avlENERCON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_AVL.xlsx";
-        //public string stockENERCON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_STOCK.xlsm";
-        //public string avlDIGITRONIX = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_AVL.xlsx";
-        //public string stockDIGITRONIX = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_STOCK.xlsm";
-        //public string avlHEPTAGON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_AVL.xlsx";
-        //public string stockHEPTAGON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_STOCK.xlsm";
-        //public string avlEPS = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_AVL.xlsx";
-        //public string stockEPS = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_STOCK.xlsm";
-        //public string avlSOS = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_AVL.xlsx";
-        //public string stockSOS = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_STOCK.xlsm";
-        //public string avlARAN = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_AVL.xlsx";
-        //public string stockARAN = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_STOCK.xlsm";
-        //public string avlSOLANIUM = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_AVL.xlsm";
-        //public string stockSOLANIUM = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_STOCK.xlsm";
-        //public string avlSONOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_AVL.xlsm";
-        //public string stockSONOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_STOCK.xlsm";
-        //public string avlASIO = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_AVL.xlsm";
-        //public string stockASIO = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_STOCK.xlsm";
-        //public string avlSHILAT = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_AVL.xlsm";
-        //public string stockSHILAT = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_STOCK.xlsm";
-        //public string avlTRILOGICAL = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_AVL.xlsm";
-        //public string stockTRILOGICAL = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_STOCK.xlsm";
-        //public string avlCIS = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_AVL.xlsm";
-        //public string stockCIS = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_STOCK.xlsm";
-        //public string avlQM = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\QUANTUM-MACHINES\\QUANTUM-MACHINES_AVL.xlsm";
-        //public string stockQM = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\QUANTUM-MACHINES\\QUANTUM-MACHINES_STOCK.xlsm";
         public string avlFile;
         public string stockFile;
         public void SetComboBoxText(string text)
@@ -369,80 +340,6 @@ namespace WH_Panel
                     MasterReload(avlFile, stockFile);
                 }
             }
-            //if (comboBox3.Text == "ROBOTRON")
-            //{
-            //    MasterReload(avlROBOTRON, stockROBOTRON);
-            //}
-            //else if (comboBox3.Text == "ARAN")
-            //{
-            //    MasterReload(avlARAN, stockARAN);
-            //}
-            //else if (comboBox3.Text == "EPS")
-            //{
-            //    MasterReload(avlEPS, stockEPS);
-            //}
-            //else if (comboBox3.Text == "SOS")
-            //{
-            //    MasterReload(avlSOS, stockSOS);
-            //}
-            //else if (comboBox3.Text == "G.I.Leader_Tech")
-            //{
-            //    MasterReload(avlLeader_Tech, stockLeader_Tech);
-            //}
-            //else if (comboBox3.Text == "HEPTAGON")
-            //{
-            //    MasterReload(avlHEPTAGON, stockHEPTAGON);
-            //}
-            //else if (comboBox3.Text == "NETLINE")
-            //{
-            //    MasterReload(avlNETLINE, stockNETLINE);
-            //}
-            //else if (comboBox3.Text == "VAYAR")
-            //{
-            //    MasterReload(avlVAYAR, stockVAYAR);
-            //}
-            //else if (comboBox3.Text == "VALENS")
-            //{
-            //    MasterReload(avlVALENS, stockVALENS);
-            //}
-            //else if (comboBox3.Text == "ENERCON")
-            //{
-            //    MasterReload(avlENERCON, stockENERCON);
-            //}
-            //else if (comboBox3.Text == "DIGITRONIX")
-            //{
-            //    MasterReload(avlDIGITRONIX, stockDIGITRONIX);
-            //}
-            //else if (comboBox3.Text == "SOLANIUM")
-            //{
-            //    MasterReload(avlSOLANIUM, stockSOLANIUM);
-            //}
-            //else if (comboBox3.Text == "SONOTRON")
-            //{
-            //    MasterReload(avlSONOTRON, stockSONOTRON);
-            //}
-            //else if (comboBox3.Text == "ASIO")
-            //{
-            //    MasterReload(avlASIO, stockASIO);
-            //}
-            //else if (comboBox3.Text == "TRILOGICAL")
-            //{
-            //    MasterReload(avlTRILOGICAL, stockTRILOGICAL);
-            //}
-            //else if (comboBox3.Text == "SHILAT")
-            //{
-            //    MasterReload(avlSHILAT, stockSHILAT);
-            //}
-            //else if (comboBox3.Text == "CIS")
-            //{
-            //    MasterReload(avlCIS, stockCIS);
-            //}
-            //else if (comboBox3.Text == "QUANTUM-MACHINES")
-            //{
-            //    MasterReload(avlQM, stockQM);
-            //}
-
-
         }
         private void button2_Click(object sender, EventArgs e)
         {
@@ -1848,6 +1745,26 @@ namespace WH_Panel
                 AuthorizedExcelFileOpening(war.clAvlFile);
             }
         }
+
+        private void button41_Click(object sender, EventArgs e)
+        {
+            var war = warehouses.FirstOrDefault(w => w.clName == "MS-TECH");
+
+            if (war != null)
+            {
+                AuthorizedExcelFileOpening(war.clStockFile);
+            }
+        }
+
+        private void button42_Click(object sender, EventArgs e)
+        {
+            var war = warehouses.FirstOrDefault(w => w.clName == "MS-TECH");
+
+            if (war != null)
+            {
+                AuthorizedExcelFileOpening(war.clAvlFile);
+            }
+        }
         private void textBox11_KeyDown(object sender, KeyEventArgs e)
         {
 
@@ -2545,5 +2462,7 @@ namespace WH_Panel
                 MessageBox.Show("Error");
             }
         }
+
+
     }
 }
