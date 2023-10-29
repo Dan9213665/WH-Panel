@@ -1002,6 +1002,7 @@
             dataGridView1.TabIndex = 0;
             dataGridView1.CellClick += dataGridView1_CellClick;
             dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
+            dataGridView1.CellMouseClick += dataGridView1_CellMouseClick;
             // 
             // groupBox5
             // 

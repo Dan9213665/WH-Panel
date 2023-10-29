@@ -5,7 +5,11 @@ using System.Data;
 using System.Data.OleDb;
 using System.Diagnostics;
 using System.Text;
+using System.Web;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using Button = System.Windows.Forms.Button;
+using ComboBox = System.Windows.Forms.ComboBox;
 using DataTable = System.Data.DataTable;
 using RadioButton = System.Windows.Forms.RadioButton;
 using TextBox = System.Windows.Forms.TextBox;
@@ -2305,8 +2309,7 @@ namespace WH_Panel
             };
 
             wHitemToSplit = whi;
-            //MessageBox.Show(whi.IPN.ToString() + " whi " + whi.Stock.ToString());
-            //MessageBox.Show(wHitemToSplit.IPN.ToString() + " wHitemToSplit " + wHitemToSplit.Stock.ToString());
+
         }
 
         private void textBox12_KeyDown(object sender, KeyEventArgs e)
@@ -2466,5 +2469,81 @@ namespace WH_Panel
         }
 
 
+        private void dataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right && e.RowIndex >= 0)
+            {
+                DataGridViewRow selectedRow = dataGridView1.Rows[e.RowIndex];
+                string currentReelBagTrayStick = selectedRow.Cells["ReelBagTrayStick"].Value.ToString();
+
+                int rowindex = dataGridView1.CurrentCell.RowIndex;
+                WHitem wHitemABCD = new WHitem()
+                {
+                    IPN = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["IPN"].Index].Value.ToString(),
+                    Manufacturer = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Manufacturer"].Index].Value.ToString(),
+                    MFPN = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["MFPN"].Index].Value.ToString(),
+                    Description = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Description"].Index].Value.ToString(),
+                    Stock = int.Parse(dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString()),
+                    UpdatedOn = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["UpdatedOn"].Index].Value.ToString(),
+                    ReelBagTrayStick = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["ReelBagTrayStick"].Index].Value.ToString(),
+                    SourceRequester = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["SourceRequester"].Index].Value.ToString()
+                };
+
+                ContextMenuStrip contextMenu = new ContextMenuStrip();
+
+                foreach (string option in comboBox1.Items)
+                {
+                    ToolStripMenuItem item = new ToolStripMenuItem(option);
+                    item.Click += (sender, args) =>
+                    {
+                        ToolStripMenuItem clickedItem = (ToolStripMenuItem)sender;
+                        string newReelBagTrayStick = clickedItem.Text;
+
+                        // Show a confirmation message box before applying the changes
+                        DialogResult dialogResult = MessageBox.Show($"Apply changes to Warehouse Item? Change from {currentReelBagTrayStick} to {newReelBagTrayStick} ?", "Confirmation", MessageBoxButtons.YesNo);
+                        if (dialogResult == DialogResult.Yes)
+                        {
+                            selectedRow.Cells["ReelBagTrayStick"].Value = newReelBagTrayStick;
+                            DataUpdater(stockFile, "STOCK", currentReelBagTrayStick, wHitemABCD, newReelBagTrayStick);
+                        }
+                    };
+                    contextMenu.Items.Add(item);
+                }
+
+                // Display the context menu at the current mouse position
+                contextMenu.Show(dataGridView1, dataGridView1.PointToClient(Cursor.Position));
+            }
+        }
+
+        private void DataUpdater(string fp, string thesheetName, string currentReelBagTrayStick, WHitem wHitem, string newReelBagTrayStick)
+        {
+
+            //AND Manufacturer = @Manufacturer
+            try
+            {
+                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+                using (OleDbConnection conn = new OleDbConnection(constr))
+                {
+                    conn.Open();
+                    OleDbCommand command = new OleDbCommand($"UPDATE [{thesheetName}$] SET Comments = @NewReelBagTrayStick WHERE Comments = @currentReelBagTrayStick AND IPN = @IPN AND MFPN = @MFPN AND Description = @Description AND Stock = @Stock AND Updated_on = @UpdatedOn AND Source_Requester = @SourceRequester", conn);
+                    command.Parameters.AddWithValue("@NewReelBagTrayStick", newReelBagTrayStick);
+                    command.Parameters.AddWithValue("@currentReelBagTrayStick", currentReelBagTrayStick);
+                    command.Parameters.AddWithValue("@IPN", wHitem.IPN);
+                    //command.Parameters.AddWithValue("@Manufacturer", wHitem.Manufacturer);
+                    command.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
+                    command.Parameters.AddWithValue("@Description", wHitem.Description);
+                    command.Parameters.AddWithValue("@Stock", wHitem.Stock);
+                    command.Parameters.AddWithValue("@UpdatedOn", wHitem.UpdatedOn);
+                    command.Parameters.AddWithValue("@SourceRequester", wHitem.SourceRequester);
+                    command.ExecuteNonQuery();
+                    conn.Close();
+                }
+                // Update the UI or perform any necessary actions after the update
+            }
+            catch (IOException)
+            {
+                MessageBox.Show("Error");
+            }
+        }
     }
 }
