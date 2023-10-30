@@ -1146,6 +1146,10 @@ namespace WH_Panel
             {
                 selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\GASNGO\\GASNGO_STOCK.xlsm";
             }
+            else if (w.IPN.StartsWith("QNT"))
+            {
+                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\QUANTUM-MACHINES\\QUANTUM-MACHINES_STOCK.xlsm";
+            }
             else
             {
                 selection = string.Empty;
