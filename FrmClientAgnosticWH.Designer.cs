@@ -136,6 +136,9 @@
             groupBox21 = new GroupBox();
             button32 = new Button();
             button31 = new Button();
+            groupBox28 = new GroupBox();
+            button44 = new Button();
+            button43 = new Button();
             groupBox17 = new GroupBox();
             button20 = new Button();
             button21 = new Button();
@@ -195,6 +198,7 @@
             groupBox27.SuspendLayout();
             groupBox25.SuspendLayout();
             groupBox21.SuspendLayout();
+            groupBox28.SuspendLayout();
             groupBox17.SuspendLayout();
             groupBox18.SuspendLayout();
             groupBox19.SuspendLayout();
@@ -1191,6 +1195,7 @@
             flowLayoutPanel1.Controls.Add(groupBox27);
             flowLayoutPanel1.Controls.Add(groupBox25);
             flowLayoutPanel1.Controls.Add(groupBox21);
+            flowLayoutPanel1.Controls.Add(groupBox28);
             flowLayoutPanel1.Controls.Add(groupBox17);
             flowLayoutPanel1.Controls.Add(groupBox18);
             flowLayoutPanel1.Controls.Add(groupBox19);
@@ -1666,12 +1671,48 @@
             button31.UseVisualStyleBackColor = true;
             button31.Click += button31_Click;
             // 
+            // groupBox28
+            // 
+            groupBox28.BackColor = Color.Black;
+            groupBox28.CausesValidation = false;
+            groupBox28.Controls.Add(button44);
+            groupBox28.Controls.Add(button43);
+            groupBox28.ForeColor = Color.White;
+            groupBox28.Location = new Point(552, 134);
+            groupBox28.Name = "groupBox28";
+            groupBox28.Size = new Size(132, 125);
+            groupBox28.TabIndex = 45;
+            groupBox28.TabStop = false;
+            groupBox28.Text = "RP-OPTICAL";
+            // 
+            // button44
+            // 
+            button44.BackgroundImage = (Image)resources.GetObject("button44.BackgroundImage");
+            button44.BackgroundImageLayout = ImageLayout.Stretch;
+            button44.Location = new Point(6, 77);
+            button44.Name = "button44";
+            button44.Size = new Size(119, 42);
+            button44.TabIndex = 1;
+            button44.UseVisualStyleBackColor = true;
+            button44.Click += button44_Click;
+            // 
+            // button43
+            // 
+            button43.BackgroundImage = (Image)resources.GetObject("button43.BackgroundImage");
+            button43.BackgroundImageLayout = ImageLayout.Zoom;
+            button43.Location = new Point(6, 17);
+            button43.Name = "button43";
+            button43.Size = new Size(120, 58);
+            button43.TabIndex = 0;
+            button43.UseVisualStyleBackColor = true;
+            button43.Click += button43_Click;
+            // 
             // groupBox17
             // 
             groupBox17.Controls.Add(button20);
             groupBox17.Controls.Add(button21);
             groupBox17.ForeColor = Color.White;
-            groupBox17.Location = new Point(552, 134);
+            groupBox17.Location = new Point(690, 134);
             groupBox17.Name = "groupBox17";
             groupBox17.Size = new Size(131, 125);
             groupBox17.TabIndex = 34;
@@ -1707,7 +1748,7 @@
             groupBox18.Controls.Add(button25);
             groupBox18.Controls.Add(button24);
             groupBox18.ForeColor = Color.White;
-            groupBox18.Location = new Point(689, 134);
+            groupBox18.Location = new Point(827, 134);
             groupBox18.Name = "groupBox18";
             groupBox18.Size = new Size(131, 125);
             groupBox18.TabIndex = 35;
@@ -1741,7 +1782,7 @@
             groupBox19.Controls.Add(button27);
             groupBox19.Controls.Add(button26);
             groupBox19.ForeColor = Color.White;
-            groupBox19.Location = new Point(826, 134);
+            groupBox19.Location = new Point(964, 134);
             groupBox19.Name = "groupBox19";
             groupBox19.Size = new Size(130, 125);
             groupBox19.TabIndex = 36;
@@ -1775,7 +1816,7 @@
             groupBox22.Controls.Add(button33);
             groupBox22.Controls.Add(btnSHILAT);
             groupBox22.ForeColor = Color.White;
-            groupBox22.Location = new Point(962, 134);
+            groupBox22.Location = new Point(1100, 134);
             groupBox22.Name = "groupBox22";
             groupBox22.Size = new Size(131, 125);
             groupBox22.TabIndex = 39;
@@ -1811,7 +1852,7 @@
             groupBox23.Controls.Add(button35);
             groupBox23.Controls.Add(button34);
             groupBox23.ForeColor = Color.White;
-            groupBox23.Location = new Point(1099, 134);
+            groupBox23.Location = new Point(3, 265);
             groupBox23.Name = "groupBox23";
             groupBox23.Size = new Size(131, 125);
             groupBox23.TabIndex = 40;
@@ -1846,7 +1887,7 @@
             groupBox9.Controls.Add(btnValens);
             groupBox9.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
             groupBox9.ForeColor = Color.White;
-            groupBox9.Location = new Point(3, 265);
+            groupBox9.Location = new Point(140, 265);
             groupBox9.Name = "groupBox9";
             groupBox9.Size = new Size(132, 125);
             groupBox9.TabIndex = 17;
@@ -1882,7 +1923,7 @@
             groupBox11.Controls.Add(button18);
             groupBox11.Controls.Add(btnVAYYAR);
             groupBox11.ForeColor = Color.White;
-            groupBox11.Location = new Point(141, 265);
+            groupBox11.Location = new Point(278, 265);
             groupBox11.Name = "groupBox11";
             groupBox11.Size = new Size(131, 125);
             groupBox11.TabIndex = 21;
@@ -1919,7 +1960,7 @@
             btnFIELDIN.BackgroundImage = Properties.Resources.Fieldin;
             btnFIELDIN.BackgroundImageLayout = ImageLayout.Zoom;
             btnFIELDIN.Cursor = Cursors.Hand;
-            btnFIELDIN.Location = new Point(278, 265);
+            btnFIELDIN.Location = new Point(415, 265);
             btnFIELDIN.Name = "btnFIELDIN";
             btnFIELDIN.Size = new Size(132, 59);
             btnFIELDIN.TabIndex = 29;
@@ -1930,7 +1971,7 @@
             // 
             button7.BackgroundImage = Properties.Resources.STM;
             button7.BackgroundImageLayout = ImageLayout.Zoom;
-            button7.Location = new Point(416, 265);
+            button7.Location = new Point(553, 265);
             button7.Name = "button7";
             button7.Size = new Size(132, 59);
             button7.TabIndex = 28;
@@ -1997,6 +2038,7 @@
             groupBox27.ResumeLayout(false);
             groupBox25.ResumeLayout(false);
             groupBox21.ResumeLayout(false);
+            groupBox28.ResumeLayout(false);
             groupBox17.ResumeLayout(false);
             groupBox18.ResumeLayout(false);
             groupBox19.ResumeLayout(false);
@@ -2138,5 +2180,8 @@
         private GroupBox groupBox27;
         private Button button42;
         private Button button41;
+        private GroupBox groupBox28;
+        private Button button44;
+        private Button button43;
     }
 }

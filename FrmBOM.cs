@@ -1150,6 +1150,10 @@ namespace WH_Panel
             {
                 selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\QUANTUM-MACHINES\\QUANTUM-MACHINES_STOCK.xlsm";
             }
+            else if (w.IPN.StartsWith("RPO"))
+            {
+                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\RP-OPTICAL\\RP-OPTICAL_STOCK.xlsm";
+            }
             else
             {
                 selection = string.Empty;

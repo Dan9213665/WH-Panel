@@ -288,6 +288,14 @@ namespace WH_Panel
         clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\MS-TECH\\MS-TECH_AVL.xlsm",
         clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\MS-TECH\\MS-TECH_STOCK.xlsm"
     }
+                     ,
+                    new ClientWarehouse
+    {
+        clName = "RP-OPTICAL",
+        clPrefix = "RPO",
+        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\RP-OPTICAL\\RP-OPTICAL_AVL.xlsm",
+        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\RP-OPTICAL\\RP-OPTICAL_STOCK.xlsm"
+    }
     // Add more entries for each warehouse as needed
 };
 
@@ -1731,9 +1739,25 @@ namespace WH_Panel
             {
                 AuthorizedExcelFileOpening(war.clStockFile);
             }
+        }
+        private void button43_Click(object sender, EventArgs e)
+        {
+            var war = warehouses.FirstOrDefault(w => w.clName == "RP-OPTICAL");
 
+            if (war != null)
+            {
+                AuthorizedExcelFileOpening(war.clStockFile);
+            }
+        }
 
+        private void button44_Click(object sender, EventArgs e)
+        {
+            var war = warehouses.FirstOrDefault(w => w.clName == "RP-OPTICAL");
 
+            if (war != null)
+            {
+                AuthorizedExcelFileOpening(war.clAvlFile);
+            }
         }
 
         private void button40_Click(object sender, EventArgs e)
