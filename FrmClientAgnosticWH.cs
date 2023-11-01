@@ -1796,6 +1796,26 @@ namespace WH_Panel
                 AuthorizedExcelFileOpening(war.clAvlFile);
             }
         }
+
+        private void button45_Click(object sender, EventArgs e)
+        {
+            var war = warehouses.FirstOrDefault(w => w.clName == "ROBOTEAM");
+
+            if (war != null)
+            {
+                AuthorizedExcelFileOpening(war.clStockFile);
+            }
+        }
+
+        private void button46_Click(object sender, EventArgs e)
+        {
+            var war = warehouses.FirstOrDefault(w => w.clName == "ROBOTEAM");
+
+            if (war != null)
+            {
+                AuthorizedExcelFileOpening(war.clAvlFile);
+            }
+        }
         private void textBox11_KeyDown(object sender, KeyEventArgs e)
         {
 
