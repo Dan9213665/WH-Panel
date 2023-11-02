@@ -449,28 +449,77 @@ namespace WH_Panel
             dataGridView1.Columns["Calc"].DisplayIndex = 8;
             dataGridView1.Columns["Alts"].DisplayIndex = 9;
         }
+        //private void FilterTheDataGridView()
+        //{
+        //    try
+        //    {
+        //        DataView dv = UDtable.DefaultView;
+        //        dv.RowFilter = "[IPN] LIKE '%" + textBox1.Text.ToString() +
+        //             "%' AND [ProjectName] LIKE '%" + textBox11.Text.ToString() +
+        //        "%' AND [MFPN] LIKE '%" + textBox2.Text.ToString() +
+        //        "%' AND [Alts] LIKE '%" + textBox9.Text.ToString() +
+        //        "%' AND [Description] LIKE '%" + textBox3.Text.ToString() + "%' ";
+        //        dataGridView1.DataSource = dv;
+        //        SetColumsOrder();
+        //        SetColumsOrder();
+        //        ColorTheDelta(dataGridView1);
+        //        //dataGridView1.Update();
+        //    }
+        //    catch (Exception)
+        //    {
+        //        MessageBox.Show("Incorrect search pattern, remove invalid character and try again !", "Search pattern error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        //        throw;
+        //    }
+        //}
         private void FilterTheDataGridView()
         {
             try
             {
                 DataView dv = UDtable.DefaultView;
-                dv.RowFilter = "[IPN] LIKE '%" + textBox1.Text.ToString() +
-                     "%' AND [ProjectName] LIKE '%" + textBox11.Text.ToString() +
-                "%' AND [MFPN] LIKE '%" + textBox2.Text.ToString() +
-                "%' AND [Alts] LIKE '%" + textBox9.Text.ToString() +
-                "%' AND [Description] LIKE '%" + textBox3.Text.ToString() + "%' ";
+                StringBuilder filterQuery = new StringBuilder();
+
+                if (!string.IsNullOrEmpty(textBox1.Text))
+                    filterQuery.Append("[IPN] LIKE '%" + textBox1.Text + "%' AND ");
+
+                if (!string.IsNullOrEmpty(textBox11.Text))
+                    filterQuery.Append("[ProjectName] LIKE '%" + textBox11.Text + "%' AND ");
+
+                if (!string.IsNullOrEmpty(textBox2.Text))
+                    filterQuery.Append("[MFPN] LIKE '%" + textBox2.Text + "%' AND ");
+
+                if (!string.IsNullOrEmpty(textBox9.Text))
+                    filterQuery.Append("[Alts] LIKE '%" + textBox9.Text + "%' AND ");
+
+                //if (!string.IsNullOrEmpty(textBox3.Text))
+                //    filterQuery.Append("[Description] LIKE '%" + textBox3.Text + "%' AND ");
+                if (!string.IsNullOrEmpty(textBox3.Text))
+                {
+                    string[] searchTerms = textBox3.Text.Split(new char[] { '+', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (string term in searchTerms)
+                    {
+                        filterQuery.Append("[Description] LIKE '%" + term + "%' AND ");
+                    }
+                }
+                if (filterQuery.Length > 0)
+                {
+                    filterQuery.Remove(filterQuery.Length - 5, 5); // Remove the extra 'AND' at the end
+                    dv.RowFilter = filterQuery.ToString();
+                }
+                else
+                {
+                    dv.RowFilter = string.Empty; // No filter applied
+                }
+
                 dataGridView1.DataSource = dv;
                 SetColumsOrder();
-                SetColumsOrder();
                 ColorTheDelta(dataGridView1);
-                //dataGridView1.Update();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                MessageBox.Show("Incorrect search pattern, remove invalid character and try again !", "Search pattern error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                throw;
+                MessageBox.Show("Incorrect search pattern, remove invalid character and try again !\nError: " + ex.Message, "Search pattern error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
+
 
         private void DataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {

@@ -263,25 +263,69 @@ namespace WH_Panel
             label2.BackColor = Color.IndianRed;
             FilterTheDataGridView();
         }
+        //private void FilterTheDataGridView()
+        //{
+        //    try
+        //    {
+        //        DataView dv = UDtable.DefaultView;
+        //        dv.RowFilter = "[IPN] LIKE '%" + textBox2.Text.ToString() +
+        //            "%' AND [MFPN] LIKE '%" + textBox4.Text.ToString() +
+        //            "%' AND [Description] LIKE '%" + textBox5.Text.ToString() +
+        //            "%' AND [SourceRequester] LIKE '%" + textBox9.Text.ToString() +
+        //            "%'";
+        //        dataGridView1.DataSource = dv;
+        //        SetColumsOrder();
+        //    }
+        //    catch (Exception)
+        //    {
+        //        MessageBox.Show("Incorrect search pattern, remove invalid character and try again !");
+        //        throw;
+        //    }
+        //}
         private void FilterTheDataGridView()
         {
             try
             {
                 DataView dv = UDtable.DefaultView;
-                dv.RowFilter = "[IPN] LIKE '%" + textBox2.Text.ToString() +
-                    "%' AND [MFPN] LIKE '%" + textBox4.Text.ToString() +
-                    "%' AND [Description] LIKE '%" + textBox5.Text.ToString() +
-                    "%' AND [SourceRequester] LIKE '%" + textBox9.Text.ToString() +
-                    "%'";
+                StringBuilder filterQuery = new StringBuilder();
+
+                if (!string.IsNullOrEmpty(textBox2.Text))
+                    filterQuery.Append("[IPN] LIKE '%" + textBox2.Text + "%' AND ");
+
+                if (!string.IsNullOrEmpty(textBox4.Text))
+                    filterQuery.Append("[MFPN] LIKE '%" + textBox4.Text + "%' AND ");
+
+                if (!string.IsNullOrEmpty(textBox5.Text))
+                {
+                    string[] searchTerms = textBox5.Text.Split(new char[] { '+', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (string term in searchTerms)
+                    {
+                        filterQuery.Append("[Description] LIKE '%" + term + "%' AND ");
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(textBox9.Text))
+                    filterQuery.Append("[SourceRequester] LIKE '%" + textBox9.Text + "%' AND ");
+
+                if (filterQuery.Length > 0)
+                {
+                    filterQuery.Remove(filterQuery.Length - 5, 5); // Remove the extra 'AND' at the end
+                    dv.RowFilter = filterQuery.ToString();
+                }
+                else
+                {
+                    dv.RowFilter = string.Empty; // No filter applied
+                }
+
                 dataGridView1.DataSource = dv;
                 SetColumsOrder();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                MessageBox.Show("Incorrect search pattern, remove invalid character and try again !");
-                throw;
+                MessageBox.Show("Incorrect search pattern, remove invalid character and try again !\nError: " + ex.Message, "Search pattern error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
+
         private void textBox4_TextChanged(object sender, EventArgs e)
         {
             label4.BackColor = Color.IndianRed;

@@ -30,12 +30,12 @@ namespace WH_Panel
                 {
                     clName = "LEADER-TECH",
                     clPrefix = "C100",
-                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_AVL.xlsm",
-                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm"
+                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\LEADER-TECH\\LEADER-TECH_AVL.xlsm",
+                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\LEADER-TECH\\LEADER-TECH_STOCK.xlsm"
                 },
                 new ClientWarehouse
                 {
-                    clName = "VAYYAR",
+                    clName = "VAYAR",
                     clPrefix = "VAY",
                     clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_AVL.xlsx",
                     clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm"
