@@ -15,7 +15,7 @@ namespace WH_Panel
             DateTime fileModifiedDate = File.GetLastWriteTime(@"ImperiumTabulaPrincipalis.exe");
             this.Text = "Imperium Tabula Principalis UPDATED " + fileModifiedDate.ToString();
         }
-        private List<ClientWarehouse> InitializeWarehouses()
+        public List<ClientWarehouse> InitializeWarehouses()
         {
             List<ClientWarehouse> warehousesInitializedIntheMainForm = new List<ClientWarehouse>
             {

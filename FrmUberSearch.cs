@@ -113,23 +113,6 @@ namespace WH_Panel
             // Create a list to hold the buttons
             List<Button> buttons = new List<Button>();
 
-            // Create and add the buttons to the list
-            //for (int i = 0; i < listOfWareHouses.Count; i++)
-            //{
-            //    string warehousePath = listOfWareHouses[i].Key; // Get the warehouse path from the KeyValuePair
-
-            //    // Extract the warehouse name from the warehouse path
-            //    string[] pathParts = warehousePath.Split('\\');
-            //    string warehouseName = pathParts[pathParts.Length - 2];
-
-            //    Button button = new Button();
-            //    button.Text = warehouseName;
-            //    button.Tag = warehousePath;
-            //    button.AutoSize = true; // Adjust the button size based on the text length
-            //    button.Click += Button_Click; // Assign a common event handler for button click event
-
-            //    buttons.Add(button); // Add the button to the list
-            //}
 
             for (int i = 0; i < warehouses.Count; i++)
             {
@@ -168,6 +151,7 @@ namespace WH_Panel
             string warehouseName = pathParts[pathParts.Length - 2];
 
             FrmClientAgnosticWH w = new FrmClientAgnosticWH();
+            w.InitializeGlobalWarehouses(warehouses);
             w.Show();
             w.Focus();
 
