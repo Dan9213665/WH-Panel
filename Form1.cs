@@ -191,6 +191,20 @@ namespace WH_Panel
             cl.Show();
            
         }
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (frmUberSearch == null || frmUberSearch.IsDisposed)
+            {
+                frmUberSearch = new FrmUberSearch();
+                List<ClientWarehouse> warehouses = InitializeWarehouses();
+                frmUberSearch.InitializeGlobalWarehouses(warehouses);
+                frmUberSearch.Show();
+            }
+            else
+            {
+                frmUberSearch.BringToFront();
+            }
+        }
         private void openWHexcelDB(string thePathToFile)
         {
             Process excel = new Process();
@@ -238,18 +252,7 @@ namespace WH_Panel
         }
         private FrmUberSearch openUberSearchForm = null;
         private FrmUberSearch frmUberSearch = null;
-        private void button3_Click(object sender, EventArgs e)
-        {
-            if (frmUberSearch == null || frmUberSearch.IsDisposed)
-            {
-                frmUberSearch = new FrmUberSearch();
-                frmUberSearch.Show();
-            }
-            else
-            {
-                frmUberSearch.BringToFront();
-            }
-        }
+     
        
         private FrmKITShistory openKITShistoryForm = null;
         private void button5_Click(object sender, EventArgs e)
