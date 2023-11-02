@@ -24,6 +24,7 @@ namespace WH_Panel
             UpdateControlColors(this);
             InitializeWarehouses();
             //comboBox3.SelectedIndex = 0;
+            comboBox6.Enabled = false;
             button23.Enabled = false;
             comboBox3.SelectedItem = "ROBOTRON";
             //MasterReload(avlROBOTRON, stockROBOTRON);
@@ -578,7 +579,9 @@ namespace WH_Panel
             RadioButton rbtn = sender as RadioButton;
             if (rbtn.Checked == true)
             {
-                lblRWK.Text = "_RWK Yuri_";
+                comboBox6.Enabled = true;
+                comboBox6.SelectedIndex = 0;
+                lblRWK.Text = "_requested by " + comboBox6.SelectedText;
                 lblSendTo.Text = "_Sent to_";
                 lblSendTo.Enabled = true;
                 textBox8.ReadOnly = true;
@@ -589,6 +592,7 @@ namespace WH_Panel
             {
                 lblRWK.ResetText();
                 lblSendTo.ResetText();
+                comboBox6.Enabled = false;
                 lblSendTo.Enabled = false;
                 textBox9.ReadOnly = true;
                 textBox8.ReadOnly = false;
@@ -1483,7 +1487,9 @@ namespace WH_Panel
         }
         private void lblSendTo_Click(object sender, EventArgs e)
         {
-            lblSendTo.Text += comboBox3.Text.ToString() + " " + DateTime.Now.ToString("yyyy-MM-dd");
+            lblSendTo.Text = string.Empty;
+            lblSendTo.Text += "sent to ";
+            lblSendTo.Text += comboBox3.Text.ToString() + " on " + DateTime.Now.ToString("yyyy-MM-dd");
             textBox9.Text = lblSendTo.Text;
         }
         private void textBox9_KeyDown_1(object sender, KeyEventArgs e)
@@ -1496,8 +1502,9 @@ namespace WH_Panel
         }
         private void lblRWK_Click(object sender, EventArgs e)
         {
-            lblRWK.Text += DateTime.Now.ToString("yyyy-MM-dd");
-            textBox9.Text = lblRWK.Text;
+            lblRWK.Text = string.Empty;
+            lblRWK.Text += "requested by ";
+            textBox9.Text = lblRWK.Text + comboBox6.SelectedItem.ToString() + " on " + DateTime.Now.ToString("yyyy-MM-dd");
         }
 
         private void btnLEADERTECH_Click(object sender, EventArgs e)
@@ -1848,21 +1855,12 @@ namespace WH_Panel
 
         private void button22_Click(object sender, EventArgs e)
         {
-            //GenerateHTML();
+
 
         }
         private void button22_MouseClick(object sender, MouseEventArgs e)
         {
-            //if (e.Button == MouseButtons.Left)
-            //{
-            //    MessageBox.Show("left");
-            //    GenerateHTML();
-            //}
-            //else if (e.Button == MouseButtons.Right)
-            //{
-            //    MessageBox.Show("right");
-            //    GenerateHTMLwareHouseBalance();
-            //}
+
         }
         private void button22_MouseDown(object sender, MouseEventArgs e)
         {
@@ -1981,19 +1979,6 @@ namespace WH_Panel
 
                 writer.WriteLine("<script>");
 
-                //writer.WriteLine("var acc = document.getElementsByClassName('accordion');");
-                //writer.WriteLine("var i;");
-                //writer.WriteLine("for (i = 0; i < acc.length; i++) {");
-                //writer.WriteLine("acc[i].addEventListener('click', function() {");
-                //writer.WriteLine("this.classList.toggle('active');");
-                //writer.WriteLine("var panel = this.nextElementSibling;");
-                //writer.WriteLine("if (panel.style.display === 'block') {");
-                //writer.WriteLine("panel.style.display = 'none';");
-                //writer.WriteLine("} else {");
-                //writer.WriteLine("panel.style.display = 'block';");
-                //writer.WriteLine("}");
-                //writer.WriteLine("});");
-                //writer.WriteLine("}");
 
                 writer.WriteLine("var acc = document.getElementsByClassName('accordion');");
                 writer.WriteLine("var i;");
@@ -2025,23 +2010,6 @@ namespace WH_Panel
                 writer.WriteLine("}");
                 writer.WriteLine("</script>");
 
-                //writer.WriteLine("<script>");
-                //writer.WriteLine("function filterItems() {");
-                //writer.WriteLine("var input, filter, accordions, panels, i, ipn;");
-                //writer.WriteLine("input = document.getElementById('filterInput');");
-                //writer.WriteLine("filter = input.value.toUpperCase();");
-                //writer.WriteLine("accordions = document.getElementsByClassName('accordion');");
-                //writer.WriteLine("for (i = 0; i < accordions.length; i++) {");
-                //writer.WriteLine("ipn = accordions[i].getElementsByTagName('strong')[0].innerText;");
-                //writer.WriteLine("if (ipn.toUpperCase().indexOf(filter) > -1) {");
-                //writer.WriteLine("accordions[i].style.display = '';");
-                //writer.WriteLine("} else {");
-                //writer.WriteLine("accordions[i].style.display = 'none';");
-                //writer.WriteLine("}");
-                //writer.WriteLine("}");
-                //writer.WriteLine("}");
-                //writer.WriteLine("</script>");
-
                 writer.WriteLine("<script>");
                 writer.WriteLine("function filterItems() {");
                 writer.WriteLine("var input, filter, accordions, panels, i, ipn;");
@@ -2068,8 +2036,6 @@ namespace WH_Panel
                 writer.WriteLine("}");
                 writer.WriteLine("}");
                 writer.WriteLine("</script>");
-
-
 
                 writer.WriteLine("</body>");
                 writer.WriteLine("</html>");
@@ -2234,16 +2200,6 @@ namespace WH_Panel
 
             PopulateStockView();
 
-            // Construct the message to display all properties of each object
-            //string message =
-            //    "Original Item:\n" +
-            //    GetObjectPropertiesAsString(e.OriginalItem) +
-            //    "\n\nAdjusted Item A:\n" +
-            //    GetObjectPropertiesAsString(e.AdjustedItemA) +
-            //    "\n\nAdjusted Item B:\n" +
-            //    GetObjectPropertiesAsString(e.AdjustedItemB);
-
-            //MessageBox.Show(message);
         }
         private string GetObjectPropertiesAsString(WHitem item)
         {
@@ -2288,13 +2244,6 @@ namespace WH_Panel
 
                 if (textBox12.Text.Contains("-") == true && textBox12.Text.Length > 6)
                 {
-                    //string[] theSplit = textBox13.Text.ToString().Split("-");
-                    ////if (theSplit[0].Length == 3 || theSplit[0].Length >= 2 || textBox13.Text.Length > 5)
-                    //if (theSplit[0].Length >= 3)
-                    //{
-                    //    searchbyMFPN = theSplit[1];
-
-                    //}
                     string[] theSplit = textBox12.Text.Split("-");
                     if (theSplit.Length > 1)
                     {
@@ -2373,11 +2322,7 @@ namespace WH_Panel
                 }
                 else
                 {
-                    //// If the search text is empty, show all rows
-                    //foreach (DataGridViewRow row in dataGridView2.Rows)
-                    //{
-                    //    row.Visible = true;
-                    //}
+
                 }
 
                 LastInputFromUser = textBox13;
