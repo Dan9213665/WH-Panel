@@ -24,166 +24,210 @@ namespace WH_Panel
 {
     public partial class FrmLinkSimulator : Form
     {
-        List<ClientWarehouse> warehouses = new List<ClientWarehouse>();
+        //List<ClientWarehouse> warehouses = new List<ClientWarehouse>();
+        List<ClientWarehouse> warehouses { get; set; }
         public List<WHitem> stockItems = new List<WHitem>();
         List<string> selectedFileNames = new List<string>();
         public FrmLinkSimulator()
         {
             InitializeComponent();
             InitializeComboBoxes();
-            IntitializeWarehouses();
+            //IntitializeWarehouses();
             UpdateControlColors(this);
             BOMs = new List<BOMList>();
 
 
 
         }
-
-        public void IntitializeWarehouses()
+        public void InitializeGlobalWarehouses(List<ClientWarehouse> warehousesFromTheMain)
         {
-            warehouses = new List<ClientWarehouse>
-{
-    new ClientWarehouse
-    {
-        clName = "NETLINE",
-        clPrefix = "NET",
-        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_AVL.xlsx",
-        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm"
-    },
-    new ClientWarehouse
-    {
-        clName = "LEADER-TECH",
-        clPrefix = "C100",
-        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_AVL.xlsm",
-        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm"
-    },
-    // Add more warehouses following the same format
-    new ClientWarehouse
-    {
-        clName = "VAYYAR",
-        clPrefix = "VAY",
-        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_AVL.xlsx",
-        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm"
-    },
-     new ClientWarehouse
-    {
-        clName = "CIS",
-        clPrefix = "CIS",
-        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_AVL.xlsm",
-        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_STOCK.xlsm"
-    },
-       new ClientWarehouse
-    {
-        clName = "VALENS",
-        clPrefix = "VAL",
-        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_AVL.xlsx",
-        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm"
-    },
-          new ClientWarehouse
-    {
-        clName = "ROBOTRON",
-        clPrefix = "ROB",
-        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_AVL.xlsx",
-        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_STOCK.xlsm"
-    },
-             new ClientWarehouse
-    {
-        clName = "ENERCON",
-        clPrefix = "ENE",
-        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_AVL.xlsx",
-        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_STOCK.xlsm"
-    },
-               new ClientWarehouse
-    {
-        clName = "DIGITRONIX",
-        clPrefix = "DIG",
-        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_AVL.xlsx",
-        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_STOCK.xlsm"
-    },
-                 new ClientWarehouse
-    {
-        clName = "HEPTAGON",
-        clPrefix = "HEP",
-        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_AVL.xlsx",
-        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_STOCK.xlsm"
-    },
-                   new ClientWarehouse
-    {
-        clName = "EPS",
-        clPrefix = "EPS",
-        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_AVL.xlsx",
-        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_STOCK.xlsm"
-    },
-                   new ClientWarehouse
-    {
-        clName = "SOS",
-        clPrefix = "SOS",
-        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_AVL.xlsx",
-        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_STOCK.xlsm"
-    },
-                    new ClientWarehouse
-    {
-        clName = "ARAN",
-        clPrefix = "ARN",
-        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_AVL.xlsx",
-        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_STOCK.xlsm"
-    },
-                    new ClientWarehouse
-    {
-        clName = "SOLANIUM",
-        clPrefix = "BAN",
-        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_AVL.xlsx",
-        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_STOCK.xlsm"
-    },
-                    new ClientWarehouse
-    {
-        clName = "SONOTRON",
-        clPrefix = "SON",
-        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_AVL.xlsx",
-        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_STOCK.xlsm"
-    },
-                    new ClientWarehouse
-    {
-        clName = "ASIO",
-        clPrefix = "ASO",
-        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_AVL.xlsx",
-        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_STOCK.xlsm"
-    },
-                    new ClientWarehouse
-    {
-        clName = "SHILAT",
-        clPrefix = "SHT",
-        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_AVL.xlsx",
-        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_STOCK.xlsm"
-    }
-                    ,
-                    new ClientWarehouse
-    {
-        clName = "TRILOGICAL",
-        clPrefix = "UTR",
-        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_AVL.xlsx",
-        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_STOCK.xlsm"
-    }
-                      ,
-                    new ClientWarehouse
-    {
-        clName = "QUANTUM-MACHINES",
-        clPrefix = "QNT",
-        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\QUANTUM-MACHINES\\QUANTUM-MACHINES_AVL.xlsm",
-        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\QUANTUM-MACHINES\\QUANTUM-MACHINES_STOCK.xlsm"
-    }
-    // Add more entries for each warehouse as needed
-};
+            warehouses = warehousesFromTheMain;
+
 
             // Ordering the warehouses list by clName
             warehouses = warehouses.OrderBy(warehouse => warehouse.clName).ToList();
 
-            // Adding clNames to comboBox of warehouse name
+            // Adding clNames to comboBox4
             foreach (ClientWarehouse warehouse in warehouses)
             {
                 comboBox6.Items.Add(warehouse.clName);
             }
         }
+//        public void IntitializeWarehouses()
+//        {
+//            warehouses = new List<ClientWarehouse>
+//{
+//    new ClientWarehouse
+//    {
+//        clName = "NETLINE",
+//        clPrefix = "NET",
+//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_AVL.xlsx",
+//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm"
+//    },
+//    new ClientWarehouse
+//    {
+//        clName = "LEADER-TECH",
+//        clPrefix = "C100",
+//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_AVL.xlsm",
+//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm"
+//    },
+//    // Add more warehouses following the same format
+//    new ClientWarehouse
+//    {
+//        clName = "VAYYAR",
+//        clPrefix = "VAY",
+//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_AVL.xlsx",
+//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm"
+//    },
+//     new ClientWarehouse
+//    {
+//        clName = "CIS",
+//        clPrefix = "CIS",
+//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_AVL.xlsm",
+//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_STOCK.xlsm"
+//    },
+//       new ClientWarehouse
+//    {
+//        clName = "VALENS",
+//        clPrefix = "VAL",
+//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_AVL.xlsx",
+//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm"
+//    },
+//          new ClientWarehouse
+//    {
+//        clName = "ROBOTRON",
+//        clPrefix = "ROB",
+//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_AVL.xlsx",
+//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_STOCK.xlsm"
+//    },
+//             new ClientWarehouse
+//    {
+//        clName = "ENERCON",
+//        clPrefix = "ENE",
+//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_AVL.xlsx",
+//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_STOCK.xlsm"
+//    },
+//               new ClientWarehouse
+//    {
+//        clName = "DIGITRONIX",
+//        clPrefix = "DIG",
+//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_AVL.xlsx",
+//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_STOCK.xlsm"
+//    },
+//                 new ClientWarehouse
+//    {
+//        clName = "HEPTAGON",
+//        clPrefix = "HEP",
+//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_AVL.xlsx",
+//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_STOCK.xlsm"
+//    },
+//                   new ClientWarehouse
+//    {
+//        clName = "EPS",
+//        clPrefix = "EPS",
+//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_AVL.xlsx",
+//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_STOCK.xlsm"
+//    },
+//                   new ClientWarehouse
+//    {
+//        clName = "SOS",
+//        clPrefix = "SOS",
+//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_AVL.xlsx",
+//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_STOCK.xlsm"
+//    },
+//                    new ClientWarehouse
+//    {
+//        clName = "ARAN",
+//        clPrefix = "ARN",
+//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_AVL.xlsx",
+//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_STOCK.xlsm"
+//    },
+//                    new ClientWarehouse
+//    {
+//        clName = "SOLANIUM",
+//        clPrefix = "BAN",
+//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_AVL.xlsx",
+//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_STOCK.xlsm"
+//    },
+//                    new ClientWarehouse
+//    {
+//        clName = "SONOTRON",
+//        clPrefix = "SON",
+//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_AVL.xlsx",
+//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_STOCK.xlsm"
+//    },
+//                    new ClientWarehouse
+//    {
+//        clName = "ASIO",
+//        clPrefix = "ASO",
+//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_AVL.xlsx",
+//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_STOCK.xlsm"
+//    },
+//                    new ClientWarehouse
+//    {
+//        clName = "SHILAT",
+//        clPrefix = "SHT",
+//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_AVL.xlsx",
+//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_STOCK.xlsm"
+//    }
+//                    ,
+//                    new ClientWarehouse
+//    {
+//        clName = "TRILOGICAL",
+//        clPrefix = "UTR",
+//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_AVL.xlsx",
+//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_STOCK.xlsm"
+//    }
+//                      ,
+//                    new ClientWarehouse
+//    {
+//        clName = "QUANTUM-MACHINES",
+//        clPrefix = "QNT",
+//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\QUANTUM-MACHINES\\QUANTUM-MACHINES_AVL.xlsm",
+//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\QUANTUM-MACHINES\\QUANTUM-MACHINES_STOCK.xlsm"
+//    }  ,
+//                new ClientWarehouse
+//                {
+//                    clName = "GASNGO",
+//                    clPrefix = "GNG",
+//                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\GASNGO\\GASNGO_AVL.xlsm",
+//                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\GASNGO\\GASNGO_STOCK.xlsm"
+//                }
+//                    ,
+//                new ClientWarehouse
+//                {
+//                    clName = "MS-TECH",
+//                    clPrefix = "MST",
+//                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\MS-TECH\\MS-TECH_AVL.xlsm",
+//                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\MS-TECH\\MS-TECH_STOCK.xlsm"
+//                }
+//                     ,
+//                new ClientWarehouse
+//                {
+//                    clName = "RP-OPTICAL",
+//                    clPrefix = "RPO",
+//                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\RP-OPTICAL\\RP-OPTICAL_AVL.xlsm",
+//                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\RP-OPTICAL\\RP-OPTICAL_STOCK.xlsm"
+//                },
+//                new ClientWarehouse
+//                {
+//                    clName = "ROBOTEAM",
+//                    clPrefix = "RBM",
+//                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTEAM\\ROBOTEAM_AVL.xlsm",
+//                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTEAM\\ROBOTEAM_STOCK.xlsm"
+//                }
+//    // Add more entries for each warehouse as needed
+//};
+
+//            // Ordering the warehouses list by clName
+//            warehouses = warehouses.OrderBy(warehouse => warehouse.clName).ToList();
+
+//            // Adding clNames to comboBox of warehouse name
+//            foreach (ClientWarehouse warehouse in warehouses)
+//            {
+//                comboBox6.Items.Add(warehouse.clName);
+//            }
+//        }
         private void InitializeComboBoxes()
         {
 

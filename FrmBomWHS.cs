@@ -37,7 +37,7 @@ namespace WH_Panel
     },
     new ClientWarehouse
     {
-        clName = "Leader_Tech",
+        clName = "LEADER-TECH",
         clPrefix = "C100",
         clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_AVL.xlsm",
         clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm"

@@ -12,11 +12,184 @@ namespace WH_Panel
         public Form1()
         {
             InitializeComponent();
-            //Rectangle workingArea = Screen.GetWorkingArea(this);
-            //this.Location = new Point(-1040,1300);
-            //DateTime fileCreatedDate = File.GetCreationTime(@"ImperiumTabulaPrincipalis.exe");
             DateTime fileModifiedDate = File.GetLastWriteTime(@"ImperiumTabulaPrincipalis.exe");
             this.Text = "Imperium Tabula Principalis UPDATED " + fileModifiedDate.ToString();
+        }
+        private List<ClientWarehouse> InitializeWarehouses()
+        {
+            List<ClientWarehouse> warehousesInitializedIntheMainForm = new List<ClientWarehouse>
+            {
+                new ClientWarehouse
+                {
+                    clName = "NETLINE",
+                    clPrefix = "NET",
+                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_AVL.xlsx",
+                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm"
+                },
+                new ClientWarehouse
+                {
+                    clName = "LEADER-TECH",
+                    clPrefix = "C100",
+                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_AVL.xlsm",
+                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm"
+                },
+                new ClientWarehouse
+                {
+                    clName = "VAYYAR",
+                    clPrefix = "VAY",
+                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_AVL.xlsx",
+                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm"
+                },
+                new ClientWarehouse
+                {
+                    clName = "CIS",
+                    clPrefix = "CIS",
+                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_AVL.xlsm",
+                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_STOCK.xlsm"
+                },
+                new ClientWarehouse
+                {
+                    clName = "VALENS",
+                    clPrefix = "VAL",
+                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_AVL.xlsx",
+                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm"
+                },
+                new ClientWarehouse
+                {
+                    clName = "ROBOTRON",
+                    clPrefix = "ROB",
+                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_AVL.xlsm",
+                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_STOCK.xlsm"
+                },
+                new ClientWarehouse
+                {
+                    clName = "ENERCON",
+                    clPrefix = "ENE",
+                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_AVL.xlsx",
+                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_STOCK.xlsm"
+                },
+                new ClientWarehouse
+                {
+                    clName = "DIGITRONIX",
+                    clPrefix = "DIG",
+                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_AVL.xlsx",
+                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_STOCK.xlsm"
+                },
+                new ClientWarehouse
+                {
+                    clName = "HEPTAGON",
+                    clPrefix = "HEP",
+                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_AVL.xlsx",
+                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_STOCK.xlsm"
+                },
+                new ClientWarehouse
+                {
+                    clName = "EPS",
+                    clPrefix = "EPS",
+                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_AVL.xlsx",
+                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_STOCK.xlsm"
+                },
+                new ClientWarehouse
+                {
+                    clName = "SOS",
+                    clPrefix = "SOS",
+                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_AVL.xlsx",
+                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_STOCK.xlsm"
+                },
+                new ClientWarehouse
+                {
+                    clName = "ARAN",
+                    clPrefix = "ARN",
+                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_AVL.xlsx",
+                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_STOCK.xlsm"
+                },
+                new ClientWarehouse
+                {
+                    clName = "SOLANIUM",
+                    clPrefix = "BAN",
+                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_AVL.xlsm",
+                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_STOCK.xlsm"
+                },
+                new ClientWarehouse
+                {
+                    clName = "SONOTRON",
+                    clPrefix = "SON",
+                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_AVL.xlsm",
+                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_STOCK.xlsm"
+                },
+                new ClientWarehouse
+                {
+                    clName = "ASIO",
+                    clPrefix = "ASO",
+                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_AVL.xlsm",
+                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_STOCK.xlsm"
+                },
+                new ClientWarehouse
+                {
+                    clName = "SHILAT",
+                    clPrefix = "SHT",
+                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_AVL.xlsm",
+                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_STOCK.xlsm"
+                }
+                    ,
+                new ClientWarehouse
+                {
+                    clName = "TRILOGICAL",
+                    clPrefix = "UTR",
+                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_AVL.xlsm",
+                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_STOCK.xlsm"
+                }
+                     ,
+                new ClientWarehouse
+                {
+                    clName = "QUANTUM-MACHINES",
+                    clPrefix = "QNT",
+                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\QUANTUM-MACHINES\\QUANTUM-MACHINES_AVL.xlsm",
+                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\QUANTUM-MACHINES\\QUANTUM-MACHINES_STOCK.xlsm"
+                }
+                        ,
+                new ClientWarehouse
+                {
+                    clName = "GASNGO",
+                    clPrefix = "GNG",
+                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\GASNGO\\GASNGO_AVL.xlsm",
+                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\GASNGO\\GASNGO_STOCK.xlsm"
+                }
+                    ,
+                new ClientWarehouse
+                {
+                    clName = "MS-TECH",
+                    clPrefix = "MST",
+                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\MS-TECH\\MS-TECH_AVL.xlsm",
+                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\MS-TECH\\MS-TECH_STOCK.xlsm"
+                }
+                     ,
+                new ClientWarehouse
+                {
+                    clName = "RP-OPTICAL",
+                    clPrefix = "RPO",
+                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\RP-OPTICAL\\RP-OPTICAL_AVL.xlsm",
+                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\RP-OPTICAL\\RP-OPTICAL_STOCK.xlsm"
+                },
+                new ClientWarehouse
+                {
+                    clName = "ROBOTEAM",
+                    clPrefix = "RBM",
+                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTEAM\\ROBOTEAM_AVL.xlsm",
+                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTEAM\\ROBOTEAM_STOCK.xlsm"
+                }
+                // Add more entries for each warehouse as needed
+            };
+            return warehousesInitializedIntheMainForm;
+        }
+        private void button14_Click(object sender, EventArgs e)
+        {
+           
+            FrmClientAgnosticWH cl = new FrmClientAgnosticWH();
+            List<ClientWarehouse> warehouses = InitializeWarehouses();
+            cl.InitializeGlobalWarehouses(warehouses);
+            cl.Show();
+           
         }
         private void openWHexcelDB(string thePathToFile)
         {
@@ -25,21 +198,7 @@ namespace WH_Panel
             excel.StartInfo.Arguments = thePathToFile;
             excel.Start();
         }
-        private void button1_Click(object sender, EventArgs e)
-        {
-            //Process.Start("C:\\1\\source\\repos\\1.Txt");
-            var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm";
-            AuthorizedExcelFileOpening(fp);
-            //Process excel = new Process();
-            //excel.StartInfo.FileName = "C:\\Program Files\\Microsoft Office\\root\\Office16\\EXCEL.exe";
-            //excel.StartInfo.Arguments = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm"; 
-            //excel.Start();
-        }
-        private void button1_Click_1(object sender, EventArgs e)
-        {
-            var fp = @"\\\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\NETLINE\NETLINE_STOCK.xlsm";
-            AuthorizedExcelFileOpening(fp);
-        }
+       
         private void AuthorizedExcelFileOpening(string fp)
         {
             if (Environment.UserName == "lgt")
@@ -51,21 +210,13 @@ namespace WH_Panel
                 MessageBox.Show("Unauthorized ! Access denied !", "Unauthorized ! Access denied !", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
         }
-        private void btnFIELDIN_Click(object sender, EventArgs e)
-        {
-            var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\FIELDIN\\FIELDIN_STOCK.xlsm";
-            AuthorizedExcelFileOpening(fp);
-        }
+     
         private void btnWorkProgramm_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\\Data\\DocumentsForProduction\\WORK_PROGRAM.xlsm";
             openWHexcelDB(fp);
         }
-        private void btnLEADERTECH_Click(object sender, EventArgs e)
-        {
-            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm";
-            AuthorizedExcelFileOpening(fp);
-        }
+      
         private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             this.WindowState = FormWindowState.Normal;
@@ -74,23 +225,9 @@ namespace WH_Panel
         {
             this.WindowState = FormWindowState.Normal;
         }
-        private void btnVAYYAR_Click(object sender, EventArgs e)
-        {
-            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm";
-            AuthorizedExcelFileOpening(fp);
-        }
-        private void btnSHILAT_Click(object sender, EventArgs e)
-        {
-            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_STOCK.xlsm";
-            AuthorizedExcelFileOpening(fp);
-        }
+      
         private void button1_Click_2(object sender, EventArgs e)
         {
-            //Form f = new frmkitLabelPrint();
-            //f.Show();
-            //f.Focus();
-            //var fp = @"\\\\dbr1\\Data\\WareHouse\\KitLabel.xlsm";
-            //openWHexcelDB(fp);
             frmkitLabelPrint frmkit = new frmkitLabelPrint();
             frmkit.Show();
         }
@@ -100,21 +237,7 @@ namespace WH_Panel
             openWHexcelDB(fp);
         }
         private FrmUberSearch openUberSearchForm = null;
-
-        //private void button3_Click(object sender, EventArgs e)
-        //{
-        //    if (openUberSearchForm != null && !openUberSearchForm.IsDisposed)
-        //    {
-        //        openUberSearchForm.Close();
-        //    }
-
-        //    FrmUberSearch frmUber = new FrmUberSearch();
-        //    frmUber.Show();
-
-        //    openUberSearchForm = frmUber; // Set the reference to the newly opened form
-        //}
         private FrmUberSearch frmUberSearch = null;
-
         private void button3_Click(object sender, EventArgs e)
         {
             if (frmUberSearch == null || frmUberSearch.IsDisposed)
@@ -127,13 +250,8 @@ namespace WH_Panel
                 frmUberSearch.BringToFront();
             }
         }
-        private void button4_Click(object sender, EventArgs e)
-        {
-            var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_STOCK.xlsm";
-            AuthorizedExcelFileOpening(fp);
-        }
+       
         private FrmKITShistory openKITShistoryForm = null;
-
         private void button5_Click(object sender, EventArgs e)
         {
             if (openKITShistoryForm == null || openKITShistoryForm.IsDisposed)
@@ -146,18 +264,11 @@ namespace WH_Panel
                 openKITShistoryForm.BringToFront();
             }
         }
-        private void button6_Click(object sender, EventArgs e)
-        {
-            var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ST_MICRO\\ST_MICRO_STOCK.xlsm";
-            AuthorizedExcelFileOpening(fp);
-        }
-
         private void button8_Click(object sender, EventArgs e)
         {
             FrmPackingSlips fps = new FrmPackingSlips();
             fps.Show();
         }
-
         private void button11_Click(object sender, EventArgs e)
         {
             frmkitLabelPrint frmkit = new frmkitLabelPrint();
@@ -168,15 +279,87 @@ namespace WH_Panel
             FrmPackingSlipShip ps = new FrmPackingSlipShip();
             ps.Show();
         }
-        private void button14_Click(object sender, EventArgs e)
+      
+        private void button7_Click_1(object sender, EventArgs e)
         {
-            FrmClientAgnosticWH cl = new FrmClientAgnosticWH();
-            cl.Show();
+            FrmFinishedGoodsLog ff = new FrmFinishedGoodsLog();
+            ff.Show();
         }
+
+
         private void button11_Click_1(object sender, EventArgs e)
         {
             FrmBOM frmBOM = new FrmBOM();
             frmBOM.Show();
+        }
+        private void button6_Click_1(object sender, EventArgs e)
+        {
+            FrmExcelFormatter fr = new FrmExcelFormatter();
+            fr.Show();
+            fr.Focus();
+        }
+
+        private void button9_Click_1(object sender, EventArgs e)
+        {
+            FrmQRPrint fq = new FrmQRPrint();
+            fq.Show();
+        }
+
+        private void button10_Click_1(object sender, EventArgs e)
+        {
+            FrmLinkSimulator frm = new FrmLinkSimulator();
+            List<ClientWarehouse> warehouses = InitializeWarehouses();
+            frm.InitializeGlobalWarehouses(warehouses);
+            frm.Show();
+        }
+        private void button4_Click_1(object sender, EventArgs e)
+        {
+            OpenWebAppInBroser();
+        }
+        static void OpenWebAppInBroser()
+        {
+            string url = "http://192.168.69.37:81/"; // Change this to the desired web address
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = url,
+                UseShellExecute = true
+            });
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            //Process.Start("C:\\1\\source\\repos\\1.Txt");
+            var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\NETLINE\NETLINE_STOCK.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+        private void btnFIELDIN_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\FIELDIN\\FIELDIN_STOCK.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+        private void btnLEADERTECH_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+        private void btnVAYYAR_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+        private void btnSHILAT_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_STOCK.xlsm";
+            AuthorizedExcelFileOpening(fp);
+        }
+        private void button4_Click(object sender, EventArgs e)
+        {
+            var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_STOCK.xlsm";
+            AuthorizedExcelFileOpening(fp);
         }
         private void button15_Click(object sender, EventArgs e)
         {
@@ -198,58 +381,23 @@ namespace WH_Panel
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_AVL.xlsx";
             AuthorizedExcelFileOpening(fp);
         }
-        private void button7_Click_1(object sender, EventArgs e)
-        {
-            FrmFinishedGoodsLog ff = new FrmFinishedGoodsLog();
-            ff.Show();
-        }
-
+       
         private void button10_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_STOCK.xlsm";
             AuthorizedExcelFileOpening(fp);
         }
-
         private void button9_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_AVL.xlsx";
             AuthorizedExcelFileOpening(fp);
         }
-
-        private void button4_Click_1(object sender, EventArgs e)
+        private void button6_Click(object sender, EventArgs e)
         {
-            OpenWebAppInBroser();
-
-
-        }
-        static void OpenWebAppInBroser()
-        {
-            string url = "http://192.168.69.37:81/"; // Change this to the desired web address
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = url,
-                UseShellExecute = true
-            });
+            var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ST_MICRO\\ST_MICRO_STOCK.xlsm";
+            AuthorizedExcelFileOpening(fp);
         }
 
-        private void button6_Click_1(object sender, EventArgs e)
-        {
-            FrmExcelFormatter fr = new FrmExcelFormatter();
-            fr.Show();
-            fr.Focus();
-        }
-
-        private void button9_Click_1(object sender, EventArgs e)
-        {
-            FrmQRPrint fq = new FrmQRPrint();
-            fq.Show();
-        }
-
-        private void button10_Click_1(object sender, EventArgs e)
-        {
-            FrmLinkSimulator frm = new FrmLinkSimulator();
-            frm.Show();
-        }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
