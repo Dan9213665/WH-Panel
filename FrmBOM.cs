@@ -164,6 +164,14 @@ namespace WH_Panel
                 }
             }
         }
+        List<ClientWarehouse> warehouses { get; set; }
+        public void InitializeGlobalWarehouses(List<ClientWarehouse> warehousesFromTheMain)
+        {
+            warehouses = warehousesFromTheMain;
+            // Ordering the warehouses list by clName
+            warehouses = warehouses.OrderBy(warehouse => warehouse.clName).ToList();
+
+        }
         private void ResetViews()
         {
             checkBox1.Checked = false;
@@ -903,7 +911,9 @@ namespace WH_Panel
                 wh.fromTheMainBom = new List<KitHistoryItem>();
                 wh.fromTheMainBom.Clear();
                 wh.fromTheMainBom = MissingItemsList;
+                wh.InitializeGlobalWarehouses(warehouses);
                 wh.Show();
+
 
                 openBomWHSForm = wh; // Set the reference to the newly opened form
             }

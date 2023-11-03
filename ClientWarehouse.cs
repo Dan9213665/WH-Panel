@@ -12,5 +12,6 @@ namespace WH_Panel
         public string? clPrefix { get; set; }
         public string? clAvlFile { get; set; }
         public string? clStockFile { get; set; }
+        public string? clLogo { get; set; }
     }
 }

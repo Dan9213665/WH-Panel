@@ -33,7 +33,7 @@ namespace WH_Panel
             InitializeComponent();
 
         }
-        List<ClientWarehouse> warehouses { get; set; }
+
         private void TextBox_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter((TextBox)sender);
@@ -63,6 +63,7 @@ namespace WH_Panel
 
         }
 
+        List<ClientWarehouse> warehouses { get; set; }
         public void InitializeGlobalWarehouses(List<ClientWarehouse> warehousesFromTheMain)
         {
             warehouses = warehousesFromTheMain;
@@ -263,25 +264,7 @@ namespace WH_Panel
             label2.BackColor = Color.IndianRed;
             FilterTheDataGridView();
         }
-        //private void FilterTheDataGridView()
-        //{
-        //    try
-        //    {
-        //        DataView dv = UDtable.DefaultView;
-        //        dv.RowFilter = "[IPN] LIKE '%" + textBox2.Text.ToString() +
-        //            "%' AND [MFPN] LIKE '%" + textBox4.Text.ToString() +
-        //            "%' AND [Description] LIKE '%" + textBox5.Text.ToString() +
-        //            "%' AND [SourceRequester] LIKE '%" + textBox9.Text.ToString() +
-        //            "%'";
-        //        dataGridView1.DataSource = dv;
-        //        SetColumsOrder();
-        //    }
-        //    catch (Exception)
-        //    {
-        //        MessageBox.Show("Incorrect search pattern, remove invalid character and try again !");
-        //        throw;
-        //    }
-        //}
+
         private void FilterTheDataGridView()
         {
             try
@@ -343,55 +326,7 @@ namespace WH_Panel
             excel.StartInfo.Arguments = thePathToFile;
             excel.Start();
         }
-        //private void button2_Click(object sender, EventArgs e)
-        //{
-        //    //MessageBox.Show(Environment.MachineName.ToString());   
-        //    if (Environment.MachineName.ToString() == "RT12")
-        //    {
-        //        var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm";
-        //        openWHexcelDB(fp);
-        //    }
-        //    else
-        //    {
-        //        MessageBox.Show("ACCESS DENIED");
-        //    }
-        //}
-        //private void button3_Click(object sender, EventArgs e)
-        //{
-        //    if (Environment.MachineName.ToString() == "RT12")
-        //    {
-        //        var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm";
-        //        openWHexcelDB(fp);
-        //    }
-        //    else
-        //    {
-        //        MessageBox.Show("ACCESS DENIED");
-        //    }
-        //}
-        //private void button4_Click(object sender, EventArgs e)
-        //{
-        //    if (Environment.MachineName.ToString() == "RT12")
-        //    {
-        //        var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\FIELDIN\\FIELDIN_STOCK.xlsm";
-        //        openWHexcelDB(fp);
-        //    }
-        //    else
-        //    {
-        //        MessageBox.Show("ACCESS DENIED");
-        //    }
-        //}
-        //private void button5_Click(object sender, EventArgs e)
-        //{
-        //    if (Environment.MachineName.ToString() == "RT12")
-        //    {
-        //        var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm";
-        //        openWHexcelDB(fp);
-        //    }
-        //    else
-        //    {
-        //        MessageBox.Show("ACCESS DENIED");
-        //    }
-        //}
+
         private void textBox9_TextChanged(object sender, EventArgs e)
         {
             label9.BackColor = Color.IndianRed;
