@@ -37,6 +37,48 @@ namespace WH_Panel
             foreach (ClientWarehouse warehouse in warehouses)
             {
                 comboBox3.Items.Add(warehouse.clName);
+
+                GroupBox groupBox = new GroupBox();
+                groupBox.Name = warehouse.clName;
+                groupBox.Text = warehouse.clName;
+                groupBox.Width = 150;
+                groupBox.Height = 130;
+
+                Button stockButton = new Button();
+                //stockButton.Text = "Open Stock File";
+                stockButton.Click += (sender, e) => AuthorizedExcelFileOpening(warehouse.clStockFile);
+                stockButton.Top = 15; // Adjust the top position as needed
+                stockButton.Left = 5; // Adjust the left position as needed
+                //stockButton.Width = 66;
+
+                if (File.Exists(warehouse.clLogo))
+                {
+
+                    string logoFilePath = Path.Combine("dbr1", "WareHouse", "STOCK_CUSTOMERS", warehouse.clName, warehouse.clLogo);
+                    stockButton.BackgroundImage = Image.FromFile(logoFilePath);
+                    stockButton.BackgroundImageLayout = ImageLayout.Stretch;
+                    stockButton.Width = 140;
+                    stockButton.Height = 50;
+                }
+
+                Button avlButton = new Button();
+                //avlButton.Text = "Open AVL File";
+                avlButton.Click += (sender, e) => AuthorizedExcelFileOpening(warehouse.clAvlFile);
+                avlButton.Top = stockButton.Bottom + 2; // Adjust the top position as needed
+                avlButton.Left = 5;
+
+                string avlImagePath = Path.Combine(Application.StartupPath, "Resources", "AVL.png");
+                if (File.Exists(avlImagePath))
+                {
+                    avlButton.BackgroundImage = Image.FromFile(avlImagePath);
+                    avlButton.BackgroundImageLayout = ImageLayout.Stretch;
+                    avlButton.Width = 140; // Adjust the button width as needed
+                    avlButton.Height = 50;
+                }
+                flowLayoutPanel1.Controls.Add(groupBox);
+                groupBox.Controls.Add(stockButton);
+                groupBox.Controls.Add(avlButton);
+
             }
 
             comboBox6.Enabled = false;

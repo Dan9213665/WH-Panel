@@ -38,6 +38,14 @@ namespace WH_Panel
 
                 if (!string.IsNullOrEmpty(clAvlFile) && !string.IsNullOrEmpty(clStockFile))
                 {
+                    //if (!string.IsNullOrEmpty(clLogoFile))
+                    //{
+                    //    //MessageBox.Show("Logo file found for " + clName + ": " + clLogoFile);
+                    //}
+                    //else
+                    //{
+                    //    //MessageBox.Show("Logo file not found for " + clName);
+                    //}
                     ClientWarehouse warehouse = new ClientWarehouse
                     {
                         clName = clName,
