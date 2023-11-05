@@ -81,6 +81,7 @@
             label17 = new Label();
             label18 = new Label();
             label21 = new Label();
+            button4 = new Button();
             dateTimePicker1 = new DateTimePicker();
             tableLayoutPanel1.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -98,9 +99,9 @@
             // 
             dateTimePicker1.Dock = DockStyle.Fill;
             dateTimePicker1.Enabled = false;
-            dateTimePicker1.Location = new Point(827, 18);
+            dateTimePicker1.Location = new Point(783, 18);
             dateTimePicker1.Name = "dateTimePicker1";
-            dateTimePicker1.Size = new Size(200, 23);
+            dateTimePicker1.Size = new Size(189, 23);
             dateTimePicker1.TabIndex = 5;
             // 
             // tableLayoutPanel1
@@ -665,14 +666,14 @@
             // 
             tableLayoutPanel5.AutoSize = true;
             tableLayoutPanel5.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            tableLayoutPanel5.ColumnCount = 6;
-            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.66667F));
-            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.66667F));
-            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.66667F));
-            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.66667F));
-            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.66667F));
-            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.66667F));
-            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel5.ColumnCount = 7;
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 15.7894735F));
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 15.7894735F));
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 15.7894735F));
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 15.7894735F));
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 15.7894735F));
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 15.7894735F));
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 5.263158F));
             tableLayoutPanel5.Controls.Add(btnPrintSticker, 5, 0);
             tableLayoutPanel5.Controls.Add(txtbIPN, 0, 1);
             tableLayoutPanel5.Controls.Add(txtbMFPN, 0, 1);
@@ -684,6 +685,7 @@
             tableLayoutPanel5.Controls.Add(label17, 3, 0);
             tableLayoutPanel5.Controls.Add(label18, 4, 0);
             tableLayoutPanel5.Controls.Add(label21, 1, 0);
+            tableLayoutPanel5.Controls.Add(button4, 6, 0);
             tableLayoutPanel5.Dock = DockStyle.Fill;
             tableLayoutPanel5.Location = new Point(3, 19);
             tableLayoutPanel5.Name = "tableLayoutPanel5";
@@ -700,10 +702,10 @@
             btnPrintSticker.BackgroundImage = (Image)resources.GetObject("btnPrintSticker.BackgroundImage");
             btnPrintSticker.BackgroundImageLayout = ImageLayout.Stretch;
             btnPrintSticker.Dock = DockStyle.Fill;
-            btnPrintSticker.Location = new Point(1033, 3);
+            btnPrintSticker.Location = new Point(978, 3);
             btnPrintSticker.Name = "btnPrintSticker";
             tableLayoutPanel5.SetRowSpan(btnPrintSticker, 2);
-            btnPrintSticker.Size = new Size(203, 109);
+            btnPrintSticker.Size = new Size(189, 109);
             btnPrintSticker.TabIndex = 15;
             btnPrintSticker.TextAlign = ContentAlignment.MiddleLeft;
             btnPrintSticker.UseVisualStyleBackColor = true;
@@ -715,28 +717,28 @@
             txtbIPN.Location = new Point(3, 18);
             txtbIPN.Name = "txtbIPN";
             txtbIPN.ReadOnly = true;
-            txtbIPN.Size = new Size(200, 23);
+            txtbIPN.Size = new Size(189, 23);
             txtbIPN.TabIndex = 1;
             txtbIPN.TextAlign = HorizontalAlignment.Center;
             // 
             // txtbMFPN
             // 
             txtbMFPN.Dock = DockStyle.Fill;
-            txtbMFPN.Location = new Point(209, 18);
+            txtbMFPN.Location = new Point(198, 18);
             txtbMFPN.Name = "txtbMFPN";
             txtbMFPN.ReadOnly = true;
-            txtbMFPN.Size = new Size(200, 23);
+            txtbMFPN.Size = new Size(189, 23);
             txtbMFPN.TabIndex = 0;
             txtbMFPN.TextAlign = HorizontalAlignment.Center;
             // 
             // txtbDescription
             // 
             txtbDescription.Dock = DockStyle.Fill;
-            txtbDescription.Location = new Point(415, 18);
+            txtbDescription.Location = new Point(393, 18);
             txtbDescription.Multiline = true;
             txtbDescription.Name = "txtbDescription";
             txtbDescription.ReadOnly = true;
-            txtbDescription.Size = new Size(200, 94);
+            txtbDescription.Size = new Size(189, 94);
             txtbDescription.TabIndex = 3;
             txtbDescription.TextAlign = HorizontalAlignment.Center;
             // 
@@ -744,10 +746,10 @@
             // 
             txtbQty.Dock = DockStyle.Fill;
             txtbQty.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
-            txtbQty.Location = new Point(621, 18);
+            txtbQty.Location = new Point(588, 18);
             txtbQty.Name = "txtbQty";
             txtbQty.PlaceholderText = "Input QTY";
-            txtbQty.Size = new Size(200, 39);
+            txtbQty.Size = new Size(189, 39);
             txtbQty.TabIndex = 4;
             txtbQty.TextAlign = HorizontalAlignment.Center;
             txtbQty.Enter += txtbQty_Enter;
@@ -760,7 +762,7 @@
             label14.Dock = DockStyle.Fill;
             label14.Location = new Point(3, 0);
             label14.Name = "label14";
-            label14.Size = new Size(200, 15);
+            label14.Size = new Size(189, 15);
             label14.TabIndex = 8;
             label14.Text = "IPN";
             label14.TextAlign = ContentAlignment.MiddleCenter;
@@ -769,9 +771,9 @@
             // 
             label16.AutoSize = true;
             label16.Dock = DockStyle.Fill;
-            label16.Location = new Point(415, 0);
+            label16.Location = new Point(393, 0);
             label16.Name = "label16";
-            label16.Size = new Size(200, 15);
+            label16.Size = new Size(189, 15);
             label16.TabIndex = 8;
             label16.Text = "Description";
             label16.TextAlign = ContentAlignment.MiddleCenter;
@@ -780,9 +782,9 @@
             // 
             label17.AutoSize = true;
             label17.Dock = DockStyle.Fill;
-            label17.Location = new Point(621, 0);
+            label17.Location = new Point(588, 0);
             label17.Name = "label17";
-            label17.Size = new Size(200, 15);
+            label17.Size = new Size(189, 15);
             label17.TabIndex = 8;
             label17.Text = "Quantity";
             label17.TextAlign = ContentAlignment.MiddleCenter;
@@ -791,9 +793,9 @@
             // 
             label18.AutoSize = true;
             label18.Dock = DockStyle.Fill;
-            label18.Location = new Point(827, 0);
+            label18.Location = new Point(783, 0);
             label18.Name = "label18";
-            label18.Size = new Size(200, 15);
+            label18.Size = new Size(189, 15);
             label18.TabIndex = 8;
             label18.Text = "Date";
             label18.TextAlign = ContentAlignment.MiddleCenter;
@@ -802,12 +804,25 @@
             // 
             label21.AutoSize = true;
             label21.Dock = DockStyle.Fill;
-            label21.Location = new Point(209, 0);
+            label21.Location = new Point(198, 0);
             label21.Name = "label21";
-            label21.Size = new Size(200, 15);
+            label21.Size = new Size(189, 15);
             label21.TabIndex = 9;
             label21.Text = "MFPN";
             label21.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // button4
+            // 
+            button4.BackgroundImage = Properties.Resources.Excel;
+            button4.BackgroundImageLayout = ImageLayout.Zoom;
+            button4.Dock = DockStyle.Fill;
+            button4.Location = new Point(1173, 3);
+            button4.Name = "button4";
+            tableLayoutPanel5.SetRowSpan(button4, 2);
+            button4.Size = new Size(63, 109);
+            button4.TabIndex = 16;
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += button4_Click;
             // 
             // FrmKITShistory
             // 
@@ -892,5 +907,6 @@
         private TextBox textBox13;
         private ComboBox comboBox1;
         private ComboBox comboBox2;
+        private Button button4;
     }
 }
