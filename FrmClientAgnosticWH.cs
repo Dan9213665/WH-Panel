@@ -1329,6 +1329,12 @@ namespace WH_Panel
         }
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (comboBox2.SelectedItem.ToString() == "FTK2300")
+            {
+                string todayMonth = DateTime.Now.ToString("MM");
+                string todayDay = DateTime.Now.ToString("dd");
+                textBox8.Text = todayMonth + todayDay;
+            }
             textBox8.Focus();
         }
         private void FrmClientAgnosticWH_Load(object sender, EventArgs e)
