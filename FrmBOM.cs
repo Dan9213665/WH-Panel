@@ -1084,94 +1084,126 @@ namespace WH_Panel
             }
             return ReelBagTrayStickFromStock;
         }
-
+        private string ConvertStockFileFormat(string originalStockFile)
+        {
+            // Perform the necessary string formatting to match the expected format
+            string convertedStockFile = originalStockFile.Replace("\\", "\\\\");
+            return convertedStockFile;
+        }
         private string warehouseSelectorBasedOnItem(KitHistoryItem w)
         {
             string selection = string.Empty;
-            if (w.IPN.StartsWith("C100") || w.IPN.StartsWith("A00"))
+
+            if (warehouses != null)
             {
-                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm";
-            }
-            else if (w.IPN.StartsWith("NET"))
-            {
-                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm";
-            }
-            else if (w.IPN.StartsWith("VAY"))
-            {
-                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm";
-            }
-            else if (w.IPN.StartsWith("VAL"))
-            {
-                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm";
-            }
-            else if (w.IPN.StartsWith("ROB"))
-            {
-                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_STOCK.xlsm";
-            }
-            else if (w.IPN.StartsWith("ENE"))
-            {
-                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_STOCK.xlsm";
-            }
-            else if (w.IPN.StartsWith("DGT"))
-            {
-                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_STOCK.xlsm";
-            }
-            else if (w.IPN.StartsWith("HEP"))
-            {
-                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_STOCK.xlsm";
-            }
-            else if (w.IPN.StartsWith("EPS"))
-            {
-                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_STOCK.xlsm";
-            }
-            else if (w.IPN.StartsWith("SOS"))
-            {
-                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_STOCK.xlsm";
-            }
-            else if (w.IPN.StartsWith("ARN"))
-            {
-                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_STOCK.xlsm";
-            }
-            else if (w.IPN.StartsWith("SON"))
-            {
-                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_STOCK.xlsm";
-            }
-            else if (w.IPN.StartsWith("ASO"))
-            {
-                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_STOCK.xlsm";
-            }
-            else if (w.IPN.StartsWith("UTR"))
-            {
-                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_STOCK.xlsm";
-            }
-            else if (w.IPN.StartsWith("BAN"))
-            {
-                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_STOCK.xlsm";
-            }
-            else if (w.IPN.StartsWith("SHT"))
-            {
-                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_STOCK.xlsm";
-            }
-            else if (w.IPN.StartsWith("GNG"))
-            {
-                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\GASNGO\\GASNGO_STOCK.xlsm";
-            }
-            else if (w.IPN.StartsWith("QNT"))
-            {
-                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\QUANTUM-MACHINES\\QUANTUM-MACHINES_STOCK.xlsm";
-            }
-            else if (w.IPN.StartsWith("RPO"))
-            {
-                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\RP-OPTICAL\\RP-OPTICAL_STOCK.xlsm";
-            }
-            else if (w.IPN.StartsWith("RBM"))
-            {
-                selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTEAM\\ROBOTEAM_STOCK.xlsm";
+                foreach (ClientWarehouse wh in warehouses)
+                {
+                    if (w.IPN.StartsWith(wh.clPrefix))
+                    {
+                        //string convertedStockFile = ConvertStockFileFormat(wh.clStockFile);
+                        //MessageBox.Show(wh.clStockFile);
+
+                        //selection = convertedStockFile;
+                        selection = wh.clStockFile;
+                        //MessageBox.Show(selection);
+                        break;
+                    }
+                }
             }
             else
             {
-                selection = string.Empty;
+                MessageBox.Show("warehouses is null !");
             }
+
+            //string selection = string.Empty;
+            //if (w.IPN.StartsWith("C100") || w.IPN.StartsWith("A00"))
+            //{
+            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\LEADER-TECH\\LEADER-TECH_STOCK.xlsm";
+            //}
+            //else if (w.IPN.StartsWith("NET"))
+            //{
+            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm";
+            //}
+            //else if (w.IPN.StartsWith("VAY"))
+            //{
+            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYYAR\\VAYYAR_stock.xlsm";
+            //}
+            //else if (w.IPN.StartsWith("VAL"))
+            //{
+            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm";
+            //}
+            //else if (w.IPN.StartsWith("ROB"))
+            //{
+            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_STOCK.xlsm";
+            //}
+            //else if (w.IPN.StartsWith("ENE"))
+            //{
+            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_STOCK.xlsm";
+            //}
+            //else if (w.IPN.StartsWith("DGT"))
+            //{
+            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_STOCK.xlsm";
+            //}
+            //else if (w.IPN.StartsWith("HEP"))
+            //{
+            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_STOCK.xlsm";
+            //}
+            //else if (w.IPN.StartsWith("EPS"))
+            //{
+            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_STOCK.xlsm";
+            //}
+            //else if (w.IPN.StartsWith("SOS"))
+            //{
+            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_STOCK.xlsm";
+            //}
+            //else if (w.IPN.StartsWith("ARN"))
+            //{
+            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_STOCK.xlsm";
+            //}
+            //else if (w.IPN.StartsWith("SON"))
+            //{
+            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_STOCK.xlsm";
+            //}
+            //else if (w.IPN.StartsWith("ASO"))
+            //{
+            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_STOCK.xlsm";
+            //}
+            //else if (w.IPN.StartsWith("UTR"))
+            //{
+            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_STOCK.xlsm";
+            //}
+            //else if (w.IPN.StartsWith("BAN"))
+            //{
+            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_STOCK.xlsm";
+            //}
+            //else if (w.IPN.StartsWith("SHT"))
+            //{
+            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_STOCK.xlsm";
+            //}
+            //else if (w.IPN.StartsWith("GNG"))
+            //{
+            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\GASNGO\\GASNGO_STOCK.xlsm";
+            //}
+            //else if (w.IPN.StartsWith("QNT"))
+            //{
+            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\QUANTUM-MACHINES\\QUANTUM-MACHINES_STOCK.xlsm";
+            //}
+            //else if (w.IPN.StartsWith("RPO"))
+            //{
+            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\RP-OPTICAL\\RP-OPTICAL_STOCK.xlsm";
+            //}
+            //else if (w.IPN.StartsWith("RBM"))
+            //{
+            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTEAM\\ROBOTEAM_STOCK.xlsm";
+            //}
+            //else if (w.IPN.StartsWith("CIS"))
+            //{
+            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_STOCK.xlsm";
+            //}
+            //else
+            //{
+            //    selection = string.Empty;
+            //}
             return selection;
         }
         private void DataInserter(string fp, string thesheetName, WHitem wHitem)
