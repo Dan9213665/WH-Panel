@@ -6,9 +6,12 @@ using System.Data;
 using System.Data.OleDb;
 using System.Diagnostics;
 using System.Text;
+using OfficeOpenXml;
+using System.IO;
 using System.Web;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using Button = System.Windows.Forms.Button;
 using ComboBox = System.Windows.Forms.ComboBox;
 using DataTable = System.Data.DataTable;
@@ -768,13 +771,25 @@ namespace WH_Panel
             {
                 string userName = Environment.UserName;
                 string fp = @"C:\\Users\\" + userName + "\\Desktop\\Print_Stickers.xlsx"; // //////Print_StickersWH.xlsm
+
+                //string fp = @"C:\\Users\\lgt\\Desktop";
                 string thesheetName = "Sheet1";
-                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0;HDR=YES;IMEX=0\"";
                 OleDbConnection conn = new OleDbConnection(constr);
                 OleDbCommand cmd = new OleDbCommand();
                 cmd.Connection = conn;
                 cmd.CommandType = CommandType.Text;
                 cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @UPDATEDON";
+                //string fp = $@"C:\Users\{userName}\Desktop\Print_Stickers.xlsx";
+                //string thesheetName = "Sheet1$"; // Note the '$' at the end to reference the sheet directly
+                //string constr = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={fp};Extended Properties=\"Excel 12.0;HDR=YES;IMEX=0\"";
+                //OleDbConnection conn = new OleDbConnection(constr);
+                //OleDbCommand cmd = new OleDbCommand();
+                //cmd.Connection = conn;
+                //cmd.CommandType = CommandType.Text;
+                //cmd.CommandText = $"UPDATE [{thesheetName}] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @UPDATEDON";
+                //// Rest of your code remains unchanged
+
                 cmd.Parameters.AddWithValue("@PN", wHitem.IPN);
                 cmd.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
                 cmd.Parameters.AddWithValue("@ItemDesc", wHitem.Description);
@@ -783,6 +798,38 @@ namespace WH_Panel
                 conn.Open();
                 cmd.ExecuteNonQuery();
                 conn.Close();
+
+                //string userName = Environment.UserName;
+                //string fp = $@"C:\Users\{userName}\Desktop\Print_Stickers.xlsx";
+                //string constr = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={fp};Extended Properties='Excel 12.0 Macro;HDR=YES;IMEX=0'";
+                //OleDbConnection conn = new OleDbConnection(constr);
+                //conn.Open();
+                //DataTable dtSheet = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+                //conn.Close();
+
+                //if (dtSheet != null && dtSheet.Rows.Count > 0)
+                //{
+                //    string firstSheetName = dtSheet.Rows[0]["TABLE_NAME"].ToString().Trim('\'');
+
+                //    conn.Open();
+                //    OleDbCommand cmd = new OleDbCommand();
+                //    cmd.Connection = conn;
+                //    cmd.CommandType = CommandType.Text;
+                //    cmd.CommandText = $"UPDATE [{firstSheetName}] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @UPDATEDON";
+                //    cmd.Parameters.AddWithValue("@PN", wHitem.IPN);
+                //    cmd.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
+                //    cmd.Parameters.AddWithValue("@ItemDesc", wHitem.Description);
+                //    cmd.Parameters.AddWithValue("@QTY", wHitem.Stock);
+                //    cmd.Parameters.AddWithValue("@UPDATEDON", wHitem.UpdatedOn);
+                //    cmd.ExecuteNonQuery();
+                //    conn.Close();
+                //}
+                //else
+                //{
+                //    MessageBox.Show("Print error");
+                //    // Handle the case when there are no sheets in the Excel file.
+                //}
+
                 Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
                 SendKeys.SendWait("^p");
                 SendKeys.SendWait("{Enter}");
@@ -816,6 +863,34 @@ namespace WH_Panel
                 conn.Open();
                 cmd.ExecuteNonQuery();
                 conn.Close();
+
+                //string userName = Environment.UserName;
+                //string filePath = @"C:\Users\" + userName + @"\Desktop\Print_Stickers.xlsx";
+                //string theSheetName = "Sheet1";
+
+                //FileInfo file = new FileInfo(filePath);
+
+                //using (ExcelPackage package = new ExcelPackage(file))
+                //{
+                //    ExcelWorksheet worksheet = package.Workbook.Worksheets[theSheetName];
+
+                //    if (worksheet != null)
+                //    {
+                //        int rowIndex = 2; // Assuming the data starts from the second row
+                //        worksheet.Cells[rowIndex, 1].Value = wHitem.IPN;
+                //        worksheet.Cells[rowIndex, 2].Value = wHitem.MFPN;
+                //        worksheet.Cells[rowIndex, 3].Value = wHitem.Description;
+                //        worksheet.Cells[rowIndex, 4].Value = wHitem.Stock;
+                //        worksheet.Cells[rowIndex, 5].Value = wHitem.UpdatedOn;
+
+                //        package.Save();
+                //    }
+                //    else
+                //    {
+                //        Console.WriteLine("Worksheet not found");
+                //    }
+                //}
+
                 Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
                 Thread.Sleep(500);
                 SendKeys.SendWait("^p");

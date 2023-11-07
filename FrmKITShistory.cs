@@ -27,6 +27,7 @@ using ComboBox = System.Windows.Forms.ComboBox;
 using Label = System.Windows.Forms.Label;
 using Button = System.Windows.Forms.Button;
 using GroupBox = System.Windows.Forms.GroupBox;
+using Application = System.Windows.Forms.Application;
 
 namespace WH_Panel
 {
@@ -966,11 +967,23 @@ namespace WH_Panel
                             DialogResult result = MessageBox.Show("Open the file : " + str + " ?", "Open file", MessageBoxButtons.OKCancel);
                             if (result == DialogResult.OK)
                             {
-                                FrmBOM frmBOM = new FrmBOM();
-                                frmBOM.ExternalLinktoFile(@str);
-                                frmBOM.Show();
-                                frmBOM.ReloadLogic();
-                                //openWHexcelDB(@str);
+                                // Check if Form1 is open
+                                Form1 form1 = Application.OpenForms.OfType<Form1>().FirstOrDefault();
+
+                                if (form1 != null)
+                                {
+                                    FrmBOM frmBOM = new FrmBOM();
+                                    frmBOM.InitializeGlobalWarehouses(form1.PopulateWarehouses()); // Accessing the warehouses list from Form1
+                                    frmBOM.ExternalLinktoFile(@str);
+                                    frmBOM.Show();
+                                    frmBOM.ReloadLogic();
+                                }
+                                //FrmBOM frmBOM = new FrmBOM();
+                                //frmBOM.InitializeGlobalWarehouses(Form1.ActiveForm.warehoses);
+                                //frmBOM.ExternalLinktoFile(@str);
+                                //frmBOM.Show();
+                                //frmBOM.ReloadLogic();
+                                ////openWHexcelDB(@str);
                             }
                             else
                             {

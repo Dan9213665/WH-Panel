@@ -18,6 +18,7 @@ namespace WH_Panel
             this.Text = "Imperium Tabula Principalis UPDATED " + fileModifiedDate.ToString();
         }
 
+        //public List<ClientWarehouse> warehouses {  get; set; }
         public List<ClientWarehouse> PopulateWarehouses()
         {
             string directoryPath = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS";
