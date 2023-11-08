@@ -24,7 +24,7 @@ namespace WH_Panel
     {
 
         public List<WHitem> avlItemsFromTheMainForm = new List<WHitem>();
-        List<string> typesNamesList = new List<string> { "CAP", "RES", "IND", "OSC", "TRN", "DID", "PWR", "CON", "ICT","PCB" };
+        List<string> typesNamesList = new List<string> { "CAP", "RES", "IND", "OSC", "TRN", "DID", "PWR", "CON", "ICT", "PCB" };
         List<string> manufacturersList = new List<string> { "SAMTEC",
 "FINISAR",
 "JDSU",
@@ -608,14 +608,71 @@ namespace WH_Panel
 
         private void button1_Click(object sender, EventArgs e)
         {
-            WHitem itemToAddToAvl = new WHitem();
-            itemToAddToAvl.IPN = textBox3.Text.ToString();
-            itemToAddToAvl.Manufacturer = comboBox2.SelectedItem.ToString();
-            itemToAddToAvl.MFPN = textBox2.Text.ToString();
-            itemToAddToAvl.Description = richTextBox1.Text.ToString();
-            DataInserter(avlROBOTRON, "AVL", itemToAddToAvl);
-            this.Dispose();
-            this.Close();
+            //WHitem itemToAddToAvl = new WHitem();
+            //itemToAddToAvl.IPN = textBox3.Text.ToString();
+            //itemToAddToAvl.Manufacturer = comboBox2.SelectedItem.ToString();
+            //itemToAddToAvl.MFPN = textBox2.Text.ToString();
+            //itemToAddToAvl.Description = richTextBox1.Text.ToString();
+
+
+            //DataInserter(avlROBOTRON, "AVL", itemToAddToAvl);
+
+            //        if (!string.IsNullOrEmpty(textBox3.Text) &&
+            //comboBox2.SelectedItem != null &&
+            //!string.IsNullOrEmpty(textBox2.Text) &&
+            //!string.IsNullOrEmpty(richTextBox1.Text))
+            //        {
+            //            WHitem itemToAddToAvl = new WHitem();
+            //            itemToAddToAvl.IPN = textBox3.Text.ToString();
+            //            itemToAddToAvl.Manufacturer = comboBox2.SelectedItem.ToString();
+            //            itemToAddToAvl.MFPN = textBox2.Text.ToString();
+            //            itemToAddToAvl.Description = richTextBox1.Text.ToString();
+
+            //            DataInserter(avlROBOTRON, "AVL", itemToAddToAvl);
+            //            this.Dispose();
+            //            this.Close();
+            //        }
+            //        else
+            //        {
+            //            MessageBox.Show("Please populate all the required fields before proceeding.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //        }
+
+            if (!string.IsNullOrEmpty(textBox3.Text) &&
+    comboBox2.SelectedItem != null &&
+    !string.IsNullOrEmpty(textBox2.Text) &&
+    !string.IsNullOrEmpty(richTextBox1.Text))
+            {
+                WHitem itemToAddToAvl = new WHitem();
+                itemToAddToAvl.IPN = textBox3.Text.ToString();
+                itemToAddToAvl.Manufacturer = comboBox2.SelectedItem.ToString();
+                itemToAddToAvl.MFPN = textBox2.Text.ToString();
+                itemToAddToAvl.Description = richTextBox1.Text.ToString();
+
+                DataInserter(avlROBOTRON, "AVL", itemToAddToAvl);
+                //this.Dispose();
+                this.Close();
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(textBox3.Text))
+                {
+                    textBox3.Focus();
+                }
+                else if (comboBox2.SelectedItem == null)
+                {
+                    comboBox2.Focus();
+                }
+                else if (string.IsNullOrEmpty(textBox2.Text))
+                {
+                    textBox2.Focus();
+                }
+                else if (string.IsNullOrEmpty(richTextBox1.Text))
+                {
+                    richTextBox1.Focus();
+                }
+
+                MessageBox.Show("Please populate all the required fields before proceeding.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
         }
         private void DataInserter(string fp, string thesheetName, WHitem wHitem)

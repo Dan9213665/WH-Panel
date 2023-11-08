@@ -2328,6 +2328,10 @@ namespace WH_Panel
 
 
                     FrmIPNgenerator gen = new FrmIPNgenerator(avlItems, prefix);
+                    gen.FormClosed += (s, args) =>
+                    {
+                        button2.PerformClick(); // Replace button2 with your actual button name
+                    };
                     gen.Show();
 
                 }
@@ -2336,9 +2340,6 @@ namespace WH_Panel
 
                 }
             }
-
-
-
         }
 
 
