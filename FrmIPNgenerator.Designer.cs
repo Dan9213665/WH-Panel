@@ -214,6 +214,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1183, 229);
             Controls.Add(tableLayoutPanel1);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FrmIPNgenerator";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "FrmIPNgenerator";

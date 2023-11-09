@@ -1008,82 +1008,7 @@ namespace WH_Panel
             string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
             string filename = @"\\dbr1\Data\WareHouse\2023\WHsearcher\" + fileTimeStamp + "_" + ".html";
 
-            //using (StreamWriter writer = new StreamWriter(filename))
-            //{
-            //    writer.WriteLine("<!DOCTYPE html>");
-            //    writer.WriteLine("<html>");
-            //    writer.WriteLine("<head>");
-            //    writer.WriteLine("<style>");
-            //    writer.WriteLine("body {");
-            //    writer.WriteLine("background-color: black;");
-            //    writer.WriteLine("color: black;");
-            //    writer.WriteLine("}");
-            //    writer.WriteLine("table {");
-            //    writer.WriteLine("font-family: Arial, sans-serif;");
-            //    writer.WriteLine("border-collapse: collapse;");
-            //    writer.WriteLine("width: 100%;");
-            //    writer.WriteLine("}");
-            //    writer.WriteLine("th {");
-            //    writer.WriteLine("position: sticky;");
-            //    writer.WriteLine("top: 0;");
-            //    writer.WriteLine("background-color: #4CAF50;");
-            //    writer.WriteLine("color: black;");
-            //    writer.WriteLine("}");
-            //    writer.WriteLine("td, th {");
-            //    writer.WriteLine("border: 1px solid #dddddd;");
-            //    writer.WriteLine("text-align: left;");
-            //    writer.WriteLine("padding: 8px;");
-            //    writer.WriteLine("}");
-            //    writer.WriteLine("</style>");
-            //    writer.WriteLine("</head>");
-            //    writer.WriteLine("<body>");
-            //    writer.WriteLine("<table>");
-            //    writer.WriteLine("<tr>");
-
-            //    // Add header from DataGridView with specified column order
-            //    writer.WriteLine("<th>" + dataGridView1.Columns["DateOfCreation"].HeaderText + "</th>");
-            //    writer.WriteLine("<th>" + dataGridView1.Columns["ProjectName"].HeaderText + "</th>");
-            //    writer.WriteLine("<th>" + dataGridView1.Columns["IPN"].HeaderText + "</th>");
-            //    writer.WriteLine("<th>" + dataGridView1.Columns["MFPN"].HeaderText + "</th>");
-            //    writer.WriteLine("<th>" + dataGridView1.Columns["Description"].HeaderText + "</th>");
-            //    writer.WriteLine("<th>" + dataGridView1.Columns["QtyInKit"].HeaderText + "</th>");
-            //    writer.WriteLine("<th>" + dataGridView1.Columns["Delta"].HeaderText + "</th>");
-            //    writer.WriteLine("<th>" + dataGridView1.Columns["QtyPerUnit"].HeaderText + "</th>");
-            //    writer.WriteLine("<th>" + dataGridView1.Columns["Calc"].HeaderText + "</th>");
-            //    writer.WriteLine("<th>" + dataGridView1.Columns["Alts"].HeaderText + "</th>");
-
-            //    writer.WriteLine("</tr>");
-
-            //    foreach (DataGridViewRow row in dataGridView1.Rows)
-            //    {
-            //        // Check the condition for the Delta column
-            //        bool isNegativeDelta = Convert.ToInt32(row.Cells["Delta"].Value) < 0;
-
-            //        // Set the row color based on the Delta value
-            //        string rowColor = isNegativeDelta ? "indianred" : "#4CAF50";
-
-            //        // Start the row with the specified color
-            //        writer.WriteLine("<tr style='background-color:" + rowColor + "'>");
-
-            //        // Iterate through the cells in the specified column order
-            //        writer.WriteLine("<td>" + row.Cells["DateOfCreation"].Value.ToString() + "</td>");
-            //        writer.WriteLine("<td>" + row.Cells["ProjectName"].Value.ToString() + "</td>");
-            //        writer.WriteLine("<td>" + row.Cells["IPN"].Value.ToString() + "</td>");
-            //        writer.WriteLine("<td>" + row.Cells["MFPN"].Value.ToString() + "</td>");
-            //        writer.WriteLine("<td>" + row.Cells["Description"].Value.ToString() + "</td>");
-            //        writer.WriteLine("<td>" + row.Cells["QtyInKit"].Value.ToString() + "</td>");
-            //        writer.WriteLine("<td>" + row.Cells["Delta"].Value.ToString() + "</td>");
-            //        writer.WriteLine("<td>" + row.Cells["QtyPerUnit"].Value.ToString() + "</td>");
-            //        writer.WriteLine("<td>" + row.Cells["Calc"].Value.ToString() + "</td>");
-            //        writer.WriteLine("<td>" + row.Cells["Alts"].Value.ToString() + "</td>");
-
-            //        writer.WriteLine("</tr>");
-            //    }
-
-            //    writer.WriteLine("</table>");
-            //    writer.WriteLine("</body>");
-            //    writer.WriteLine("</html>");
-            //}
+    
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.WriteLine("<!DOCTYPE html>");
@@ -1116,6 +1041,8 @@ namespace WH_Panel
                 writer.WriteLine("}");
                 writer.WriteLine("</style>");
 
+               
+
                 writer.WriteLine("<script>");
                 writer.WriteLine("function sortTable(n) {");
                 writer.WriteLine("var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;");
@@ -1129,9 +1056,13 @@ namespace WH_Panel
                 writer.WriteLine("shouldSwitch = false;");
                 writer.WriteLine("x = rows[i].getElementsByTagName('TD')[n];");
                 writer.WriteLine("y = rows[i + 1].getElementsByTagName('TD')[n];");
-                writer.WriteLine("if (n === 5 || n === 6 || n === 7) {"); // Assuming columns 5, 6, and 7 contain numeric values
+                writer.WriteLine("var isNumeric = !isNaN(x.innerHTML) && !isNaN(y.innerHTML);");
+                writer.WriteLine("if (isNumeric) {");
                 writer.WriteLine("x = parseInt(x.innerHTML);");
                 writer.WriteLine("y = parseInt(y.innerHTML);");
+                writer.WriteLine("} else {");
+                writer.WriteLine("x = x.innerHTML;");
+                writer.WriteLine("y = y.innerHTML;");
                 writer.WriteLine("}");
                 writer.WriteLine("if (dir === 'asc') {");
                 writer.WriteLine("if (x > y) {");

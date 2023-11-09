@@ -17,6 +17,8 @@ using ComboBox = System.Windows.Forms.ComboBox;
 using DataTable = System.Data.DataTable;
 using RadioButton = System.Windows.Forms.RadioButton;
 using TextBox = System.Windows.Forms.TextBox;
+using Newtonsoft.Json;
+
 namespace WH_Panel
 {
 
@@ -1835,6 +1837,25 @@ namespace WH_Panel
                 GenerateHTMLwareHouseBalance();
             }
         }
+
+        public List<string> GenerateRandomColors(int count)
+        {
+            var random = new Random();
+            var colors = new List<string>();
+
+            for (int i = 0; i < count; i++)
+            {
+                colors.Add(String.Format("'rgba({0}, {1}, {2}, {3})'",
+                    random.Next(0, 255),
+                    random.Next(0, 255),
+                    random.Next(0, 255),
+                    0.2
+                ));
+            }
+
+            return colors;
+        }
+
         private void GenerateHTMLwareHouseBalance()
         {
             string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
@@ -1842,8 +1863,13 @@ namespace WH_Panel
 
             using (StreamWriter writer = new StreamWriter(filename))
             {
-                writer.WriteLine("<html style='background-color: black;'>");
+                writer.WriteLine("<html style='background-color: gray;'>");
                 writer.WriteLine("<head>");
+
+                writer.WriteLine("<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>");
+                writer.WriteLine("<script src='https://cdnjs.cloudflare.com/ajax/libs/json2/20210202/json2.js'></script>");
+                writer.WriteLine("<script src='https://cdnjs.cloudflare.com/ajax/libs/newtonsoft.json/13.0.1/json.net.min.js'></script>");
+
 
 
                 writer.WriteLine("<h1 id='stickyHeader' style='position: sticky; top: 0; background-color: lightgreen; text-align: center;'>");
@@ -1858,7 +1884,7 @@ namespace WH_Panel
                 writer.WriteLine("<button onclick='openAllAccordions()' style='margin: 10px;'>Open All Accordions</button>");
 
                 writer.WriteLine(".accordion {");
-                writer.WriteLine("background-color: black;");
+                writer.WriteLine("background-color: gray;");
                 writer.WriteLine("color: #444;");
                 writer.WriteLine("cursor: pointer;");
                 writer.WriteLine("padding: 18px;");
@@ -1876,12 +1902,17 @@ namespace WH_Panel
                 writer.WriteLine(".panel {");
                 writer.WriteLine("padding: 0 18px;");
                 writer.WriteLine("display: none;");
-                writer.WriteLine("background-color: black;");
+                writer.WriteLine("background-color: gray;");
                 writer.WriteLine("overflow: hidden;");
                 writer.WriteLine("}");
                 writer.WriteLine("</style>");
                 writer.WriteLine("</head>");
                 writer.WriteLine("<body>");
+
+                writer.WriteLine("<canvas id='myChart' width='400' height='200'></canvas>");
+
+
+
 
                 var orderedStockItems = stockItems.OrderBy(item => item.IPN).ToList();
                 // Group items by IPN and calculate the total stock for each unique IPN
@@ -1901,6 +1932,133 @@ namespace WH_Panel
                                                     item.SourceRequester
                                                 })
                                             });
+
+                var groupedByReelBagTrayStick = orderedStockItems
+    .GroupBy(item => item.ReelBagTrayStick)
+    .Select(group => new
+    {
+        ReelBagTrayStick = group.Key,
+        Count = group.Count()
+    });
+
+                // Generate the chart data based on the grouped data
+                var labels = groupedByReelBagTrayStick.Select(item => item.ReelBagTrayStick).ToList();
+                var data = groupedByReelBagTrayStick.Select(item => item.Count).ToList();
+
+          
+
+                // Generate random colors for the chart
+                var colors = new List<string>();
+                var random = new Random();
+                for (int i = 0; i < labels.Count; i++)
+                {
+                    var color = String.Format("'rgba({0}, {1}, {2}, {3})'",
+                        random.Next(0, 255),
+                        random.Next(0, 255),
+                        random.Next(0, 255),
+                        0.2
+                    );
+                    colors.Add(color);
+                }
+
+
+           
+
+                // Write the script to generate the chart
+                writer.WriteLine("<script>");
+                writer.WriteLine("var ctx = document.getElementById('myChart').getContext('2d');");
+                writer.WriteLine("var myChart = new Chart(ctx, {");
+                writer.WriteLine("type: 'bar',");
+                writer.WriteLine("data: {");
+                writer.WriteLine("labels: " + JsonConvert.SerializeObject(labels) + ",");
+                writer.WriteLine("datasets: [{");
+                writer.WriteLine("label: 'Count of ReelBagTrayStick',");
+                writer.WriteLine("data: " + JsonConvert.SerializeObject(data) + ",");
+                writer.WriteLine("backgroundColor: [");
+                // Adjust the alpha value to make the colors more vibrant
+                writer.WriteLine("'rgba(255, 99, 132, 1)',");
+                writer.WriteLine("'rgba(54, 162, 235, 1)',");
+                writer.WriteLine("'rgba(255, 206, 86, 1)',");
+                writer.WriteLine("'rgba(75, 192, 192, 1)',");
+                writer.WriteLine("'rgba(153, 102, 255, 1)',");
+                writer.WriteLine("'rgba(255, 159, 64, 1)'");
+                writer.WriteLine("],");
+                writer.WriteLine("borderColor: [");
+                // Adjust the alpha value for border colors if needed
+                writer.WriteLine("'rgba(255, 99, 132, 1)',");
+                writer.WriteLine("'rgba(54, 162, 235, 1)',");
+                writer.WriteLine("'rgba(255, 206, 86, 1)',");
+                writer.WriteLine("'rgba(75, 192, 192, 1)',");
+                writer.WriteLine("'rgba(153, 102, 255, 1)',");
+                writer.WriteLine("'rgba(255, 159, 64, 1)'");
+                writer.WriteLine("],");
+                writer.WriteLine("borderWidth: 1");
+                writer.WriteLine("}]");
+                writer.WriteLine("},");
+                writer.WriteLine("options: {}");
+                writer.WriteLine("});");
+                writer.WriteLine("</script>");
+
+
+                //// Write the script to generate the chart
+                //writer.WriteLine("<script>");
+                //writer.WriteLine("var ctx = document.getElementById('myChart').getContext('2d');");
+                //writer.WriteLine("var myChart = new Chart(ctx, {");
+                //writer.WriteLine("type: 'bar',");
+                //writer.WriteLine("data: {");
+                //writer.WriteLine("labels: " + JsonConvert.SerializeObject(labels) + ",");
+                //writer.WriteLine("datasets: [{");
+                //writer.WriteLine("label: 'Count of ReelBagTrayStick',");
+                //writer.WriteLine("data: " + JsonConvert.SerializeObject(data) + ",");
+                //writer.WriteLine("backgroundColor: [" + string.Join(",", colors) + "],");
+                //writer.WriteLine("borderWidth: 1");
+                //writer.WriteLine("}]");
+                //writer.WriteLine("},");
+                //writer.WriteLine("options: {}");
+                //writer.WriteLine("});");
+                //writer.WriteLine("</script>");
+
+                //writer.WriteLine("<script>");
+                //writer.WriteLine("var ctx = document.getElementById('myChart').getContext('2d');");
+                //writer.WriteLine("var myChart = new Chart(ctx, {");
+                //writer.WriteLine("type: 'pie',");
+                //writer.WriteLine("data: {");
+
+                //// Modify this data array according to your needs
+                //writer.WriteLine("labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],");
+                //writer.WriteLine("datasets: [{");
+                //writer.WriteLine("label: '# of Votes',");
+                //writer.WriteLine("data: [12, 19, 3, 5, 2, 3],");
+                //writer.WriteLine("backgroundColor: [");
+                //writer.WriteLine("'rgba(255, 99, 132, 0.2)',");
+                //writer.WriteLine("'rgba(54, 162, 235, 0.2)',");
+                //writer.WriteLine("'rgba(255, 206, 86, 0.2)',");
+                //writer.WriteLine("'rgba(75, 192, 192, 0.2)',");
+                //writer.WriteLine("'rgba(153, 102, 255, 0.2)',");
+                //writer.WriteLine("'rgba(255, 159, 64, 0.2)'");
+                //writer.WriteLine("],");
+                //writer.WriteLine("borderColor: [");
+                //writer.WriteLine("'rgba(255, 99, 132, 1)',");
+                //writer.WriteLine("'rgba(54, 162, 235, 1)',");
+                //writer.WriteLine("'rgba(255, 206, 86, 1)',");
+                //writer.WriteLine("'rgba(75, 192, 192, 1)',");
+                //writer.WriteLine("'rgba(153, 102, 255, 1)',");
+                //writer.WriteLine("'rgba(255, 159, 64, 1)'");
+                //writer.WriteLine("],");
+                //writer.WriteLine("borderWidth: 1");
+                //writer.WriteLine("}]");
+                //writer.WriteLine("},");
+                //writer.WriteLine("options: {");
+                //writer.WriteLine("scales: {");
+                //writer.WriteLine("y: {");
+                //writer.WriteLine("beginAtZero: true");
+                //writer.WriteLine("}");
+                //writer.WriteLine("}");
+                //writer.WriteLine("}");
+                //writer.WriteLine("});");
+                //writer.WriteLine("</script>");
+
+
 
                 foreach (var group in groupedItems)
                 {

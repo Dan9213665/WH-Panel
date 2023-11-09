@@ -210,9 +210,8 @@ namespace WH_Panel
         }
         private void PopulateGridView()
         {
-            //MessageBox.Show(wHitems.Count.ToString()); 
+            UDtable.Clear();
             IEnumerable<WHitem> data = wHitems;
-            //UDtable.Clear();
             using (var reader = ObjectReader.Create(data))
             {
                 UDtable.Load(reader);

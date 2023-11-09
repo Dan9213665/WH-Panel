@@ -1246,7 +1246,7 @@ namespace WH_Panel
                 StringBuilder htmlContent = new StringBuilder();
 
                 // Start writing the HTML table
-                htmlContent.AppendLine("<html>");
+                writer.WriteLine("<html style='background-color: gray;'>");
                 htmlContent.AppendLine("<head>");
                 htmlContent.AppendLine("<title>" + projectName.Substring(0, projectName.Length - 5) + " SIMULATION" + "</title>");
                 htmlContent.AppendLine("</head>");
@@ -1353,28 +1353,39 @@ namespace WH_Panel
 
         private string GenerateJavascript()
         {
+
             StringBuilder jsContent = new StringBuilder();
             jsContent.AppendLine("<script>");
             jsContent.AppendLine("window.onload = function() {");
             jsContent.AppendLine("var table = document.getElementsByTagName('table')[0];");
-            jsContent.AppendLine("var deltaHeader = table.rows[0].cells[5];"); // Delta column header cell
-            jsContent.AppendLine("var ipnHeader = table.rows[0].cells[1];"); // IPN column header cell
+            jsContent.AppendLine("var lastSortedColumnIndex = -1;");
+            jsContent.AppendLine("var sortDirection = 1;"); // 1 for ascending, -1 for descending
 
-            // Add click event listeners to enable sorting
-            jsContent.AppendLine("deltaHeader.addEventListener('click', function() {");
-            jsContent.AppendLine("sortTableByColumn(table, 5);"); // Sort by Delta column (index 4)
+            // Add click event listeners to enable sorting for all columns
+            jsContent.AppendLine("for (var i = 0; i < table.rows[0].cells.length; i++) {");
+            jsContent.AppendLine("table.rows[0].cells[i].addEventListener('click', function() {");
+            jsContent.AppendLine("var columnIndex = this.cellIndex;");
+            jsContent.AppendLine("if (lastSortedColumnIndex === columnIndex) {");
+            jsContent.AppendLine("sortDirection *= -1;"); // Toggle the sort direction
+            jsContent.AppendLine("} else {");
+            jsContent.AppendLine("sortDirection = 1;"); // Reset to ascending order
+            jsContent.AppendLine("}");
+            jsContent.AppendLine("sortTableByColumn(table, columnIndex, sortDirection);"); // Sort the table
+            jsContent.AppendLine("lastSortedColumnIndex = columnIndex;");
             jsContent.AppendLine("});");
-            jsContent.AppendLine("ipnHeader.addEventListener('click', function() {");
-            jsContent.AppendLine("sortTableByColumn(table, 1);"); // Sort by IPN column (index 1)
-            jsContent.AppendLine("});");
+            jsContent.AppendLine("}");
 
             // Sorting function
-            jsContent.AppendLine("function sortTableByColumn(table, columnIndex) {");
+            jsContent.AppendLine("function sortTableByColumn(table, columnIndex, sortDirection) {");
             jsContent.AppendLine("var rows = Array.from(table.rows).slice(1);"); // Skip the header row
             jsContent.AppendLine("rows.sort(function(a, b) {");
             jsContent.AppendLine("var aValue = a.cells[columnIndex].textContent;");
             jsContent.AppendLine("var bValue = b.cells[columnIndex].textContent;");
-            jsContent.AppendLine("return aValue.localeCompare(bValue, undefined, { numeric: true, sensitivity: 'base' });"); // Numeric sorting
+            jsContent.AppendLine("if (!isNaN(aValue) && !isNaN(bValue)) {");
+            jsContent.AppendLine("return sortDirection * (parseInt(aValue) - parseInt(bValue));"); // Numeric sorting
+            jsContent.AppendLine("} else {");
+            jsContent.AppendLine("return sortDirection * aValue.localeCompare(bValue, undefined, { sensitivity: 'base' });"); // String sorting
+            jsContent.AppendLine("}");
             jsContent.AppendLine("});");
             jsContent.AppendLine("for (var i = 0; i < rows.length; i++) {");
             jsContent.AppendLine("table.appendChild(rows[i]);");
@@ -1398,6 +1409,7 @@ namespace WH_Panel
             jsContent.AppendLine("</script>");
 
             return jsContent.ToString();
+
         }
 
         private void WriteMissingCell(StringBuilder sb, DataGridViewRow row, Dictionary<string, int> columnIndexMap)
