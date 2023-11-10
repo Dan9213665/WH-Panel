@@ -18,6 +18,10 @@ using DataTable = System.Data.DataTable;
 using RadioButton = System.Windows.Forms.RadioButton;
 using TextBox = System.Windows.Forms.TextBox;
 using Newtonsoft.Json;
+using Microsoft.Office.Interop.Excel;
+using Label = System.Windows.Forms.Label;
+using GroupBox = System.Windows.Forms.GroupBox;
+using Application = System.Windows.Forms.Application;
 
 namespace WH_Panel
 {
@@ -1909,8 +1913,21 @@ namespace WH_Panel
                 writer.WriteLine("</head>");
                 writer.WriteLine("<body>");
 
-                writer.WriteLine("<canvas id='myChart' width='400' height='200'></canvas>");
+                //writer.WriteLine("<canvas id='myChart' width='200' height='200'></canvas>");
 
+                //writer.WriteLine("<canvas id='myChart' width='200' height='300' style='max-height: 300px;'></canvas>");
+
+                writer.WriteLine("<div style=\"height: 300px; display: flex;\">");
+
+                writer.WriteLine("<div style =\"flex: 1; text-align: right;\">");
+                writer.WriteLine("<canvas id='myChart1' width='100' height='300' style='max-height: 300px; flex: 1;'></canvas>");
+                writer.WriteLine("</div>");
+
+                writer.WriteLine("<div style =\"flex: 1; text-align: left;\">");
+                writer.WriteLine("<canvas id='myChart2' width='100' height='300' style='max-height: 300px; flex: 2;'></canvas>");
+                writer.WriteLine("</div>");
+
+                writer.WriteLine("</div>");
 
 
 
@@ -1933,7 +1950,16 @@ namespace WH_Panel
                                                 })
                                             });
 
+                //            var groupedByReelBagTrayStick = orderedStockItems
+                //.GroupBy(item => item.ReelBagTrayStick)
+                //.Select(group => new
+                //{
+                //    ReelBagTrayStick = group.Key,
+                //    Count = group.Count()
+                //});
+
                 var groupedByReelBagTrayStick = orderedStockItems
+    .Where(item => item.Stock > 0)
     .GroupBy(item => item.ReelBagTrayStick)
     .Select(group => new
     {
@@ -1945,7 +1971,7 @@ namespace WH_Panel
                 var labels = groupedByReelBagTrayStick.Select(item => item.ReelBagTrayStick).ToList();
                 var data = groupedByReelBagTrayStick.Select(item => item.Count).ToList();
 
-          
+
 
                 // Generate random colors for the chart
                 var colors = new List<string>();
@@ -1962,17 +1988,17 @@ namespace WH_Panel
                 }
 
 
-           
+
 
                 // Write the script to generate the chart
                 writer.WriteLine("<script>");
-                writer.WriteLine("var ctx = document.getElementById('myChart').getContext('2d');");
-                writer.WriteLine("var myChart = new Chart(ctx, {");
-                writer.WriteLine("type: 'bar',");
+                writer.WriteLine("var ctx1 = document.getElementById('myChart1').getContext('2d');");
+                writer.WriteLine("var myChart1 = new Chart(ctx1, {");
+                writer.WriteLine("type: 'doughnut',");
                 writer.WriteLine("data: {");
                 writer.WriteLine("labels: " + JsonConvert.SerializeObject(labels) + ",");
                 writer.WriteLine("datasets: [{");
-                writer.WriteLine("label: 'Count of ReelBagTrayStick',");
+                writer.WriteLine("label: 'Count:',");
                 writer.WriteLine("data: " + JsonConvert.SerializeObject(data) + ",");
                 writer.WriteLine("backgroundColor: [");
                 // Adjust the alpha value to make the colors more vibrant
@@ -1995,7 +2021,77 @@ namespace WH_Panel
                 writer.WriteLine("borderWidth: 1");
                 writer.WriteLine("}]");
                 writer.WriteLine("},");
-                writer.WriteLine("options: {}");
+                //writer.WriteLine("options: {}");
+                writer.WriteLine("options: {");
+                writer.WriteLine("    indexAxis: 'y',");
+                writer.WriteLine("    scales: {");
+                writer.WriteLine("        y: {");
+                writer.WriteLine("            stacked: true,");
+                writer.WriteLine("            beginAtZero: true,");
+                writer.WriteLine("            ticks: {");
+                writer.WriteLine("                color: 'white'");
+                writer.WriteLine("            }");
+                writer.WriteLine("        },");
+                writer.WriteLine("        x: {");
+                writer.WriteLine("            stacked: true,");
+                writer.WriteLine("            ticks: {");
+                writer.WriteLine("                color: 'white'");
+                writer.WriteLine("            }");
+                writer.WriteLine("        }");
+                writer.WriteLine("    }");
+                writer.WriteLine("}");
+                writer.WriteLine("});");
+                writer.WriteLine("</script>");
+
+                writer.WriteLine("<script>");
+                writer.WriteLine("var ctx2 = document.getElementById('myChart2').getContext('2d');");
+                writer.WriteLine("var myChart2 = new Chart(ctx2, {");
+                writer.WriteLine("type: 'bar',");
+                writer.WriteLine("data: {");
+                writer.WriteLine("labels: " + JsonConvert.SerializeObject(labels) + ",");
+                writer.WriteLine("datasets: [{");
+                writer.WriteLine("label: 'Count:',");
+                writer.WriteLine("data: " + JsonConvert.SerializeObject(data) + ",");
+                writer.WriteLine("backgroundColor: [");
+                // Adjust the alpha value to make the colors more vibrant
+                writer.WriteLine("'rgba(255, 99, 132, 1)',");
+                writer.WriteLine("'rgba(54, 162, 235, 1)',");
+                writer.WriteLine("'rgba(255, 206, 86, 1)',");
+                writer.WriteLine("'rgba(75, 192, 192, 1)',");
+                writer.WriteLine("'rgba(153, 102, 255, 1)',");
+                writer.WriteLine("'rgba(255, 159, 64, 1)'");
+                writer.WriteLine("],");
+                writer.WriteLine("borderColor: [");
+                // Adjust the alpha value for border colors if needed
+                writer.WriteLine("'rgba(255, 99, 132, 1)',");
+                writer.WriteLine("'rgba(54, 162, 235, 1)',");
+                writer.WriteLine("'rgba(255, 206, 86, 1)',");
+                writer.WriteLine("'rgba(75, 192, 192, 1)',");
+                writer.WriteLine("'rgba(153, 102, 255, 1)',");
+                writer.WriteLine("'rgba(255, 159, 64, 1)'");
+                writer.WriteLine("],");
+                writer.WriteLine("borderWidth: 1");
+                writer.WriteLine("}]");
+                writer.WriteLine("},");
+                //writer.WriteLine("options: {}");
+                writer.WriteLine("options: {");
+                writer.WriteLine("    indexAxis: 'y',");
+                writer.WriteLine("    scales: {");
+                writer.WriteLine("        y: {");
+                writer.WriteLine("            stacked: true,");
+                writer.WriteLine("            beginAtZero: true,");
+                writer.WriteLine("            ticks: {");
+                writer.WriteLine("                color: 'white'");
+                writer.WriteLine("            }");
+                writer.WriteLine("        },");
+                writer.WriteLine("        x: {");
+                writer.WriteLine("            stacked: true,");
+                writer.WriteLine("            ticks: {");
+                writer.WriteLine("                color: 'white'");
+                writer.WriteLine("            }");
+                writer.WriteLine("        }");
+                writer.WriteLine("    }");
+                writer.WriteLine("}");
                 writer.WriteLine("});");
                 writer.WriteLine("</script>");
 
@@ -2578,6 +2674,138 @@ namespace WH_Panel
             }
         }
 
+        private void button2_MouseClick(object sender, MouseEventArgs e)
+        {
 
+        }
+
+        private void button2_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                openFileDialog1.Title = "Select BOM File";
+                openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\2023\\" + DateTime.Now.ToString("MM") + ".2023";
+                openFileDialog1.Filter = "BOM files(*.xlsm) | *.xlsm";
+                openFileDialog1.Multiselect = false;
+
+                string currentPrefix = string.Empty;
+                string currentAvl = string.Empty;
+                foreach (ClientWarehouse w in warehouses)
+                {
+                    if (comboBox3.Text == w.clName)
+                    {
+                        currentPrefix = w.clPrefix;
+                        currentAvl = w.clAvlFile;
+                    }
+                }
+
+                List<WHitem> ItemsToAddToAvl = new List<WHitem>();
+
+                if (openFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    string fileName = openFileDialog1.FileName;
+                    string connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fileName + ";Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1';";
+                    using (OleDbConnection connection = new OleDbConnection(connectionString))
+                    {
+                        connection.Open();
+                        DataTable dt = connection.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+                        if (dt != null && dt.Rows.Count > 0)
+                        {
+                            string sheetName = dt.Rows[0]["TABLE_NAME"].ToString();
+                            if (!sheetName.EndsWith("_"))
+                            {
+                                OleDbDataAdapter dataAdapter = new OleDbDataAdapter("SELECT IPN, Manufacturer, MFPN, Description FROM [" + sheetName + "]", connection);
+                                DataTable dtExcelData = new DataTable();
+                                dataAdapter.Fill(dtExcelData);
+
+                                // Check if the first IPN starts with currentPrefix
+                                if (dtExcelData.Rows.Count > 0)
+                                {
+                                    string firstIPN = dtExcelData.Rows[0]["IPN"]?.ToString();
+                                    if (!firstIPN.StartsWith(currentPrefix))
+                                    {
+                                        MessageBox.Show("INCORRECT CLIENT BOM!");
+                                        // Let the user select a suitable file again
+                                        button2_MouseDown(sender, e);
+                                        return;
+                                    }
+                                }
+
+                                foreach (DataRow item in dtExcelData.Rows)
+                                {
+                                    ItemsToAddToAvl.Add(new WHitem
+                                    {
+                                        IPN = item["IPN"]?.ToString()?.Trim(),
+                                        Manufacturer = item["Manufacturer"]?.ToString(),
+                                        MFPN = item["MFPN"]?.ToString()?.Trim(),
+                                        Description = item["Description"]?.ToString()
+                                    });
+                                }
+                            }
+                        }
+                    }
+
+                    var uniqueMFPNItems = ItemsToAddToAvl
+    .Where(newItem => !avlItems.Any(existingItem => existingItem.MFPN == newItem.MFPN))
+    .ToList();
+
+                    if (uniqueMFPNItems.Count > 0)
+                    {
+                        string message = uniqueMFPNItems.Count.ToString() + " new ITEMS found:\n\n";
+                        foreach (var item in uniqueMFPNItems)
+                        {
+                            message += $"IPN: {item.IPN}, Manufacturer: {item.Manufacturer}, MFPN: {item.MFPN}, Description: {item.Description}\n\n";
+                        }
+                        MessageBox.Show(message);
+                        // Call the function to add new items to the database
+                        AddNewItemsToAVL(currentAvl, uniqueMFPNItems);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Nothing new here");
+                    }
+                }
+            }
+        }
+
+        private void AddNewItemsToAVL(string currentAvl, List<WHitem> newItems)
+        {
+            //MessageBox.Show(currentAvl);
+            try
+            {
+                OleDbConnectionStringBuilder builder = new OleDbConnectionStringBuilder();
+                builder.Provider = "Microsoft.ACE.OLEDB.12.0";
+                builder.DataSource = currentAvl;
+                builder["Extended Properties"] = "Excel 12.0 Xml;HDR=YES;IMEX=0;Mode=ReadWrite";
+
+                using (OleDbConnection connection = new OleDbConnection(builder.ConnectionString))
+                {
+                    connection.Open();
+
+                    foreach (var item in newItems)
+                    {
+                        // Assuming you have a sheet named 'YourSheetName' in your Excel file
+                        string query = "INSERT INTO [AVL$] (IPN, Manufacturer, MFPN, Description) VALUES (@IPN, @Manufacturer, @MFPN, @Description)";
+
+                        using (OleDbCommand command = new OleDbCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@IPN", item.IPN);
+                            command.Parameters.AddWithValue("@Manufacturer", item.Manufacturer);
+                            command.Parameters.AddWithValue("@MFPN", item.MFPN);
+                            command.Parameters.AddWithValue("@Description", item.Description);
+                            command.ExecuteNonQuery();
+                        }
+                    }
+
+                    MessageBox.Show(newItems.Count.ToString() + " New items added to the AVL file successfully.");
+                    button2.PerformClick();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error adding new items to the AVL file: {ex.Message}");
+                // Handle the exception appropriately (log, show a user-friendly message, etc.)
+            }
+        }
     }
 }

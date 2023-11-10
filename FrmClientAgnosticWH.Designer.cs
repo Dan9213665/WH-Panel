@@ -98,6 +98,7 @@
             dataGridView2 = new DataGridView();
             tabPage2 = new TabPage();
             flowLayoutPanel1 = new FlowLayoutPanel();
+            openFileDialog1 = new OpenFileDialog();
             dateTimePicker1 = new DateTimePicker();
             groupBox1.SuspendLayout();
             tabControl1.SuspendLayout();
@@ -290,6 +291,8 @@
             button2.TabIndex = 2;
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
+            button2.MouseClick += button2_MouseClick;
+            button2.MouseDown += button2_MouseDown;
             // 
             // label2
             // 
@@ -1114,6 +1117,10 @@
             flowLayoutPanel1.Size = new Size(1866, 824);
             flowLayoutPanel1.TabIndex = 0;
             // 
+            // openFileDialog1
+            // 
+            openFileDialog1.FileName = "openFileDialog1";
+            // 
             // FrmClientAgnosticWH
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1233,5 +1240,6 @@
         private TextBox textBox13;
         private Button button30;
         private ComboBox comboBox6;
+        private OpenFileDialog openFileDialog1;
     }
 }
