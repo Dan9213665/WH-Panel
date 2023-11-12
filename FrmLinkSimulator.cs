@@ -795,24 +795,7 @@ namespace WH_Panel
                               })
                    .OrderBy(item => item.IPN);
 
-            //        var stockData = BOMs
-            //.SelectMany(bom => bom.Items)
-            //.GroupBy(item => item.IPN)
-            //.Select(group => new
-            //{
-            //    IPN = group.Key,
-            //    Items = group.ToList()
-            //})
-            //.Select(itemGroup => new
-            //{
-            //    IPN = itemGroup.IPN,
-            //    MFPN = itemGroup.Items.FirstOrDefault()?.MFPN,
-            //    Description = itemGroup.Items.FirstOrDefault()?.Description,
-            //    TotalRequired = itemGroup.Items.Sum(item => item.Delta),
-            //    StockQuantity = stockItems.Where(si => si.IPN == itemGroup.IPN).Sum(si => si.Stock)
-            //})
-            //.OrderBy(item => item.IPN)
-            //.ToList();
+      
 
             string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
 

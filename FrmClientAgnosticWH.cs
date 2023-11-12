@@ -1950,7 +1950,9 @@ namespace WH_Panel
                                                 })
                                             });
 
+
                 //            var groupedByReelBagTrayStick = orderedStockItems
+                //.Where(item => item.Stock > 0)
                 //.GroupBy(item => item.ReelBagTrayStick)
                 //.Select(group => new
                 //{
@@ -1964,7 +1966,8 @@ namespace WH_Panel
     .Select(group => new
     {
         ReelBagTrayStick = group.Key,
-        Count = group.Count()
+        Count = group.Count(g => !orderedStockItems.Any(item =>
+            item.ReelBagTrayStick == group.Key && item.Stock == -g.Stock))
     });
 
                 // Generate the chart data based on the grouped data
