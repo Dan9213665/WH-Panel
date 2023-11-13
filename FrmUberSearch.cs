@@ -23,6 +23,7 @@ using GroupBox = System.Windows.Forms.GroupBox;
 using TextBox = System.Windows.Forms.TextBox;
 using ComboBox = System.Windows.Forms.ComboBox;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolBar;
+using ToolTip = System.Windows.Forms.ToolTip;
 
 namespace WH_Panel
 {
@@ -111,9 +112,45 @@ namespace WH_Panel
             //}
 
 
+            //// Create a list to hold the buttons
+            //List<Button> buttons = new List<Button>();
+
+
+            //for (int i = 0; i < warehouses.Count; i++)
+            //{
+            //    string warehousePath = warehouses[i].clStockFile; // Get the warehouse path from the KeyValuePair
+
+            //    // Extract the warehouse name from the warehouse path
+            //    string[] pathParts = warehousePath.Split('\\');
+            //    string warehouseName = warehouses[i].clName;
+
+            //    Button button = new Button();
+            //    button.Text = warehouseName;
+            //    button.Tag = warehousePath;
+            //    button.AutoSize = true; // Adjust the button size based on the text length
+            //    button.Click += Button_Click; // Assign a common event handler for button click event
+
+            //    buttons.Add(button); // Add the button to the list
+
+
+
+            //}
+
+
+
+            //// Sort the buttons alphabetically based on their text
+            //buttons.Sort((x, y) => x.Text.CompareTo(y.Text));
+
+            //flowLayoutPanel1.Controls.Clear();
+            //// Add the sorted buttons to the flowLayoutPanel1 control
+            //foreach (Button button in buttons)
+            //{
+            //    flowLayoutPanel1.Controls.Add(button); // Add the button to the FlowLayoutPanel
+            //}
+
+
             // Create a list to hold the buttons
             List<Button> buttons = new List<Button>();
-
 
             for (int i = 0; i < warehouses.Count; i++)
             {
@@ -124,18 +161,47 @@ namespace WH_Panel
                 string warehouseName = warehouses[i].clName;
 
                 Button button = new Button();
-                button.Text = warehouseName;
                 button.Tag = warehousePath;
-                button.AutoSize = true; // Adjust the button size based on the text length
+                //button.AutoSize = true; // Adjust the button size based on the text length
+                button.AutoSize = false; // Disable auto-sizing
+                button.Size = new Size(100, 60); // Set the button size
+                                                 // Add a tooltip to display warehouseName when hovering over the button
+                ToolTip toolTip = new ToolTip();
+                toolTip.SetToolTip(button, warehouseName);
+
                 button.Click += Button_Click; // Assign a common event handler for button click event
+
+                // Load the image from the first function and set it as the button's background
+                if (File.Exists(warehouses[i].clLogo))
+                {
+                    try
+                    {
+                        string logoFilePath = Path.Combine("dbr1", "WareHouse", "STOCK_CUSTOMERS", warehouseName, warehouses[i].clLogo);
+                        button.BackgroundImage = Image.FromFile(logoFilePath);
+                        button.BackgroundImageLayout = ImageLayout.Stretch;
+                    }
+                    catch (Exception ex)
+                    {
+                        // Handle the exception (e.g., log it, display a message to the user)
+                        Console.WriteLine($"Error loading logo: {ex.Message}");
+                    }
+                }
 
                 buttons.Add(button); // Add the button to the list
             }
 
+            //// Sort the buttons alphabetically based on their text
+            //buttons.Sort((x, y) => string.Compare(x.Text, y.Text, StringComparison.Ordinal));
+
+            // Sort the buttons alphabetically based on their tooltip text
+            //buttons.Sort((x, y) => string.Compare(x.ToolTipText, y.ToolTipText, StringComparison.Ordinal));
 
 
-            // Sort the buttons alphabetically based on their text
-            buttons.Sort((x, y) => x.Text.CompareTo(y.Text));
+            // Set the first row's SizeType to AutoSize and a minimum height
+            //tableLayoutPanel1.RowStyles[0] = new RowStyle(SizeType.AutoSize, 80);
+            //tableLayoutPanel1.RowStyles[1] = new RowStyle(SizeType.AutoSize, 80);
+            //tableLayoutPanel2.RowStyles[0] = new RowStyle(SizeType.AutoSize, 80);
+            //tableLayoutPanel3.RowStyles[0] = new RowStyle(SizeType.AutoSize, 80);
 
             flowLayoutPanel1.Controls.Clear();
             // Add the sorted buttons to the flowLayoutPanel1 control
@@ -143,6 +209,14 @@ namespace WH_Panel
             {
                 flowLayoutPanel1.Controls.Add(button); // Add the button to the FlowLayoutPanel
             }
+
+            // Refresh the layout to trigger the automatic adjustment of the first row's height
+            // Refresh the layout to trigger the automatic adjustment of the first row's height
+            //flowLayoutPanel1.PerformLayout();
+            //tableLayoutPanel1.PerformLayout();
+            //tableLayoutPanel2.PerformLayout();
+            //tableLayoutPanel3.PerformLayout();
+
         }
         private void Button_Click(object sender, EventArgs e)
         {
