@@ -544,6 +544,8 @@ namespace WH_Panel
         }
         private void StockViewDataLoader(string fp, string thesheetName)
         {
+            stockItems.Clear();
+
             try
             {
                 string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
