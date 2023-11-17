@@ -22,6 +22,7 @@ using Microsoft.Office.Interop.Excel;
 using Label = System.Windows.Forms.Label;
 using GroupBox = System.Windows.Forms.GroupBox;
 using Application = System.Windows.Forms.Application;
+using Seagull.Framework.Extensions;
 
 namespace WH_Panel
 {
@@ -1995,10 +1996,12 @@ namespace WH_Panel
                 var groupedPositiveBalanceByReelBagTrayStick = orderedStockItems
     .Where(item => item.Stock > 0 && !orderedStockItems.Any(otherItem =>
         otherItem.IPN == item.IPN && otherItem.Stock == -item.Stock))
-    .GroupBy(item => new { item.IPN, item.ReelBagTrayStick })
+    //.GroupBy(item => new { item.IPN, item.ReelBagTrayStick })
+
+    .GroupBy(item => new { item.ReelBagTrayStick })
     .Select(group => new
     {
-        IPN = group.Key.IPN,
+        //IPN = group.Key.IPN,
         ReelBagTrayStick = group.Key.ReelBagTrayStick,
         Count = group.Count()
     });
