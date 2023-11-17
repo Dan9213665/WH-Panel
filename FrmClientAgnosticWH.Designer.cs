@@ -29,6 +29,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmClientAgnosticWH));
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             groupBox1 = new GroupBox();
+            pictureBox1 = new PictureBox();
             comboBox3 = new ComboBox();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
@@ -101,6 +102,7 @@
             openFileDialog1 = new OpenFileDialog();
             dateTimePicker1 = new DateTimePicker();
             groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
@@ -135,6 +137,7 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(pictureBox1);
             groupBox1.Controls.Add(comboBox3);
             groupBox1.Controls.Add(tabControl1);
             groupBox1.Dock = DockStyle.Fill;
@@ -144,6 +147,14 @@
             groupBox1.TabIndex = 5;
             groupBox1.TabStop = false;
             groupBox1.Text = "AGNOSTIC WAREHOUSE";
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.Location = new Point(474, 0);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(275, 43);
+            pictureBox1.TabIndex = 8;
+            pictureBox1.TabStop = false;
             // 
             // comboBox3
             // 
@@ -1134,6 +1145,7 @@
             WindowState = FormWindowState.Maximized;
             Load += FrmClientAgnosticWH_Load;
             groupBox1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
             tabPage1.PerformLayout();
@@ -1241,5 +1253,6 @@
         private Button button30;
         private ComboBox comboBox6;
         private OpenFileDialog openFileDialog1;
+        private PictureBox pictureBox1;
     }
 }

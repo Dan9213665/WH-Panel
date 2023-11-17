@@ -239,6 +239,11 @@ namespace WH_Panel
             {
                 if (comboBox3.Text == w.clName)
                 {
+                    // Set the image in PictureBox based on the selected warehouse
+                    pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+                    pictureBox1.Image = Image.FromFile(w.clLogo);
+
+
                     avlFile = w.clAvlFile;
                     stockFile = w.clStockFile;
                     MasterReload(avlFile, stockFile);
@@ -870,32 +875,6 @@ namespace WH_Panel
                 cmd.ExecuteNonQuery();
                 conn.Close();
 
-                //string userName = Environment.UserName;
-                //string filePath = @"C:\Users\" + userName + @"\Desktop\Print_Stickers.xlsx";
-                //string theSheetName = "Sheet1";
-
-                //FileInfo file = new FileInfo(filePath);
-
-                //using (ExcelPackage package = new ExcelPackage(file))
-                //{
-                //    ExcelWorksheet worksheet = package.Workbook.Worksheets[theSheetName];
-
-                //    if (worksheet != null)
-                //    {
-                //        int rowIndex = 2; // Assuming the data starts from the second row
-                //        worksheet.Cells[rowIndex, 1].Value = wHitem.IPN;
-                //        worksheet.Cells[rowIndex, 2].Value = wHitem.MFPN;
-                //        worksheet.Cells[rowIndex, 3].Value = wHitem.Description;
-                //        worksheet.Cells[rowIndex, 4].Value = wHitem.Stock;
-                //        worksheet.Cells[rowIndex, 5].Value = wHitem.UpdatedOn;
-
-                //        package.Save();
-                //    }
-                //    else
-                //    {
-                //        Console.WriteLine("Worksheet not found");
-                //    }
-                //}
 
                 Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
                 Thread.Sleep(500);
@@ -903,9 +882,7 @@ namespace WH_Panel
                 Thread.Sleep(500);
                 SendKeys.SendWait("{Enter}");
                 Thread.Sleep(500);
-                //ComeBackFromPrint();
-                //Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
-                //LastInputFromUser.Focus();
+
             }
             catch (Exception e)
             {
@@ -1950,6 +1927,26 @@ namespace WH_Panel
                                                 })
                                             });
 
+                //            var groupedPositiveBalance = orderedStockItems
+                //.GroupBy(item => item.IPN)
+                //.Select(group => new
+                //{
+                //    IPN = group.Key,
+                //    TotalStock = group.Sum(item => item.Stock),
+                //    Items = group.Select(item => new
+                //    {
+                //        item.Manufacturer,
+                //        item.MFPN,
+                //        item.Description,
+                //        item.Stock,
+                //        item.UpdatedOn,
+                //        item.ReelBagTrayStick,
+                //        item.SourceRequester
+                //    })
+                //})
+                //.Where(group => group.TotalStock > 0)
+                //.ToList();
+
 
                 //            var groupedByReelBagTrayStick = orderedStockItems
                 //.Where(item => item.Stock > 0)
@@ -1959,21 +1956,56 @@ namespace WH_Panel
                 //    ReelBagTrayStick = group.Key,
                 //    Count = group.Count()
                 //});
+                //var groupedByReelBagTrayStick = orderedStockItems
 
-                var groupedByReelBagTrayStick = orderedStockItems
-    .Where(item => item.Stock > 0)
-    .GroupBy(item => item.ReelBagTrayStick)
+
+                //            var groupedByReelBagTrayStick = orderedStockItems
+                //.Where(item => item.Stock > 0)
+                //.GroupBy(item => item.ReelBagTrayStick)
+                //.Select(group => new
+                //{
+                //    ReelBagTrayStick = group.Key,
+                //    Count = group.Count(g => !orderedStockItems.Any(item =>
+                //        item.ReelBagTrayStick == group.Key && item.Stock == -g.Stock))
+                //});
+
+                //            // Generate the chart data based on the grouped data
+                //            var labels = groupedByReelBagTrayStick.Select(item => item.ReelBagTrayStick).ToList();
+                //            var data = groupedByReelBagTrayStick.Select(item => item.Count).ToList();
+
+                //            var groupedPositiveBalanceByReelBagTrayStick = groupedPositiveBalance
+                //.SelectMany(group => group.Items, (group, item) => new
+                //{
+                //    group.IPN,
+                //    item.Stock,
+                //    item.ReelBagTrayStick
+                //})
+                //.GroupBy(item => item.ReelBagTrayStick)
+                //.Select(group => new
+                //{
+                //    ReelBagTrayStick = group.Key,
+                //    Count = group.Count(g => !orderedStockItems.Any(item =>
+                //                   item.ReelBagTrayStick == group.Key && item.Stock == -g.Stock))
+                //});
+
+                //            // Generate the chart data based on the grouped data
+                //            var labels = groupedPositiveBalanceByReelBagTrayStick.Select(item => item.ReelBagTrayStick).ToList();
+                //            var data = groupedPositiveBalanceByReelBagTrayStick.Select(item => item.Count).ToList();
+
+                var groupedPositiveBalanceByReelBagTrayStick = orderedStockItems
+    .Where(item => item.Stock > 0 && !orderedStockItems.Any(otherItem =>
+        otherItem.IPN == item.IPN && otherItem.Stock == -item.Stock))
+    .GroupBy(item => new { item.IPN, item.ReelBagTrayStick })
     .Select(group => new
     {
-        ReelBagTrayStick = group.Key,
-        Count = group.Count(g => !orderedStockItems.Any(item =>
-            item.ReelBagTrayStick == group.Key && item.Stock == -g.Stock))
+        IPN = group.Key.IPN,
+        ReelBagTrayStick = group.Key.ReelBagTrayStick,
+        Count = group.Count()
     });
 
                 // Generate the chart data based on the grouped data
-                var labels = groupedByReelBagTrayStick.Select(item => item.ReelBagTrayStick).ToList();
-                var data = groupedByReelBagTrayStick.Select(item => item.Count).ToList();
-
+                var labels = groupedPositiveBalanceByReelBagTrayStick.Select(item => item.ReelBagTrayStick).ToList();
+                var data = groupedPositiveBalanceByReelBagTrayStick.Select(item => item.Count).ToList();
 
 
                 // Generate random colors for the chart
@@ -2099,63 +2131,7 @@ namespace WH_Panel
                 writer.WriteLine("</script>");
 
 
-                //// Write the script to generate the chart
-                //writer.WriteLine("<script>");
-                //writer.WriteLine("var ctx = document.getElementById('myChart').getContext('2d');");
-                //writer.WriteLine("var myChart = new Chart(ctx, {");
-                //writer.WriteLine("type: 'bar',");
-                //writer.WriteLine("data: {");
-                //writer.WriteLine("labels: " + JsonConvert.SerializeObject(labels) + ",");
-                //writer.WriteLine("datasets: [{");
-                //writer.WriteLine("label: 'Count of ReelBagTrayStick',");
-                //writer.WriteLine("data: " + JsonConvert.SerializeObject(data) + ",");
-                //writer.WriteLine("backgroundColor: [" + string.Join(",", colors) + "],");
-                //writer.WriteLine("borderWidth: 1");
-                //writer.WriteLine("}]");
-                //writer.WriteLine("},");
-                //writer.WriteLine("options: {}");
-                //writer.WriteLine("});");
-                //writer.WriteLine("</script>");
 
-                //writer.WriteLine("<script>");
-                //writer.WriteLine("var ctx = document.getElementById('myChart').getContext('2d');");
-                //writer.WriteLine("var myChart = new Chart(ctx, {");
-                //writer.WriteLine("type: 'pie',");
-                //writer.WriteLine("data: {");
-
-                //// Modify this data array according to your needs
-                //writer.WriteLine("labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],");
-                //writer.WriteLine("datasets: [{");
-                //writer.WriteLine("label: '# of Votes',");
-                //writer.WriteLine("data: [12, 19, 3, 5, 2, 3],");
-                //writer.WriteLine("backgroundColor: [");
-                //writer.WriteLine("'rgba(255, 99, 132, 0.2)',");
-                //writer.WriteLine("'rgba(54, 162, 235, 0.2)',");
-                //writer.WriteLine("'rgba(255, 206, 86, 0.2)',");
-                //writer.WriteLine("'rgba(75, 192, 192, 0.2)',");
-                //writer.WriteLine("'rgba(153, 102, 255, 0.2)',");
-                //writer.WriteLine("'rgba(255, 159, 64, 0.2)'");
-                //writer.WriteLine("],");
-                //writer.WriteLine("borderColor: [");
-                //writer.WriteLine("'rgba(255, 99, 132, 1)',");
-                //writer.WriteLine("'rgba(54, 162, 235, 1)',");
-                //writer.WriteLine("'rgba(255, 206, 86, 1)',");
-                //writer.WriteLine("'rgba(75, 192, 192, 1)',");
-                //writer.WriteLine("'rgba(153, 102, 255, 1)',");
-                //writer.WriteLine("'rgba(255, 159, 64, 1)'");
-                //writer.WriteLine("],");
-                //writer.WriteLine("borderWidth: 1");
-                //writer.WriteLine("}]");
-                //writer.WriteLine("},");
-                //writer.WriteLine("options: {");
-                //writer.WriteLine("scales: {");
-                //writer.WriteLine("y: {");
-                //writer.WriteLine("beginAtZero: true");
-                //writer.WriteLine("}");
-                //writer.WriteLine("}");
-                //writer.WriteLine("}");
-                //writer.WriteLine("});");
-                //writer.WriteLine("</script>");
 
 
 
@@ -2708,69 +2684,190 @@ namespace WH_Panel
                 {
                     string fileName = openFileDialog1.FileName;
                     string connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fileName + ";Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1';";
+
+
                     using (OleDbConnection connection = new OleDbConnection(connectionString))
                     {
                         connection.Open();
-                        DataTable dt = connection.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
-                        if (dt != null && dt.Rows.Count > 0)
+
+                        // Get the first sheet name from the schema
+                        string sheetName = GetFirstSheetName(connection);
+
+                        if (IsValidSheet(sheetName))
                         {
-                            string sheetName = dt.Rows[0]["TABLE_NAME"].ToString();
-                            if (!sheetName.EndsWith("_"))
+                            // Check if the required columns exist
+                            List<string> missingColumns = CheckColumnsExist(connection, sheetName, "IPN", "Manufacturer", "MFPN", "Description");
+
+                            // Check if the required columns exist
+                            // if (CheckColumnsExist(connection, sheetName, "IPN", "Manufacturer", "MFPN", "Description"))
+                            if (missingColumns.Count == 0)
                             {
-                                OleDbDataAdapter dataAdapter = new OleDbDataAdapter("SELECT IPN, Manufacturer, MFPN, Description FROM [" + sheetName + "]", connection);
-                                DataTable dtExcelData = new DataTable();
-                                dataAdapter.Fill(dtExcelData);
+                                // Columns exist, proceed with data retrieval
+                                DataTable dtExcelData = RetrieveExcelData(connection, sheetName);
 
                                 // Check if the first IPN starts with currentPrefix
-                                if (dtExcelData.Rows.Count > 0)
+                                if (IsValidPrefix(dtExcelData))
                                 {
-                                    string firstIPN = dtExcelData.Rows[0]["IPN"]?.ToString();
-                                    if (!firstIPN.StartsWith(currentPrefix))
-                                    {
-                                        MessageBox.Show("INCORRECT CLIENT BOM!");
-                                        // Let the user select a suitable file again
-                                        button2_MouseDown(sender, e);
-                                        return;
-                                    }
-                                }
+                                    // Process data and add to ItemsToAddToAvl
+                                    ProcessExcelData(dtExcelData);
 
-                                foreach (DataRow item in dtExcelData.Rows)
-                                {
-                                    ItemsToAddToAvl.Add(new WHitem
-                                    {
-                                        IPN = item["IPN"]?.ToString()?.Trim(),
-                                        Manufacturer = item["Manufacturer"]?.ToString(),
-                                        MFPN = item["MFPN"]?.ToString()?.Trim(),
-                                        Description = item["Description"]?.ToString()
-                                    });
+                                    // Check for unique MFPN items
+                                    CheckAndHandleUniqueItems();
                                 }
+                                else
+                                {
+                                    MessageBox.Show("INCORRECT CLIENT BOM!");
+                                    // Let the user select a suitable file again
+                                    button2_MouseDown(sender, e);
+                                    return;
+                                }
+                            }
+                            else
+                            {
+                                //MessageBox.Show("Error: The required columns do not exist in the Excel sheet.");
+                                // Display the missing columns in the error message
+                                MessageBox.Show($"Error: The following columns do not exist in the Excel sheet: {string.Join(", ", missingColumns)}");
+
+                                // Open the Excel file for user to make necessary changes
+                                //OpenExcelFile(openFileDialog1.FileName);
+                                AuthorizedExcelFileOpening(openFileDialog1.FileName);
+
                             }
                         }
                     }
-
-                    var uniqueMFPNItems = ItemsToAddToAvl
-    .Where(newItem => !avlItems.Any(existingItem => existingItem.MFPN == newItem.MFPN))
-    .ToList();
-
-                    if (uniqueMFPNItems.Count > 0)
+                    void OpenExcelFile(string filePath)
                     {
-                        string message = uniqueMFPNItems.Count.ToString() + " new ITEMS found:\n\n";
-                        foreach (var item in uniqueMFPNItems)
+                        try
                         {
-                            message += $"IPN: {item.IPN}, Manufacturer: {item.Manufacturer}, MFPN: {item.MFPN}, Description: {item.Description}\n\n";
+                            System.Diagnostics.Process.Start(filePath);
                         }
-                        MessageBox.Show(message);
-                        // Call the function to add new items to the database
-                        AddNewItemsToAVL(currentAvl, uniqueMFPNItems);
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"Error opening Excel file: {ex.Message}");
+                        }
                     }
-                    else
+                    // Helper method to check if the sheet name is valid
+                    bool IsValidSheet(string sheetName)
                     {
-                        MessageBox.Show("Nothing new here");
+                        return !string.IsNullOrEmpty(sheetName) && !sheetName.EndsWith("_");
                     }
+
+                    // Helper method to retrieve Excel data
+                    DataTable RetrieveExcelData(OleDbConnection connection, string sheetName)
+                    {
+                        OleDbDataAdapter dataAdapter = new OleDbDataAdapter($"SELECT IPN, Manufacturer, MFPN, Description FROM [{sheetName}]", connection);
+                        DataTable dtExcelData = new DataTable();
+                        dataAdapter.Fill(dtExcelData);
+                        return dtExcelData;
+                    }
+
+                    // Helper method to check if the first IPN starts with the current prefix
+                    bool IsValidPrefix(DataTable dtExcelData)
+                    {
+                        if (dtExcelData.Rows.Count > 0)
+                        {
+                            string firstIPN = dtExcelData.Rows[0]["IPN"]?.ToString();
+                            return !string.IsNullOrEmpty(firstIPN) && firstIPN.StartsWith(currentPrefix);
+                        }
+                        return false;
+                    }
+
+                    // Helper method to process Excel data and add to ItemsToAddToAvl
+                    void ProcessExcelData(DataTable dtExcelData)
+                    {
+                        foreach (DataRow item in dtExcelData.Rows)
+                        {
+                            ItemsToAddToAvl.Add(new WHitem
+                            {
+                                IPN = item["IPN"]?.ToString()?.Trim(),
+                                Manufacturer = item["Manufacturer"]?.ToString(),
+                                MFPN = item["MFPN"]?.ToString()?.Trim(),
+                                Description = item["Description"]?.ToString()
+                            });
+                        }
+                    }
+
+                    // Helper method to check for unique MFPN items and handle accordingly
+                    void CheckAndHandleUniqueItems()
+                    {
+                        var uniqueMFPNItems = ItemsToAddToAvl
+                            .Where(newItem => !avlItems.Any(existingItem => existingItem.MFPN == newItem.MFPN))
+                            .ToList();
+
+                        if (uniqueMFPNItems.Count > 0)
+                        {
+                            string message = $"{uniqueMFPNItems.Count} new ITEMS found:\n\n";
+                            foreach (var item in uniqueMFPNItems)
+                            {
+                                message += $"IPN: {item.IPN}, Manufacturer: {item.Manufacturer}, MFPN: {item.MFPN}, Description: {item.Description}\n\n";
+                            }
+                            MessageBox.Show(message);
+                            // Call the function to add new items to the database
+                            AddNewItemsToAVL(currentAvl, uniqueMFPNItems);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Nothing new here");
+                        }
+                    }
+
+
+
+
+
+
                 }
             }
         }
 
+        // Helper method to get the first sheet name from the schema
+        string GetFirstSheetName(OleDbConnection connection)
+        {
+            DataTable dt = connection.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                return dt.Rows[0]["TABLE_NAME"].ToString();
+            }
+
+            return null;
+        }
+
+        //static bool CheckColumnsExist(OleDbConnection connection, string sheetName, params string[] columnNames)
+        //{
+        //    DataTable schemaTable = connection.GetOleDbSchemaTable(OleDbSchemaGuid.Columns, new object[] { null, null, sheetName, null });
+
+        //    foreach (string columnName in columnNames)
+        //    {
+        //        // Check if the column exists in the schema table
+        //        DataRow[] rows = schemaTable.Select("COLUMN_NAME = '" + columnName + "'");
+        //        if (rows.Length == 0)
+        //        {
+        //            return false; // Column not found
+        //        }
+        //    }
+
+        //    return true; // All columns found
+        //}
+        // Modified CheckColumnsExist method to return missing column names
+        List<string> CheckColumnsExist(OleDbConnection connection, string sheetName, params string[] columnNames)
+        {
+            DataTable schemaTable = connection.GetOleDbSchemaTable(OleDbSchemaGuid.Columns, new object[] { null, null, sheetName, null });
+
+            List<string> missingColumns = new List<string>();
+
+            foreach (string columnName in columnNames)
+            {
+                // Check if the column exists in the schema table
+                DataRow[] rows = schemaTable.Select("COLUMN_NAME = '" + columnName + "'");
+                if (rows.Length == 0)
+                {
+                    missingColumns.Add(columnName);
+                }
+            }
+
+            return missingColumns;
+        }
         private void AddNewItemsToAVL(string currentAvl, List<WHitem> newItems)
         {
             //MessageBox.Show(currentAvl);
