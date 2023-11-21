@@ -199,6 +199,10 @@ namespace WH_Panel
             {
                 listOfPaths = listOfPathsAggregator(11);
             }
+            else if (timeSpan != 12 && timeSpan != 6 && timeSpan != 2)
+            {
+                listOfPaths = listOfPathsAggregator(timeSpan);
+            }
 
 
             foreach (string path in listOfPaths)
@@ -226,38 +230,7 @@ namespace WH_Panel
             stopWatch.Stop();
         }
 
-        //private List<string> listOfPathsAggregator(int numMonths)
-        //{
-        //    List<string> list = new List<string>();
 
-        //    string main = "\\\\dbr1\\Data\\WareHouse\\";
-        //    DateTime d = DateTime.Now;
-
-        //    for (int i = 0; i < numMonths; i++)
-        //    {
-        //        string year = d.Year.ToString("D4");
-        //        int month = d.Month;
-
-        //        if (month == 1) // If it's January, adjust year and month accordingly
-        //        {
-        //            year = (d.Year - 1).ToString("D4");
-        //            month = 12; // Set month to December
-        //        }
-        //        else
-        //        {
-        //            //month--;
-        //        }
-
-        //        string previousMonthPath = $"{main}{year}\\{month:D2}.{year}";
-        //        list.Add(previousMonthPath);
-
-        //        d = d.AddMonths(-1); // Move to the previous month
-        //    }
-
-        //    list.Reverse(); // Since we're adding paths in reverse order, reverse the list
-
-        //    return list;
-        //}
         private List<string> listOfPathsAggregator(int numMonths)
         {
             List<string> list = new List<string>();
@@ -1008,7 +981,7 @@ namespace WH_Panel
             string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
             string filename = @"\\dbr1\Data\WareHouse\2023\WHsearcher\" + fileTimeStamp + "_" + ".html";
 
-    
+
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.WriteLine("<!DOCTYPE html>");
@@ -1041,7 +1014,7 @@ namespace WH_Panel
                 writer.WriteLine("}");
                 writer.WriteLine("</style>");
 
-               
+
 
                 writer.WriteLine("<script>");
                 writer.WriteLine("function sortTable(n) {");
@@ -1150,5 +1123,51 @@ namespace WH_Panel
             process.Start();
         }
 
+        private void button5_Click(object sender, EventArgs e)
+        {
+            stopWatch.Reset();
+            ResetViews();
+
+            // Get the current date
+            DateTime currentDate = DateTime.Now;
+
+            // Set the reference date to May 2022
+            DateTime referenceDate = new DateTime(2022, 9, 1);
+
+            // Calculate the difference in months
+            int numMonths = CalculateMonthsDifference(referenceDate, currentDate);
+
+            // Pass the number of months to the function
+            //listOfPathsAggregator(numMonths);
+            //MessageBox.Show(numMonths.ToString());
+            //startUpLogic(numMonths);
+
+            // Display a YES/NO question to the user
+            DialogResult result = MessageBox.Show($"Are you sure you want to load the last {numMonths} months passed since 2022.09 ?", "EXTREMELY LONG LOADING TIMES WARNING !!!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+            // Check the user's response
+            if (result == DialogResult.Yes)
+            {
+                // User clicked YES, proceed with loading numMonths
+                //.Show(numMonths.ToString());
+
+                // Assuming startUpLogic is a method that takes numMonths as a parameter
+                startUpLogic(numMonths);
+                SetColumsOrder();
+                textBox1.Focus();
+            }
+            else
+            {
+                // User clicked NO, handle accordingly
+                //MessageBox.Show("Operation canceled by user.");
+            }
+
+
+        }
+        static int CalculateMonthsDifference(DateTime startDate, DateTime endDate)
+        {
+            int monthsApart = (endDate.Year - startDate.Year) * 12 + endDate.Month - startDate.Month;
+            return monthsApart;
+        }
     }
 }

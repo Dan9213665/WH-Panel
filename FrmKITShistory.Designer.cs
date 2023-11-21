@@ -39,6 +39,7 @@
             label12 = new Label();
             button2 = new Button();
             button3 = new Button();
+            button5 = new Button();
             groupBox2 = new GroupBox();
             tableLayoutPanel2 = new TableLayoutPanel();
             textBox11 = new TextBox();
@@ -150,6 +151,7 @@
             tableLayoutPanel3.Controls.Add(label12, 4, 0);
             tableLayoutPanel3.Controls.Add(button2, 1, 0);
             tableLayoutPanel3.Controls.Add(button3, 2, 0);
+            tableLayoutPanel3.Controls.Add(button5, 3, 0);
             tableLayoutPanel3.Dock = DockStyle.Fill;
             tableLayoutPanel3.Location = new Point(3, 19);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -244,6 +246,18 @@
             button3.TabIndex = 4;
             button3.UseVisualStyleBackColor = true;
             button3.Click += button3_Click;
+            // 
+            // button5
+            // 
+            button5.BackgroundImage = (Image)resources.GetObject("button5.BackgroundImage");
+            button5.BackgroundImageLayout = ImageLayout.Zoom;
+            button5.Dock = DockStyle.Fill;
+            button5.Location = new Point(372, 3);
+            button5.Name = "button5";
+            button5.Size = new Size(117, 109);
+            button5.TabIndex = 5;
+            button5.UseVisualStyleBackColor = true;
+            button5.Click += button5_Click;
             // 
             // groupBox2
             // 
@@ -908,5 +922,6 @@
         private ComboBox comboBox1;
         private ComboBox comboBox2;
         private Button button4;
+        private Button button5;
     }
 }
