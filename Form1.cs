@@ -73,16 +73,16 @@ namespace WH_Panel
             return string.Empty;
         }
 
-       
+
         private void button14_Click(object sender, EventArgs e)
         {
-           
+
             FrmClientAgnosticWH cl = new FrmClientAgnosticWH();
             //List<ClientWarehouse> warehouses = InitializeWarehouses();
             List<ClientWarehouse> warehouses = PopulateWarehouses();
             cl.InitializeGlobalWarehouses(warehouses);
             cl.Show();
-           
+
         }
         private void button3_Click(object sender, EventArgs e)
         {
@@ -113,7 +113,7 @@ namespace WH_Panel
             excel.StartInfo.Arguments = thePathToFile;
             excel.Start();
         }
-       
+
         private void AuthorizedExcelFileOpening(string fp)
         {
             if (Environment.UserName == "lgt")
@@ -125,13 +125,13 @@ namespace WH_Panel
                 MessageBox.Show("Unauthorized ! Access denied !", "Unauthorized ! Access denied !", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
         }
-     
+
         private void btnWorkProgramm_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\\Data\\DocumentsForProduction\\WORK_PROGRAM.xlsm";
             openWHexcelDB(fp);
         }
-      
+
         private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             this.WindowState = FormWindowState.Normal;
@@ -140,7 +140,7 @@ namespace WH_Panel
         {
             this.WindowState = FormWindowState.Normal;
         }
-      
+
         private void button1_Click_2(object sender, EventArgs e)
         {
             frmkitLabelPrint frmkit = new frmkitLabelPrint();
@@ -153,8 +153,8 @@ namespace WH_Panel
         }
         private FrmUberSearch openUberSearchForm = null;
         private FrmUberSearch frmUberSearch = null;
-     
-       
+
+
         private FrmKITShistory openKITShistoryForm = null;
         private void button5_Click(object sender, EventArgs e)
         {
@@ -183,7 +183,7 @@ namespace WH_Panel
             FrmPackingSlipShip ps = new FrmPackingSlipShip();
             ps.Show();
         }
-      
+
         private void button7_Click_1(object sender, EventArgs e)
         {
             FrmFinishedGoodsLog ff = new FrmFinishedGoodsLog();
@@ -191,7 +191,7 @@ namespace WH_Panel
         }
 
 
-     
+
         private void button6_Click_1(object sender, EventArgs e)
         {
             FrmExcelFormatter fr = new FrmExcelFormatter();
@@ -225,8 +225,8 @@ namespace WH_Panel
                 UseShellExecute = true
             });
         }
-      
-       
+
+
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -244,6 +244,13 @@ namespace WH_Panel
             //    dbConnection.Dispose();
             //}
         }
-       
+
+        private void button12_Click(object sender, EventArgs e)
+        {
+            FrmWHStockStatusList w = new FrmWHStockStatusList();
+            List<ClientWarehouse> warehouses = PopulateWarehouses();
+            w.InitializeGlobalWarehouses(warehouses);
+            w.Show();
+        }
     }
 }

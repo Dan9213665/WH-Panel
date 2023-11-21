@@ -1,0 +1,285 @@
+﻿using FastMember;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.OleDb;
+using System.Diagnostics;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace WH_Panel
+{
+    public partial class FrmWHStockStatusList : Form
+    {
+        public FrmWHStockStatusList()
+        {
+            InitializeComponent();
+        }
+        List<ClientWarehouse> warehouses { get; set; }
+
+        public List<WHitem> stockItems =new List<WHitem>();
+        ClientWarehouse selectedWH { get; set; }
+        public void InitializeGlobalWarehouses(List<ClientWarehouse> warehousesFromTheMain)
+        {
+            warehouses = warehousesFromTheMain;
+
+            label2.Text = "Loaded warehouses : " + warehouses.Count.ToString();
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (textBox1.Lines.Length > 0)
+            {
+
+
+                //MessageBox.Show(textBox1.Lines.Length.ToString());
+
+                string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+                //ExportToHTML(dataGridView1, "\\\\dbr1\\Data\\WareHouse\\2023\\WHsearcher\\"+ _fileTimeStamp+"_"+projectName.Substring(0, projectName.Length - 5) + ".html");
+                //ExportToHTML20(dataGridView1, "\\\\dbr1\\Data\\WareHouse\\2023\\WHsearcher\\" + _fileTimeStamp + "_" + projectName.Substring(0, projectName.Length - 5) + ".html");
+
+                StockViewDataLoader(selectedWH.clStockFile, "STOCK");
+
+
+                //GenerateHTML();
+                GenerateFilteredReport();
+            }
+            else
+            {
+                MessageBox.Show("Paste IPNs to search for in the textbox !");
+                textBox1.Focus();
+            }
+        }
+
+
+        private void GenerateFilteredReport()
+        {
+            // Assuming textBox1.Lines contains the filter values
+            string[] filterValues = textBox1.Lines.Select(line => line.Trim()).Where(line => !string.IsNullOrWhiteSpace(line)).ToArray();
+
+            // Assuming stockItems is your list of WHitem
+            var groupedByIPN = stockItems
+                .Where(item => filterValues.Contains(item.IPN))
+                .GroupBy(item => item.IPN)
+                .ToList();
+
+            // Generate and display the HTML report using the grouped list
+            GenerateHTMLReport(groupedByIPN);
+        }
+
+
+
+       //private void GenerateHTMLReport(List<WHitem> items)
+         private void GenerateHTMLReport(List<IGrouping<string?, WHitem>> groupedByIPN)
+        {
+            string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+            string filename = "\\\\dbr1\\Data\\WareHouse\\2023\\WHsearcher\\" + _fileTimeStamp + ".html";
+            using (StreamWriter writer = new StreamWriter(filename))
+            {
+                writer.WriteLine("<html>");
+                writer.WriteLine("<head>");
+                writer.WriteLine("<title>Listed items to search for</title>");
+                writer.WriteLine("</head>");
+                // Assuming this is part of your HTML generation
+                
+                writer.WriteLine("<button onclick='toggleDisplay()'>FILTER for PRINTOUT</button>");
+
+                writer.WriteLine("<script>");
+                writer.WriteLine("var filterOn = false;"); // Variable to track filtering state
+                writer.WriteLine("function toggleDisplay() {");
+                writer.WriteLine("  filterOn = !filterOn;"); // Toggle the filter state
+                writer.WriteLine("  var rows = document.getElementsByTagName('tr');");
+                writer.WriteLine("  for (var i = 0; i < rows.length; i++) {");
+                writer.WriteLine("    var stockCell = rows[i].getElementsByTagName('td')[4];"); // Assuming the stock cell is at index 4
+                writer.WriteLine("    rows[i].style.display = filterOn ? (stockCell && stockCell.style.backgroundColor === 'lightgreen' ? '' : 'none') : '';");
+                writer.WriteLine("  }");
+                writer.WriteLine("}");
+                writer.WriteLine("</script>");
+
+
+
+                foreach (var group in groupedByIPN)
+                {
+                    //writer.WriteLine("<h2>IPN: " + group.Key + "</h2>");
+
+                   
+
+                    writer.WriteLine("<table border='1'>");
+
+                    // Table headers
+                    writer.WriteLine("<tr>");
+                    writer.WriteLine("<th>IPN</th>");
+                    writer.WriteLine("<th>Manufacturer</th>");
+                    writer.WriteLine("<th>MFPN</th>");
+                    writer.WriteLine("<th>Description</th>");
+                    writer.WriteLine("<th>Stock</th>");
+                    writer.WriteLine("<th>UpdatedOn</th>");
+                    writer.WriteLine("<th>ReelBagTrayStick</th>");
+                    writer.WriteLine("<th>SourceRequester</th>");
+                    writer.WriteLine("</tr>");
+
+                    writer.WriteLine("<h2>" + group.Key + " - Warehouse Balance: " + group.Sum(item => item.Stock) + "</h2>");
+
+   
+                    foreach (var item in group)
+                    {
+                        writer.WriteLine("<tr>");
+                        writer.WriteLine("<td style='text-align: center;'>" + item.IPN + "</td>");
+                        writer.WriteLine("<td style='text-align: center;'>" + item.Manufacturer + "</td>");
+                        writer.WriteLine("<td style='text-align: center;'>" + item.MFPN + "</td>");
+                        writer.WriteLine("<td style='text-align: center;'>" + item.Description + "</td>");
+
+                        // Color the background of the stock cell based on the condition
+                        if (item.Stock > 0 && !group.Any(otherItem => otherItem.Stock == -item.Stock))
+                        {
+                            // Green background for positive stocks without a negative pair
+                            writer.WriteLine("<td style='background-color: lightgreen; text-align: center;'>" + item.Stock + "</td>");
+                        }
+                        else
+                        {
+                            // No background color for other cells
+                            writer.WriteLine("<td style='text-align: center;'>" + item.Stock + "</td>");
+                        }
+
+                        writer.WriteLine("<td style='text-align: center;'>" + item.UpdatedOn + "</td>");
+                        writer.WriteLine("<td style='text-align: center;'>" + item.ReelBagTrayStick + "</td>");
+                        writer.WriteLine("<td style='text-align: center;'>" + item.SourceRequester + "</td>");
+                        writer.WriteLine("</tr>");
+                    }
+
+
+                }
+
+
+               
+
+          
+
+
+
+
+                writer.WriteLine("</body>");
+                writer.WriteLine("</html>");
+            }
+
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(filename)
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+        }
+
+
+
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                string[] lines = textBox1.Lines;
+
+                // Remove empty lines
+                lines = lines.Where(line => !string.IsNullOrWhiteSpace(line)).ToArray();
+
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    lines[i] = lines[i].Trim();  // Trim leading and trailing spaces
+                }
+
+                // Set the trimmed lines back to the textBox1
+                textBox1.Lines = lines;
+
+                int rowCount = lines.Length;
+                label1.Text = "Total rows to search for: " + rowCount;
+
+                foreach (ClientWarehouse w in warehouses)
+                {
+                    if (textBox1.Lines.Length > 0 && textBox1.Lines[0].StartsWith(w.clPrefix))
+                    {
+                        try
+                        {
+                            selectedWH = w;
+                            button2.BackgroundImageLayout = ImageLayout.Zoom;
+                            button2.BackgroundImage = Image.FromFile(w.clLogo);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            // Handle any exceptions that may occur when loading the image
+                            // You can log the exception or take appropriate action
+                            MessageBox.Show($"Error loading image: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle the case where an exception occurs (e.g., user deletes everything from the text box)
+                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void StockViewDataLoader(string fp, string thesheetName)
+        {
+            stockItems.Clear();
+            try
+            {
+                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+                using (OleDbConnection conn = new OleDbConnection(constr))
+                {
+                    conn.Open();
+                    OleDbCommand command = new OleDbCommand("Select * from [" + thesheetName + "$]", conn);
+                    OleDbDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            try
+                            {
+                                int res = 0;
+                                int toStk;
+                                bool stk = int.TryParse(reader[4].ToString(), out res);
+                                if (stk)
+                                {
+                                    toStk = res;
+                                }
+                                else
+                                {
+                                    toStk = 0;
+                                }
+                                WHitem abc = new WHitem
+                                {
+                                    IPN = reader[0].ToString(),
+                                    Manufacturer = reader[1].ToString(),
+                                    MFPN = reader[2].ToString(),
+                                    Description = reader[3].ToString(),
+                                    Stock = toStk,
+                                    UpdatedOn = reader[5].ToString(),
+                                    ReelBagTrayStick = reader[6].ToString(),
+                                    SourceRequester = reader[7].ToString()
+                                };
+                                 stockItems.Add(abc);
+                            }
+                            catch (Exception E)
+                            {
+                                MessageBox.Show(E.Message);
+                                throw;
+                            }
+                        }
+                    }
+                    conn.Close();
+                }
+            }
+            catch (IOException)
+            {
+                MessageBox.Show("Error");
+            }
+        }
+
+    }
+}

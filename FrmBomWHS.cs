@@ -668,24 +668,7 @@ namespace WH_Panel
                     //writer.WriteLine("<h2>Movements log for IPN " + IPN + "</h2>");
                     writer.WriteLine("<table border='1' style='text-align:center; width:auto; margin-right: 0px;margin-left: auto;'>");
                     writer.WriteLine("</tr>");
-                    //writer.WriteLine("<tr>");
-                    //for (int j = 0; j < dataGridView1.Columns.Count; j++)
-                    //{
-                    //    if(dataGridView1.Columns[j].HeaderText.ToString()!= "ProjectName")
-                    //    {
-                    //        if (dataGridView1.Columns[j].HeaderText.ToString() != "DateOfCreation")
-                    //        {
-                    //            if (dataGridView1.Columns[j].HeaderText.ToString() != "QtyPerUnit")
-                    //            {
-                    //                if (dataGridView1.Columns[j].HeaderText.ToString() != "Calc")
-                    //                {
-                    //                    writer.WriteLine("<th>" + dataGridView1.Columns[j].HeaderText + "</th>");
-                    //                }
-                    //            }
-                    //        }
-                    //    }
-                    //}
-                    //writer.WriteLine("</tr>");
+
                     writer.WriteLine("<tr>");
                     for (int j = 0; j < dataGridView1.Columns.Count; j++)
                     {
