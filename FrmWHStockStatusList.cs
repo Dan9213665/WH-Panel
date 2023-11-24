@@ -1,4 +1,5 @@
 ﻿using FastMember;
+using Seagull.Framework.Extensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -65,8 +66,9 @@ namespace WH_Panel
             var groupedByIPN = stockItems
                 .Where(item => filterValues.Contains(item.IPN))
                 .GroupBy(item => item.IPN)
-                .ToList();
+            .ToList();
 
+            groupedByIPN.OrderBy(item => item.Key);
             // Generate and display the HTML report using the grouped list
             GenerateHTMLReport(groupedByIPN);
         }
@@ -177,51 +179,134 @@ namespace WH_Panel
 
 
 
+        //private void textBox1_TextChanged(object sender, EventArgs e)
+        //{
+        //    try
+        //    {
+        //        string[] lines = textBox1.Lines;
+
+        //        // Remove empty lines
+        //        lines = lines.Where(line => !string.IsNullOrWhiteSpace(line)).ToArray();
+
+        //        for (int i = 0; i < lines.Length; i++)
+        //        {
+        //            lines[i] = lines[i].Trim().ToUpper();  // Trim leading and trailing spaces
+        //        }
+
+        //        lines.Order();
+        //        // Set the trimmed lines back to the textBox1
+        //        textBox1.Lines = lines;
+
+        //        int rowCount = lines.Length;
+        //        label1.Text = "Total rows to search for: " + rowCount;
+
+        //        foreach (ClientWarehouse w in warehouses)
+        //        {
+        //            if (textBox1.Lines.Length > 0 && textBox1.Lines[0].StartsWith(w.clPrefix))
+        //            {
+        //                try
+        //                {
+        //                    selectedWH = w;
+        //                    button2.BackgroundImageLayout = ImageLayout.Zoom;
+        //                    button2.BackgroundImage = Image.FromFile(w.clLogo);
+
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    // Handle any exceptions that may occur when loading the image
+        //                    // You can log the exception or take appropriate action
+        //                    MessageBox.Show($"Error loading image: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Handle the case where an exception occurs (e.g., user deletes everything from the text box)
+        //        MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //    }
+        //}
+        //private void textBox1_TextChanged(object sender, EventArgs e)
+        //{
+        //    try
+        //    {
+        //        ProcessText();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        HandleError(ex.Message);
+        //    }
+        //}
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             try
             {
-                string[] lines = textBox1.Lines;
+                int selectionStart = textBox1.SelectionStart;
+                int selectionLength = textBox1.SelectionLength;
 
-                // Remove empty lines
-                lines = lines.Where(line => !string.IsNullOrWhiteSpace(line)).ToArray();
+                ProcessText();
 
-                for (int i = 0; i < lines.Length; i++)
-                {
-                    lines[i] = lines[i].Trim();  // Trim leading and trailing spaces
-                }
-
-                // Set the trimmed lines back to the textBox1
-                textBox1.Lines = lines;
-
-                int rowCount = lines.Length;
-                label1.Text = "Total rows to search for: " + rowCount;
-
-                foreach (ClientWarehouse w in warehouses)
-                {
-                    if (textBox1.Lines.Length > 0 && textBox1.Lines[0].StartsWith(w.clPrefix))
-                    {
-                        try
-                        {
-                            selectedWH = w;
-                            button2.BackgroundImageLayout = ImageLayout.Zoom;
-                            button2.BackgroundImage = Image.FromFile(w.clLogo);
-
-                        }
-                        catch (Exception ex)
-                        {
-                            // Handle any exceptions that may occur when loading the image
-                            // You can log the exception or take appropriate action
-                            MessageBox.Show($"Error loading image: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-                    }
-                }
+                // Restore cursor position
+                textBox1.SelectionStart = selectionStart;
+                textBox1.SelectionLength = selectionLength;
             }
             catch (Exception ex)
             {
-                // Handle the case where an exception occurs (e.g., user deletes everything from the text box)
-                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                HandleError(ex.Message);
             }
+        }
+
+
+        private void ProcessText()
+        {
+            string[] lines = textBox1.Lines;
+
+            // Remove empty lines
+            lines = lines.Where(line => !string.IsNullOrWhiteSpace(line)).ToArray();
+
+            // Trim leading and trailing spaces and convert to uppercase
+            for (int i = 0; i < lines.Length; i++)
+            {
+                lines[i] = lines[i].Trim().ToUpper();
+            }
+
+            Array.Sort(lines);
+
+            // Set the trimmed and ordered lines back to the textBox1
+            textBox1.Lines = lines;
+
+            int rowCount = lines.Length;
+            label1.Text = "Total rows to search for: " + rowCount;
+
+            LoadImageBasedOnPrefix(lines);
+        }
+
+        private void LoadImageBasedOnPrefix(string[] lines)
+        {
+            foreach (ClientWarehouse w in warehouses)
+            {
+                if (lines.Length > 0 && lines[0].StartsWith(w.clPrefix))
+                {
+                    try
+                    {
+                        selectedWH = w;
+                        button2.BackgroundImageLayout = ImageLayout.Zoom;
+                        button2.BackgroundImage = Image.FromFile(w.clLogo);
+
+                        // Optionally, provide feedback to the user about the loaded image
+                    }
+                    catch (Exception ex)
+                    {
+                        HandleError($"Error loading image: {ex.Message}");
+                    }
+                }
+            }
+        }
+
+        private void HandleError(string errorMessage)
+        {
+            // Handle errors, e.g., log them or show a user-friendly message box
+            MessageBox.Show(errorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         private void StockViewDataLoader(string fp, string thesheetName)

@@ -36,6 +36,7 @@ namespace WH_Panel
             groupBox6 = new GroupBox();
             button1 = new Button();
             groupBox9 = new GroupBox();
+            button12 = new Button();
             button14 = new Button();
             groupBox10 = new GroupBox();
             button10 = new Button();
@@ -53,7 +54,6 @@ namespace WH_Panel
             groupBox11 = new GroupBox();
             button7 = new Button();
             notifyIcon1 = new NotifyIcon(components);
-            button12 = new Button();
             groupBox1.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
             groupBox4.SuspendLayout();
@@ -160,7 +160,6 @@ namespace WH_Panel
             // 
             // groupBox9
             // 
-            groupBox9.Controls.Add(button12);
             groupBox9.Controls.Add(button14);
             groupBox9.ForeColor = Color.White;
             groupBox9.Location = new Point(141, 3);
@@ -169,6 +168,17 @@ namespace WH_Panel
             groupBox9.TabIndex = 21;
             groupBox9.TabStop = false;
             groupBox9.Text = "AGNOSTIC WH";
+            // 
+            // button12
+            // 
+            button12.BackgroundImage = (Image)resources.GetObject("button12.BackgroundImage");
+            button12.BackgroundImageLayout = ImageLayout.Zoom;
+            button12.Location = new Point(76, 21);
+            button12.Name = "button12";
+            button12.Size = new Size(52, 51);
+            button12.TabIndex = 13;
+            button12.UseVisualStyleBackColor = true;
+            button12.Click += button12_Click;
             // 
             // button14
             // 
@@ -234,6 +244,7 @@ namespace WH_Panel
             // 
             // groupBox7
             // 
+            groupBox7.Controls.Add(button12);
             groupBox7.Controls.Add(button9);
             groupBox7.Controls.Add(button3);
             groupBox7.ForeColor = Color.White;
@@ -365,17 +376,6 @@ namespace WH_Panel
             notifyIcon1.Visible = true;
             notifyIcon1.MouseClick += notifyIcon1_MouseClick;
             notifyIcon1.MouseDoubleClick += notifyIcon1_MouseDoubleClick;
-            // 
-            // button12
-            // 
-            button12.BackgroundImage = (Image)resources.GetObject("button12.BackgroundImage");
-            button12.BackgroundImageLayout = ImageLayout.Zoom;
-            button12.Location = new Point(85, 22);
-            button12.Name = "button12";
-            button12.Size = new Size(43, 38);
-            button12.TabIndex = 13;
-            button12.UseVisualStyleBackColor = true;
-            button12.Click += button12_Click;
             // 
             // Form1
             // 
