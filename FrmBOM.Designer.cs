@@ -393,6 +393,7 @@
             btnPrintKitLabel.TabIndex = 6;
             btnPrintKitLabel.UseVisualStyleBackColor = true;
             btnPrintKitLabel.Click += btnPrintKitLabel_Click;
+            btnPrintKitLabel.MouseDown += btnPrintKitLabel_MouseDown;
             // 
             // button5
             // 

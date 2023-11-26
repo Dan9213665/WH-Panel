@@ -39,7 +39,8 @@ using OfficeOpenXml;
 using System.Drawing.Printing;
 using Button = System.Windows.Forms.Button;
 using GroupBox = System.Windows.Forms.GroupBox;
-
+using WH_Panel;
+using File = System.IO.File;
 namespace WH_Panel
 {
     public partial class FrmBOM : Form
@@ -76,7 +77,6 @@ namespace WH_Panel
                 // Update control colors based on your criteria
                 control.BackColor = Color.LightGray;
                 control.ForeColor = Color.Black;
-
                 // Handle Button controls separately
                 if (control is Button button)
                 {
@@ -84,14 +84,12 @@ namespace WH_Panel
                     button.FlatAppearance.BorderColor = Color.DarkGray; // Change border color
                     button.ForeColor = Color.Black;
                 }
-
                 // Handle Button controls separately
                 if (control is GroupBox groupbox)
                 {
                     groupbox.FlatStyle = FlatStyle.Flat; // Set FlatStyle to Flat
                     groupbox.ForeColor = Color.Black;
                 }
-
                 // Handle TextBox controls separately
                 if (control is TextBox textBox)
                 {
@@ -99,7 +97,6 @@ namespace WH_Panel
                     textBox.BackColor = Color.LightGray; // Change background color
                     textBox.ForeColor = Color.Black; // Change text color
                 }
-
                 // Handle Label controls separately
                 if (control is Label label)
                 {
@@ -107,8 +104,6 @@ namespace WH_Panel
                     label.BackColor = Color.Gray; // Change background color
                     label.ForeColor = Color.Black; // Change text color
                 }
-
-
                 // Handle TabControl controls separately
                 if (control is TabControl tabControl)
                 {
@@ -121,7 +116,6 @@ namespace WH_Panel
                         tabPage.ForeColor = Color.Black; // Change TabPage text color
                     }
                 }
-
                 // Handle DataGridView controls separately
                 if (control is DataGridView dataGridView)
                 {
@@ -170,7 +164,6 @@ namespace WH_Panel
             warehouses = warehousesFromTheMain;
             // Ordering the warehouses list by clName
             warehouses = warehouses.OrderBy(warehouse => warehouse.clName).ToList();
-
         }
         private void ResetViews()
         {
@@ -209,7 +202,6 @@ namespace WH_Panel
         {
             btn1ClickLogic();
         }
-
         private void btn1ClickLogic()
         {
             ResetViews();
@@ -235,11 +227,11 @@ namespace WH_Panel
                 {
                     //
                 }
-
                 fileName = openFileDialog1.FileName;
                 theExcelFilePath = Path.GetFileName(fileName);
                 string Litem = Path.GetFileName(fileName);
                 label12.Text += fileName.ToString() + "\n";
+                projectName = Litem;
                 DataLoader(fileName, Litem);
                 KitProgressUpdate(fileName);
                 button2.Enabled = true;
@@ -247,7 +239,6 @@ namespace WH_Panel
                 PopulateSufficientGridView();
             }
         }
-
         public void ExternalLinktoFile(string externalPathToExcelFIle)
         {
             ResetViews();
@@ -904,7 +895,6 @@ namespace WH_Panel
             {
                 openBomWHSForm.Close();
             }
-
             if (MissingItemsList.Count > 0)
             {
                 FrmBomWHS wh = new FrmBomWHS();
@@ -913,8 +903,6 @@ namespace WH_Panel
                 wh.fromTheMainBom = MissingItemsList;
                 wh.InitializeGlobalWarehouses(warehouses);
                 wh.Show();
-
-
                 openBomWHSForm = wh; // Set the reference to the newly opened form
             }
             else
@@ -927,37 +915,27 @@ namespace WH_Panel
             EXCELinserter(theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));
             //ExcelInserterUsingEPPlus(theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));
         }
-
-
         private void ExcelInserterUsingEPPlus(string kitName)
         {
             try
             {
                 string filePath = @"\\dbr1\Data\WareHouse\KitLabelAuto.xlsx";
-
                 using (var package = new ExcelPackage(new FileInfo(filePath)))
                 {
                     var worksheet = package.Workbook.Worksheets[0]; // Assuming first worksheet
-
                     // Update cell value
                     worksheet.Cells["B1"].Value = kitName;
-
                     // Set column width to a specific value (e.g., 20)
                     worksheet.Column(2).Width = 51; // Column B
-
                     // Wrap text within the cell
                     worksheet.Cells["B1"].Style.WrapText = true;
-
                     // Print the entire worksheet
                     worksheet.PrinterSettings.FitToPage = true; // Fit to a single page
                     worksheet.PrinterSettings.Orientation = eOrientation.Landscape; // Set to eOrientation.Portrait if needed
-
                     // Print the worksheet to the default printer
                     //worksheet.PrintOut();
-
                     // Save the changes to the Excel file
                     package.Save();
-
                     MessageBox.Show("Data Updated and Printed");
                 }
             }
@@ -966,8 +944,6 @@ namespace WH_Panel
                 MessageBox.Show(e.Message);
             }
         }
-
-
         private void EXCELinserter(string kitName)
         {
             try
@@ -1093,7 +1069,6 @@ namespace WH_Panel
         private string warehouseSelectorBasedOnItem(KitHistoryItem w)
         {
             string selection = string.Empty;
-
             if (warehouses != null)
             {
                 foreach (ClientWarehouse wh in warehouses)
@@ -1102,7 +1077,6 @@ namespace WH_Panel
                     {
                         //string convertedStockFile = ConvertStockFileFormat(wh.clStockFile);
                         //MessageBox.Show(wh.clStockFile);
-
                         //selection = convertedStockFile;
                         selection = wh.clStockFile;
                         //MessageBox.Show(selection);
@@ -1114,7 +1088,6 @@ namespace WH_Panel
             {
                 MessageBox.Show("warehouses is null !");
             }
-
             //string selection = string.Empty;
             //if (w.IPN.StartsWith("C100") || w.IPN.StartsWith("A00"))
             //{
@@ -1216,7 +1189,6 @@ namespace WH_Panel
                     conn.Open();
                     OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$] (IPN,Manufacturer,MFPN,Description,Stock,Updated_on,Comments,Source_Requester) values('" + wHitem.IPN + "','" + wHitem.Manufacturer + "','" + wHitem.MFPN + "','" + wHitem.Description + "','" + wHitem.Stock + "','" + wHitem.UpdatedOn + "','" + wHitem.ReelBagTrayStick + "','" + wHitem.SourceRequester + "')", conn);
                     command.ExecuteNonQuery();
-
                     conn.Close();
                 }
                 txtbQtyToAdd.Clear();
@@ -1260,7 +1232,6 @@ namespace WH_Panel
             [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Auto)]
             static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
         }
-
         private void dataGridView2_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             WHitem itemToPrint = new WHitem();
@@ -1272,24 +1243,18 @@ namespace WH_Panel
                 itemToPrint.Description = dataGridView2.Rows[rowindex].Cells["Description"].Value.ToString();
                 itemToPrint.Stock = int.Parse(dataGridView2.Rows[rowindex].Cells["QtyInKit"].Value.ToString());
                 itemToPrint.UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
-
             }
             printSticker(itemToPrint);
             //printStickerCopy(itemToPrint);
         }
-
         private void printStickerCopy(WHitem itToPrint)
         {
             //MessageBox.Show("Test");
         }
-
-
         private void button5_Click(object sender, EventArgs e)
         {
             ReloadLogic();
-
         }
-
         public void ReloadLogic()
         {
             if (fileName != string.Empty)
@@ -1309,7 +1274,6 @@ namespace WH_Panel
                 //
             }
         }
-
         private void textBox12_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -1317,7 +1281,6 @@ namespace WH_Panel
                 string inputStr = textBox12.Text;
                 string startStr = comboBox4.Text.ToString();
                 string endStr = comboBox5.Text.ToString();
-
                 int startIndex = inputStr.IndexOf(startStr);
                 if (startIndex != -1)
                 {
@@ -1332,46 +1295,32 @@ namespace WH_Panel
                         textBox2_KeyDown(sender, e);
                     }
                 }
-
             }
         }
-
         private void textBox12_Click(object sender, EventArgs e)
         {
             textBox12.Clear();
         }
-
-
-
-
-
         // Event handler for the button click
         private void btnSendEmail_Click(object sender, EventArgs e)
         {
             //// Get the contents of the DataGridView
             //string contents = GetDataGridViewContents(dataGridView1); // Replace 'dataGridView1' with the name of your DataGridView control
-
-
-
             //// Focus on the current instance of Outlook
             //FocusOnOutlook();
-
             //// Create a new email and paste the contents into the body
             //CreateNewEmail();
             //AndPaste(contents);
         }
-
         private void textBox13_Click(object sender, EventArgs e)
         {
             textBox13.Clear();
         }
-
         private void textBox13_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
                 string searchbyMFPN = string.Empty;
-
                 if (textBox13.Text.Contains("-") == true && textBox13.Text.Length > 6)
                 {
                     //string[] theSplit = textBox13.Text.ToString().Split("-");
@@ -1379,7 +1328,6 @@ namespace WH_Panel
                     //if (theSplit[0].Length >= 3)
                     //{
                     //    searchbyMFPN = theSplit[1];
-
                     //}
                     string[] theSplit = textBox13.Text.Split("-");
                     if (theSplit.Length > 1)
@@ -1390,48 +1338,39 @@ namespace WH_Panel
                     {
                         searchbyMFPN = textBox13.Text;
                     }
-
                     textBox2.Text = searchbyMFPN;
                 }
                 else
                 {
-
                 }
                 lastTxtbInputFromUser = textBox13;
                 textBox2.Focus();
                 textBox2_KeyDown(sender, e);
             }
         }
-
         private void textBox13_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter((TextBox)sender);
         }
-
         private void textBox12_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter((TextBox)sender);
         }
-
         private void textBox13_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave((TextBox)sender);
         }
-
         private void textBox12_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave((TextBox)sender);
         }
-
         private void textBox14_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
                 string searchbyMFPN = textBox14.Text.Trim(); // Get the text from textBox14
-
                 // Remove [)> characters from the search string
                 searchbyMFPN = searchbyMFPN.Replace("[)>", "");
-
                 if (!string.IsNullOrEmpty(searchbyMFPN))
                 {
                     // Loop through the DataGridView rows and filter based on MFPN
@@ -1460,26 +1399,97 @@ namespace WH_Panel
                         row.Visible = true;
                     }
                 }
-
                 lastTxtbInputFromUser = textBox14;
                 textBox2.Focus();
                 textBox2_KeyDown(sender, e);
             }
         }
-
         private void textBox14_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter((TextBox)sender);
         }
-
         private void textBox14_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave((TextBox)sender);
         }
-
         private void textBox14_Click(object sender, EventArgs e)
         {
             textBox14.Clear();
+        }
+        private void btnPrintKitLabel_MouseDown(object sender, MouseEventArgs e)
+        {
+            // Check if the right mouse button was clicked
+            if (e.Button == MouseButtons.Right)
+            {
+                string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+             GenerateHTMLkitBoxLabel();
+            }
+        }
+        public string projectName = string.Empty;
+        private void GenerateHTMLkitBoxLabel()
+        {
+            //string fileName = "output.html";
+            string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+            string filename = "\\\\dbr1\\Data\\WareHouse\\2023\\WHsearcher\\" + _fileTimeStamp + "_box label for_" + projectName.Substring(0, projectName.Length - 5).ToString() + ".html";
+            using (StreamWriter writer = new StreamWriter(filename))
+            {
+                writer.WriteLine("<html style='text-align:center'>");
+                writer.WriteLine("<head>");
+                writer.WriteLine("<title>" + projectName.Substring(0, projectName.Length - 5).ToString() + "</title>");
+                writer.WriteLine("</head>");
+                writer.WriteLine("<body>");
+                string[] parts = projectName.Substring(0, projectName.Length - 5).ToString().Split('_');
+                string currentIPN = string.Empty;
+                if (MissingItemsList.Count > 0)
+                {
+                    currentIPN = MissingItemsList[0].IPN;
+                }
+                else
+                {
+                    currentIPN = SufficientItemsList[0].IPN;
+                }
+                string imageUrl = string.Empty;
+                foreach (ClientWarehouse w in warehouses)
+                {
+                    if (currentIPN.StartsWith(w.clPrefix))
+                    {
+                        //MessageBox.Show(w.clName);
+                        if (File.Exists(w.clLogo))
+                        {
+                            // Convert the local file path to a relative URL
+                            string logoFilePath = Path.Combine("dbr1", "WareHouse", "STOCK_CUSTOMERS", w.clName, w.clLogo);
+                            string relativeUrl = logoFilePath.Replace("\\", "/");
+                            // Use the relative URL as the image source
+                            imageUrl = relativeUrl;
+                        }
+                    }
+                }
+                for (int i = 0; i < 3; i++)
+                {
+                    string altText = "WH image";
+                    writer.WriteLine("<table border='1' style='width: 600px; margin: auto; display: table;'>");
+                    writer.WriteLine("<col style='width: 25%;'>"); // 25% width for the image column
+                    writer.WriteLine("<col style='width: 75%;'>"); // 75% width for the text column
+                    writer.WriteLine("<tr>");
+                    writer.WriteLine("<td style='vertical-align: middle;'><img src='" + imageUrl + "' alt='" + altText + "' style='height: 100%; width: 100%;'></td>"); // Image column
+                    writer.WriteLine("<td style='text-align: center; vertical-align: middle;'>");
+                    foreach (string part in parts)
+                    {
+                        // Add a border to each row
+                        writer.WriteLine("<div style='text-align: center; border: 1px solid black; margin: 0px; padding: 5px; vertical-align: middle; font-size: 40px; font-weight: bold;'>" + part + "</div>");
+                    }
+                    writer.WriteLine("</td>");
+                    writer.WriteLine("</tr>");
+                    writer.WriteLine("</table>");
+                }
+            }
+            // Open the file in default browser
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(filename)
+            {
+                UseShellExecute = true
+            };
+            p.Start();
         }
     }
 }
