@@ -1422,7 +1422,7 @@ namespace WH_Panel
             if (e.Button == MouseButtons.Right)
             {
                 string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-             GenerateHTMLkitBoxLabel();
+                GenerateHTMLkitBoxLabel();
             }
         }
         public string projectName = string.Empty;
@@ -1476,7 +1476,7 @@ namespace WH_Panel
                     foreach (string part in parts)
                     {
                         // Add a border to each row
-                        writer.WriteLine("<div style='text-align: center; border: 1px solid black; margin: 0px; padding: 5px; vertical-align: middle; font-size: 40px; font-weight: bold;'>" + part + "</div>");
+                        writer.WriteLine("<div style='text-align: center; border: 1px solid black; margin: 0px; padding: 5px; vertical-align: middle; font-size: 50px; font-weight: bold;'>" + part + "</div>");
                     }
                     writer.WriteLine("</td>");
                     writer.WriteLine("</tr>");
