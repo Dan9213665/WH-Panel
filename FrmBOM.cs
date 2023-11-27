@@ -1464,11 +1464,60 @@ namespace WH_Panel
                         }
                     }
                 }
+
+
+                //string backgroundImageUrl = Path.GetFullPath("/dbr1/Data/WareHouse/_template/eleBackGND.png");
+
+                //string backgroundImageUrl = "/dbr1/Data/WareHouse/_template/eleBackGND.png";
+
+                //string backgroundImageUrl = Path.GetFullPath(@"\dbr1\Data\WareHouse\_template\eleBackGND.png");
+
+                //string relativeUrlbackgroundImageUrl = backgroundImageUrl.Replace("\\", "/");
+
+                //string altText = "WH image";
+
+                //for (int i = 0; i < 3; i++)
+                //{
+                //    writer.WriteLine("<table border='1' style='width: 600px; margin: auto; display: table;'>");
+
+                //    writer.WriteLine("<col style='width: 25%; background: url(" + relativeUrlbackgroundImageUrl + ") no-repeat center center; background-size: contain;'>"); // 25% width for the image column
+
+                //    writer.WriteLine("<col style='width: 75%;'>"); // 75% width for the text column
+                //    writer.WriteLine("<tr>");
+                //    writer.WriteLine("<td style='vertical-align: middle;'><img src='" + imageUrl + "' alt='" + altText + "' style='height: 100%; width: 100%;'></td>"); // Image column
+                //    writer.WriteLine("<td style='text-align: center; vertical-align: middle;'>");
+                //    foreach (string part in parts)
+                //    {
+                //        // Add a border to each row
+                //        writer.WriteLine("<div style='text-align: center; border: 1px solid black; margin: 0px; padding: 5px; vertical-align: middle; font-size: 50px; font-weight: bold;'>" + part + "</div>");
+                //    }
+                //    writer.WriteLine("</td>");
+                //    writer.WriteLine("</tr>");
+                //    writer.WriteLine("</table>");
+                //}
+
+                //string backgroundImageUrl = "/dbr1/Data/WareHouse/_template/eleBackGND.png";
+
+
+                //string backgroundImageUrl = Path.Combine("dbr1", "WareHouse", "_template", "eleBackGND.png");
+                
+
+                //string relativeUrlbackgroundImageUrl = backgroundImageUrl.Replace("\\", "/");
+
+                string backgroundImageUrl = "eleBackGND.png";
+
+
+                Console.WriteLine("Background Image Path: " + backgroundImageUrl);
+
+                string altText = "WH image";
+
                 for (int i = 0; i < 3; i++)
                 {
-                    string altText = "WH image";
                     writer.WriteLine("<table border='1' style='width: 600px; margin: auto; display: table;'>");
-                    writer.WriteLine("<col style='width: 25%;'>"); // 25% width for the image column
+                    //writer.WriteLine("<col style='width: 25%; background: url(" + backgroundImageUrl + ") no-repeat center center; background-size: contain;'>"); // 25% width for the image column
+                    writer.WriteLine("<col style='width: 25%; background: url(" + backgroundImageUrl + ") no-repeat center center; background-size: 100% 100%;'>");
+
+
                     writer.WriteLine("<col style='width: 75%;'>"); // 75% width for the text column
                     writer.WriteLine("<tr>");
                     writer.WriteLine("<td style='vertical-align: middle;'><img src='" + imageUrl + "' alt='" + altText + "' style='height: 100%; width: 100%;'></td>"); // Image column
@@ -1482,6 +1531,8 @@ namespace WH_Panel
                     writer.WriteLine("</tr>");
                     writer.WriteLine("</table>");
                 }
+
+
             }
             // Open the file in default browser
             var p = new Process();
