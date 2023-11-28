@@ -641,11 +641,8 @@ namespace WH_Panel
         private void button1_Click(object sender, EventArgs e)
         {
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-            //ExportToHTML(dataGridView1, "\\\\dbr1\\Data\\WareHouse\\2023\\WHsearcher\\"+ _fileTimeStamp+"_"+projectName.Substring(0, projectName.Length - 5) + ".html");
-            //ExportToHTML20(dataGridView1, "\\\\dbr1\\Data\\WareHouse\\2023\\WHsearcher\\" + _fileTimeStamp + "_" + projectName.Substring(0, projectName.Length - 5) + ".html");
             GenerateHTML();
         }
-        // ...
         private void GenerateHTML()
         {
             //string fileName = "output.html";
@@ -658,20 +655,21 @@ namespace WH_Panel
                 writer.WriteLine("<title>" + projectName.Substring(0, projectName.Length - 5) + "</title>");
                 writer.WriteLine("</head>");
                 writer.WriteLine("<body>");
-                //writer.WriteLine("<h1>" + projectName.Substring(0, projectName.Length - 5) + "</h1>");
                 writer.WriteLine("<table border='1'>");
                 for (int i = 0; i < dataGridView1.Rows.Count; i++)
                 {
                     string IPN = dataGridView1.Rows[i].Cells["IPN"].Value.ToString();
                     writer.WriteLine("<tr>");
                     writer.WriteLine("<td colspan='" + dataGridView1.Columns.Count + "'>");
-                    //writer.WriteLine("<h2>Movements log for IPN " + IPN + "</h2>");
                     writer.WriteLine("<table border='1' style='text-align:center; width:auto; margin-right: 0px;margin-left: auto;'>");
                     writer.WriteLine("</tr>");
-
                     writer.WriteLine("<tr>");
                     for (int j = 0; j < dataGridView1.Columns.Count; j++)
                     {
+                        int req = 0;
+                        int ipnInStock = 0;
+                        int ipnLine = 0;
+
                         if (dataGridView1.Columns[j].HeaderText.ToString() != "ProjectName")
                         {
                             if (dataGridView1.Columns[j].HeaderText.ToString() != "DateOfCreation")
@@ -687,6 +685,34 @@ namespace WH_Panel
                                         else if (dataGridView1.Columns[j].HeaderText.ToString() == "MFPN")
                                         {
                                             writer.WriteLine("<td style='font-size: x-small'>" + dataGridView1.Rows[i].Cells[j].Value.ToString() + "</td>");
+                                        }
+                                        else if (dataGridView1.Columns[j].HeaderText.ToString() == "Delta")
+                                        {
+                                            req = int.Parse(dataGridView1.Rows[i].Cells[j].Value.ToString());
+
+                                            writer.WriteLine("<td style='font-size: 18px;font-weight: bold;background-color: Pink' id='requiredQty'>" + req + "</td>");
+                                        }
+                                        else if (dataGridView1.Columns[j].HeaderText.ToString() == "WHbalance")
+                                        {
+                                            ipnInStock = int.Parse(dataGridView1.Rows[i].Cells[j].Value.ToString());
+
+                                            if (ipnInStock + req > 0)
+                                            {
+                                                //writer.WriteLine("<td style='font-size: 18px;font-weight: bold;background-color: #5df55b'>" + dataGridView1.Rows[i].Cells[j].Value.ToString() + "</td>");
+                                                writer.WriteLine("<td style='font-size: 18px;font-weight: bold;background-color: LightGreen'>" + ipnInStock + "</td>");
+                                            }
+                                            else
+                                            {
+                                                writer.WriteLine("<td style='font-size: 18px;font-weight: bold;background-color: #f05e54'>" + ipnInStock + "</td>");
+                                            }
+
+                                        }
+                                        else if (dataGridView1.Columns[j].HeaderText.ToString() == "QtyInKit")
+                                        {
+                                            //int rowIndex = i+j;
+                                            writer.WriteLine("<td style='font-size: 18px;font-weight: bold;'>" + dataGridView1.Rows[i].Cells[j].Value.ToString() + "</td>");
+                                            //string cellValue = dataGridView1.Rows[i].Cells[j].Value.ToString();
+                                            //writer.WriteLine($"<td style='font-size: 18px;font-weight: bold;'>{cellValue}</td>");
                                         }
                                         else
                                         {
@@ -720,13 +746,7 @@ namespace WH_Panel
                     }
                     DataTable filteredData = inWHTable;
                     filteredData.Columns["Manufacturer"].ColumnMapping = MappingType.Hidden;
-                    //    for (int k = 0; k < filteredData.Columns.Count; k++)
-                    //{
-                    //        if(filteredData.Columns[k].ColumnName!= "Manufacturer")
-                    //        {
-                    //            writer.WriteLine("<th>" + filteredData.Columns[k].ColumnName + "</th>");
-                    //        }
-                    //}
+
                     writer.WriteLine("</tr>");
                     for (int l = 0; l < filteredData.Rows.Count; l++)
                     {
@@ -745,6 +765,18 @@ namespace WH_Panel
                                     {
                                         writer.WriteLine("<td style='font-size: x-small'>" + filteredData.Rows[l][m].ToString() + "</td>");
                                     }
+                                    //else if (filteredData.Columns[m].ColumnName == "Stock")
+                                    //{
+                                    //    int rowIndexl = l;
+                                    //    string cellValue = filteredData.Rows[l][m].ToString();
+                                    //    writer.WriteLine($"<td style='font-size: 18px;font-weight: bold;' id='qtyInKit_{rowIndexl}'>{cellValue}</td>");
+                                    //}
+                                    else if (filteredData.Columns[m].ColumnName == "Stock")
+                                    {
+                                        string cellValue = filteredData.Rows[l][m].ToString();
+                                        writer.WriteLine($"<td class='qtyInKit-cell' style='font-size: 18px;font-weight: bold;'>{cellValue}</td>");
+                                    }
+
                                     else
                                     {
                                         writer.WriteLine("<td>" + filteredData.Rows[l][m].ToString() + "</td>");
@@ -759,11 +791,91 @@ namespace WH_Panel
                     writer.WriteLine("</tr>");
                 }
                 writer.WriteLine("</table>");
+
+                //writer.WriteLine("<script>");
+                //writer.WriteLine("document.addEventListener('DOMContentLoaded', function() {");
+                //writer.WriteLine("    var tables = document.querySelectorAll('table');");
+                //writer.WriteLine("    tables.forEach(function(table) {");
+                //writer.WriteLine("        highlightCells(table);");
+                //writer.WriteLine("    });");
+                //writer.WriteLine("});");
+
+                //writer.WriteLine("function highlightCells(table) {");
+                //writer.WriteLine("    var rows = table.querySelectorAll('tr');");
+                //writer.WriteLine("    for (var i = 1; i < rows.length; i++) {");
+                //writer.WriteLine("        var cells = rows[i].querySelectorAll('.qtyInKit-cell');");
+                //writer.WriteLine("        var requiredQty = parseInt(document.getElementById('requiredQty').innerText);");
+
+                //writer.WriteLine("        var lowestSum = Number.MAX_SAFE_INTEGER;");
+                //writer.WriteLine("        var selectedCells = [];");
+
+                //writer.WriteLine("        for (var j = 0; j < cells.length; j++) {");
+                //writer.WriteLine("            var cellValue = parseInt(cells[j].innerText);");
+                //writer.WriteLine("            if (!isNaN(cellValue) && cellValue >= requiredQty) {");
+                //writer.WriteLine("                selectedCells = [cells[j]];");
+                //writer.WriteLine("                break;");
+                //writer.WriteLine("            }");
+
+                //writer.WriteLine("            if (!isNaN(cellValue) && cellValue < lowestSum) {");
+                //writer.WriteLine("                lowestSum = cellValue;");
+                //writer.WriteLine("                selectedCells = [cells[j]];");
+                //writer.WriteLine("            } else if (!isNaN(cellValue) && cellValue === lowestSum) {");
+                //writer.WriteLine("                selectedCells.push(cells[j]);");
+                //writer.WriteLine("            }");
+                //writer.WriteLine("        }");
+
+                //writer.WriteLine("        selectedCells.forEach(function(cell) {");
+                //writer.WriteLine("            cell.style.backgroundColor = 'yellow';");
+                //writer.WriteLine("        });");
+                //writer.WriteLine("    }");
+                //writer.WriteLine("}");
+                //writer.WriteLine("</script>");
+
+                writer.WriteLine("<script>");
+                writer.WriteLine("document.addEventListener('DOMContentLoaded', function() {");
+                writer.WriteLine("    var tables = document.querySelectorAll('table');");
+                writer.WriteLine("    tables.forEach(function(table) {");
+                writer.WriteLine("        highlightCells(table);");
+                writer.WriteLine("    });");
+                writer.WriteLine("});");
+
+                writer.WriteLine("function highlightCells(table) {");
+                writer.WriteLine("    var rows = table.querySelectorAll('tr');");
+                writer.WriteLine("    for (var i = 1; i < rows.length; i++) {");
+                writer.WriteLine("        var cells = rows[i].querySelectorAll('.qtyInKit-cell');");
+                writer.WriteLine("        var requiredQty = parseInt(document.getElementById('requiredQty').innerText);");
+
+                writer.WriteLine("        var lowestSum = Number.MAX_SAFE_INTEGER;");
+                writer.WriteLine("        var selectedCells = [];");
+
+                writer.WriteLine("        for (var j = 0; j < cells.length; j++) {");
+                writer.WriteLine("            var cellValue = parseInt(cells[j].innerText);");
+                writer.WriteLine("            if (!isNaN(cellValue) && cellValue >= requiredQty) {");
+                writer.WriteLine("                selectedCells = [cells[j]];");
+                writer.WriteLine("                break;");
+                writer.WriteLine("            }");
+
+                writer.WriteLine("            if (!isNaN(cellValue) && cellValue < lowestSum) {");
+                writer.WriteLine("                lowestSum = cellValue;");
+                writer.WriteLine("                selectedCells = [cells[j]];");
+                writer.WriteLine("            } else if (!isNaN(cellValue) && cellValue === lowestSum) {");
+                writer.WriteLine("                selectedCells.push(cells[j]);");
+                writer.WriteLine("            }");
+                writer.WriteLine("        }");
+
+                writer.WriteLine("        selectedCells.forEach(function(cell) {");
+                writer.WriteLine("            cell.style.backgroundColor = 'yellow';");
+                writer.WriteLine("        });");
+                writer.WriteLine("    }");
+                writer.WriteLine("}");
+                writer.WriteLine("</script>");
+
+
+
+
                 writer.WriteLine("</body>");
                 writer.WriteLine("</html>");
             }
-            // Open the file in default browser
-            // Process.Start(fileName);
             var p = new Process();
             p.StartInfo = new ProcessStartInfo(filename)
             {
