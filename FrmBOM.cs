@@ -164,6 +164,10 @@ namespace WH_Panel
             warehouses = warehousesFromTheMain;
             // Ordering the warehouses list by clName
             warehouses = warehouses.OrderBy(warehouse => warehouse.clName).ToList();
+            foreach (ClientWarehouse warehouse in warehouses)
+            {
+                comboBox1.Items.Add(warehouse.clName);
+            }
         }
         private void ResetViews()
         {
@@ -326,6 +330,11 @@ namespace WH_Panel
                                 {
                                     MissingItemsList.Add(abc);
                                     missingCount++;
+                                }
+                                ClientWarehouse selectedWarehouse = warehouses.FirstOrDefault(warehouse => abc.IPN.StartsWith(warehouse.clPrefix ?? ""));
+                                if (selectedWarehouse != null)
+                                {
+                                    comboBox1.SelectedItem = selectedWarehouse.clName;
                                 }
                             }
                         }
@@ -1073,7 +1082,8 @@ namespace WH_Panel
             {
                 foreach (ClientWarehouse wh in warehouses)
                 {
-                    if (w.IPN.StartsWith(wh.clPrefix))
+                    //if (w.IPN.StartsWith(wh.clPrefix))
+                    if (wh.clName == comboBox1.SelectedItem.ToString())
                     {
                         //string convertedStockFile = ConvertStockFileFormat(wh.clStockFile);
                         //MessageBox.Show(wh.clStockFile);

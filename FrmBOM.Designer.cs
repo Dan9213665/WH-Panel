@@ -54,7 +54,7 @@
             button4 = new Button();
             btnPrintKitLabel = new Button();
             button5 = new Button();
-            btnSendEmail = new Button();
+            comboBox1 = new ComboBox();
             groupBox2 = new GroupBox();
             tableLayoutPanel2 = new TableLayoutPanel();
             tableLayoutPanel8 = new TableLayoutPanel();
@@ -272,7 +272,7 @@
             tableLayoutPanel3.Controls.Add(button4, 7, 0);
             tableLayoutPanel3.Controls.Add(btnPrintKitLabel, 3, 0);
             tableLayoutPanel3.Controls.Add(button5, 1, 0);
-            tableLayoutPanel3.Controls.Add(btnSendEmail, 8, 0);
+            tableLayoutPanel3.Controls.Add(comboBox1, 8, 0);
             tableLayoutPanel3.Dock = DockStyle.Fill;
             tableLayoutPanel3.Location = new Point(3, 19);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -407,17 +407,15 @@
             button5.UseVisualStyleBackColor = true;
             button5.Click += button5_Click;
             // 
-            // btnSendEmail
+            // comboBox1
             // 
-            btnSendEmail.BackgroundImage = (Image)resources.GetObject("btnSendEmail.BackgroundImage");
-            btnSendEmail.BackgroundImageLayout = ImageLayout.Zoom;
-            btnSendEmail.Dock = DockStyle.Fill;
-            btnSendEmail.Location = new Point(1155, 3);
-            btnSendEmail.Name = "btnSendEmail";
-            btnSendEmail.Size = new Size(141, 38);
-            btnSendEmail.TabIndex = 8;
-            btnSendEmail.UseVisualStyleBackColor = true;
-            btnSendEmail.Click += btnSendEmail_Click;
+            comboBox1.Dock = DockStyle.Fill;
+            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Location = new Point(1155, 3);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new Size(141, 23);
+            comboBox1.TabIndex = 8;
             // 
             // groupBox2
             // 
@@ -1029,8 +1027,8 @@
         private ComboBox comboBox4;
         private ComboBox comboBox5;
         private TextBox textBox12;
-        private Button btnSendEmail;
         private TextBox textBox13;
         private TextBox textBox14;
+        private ComboBox comboBox1;
     }
 }
