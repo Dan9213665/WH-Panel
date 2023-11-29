@@ -337,14 +337,14 @@ namespace WH_Panel
                                 //{
                                 //    comboBox1.SelectedItem = selectedWarehouse.clName;
                                 //}
-                                if(countItems == 1)
+                                if (countItems == 1)
                                 {
                                     WHselectorLogic(abc);
                                 }
-                                
+
 
                             }
-                            
+
                         }
                         conn.Dispose();
                         conn.Close();
@@ -386,7 +386,7 @@ namespace WH_Panel
         private Form dynamicForm; // Declare dynamicForm at the class level
         private void WHselectorLogic(KitHistoryItem abc)
         {
-            
+
 
             var matchingWarehouses = warehouses
                 .Where(warehouse => abc.IPN.StartsWith(warehouse.clPrefix ?? ""))
@@ -414,7 +414,7 @@ namespace WH_Panel
 
                 int buttonTop = 10;
                 int maxWidth = 0;
-         
+
                 foreach (var warehouse in matchingWarehouses)
                 {
                     var button = new Button
@@ -465,7 +465,7 @@ namespace WH_Panel
                 }
             }
 
-        
+
         }
         void WarehouseButton_Click(object sender, EventArgs e)
         {
@@ -474,10 +474,10 @@ namespace WH_Panel
             dynamicForm.DialogResult = DialogResult.OK;
             dynamicForm.Close();
         }
-        public ClientWarehouse SelectedWarehouse { get;  set; }
-       
-        
-        
+        public ClientWarehouse SelectedWarehouse { get; set; }
+
+
+
         private void PopulateMissingGridView()
         {
             missingUDtable.Clear();
@@ -1185,12 +1185,12 @@ namespace WH_Panel
             {
                 foreach (ClientWarehouse wh in warehouses)
                 {
-                    
+
                     if (wh.clName == comboBox1.SelectedItem.ToString())
                     {
-                        
+
                         selection = wh.clStockFile;
-                       
+
                         break;
                     }
                 }
@@ -1562,8 +1562,9 @@ namespace WH_Panel
                 string imageUrl = string.Empty;
                 foreach (ClientWarehouse w in warehouses)
                 {
-                    if (currentIPN.StartsWith(w.clPrefix))
-                    {
+                    //if (currentIPN.StartsWith(w.clPrefix))
+                        if (comboBox1.SelectedItem==w.clName)
+                        {
                         //MessageBox.Show(w.clName);
                         if (File.Exists(w.clLogo))
                         {
