@@ -298,6 +298,7 @@ namespace WH_Panel
                             int indQty = reader.GetOrdinal("Qty");
                             int indCalc = reader.GetOrdinal("Calc");
                             int indAlts = indQty + 2;
+
                             while (reader.Read())
                             {
                                 int del = 0;
@@ -331,12 +332,19 @@ namespace WH_Panel
                                     MissingItemsList.Add(abc);
                                     missingCount++;
                                 }
-                                ClientWarehouse selectedWarehouse = warehouses.FirstOrDefault(warehouse => abc.IPN.StartsWith(warehouse.clPrefix ?? ""));
-                                if (selectedWarehouse != null)
+                                //ClientWarehouse selectedWarehouse = warehouses.FirstOrDefault(warehouse => abc.IPN.StartsWith(warehouse.clPrefix ?? ""));
+                                //if (selectedWarehouse != null)
+                                //{
+                                //    comboBox1.SelectedItem = selectedWarehouse.clName;
+                                //}
+                                if(countItems == 1)
                                 {
-                                    comboBox1.SelectedItem = selectedWarehouse.clName;
+                                    WHselectorLogic(abc);
                                 }
+                                
+
                             }
+                            
                         }
                         conn.Dispose();
                         conn.Close();
@@ -375,6 +383,101 @@ namespace WH_Panel
                 MessageBox.Show(e.Message);
             }
         }
+        private Form dynamicForm; // Declare dynamicForm at the class level
+        private void WHselectorLogic(KitHistoryItem abc)
+        {
+            
+
+            var matchingWarehouses = warehouses
+                .Where(warehouse => abc.IPN.StartsWith(warehouse.clPrefix ?? ""))
+                .ToList();
+
+            if (matchingWarehouses.Count == 0)
+            {
+                // No matching warehouse found
+                MessageBox.Show("No warehouse found for the given prefix.");
+            }
+            else if (matchingWarehouses.Count == 1)
+            {
+                // Only one matching warehouse found, auto-select it
+                comboBox1.SelectedItem = matchingWarehouses[0].clName;
+            }
+            else
+            {
+                // Multiple matching warehouses found, create dynamic form
+                dynamicForm = new Form();
+                dynamicForm.AutoSize = true;
+                dynamicForm.Text = "Select Warehouse";
+                dynamicForm.StartPosition = FormStartPosition.CenterScreen;
+                // Remove the control box (maximize, minimize, close buttons)
+                dynamicForm.ControlBox = false;
+
+                int buttonTop = 10;
+                int maxWidth = 0;
+         
+                foreach (var warehouse in matchingWarehouses)
+                {
+                    var button = new Button
+                    {
+                        //Text = warehouse.clName,
+                        Tag = warehouse,  // Store the warehouse object in the Tag property
+                        Top = buttonTop,
+                        Left = 10,
+                        Width = 300,
+                        Height = 100
+                    };
+
+                    if (!string.IsNullOrEmpty(warehouse.clLogo))
+                    {
+                        try
+                        {
+                            // Set the background image from the clLogo property
+                            button.BackgroundImage = Image.FromFile(warehouse.clLogo);
+                            button.BackgroundImageLayout = ImageLayout.Zoom; // Adjust the layout as needed
+                        }
+                        catch (Exception ex)
+                        {
+                            // Handle image loading error, if any
+                            MessageBox.Show($"Error loading image: {ex.Message}");
+                        }
+                    }
+
+                    button.Click += WarehouseButton_Click;
+                    dynamicForm.Controls.Add(button);
+                    maxWidth = Math.Max(maxWidth, button.Width);
+                    buttonTop += 100;
+                }
+                // Adjust the form size if needed
+                dynamicForm.Height = buttonTop + 20;
+                dynamicForm.Width = maxWidth + 2 * 20;
+
+                var result = dynamicForm.ShowDialog();
+
+                if (result == DialogResult.OK)
+                {
+                    // User selected a warehouse, update your ComboBox or perform other actions
+                    comboBox1.SelectedItem = SelectedWarehouse.clName;
+                }
+                else
+                {
+                    // User closed the form without selecting a warehouse
+                    // Handle as needed (you might want to do nothing in this case)
+                }
+            }
+
+        
+        }
+        void WarehouseButton_Click(object sender, EventArgs e)
+        {
+            var button = (Button)sender;
+            SelectedWarehouse = (ClientWarehouse)button.Tag;
+            dynamicForm.DialogResult = DialogResult.OK;
+            dynamicForm.Close();
+        }
+        public ClientWarehouse SelectedWarehouse { get;  set; }
+       
+        
+        
         private void PopulateMissingGridView()
         {
             missingUDtable.Clear();
@@ -1082,14 +1185,12 @@ namespace WH_Panel
             {
                 foreach (ClientWarehouse wh in warehouses)
                 {
-                    //if (w.IPN.StartsWith(wh.clPrefix))
+                    
                     if (wh.clName == comboBox1.SelectedItem.ToString())
                     {
-                        //string convertedStockFile = ConvertStockFileFormat(wh.clStockFile);
-                        //MessageBox.Show(wh.clStockFile);
-                        //selection = convertedStockFile;
+                        
                         selection = wh.clStockFile;
-                        //MessageBox.Show(selection);
+                       
                         break;
                     }
                 }
