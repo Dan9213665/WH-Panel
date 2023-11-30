@@ -544,6 +544,8 @@ namespace WH_Panel
                     }
                     catch (Exception)
                     {
+                        textBox6.Text = string.Empty;
+                        textBox6.Focus();
                         throw;
                     }
                 }
@@ -641,6 +643,7 @@ namespace WH_Panel
                     else
                     {
                         MessageBox.Show("Input Qty !");
+                        textBox6.Text = string.Empty;
                         textBox6.Focus();
                     }
                 }

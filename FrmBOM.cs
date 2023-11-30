@@ -41,6 +41,8 @@ using Button = System.Windows.Forms.Button;
 using GroupBox = System.Windows.Forms.GroupBox;
 using WH_Panel;
 using File = System.IO.File;
+using Point = System.Drawing.Point;
+
 namespace WH_Panel
 {
     public partial class FrmBOM : Form
@@ -384,18 +386,101 @@ namespace WH_Panel
             }
         }
         private Form dynamicForm; // Declare dynamicForm at the class level
+        //private void WHselectorLogic(KitHistoryItem abc)
+        //{
+
+
+        //    var matchingWarehouses = warehouses
+        //        .Where(warehouse => abc.IPN.StartsWith(warehouse.clPrefix ?? ""))
+        //        .ToList();
+
+        //    if (matchingWarehouses.Count == 0)
+        //    {
+        //        // No matching warehouse found
+        //        MessageBox.Show("No warehouse found for the given prefix.");
+        //    }
+        //    else if (matchingWarehouses.Count == 1)
+        //    {
+        //        // Only one matching warehouse found, auto-select it
+        //        comboBox1.SelectedItem = matchingWarehouses[0].clName;
+        //    }
+        //    else
+        //    {
+        //        // Multiple matching warehouses found, create dynamic form
+        //        dynamicForm = new Form();
+        //        dynamicForm.AutoSize = true;
+        //        dynamicForm.Text = "Select Warehouse";
+        //        dynamicForm.StartPosition = FormStartPosition.CenterScreen;
+        //        // Remove the control box (maximize, minimize, close buttons)
+        //        dynamicForm.ControlBox = false;
+
+        //        int buttonTop = 10;
+        //        int maxWidth = 0;
+
+        //        foreach (var warehouse in matchingWarehouses)
+        //        {
+        //            var button = new Button
+        //            {
+        //                //Text = warehouse.clName,
+        //                Tag = warehouse,  // Store the warehouse object in the Tag property
+        //                Top = buttonTop,
+        //                Left = 10,
+        //                Width = 300,
+        //                Height = 100
+        //            };
+
+        //            if (!string.IsNullOrEmpty(warehouse.clLogo))
+        //            {
+        //                try
+        //                {
+        //                    // Set the background image from the clLogo property
+        //                    button.BackgroundImage = Image.FromFile(warehouse.clLogo);
+        //                    button.BackgroundImageLayout = ImageLayout.Zoom; // Adjust the layout as needed
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    // Handle image loading error, if any
+        //                    MessageBox.Show($"Error loading image: {ex.Message}");
+        //                }
+        //            }
+
+        //            button.Click += WarehouseButton_Click;
+        //            dynamicForm.Controls.Add(button);
+        //            maxWidth = Math.Max(maxWidth, button.Width);
+        //            buttonTop += 100;
+        //        }
+        //        // Adjust the form size if needed
+        //        dynamicForm.Height = buttonTop + 20;
+        //        dynamicForm.Width = maxWidth + 2 * 20;
+
+        //        var result = dynamicForm.ShowDialog();
+
+        //        if (result == DialogResult.OK)
+        //        {
+        //            // User selected a warehouse, update your ComboBox or perform other actions
+        //            comboBox1.SelectedItem = SelectedWarehouse.clName;
+        //        }
+        //        else
+        //        {
+        //            // User closed the form without selecting a warehouse
+        //            // Handle as needed (you might want to do nothing in this case)
+        //        }
+        //    }
+
+
+        //}
+
+
         private void WHselectorLogic(KitHistoryItem abc)
         {
-
-
             var matchingWarehouses = warehouses
                 .Where(warehouse => abc.IPN.StartsWith(warehouse.clPrefix ?? ""))
                 .ToList();
 
             if (matchingWarehouses.Count == 0)
             {
-                // No matching warehouse found
-                MessageBox.Show("No warehouse found for the given prefix.");
+                // No matching warehouse found, display all warehouses for manual selection
+                ShowAllWarehousesForm();
             }
             else if (matchingWarehouses.Count == 1)
             {
@@ -404,69 +489,355 @@ namespace WH_Panel
             }
             else
             {
-                // Multiple matching warehouses found, create dynamic form
-                dynamicForm = new Form();
-                dynamicForm.AutoSize = true;
-                dynamicForm.Text = "Select Warehouse";
-                dynamicForm.StartPosition = FormStartPosition.CenterScreen;
-                // Remove the control box (maximize, minimize, close buttons)
-                dynamicForm.ControlBox = false;
+                ShowWarehouseSelectionForm(matchingWarehouses);
+            }
+        }
 
-                int buttonTop = 10;
-                int maxWidth = 0;
+        private void ShowWarehouseSelectionForm(List<ClientWarehouse> warehouses)
+        {
+            dynamicForm = new Form
+            {
+                AutoSize = true,
+                Text = "Select Warehouse",
+                StartPosition = FormStartPosition.CenterScreen,
+                ControlBox = false
+            };
 
-                foreach (var warehouse in matchingWarehouses)
+            int buttonTop = 10;
+            int maxWidth = 0;
+
+            foreach (var warehouse in warehouses)
+            {
+                var button = new Button
                 {
-                    var button = new Button
-                    {
-                        //Text = warehouse.clName,
-                        Tag = warehouse,  // Store the warehouse object in the Tag property
-                        Top = buttonTop,
-                        Left = 10,
-                        Width = 300,
-                        Height = 100
-                    };
+                    Tag = warehouse,  // Store the warehouse object in the Tag property
+                    Top = buttonTop,
+                    Left = 10,
+                    Width = 300,
+                    Height = 100
+                };
 
-                    if (!string.IsNullOrEmpty(warehouse.clLogo))
+                if (!string.IsNullOrEmpty(warehouse.clLogo))
+                {
+                    try
                     {
-                        try
-                        {
-                            // Set the background image from the clLogo property
-                            button.BackgroundImage = Image.FromFile(warehouse.clLogo);
-                            button.BackgroundImageLayout = ImageLayout.Zoom; // Adjust the layout as needed
-                        }
-                        catch (Exception ex)
-                        {
-                            // Handle image loading error, if any
-                            MessageBox.Show($"Error loading image: {ex.Message}");
-                        }
+                        // Set the background image from the clLogo property
+                        button.BackgroundImage = Image.FromFile(warehouse.clLogo);
+                        button.BackgroundImageLayout = ImageLayout.Zoom; // Adjust the layout as needed
                     }
-
-                    button.Click += WarehouseButton_Click;
-                    dynamicForm.Controls.Add(button);
-                    maxWidth = Math.Max(maxWidth, button.Width);
-                    buttonTop += 100;
+                    catch (Exception ex)
+                    {
+                        // Handle image loading error, if any
+                        MessageBox.Show($"Error loading image: {ex.Message}");
+                    }
                 }
-                // Adjust the form size if needed
-                dynamicForm.Height = buttonTop + 20;
-                dynamicForm.Width = maxWidth + 2 * 20;
 
-                var result = dynamicForm.ShowDialog();
-
-                if (result == DialogResult.OK)
-                {
-                    // User selected a warehouse, update your ComboBox or perform other actions
-                    comboBox1.SelectedItem = SelectedWarehouse.clName;
-                }
-                else
-                {
-                    // User closed the form without selecting a warehouse
-                    // Handle as needed (you might want to do nothing in this case)
-                }
+                button.Click += WarehouseButton_Click;
+                dynamicForm.Controls.Add(button);
+                maxWidth = Math.Max(maxWidth, button.Width);
+                buttonTop += 100;
             }
 
+            // Adjust the form size if needed
+            dynamicForm.Height = buttonTop + 20;
+            dynamicForm.Width = maxWidth + 2 * 20;
 
+            var result = dynamicForm.ShowDialog();
+
+            if (result == DialogResult.OK)
+            {
+                // User selected a warehouse, update your ComboBox or perform other actions
+                comboBox1.SelectedItem = SelectedWarehouse?.clName;
+            }
+            else
+            {
+                // User closed the form without selecting a warehouse
+                // Handle as needed (you might want to do nothing in this case)
+            }
         }
+
+
+        //private void ShowAllWarehousesForm()
+        //{
+        //    dynamicForm = new Form
+        //    {
+        //        AutoSize = true,
+        //        Text = "Select Warehouse",
+        //        StartPosition = FormStartPosition.CenterScreen,
+        //        ControlBox = false
+        //    };
+        //    var flowLayoutPanel = new FlowLayoutPanel
+        //    {
+        //        AutoSize = true,
+        //        AutoScroll = true,
+        //        FlowDirection = FlowDirection.TopDown
+        //    };
+        //    dynamicForm.Controls.Add(flowLayoutPanel);
+        //    //int buttonTop = 10;
+        //    int maxWidth = 0;
+
+        //    foreach (var warehouse in warehouses)
+        //    {
+        //        var button = new Button
+        //        {
+        //            Tag = warehouse,  // Store the warehouse object in the Tag property
+        //            //Top = buttonTop,
+        //            //Left = 10,
+        //            Width = 150,
+        //            Height = 50
+        //        };
+
+        //        if (!string.IsNullOrEmpty(warehouse.clLogo))
+        //        {
+        //            try
+        //            {
+        //                // Set the background image from the clLogo property
+        //                button.BackgroundImage = Image.FromFile(warehouse.clLogo);
+        //                button.BackgroundImageLayout = ImageLayout.Zoom; // Adjust the layout as needed
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                // Handle image loading error, if any
+        //                MessageBox.Show($"Error loading image: {ex.Message}");
+        //            }
+        //        }
+
+        //        button.Click += WarehouseButton_Click;
+        //        //dynamicForm.Controls.Add(button);
+        //        flowLayoutPanel.Controls.Add(button);
+        //        maxWidth = Math.Max(maxWidth, button.Width);
+        //        //buttonTop += 100;
+        //    }
+
+        //    // Adjust the form size if needed
+        //    //dynamicForm.Height = buttonTop + 20;
+        //    dynamicForm.AutoSize = true;
+        //    //dynamicForm.Width = maxWidth*3 ;
+
+        //    var result = dynamicForm.ShowDialog();
+
+        //    if (result == DialogResult.OK)
+        //    {
+        //        // User selected a warehouse, update your ComboBox or perform other actions
+        //        comboBox1.SelectedItem = SelectedWarehouse?.clName;
+        //    }
+        //    else
+        //    {
+        //        // User closed the form without selecting a warehouse
+        //        // Handle as needed (you might want to do nothing in this case)
+        //    }
+        //}
+
+        //private void ShowAllWarehousesForm()
+        //{
+        //    dynamicForm = new Form
+        //    {
+        //        AutoSize = true,
+        //        Text = "Select Warehouse",
+        //        StartPosition = FormStartPosition.CenterScreen,
+        //        ControlBox = false,
+        //        AutoScroll = true  // Enable AutoScroll for the form
+        //    };
+
+        //    var flowLayoutPanel = new FlowLayoutPanel
+        //    {
+        //        AutoSize = true,
+        //        FlowDirection = FlowDirection.TopDown
+        //    };
+
+        //    dynamicForm.Controls.Add(flowLayoutPanel);
+
+        //    int maxWidth = 0;
+
+        //    foreach (var warehouse in warehouses)
+        //    {
+        //        var button = new Button
+        //        {
+        //            Tag = warehouse,
+        //            Width = 150,
+        //            Height = 50
+        //        };
+
+        //        if (!string.IsNullOrEmpty(warehouse.clLogo))
+        //        {
+        //            try
+        //            {
+        //                button.BackgroundImage = Image.FromFile(warehouse.clLogo);
+        //                button.BackgroundImageLayout = ImageLayout.Zoom;
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                MessageBox.Show($"Error loading image: {ex.Message}");
+        //            }
+        //        }
+
+        //        button.Click += WarehouseButton_Click;
+        //        flowLayoutPanel.Controls.Add(button);
+        //        maxWidth = Math.Max(maxWidth, button.Width);
+        //    }
+
+        //    // Set the size of the form based on the content
+        //    dynamicForm.Size = new Size(maxWidth + 40, SystemInformation.PrimaryMonitorSize.Height - 100);
+
+        //    // Calculate the center of the screen
+        //    int centerX = (Screen.PrimaryScreen.WorkingArea.Width - dynamicForm.Width) / 2;
+        //    int centerY = (Screen.PrimaryScreen.WorkingArea.Height - dynamicForm.Height) / 2;
+
+        //    // Set the location of the form to be centered
+        //    dynamicForm.Location = new Point(centerX, centerY);
+
+        //    var result = dynamicForm.ShowDialog();
+
+        //    if (result == DialogResult.OK)
+        //    {
+        //        comboBox1.SelectedItem = SelectedWarehouse?.clName;
+        //    }
+        //    else
+        //    {
+        //        // Handle form closed without selection
+        //    }
+        //}
+        //private void ShowAllWarehousesForm()
+        //{
+        //    dynamicForm = new Form
+        //    {
+        //        AutoSize = true,
+        //        Text = "Select Warehouse",
+        //        StartPosition = FormStartPosition.CenterScreen,
+        //        ControlBox = false,
+        //        AutoScroll = true  // Enable AutoScroll for the form
+        //    };
+
+        //    var flowLayoutPanel = new FlowLayoutPanel
+        //    {
+        //        AutoSize = true,
+        //        FlowDirection = FlowDirection.TopDown
+        //    };
+
+        //    dynamicForm.Controls.Add(flowLayoutPanel);
+
+        //    int maxWidth = 0;
+
+        //    foreach (var warehouse in warehouses)
+        //    {
+        //        var button = new Button
+        //        {
+        //            Tag = warehouse,
+        //            Width = 150,
+        //            Height = 50
+        //        };
+
+        //        if (!string.IsNullOrEmpty(warehouse.clLogo))
+        //        {
+        //            try
+        //            {
+        //                button.BackgroundImage = Image.FromFile(warehouse.clLogo);
+        //                button.BackgroundImageLayout = ImageLayout.Zoom;
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                MessageBox.Show($"Error loading image: {ex.Message}");
+        //            }
+        //        }
+
+        //        button.Click += WarehouseButton_Click;
+        //        flowLayoutPanel.Controls.Add(button);
+        //        maxWidth = Math.Max(maxWidth, button.Width);
+        //    }
+
+        //    // Set a fixed maximum height for the form (adjust as needed)
+        //    int maxHeight = 600;
+
+        //    // Set the size of the form based on the content, with a maximum height
+        //    dynamicForm.Size = new Size(maxWidth + 40, Math.Min(maxHeight, flowLayoutPanel.Height));
+
+        //    // Calculate the center of the screen
+        //    int centerX = (Screen.PrimaryScreen.WorkingArea.Width - dynamicForm.Width) / 2;
+        //    int centerY = (Screen.PrimaryScreen.WorkingArea.Height - dynamicForm.Height) / 2;
+
+        //    // Set the location of the form to be centered
+        //    dynamicForm.Location = new Point(centerX, centerY);
+
+        //    var result = dynamicForm.ShowDialog();
+
+        //    if (result == DialogResult.OK)
+        //    {
+        //        comboBox1.SelectedItem = SelectedWarehouse?.clName;
+        //    }
+        //    else
+        //    {
+        //        // Handle form closed without selection
+        //    }
+        //}
+
+        private void ShowAllWarehousesForm()
+        {
+            dynamicForm = new Form
+            {
+                AutoSize = true, // Set AutoSize to false
+                Text = "Select Warehouse",
+                StartPosition = FormStartPosition.CenterScreen,
+                WindowState = FormWindowState.Maximized,
+                ControlBox = false
+            };
+            var panel = new FlowLayoutPanel
+            {
+                AutoSize = true,
+                AutoScroll = true,
+                FlowDirection = FlowDirection.LeftToRight,
+                Dock = DockStyle.Fill,
+                WrapContents = true // Set WrapContents to false
+            };
+
+            dynamicForm.Controls.Add(panel);
+
+            int maxWidth = 0;
+
+            foreach (var warehouse in warehouses)
+            {
+                var button = new Button
+                {
+                    Tag = warehouse,
+                    Width = (Screen.PrimaryScreen.WorkingArea.Width / 5) - 15,
+                    Height = 200
+                };
+
+                if (!string.IsNullOrEmpty(warehouse.clLogo))
+                {
+                    try
+                    {
+                        button.BackgroundImage = Image.FromFile(warehouse.clLogo);
+                        button.BackgroundImageLayout = ImageLayout.Zoom;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error loading image: {ex.Message}");
+                    }
+                }
+
+                button.Click += WarehouseButton_Click;
+                panel.Controls.Add(button);
+
+                // Create a tooltip for each button
+                var toolTip = new ToolTip();
+                toolTip.SetToolTip(button, warehouse.clPrefix);
+            }
+
+            var result = dynamicForm.ShowDialog();
+
+            if (result == DialogResult.OK)
+            {
+                comboBox1.SelectedItem = SelectedWarehouse?.clName;
+            }
+            else
+            {
+                // Handle form closed without selection
+            }
+        }
+
+
+
+
         void WarehouseButton_Click(object sender, EventArgs e)
         {
             var button = (Button)sender;
@@ -1563,8 +1934,8 @@ namespace WH_Panel
                 foreach (ClientWarehouse w in warehouses)
                 {
                     //if (currentIPN.StartsWith(w.clPrefix))
-                        if (comboBox1.SelectedItem==w.clName)
-                        {
+                    if (comboBox1.SelectedItem == w.clName)
+                    {
                         //MessageBox.Show(w.clName);
                         if (File.Exists(w.clLogo))
                         {
