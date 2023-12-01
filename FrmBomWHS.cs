@@ -28,11 +28,11 @@ namespace WH_Panel
         public List<KitHistoryItem> misItemsLST = new List<KitHistoryItem>();
         public List<BOMitem> misBOMItemsLST = new List<BOMitem>();
         List<ClientWarehouse> clList { get; set; }
-
-        public void InitializeGlobalWarehouses(List<ClientWarehouse> warehousesFromTheMain)
+        string selectedWHname { get; set; }
+        public void InitializeGlobalWarehouses(List<ClientWarehouse> warehousesFromTheMain, string selectedWHnameFromTheMainForm)
         {
             clList = warehousesFromTheMain;
-
+            selectedWHname = selectedWHnameFromTheMainForm;
 
             // Ordering the warehouses list by clName
             clList = clList.OrderBy(warehouse => warehouse.clName).ToList();
@@ -223,7 +223,8 @@ namespace WH_Panel
         {
             string selection = string.Empty;
             foreach (ClientWarehouse clientWH in clList)
-                if (misBOMItemsLST[0].IPN.StartsWith(clientWH.clPrefix))
+                //if (misBOMItemsLST[0].IPN.StartsWith(clientWH.clPrefix))
+                if (clientWH.clName == selectedWHname)
                 {
                     selection = clientWH.clName;
                     MasterReload(clientWH.clAvlFile, clientWH.clStockFile);
