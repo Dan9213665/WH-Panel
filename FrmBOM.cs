@@ -1097,35 +1097,7 @@ namespace WH_Panel
             EXCELinserter(theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));
             //ExcelInserterUsingEPPlus(theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));
         }
-        private void ExcelInserterUsingEPPlus(string kitName)
-        {
-            try
-            {
-                string filePath = @"\\dbr1\Data\WareHouse\KitLabelAuto.xlsx";
-                using (var package = new ExcelPackage(new FileInfo(filePath)))
-                {
-                    var worksheet = package.Workbook.Worksheets[0]; // Assuming first worksheet
-                    // Update cell value
-                    worksheet.Cells["B1"].Value = kitName;
-                    // Set column width to a specific value (e.g., 20)
-                    worksheet.Column(2).Width = 51; // Column B
-                    // Wrap text within the cell
-                    worksheet.Cells["B1"].Style.WrapText = true;
-                    // Print the entire worksheet
-                    worksheet.PrinterSettings.FitToPage = true; // Fit to a single page
-                    worksheet.PrinterSettings.Orientation = eOrientation.Landscape; // Set to eOrientation.Portrait if needed
-                    // Print the worksheet to the default printer
-                    //worksheet.PrintOut();
-                    // Save the changes to the Excel file
-                    package.Save();
-                    MessageBox.Show("Data Updated and Printed");
-                }
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message);
-            }
-        }
+    
         private void EXCELinserter(string kitName)
         {
             try
@@ -1269,95 +1241,6 @@ namespace WH_Panel
             {
                 MessageBox.Show("warehouses is null !");
             }
-            //string selection = string.Empty;
-            //if (w.IPN.StartsWith("C100") || w.IPN.StartsWith("A00"))
-            //{
-            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\LEADER-TECH\\LEADER-TECH_STOCK.xlsm";
-            //}
-            //else if (w.IPN.StartsWith("NET"))
-            //{
-            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm";
-            //}
-            //else if (w.IPN.StartsWith("VAY"))
-            //{
-            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYYAR\\VAYYAR_stock.xlsm";
-            //}
-            //else if (w.IPN.StartsWith("VAL"))
-            //{
-            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm";
-            //}
-            //else if (w.IPN.StartsWith("ROB"))
-            //{
-            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_STOCK.xlsm";
-            //}
-            //else if (w.IPN.StartsWith("ENE"))
-            //{
-            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_STOCK.xlsm";
-            //}
-            //else if (w.IPN.StartsWith("DGT"))
-            //{
-            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_STOCK.xlsm";
-            //}
-            //else if (w.IPN.StartsWith("HEP"))
-            //{
-            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_STOCK.xlsm";
-            //}
-            //else if (w.IPN.StartsWith("EPS"))
-            //{
-            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_STOCK.xlsm";
-            //}
-            //else if (w.IPN.StartsWith("SOS"))
-            //{
-            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_STOCK.xlsm";
-            //}
-            //else if (w.IPN.StartsWith("ARN"))
-            //{
-            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_STOCK.xlsm";
-            //}
-            //else if (w.IPN.StartsWith("SON"))
-            //{
-            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_STOCK.xlsm";
-            //}
-            //else if (w.IPN.StartsWith("ASO"))
-            //{
-            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_STOCK.xlsm";
-            //}
-            //else if (w.IPN.StartsWith("UTR"))
-            //{
-            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_STOCK.xlsm";
-            //}
-            //else if (w.IPN.StartsWith("BAN"))
-            //{
-            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_STOCK.xlsm";
-            //}
-            //else if (w.IPN.StartsWith("SHT"))
-            //{
-            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_STOCK.xlsm";
-            //}
-            //else if (w.IPN.StartsWith("GNG"))
-            //{
-            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\GASNGO\\GASNGO_STOCK.xlsm";
-            //}
-            //else if (w.IPN.StartsWith("QNT"))
-            //{
-            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\QUANTUM-MACHINES\\QUANTUM-MACHINES_STOCK.xlsm";
-            //}
-            //else if (w.IPN.StartsWith("RPO"))
-            //{
-            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\RP-OPTICAL\\RP-OPTICAL_STOCK.xlsm";
-            //}
-            //else if (w.IPN.StartsWith("RBM"))
-            //{
-            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTEAM\\ROBOTEAM_STOCK.xlsm";
-            //}
-            //else if (w.IPN.StartsWith("CIS"))
-            //{
-            //    selection = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_STOCK.xlsm";
-            //}
-            //else
-            //{
-            //    selection = string.Empty;
-            //}
             return selection;
         }
         private void DataInserter(string fp, string thesheetName, WHitem wHitem)
@@ -1426,12 +1309,8 @@ namespace WH_Panel
                 itemToPrint.UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
             }
             printSticker(itemToPrint);
-            //printStickerCopy(itemToPrint);
         }
-        private void printStickerCopy(WHitem itToPrint)
-        {
-            //MessageBox.Show("Test");
-        }
+       
         private void button5_Click(object sender, EventArgs e)
         {
             ReloadLogic();
@@ -1504,12 +1383,6 @@ namespace WH_Panel
                 string searchbyMFPN = string.Empty;
                 if (textBox13.Text.Contains("-") == true && textBox13.Text.Length > 6)
                 {
-                    //string[] theSplit = textBox13.Text.ToString().Split("-");
-                    ////if (theSplit[0].Length == 3 || theSplit[0].Length >= 2 || textBox13.Text.Length > 5)
-                    //if (theSplit[0].Length >= 3)
-                    //{
-                    //    searchbyMFPN = theSplit[1];
-                    //}
                     string[] theSplit = textBox13.Text.Split("-");
                     if (theSplit.Length > 1)
                     {
@@ -1646,14 +1519,8 @@ namespace WH_Panel
                         }
                     }
                 }
-
-
-
                 string backgroundImageUrl = "eleBackGND.png";
-
-
-                Console.WriteLine("Background Image Path: " + backgroundImageUrl);
-
+                //Console.WriteLine("Background Image Path: " + backgroundImageUrl);
                 string altText = "WH image";
 
                 for (int i = 0; i < 3; i++)
@@ -1676,8 +1543,6 @@ namespace WH_Panel
                     writer.WriteLine("</tr>");
                     writer.WriteLine("</table>");
                 }
-
-
             }
             // Open the file in default browser
             var p = new Process();
