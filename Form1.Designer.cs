@@ -405,7 +405,6 @@ namespace WH_Panel
             groupBox11.ResumeLayout(false);
             ResumeLayout(false);
         }
-
         #endregion
         private GroupBox groupBox1;
         private FlowLayoutPanel flowLayoutPanel1;

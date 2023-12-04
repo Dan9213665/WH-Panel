@@ -12,7 +12,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
 namespace WH_Panel
 {
     public partial class FrmWHStockStatusList : Form
@@ -22,30 +21,22 @@ namespace WH_Panel
             InitializeComponent();
         }
         List<ClientWarehouse> warehouses { get; set; }
-
         public List<WHitem> stockItems =new List<WHitem>();
         ClientWarehouse selectedWH { get; set; }
         public void InitializeGlobalWarehouses(List<ClientWarehouse> warehousesFromTheMain)
         {
             warehouses = warehousesFromTheMain;
-
             label2.Text = "Loaded warehouses : " + warehouses.Count.ToString();
         }
         private void button1_Click(object sender, EventArgs e)
         {
             if (textBox1.Lines.Length > 0)
             {
-
-
                 //MessageBox.Show(textBox1.Lines.Length.ToString());
-
                 string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
                 //ExportToHTML(dataGridView1, "\\\\dbr1\\Data\\WareHouse\\2023\\WHsearcher\\"+ _fileTimeStamp+"_"+projectName.Substring(0, projectName.Length - 5) + ".html");
                 //ExportToHTML20(dataGridView1, "\\\\dbr1\\Data\\WareHouse\\2023\\WHsearcher\\" + _fileTimeStamp + "_" + projectName.Substring(0, projectName.Length - 5) + ".html");
-
                 StockViewDataLoader(selectedWH.clStockFile, "STOCK");
-
-
                 //GenerateHTML();
                 GenerateFilteredReport();
             }
@@ -55,26 +46,20 @@ namespace WH_Panel
                 textBox1.Focus();
             }
         }
-
-
         private void GenerateFilteredReport()
         {
+            //stockItems.OrderBy(item => item.IPN);
             // Assuming textBox1.Lines contains the filter values
             string[] filterValues = textBox1.Lines.Select(line => line.Trim()).Where(line => !string.IsNullOrWhiteSpace(line)).ToArray();
-
             // Assuming stockItems is your list of WHitem
             var groupedByIPN = stockItems
                 .Where(item => filterValues.Contains(item.IPN))
-                .GroupBy(item => item.IPN)
+                .GroupBy(item => item.IPN).OrderBy(item => item.Key)
             .ToList();
-
-            groupedByIPN.OrderBy(item => item.Key);
+            //groupedByIPN.OrderBy(item => item.Key);
             // Generate and display the HTML report using the grouped list
             GenerateHTMLReport(groupedByIPN);
         }
-
-
-
        //private void GenerateHTMLReport(List<WHitem> items)
          private void GenerateHTMLReport(List<IGrouping<string?, WHitem>> groupedByIPN)
         {
@@ -87,9 +72,7 @@ namespace WH_Panel
                 writer.WriteLine("<title>Listed items to search for</title>");
                 writer.WriteLine("</head>");
                 // Assuming this is part of your HTML generation
-                
                 writer.WriteLine("<button onclick='toggleDisplay()'>FILTER for PRINTOUT</button>");
-
                 writer.WriteLine("<script>");
                 writer.WriteLine("var filterOn = false;"); // Variable to track filtering state
                 writer.WriteLine("function toggleDisplay() {");
@@ -101,17 +84,10 @@ namespace WH_Panel
                 writer.WriteLine("  }");
                 writer.WriteLine("}");
                 writer.WriteLine("</script>");
-
-
-
                 foreach (var group in groupedByIPN)
                 {
                     //writer.WriteLine("<h2>IPN: " + group.Key + "</h2>");
-
-                   
-
                     writer.WriteLine("<table border='1'>");
-
                     // Table headers
                     writer.WriteLine("<tr>");
                     writer.WriteLine("<th>IPN</th>");
@@ -123,10 +99,7 @@ namespace WH_Panel
                     writer.WriteLine("<th>ReelBagTrayStick</th>");
                     writer.WriteLine("<th>SourceRequester</th>");
                     writer.WriteLine("</tr>");
-
                     writer.WriteLine("<h2>" + group.Key + " - Warehouse Balance: " + group.Sum(item => item.Stock) + "</h2>");
-
-   
                     foreach (var item in group)
                     {
                         writer.WriteLine("<tr>");
@@ -134,11 +107,9 @@ namespace WH_Panel
                         writer.WriteLine("<td style='text-align: center;'>" + item.Manufacturer + "</td>");
                         writer.WriteLine("<td style='text-align: center;'>" + item.MFPN + "</td>");
                         writer.WriteLine("<td style='text-align: center;'>" + item.Description + "</td>");
-
-                        // Color the background of the stock cell based on the condition
                         if (item.Stock > 0 && !group.Any(otherItem => otherItem.Stock == -item.Stock))
                         {
-                            // Green background for positive stocks without a negative pair
+                            // Green background for positive stocks without a corresponding negative pair
                             writer.WriteLine("<td style='background-color: lightgreen; text-align: center;'>" + item.Stock + "</td>");
                         }
                         else
@@ -146,28 +117,15 @@ namespace WH_Panel
                             // No background color for other cells
                             writer.WriteLine("<td style='text-align: center;'>" + item.Stock + "</td>");
                         }
-
                         writer.WriteLine("<td style='text-align: center;'>" + item.UpdatedOn + "</td>");
                         writer.WriteLine("<td style='text-align: center;'>" + item.ReelBagTrayStick + "</td>");
                         writer.WriteLine("<td style='text-align: center;'>" + item.SourceRequester + "</td>");
                         writer.WriteLine("</tr>");
                     }
-
-
                 }
-
-
-               
-
-          
-
-
-
-
                 writer.WriteLine("</body>");
                 writer.WriteLine("</html>");
             }
-
             var p = new Process();
             p.StartInfo = new ProcessStartInfo(filename)
             {
@@ -175,77 +133,13 @@ namespace WH_Panel
             };
             p.Start();
         }
-
-
-
-
-        //private void textBox1_TextChanged(object sender, EventArgs e)
-        //{
-        //    try
-        //    {
-        //        string[] lines = textBox1.Lines;
-
-        //        // Remove empty lines
-        //        lines = lines.Where(line => !string.IsNullOrWhiteSpace(line)).ToArray();
-
-        //        for (int i = 0; i < lines.Length; i++)
-        //        {
-        //            lines[i] = lines[i].Trim().ToUpper();  // Trim leading and trailing spaces
-        //        }
-
-        //        lines.Order();
-        //        // Set the trimmed lines back to the textBox1
-        //        textBox1.Lines = lines;
-
-        //        int rowCount = lines.Length;
-        //        label1.Text = "Total rows to search for: " + rowCount;
-
-        //        foreach (ClientWarehouse w in warehouses)
-        //        {
-        //            if (textBox1.Lines.Length > 0 && textBox1.Lines[0].StartsWith(w.clPrefix))
-        //            {
-        //                try
-        //                {
-        //                    selectedWH = w;
-        //                    button2.BackgroundImageLayout = ImageLayout.Zoom;
-        //                    button2.BackgroundImage = Image.FromFile(w.clLogo);
-
-        //                }
-        //                catch (Exception ex)
-        //                {
-        //                    // Handle any exceptions that may occur when loading the image
-        //                    // You can log the exception or take appropriate action
-        //                    MessageBox.Show($"Error loading image: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //                }
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Handle the case where an exception occurs (e.g., user deletes everything from the text box)
-        //        MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //    }
-        //}
-        //private void textBox1_TextChanged(object sender, EventArgs e)
-        //{
-        //    try
-        //    {
-        //        ProcessText();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        HandleError(ex.Message);
-        //    }
-        //}
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             try
             {
                 int selectionStart = textBox1.SelectionStart;
                 int selectionLength = textBox1.SelectionLength;
-
                 ProcessText();
-
                 // Restore cursor position
                 textBox1.SelectionStart = selectionStart;
                 textBox1.SelectionLength = selectionLength;
@@ -255,32 +149,23 @@ namespace WH_Panel
                 HandleError(ex.Message);
             }
         }
-
-
         private void ProcessText()
         {
             string[] lines = textBox1.Lines;
-
             // Remove empty lines
             lines = lines.Where(line => !string.IsNullOrWhiteSpace(line)).ToArray();
-
             // Trim leading and trailing spaces and convert to uppercase
             for (int i = 0; i < lines.Length; i++)
             {
                 lines[i] = lines[i].Trim().ToUpper();
             }
-
             Array.Sort(lines);
-
             // Set the trimmed and ordered lines back to the textBox1
             textBox1.Lines = lines;
-
             int rowCount = lines.Length;
             label1.Text = "Total rows to search for: " + rowCount;
-
             LoadImageBasedOnPrefix(lines);
         }
-
         private void LoadImageBasedOnPrefix(string[] lines)
         {
             foreach (ClientWarehouse w in warehouses)
@@ -292,7 +177,6 @@ namespace WH_Panel
                         selectedWH = w;
                         button2.BackgroundImageLayout = ImageLayout.Zoom;
                         button2.BackgroundImage = Image.FromFile(w.clLogo);
-
                         // Optionally, provide feedback to the user about the loaded image
                     }
                     catch (Exception ex)
@@ -302,13 +186,11 @@ namespace WH_Panel
                 }
             }
         }
-
         private void HandleError(string errorMessage)
         {
             // Handle errors, e.g., log them or show a user-friendly message box
             MessageBox.Show(errorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
-
         private void StockViewDataLoader(string fp, string thesheetName)
         {
             stockItems.Clear();
@@ -365,6 +247,5 @@ namespace WH_Panel
                 MessageBox.Show("Error");
             }
         }
-
     }
 }

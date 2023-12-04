@@ -28,7 +28,6 @@ using Label = System.Windows.Forms.Label;
 using Button = System.Windows.Forms.Button;
 using GroupBox = System.Windows.Forms.GroupBox;
 using Application = System.Windows.Forms.Application;
-
 namespace WH_Panel
 {
     public partial class FrmKITShistory : Form
@@ -63,7 +62,6 @@ namespace WH_Panel
                 // Update control colors based on your criteria
                 control.BackColor = Color.LightGray;
                 control.ForeColor = Color.White;
-
                 // Handle Button controls separately
                 if (control is Button button)
                 {
@@ -71,14 +69,12 @@ namespace WH_Panel
                     button.FlatAppearance.BorderColor = Color.DarkGray; // Change border color
                     button.ForeColor = Color.Black;
                 }
-
                 // Handle Button controls separately
                 if (control is GroupBox groupbox)
                 {
                     groupbox.FlatStyle = FlatStyle.Flat; // Set FlatStyle to Flat
                     groupbox.ForeColor = Color.Black;
                 }
-
                 // Handle TextBox controls separately
                 if (control is TextBox textBox)
                 {
@@ -86,7 +82,6 @@ namespace WH_Panel
                     textBox.BackColor = Color.LightGray; // Change background color
                     textBox.ForeColor = Color.Black; // Change text color
                 }
-
                 // Handle Label controls separately
                 if (control is Label label)
                 {
@@ -94,8 +89,6 @@ namespace WH_Panel
                     label.BackColor = Color.Gray; // Change background color
                     label.ForeColor = Color.Black; // Change text color
                 }
-
-
                 // Handle TabControl controls separately
                 if (control is TabControl tabControl)
                 {
@@ -108,7 +101,6 @@ namespace WH_Panel
                         tabPage.ForeColor = Color.Black; // Change TabPage text color
                     }
                 }
-
                 // Handle DataGridView controls separately
                 if (control is DataGridView dataGridView)
                 {
@@ -185,8 +177,6 @@ namespace WH_Panel
         {
             stopWatch.Start();
             label12.BackColor = Color.IndianRed;
-
-
             if (timeSpan == 2)
             {
                 listOfPaths = listOfPathsAggregator(1);
@@ -203,8 +193,6 @@ namespace WH_Panel
             {
                 listOfPaths = listOfPathsAggregator(timeSpan);
             }
-
-
             foreach (string path in listOfPaths)
             {
                 foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
@@ -229,27 +217,19 @@ namespace WH_Panel
             SetColumsOrder();
             stopWatch.Stop();
         }
-
-
         private List<string> listOfPathsAggregator(int numMonths)
         {
             List<string> list = new List<string>();
-
             string main = "\\\\dbr1\\Data\\WareHouse\\";
             DateTime d = DateTime.Now;
-
             string cyear = d.Year.ToString("D4");
             int cmonth = d.Month;
             string currentMonthPath = $"{main}{cyear}\\{cmonth:D2}.{cyear}";
             list.Add(currentMonthPath);
-
             for (int i = 0; i < numMonths; i++)
             {
                 string year = d.Year.ToString("D4");
                 int month = d.Month;
-
-
-
                 if (month == 1) // If it's January, adjust year and month accordingly
                 {
                     year = (d.Year - 1).ToString("D4");
@@ -259,18 +239,13 @@ namespace WH_Panel
                 {
                     month--;
                 }
-
                 string previousMonthPath = $"{main}{year}\\{month:D2}.{year}";
                 list.Add(previousMonthPath);
-
                 d = d.AddMonths(-1); // Move to the previous month
             }
-
             list.Reverse(); // Since we're adding paths in reverse order, reverse the list
-
             return list;
         }
-
         private string CreateCopyOfFile(string filePath)
         {
             string copyFilePath = Path.Combine(Path.GetDirectoryName(filePath), "Copy_" + Path.GetFileName(filePath));
@@ -339,7 +314,6 @@ namespace WH_Panel
                                 int indQty = indDELTA + 2;//reader.GetOrdinal("Qty");
                                 int indCalc = indDELTA + 3;//reader.GetOrdinal("Calc");
                                 int indAlts = indDELTA + 4;
-
                                 int del = 0;
                                 bool delPar = int.TryParse(reader[indDELTA].ToString(), out del);
                                 int qtk = 0;
@@ -451,19 +425,14 @@ namespace WH_Panel
             {
                 DataView dv = UDtable.DefaultView;
                 StringBuilder filterQuery = new StringBuilder();
-
                 if (!string.IsNullOrEmpty(textBox1.Text))
                     filterQuery.Append("[IPN] LIKE '%" + textBox1.Text + "%' AND ");
-
                 if (!string.IsNullOrEmpty(textBox11.Text))
                     filterQuery.Append("[ProjectName] LIKE '%" + textBox11.Text + "%' AND ");
-
                 if (!string.IsNullOrEmpty(textBox2.Text))
                     filterQuery.Append("[MFPN] LIKE '%" + textBox2.Text + "%' AND ");
-
                 if (!string.IsNullOrEmpty(textBox9.Text))
                     filterQuery.Append("[Alts] LIKE '%" + textBox9.Text + "%' AND ");
-
                 //if (!string.IsNullOrEmpty(textBox3.Text))
                 //    filterQuery.Append("[Description] LIKE '%" + textBox3.Text + "%' AND ");
                 if (!string.IsNullOrEmpty(textBox3.Text))
@@ -483,7 +452,6 @@ namespace WH_Panel
                 {
                     dv.RowFilter = string.Empty; // No filter applied
                 }
-
                 dataGridView1.DataSource = dv;
                 SetColumsOrder();
                 ColorTheDelta(dataGridView1);
@@ -493,8 +461,6 @@ namespace WH_Panel
                 MessageBox.Show("Incorrect search pattern, remove invalid character and try again !\nError: " + ex.Message, "Search pattern error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
-
-
         private void DataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             // Check if the current column is "DELTA" and the cell is not a header cell.
@@ -504,7 +470,6 @@ namespace WH_Panel
                 if (cell.Value != null && cell.Value != DBNull.Value)
                 {
                     double deltaValue = Convert.ToDouble(cell.Value);
-
                     // Set the background color based on the delta value.
                     if (deltaValue < 0)
                     {
@@ -517,7 +482,6 @@ namespace WH_Panel
                 }
             }
         }
-
         private void ColorTheDelta(DataGridView dw)
         {
             // This method can be used to initially color the cells.
@@ -528,7 +492,6 @@ namespace WH_Panel
                 if (cell.Value != null && cell.Value != DBNull.Value)
                 {
                     double deltaValue = Convert.ToDouble(cell.Value);
-
                     // Set the background color based on the delta value.
                     if (deltaValue < 0)
                     {
@@ -541,7 +504,6 @@ namespace WH_Panel
                 }
             }
         }
-
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             label1.BackColor = Color.IndianRed;
@@ -794,7 +756,6 @@ namespace WH_Panel
         {
             txtbColorWhiteOnLeave(sender);
         }
-
         private void button2_Click(object sender, EventArgs e)
         {
             stopWatch.Reset();
@@ -803,7 +764,6 @@ namespace WH_Panel
             SetColumsOrder();
             textBox1.Focus();
         }
-
         private void button3_Click(object sender, EventArgs e)
         {
             stopWatch.Reset();
@@ -812,38 +772,30 @@ namespace WH_Panel
             SetColumsOrder();
             textBox1.Focus();
         }
-
-
         private void textBox11_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
         }
-
         private void textBox11_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(sender);
         }
-
         private void textBox12_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
         }
-
         private void textBox13_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
         }
-
         private void textBox12_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(sender);
         }
-
         private void textBox13_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(sender);
         }
-
         private void textBox13_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -851,7 +803,6 @@ namespace WH_Panel
                 string inputStr = textBox13.Text;
                 string startStr = comboBox1.Text.ToString();
                 string endStr = comboBox2.Text.ToString();
-
                 int startIndex = inputStr.IndexOf(startStr);
                 if (startIndex != -1)
                 {
@@ -865,21 +816,17 @@ namespace WH_Panel
                         textBox2_KeyDown(sender, e);
                     }
                 }
-
             }
         }
-
         private void textBox13_Click(object sender, EventArgs e)
         {
             textBox13.Clear();
         }
-
         private void textBox12_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
                 string searchbyMFPN = string.Empty;
-
                 if (textBox12.Text.Contains("-") == true && textBox12.Text.Length > 6)
                 {
                     //string[] theSplit = textBox13.Text.ToString().Split("-");
@@ -887,7 +834,6 @@ namespace WH_Panel
                     //if (theSplit[0].Length >= 3)
                     //{
                     //    searchbyMFPN = theSplit[1];
-
                     //}
                     string[] theSplit = textBox12.Text.Split("-");
                     if (theSplit.Length > 1)
@@ -898,23 +844,19 @@ namespace WH_Panel
                     {
                         searchbyMFPN = textBox12.Text;
                     }
-
                     textBox2.Text = searchbyMFPN;
                 }
                 else
                 {
-
                 }
                 textBox2.Focus();
                 textBox2_KeyDown(sender, e);
             }
         }
-
         private void textBox12_Click(object sender, EventArgs e)
         {
             textBox12.Clear();
         }
-
         private void dataGridView1_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -942,7 +884,6 @@ namespace WH_Panel
                             {
                                 // Check if Form1 is open
                                 Form1 form1 = Application.OpenForms.OfType<Form1>().FirstOrDefault();
-
                                 if (form1 != null)
                                 {
                                     FrmBOM frmBOM = new FrmBOM();
@@ -970,18 +911,14 @@ namespace WH_Panel
                 //MessageBox.Show("Test");
             }
         }
-
         private void button4_Click(object sender, EventArgs e)
         {
             GenerateHTMLfrmKIThistory();
         }
-
         private void GenerateHTMLfrmKIThistory()
         {
             string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
             string filename = @"\\dbr1\Data\WareHouse\2023\WHsearcher\" + fileTimeStamp + "_" + ".html";
-
-
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.WriteLine("<!DOCTYPE html>");
@@ -1013,9 +950,6 @@ namespace WH_Panel
                 writer.WriteLine("text-align: center;");
                 writer.WriteLine("}");
                 writer.WriteLine("</style>");
-
-
-
                 writer.WriteLine("<script>");
                 writer.WriteLine("function sortTable(n) {");
                 writer.WriteLine("var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;");
@@ -1062,12 +996,10 @@ namespace WH_Panel
                 writer.WriteLine("}");
                 writer.WriteLine("}");
                 writer.WriteLine("</script>");
-
                 writer.WriteLine("</head>");
                 writer.WriteLine("<body>");
                 writer.WriteLine("<table>");
                 writer.WriteLine("<tr>");
-
                 // Add header from DataGridView with specified column order
                 writer.WriteLine("<th onclick='sortTable(0)'>" + dataGridView1.Columns["DateOfCreation"].HeaderText + "</th>");
                 writer.WriteLine("<th onclick='sortTable(1)'>" + dataGridView1.Columns["ProjectName"].HeaderText + "</th>");
@@ -1079,21 +1011,15 @@ namespace WH_Panel
                 writer.WriteLine("<th onclick='sortTable(7)'>" + dataGridView1.Columns["QtyPerUnit"].HeaderText + "</th>");
                 writer.WriteLine("<th onclick='sortTable(8)'>" + dataGridView1.Columns["Calc"].HeaderText + "</th>");
                 writer.WriteLine("<th onclick='sortTable(9)'>" + dataGridView1.Columns["Alts"].HeaderText + "</th>");
-
                 writer.WriteLine("</tr>");
-
-
                 foreach (DataGridViewRow row in dataGridView1.Rows)
                 {
                     // Check the condition for the Delta column
                     bool isNegativeDelta = Convert.ToInt32(row.Cells["Delta"].Value) < 0;
-
                     // Set the row color based on the Delta value
                     string rowColor = isNegativeDelta ? "indianred" : "#4CAF50";
-
                     // Start the row with the specified color
                     writer.WriteLine("<tr style='background-color:" + rowColor + "'>");
-
                     // Iterate through the cells in the specified column order
                     writer.WriteLine("<td>" + row.Cells["DateOfCreation"].Value.ToString() + "</td>");
                     writer.WriteLine("<td>" + row.Cells["ProjectName"].Value.ToString() + "</td>");
@@ -1105,16 +1031,12 @@ namespace WH_Panel
                     writer.WriteLine("<td>" + row.Cells["QtyPerUnit"].Value.ToString() + "</td>");
                     writer.WriteLine("<td>" + row.Cells["Calc"].Value.ToString() + "</td>");
                     writer.WriteLine("<td>" + row.Cells["Alts"].Value.ToString() + "</td>");
-
                     writer.WriteLine("</tr>");
                 }
-
                 writer.WriteLine("</table>");
                 writer.WriteLine("</body>");
                 writer.WriteLine("</html>");
             }
-
-
             var process = new Process();
             process.StartInfo = new ProcessStartInfo(filename)
             {
@@ -1122,35 +1044,27 @@ namespace WH_Panel
             };
             process.Start();
         }
-
         private void button5_Click(object sender, EventArgs e)
         {
             stopWatch.Reset();
             ResetViews();
-
             // Get the current date
             DateTime currentDate = DateTime.Now;
-
             // Set the reference date to May 2022
             DateTime referenceDate = new DateTime(2022, 9, 1);
-
             // Calculate the difference in months
             int numMonths = CalculateMonthsDifference(referenceDate, currentDate);
-
             // Pass the number of months to the function
             //listOfPathsAggregator(numMonths);
             //MessageBox.Show(numMonths.ToString());
             //startUpLogic(numMonths);
-
             // Display a YES/NO question to the user
             DialogResult result = MessageBox.Show($"Are you sure you want to load the last {numMonths} months passed since 2022.09 ?", "EXTREMELY LONG LOADING TIMES WARNING !!!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-
             // Check the user's response
             if (result == DialogResult.Yes)
             {
                 // User clicked YES, proceed with loading numMonths
                 //.Show(numMonths.ToString());
-
                 // Assuming startUpLogic is a method that takes numMonths as a parameter
                 startUpLogic(numMonths);
                 SetColumsOrder();
@@ -1161,8 +1075,6 @@ namespace WH_Panel
                 // User clicked NO, handle accordingly
                 //MessageBox.Show("Operation canceled by user.");
             }
-
-
         }
         static int CalculateMonthsDifference(DateTime startDate, DateTime endDate)
         {

@@ -17,26 +17,20 @@ namespace WH_Panel
             DateTime fileModifiedDate = File.GetLastWriteTime(@"ImperiumTabulaPrincipalis.exe");
             this.Text = "Imperium Tabula Principalis UPDATED " + fileModifiedDate.ToString();
         }
-
         //public List<ClientWarehouse> warehouses {  get; set; }
         public List<ClientWarehouse> PopulateWarehouses()
         {
             string directoryPath = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS";
-
             List<ClientWarehouse> warehouses = new List<ClientWarehouse>();
-
             // Get all subdirectories under the specified directory
             string[] subDirectories = Directory.GetDirectories(directoryPath);
-
             foreach (string subDir in subDirectories)
             {
                 string clName = new DirectoryInfo(subDir).Name;
                 string clPrefix = GetPrefixFromFile(Path.Combine(subDir, "prefix.txt"));
-
                 string clAvlFile = Directory.GetFiles(subDir, "*_AVL.XLSM").FirstOrDefault();
                 string clStockFile = Directory.GetFiles(subDir, "*_STOCK.XLSM").FirstOrDefault();
                 string clLogoFile = Directory.GetFiles(subDir, "logo.png").FirstOrDefault();
-
                 if (!string.IsNullOrEmpty(clAvlFile) && !string.IsNullOrEmpty(clStockFile))
                 {
                     ClientWarehouse warehouse = new ClientWarehouse
@@ -47,14 +41,11 @@ namespace WH_Panel
                         clStockFile = clStockFile,
                         clLogo = clLogoFile
                     };
-
                     warehouses.Add(warehouse);
                 }
             }
-
             return warehouses;
         }
-
         private string GetPrefixFromFile(string prefixFilePath)
         {
             if (File.Exists(prefixFilePath))
@@ -68,21 +59,16 @@ namespace WH_Panel
                     // Handle any exceptions that may occur while reading the prefix file
                 }
             }
-
             // Return a default value if the prefix file is missing or invalid
             return string.Empty;
         }
-
-
         private void button14_Click(object sender, EventArgs e)
         {
-
             FrmClientAgnosticWH cl = new FrmClientAgnosticWH();
             //List<ClientWarehouse> warehouses = InitializeWarehouses();
             List<ClientWarehouse> warehouses = PopulateWarehouses();
             cl.InitializeGlobalWarehouses(warehouses);
             cl.Show();
-
         }
         private void button3_Click(object sender, EventArgs e)
         {
@@ -113,7 +99,6 @@ namespace WH_Panel
             excel.StartInfo.Arguments = thePathToFile;
             excel.Start();
         }
-
         private void AuthorizedExcelFileOpening(string fp)
         {
             if (Environment.UserName == "lgt")
@@ -125,13 +110,11 @@ namespace WH_Panel
                 MessageBox.Show("Unauthorized ! Access denied !", "Unauthorized ! Access denied !", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
         }
-
         private void btnWorkProgramm_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\\Data\\DocumentsForProduction\\WORK_PROGRAM.xlsm";
             openWHexcelDB(fp);
         }
-
         private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             this.WindowState = FormWindowState.Normal;
@@ -140,7 +123,6 @@ namespace WH_Panel
         {
             this.WindowState = FormWindowState.Normal;
         }
-
         private void button1_Click_2(object sender, EventArgs e)
         {
             frmkitLabelPrint frmkit = new frmkitLabelPrint();
@@ -153,8 +135,6 @@ namespace WH_Panel
         }
         private FrmUberSearch openUberSearchForm = null;
         private FrmUberSearch frmUberSearch = null;
-
-
         private FrmKITShistory openKITShistoryForm = null;
         private void button5_Click(object sender, EventArgs e)
         {
@@ -183,28 +163,22 @@ namespace WH_Panel
             FrmPackingSlipShip ps = new FrmPackingSlipShip();
             ps.Show();
         }
-
         private void button7_Click_1(object sender, EventArgs e)
         {
             FrmFinishedGoodsLog ff = new FrmFinishedGoodsLog();
             ff.Show();
         }
-
-
-
         private void button6_Click_1(object sender, EventArgs e)
         {
             FrmExcelFormatter fr = new FrmExcelFormatter();
             fr.Show();
             fr.Focus();
         }
-
         private void button9_Click_1(object sender, EventArgs e)
         {
             FrmQRPrint fq = new FrmQRPrint();
             fq.Show();
         }
-
         private void button10_Click_1(object sender, EventArgs e)
         {
             FrmLinkSimulator frm = new FrmLinkSimulator();
@@ -225,9 +199,6 @@ namespace WH_Panel
                 UseShellExecute = true
             });
         }
-
-
-
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             //// Close any open file streams
@@ -236,7 +207,6 @@ namespace WH_Panel
             //    fileStream.Close();
             //    fileStream.Dispose();
             //}
-
             //// Close any open database connections
             //if (dbConnection != null)
             //{
@@ -244,7 +214,6 @@ namespace WH_Panel
             //    dbConnection.Dispose();
             //}
         }
-
         private void button12_Click(object sender, EventArgs e)
         {
             FrmWHStockStatusList w = new FrmWHStockStatusList();

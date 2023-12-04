@@ -6,7 +6,6 @@
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
-
         /// <summary>
         /// Clean up any resources being used.
         /// </summary>
@@ -19,9 +18,7 @@
             }
             base.Dispose(disposing);
         }
-
         #region Windows Form Designer generated code
-
         /// <summary>
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
@@ -244,9 +241,7 @@
             tableLayoutPanel3.PerformLayout();
             ResumeLayout(false);
         }
-
         #endregion
-
         private GroupBox groupBox1;
         private TableLayoutPanel tableLayoutPanel1;
         private GroupBox groupBox2;

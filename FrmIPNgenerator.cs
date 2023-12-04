@@ -17,12 +17,10 @@ using ComboBox = System.Windows.Forms.ComboBox;
 using GroupBox = System.Windows.Forms.GroupBox;
 using Label = System.Windows.Forms.Label;
 using TextBox = System.Windows.Forms.TextBox;
-
 namespace WH_Panel
 {
     public partial class FrmIPNgenerator : Form
     {
-
         public List<WHitem> avlItemsFromTheMainForm = new List<WHitem>();
         List<string> typesNamesList = new List<string> { "CAP", "RES", "IND", "OSC", "TRN", "DID", "PWR", "CON", "ICT", "PCB" };
         List<string> manufacturersList = new List<string> { "SAMTEC",
@@ -428,9 +426,7 @@ namespace WH_Panel
 "NEC Electronics America",
 "AMPENOL",
 };
-
         public string _clientPrefix = string.Empty;
-
         //public List<WHitem> avlItems = new List<WHitem>();
         public string avlROBOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_AVL.xlsm";
         public FrmIPNgenerator(List<WHitem> avlItems, string clientPrefix)
@@ -440,8 +436,6 @@ namespace WH_Panel
             InitializeComponent();
             StartUpLogic();
             UpdateControlColors(this);
-
-
             //DataLoaderAVL(avlROBOTRON, "AVL");
         }
         private void UpdateControlColors(Control parentControl)
@@ -451,7 +445,6 @@ namespace WH_Panel
                 // Update control colors based on your criteria
                 control.BackColor = Color.LightGray;
                 control.ForeColor = Color.White;
-
                 // Handle Button controls separately
                 if (control is Button button)
                 {
@@ -459,14 +452,12 @@ namespace WH_Panel
                     button.FlatAppearance.BorderColor = Color.DarkGray; // Change border color
                     button.ForeColor = Color.Black;
                 }
-
                 // Handle Button controls separately
                 if (control is GroupBox groupbox)
                 {
                     groupbox.FlatStyle = FlatStyle.Flat; // Set FlatStyle to Flat
                     groupbox.ForeColor = Color.Black;
                 }
-
                 // Handle TextBox controls separately
                 if (control is TextBox textBox)
                 {
@@ -474,7 +465,6 @@ namespace WH_Panel
                     textBox.BackColor = Color.LightGray; // Change background color
                     textBox.ForeColor = Color.Black; // Change text color
                 }
-
                 // Handle Label controls separately
                 if (control is Label label)
                 {
@@ -482,8 +472,6 @@ namespace WH_Panel
                     label.BackColor = Color.Gray; // Change background color
                     label.ForeColor = Color.Black; // Change text color
                 }
-
-
                 // Handle TabControl controls separately
                 if (control is TabControl tabControl)
                 {
@@ -496,7 +484,6 @@ namespace WH_Panel
                         tabPage.ForeColor = Color.Black; // Change TabPage text color
                     }
                 }
-
                 // Handle DataGridView controls separately
                 if (control is DataGridView dataGridView)
                 {
@@ -546,47 +533,33 @@ namespace WH_Panel
             .Distinct()
             .OrderBy(manufacturer => manufacturer)
             .ToList();
-
             typesNamesList = typesNamesList.OrderBy(typeName => typeName).ToList();
-
             comboBox1.Items.Clear();
             comboBox1.Items.AddRange(typesNamesList.ToArray());
-
             List<string> orderedmanList = manufacturersList.OrderBy(manufacturer => manufacturer).ToList();
             comboBox2.Items.Clear();
             comboBox2.Items.AddRange(orderedmanList.ToArray());
         }
-
-
-
         private void IPNstringConstructor()
         {
             textBox3.Text = string.Empty;
             string typeOfTheIem = comboBox1.SelectedItem.ToString();
-
-
             try
             {
-
-
                 //Sample selected type
                 string selectedType = comboBox1.SelectedItem.ToString(); // Replace with your actual ComboBox logic
-
                 // Filter WHitems by the selected type
                 var filteredItems = avlItemsFromTheMainForm
                     .Where(item => item.IPN.StartsWith($"ROB_{selectedType}-"))
                     .ToList();
-
                 // Extract numbers from the filtered WHitems
                 var numbers = filteredItems
                     .Select(item => int.Parse(item.IPN.Split('-')[1]))
                     .ToList();
-
                 // Find the lowest available number
                 int lowestAvailableNumber = Enumerable.Range(1, 9999)
                     .Except(numbers)
                     .Min();
-
                 // Display the result in textbox2
                 textBox1.Text = $"{lowestAvailableNumber:D4}";
             }
@@ -600,12 +573,10 @@ namespace WH_Panel
             textBox3.Text = _clientPrefix + "_" + typeOfTheIem + "-" + numericVal;
             textBox3.Update();
         }
-
         private void comboBox1_SelectedIndexChanged_1(object sender, EventArgs e)
         {
             IPNstringConstructor();
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
             //WHitem itemToAddToAvl = new WHitem();
@@ -613,10 +584,7 @@ namespace WH_Panel
             //itemToAddToAvl.Manufacturer = comboBox2.SelectedItem.ToString();
             //itemToAddToAvl.MFPN = textBox2.Text.ToString();
             //itemToAddToAvl.Description = richTextBox1.Text.ToString();
-
-
             //DataInserter(avlROBOTRON, "AVL", itemToAddToAvl);
-
             //        if (!string.IsNullOrEmpty(textBox3.Text) &&
             //comboBox2.SelectedItem != null &&
             //!string.IsNullOrEmpty(textBox2.Text) &&
@@ -627,7 +595,6 @@ namespace WH_Panel
             //            itemToAddToAvl.Manufacturer = comboBox2.SelectedItem.ToString();
             //            itemToAddToAvl.MFPN = textBox2.Text.ToString();
             //            itemToAddToAvl.Description = richTextBox1.Text.ToString();
-
             //            DataInserter(avlROBOTRON, "AVL", itemToAddToAvl);
             //            this.Dispose();
             //            this.Close();
@@ -636,7 +603,6 @@ namespace WH_Panel
             //        {
             //            MessageBox.Show("Please populate all the required fields before proceeding.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             //        }
-
             if (!string.IsNullOrEmpty(textBox3.Text) &&
     comboBox2.SelectedItem != null &&
     !string.IsNullOrEmpty(textBox2.Text) &&
@@ -647,7 +613,6 @@ namespace WH_Panel
                 itemToAddToAvl.Manufacturer = comboBox2.SelectedItem.ToString();
                 itemToAddToAvl.MFPN = textBox2.Text.ToString();
                 itemToAddToAvl.Description = richTextBox1.Text.ToString();
-
                 DataInserter(avlROBOTRON, "AVL", itemToAddToAvl);
                 //this.Dispose();
                 this.Close();
@@ -670,14 +635,11 @@ namespace WH_Panel
                 {
                     richTextBox1.Focus();
                 }
-
                 MessageBox.Show("Please populate all the required fields before proceeding.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
         }
         private void DataInserter(string fp, string thesheetName, WHitem wHitem)
         {
-
             try
             {
                 string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
@@ -688,7 +650,6 @@ namespace WH_Panel
                     command.ExecuteNonQuery();
                     conn.Close();
                 }
-
                 MessageBox.Show(wHitem.IPN.ToString() + " added to AVL");
             }
             catch (IOException)
@@ -696,11 +657,9 @@ namespace WH_Panel
                 MessageBox.Show("Error");
             }
         }
-
         private void textBox1_KeyUp(object sender, KeyEventArgs e)
         {
             IPNstringConstructor();
         }
-
     }
 }

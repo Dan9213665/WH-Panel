@@ -25,7 +25,6 @@ using System;
 using System.IO;
 using System.Windows.Forms;
 using System.Drawing.Printing;
-
 namespace WH_Panel
 {
     public partial class frmkitLabelPrint : Form
@@ -79,26 +78,20 @@ namespace WH_Panel
         //    try
         //    {
         //        string filePath = @"\\dbr1\Data\WareHouse\KitLabel.xlsm";
-
         //        using (var package = new ExcelPackage(new FileInfo(filePath)))
         //        {
         //            ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-
         //            worksheet.Cells["B1"].Value = kitName;
         //            worksheet.Column(1).Width = 23;
         //            worksheet.Column(2).Width = 56;
         //            //worksheet.Cells[3, 2].Style.WrapText = true;
         //            //worksheet.Cells[6, 2].Style.WrapText = true;
         //            //worksheet.Cells[9, 2].Style.WrapText = true;
-
         //            // Set print area
         //            var printArea = worksheet.Cells["A1:B13"];
-
         //            printArea.AutoFitColumns();
         //            //printArea.PrinterSettings.RepeatRows = worksheet.Cells["1:1"];
-
         //            package.Save();
-
         //            // Printing functionality
         //            using (var printDocument = new PrintDocument())
         //            {
@@ -141,6 +134,5 @@ namespace WH_Panel
                 MessageBox.Show(e.Message);
             }
         }
-
     }
 }

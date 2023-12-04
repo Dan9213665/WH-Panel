@@ -131,12 +131,9 @@ namespace WH_Panel
         //                }
         //                string firstSheetName = excelFIleName;
         //                string cleanedUpSheetName = "PACKING SLIP";
-
         //                //string firstSheetName = dbSchema.Rows[0]["TABLE_NAME"].ToString();
         //                //firstSheetName = firstSheetName.Replace("$", ""); // Clean up the sheet name
-
         //                ////string cleanedUpSheetName = firstSheetName.Substring(1).Substring(0, firstSheetName.Length - 3);
-
         //                OleDbCommand command = new OleDbCommand("Select * from [" + cleanedUpSheetName + "$]", conn);
         //                //OleDbCommand command = new OleDbCommand("Select * from [Sheet1$]", conn);
         //                OleDbDataReader reader = command.ExecuteReader();
@@ -195,7 +192,6 @@ namespace WH_Panel
         //        throw;
         //    }
         //}
-
         private void DataLoader(string fp, string excelFIleName)
         {
             TimeSpan ts = stopWatch.Elapsed;
@@ -212,12 +208,9 @@ namespace WH_Panel
                         {
                             throw new Exception("Error: Could not determine the name of the first worksheet.");
                         }
-
                         string cleanedUpSheetNameWithSpace = "PACKING SLIP";
                         string cleanedUpSheetNameWithUnderscore = "PACKING_SLIP";
-
                         string selectedSheetName = null;
-
                         if (SheetExists(conn, cleanedUpSheetNameWithSpace))
                         {
                             selectedSheetName = cleanedUpSheetNameWithSpace;
@@ -231,11 +224,9 @@ namespace WH_Panel
                             //Console.WriteLine("Neither 'PACKING SLIP' nor 'PACKING_SLIP' sheet found.");
                             return;
                         }
-
                         OleDbCommand command = new OleDbCommand("SELECT * FROM [" + selectedSheetName + "$]", conn);
                         //OleDbCommand command = new OleDbCommand("SELECT * FROM [" + cleanedUpSheetNameWithUnderscore + "$]", conn);
                         OleDbDataReader reader = command.ExecuteReader();
-
                         // Rest of your data processing code...
                         if (reader.HasRows)
                         {
@@ -269,7 +260,6 @@ namespace WH_Panel
                                         // Handle parsing failure, perhaps log an error or set qty to a default value
                                         // For example: qty = 0;
                                     }
-
                                     string _ClientName = excelFIleName.Substring(13);
                                     string thName = _ClientName.Substring(0, _ClientName.Length - 5);
                                     PackingSlipItem abc = new PackingSlipItem
@@ -295,11 +285,8 @@ namespace WH_Panel
                                 {
                                     j++;
                                 }
-
-
                             }
                         }
-
                         conn.Dispose();
                         conn.Close();
                     }
@@ -322,7 +309,6 @@ namespace WH_Panel
                 throw;
             }
         }
-
         private bool SheetExists(OleDbConnection conn, string sheetName)
         {
             DataTable dbSchema = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
@@ -336,8 +322,6 @@ namespace WH_Panel
             }
             return false;
         }
-
-
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             label1.BackColor = Color.IndianRed;
@@ -400,10 +384,8 @@ namespace WH_Panel
             textBox3.Clear();
             lbl.BackColor = Color.LightGreen;
         }
-
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-
         }
     }
 }

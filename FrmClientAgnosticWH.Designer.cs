@@ -883,6 +883,7 @@
             button4.Text = "FIlter Current WH stock ONLY";
             button4.UseVisualStyleBackColor = true;
             button4.Click += button4_Click_1;
+            button4.MouseDown += button4_MouseDown;
             // 
             // button22
             // 

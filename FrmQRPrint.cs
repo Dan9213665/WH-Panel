@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
 namespace WH_Panel
 {
     public partial class FrmQRPrint : Form
@@ -17,10 +16,8 @@ namespace WH_Panel
             InitializeComponent();
             UpdateControlColors(this);
         }
-
         private void button2_Click(object sender, EventArgs e)
         {
-
         }
         private void UpdateControlColors(Control parentControl)
         {
@@ -29,7 +26,6 @@ namespace WH_Panel
                 // Update control colors based on your criteria
                 control.BackColor = Color.Black;
                 control.ForeColor = Color.White;
-
                 // Recursively update controls within containers
                 if (control.Controls.Count > 0)
                 {
@@ -37,8 +33,6 @@ namespace WH_Panel
                 }
             }
         }
-
         // Call the method for each form
-        
     }
 }

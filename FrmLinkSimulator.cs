@@ -19,7 +19,6 @@ using Button = System.Windows.Forms.Button;
 using ComboBox = System.Windows.Forms.ComboBox;
 using Label = System.Windows.Forms.Label;
 using TextBox = System.Windows.Forms.TextBox;
-
 namespace WH_Panel
 {
     public partial class FrmLinkSimulator : Form
@@ -35,18 +34,12 @@ namespace WH_Panel
             //IntitializeWarehouses();
             UpdateControlColors(this);
             BOMs = new List<BOMList>();
-
-
-
         }
         public void InitializeGlobalWarehouses(List<ClientWarehouse> warehousesFromTheMain)
         {
             warehouses = warehousesFromTheMain;
-
-
             // Ordering the warehouses list by clName
             warehouses = warehouses.OrderBy(warehouse => warehouse.clName).ToList();
-
             // Adding clNames to comboBox4
             foreach (ClientWarehouse warehouse in warehouses)
             {
@@ -218,10 +211,8 @@ namespace WH_Panel
 //                }
 //    // Add more entries for each warehouse as needed
 //};
-
 //            // Ordering the warehouses list by clName
 //            warehouses = warehouses.OrderBy(warehouse => warehouse.clName).ToList();
-
 //            // Adding clNames to comboBox of warehouse name
 //            foreach (ClientWarehouse warehouse in warehouses)
 //            {
@@ -230,7 +221,6 @@ namespace WH_Panel
 //        }
         private void InitializeComboBoxes()
         {
-
             // Assuming comboBox1, comboBox2, and comboBox3 are the ComboBoxes in your form
             comboBox1.SelectedIndexChanged += ComboBoxes_SelectedIndexChanged;
             comboBox2.SelectedIndexChanged += ComboBoxes_SelectedIndexChanged;
@@ -238,7 +228,6 @@ namespace WH_Panel
             comboBox4.SelectedIndexChanged += ComboBoxes_SelectedIndexChanged;
             comboBox5.SelectedIndexChanged += ComboBoxes_SelectedIndexChanged;
         }
-
         private void UpdateControlColors(Control parentControl)
         {
             foreach (Control control in parentControl.Controls)
@@ -246,7 +235,6 @@ namespace WH_Panel
                 // Update control colors based on your criteria
                 control.BackColor = Color.LightGray;
                 control.ForeColor = Color.Black;
-
                 // Handle Button controls separately
                 if (control is Button button)
                 {
@@ -254,14 +242,12 @@ namespace WH_Panel
                     button.FlatAppearance.BorderColor = Color.DarkGray; // Change border color
                     button.ForeColor = Color.Black;
                 }
-
                 // Handle Button controls separately
                 if (control is GroupBox groupbox)
                 {
                     groupbox.FlatStyle = FlatStyle.Flat; // Set FlatStyle to Flat
                     groupbox.ForeColor = Color.Black;
                 }
-
                 // Handle TextBox controls separately
                 if (control is TextBox textBox)
                 {
@@ -269,7 +255,6 @@ namespace WH_Panel
                     textBox.BackColor = Color.LightGray; // Change background color
                     textBox.ForeColor = Color.Black; // Change text color
                 }
-
                 // Handle Label controls separately
                 if (control is Label label)
                 {
@@ -277,8 +262,6 @@ namespace WH_Panel
                     label.BackColor = Color.Gray; // Change background color
                     label.ForeColor = Color.Black; // Change text color
                 }
-
-
                 // Handle TabControl controls separately
                 if (control is TabControl tabControl)
                 {
@@ -291,7 +274,6 @@ namespace WH_Panel
                         tabPage.ForeColor = Color.Black; // Change TabPage text color
                     }
                 }
-
                 // Handle DataGridView controls separately
                 if (control is DataGridView dataGridView)
                 {
@@ -334,32 +316,23 @@ namespace WH_Panel
                 }
             }
         }
-
         public class BOMList
         {
             public string Name { get; set; }
             public List<KitHistoryItem> Items { get; set; }
-
             public BOMList(string name)
             {
                 Name = name;
                 Items = new List<KitHistoryItem>();
             }
         }
-
-
-
-
         public List<BOMList> BOMs { get; set; }
-
         public string fileName = string.Empty;
         public string theExcelFilePath = string.Empty;
         public DataTable BOM1Dtable = new DataTable();
-
         private void ComboBoxes_SelectedIndexChanged(object sender, EventArgs e)
         {
             ComboBox selectedComboBox = (ComboBox)sender;
-
             //// Update the GroupBox texts based on the selected items in the ComboBoxes
             //if (selectedComboBox == comboBox1)
             //{
@@ -381,7 +354,6 @@ namespace WH_Panel
             //{
             //    groupBox12.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox12";
             //}
-
             // Update the GroupBox texts based on the selected items in the ComboBoxes
             if (selectedComboBox == comboBox1)
             {
@@ -408,7 +380,6 @@ namespace WH_Panel
                 groupBox12.Text = selectedComboBox.SelectedItem?.ToString() ?? "Select BOM in the combobox above";
                 UpdateLabelBasedOnComboBoxSelection(label5, selectedComboBox);
             }
-
             // Remove the selected item from other ComboBoxes
             foreach (ComboBox comboBox in new[] { comboBox1, comboBox2, comboBox3, comboBox4, comboBox5 }.Where(c => c != selectedComboBox))
             {
@@ -417,17 +388,12 @@ namespace WH_Panel
                     comboBox.SelectedItem = null;
                 }
             }
-
             // Load data based on the selected items in the ComboBoxes
             LoadDataIntoDataGridViews();
         }
-
-
-
         private void UpdateLabelBasedOnComboBoxSelection(Label label, ComboBox selectedComboBox)
         {
             int selectedComboBoxIndex = Array.IndexOf(new[] { comboBox1, comboBox2, comboBox3, comboBox4, comboBox5 }, selectedComboBox);
-
             if (selectedComboBoxIndex >= 0 && selectedComboBoxIndex < BOMs.Count)
             {
                 int totalRows = BOMs[selectedComboBoxIndex].Items.Count;
@@ -436,17 +402,13 @@ namespace WH_Panel
                 label.Text = $"Positive Delta Percentage: {positivePercentage:F2}%";
             }
         }
-
         private void LoadDataIntoDataGridViews()
         {
-
             for (int i = 0; i < 5; i++)
             {
                 //if (i == 3) continue; // Skip the processing for ComboBox4 and DataGridView4
-
                 ComboBox currentComboBox = Controls.Find($"comboBox{i + 1}", true).FirstOrDefault() as ComboBox;
                 DataGridView currentDataGridView = Controls.Find($"dataGridView{i + 1}", true).FirstOrDefault() as DataGridView;
-
                 if (currentComboBox.SelectedItem != null)
                 {
                     int selectedIndex = currentComboBox.SelectedIndex;
@@ -460,24 +422,19 @@ namespace WH_Panel
                 }
             }
         }
-
-
         private void button1_Click(object sender, EventArgs e)
         {
             openFileDialog1.Title = "Select BOM File";
             openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\2023\\" + DateTime.Now.ToString("MM.yyyy");
             openFileDialog1.Filter = "BOM files(*.xlsm) | *.xlsm";
             openFileDialog1.Multiselect = true;
-
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 string[] fileNames = openFileDialog1.FileNames; // Get all selected file names
-
                 foreach (string fileName in fileNames)
                 {
                     string theExcelFilePath = Path.GetFileName(fileName);
                     string Litem = Path.GetFileName(fileName);
-
                     if (IsFileLoaded(theExcelFilePath))
                     {
                         MessageBox.Show("File already loaded!");
@@ -511,32 +468,22 @@ namespace WH_Panel
             }
             return false;
         }
-
         private void DataLoader(string fp, string excelFIleName)
         {
-
-
             BOMList a = new BOMList(excelFIleName);
-
             comboBox1.Items.Add(a.Name);
             comboBox2.Items.Add(a.Name);
             comboBox3.Items.Add(a.Name);
             comboBox4.Items.Add(a.Name);
             comboBox5.Items.Add(a.Name);
             richTextBox1.Text += a.Name + "\n";
-
-
             // Assuming comboBox1, comboBox2, and comboBox3 are the names of your ComboBox controls
-
             // Set the SelectedIndex for each ComboBox based on its own count
             comboBox1.SelectedIndex = comboBox1.Items.Count - 1;
             comboBox2.SelectedIndex = comboBox2.Items.Count - 1;
             comboBox3.SelectedIndex = comboBox3.Items.Count - 1;
             comboBox4.SelectedIndex = comboBox4.Items.Count - 1;
             comboBox5.SelectedIndex = comboBox5.Items.Count - 1;
-
-
-
             try
             {
                 string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=1\"";
@@ -584,15 +531,12 @@ namespace WH_Panel
                                     Calc = reader[indCalc].ToString(),
                                     Alts = reader[indAlts].ToString()
                                 };
-
                                 a.Items.Add(abc);
-
                             }
                         }
                         conn.Dispose();
                         conn.Close();
                         string[] alltheNames = excelFIleName.Split("_");
-
                     }
                     catch (Exception e)
                     {
@@ -624,15 +568,12 @@ namespace WH_Panel
                 }
             }
         }
-
         private void PopulateBOMGridView(int selectedIndex, DataGridView dataGridView)
         {
             //if (dataGridView.Name == "dataGridView4") return; // Skip Populating DataGridView4
-
             dataGridView.DataSource = null;
             dataGridView.Rows.Clear();
             dataGridView.Refresh();
-
             if (selectedIndex >= 0 && selectedIndex < BOMs.Count)
             {
                 DataTable table = new DataTable();
@@ -654,12 +595,9 @@ namespace WH_Panel
             dgw.Columns["Alts"].Visible = false;
             dgw.Columns["MFPN"].Visible = false;
             dgw.Columns["QtyPerUnit"].Visible = false;
-
             dgw.Columns["IPN"].DisplayIndex = 0;
             dgw.Columns["QtyInKit"].DisplayIndex = 1;
             dgw.Columns["Delta"].DisplayIndex = 2;
-
-
             // Set AutoSizeMode for the displayed columns
             foreach (DataGridViewColumn column in dgw.Columns)
             {
@@ -688,21 +626,17 @@ namespace WH_Panel
             // Sorting by Delta column
             dgw.Sort(dgw.Columns["Delta"], ListSortDirection.Ascending);
         }
-
         private void button2_Click(object sender, EventArgs e)
         {
             foreach (ClientWarehouse w in warehouses)
             {
                 if (comboBox6.SelectedItem == w.clName)
                 {
-
                     StockViewDataLoader(w.clStockFile, "STOCK");
                 }
             }
             GenerateHtmlReport(true);
         }
-
-
         private void StockViewDataLoader(string fp, string thesheetName)
         {
             stockItems.Clear();
@@ -758,11 +692,7 @@ namespace WH_Panel
             {
                 MessageBox.Show("Error");
             }
-
-
         }
-
-
         private void GenerateHtmlReport(bool limitOrNot)
         {
             var sumRequiredByIPN = BOMs.SelectMany(bom => bom.Items)
@@ -772,8 +702,6 @@ namespace WH_Panel
                                           IPN = group.Key,
                                           TotalRequired = group.Sum(item => item.Delta)
                                       });
-
-
             var stockData = BOMs.SelectMany(bom => bom.Items)
                    .GroupBy(item => item.IPN)
                    .Select(group => new
@@ -795,15 +723,9 @@ namespace WH_Panel
                                   TotalRequired = sumItem.TotalRequired
                               })
                    .OrderBy(item => item.IPN);
-
-      
-
             string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-
             // Generating the HTML content
-
             // <link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'>
-
             string htmlContent = @"<!DOCTYPE html>
                         <html style='background-color: gray;'>
                         <head>
@@ -828,12 +750,10 @@ namespace WH_Panel
         z-index: 1;
     }
                         </style>
-                    
                      <script>
                          window.onload = function() {
         var headerElement = document.getElementById('myHeader');
         var tableElement = document.getElementById('stockTable');
-
         var headerBottom = headerElement.offsetTop + headerElement.offsetHeight;
         tableElement.style.marginTop = Math.max(headerBottom, headerElement.offsetHeight) + 'px';
     };
@@ -865,14 +785,12 @@ namespace WH_Panel
             }}
         }}
     }}
-
       function filterTable() {{
         var input, filter, table, tr, td, i, txtValue;
         input = document.getElementById('searchInput');
         filter = input.value.toUpperCase();
         table = document.getElementById('stockTable');
         tr = table.getElementsByTagName('tr');
-
         for (i = 0; i < tr.length; i++) {{
             tdIPN = tr[i].getElementsByTagName('td')[0];
             tdMFPN = tr[i].getElementsByTagName('td')[1];
@@ -887,7 +805,6 @@ namespace WH_Panel
             }}
         }}
     }}
-
      function clearFilter() {
     document.getElementById('searchInput').value = '';
     var table = document.getElementById('stockTable');
@@ -897,15 +814,12 @@ namespace WH_Panel
     }
     document.getElementById('searchInput').focus();
 }
-
                     </script>
                         </head>
                         <body>
                         <div style='text-align: center;'>
                             <h2>UPDATED_" + fileTimeStamp+"<br> Multi-BOM simulation for:";
-
             htmlContent += "<br>";
-
             if (limitOrNot)
             {
                 string[] comboBoxItems = new string[] {
@@ -914,7 +828,6 @@ namespace WH_Panel
                                         comboBox3.SelectedItem?.ToString(),
                                         comboBox4.SelectedItem?.ToString(),
                                         comboBox5.SelectedItem?.ToString() };
-
                 foreach (string item in comboBoxItems)
                 {
                     string selectedText = item?.TrimEnd(".xlsm".ToCharArray());
@@ -941,61 +854,45 @@ namespace WH_Panel
             }
             // Continuing the HTML content
             htmlContent += @"</h2>
-         
 <input type='text' id=""searchInput"" placeholder=""Search for IPN or MFPN.."" onkeyup=""filterTable()"" />
-
-
 <button onclick=""clearFilter()"">Clear Filter</button>
                 <table id='stockTable' border='1'>
                 <tr><th onclick='sortTable(0)'>IPN</th><th onclick='sortTable(1)'>MFPN</th><th onclick='sortTable(2)'>Description</th><th onclick='sortTable(3)'>WH Qty</th><th onclick='sortTable(4)'>KITs BALANCE</th><th onclick='sortTable(5)'>DELTA</th></tr>";
-
-
             foreach (var item in stockData)
             {
                 var rowColorClass = item.StockQuantity + item.TotalRequired < 0 ? "lightcoral" : "lightgreen";
                 htmlContent += $"<tr class='{rowColorClass}'><td>{item.IPN}</td><td>{item.MFPN}</td><td>{item.Description}</td><td>{item.StockQuantity}</td><td>{item.TotalRequired}</td><td>{item.StockQuantity + item.TotalRequired}</td></tr>";
             }
             htmlContent += "</table></div></body></html>";
-
             //htmlContent += "<div class='container'><table class='table table-striped'>";
-
             //foreach (var item in stockData)
             //{
             //    var rowColorClass = item.StockQuantity + item.TotalRequired < 0 ? "lightcoral" : "lightgreen";
             //    htmlContent += $"<tr class='{rowColorClass}'><td><a href='#' data-toggle='modal' data-target='#modal-{item.IPN}'>{item.IPN}</a></td><td>{item.MFPN}</td><td>{item.Description}</td><td>{item.StockQuantity}</td><td>{item.TotalRequired}</td><td>{item.StockQuantity + item.TotalRequired}</td></tr>";
-
             //    // Find all the BOMs containing the specific IPN
             //    var relevantBOMs = BOMs.Where(bom => bom.Items.Any(bomItem => bomItem.IPN == item.IPN));
-
             //    // Modal content
             //    htmlContent += $"<div class='modal fade' id='modal-{item.IPN}' tabindex='-1' role='dialog' aria-labelledby='modal-{item.IPN}-label' aria-hidden='true'>";
             //    htmlContent += "<div class='modal-dialog' role='document'><div class='modal-content'>";
             //    htmlContent += "<div class='modal-header'><h5 class='modal-title' id='modal-{item.IPN}-label'>BOMs Information</h5>";
             //    htmlContent += "<button type='button' class='close' data-dismiss='modal' aria-label='Close'>";
             //    htmlContent += "<span aria-hidden='true'>&times;</span></button></div><div class='modal-body'><ul>";
-
             //    foreach (var bom in relevantBOMs)
             //    {
             //        var quantityInBOM = bom.Items.Where(bomItem => bomItem.IPN == item.IPN).Sum(bomItem => bomItem.QtyInKit);
             //        htmlContent += $"<li>{bom.Name} - Quantity in BOM: {quantityInBOM}</li>";
             //    }
-
             //    htmlContent += "</ul></div><div class='modal-footer'>";
             //    htmlContent += "<button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button></div></div></div></div>";
             //}
-
             //htmlContent += "</table></div></body></html>";
-
             //htmlContent += "<div class='container'><table class='table table-striped'>";
-
             //foreach (var item in stockData)
             //{
             //    var rowColorClass = item.StockQuantity + item.TotalRequired < 0 ? "lightcoral" : "lightgreen";
             //    htmlContent += $"<tr class='{rowColorClass}'><td>{item.IPN}</td><td>{item.MFPN}</td><td>{item.Description}</td><td>{item.StockQuantity}</td><td>{item.TotalRequired}</td><td>{item.StockQuantity + item.TotalRequired}</td></tr>";
-
             //    // Find all the BOMs containing the specific IPN
             //    var relevantBOMs = BOMs.Where(bom => bom.Items.Any(bomItem => bomItem.IPN == item.IPN));
-
             //    htmlContent += "<tr><td colspan='6'><ul>";
             //    foreach (var bom in relevantBOMs)
             //    {
@@ -1004,20 +901,12 @@ namespace WH_Panel
             //    }
             //    htmlContent += "</ul></td></tr>";
             //}
-
             //htmlContent += "</table></div></body></html>";
-
-
-
-
-
             string filename = @"\\dbr1\Data\WareHouse\2023\WHsearcher\" + fileTimeStamp + "_BOMs_sim" + ".html";
-
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.Write(htmlContent);
             }
-
             // Opening the HTML file in the default browser
             var process = new Process();
             process.StartInfo = new ProcessStartInfo(filename)
@@ -1026,7 +915,6 @@ namespace WH_Panel
             };
             process.Start();
         }
-
         private void button3_Click(object sender, EventArgs e)
         {
             OptimizeBOMOrder();
@@ -1037,30 +925,25 @@ namespace WH_Panel
             {
                 int maxPositivePercentageIndex = -1;
                 double maxPositivePercentage = 0;
-
                 for (int j = 1; j < BOMs.Count; j++)
                 {
                     int totalRows = BOMs[j].Items.Count;
                     int positiveCount = BOMs[j].Items.Count(item => (item.Delta ?? 0) > 0);
                     double currentPositivePercentage = (double)positiveCount / totalRows;
-
                     if (currentPositivePercentage > maxPositivePercentage)
                     {
                         maxPositivePercentage = currentPositivePercentage;
                         maxPositivePercentageIndex = j;
                     }
                 }
-
                 if (maxPositivePercentageIndex != -1 && maxPositivePercentageIndex != 0)
                 {
                     // Swap the BOMLists in the data grid views
                     BOMList temp = BOMs[0];
                     BOMs[0] = BOMs[maxPositivePercentageIndex];
                     BOMs[maxPositivePercentageIndex] = temp;
-
                     // Reload the data in the respective ComboBoxes
                     ComboBox[] comboBoxes = new ComboBox[] { comboBox1, comboBox2, comboBox3, comboBox4, comboBox5 };
-
                     for (int i = 0; i < Math.Min(BOMs.Count, 5); i++)
                     {
                         comboBoxes[i].SelectedItem = BOMs[i].Name;
@@ -1068,14 +951,12 @@ namespace WH_Panel
                 }
             }
         }
-
         private void button4_Click(object sender, EventArgs e)
         {
             foreach (ClientWarehouse w in warehouses)
             {
                 if (comboBox6.SelectedItem == w.clName)
                 {
-
                     StockViewDataLoader(w.clStockFile, "STOCK");
                 }
             }

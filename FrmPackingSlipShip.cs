@@ -95,7 +95,6 @@ namespace WH_Panel
         {
             stopWatch.Start();
             label12.BackColor = Color.IndianRed;
-
             if (timeSpan == 2)
             {
                 listOfPaths = listOfPathsAggregator(2);
@@ -104,8 +103,6 @@ namespace WH_Panel
             {
                 listOfPaths = listOfPathsAggregator(6);
             }
-
-
             foreach (string path in listOfPaths)
             {
                 foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
@@ -147,15 +144,12 @@ namespace WH_Panel
         private List<string> listOfPathsAggregator(int numMonths)
         {
             List<string> list = new List<string>();
-
             string main = "\\\\dbr1\\Data\\WareHouse\\";
             DateTime d = DateTime.Now;
-
             for (int i = 0; i < numMonths; i++)
             {
                 string year = d.Year.ToString("D4");
                 int month = d.Month;
-
                 if (month == 1) // If it's January, adjust year and month accordingly
                 {
                     year = (d.Year - 1).ToString("D4");
@@ -165,18 +159,13 @@ namespace WH_Panel
                 {
                     //month--;
                 }
-
                 string previousMonthPath = $"{main}{year}\\{month:D2}.{year}";
                 list.Add(previousMonthPath);
-
                 d = d.AddMonths(-1); // Move to the previous month
             }
-
             list.Reverse(); // Since we're adding paths in reverse order, reverse the list
-
             return list;
         }
-
         //public bool IsFileLocked(string strFullFileName)
         //{
         //    bool blnReturn = false;
@@ -251,7 +240,6 @@ namespace WH_Panel
             dgw.Columns["SourceRequester"].Visible = false;
             dgw.AutoResizeColumns();
         }
-
         private void DataLoader(string fp, string excelFIleName)
         {
             TimeSpan ts = stopWatch.Elapsed;
@@ -857,17 +845,14 @@ namespace WH_Panel
                 txtbQty.BackColor = Color.White;
             }
         }
-
         private void button4_Click(object sender, EventArgs e)
         {
-
             stopWatch.Reset();
             ResetViews();
             startUpLogic(6);
             SetColumsOrder(dataGridView1);
             textBox1.Focus();
             button2.Enabled = true;
-
         }
     }
 }

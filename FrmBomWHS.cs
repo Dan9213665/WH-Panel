@@ -18,7 +18,6 @@ using Button = System.Windows.Forms.Button;
 using ComboBox = System.Windows.Forms.ComboBox;
 using GroupBox = System.Windows.Forms.GroupBox;
 using TextBox = System.Windows.Forms.TextBox;
-
 namespace WH_Panel
 {
     public partial class FrmBomWHS : Form
@@ -33,17 +32,14 @@ namespace WH_Panel
         {
             clList = warehousesFromTheMain;
             selectedWHname = selectedWHnameFromTheMainForm;
-
             // Ordering the warehouses list by clName
             clList = clList.OrderBy(warehouse => warehouse.clName).ToList();
-
             // Adding clNames to comboBox4
             foreach (ClientWarehouse warehouse in clList)
             {
                 comboBox1.Items.Add(warehouse.clName);
             }
         }
-
         private void UpdateControlColors(Control parentControl)
         {
             foreach (Control control in parentControl.Controls)
@@ -51,7 +47,6 @@ namespace WH_Panel
                 // Update control colors based on your criteria
                 control.BackColor = Color.LightGray;
                 control.ForeColor = Color.Black;
-
                 // Handle Button controls separately
                 if (control is Button button)
                 {
@@ -59,14 +54,12 @@ namespace WH_Panel
                     button.FlatAppearance.BorderColor = Color.DarkGray; // Change border color
                     button.ForeColor = Color.Black;
                 }
-
                 // Handle Button controls separately
                 if (control is GroupBox groupbox)
                 {
                     groupbox.FlatStyle = FlatStyle.Flat; // Set FlatStyle to Flat
                     groupbox.ForeColor = Color.Black;
                 }
-
                 // Handle TextBox controls separately
                 if (control is TextBox textBox)
                 {
@@ -74,7 +67,6 @@ namespace WH_Panel
                     textBox.BackColor = Color.LightGray; // Change background color
                     textBox.ForeColor = Color.Black; // Change text color
                 }
-
                 // Handle Label controls separately
                 if (control is Label label)
                 {
@@ -82,8 +74,6 @@ namespace WH_Panel
                     label.BackColor = Color.Gray; // Change background color
                     label.ForeColor = Color.Black; // Change text color
                 }
-
-
                 // Handle TabControl controls separately
                 if (control is TabControl tabControl)
                 {
@@ -96,7 +86,6 @@ namespace WH_Panel
                         tabPage.ForeColor = Color.Black; // Change TabPage text color
                     }
                 }
-
                 // Handle DataGridView controls separately
                 if (control is DataGridView dataGridView)
                 {
@@ -139,11 +128,8 @@ namespace WH_Panel
                 }
             }
         }
-
-
         public string avlFile;
         public string stockFile { get; set; }
-
         public string projectName = string.Empty;
         public List<WHitem> avlItems = new List<WHitem>();
         public List<WHitem> stockItems = new List<WHitem>();
@@ -180,7 +166,6 @@ namespace WH_Panel
             //MessageBox.Show(misItemsLST.Count.ToString());
             projectName = fromTheMainBom[0].ProjectName;
             //comboBox1.SelectedItem = warehouseSelectorOnLoad();
-
             comboBox1.Items.Clear();
             foreach (ClientWarehouse cw in clList)
             {
@@ -228,11 +213,9 @@ namespace WH_Panel
                 {
                     selection = clientWH.clName;
                     MasterReload(clientWH.clAvlFile, clientWH.clStockFile);
-
                 }
             return selection;
         }
-
         private void PopulateMissingGridView()
         {
             misItemsDT.Clear();
@@ -254,11 +237,9 @@ namespace WH_Panel
                     //
                 }
             }
-
             SetColumsOrder(dataGridView1);
             double percentageCalc = Convert.ToDouble(misBOMItemsLST.Count);
             double kitPerSim = Math.Round((double)((perCounter / (percentageCalc / 100))), 2);
-
             groupBox1.Text = String.Format("Missing items : {0} . In stock: {1}/{0} . Simulation:({2})%", misBOMItemsLST.Count, perCounter, kitPerSim);
         }
         private void SetColumsOrder(DataGridView dgw)
@@ -297,12 +278,10 @@ namespace WH_Panel
             {
                 var whbalanceCell = dataGridView1.Rows[e.RowIndex].Cells["WHbalance"];
                 var deltaCell = dataGridView1.Rows[e.RowIndex].Cells["Delta"];
-
                 if (whbalanceCell.Value != null && deltaCell.Value != null)
                 {
                     var whbalanceValue = Convert.ToDecimal(whbalanceCell.Value);
                     var deltaValue = Convert.ToDecimal(deltaCell.Value);
-
                     if (whbalanceValue + deltaValue >= 0)
                     {
                         e.CellStyle.BackColor = Color.LightGreen;
@@ -382,7 +361,6 @@ namespace WH_Panel
         private void StockViewDataLoader(string fp, string thesheetName)
         {
             //stockItems.Clear();
-
             try
             {
                 string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
@@ -666,12 +644,10 @@ namespace WH_Panel
                     writer.WriteLine("<table border='1' style='text-align:center; width:auto; margin-right: 0px;margin-left: auto;'>");
                     writer.WriteLine("</tr>");
                     writer.WriteLine("<tr>");
-
                     for (int j = 0; j < dataGridView1.Columns.Count; j++)
                     {
                         string headerText = dataGridView1.Columns[j].HeaderText.ToString();
                         string cellValue = dataGridView1.Rows[i].Cells[j].Value.ToString();
-
                         if (!ExcludeColumn(headerText))
                         {
                             if (headerText == "Description" || headerText == "MFPN")
@@ -687,7 +663,6 @@ namespace WH_Panel
                             {
                                 int ipnInStock = int.Parse(cellValue);
                                 int totalStock = ipnInStock + int.Parse(dataGridView1.Rows[i].Cells[GetColumnIndex("Delta")].Value.ToString());
-
                                 if (totalStock > 0)
                                 {
                                     writer.WriteLine("<td style='font-size: 18px;font-weight: bold;background-color: LightGreen'>" + ipnInStock + "</td>");
@@ -711,13 +686,11 @@ namespace WH_Panel
                             }
                         }
                     }
-
                     // Helper method to exclude specific columns
                     bool ExcludeColumn(string headerText)
                     {
                         return headerText == "ProjectName" || headerText == "DateOfCreation" || headerText == "QtyPerUnit" || headerText == "Calc";
                     }
-
                     // Helper method to get the index of a specific column by name
                     int GetColumnIndex(string columnName)
                     {
@@ -730,7 +703,6 @@ namespace WH_Panel
                         }
                         return -1; // Column not found
                     }
-
                     writer.WriteLine("</tr>");
                     DataView dv = new DataView();
                     var negativeQtys = stockItems.Where(item => item.IPN == IPN && item.Stock < 0).ToList();
@@ -754,7 +726,6 @@ namespace WH_Panel
                     }
                     DataTable filteredData = inWHTable;
                     filteredData.Columns["Manufacturer"].ColumnMapping = MappingType.Hidden;
-
                     writer.WriteLine("</tr>");
                     for (int l = 0; l < filteredData.Rows.Count; l++)
                     {
@@ -773,7 +744,6 @@ namespace WH_Panel
                                     {
                                         writer.WriteLine("<td style='font-size: x-small'>" + filteredData.Rows[l][m].ToString() + "</td>");
                                     }
-
                                     //else if (filteredData.Columns[m].ColumnName == "Stock")
                                     //{
                                     //    string cellValue = filteredData.Rows[l][m].ToString();
@@ -782,11 +752,9 @@ namespace WH_Panel
                                     else if (filteredData.Columns[m].ColumnName == "Stock")
                                     {
                                         string cellValue = filteredData.Rows[l][m].ToString();
-
                                         writer.WriteLine($"<td id='{id}' class='qtyInKit-cell' style='font-size: 18px;font-weight: bold;'>{cellValue}</td>");
                                         id++;
                                     }
-
                                     else
                                     {
                                         writer.WriteLine("<td>" + filteredData.Rows[l][m].ToString() + "</td>");
@@ -801,8 +769,6 @@ namespace WH_Panel
                     writer.WriteLine("</tr>");
                 }
                 writer.WriteLine("</table>");
-
-
                 //writer.WriteLine("<script>");
                 //writer.WriteLine("document.addEventListener('DOMContentLoaded', function() {");
                 //writer.WriteLine("    var tables = document.querySelectorAll('table');");
@@ -810,21 +776,17 @@ namespace WH_Panel
                 //writer.WriteLine("        highlightCells(table);");
                 //writer.WriteLine("    });");
                 //writer.WriteLine("});");
-
                 //writer.WriteLine("function highlightCells(table) {");
                 //writer.WriteLine("    var rows = table.querySelectorAll('tr');");
                 //writer.WriteLine("    for (var i = 1; i < rows.length; i++) {");
                 //writer.WriteLine("        var cells = rows[i].querySelectorAll('.qtyInKit-cell');");
                 //writer.WriteLine("        var requiredQty = parseInt(document.getElementById('requiredQty').innerText);");
-
                 //writer.WriteLine("        var coveredQuantity = 0;");
                 //writer.WriteLine("        var selectedCells = [];");
-
                 //writer.WriteLine("        for (var j = 0; j < cells.length; j++) {");
                 //writer.WriteLine("            var cellValue = parseInt(cells[j].innerText);");
                 //writer.WriteLine("            coveredQuantity += isNaN(cellValue) ? 0 : cellValue;");
                 //writer.WriteLine("        }");
-
                 //writer.WriteLine("        if (coveredQuantity >= requiredQty) {");
                 //writer.WriteLine("            cells.forEach(function(cell) {");
                 //writer.WriteLine("                cell.style.backgroundColor = '#FFD300';");
@@ -833,7 +795,6 @@ namespace WH_Panel
                 //writer.WriteLine("    }");
                 //writer.WriteLine("}");
                 //writer.WriteLine("</script>");
-
                 //writer.WriteLine("<script>");
                 //writer.WriteLine("document.addEventListener('DOMContentLoaded', function() {");
                 //writer.WriteLine("    var tables = document.querySelectorAll('table');");
@@ -841,25 +802,20 @@ namespace WH_Panel
                 //writer.WriteLine("        highlightCells(table);");
                 //writer.WriteLine("    });");
                 //writer.WriteLine("});");
-
                 //writer.WriteLine("function highlightCells(table) {");
                 //writer.WriteLine("    var rows = table.querySelectorAll('tr');");
                 //writer.WriteLine("    for (var i = 1; i < rows.length; i++) {");
                 //writer.WriteLine("        var cells = rows[i].querySelectorAll('.qtyInKit-cell');");
                 //writer.WriteLine("        var requiredQty = parseInt(document.getElementById('requiredQty').innerText);");
-
                 //writer.WriteLine("        var coveredQuantity = 0;");
                 //writer.WriteLine("        var selectedCell = null;");
-
                 //writer.WriteLine("        for (var j = 0; j < cells.length; j++) {");
                 //writer.WriteLine("            var cellValue = parseInt(cells[j].innerText);");
                 //writer.WriteLine("            coveredQuantity += isNaN(cellValue) ? 0 : cellValue;");
-
                 //writer.WriteLine("            if (!selectedCell && cellValue >= requiredQty) {");
                 //writer.WriteLine("                selectedCell = cells[j];");
                 //writer.WriteLine("            }");
                 //writer.WriteLine("        }");
-
                 //writer.WriteLine("        if (selectedCell) {");
                 //writer.WriteLine("            selectedCell.style.backgroundColor = '#FFD300';");
                 //writer.WriteLine("        } else if (coveredQuantity >= requiredQty) {");
@@ -870,7 +826,6 @@ namespace WH_Panel
                 //writer.WriteLine("    }");
                 //writer.WriteLine("}");
                 //writer.WriteLine("</script>");
-
                 //writer.WriteLine("<script>");
                 //writer.WriteLine("document.addEventListener('DOMContentLoaded', function() {");
                 //writer.WriteLine("    var tables = document.querySelectorAll('table');");
@@ -878,26 +833,21 @@ namespace WH_Panel
                 //writer.WriteLine("        highlightCells(table);");
                 //writer.WriteLine("    });");
                 //writer.WriteLine("});");
-
                 //writer.WriteLine("function highlightCells(table) {");
                 //writer.WriteLine("    var rows = table.querySelectorAll('tr');");
                 //writer.WriteLine("    for (var i = 1; i < rows.length; i++) {");
                 //writer.WriteLine("        var cells = rows[i].querySelectorAll('.qtyInKit-cell');");
                 //writer.WriteLine("        var requiredQty = parseInt(document.getElementById('requiredQty').innerText);");
-
                 //writer.WriteLine("        var coveredQuantity = 0;");
                 //writer.WriteLine("        var selectedCells = [];");
-
                 //writer.WriteLine("        for (var j = 0; j < cells.length; j++) {");
                 //writer.WriteLine("            var cellValue = parseInt(cells[j].innerText);");
                 //writer.WriteLine("            coveredQuantity += isNaN(cellValue) ? 0 : cellValue;");
-
                 //writer.WriteLine("            if (cellValue >= requiredQty) {");
                 //writer.WriteLine("                selectedCells = [cells[j]];");
                 //writer.WriteLine("                break;");
                 //writer.WriteLine("            }");
                 //writer.WriteLine("        }");
-
                 //writer.WriteLine("        if (selectedCells.length > 0) {");
                 //writer.WriteLine("            selectedCells.forEach(function(cell) {");
                 //writer.WriteLine("                cell.style.backgroundColor = '#FFD300';");
@@ -906,7 +856,6 @@ namespace WH_Panel
                 //writer.WriteLine("    }");
                 //writer.WriteLine("}");
                 //writer.WriteLine("</script>");
-
                 //writer.WriteLine("<script>");
                 //writer.WriteLine("document.addEventListener('DOMContentLoaded', function() {");
                 //writer.WriteLine("    var tables = document.querySelectorAll('table');");
@@ -914,33 +863,27 @@ namespace WH_Panel
                 //writer.WriteLine("        highlightCells(table);");
                 //writer.WriteLine("    });");
                 //writer.WriteLine("});");
-
                 //writer.WriteLine("function highlightCells(table) {");
                 //writer.WriteLine("    var rows = table.querySelectorAll('tr');");
                 //writer.WriteLine("    for (var i = 1; i < rows.length; i++) {");
                 //writer.WriteLine("        var cells = rows[i].querySelectorAll('.qtyInKit-cell');");
                 //writer.WriteLine("        var requiredQty = parseInt(document.getElementById('requiredQty').innerText);");
-
                 //writer.WriteLine("        var coveredQuantity = 0;");
                 //writer.WriteLine("        var selectedCellId = null;");
-
                 //writer.WriteLine("        for (var j = 0; j < cells.length; j++) {");
                 //writer.WriteLine("            var cellValue = parseInt(cells[j].innerText);");
                 //writer.WriteLine("            coveredQuantity += isNaN(cellValue) ? 0 : cellValue;");
-
                 //writer.WriteLine("            if (cellValue >= requiredQty) {");
                 //writer.WriteLine("                selectedCellId = cells[j].id;");
                 //writer.WriteLine("                break;");
                 //writer.WriteLine("            }");
                 //writer.WriteLine("        }");
-
                 //writer.WriteLine("        if (selectedCellId) {");
                 //writer.WriteLine("            document.getElementById(selectedCellId).style.backgroundColor = '#FFD300';");
                 //writer.WriteLine("        }");
                 //writer.WriteLine("    }");
                 //writer.WriteLine("}");
                 //writer.WriteLine("</script>");
-
                 //writer.WriteLine("<script>");
                 //writer.WriteLine("document.addEventListener('DOMContentLoaded', function() {");
                 //writer.WriteLine("    var tables = document.querySelectorAll('table');");
@@ -948,33 +891,27 @@ namespace WH_Panel
                 //writer.WriteLine("        highlightCells(table);");
                 //writer.WriteLine("    });");
                 //writer.WriteLine("});");
-
                 //writer.WriteLine("function highlightCells(table) {");
                 //writer.WriteLine("    var rows = table.querySelectorAll('tr');");
                 //writer.WriteLine("    for (var i = 1; i < rows.length; i++) {");
                 //writer.WriteLine("        var cells = rows[i].querySelectorAll('.qtyInKit-cell');");
                 //writer.WriteLine("        var requiredQty = parseInt(document.getElementById('requiredQty').innerText);");
-
                 //writer.WriteLine("        var coveredQuantity = 0;");
                 //writer.WriteLine("        var selectedCellId = null;");
-
                 //writer.WriteLine("        for (var j = 0; j < cells.length; j++) {");
                 //writer.WriteLine("            var cellValue = parseInt(cells[j].innerText);");
                 //writer.WriteLine("            coveredQuantity += isNaN(cellValue) ? 0 : cellValue;");
-
                 //writer.WriteLine("            if (cellValue >= requiredQty) {");
                 //writer.WriteLine("                selectedCellId = cells[j].id;");
                 //writer.WriteLine("                break;");
                 //writer.WriteLine("            }");
                 //writer.WriteLine("        }");
-
                 //writer.WriteLine("        if (selectedCellId) {");
                 //writer.WriteLine("            document.getElementById(selectedCellId).style.backgroundColor = '#FFD300';");
                 //writer.WriteLine("        }");
                 //writer.WriteLine("    }");
                 //writer.WriteLine("}");
                 //writer.WriteLine("</script>");
-
                 //writer.WriteLine("<script>");
                 //writer.WriteLine("document.addEventListener('DOMContentLoaded', function() {");
                 //writer.WriteLine("    var tables = document.querySelectorAll('table');");
@@ -982,33 +919,27 @@ namespace WH_Panel
                 //writer.WriteLine("        highlightCells(table);");
                 //writer.WriteLine("    });");
                 //writer.WriteLine("});");
-
                 //writer.WriteLine("function highlightCells(table) {");
                 //writer.WriteLine("    var rows = table.querySelectorAll('tr');");
                 //writer.WriteLine("    for (var i = 1; i < rows.length; i++) {");
                 //writer.WriteLine("        var cells = rows[i].querySelectorAll('.qtyInKit-cell');");
                 //writer.WriteLine("        var requiredQty = parseInt(document.getElementById('requiredQty').innerText);");
-
                 //writer.WriteLine("        var coveredQuantity = 0;");
                 //writer.WriteLine("        var selectedCellId = null;");
-
                 //writer.WriteLine("        for (var j = 0; j < cells.length; j++) {");
                 //writer.WriteLine("            var cellValue = parseInt(cells[j].innerText);");
                 //writer.WriteLine("            coveredQuantity += isNaN(cellValue) ? 0 : cellValue;");
-
                 //writer.WriteLine("            if (cellValue >= requiredQty) {");
                 //writer.WriteLine("                selectedCellId = cells[j].id;");
                 //writer.WriteLine("                break;");
                 //writer.WriteLine("            }");
                 //writer.WriteLine("        }");
-
                 //writer.WriteLine("        if (selectedCellId) {");
                 //writer.WriteLine("            document.getElementById(selectedCellId).style.backgroundColor = '#FFD300';");
                 //writer.WriteLine("        }");
                 //writer.WriteLine("    }");
                 //writer.WriteLine("}");
                 //writer.WriteLine("</script>");
-
                 //writer.WriteLine("<script>");
                 //writer.WriteLine("document.addEventListener('DOMContentLoaded', function() {");
                 //writer.WriteLine("    var tables = document.querySelectorAll('table');");
@@ -1016,28 +947,23 @@ namespace WH_Panel
                 //writer.WriteLine("        highlightCells(table);");
                 //writer.WriteLine("    });");
                 //writer.WriteLine("});");
-
                 //writer.WriteLine("function highlightCells(table) {");
                 //writer.WriteLine("    var rows = table.querySelectorAll('tr');");
                 //writer.WriteLine("    for (var i = 1; i < rows.length; i++) {");
                 //writer.WriteLine("        var cells = rows[i].querySelectorAll('.qtyInKit-cell');");
                 //writer.WriteLine("        var requiredQty = parseInt(document.getElementById('requiredQty').innerText);");
-
                 //writer.WriteLine("        var coveredQuantity = 0;");
                 //writer.WriteLine("        var selectedCells = [];");
-
                 //writer.WriteLine("        for (var j = 0; j < cells.length; j++) {");
                 //writer.WriteLine("            var cellValue = parseInt(cells[j].innerText);");
                 //writer.WriteLine("            if (!isNaN(cellValue)) {");
                 //writer.WriteLine("                coveredQuantity += cellValue;");
                 //writer.WriteLine("                selectedCells.push(cells[j].id);");
-
                 //writer.WriteLine("                if (coveredQuantity >= requiredQty) {");
                 //writer.WriteLine("                    break;");
                 //writer.WriteLine("                }");
                 //writer.WriteLine("            }");
                 //writer.WriteLine("        }");
-
                 //writer.WriteLine("        if (coveredQuantity >= requiredQty) {");
                 //writer.WriteLine("            selectedCells.forEach(function(cellId) {");
                 //writer.WriteLine("                document.getElementById(cellId).style.backgroundColor = '#FFD300';");
@@ -1046,7 +972,6 @@ namespace WH_Panel
                 //writer.WriteLine("    }");
                 //writer.WriteLine("}");
                 //writer.WriteLine("</script>");
-
                 //writer.WriteLine("<script>");
                 //writer.WriteLine("document.addEventListener('DOMContentLoaded', function() {");
                 //writer.WriteLine("    var tables = document.querySelectorAll('table');");
@@ -1054,20 +979,16 @@ namespace WH_Panel
                 //writer.WriteLine("        highlightCells(table);");
                 //writer.WriteLine("    });");
                 //writer.WriteLine("});");
-
                 //writer.WriteLine("function highlightCells(table) {");
                 //writer.WriteLine("    var rows = table.querySelectorAll('tr');");
                 //writer.WriteLine("    for (var i = 1; i < rows.length; i++) {");
                 //writer.WriteLine("        var cells = rows[i].querySelectorAll('.qtyInKit-cell');");
                 //writer.WriteLine("       var requiredQty = Math.abs(parseInt(document.getElementById('requiredQty').innerText));");
-
                 //writer.WriteLine("        var coveredQuantity = 0;");
-
                 //writer.WriteLine("        for (var j = 0; j < cells.length; j++) {");
                 //writer.WriteLine("            var cellValue = parseInt(cells[j].innerText);");
                 //writer.WriteLine("            if (!isNaN(cellValue)) {");
                 //writer.WriteLine("                coveredQuantity += cellValue;");
-
                 //writer.WriteLine("                if (coveredQuantity >= requiredQty) {");
                 //writer.WriteLine("                    cells[j].style.backgroundColor = '#FFD300';");
                 //writer.WriteLine("                    break;");
@@ -1077,7 +998,6 @@ namespace WH_Panel
                 //writer.WriteLine("    }");
                 //writer.WriteLine("}");
                 //writer.WriteLine("</script>");
-
                 writer.WriteLine("<script>");
                 writer.WriteLine("document.addEventListener('DOMContentLoaded', function() {");
                 writer.WriteLine("    var tables = document.querySelectorAll('table');");
@@ -1085,20 +1005,16 @@ namespace WH_Panel
                 writer.WriteLine("        highlightCells(table);");
                 writer.WriteLine("    });");
                 writer.WriteLine("});");
-
                 writer.WriteLine("function highlightCells(table) {");
                 writer.WriteLine("    var rows = table.querySelectorAll('tr');");
                 writer.WriteLine("    for (var i = 1; i < rows.length; i++) {");
                 writer.WriteLine("        var cells = rows[i].querySelectorAll('.qtyInKit-cell');");
                 writer.WriteLine("        var requiredQty = Math.abs(parseInt(document.getElementById('requiredQty').innerText));");
-
                 writer.WriteLine("        var coveredQuantity = 0;");
-
                 writer.WriteLine("        for (var j = 0; j < cells.length; j++) {");
                 writer.WriteLine("            var cellValue = parseInt(cells[j].innerText);");
                 writer.WriteLine("            if (!isNaN(cellValue)) {");
                 writer.WriteLine("                coveredQuantity += cellValue;");
-
                 writer.WriteLine("                if (coveredQuantity >= requiredQty) {");
                 writer.WriteLine("                    cells[j].style.backgroundColor = '#FFD300';");
                 writer.WriteLine("                    break;");
@@ -1108,8 +1024,6 @@ namespace WH_Panel
                 writer.WriteLine("    }");
                 writer.WriteLine("}");
                 writer.WriteLine("</script>");
-
-
                 writer.WriteLine("</body>");
                 writer.WriteLine("</html>");
             }
@@ -1349,59 +1263,44 @@ namespace WH_Panel
             dataGridView2.Columns["Description"].Visible = true;
             dataGridView.Columns["Calc"].Visible = true;
         }
-
         private void btnFontIncrease_Click(object sender, EventArgs e)
         {
             // Increase font size of DataGridView1 rows
             dataGridView1.DefaultCellStyle.Font = new Font(dataGridView1.DefaultCellStyle.Font.FontFamily, dataGridView1.DefaultCellStyle.Font.Size + 1);
             dataGridView1.RowsDefaultCellStyle.Font = dataGridView1.DefaultCellStyle.Font;
             dataGridView1.AlternatingRowsDefaultCellStyle.Font = new Font(dataGridView1.DefaultCellStyle.Font.FontFamily, dataGridView1.DefaultCellStyle.Font.Size + 1);
-
             // Increase font size of DataGridView1 headers
             dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font(dataGridView1.ColumnHeadersDefaultCellStyle.Font.FontFamily, dataGridView1.ColumnHeadersDefaultCellStyle.Font.Size + 1);
-
             // Update row height for DataGridView1
             dataGridView1.RowTemplate.Height = (int)(dataGridView1.RowTemplate.Height * 1.2);
-
             // Increase font size of DataGridView2 rows
             dataGridView2.DefaultCellStyle.Font = new Font(dataGridView2.DefaultCellStyle.Font.FontFamily, dataGridView2.DefaultCellStyle.Font.Size + 1);
             dataGridView2.RowsDefaultCellStyle.Font = dataGridView2.DefaultCellStyle.Font;
             dataGridView2.AlternatingRowsDefaultCellStyle.Font = new Font(dataGridView2.DefaultCellStyle.Font.FontFamily, dataGridView2.DefaultCellStyle.Font.Size + 1);
-
             // Increase font size of DataGridView2 headers
             dataGridView2.ColumnHeadersDefaultCellStyle.Font = new Font(dataGridView2.ColumnHeadersDefaultCellStyle.Font.FontFamily, dataGridView2.ColumnHeadersDefaultCellStyle.Font.Size + 1);
-
             // Update row height for DataGridView2
             dataGridView2.RowTemplate.Height = (int)(dataGridView2.RowTemplate.Height * 1.2);
-
         }
-
         private void btnFontDecrease_Click(object sender, EventArgs e)
         {
             // Decrease font size of DataGridView1 rows
             dataGridView1.DefaultCellStyle.Font = new Font(dataGridView1.DefaultCellStyle.Font.FontFamily, dataGridView1.DefaultCellStyle.Font.Size - 1);
             dataGridView1.RowsDefaultCellStyle.Font = dataGridView1.DefaultCellStyle.Font;
             dataGridView1.AlternatingRowsDefaultCellStyle.Font = new Font(dataGridView1.DefaultCellStyle.Font.FontFamily, dataGridView1.DefaultCellStyle.Font.Size - 1);
-
             // Decrease font size of DataGridView1 headers
             dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font(dataGridView1.ColumnHeadersDefaultCellStyle.Font.FontFamily, dataGridView1.ColumnHeadersDefaultCellStyle.Font.Size - 1);
-
             // Update row height for DataGridView1
             dataGridView1.RowTemplate.Height = (int)(dataGridView1.RowTemplate.Height / 1.2);
-
             // Decrease font size of DataGridView2 rows
             dataGridView2.DefaultCellStyle.Font = new Font(dataGridView2.DefaultCellStyle.Font.FontFamily, dataGridView2.DefaultCellStyle.Font.Size - 1);
             dataGridView2.RowsDefaultCellStyle.Font = dataGridView2.DefaultCellStyle.Font;
             dataGridView2.AlternatingRowsDefaultCellStyle.Font = new Font(dataGridView2.DefaultCellStyle.Font.FontFamily, dataGridView2.DefaultCellStyle.Font.Size - 1);
-
             // Decrease font size of DataGridView2 headers
             dataGridView2.ColumnHeadersDefaultCellStyle.Font = new Font(dataGridView2.ColumnHeadersDefaultCellStyle.Font.FontFamily, dataGridView2.ColumnHeadersDefaultCellStyle.Font.Size - 1);
-
             // Update row height for DataGridView2
             dataGridView2.RowTemplate.Height = (int)(dataGridView2.RowTemplate.Height / 1.2);
-
         }
-
         private void button2_Click(object sender, EventArgs e)
         {
             GenerateHTMLsim();
@@ -1410,11 +1309,9 @@ namespace WH_Panel
         {
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
             string filename = "\\\\dbr1\\Data\\WareHouse\\2023\\WHsim\\" + _fileTimeStamp + "_" + projectName.Substring(0, projectName.Length - 5) + ".html";
-
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 StringBuilder htmlContent = new StringBuilder();
-
                 // Start writing the HTML table
                 writer.WriteLine("<html style='background-color: gray;'>");
                 htmlContent.AppendLine("<head>");
@@ -1424,7 +1321,6 @@ namespace WH_Panel
                 htmlContent.Append("<h2 style='text-align:center;padding:0px'>" + projectName.Substring(0, projectName.Length - 5) + "</h2>");
                 htmlContent.Append("<h3 style='text-align:center;padding:0px'>" + groupBox1.Text.ToString() + "</h3>");
                 htmlContent.AppendLine("<table border='1'>");
-
                 // Write the column headers
                 // Write the column headers in specific order
                 htmlContent.AppendLine("<tr>");
@@ -1438,7 +1334,6 @@ namespace WH_Panel
                 WriteHtmlHeaderCell(htmlContent, "DELTA", "deltaHeader");
                 htmlContent.AppendLine("</tr>");
                 htmlContent.AppendLine("</tr>");
-
                 // Map column names to their respective indices in dataGridView1
                 Dictionary<string, int> columnIndexMap = new Dictionary<string, int>();
                 foreach (DataGridViewColumn column in dataGridView1.Columns)
@@ -1449,12 +1344,10 @@ namespace WH_Panel
                         columnIndexMap[columnName] = column.Index;
                     }
                 }
-
                 // Write the rows and data
                 foreach (DataGridViewRow row in dataGridView1.Rows)
                 {
                     htmlContent.AppendLine("<tr>");
-
                     WriteHtmlCell(htmlContent, row, columnIndexMap, "IPN");
                     WriteHtmlCell(htmlContent, row, columnIndexMap, "MFPN");
                     WriteHtmlCell(htmlContent, row, columnIndexMap, "Description");
@@ -1463,18 +1356,13 @@ namespace WH_Panel
                     WriteMissingCell(htmlContent, row, columnIndexMap); // Write "Missing" cell
                     htmlContent.AppendLine("</tr>");
                 }
-
                 // Finish writing the HTML table
                 htmlContent.AppendLine("</table>");
-
                 htmlContent.AppendLine(GenerateJavascript());
-
                 htmlContent.AppendLine("</body>");
                 htmlContent.AppendLine("</html>");
-
                 // Write the content to the file
                 writer.Write(htmlContent.ToString());
-
                 var p = new Process();
                 p.StartInfo = new ProcessStartInfo(@filename)
                 {
@@ -1502,10 +1390,8 @@ namespace WH_Panel
             {
                 htmlContent.AppendFormat(">{0}", text);
             }
-
             htmlContent.Append("</th>");
         }
-
         private void WriteHtmlCell(StringBuilder sb, DataGridViewRow row, Dictionary<string, int> columnIndexMap, string columnName)
         {
             int columnIndex = columnIndexMap[columnName];
@@ -1518,19 +1404,15 @@ namespace WH_Panel
             {
                 sb.AppendLine("<td>" + cell.Value + "</td>");
             }
-
         }
-
         private string GenerateJavascript()
         {
-
             StringBuilder jsContent = new StringBuilder();
             jsContent.AppendLine("<script>");
             jsContent.AppendLine("window.onload = function() {");
             jsContent.AppendLine("var table = document.getElementsByTagName('table')[0];");
             jsContent.AppendLine("var lastSortedColumnIndex = -1;");
             jsContent.AppendLine("var sortDirection = 1;"); // 1 for ascending, -1 for descending
-
             // Add click event listeners to enable sorting for all columns
             jsContent.AppendLine("for (var i = 0; i < table.rows[0].cells.length; i++) {");
             jsContent.AppendLine("table.rows[0].cells[i].addEventListener('click', function() {");
@@ -1544,7 +1426,6 @@ namespace WH_Panel
             jsContent.AppendLine("lastSortedColumnIndex = columnIndex;");
             jsContent.AppendLine("});");
             jsContent.AppendLine("}");
-
             // Sorting function
             jsContent.AppendLine("function sortTableByColumn(table, columnIndex, sortDirection) {");
             jsContent.AppendLine("var rows = Array.from(table.rows).slice(1);"); // Skip the header row
@@ -1561,7 +1442,6 @@ namespace WH_Panel
             jsContent.AppendLine("table.appendChild(rows[i]);");
             jsContent.AppendLine("}");
             jsContent.AppendLine("}");
-
             // Rest of your existing code
             jsContent.AppendLine("for (var i = 1; i < table.rows.length; i++) {");
             jsContent.AppendLine("var deltaCell = table.rows[i].cells[4];");
@@ -1574,29 +1454,21 @@ namespace WH_Panel
             jsContent.AppendLine("table.rows[i].style.backgroundColor = 'lightcoral';");
             jsContent.AppendLine("}");
             jsContent.AppendLine("}");
-
             jsContent.AppendLine("}");
             jsContent.AppendLine("</script>");
-
             return jsContent.ToString();
-
         }
-
         private void WriteMissingCell(StringBuilder sb, DataGridViewRow row, Dictionary<string, int> columnIndexMap)
         {
             int whbalanceColumnIndex = columnIndexMap["WHbalance"];
             int deltaColumnIndex = columnIndexMap["Delta"];
-
             DataGridViewCell whbalanceCell = row.Cells[whbalanceColumnIndex];
             DataGridViewCell deltaCell = row.Cells[deltaColumnIndex];
-
             int whbalanceValue = Convert.ToInt32(whbalanceCell.Value);
             int deltaValue = Convert.ToInt32(deltaCell.Value);
             int missingValue = whbalanceValue - Math.Abs(deltaValue);
-
             sb.AppendLine("<td>" + missingValue + "</td>");
         }
-
         private void button5_Click(object sender, EventArgs e)
         {
             FrmClientAgnosticWH h = new FrmClientAgnosticWH();
@@ -1610,7 +1482,6 @@ namespace WH_Panel
                     h.Show();
                 }
             }
-
         }
     }
 }

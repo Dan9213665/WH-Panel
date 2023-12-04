@@ -24,7 +24,6 @@ using TextBox = System.Windows.Forms.TextBox;
 using ComboBox = System.Windows.Forms.ComboBox;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolBar;
 using ToolTip = System.Windows.Forms.ToolTip;
-
 namespace WH_Panel
 {
     public partial class FrmUberSearch : Form
@@ -32,19 +31,15 @@ namespace WH_Panel
         public FrmUberSearch()
         {
             InitializeComponent();
-
         }
-
         private void TextBox_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter((TextBox)sender);
         }
-
         private void TextBox_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave((TextBox)sender);
         }
-
         public List<WHitem> wHitems = new List<WHitem>();
         public DataTable UDtable = new DataTable();
         public int countItems = 0;
@@ -61,16 +56,13 @@ namespace WH_Panel
             //InitializeWarehouses();
             UpdateControlColors(this);
             startUpLogic();
-
         }
-
         List<ClientWarehouse> warehouses { get; set; }
         public void InitializeGlobalWarehouses(List<ClientWarehouse> warehousesFromTheMain)
         {
             warehouses = warehousesFromTheMain;
             // Ordering the warehouses list by clName
             warehouses = warehouses.OrderBy(warehouse => warehouse.clName).ToList();
-
         }
         private void startUpLogic()
         {
@@ -83,83 +75,57 @@ namespace WH_Panel
             {
                 l.BackColor = Color.LightGreen;
             }
-
-
-
             List<TextBox> _searchableFieldsTextBoxes = new List<TextBox>();
             _searchableFieldsTextBoxes.Add(textBox2);
             _searchableFieldsTextBoxes.Add(textBox4);
             _searchableFieldsTextBoxes.Add(textBox5);
             _searchableFieldsTextBoxes.Add(textBox9);
-
             foreach (TextBox textBox in _searchableFieldsTextBoxes)
             {
                 textBox.Enter += TextBox_Enter;
                 textBox.Leave += TextBox_Leave;
             }
-
             label1.BackColor = Color.IndianRed;
-
             foreach (ClientWarehouse warehouse in warehouses)
             {
                 DataLoader(warehouse.clStockFile, "STOCK");
             }
             PopulateGridView();
-
             //for (int i = 0; i < listOfWareHouses.Count; i++)
             //{
             //    DataLoader(listOfWareHouses[i].Key, listOfWareHouses[i].Value);
             //}
-
-
             //// Create a list to hold the buttons
             //List<Button> buttons = new List<Button>();
-
-
             //for (int i = 0; i < warehouses.Count; i++)
             //{
             //    string warehousePath = warehouses[i].clStockFile; // Get the warehouse path from the KeyValuePair
-
             //    // Extract the warehouse name from the warehouse path
             //    string[] pathParts = warehousePath.Split('\\');
             //    string warehouseName = warehouses[i].clName;
-
             //    Button button = new Button();
             //    button.Text = warehouseName;
             //    button.Tag = warehousePath;
             //    button.AutoSize = true; // Adjust the button size based on the text length
             //    button.Click += Button_Click; // Assign a common event handler for button click event
-
             //    buttons.Add(button); // Add the button to the list
-
-
-
             //}
-
-
-
             //// Sort the buttons alphabetically based on their text
             //buttons.Sort((x, y) => x.Text.CompareTo(y.Text));
-
             //flowLayoutPanel1.Controls.Clear();
             //// Add the sorted buttons to the flowLayoutPanel1 control
             //foreach (Button button in buttons)
             //{
             //    flowLayoutPanel1.Controls.Add(button); // Add the button to the FlowLayoutPanel
             //}
-
-
             // Create a list to hold the buttons
             List<Button> buttons = new List<Button>();
-
             for (int i = 0; i < warehouses.Count; i++)
             {
                 string warehousePath = warehouses[i].clStockFile; // Get the warehouse path from the KeyValuePair
-
                 // Extract the warehouse name from the warehouse path
                 string[] pathParts = warehousePath.Split('\\');
                 string warehouseName = warehouses[i].clName;
-
                 Button button = new Button();
                 button.Tag = warehousePath;
                 //button.AutoSize = true; // Adjust the button size based on the text length
@@ -168,9 +134,7 @@ namespace WH_Panel
                                                  // Add a tooltip to display warehouseName when hovering over the button
                 ToolTip toolTip = new ToolTip();
                 toolTip.SetToolTip(button, warehouseName);
-
                 button.Click += Button_Click; // Assign a common event handler for button click event
-
                 // Load the image from the first function and set it as the button's background
                 if (File.Exists(warehouses[i].clLogo))
                 {
@@ -186,37 +150,29 @@ namespace WH_Panel
                         Console.WriteLine($"Error loading logo: {ex.Message}");
                     }
                 }
-
                 buttons.Add(button); // Add the button to the list
             }
-
             //// Sort the buttons alphabetically based on their text
             //buttons.Sort((x, y) => string.Compare(x.Text, y.Text, StringComparison.Ordinal));
-
             // Sort the buttons alphabetically based on their tooltip text
             //buttons.Sort((x, y) => string.Compare(x.ToolTipText, y.ToolTipText, StringComparison.Ordinal));
-
-
             // Set the first row's SizeType to AutoSize and a minimum height
             //tableLayoutPanel1.RowStyles[0] = new RowStyle(SizeType.AutoSize, 80);
             //tableLayoutPanel1.RowStyles[1] = new RowStyle(SizeType.AutoSize, 80);
             //tableLayoutPanel2.RowStyles[0] = new RowStyle(SizeType.AutoSize, 80);
             //tableLayoutPanel3.RowStyles[0] = new RowStyle(SizeType.AutoSize, 80);
-
             flowLayoutPanel1.Controls.Clear();
             // Add the sorted buttons to the flowLayoutPanel1 control
             foreach (Button button in buttons)
             {
                 flowLayoutPanel1.Controls.Add(button); // Add the button to the FlowLayoutPanel
             }
-
             // Refresh the layout to trigger the automatic adjustment of the first row's height
             // Refresh the layout to trigger the automatic adjustment of the first row's height
             //flowLayoutPanel1.PerformLayout();
             //tableLayoutPanel1.PerformLayout();
             //tableLayoutPanel2.PerformLayout();
             //tableLayoutPanel3.PerformLayout();
-
         }
         private void Button_Click(object sender, EventArgs e)
         {
@@ -224,12 +180,10 @@ namespace WH_Panel
             string warehousePath = (string)clickedButton.Tag;
             string[] pathParts = warehousePath.Split('\\');
             string warehouseName = pathParts[pathParts.Length - 2];
-
             FrmClientAgnosticWH w = new FrmClientAgnosticWH();
             w.InitializeGlobalWarehouses(warehouses);
             w.Show();
             w.Focus();
-
             // Call the public method to set the ComboBox text
             w.SetComboBoxText(warehouseName);
         }
@@ -337,20 +291,16 @@ namespace WH_Panel
             label2.BackColor = Color.IndianRed;
             FilterTheDataGridView();
         }
-
         private void FilterTheDataGridView()
         {
             try
             {
                 DataView dv = UDtable.DefaultView;
                 StringBuilder filterQuery = new StringBuilder();
-
                 if (!string.IsNullOrEmpty(textBox2.Text))
                     filterQuery.Append("[IPN] LIKE '%" + textBox2.Text + "%' AND ");
-
                 if (!string.IsNullOrEmpty(textBox4.Text))
                     filterQuery.Append("[MFPN] LIKE '%" + textBox4.Text + "%' AND ");
-
                 if (!string.IsNullOrEmpty(textBox5.Text))
                 {
                     string[] searchTerms = textBox5.Text.Split(new char[] { '+', ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -359,10 +309,8 @@ namespace WH_Panel
                         filterQuery.Append("[Description] LIKE '%" + term + "%' AND ");
                     }
                 }
-
                 if (!string.IsNullOrEmpty(textBox9.Text))
                     filterQuery.Append("[SourceRequester] LIKE '%" + textBox9.Text + "%' AND ");
-
                 if (filterQuery.Length > 0)
                 {
                     filterQuery.Remove(filterQuery.Length - 5, 5); // Remove the extra 'AND' at the end
@@ -372,7 +320,6 @@ namespace WH_Panel
                 {
                     dv.RowFilter = string.Empty; // No filter applied
                 }
-
                 dataGridView1.DataSource = dv;
                 SetColumsOrder();
             }
@@ -381,7 +328,6 @@ namespace WH_Panel
                 MessageBox.Show("Incorrect search pattern, remove invalid character and try again !\nError: " + ex.Message, "Search pattern error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
-
         private void textBox4_TextChanged(object sender, EventArgs e)
         {
             label4.BackColor = Color.IndianRed;
@@ -399,7 +345,6 @@ namespace WH_Panel
             excel.StartInfo.Arguments = thePathToFile;
             excel.Start();
         }
-
         private void textBox9_TextChanged(object sender, EventArgs e)
         {
             label9.BackColor = Color.IndianRed;
@@ -464,7 +409,6 @@ namespace WH_Panel
                 MessageBox.Show("ACCESS DENIED");
             }
         }
-
         private void UpdateControlColors(Control parentControl)
         {
             foreach (Control control in parentControl.Controls)
@@ -472,7 +416,6 @@ namespace WH_Panel
                 // Update control colors based on your criteria
                 control.BackColor = Color.LightGray;
                 control.ForeColor = Color.White;
-
                 // Handle Button controls separately
                 if (control is Button button)
                 {
@@ -480,14 +423,12 @@ namespace WH_Panel
                     button.FlatAppearance.BorderColor = Color.DarkGray; // Change border color
                     button.ForeColor = Color.Black;
                 }
-
                 // Handle Button controls separately
                 if (control is GroupBox groupbox)
                 {
                     groupbox.FlatStyle = FlatStyle.Flat; // Set FlatStyle to Flat
                     groupbox.ForeColor = Color.Black;
                 }
-
                 // Handle TextBox controls separately
                 if (control is TextBox textBox)
                 {
@@ -495,7 +436,6 @@ namespace WH_Panel
                     textBox.BackColor = Color.LightGray; // Change background color
                     textBox.ForeColor = Color.Black; // Change text color
                 }
-
                 // Handle Label controls separately
                 if (control is Label label)
                 {
@@ -503,8 +443,6 @@ namespace WH_Panel
                     label.BackColor = Color.Gray; // Change background color
                     label.ForeColor = Color.Black; // Change text color
                 }
-
-
                 // Handle TabControl controls separately
                 if (control is TabControl tabControl)
                 {
@@ -517,7 +455,6 @@ namespace WH_Panel
                         tabPage.ForeColor = Color.Black; // Change TabPage text color
                     }
                 }
-
                 // Handle DataGridView controls separately
                 if (control is DataGridView dataGridView)
                 {
@@ -560,7 +497,6 @@ namespace WH_Panel
                 }
             }
         }
-
         private void textBox3_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
@@ -575,17 +511,14 @@ namespace WH_Panel
             TextBox? tb = sender as TextBox;
             tb.BackColor = Color.LightGray;
         }
-
         private void textBox3_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(sender);
         }
-
         private void textBox4_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
         }
-
         private void textBox4_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(sender);

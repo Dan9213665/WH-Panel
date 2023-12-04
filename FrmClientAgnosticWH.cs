@@ -23,10 +23,8 @@ using Label = System.Windows.Forms.Label;
 using GroupBox = System.Windows.Forms.GroupBox;
 using Application = System.Windows.Forms.Application;
 using Seagull.Framework.Extensions;
-
 namespace WH_Panel
 {
-
     public partial class FrmClientAgnosticWH : Form
     {
         public FrmClientAgnosticWH()
@@ -34,49 +32,39 @@ namespace WH_Panel
             InitializeComponent();
             UpdateControlColors(this);
         }
-
         public void InitializeGlobalWarehouses(List<ClientWarehouse> warehousesFromTheMain)
         {
             warehouses = warehousesFromTheMain;
-
-
             // Ordering the warehouses list by clName
             warehouses = warehouses.OrderBy(warehouse => warehouse.clName).ToList();
-
             // Adding clNames to comboBox4
             foreach (ClientWarehouse warehouse in warehouses)
             {
                 comboBox3.Items.Add(warehouse.clName);
-
                 GroupBox groupBox = new GroupBox();
                 groupBox.Name = warehouse.clName;
                 groupBox.Text = warehouse.clName;
                 groupBox.Width = 150;
                 groupBox.Height = 130;
-
                 Button stockButton = new Button();
                 //stockButton.Text = "Open Stock File";
                 stockButton.Click += (sender, e) => AuthorizedExcelFileOpening(warehouse.clStockFile);
                 stockButton.Top = 15; // Adjust the top position as needed
                 stockButton.Left = 5; // Adjust the left position as needed
                 //stockButton.Width = 66;
-
                 if (File.Exists(warehouse.clLogo))
                 {
-
                     string logoFilePath = Path.Combine("dbr1", "WareHouse", "STOCK_CUSTOMERS", warehouse.clName, warehouse.clLogo);
                     stockButton.BackgroundImage = Image.FromFile(logoFilePath);
                     stockButton.BackgroundImageLayout = ImageLayout.Stretch;
                     stockButton.Width = 140;
                     stockButton.Height = 50;
                 }
-
                 Button avlButton = new Button();
                 //avlButton.Text = "Open AVL File";
                 avlButton.Click += (sender, e) => AuthorizedExcelFileOpening(warehouse.clAvlFile);
                 avlButton.Top = stockButton.Bottom + 2; // Adjust the top position as needed
                 avlButton.Left = 5;
-
                 string avlImagePath = Path.Combine(Application.StartupPath, "Resources", "AVL.png");
                 if (File.Exists(avlImagePath))
                 {
@@ -88,14 +76,11 @@ namespace WH_Panel
                 flowLayoutPanel1.Controls.Add(groupBox);
                 groupBox.Controls.Add(stockButton);
                 groupBox.Controls.Add(avlButton);
-
             }
-
             comboBox6.Enabled = false;
             button23.Enabled = false;
             comboBox3.SelectedItem = "ROBOTRON";
         }
-
         List<ClientWarehouse> warehouses { get; set; }
         public WHitem wHitemToSplit = new WHitem();
         public List<WHitem> avlItems = new List<WHitem>();
@@ -108,8 +93,6 @@ namespace WH_Panel
         int iStock = 0;
         private object cmd;
         public TextBox LastInputFromUser = new TextBox();
-
-
         private void UpdateControlColors(Control parentControl)
         {
             foreach (Control control in parentControl.Controls)
@@ -117,7 +100,6 @@ namespace WH_Panel
                 // Update control colors based on your criteria
                 control.BackColor = Color.LightGray;
                 control.ForeColor = Color.White;
-
                 // Handle Button controls separately
                 if (control is Button button)
                 {
@@ -125,14 +107,12 @@ namespace WH_Panel
                     button.FlatAppearance.BorderColor = Color.DarkGray; // Change border color
                     button.ForeColor = Color.Black;
                 }
-
                 // Handle Button controls separately
                 if (control is GroupBox groupbox)
                 {
                     groupbox.FlatStyle = FlatStyle.Flat; // Set FlatStyle to Flat
                     groupbox.ForeColor = Color.Black;
                 }
-
                 // Handle TextBox controls separately
                 if (control is TextBox textBox)
                 {
@@ -140,7 +120,6 @@ namespace WH_Panel
                     textBox.BackColor = Color.LightGray; // Change background color
                     textBox.ForeColor = Color.Black; // Change text color
                 }
-
                 // Handle Label controls separately
                 if (control is Label label)
                 {
@@ -148,8 +127,6 @@ namespace WH_Panel
                     label.BackColor = Color.Gray; // Change background color
                     label.ForeColor = Color.Black; // Change text color
                 }
-
-
                 // Handle TabControl controls separately
                 if (control is TabControl tabControl)
                 {
@@ -162,7 +139,6 @@ namespace WH_Panel
                         tabPage.ForeColor = Color.Black; // Change TabPage text color
                     }
                 }
-
                 // Handle DataGridView controls separately
                 if (control is DataGridView dataGridView)
                 {
@@ -205,7 +181,6 @@ namespace WH_Panel
                 }
             }
         }
-
         public string avlFile;
         public string stockFile;
         public void SetComboBoxText(string text)
@@ -243,8 +218,6 @@ namespace WH_Panel
                     // Set the image in PictureBox based on the selected warehouse
                     pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
                     pictureBox1.Image = Image.FromFile(w.clLogo);
-
-
                     avlFile = w.clAvlFile;
                     stockFile = w.clStockFile;
                     MasterReload(avlFile, stockFile);
@@ -728,23 +701,10 @@ namespace WH_Panel
                     command.ExecuteNonQuery();
                     conn.Close();
                 }
-                //textBox6.Clear();
-                //LastInputFromUser.Text = string.Empty;
-                //label2.BackColor = Color.LightGreen;
-                // label3.BackColor = Color.LightGreen;
-                //LastInputFromUser.Focus();
                 if (toPrintOrNotToPrint)
                 {
                     printStickerSplitter(wHitem);
                 }
-                //if (radioButton4.Checked == true)
-                //{
-                //    AutoClosingMessageBox.Show(wHitem.IPN + " MOVED to " + textBox9.Text.ToString(), " Item added to " + textBox9.Text.ToString(), 1000);
-                //}
-                //else
-                //{
-                //    AutoClosingMessageBox.Show(wHitem.Stock.ToString() + " PCS of " + wHitem.IPN + " in a " + wHitem.ReelBagTrayStick + " MOVED to DB ", "Item added to DB", 2000);
-                //}
             }
             catch (IOException)
             {
@@ -786,7 +746,6 @@ namespace WH_Panel
             {
                 string userName = Environment.UserName;
                 string fp = @"C:\\Users\\" + userName + "\\Desktop\\Print_Stickers.xlsx"; // //////Print_StickersWH.xlsm
-
                 //string fp = @"C:\\Users\\lgt\\Desktop";
                 string thesheetName = "Sheet1";
                 string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0;HDR=YES;IMEX=0\"";
@@ -804,7 +763,6 @@ namespace WH_Panel
                 //cmd.CommandType = CommandType.Text;
                 //cmd.CommandText = $"UPDATE [{thesheetName}] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @UPDATEDON";
                 //// Rest of your code remains unchanged
-
                 cmd.Parameters.AddWithValue("@PN", wHitem.IPN);
                 cmd.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
                 cmd.Parameters.AddWithValue("@ItemDesc", wHitem.Description);
@@ -813,7 +771,6 @@ namespace WH_Panel
                 conn.Open();
                 cmd.ExecuteNonQuery();
                 conn.Close();
-
                 //string userName = Environment.UserName;
                 //string fp = $@"C:\Users\{userName}\Desktop\Print_Stickers.xlsx";
                 //string constr = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={fp};Extended Properties='Excel 12.0 Macro;HDR=YES;IMEX=0'";
@@ -821,11 +778,9 @@ namespace WH_Panel
                 //conn.Open();
                 //DataTable dtSheet = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
                 //conn.Close();
-
                 //if (dtSheet != null && dtSheet.Rows.Count > 0)
                 //{
                 //    string firstSheetName = dtSheet.Rows[0]["TABLE_NAME"].ToString().Trim('\'');
-
                 //    conn.Open();
                 //    OleDbCommand cmd = new OleDbCommand();
                 //    cmd.Connection = conn;
@@ -844,7 +799,6 @@ namespace WH_Panel
                 //    MessageBox.Show("Print error");
                 //    // Handle the case when there are no sheets in the Excel file.
                 //}
-
                 Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
                 SendKeys.SendWait("^p");
                 SendKeys.SendWait("{Enter}");
@@ -878,15 +832,12 @@ namespace WH_Panel
                 conn.Open();
                 cmd.ExecuteNonQuery();
                 conn.Close();
-
-
                 Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
                 Thread.Sleep(500);
                 SendKeys.SendWait("^p");
                 Thread.Sleep(500);
                 SendKeys.SendWait("{Enter}");
                 Thread.Sleep(500);
-
             }
             catch (Exception e)
             {
@@ -964,7 +915,6 @@ namespace WH_Panel
                 }
                 dataGridView2.Focus();
             }
-
         }
         private void textBox2_KeyDown(object sender, KeyEventArgs e)
         {
@@ -978,7 +928,6 @@ namespace WH_Panel
                 }
                 dataGridView2.Focus();
             }
-
         }
         private void StockViewDataLoader(string fp, string thesheetName)
         {
@@ -1275,7 +1224,6 @@ namespace WH_Panel
         private void txtbFiltAVLbyDESCR_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(sender);
-
             label16.BackColor = Color.Gray;
         }
         private void textBox9_Enter(object sender, EventArgs e)
@@ -1453,7 +1401,6 @@ namespace WH_Panel
             lblRWK.Text += "requested by ";
             textBox9.Text = lblRWK.Text + comboBox6.SelectedItem.ToString() + " on " + DateTime.Now.ToString("yyyy-MM-dd");
         }
-
         private void btnLEADERTECH_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm";
@@ -1477,73 +1424,61 @@ namespace WH_Panel
             excel.StartInfo.Arguments = thePathToFile;
             excel.Start();
         }
-
         private void button15_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_AVL.xlsm";
             AuthorizedExcelFileOpening(fp);
         }
-
         private void btnValens_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm";
             AuthorizedExcelFileOpening(fp);
         }
-
         private void button16_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_AVL.xlsx";
             AuthorizedExcelFileOpening(fp);
         }
-
         private void btnNETLINE_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\NETLINE\NETLINE_STOCK.xlsm";
             AuthorizedExcelFileOpening(fp);
         }
-
         private void button17_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\NETLINE\NETLINE_AVL.xlsx";
             AuthorizedExcelFileOpening(fp);
         }
-
         private void btnVAYYAR_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm";
             AuthorizedExcelFileOpening(fp);
         }
-
         private void button18_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_AVL.xlsx";
             AuthorizedExcelFileOpening(fp);
         }
-
         private void button10_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_STOCK.xlsm";
             AuthorizedExcelFileOpening(fp);
         }
-
         private void button9_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_AVL.xlsx";
             AuthorizedExcelFileOpening(fp);
         }
-
         private void button5_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_STOCK.xlsm";
             AuthorizedExcelFileOpening(fp);
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_AVL.xlsx";
             AuthorizedExcelFileOpening(fp);
         }
-
         private void button6_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_STOCK.xlsm";
@@ -1554,25 +1489,21 @@ namespace WH_Panel
             var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_AVL.xlsm";
             AuthorizedExcelFileOpening(fp);
         }
-
         private void button7_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ST_MICRO\\ST_MICRO_STOCK.xlsm";
             AuthorizedExcelFileOpening(fp);
         }
-
         private void btnFIELDIN_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\FIELDIN\\FIELDIN_STOCK.xlsm";
             AuthorizedExcelFileOpening(fp);
         }
-
         private void btnSHILAT_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_STOCK.xlsm";
             AuthorizedExcelFileOpening(fp);
         }
-
         private void button33_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_AVL.xlsm";
@@ -1615,7 +1546,6 @@ namespace WH_Panel
         }
         private void button20_Click(object sender, EventArgs e)
         {
-
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_AVL.xlsx";
             AuthorizedExcelFileOpening(fp);
         }
@@ -1639,13 +1569,11 @@ namespace WH_Panel
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_AVL.xlsm";
             AuthorizedExcelFileOpening(fp);
         }
-
         private void button29_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_AVL.xlsm";
             AuthorizedExcelFileOpening(fp);
         }
-
         private void button28_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_STOCK.xlsm";
@@ -1666,7 +1594,6 @@ namespace WH_Panel
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_STOCK.xlsm";
             AuthorizedExcelFileOpening(fp);
         }
-
         private void button35_Click(object sender, EventArgs e)
         {
             var fp = @"\\\\dbr1\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_AVL.xlsm";
@@ -1674,19 +1601,15 @@ namespace WH_Panel
         }
         private void button37_Click(object sender, EventArgs e)
         {
-
             var war = warehouses.FirstOrDefault(w => w.clName == "QUANTUM-MACHINES");
-
             if (war != null)
             {
                 AuthorizedExcelFileOpening(war.clStockFile);
             }
         }
-
         private void button38_Click(object sender, EventArgs e)
         {
             var war = warehouses.FirstOrDefault(w => w.clName == "QUANTUM-MACHINES");
-
             if (war != null)
             {
                 AuthorizedExcelFileOpening(war.clAvlFile);
@@ -1695,7 +1618,6 @@ namespace WH_Panel
         private void button39_Click(object sender, EventArgs e)
         {
             var war = warehouses.FirstOrDefault(w => w.clName == "GASNGO");
-
             if (war != null)
             {
                 AuthorizedExcelFileOpening(war.clStockFile);
@@ -1704,67 +1626,54 @@ namespace WH_Panel
         private void button43_Click(object sender, EventArgs e)
         {
             var war = warehouses.FirstOrDefault(w => w.clName == "RP-OPTICAL");
-
             if (war != null)
             {
                 AuthorizedExcelFileOpening(war.clStockFile);
             }
         }
-
         private void button44_Click(object sender, EventArgs e)
         {
             var war = warehouses.FirstOrDefault(w => w.clName == "RP-OPTICAL");
-
             if (war != null)
             {
                 AuthorizedExcelFileOpening(war.clAvlFile);
             }
         }
-
         private void button40_Click(object sender, EventArgs e)
         {
             var war = warehouses.FirstOrDefault(w => w.clName == "GASNGO");
-
             if (war != null)
             {
                 AuthorizedExcelFileOpening(war.clAvlFile);
             }
         }
-
         private void button41_Click(object sender, EventArgs e)
         {
             var war = warehouses.FirstOrDefault(w => w.clName == "MS-TECH");
-
             if (war != null)
             {
                 AuthorizedExcelFileOpening(war.clStockFile);
             }
         }
-
         private void button42_Click(object sender, EventArgs e)
         {
             var war = warehouses.FirstOrDefault(w => w.clName == "MS-TECH");
-
             if (war != null)
             {
                 AuthorizedExcelFileOpening(war.clAvlFile);
             }
         }
-
         private void button45_Click(object sender, EventArgs e)
         {
             var war = warehouses.FirstOrDefault(w => w.clName == "ROBOTEAM");
-
             if (war != null)
             {
                 AuthorizedExcelFileOpening(war.clStockFile);
             }
         }
-
         private void button46_Click(object sender, EventArgs e)
         {
             var war = warehouses.FirstOrDefault(w => w.clName == "ROBOTEAM");
-
             if (war != null)
             {
                 AuthorizedExcelFileOpening(war.clAvlFile);
@@ -1772,13 +1681,11 @@ namespace WH_Panel
         }
         private void textBox11_KeyDown(object sender, KeyEventArgs e)
         {
-
             if (e.KeyCode == Keys.Enter)
             {
                 string inputStr = textBox11.Text;
                 string startStr = comboBox4.Text.ToString();
                 string endStr = comboBox5.Text.ToString();
-
                 int startIndex = inputStr.IndexOf(startStr);
                 if (startIndex != -1)
                 {
@@ -1794,20 +1701,15 @@ namespace WH_Panel
                 }
             }
         }
-
         private void textBox11_Click(object sender, EventArgs e)
         {
             textBox11.Clear();
         }
-
         private void button22_Click(object sender, EventArgs e)
         {
-
-
         }
         private void button22_MouseClick(object sender, MouseEventArgs e)
         {
-
         }
         private void button22_MouseDown(object sender, MouseEventArgs e)
         {
@@ -1822,12 +1724,10 @@ namespace WH_Panel
                 GenerateHTMLwareHouseBalance();
             }
         }
-
         public List<string> GenerateRandomColors(int count)
         {
             var random = new Random();
             var colors = new List<string>();
-
             for (int i = 0; i < count; i++)
             {
                 colors.Add(String.Format("'rgba({0}, {1}, {2}, {3})'",
@@ -1837,37 +1737,27 @@ namespace WH_Panel
                     0.2
                 ));
             }
-
             return colors;
         }
-
         private void GenerateHTMLwareHouseBalance()
         {
             string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
             string filename = @"\\dbr1\Data\WareHouse\2023\WHsearcher\" + fileTimeStamp + "_" + comboBox3.SelectedItem.ToString() + "_wh_Balance" + ".html";
-
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.WriteLine("<html style='background-color: gray;'>");
                 writer.WriteLine("<head>");
-
                 writer.WriteLine("<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>");
                 writer.WriteLine("<script src='https://cdnjs.cloudflare.com/ajax/libs/json2/20210202/json2.js'></script>");
                 writer.WriteLine("<script src='https://cdnjs.cloudflare.com/ajax/libs/newtonsoft.json/13.0.1/json.net.min.js'></script>");
-
-
-
                 writer.WriteLine("<h1 id='stickyHeader' style='position: sticky; top: 0; background-color: lightgreen; text-align: center;'>");
                 writer.WriteLine($"{fileTimeStamp}_{comboBox3.SelectedItem}");
                 writer.WriteLine("<br>");
                 writer.WriteLine("<input type='text' id='filterInput' onkeyup='filterItems()' placeholder='Filter IPNs...' style='text-align:center;margin: 10px;'>");
                 writer.WriteLine("<button onclick='clearFilter()' style='margin: 10px;'>CLEAR</button>");
                 writer.WriteLine("</h1>");
-
                 writer.WriteLine("<style>");
-
                 writer.WriteLine("<button onclick='openAllAccordions()' style='margin: 10px;'>Open All Accordions</button>");
-
                 writer.WriteLine(".accordion {");
                 writer.WriteLine("background-color: gray;");
                 writer.WriteLine("color: #444;");
@@ -1879,11 +1769,9 @@ namespace WH_Panel
                 writer.WriteLine("outline: none;");
                 writer.WriteLine("transition: 0.4s;");
                 writer.WriteLine("}");
-
                 writer.WriteLine(".active, .accordion:hover {");
                 writer.WriteLine("background-color: #ccc;");
                 writer.WriteLine("}");
-
                 writer.WriteLine(".panel {");
                 writer.WriteLine("padding: 0 18px;");
                 writer.WriteLine("display: none;");
@@ -1893,25 +1781,16 @@ namespace WH_Panel
                 writer.WriteLine("</style>");
                 writer.WriteLine("</head>");
                 writer.WriteLine("<body>");
-
                 //writer.WriteLine("<canvas id='myChart' width='200' height='200'></canvas>");
-
                 //writer.WriteLine("<canvas id='myChart' width='200' height='300' style='max-height: 300px;'></canvas>");
-
                 writer.WriteLine("<div style=\"height: 300px; display: flex;\">");
-
                 writer.WriteLine("<div style =\"flex: 1; text-align: right;\">");
                 writer.WriteLine("<canvas id='myChart1' width='100' height='300' style='max-height: 300px; flex: 1;'></canvas>");
                 writer.WriteLine("</div>");
-
                 writer.WriteLine("<div style =\"flex: 1; text-align: left;\">");
                 writer.WriteLine("<canvas id='myChart2' width='100' height='300' style='max-height: 300px; flex: 2;'></canvas>");
                 writer.WriteLine("</div>");
-
                 writer.WriteLine("</div>");
-
-
-
                 var orderedStockItems = stockItems.OrderBy(item => item.IPN).ToList();
                 // Group items by IPN and calculate the total stock for each unique IPN
                 var groupedItems = orderedStockItems.GroupBy(item => item.IPN)
@@ -1930,90 +1809,18 @@ namespace WH_Panel
                                                     item.SourceRequester
                                                 })
                                             });
-
-                //            var groupedPositiveBalance = orderedStockItems
-                //.GroupBy(item => item.IPN)
-                //.Select(group => new
-                //{
-                //    IPN = group.Key,
-                //    TotalStock = group.Sum(item => item.Stock),
-                //    Items = group.Select(item => new
-                //    {
-                //        item.Manufacturer,
-                //        item.MFPN,
-                //        item.Description,
-                //        item.Stock,
-                //        item.UpdatedOn,
-                //        item.ReelBagTrayStick,
-                //        item.SourceRequester
-                //    })
-                //})
-                //.Where(group => group.TotalStock > 0)
-                //.ToList();
-
-
-                //            var groupedByReelBagTrayStick = orderedStockItems
-                //.Where(item => item.Stock > 0)
-                //.GroupBy(item => item.ReelBagTrayStick)
-                //.Select(group => new
-                //{
-                //    ReelBagTrayStick = group.Key,
-                //    Count = group.Count()
-                //});
-                //var groupedByReelBagTrayStick = orderedStockItems
-
-
-                //            var groupedByReelBagTrayStick = orderedStockItems
-                //.Where(item => item.Stock > 0)
-                //.GroupBy(item => item.ReelBagTrayStick)
-                //.Select(group => new
-                //{
-                //    ReelBagTrayStick = group.Key,
-                //    Count = group.Count(g => !orderedStockItems.Any(item =>
-                //        item.ReelBagTrayStick == group.Key && item.Stock == -g.Stock))
-                //});
-
-                //            // Generate the chart data based on the grouped data
-                //            var labels = groupedByReelBagTrayStick.Select(item => item.ReelBagTrayStick).ToList();
-                //            var data = groupedByReelBagTrayStick.Select(item => item.Count).ToList();
-
-                //            var groupedPositiveBalanceByReelBagTrayStick = groupedPositiveBalance
-                //.SelectMany(group => group.Items, (group, item) => new
-                //{
-                //    group.IPN,
-                //    item.Stock,
-                //    item.ReelBagTrayStick
-                //})
-                //.GroupBy(item => item.ReelBagTrayStick)
-                //.Select(group => new
-                //{
-                //    ReelBagTrayStick = group.Key,
-                //    Count = group.Count(g => !orderedStockItems.Any(item =>
-                //                   item.ReelBagTrayStick == group.Key && item.Stock == -g.Stock))
-                //});
-
-                //            // Generate the chart data based on the grouped data
-                //            var labels = groupedPositiveBalanceByReelBagTrayStick.Select(item => item.ReelBagTrayStick).ToList();
-                //            var data = groupedPositiveBalanceByReelBagTrayStick.Select(item => item.Count).ToList();
-
                 var groupedPositiveBalanceByReelBagTrayStick = orderedStockItems
     .Where(item => item.Stock > 0 && !orderedStockItems.Any(otherItem =>
         otherItem.IPN == item.IPN && otherItem.Stock == -item.Stock))
-    //.GroupBy(item => new { item.IPN, item.ReelBagTrayStick })
-
     .GroupBy(item => new { item.ReelBagTrayStick })
     .Select(group => new
     {
-        //IPN = group.Key.IPN,
         ReelBagTrayStick = group.Key.ReelBagTrayStick,
         Count = group.Count()
     });
-
                 // Generate the chart data based on the grouped data
                 var labels = groupedPositiveBalanceByReelBagTrayStick.Select(item => item.ReelBagTrayStick).ToList();
                 var data = groupedPositiveBalanceByReelBagTrayStick.Select(item => item.Count).ToList();
-
-
                 // Generate random colors for the chart
                 var colors = new List<string>();
                 var random = new Random();
@@ -2027,10 +1834,6 @@ namespace WH_Panel
                     );
                     colors.Add(color);
                 }
-
-
-
-
                 // Write the script to generate the chart
                 writer.WriteLine("<script>");
                 writer.WriteLine("var ctx1 = document.getElementById('myChart1').getContext('2d');");
@@ -2083,7 +1886,6 @@ namespace WH_Panel
                 writer.WriteLine("}");
                 writer.WriteLine("});");
                 writer.WriteLine("</script>");
-
                 writer.WriteLine("<script>");
                 writer.WriteLine("var ctx2 = document.getElementById('myChart2').getContext('2d');");
                 writer.WriteLine("var myChart2 = new Chart(ctx2, {");
@@ -2135,30 +1937,19 @@ namespace WH_Panel
                 writer.WriteLine("}");
                 writer.WriteLine("});");
                 writer.WriteLine("</script>");
-
-
-
-
-
-
                 foreach (var group in groupedItems)
                 {
                     // Generate the HTML accordion structure for each unique IPN
-
                     string stockColorBut = group.TotalStock > 0 ? "lightgreen" : "#FF7F7F";
-
                     writer.WriteLine("<button class='accordion' style='background-color: " + stockColorBut + ";'>");
                     writer.WriteLine($"<strong>{group.IPN}</strong> - Current Balance: <strong>{group.TotalStock}</strong></button>");
                     writer.WriteLine("<div class='panel'><p>");
-
-
                     writer.WriteLine("<table style='width:100%; text-align:center;' border='1'>");
                     writer.WriteLine("<tr style='background-color: lightgray;'><th>Manufacturer</th><th>MFPN</th><th>Description</th><th>Stock</th><th>Updated On</th><th>ReelBagTrayStick</th><th>Source Requester</th></tr>");
-
                     foreach (var item in group.Items)
                     {
-                        string stockColor = item.Stock > 0 ? "lightgreen" : "#FF7F7F";
-
+                        string stockColor = item.Stock > 0 && !group.Items.Any(otherItem =>
+         otherItem.Stock == -item.Stock) ? "lightgreen" : (item.Stock < 0 ? "#FF7F7F" : "");  //#FF7F7F
                         writer.WriteLine("<tr style='background-color: lightgray;'>");
                         writer.WriteLine($"<td>{item.Manufacturer}</td>");
                         writer.WriteLine($"<td>{item.MFPN}</td>");
@@ -2169,16 +1960,10 @@ namespace WH_Panel
                         writer.WriteLine($"<td>{item.SourceRequester}</td>");
                         writer.WriteLine("</tr>");
                     }
-
                     writer.WriteLine("</table>");
-
-
                     writer.WriteLine("</p></div>");
                 }
-
                 writer.WriteLine("<script>");
-
-
                 writer.WriteLine("var acc = document.getElementsByClassName('accordion');");
                 writer.WriteLine("var i;");
                 writer.WriteLine("for (i = 0; i < acc.length; i++) {");
@@ -2194,9 +1979,7 @@ namespace WH_Panel
                 writer.WriteLine("}");
                 writer.WriteLine("});");
                 writer.WriteLine("}");
-
                 writer.WriteLine("</script>");
-
                 // Add the JavaScript to open all accordions
                 writer.WriteLine("<script>");
                 writer.WriteLine("function openAllAccordions() {");
@@ -2208,7 +1991,6 @@ namespace WH_Panel
                 writer.WriteLine("}");
                 writer.WriteLine("}");
                 writer.WriteLine("</script>");
-
                 writer.WriteLine("<script>");
                 writer.WriteLine("function filterItems() {");
                 writer.WriteLine("var input, filter, accordions, panels, i, ipn;");
@@ -2224,7 +2006,6 @@ namespace WH_Panel
                 writer.WriteLine("}");
                 writer.WriteLine("}");
                 writer.WriteLine("}");
-
                 writer.WriteLine("function clearFilter() {");
                 writer.WriteLine("var input, accordions, i;");
                 writer.WriteLine("input = document.getElementById('filterInput');");
@@ -2235,11 +2016,9 @@ namespace WH_Panel
                 writer.WriteLine("}");
                 writer.WriteLine("}");
                 writer.WriteLine("</script>");
-
                 writer.WriteLine("</body>");
                 writer.WriteLine("</html>");
             }
-
             var process = new Process();
             process.StartInfo = new ProcessStartInfo(filename)
             {
@@ -2247,15 +2026,11 @@ namespace WH_Panel
             };
             process.Start();
         }
-
-
         private void GenerateHTML()
         {
             SetSTOCKiewColumsOrder();
-
             string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
             string filename = @"\\dbr1\Data\WareHouse\2023\WHsearcher\" + fileTimeStamp + "_" + ".html";
-
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.WriteLine("<html style='text-align:center'>");
@@ -2264,14 +2039,10 @@ namespace WH_Panel
                 writer.WriteLine("</head>");
                 writer.WriteLine("<body style=\"background-color:#000;\">");
                 writer.WriteLine("<table border='1' style=\"background-color:  #D3D3D3;\">");
-
                 writer.WriteLine("<tr style='text-align:center'>");
                 // Assuming you have a reference to the selected DataGridViewCell
                 DataGridViewCell selectedCell = dataGridView1.SelectedCells[0];
-
-
                 int ipnColumnIndex = dataGridView1.Columns["IPN"].Index; // Replace "IPN" with the actual column name
-
                 string cellValue = string.Empty;
                 if (dataGridView1.Rows.Count > 0 && ipnColumnIndex >= 0)
                 {
@@ -2280,7 +2051,6 @@ namespace WH_Panel
                        ? dataGridView1.Rows[0].Cells[ipnColumnIndex].Value.ToString()
                        : "";
                 }
-
                 writer.WriteLine("<td>" + "WAREHOUSE STOCK STATUS for : <b>" + cellValue + "</b> UPDATED " + fileTimeStamp + "</td>");
                 if (label15.Text.Contains("BALANCE: 0"))
                 {
@@ -2290,11 +2060,8 @@ namespace WH_Panel
                 {
                     writer.WriteLine("<td style=\"background-color: lightgreen;\">" + label15.Text + "</td>");
                 }
-
                 writer.WriteLine("</tr>");
-
                 writer.WriteLine("<tr style='text-align:center'>");
-
                 // Set column order and autosize mode
                 dataGridView1.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                 dataGridView1.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -2304,7 +2071,6 @@ namespace WH_Panel
                 dataGridView1.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                 dataGridView1.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                 dataGridView1.Columns[7].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-
                 // Add header from DataGridView with specified column order
                 writer.WriteLine("<th>" + dataGridView1.Columns["IPN"].HeaderText + "</th>");
                 writer.WriteLine("<th>" + dataGridView1.Columns["Manufacturer"].HeaderText + "</th>");
@@ -2314,14 +2080,11 @@ namespace WH_Panel
                 writer.WriteLine("<th>" + dataGridView1.Columns["UpdatedOn"].HeaderText + "</th>");
                 writer.WriteLine("<th>" + dataGridView1.Columns["ReelBagTrayStick"].HeaderText + "</th>");
                 writer.WriteLine("<th>" + dataGridView1.Columns["SourceRequester"].HeaderText + "</th>");
-
                 writer.WriteLine("</tr>");
-
                 // Iterate through the rows
                 foreach (DataGridViewRow row in dataGridView1.Rows)
                 {
                     writer.WriteLine("<tr style='text-align:center'>");
-
                     // Iterate through the cells in the specified column order
                     writer.WriteLine("<td>" + row.Cells["IPN"].Value.ToString() + "</td>");
                     writer.WriteLine("<td>" + row.Cells["Manufacturer"].Value.ToString() + "</td>");
@@ -2330,50 +2093,38 @@ namespace WH_Panel
                     if (row.Cells["Stock"].Value.ToString().Contains("-"))
                     {
                         writer.WriteLine("<td style=\"background-color:  #FF7F7F;\">" + row.Cells["Stock"].Value.ToString() + "</td>");
-
                     }
                     else
                     {
                         writer.WriteLine("<td style=\"background-color: lightgreen;\">" + row.Cells["Stock"].Value.ToString() + "</td>");
                     }
-
                     writer.WriteLine("<td>" + row.Cells["UpdatedOn"].Value.ToString() + "</td>");
                     writer.WriteLine("<td>" + row.Cells["ReelBagTrayStick"].Value.ToString() + "</td>");
                     writer.WriteLine("<td>" + row.Cells["SourceRequester"].Value.ToString() + "</td>");
-
                     writer.WriteLine("</tr>");
                 }
-
                 writer.WriteLine("</table>");
                 writer.WriteLine("</body>");
                 writer.WriteLine("</html>");
             }
-
             var process = new Process();
             process.StartInfo = new ProcessStartInfo(filename)
             {
                 UseShellExecute = true
             };
             process.Start();
-
-
         }
-
         private void button23_Click(object sender, EventArgs e)
         {
             using (FrmSplit fs = new FrmSplit())
             {
                 fs.wHitemToSplitFromTheMainForm = wHitemToSplit;
-
                 // Calculate the difference in width
                 int widthDifference = Screen.PrimaryScreen.WorkingArea.Width - fs.Width;
-
                 // Adjust the form's width without changing the height
                 fs.Width += widthDifference;
-
                 // Subscribe to the AdjustmentCompleted event
                 fs.AdjustmentCompleted += SubForm_AdjustmentCompleted;
-
                 // Show the subform
                 fs.ShowDialog();
             }
@@ -2386,19 +2137,13 @@ namespace WH_Panel
             DataInserterSplitter(stockFile, "STOCK", e.OriginalItem, false);
             stockItems.Add(e.OriginalItem);
             Thread.Sleep(1000);
-            //textBox10.Text = e.OriginalItem.IPN;
-            //textBox10.BackColor = Color.LightGreen;
-
             e.AdjustedItemA.UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
             DataInserterSplitter(stockFile, "STOCK", e.AdjustedItemA, true);
             stockItems.Add(e.AdjustedItemA);
-
             e.AdjustedItemB.UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
             DataInserterSplitter(stockFile, "STOCK", e.AdjustedItemB, true);
             stockItems.Add(e.AdjustedItemB);
-
             PopulateStockView();
-
         }
         private string GetObjectPropertiesAsString(WHitem item)
         {
@@ -2412,7 +2157,6 @@ namespace WH_Panel
                 $"UpdatedOn: {item.UpdatedOn}\n" +
                 $"ReelBagTrayStick: {item.ReelBagTrayStick}\n" +
                 $"SourceRequester: {item.SourceRequester}";
-
             return properties;
         }
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -2430,17 +2174,13 @@ namespace WH_Panel
                 ReelBagTrayStick = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["ReelBagTrayStick"].Index].Value.ToString(),
                 SourceRequester = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["SourceRequester"].Index].Value.ToString()
             };
-
             wHitemToSplit = whi;
-
         }
-
         private void textBox12_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
                 string searchbyMFPN = string.Empty;
-
                 if (textBox12.Text.Contains("-") == true && textBox12.Text.Length > 6)
                 {
                     string[] theSplit = textBox12.Text.Split("-");
@@ -2452,53 +2192,43 @@ namespace WH_Panel
                     {
                         searchbyMFPN = textBox12.Text;
                     }
-
                     textBox2.Text = searchbyMFPN;
                 }
                 else
                 {
-
                 }
                 //lastTxtbInputFromUser = textBox13;
                 textBox2.Focus();
                 textBox2_KeyDown(sender, e);
             }
         }
-
         private void textBox12_Click(object sender, EventArgs e)
         {
             textBox12.Clear();
         }
-
         private void textBox12_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(textBox12);
         }
-
         private void textBox11_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(textBox11);
         }
-
         private void textBox12_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(textBox12);
         }
-
         private void textBox11_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(textBox11);
         }
-
         private void textBox13_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
                 string searchbyMFPN = textBox13.Text.Trim(); // Get the text from textBox14
-
                 // Remove [)> characters from the search string
                 searchbyMFPN = searchbyMFPN.Replace("[)>", "");
-
                 if (!string.IsNullOrEmpty(searchbyMFPN))
                 {
                     // Loop through the DataGridView rows and filter based on MFPN
@@ -2521,32 +2251,26 @@ namespace WH_Panel
                 }
                 else
                 {
-
                 }
-
                 LastInputFromUser = textBox13;
                 textBox2.Focus();
                 textBox2_KeyDown(sender, e);
             }
         }
-
         private void textBox13_Click(object sender, EventArgs e)
         {
             textBox13.Clear();
             textBox2.Clear();
         }
-
         private void textBox13_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(textBox13);
             textBox2.Clear();
         }
-
         private void textBox13_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(textBox13);
         }
-
         private void button30_Click(object sender, EventArgs e)
         {
             if (comboBox3.SelectedItem.ToString() == "ROBOTRON")
@@ -2564,31 +2288,24 @@ namespace WH_Panel
                         List<string> sp = avlItems[0].IPN.Split('-').ToList();
                         prefix = sp[0];
                     }
-
-
                     FrmIPNgenerator gen = new FrmIPNgenerator(avlItems, prefix);
                     gen.FormClosed += (s, args) =>
                     {
                         button2.PerformClick(); // Replace button2 with your actual button name
                     };
                     gen.Show();
-
                 }
                 catch
                 {
-
                 }
             }
         }
-
-
         private void dataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right && e.RowIndex >= 0)
             {
                 DataGridViewRow selectedRow = dataGridView1.Rows[e.RowIndex];
                 string currentReelBagTrayStick = selectedRow.Cells["ReelBagTrayStick"].Value.ToString();
-
                 int rowindex = dataGridView1.CurrentCell.RowIndex;
                 WHitem wHitemABCD = new WHitem()
                 {
@@ -2601,9 +2318,7 @@ namespace WH_Panel
                     ReelBagTrayStick = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["ReelBagTrayStick"].Index].Value.ToString(),
                     SourceRequester = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["SourceRequester"].Index].Value.ToString()
                 };
-
                 ContextMenuStrip contextMenu = new ContextMenuStrip();
-
                 foreach (string option in comboBox1.Items)
                 {
                     ToolStripMenuItem item = new ToolStripMenuItem(option);
@@ -2611,7 +2326,6 @@ namespace WH_Panel
                     {
                         ToolStripMenuItem clickedItem = (ToolStripMenuItem)sender;
                         string newReelBagTrayStick = clickedItem.Text;
-
                         // Show a confirmation message box before applying the changes
                         DialogResult dialogResult = MessageBox.Show($"Apply changes to Warehouse Item? Change from {currentReelBagTrayStick} to {newReelBagTrayStick} ?", "Confirmation", MessageBoxButtons.YesNo);
                         if (dialogResult == DialogResult.Yes)
@@ -2622,15 +2336,12 @@ namespace WH_Panel
                     };
                     contextMenu.Items.Add(item);
                 }
-
                 // Display the context menu at the current mouse position
                 contextMenu.Show(dataGridView1, dataGridView1.PointToClient(Cursor.Position));
             }
         }
-
         private void DataUpdater(string fp, string thesheetName, string currentReelBagTrayStick, WHitem wHitem, string newReelBagTrayStick)
         {
-
             //AND Manufacturer = @Manufacturer
             try
             {
@@ -2658,12 +2369,9 @@ namespace WH_Panel
                 MessageBox.Show("Error");
             }
         }
-
         private void button2_MouseClick(object sender, MouseEventArgs e)
         {
-
         }
-
         private void button2_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
@@ -2672,7 +2380,6 @@ namespace WH_Panel
                 openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\2023\\" + DateTime.Now.ToString("MM") + ".2023";
                 openFileDialog1.Filter = "BOM files(*.xlsm) | *.xlsm";
                 openFileDialog1.Multiselect = false;
-
                 string currentPrefix = string.Empty;
                 string currentAvl = string.Empty;
                 foreach (ClientWarehouse w in warehouses)
@@ -2683,40 +2390,31 @@ namespace WH_Panel
                         currentAvl = w.clAvlFile;
                     }
                 }
-
                 List<WHitem> ItemsToAddToAvl = new List<WHitem>();
-
                 if (openFileDialog1.ShowDialog() == DialogResult.OK)
                 {
                     string fileName = openFileDialog1.FileName;
                     string connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fileName + ";Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1';";
-
-
                     using (OleDbConnection connection = new OleDbConnection(connectionString))
                     {
                         connection.Open();
-
                         // Get the first sheet name from the schema
                         string sheetName = GetFirstSheetName(connection);
-
                         if (IsValidSheet(sheetName))
                         {
                             // Check if the required columns exist
                             List<string> missingColumns = CheckColumnsExist(connection, sheetName, "IPN", "Manufacturer", "MFPN", "Description");
-
                             // Check if the required columns exist
                             // if (CheckColumnsExist(connection, sheetName, "IPN", "Manufacturer", "MFPN", "Description"))
                             if (missingColumns.Count == 0)
                             {
                                 // Columns exist, proceed with data retrieval
                                 DataTable dtExcelData = RetrieveExcelData(connection, sheetName);
-
                                 // Check if the first IPN starts with currentPrefix
                                 if (IsValidPrefix(dtExcelData))
                                 {
                                     // Process data and add to ItemsToAddToAvl
                                     ProcessExcelData(dtExcelData);
-
                                     // Check for unique MFPN items
                                     CheckAndHandleUniqueItems();
                                 }
@@ -2733,11 +2431,9 @@ namespace WH_Panel
                                 //MessageBox.Show("Error: The required columns do not exist in the Excel sheet.");
                                 // Display the missing columns in the error message
                                 MessageBox.Show($"Error: The following columns do not exist in the Excel sheet: {string.Join(", ", missingColumns)}");
-
                                 // Open the Excel file for user to make necessary changes
                                 //OpenExcelFile(openFileDialog1.FileName);
                                 AuthorizedExcelFileOpening(openFileDialog1.FileName);
-
                             }
                         }
                     }
@@ -2757,7 +2453,6 @@ namespace WH_Panel
                     {
                         return !string.IsNullOrEmpty(sheetName) && !sheetName.EndsWith("_");
                     }
-
                     // Helper method to retrieve Excel data
                     DataTable RetrieveExcelData(OleDbConnection connection, string sheetName)
                     {
@@ -2766,7 +2461,6 @@ namespace WH_Panel
                         dataAdapter.Fill(dtExcelData);
                         return dtExcelData;
                     }
-
                     // Helper method to check if the first IPN starts with the current prefix
                     bool IsValidPrefix(DataTable dtExcelData)
                     {
@@ -2777,7 +2471,6 @@ namespace WH_Panel
                         }
                         return false;
                     }
-
                     // Helper method to process Excel data and add to ItemsToAddToAvl
                     void ProcessExcelData(DataTable dtExcelData)
                     {
@@ -2792,14 +2485,12 @@ namespace WH_Panel
                             });
                         }
                     }
-
                     // Helper method to check for unique MFPN items and handle accordingly
                     void CheckAndHandleUniqueItems()
                     {
                         var uniqueMFPNItems = ItemsToAddToAvl
                             .Where(newItem => !avlItems.Any(existingItem => existingItem.MFPN == newItem.MFPN))
                             .ToList();
-
                         if (uniqueMFPNItems.Count > 0)
                         {
                             string message = $"{uniqueMFPNItems.Count} new ITEMS found:\n\n";
@@ -2816,52 +2507,23 @@ namespace WH_Panel
                             MessageBox.Show("Nothing new here");
                         }
                     }
-
-
-
-
-
-
                 }
             }
         }
-
         // Helper method to get the first sheet name from the schema
         string GetFirstSheetName(OleDbConnection connection)
         {
             DataTable dt = connection.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
-
             if (dt != null && dt.Rows.Count > 0)
             {
                 return dt.Rows[0]["TABLE_NAME"].ToString();
             }
-
             return null;
         }
-
-        //static bool CheckColumnsExist(OleDbConnection connection, string sheetName, params string[] columnNames)
-        //{
-        //    DataTable schemaTable = connection.GetOleDbSchemaTable(OleDbSchemaGuid.Columns, new object[] { null, null, sheetName, null });
-
-        //    foreach (string columnName in columnNames)
-        //    {
-        //        // Check if the column exists in the schema table
-        //        DataRow[] rows = schemaTable.Select("COLUMN_NAME = '" + columnName + "'");
-        //        if (rows.Length == 0)
-        //        {
-        //            return false; // Column not found
-        //        }
-        //    }
-
-        //    return true; // All columns found
-        //}
-        // Modified CheckColumnsExist method to return missing column names
         List<string> CheckColumnsExist(OleDbConnection connection, string sheetName, params string[] columnNames)
         {
             DataTable schemaTable = connection.GetOleDbSchemaTable(OleDbSchemaGuid.Columns, new object[] { null, null, sheetName, null });
-
             List<string> missingColumns = new List<string>();
-
             foreach (string columnName in columnNames)
             {
                 // Check if the column exists in the schema table
@@ -2871,7 +2533,6 @@ namespace WH_Panel
                     missingColumns.Add(columnName);
                 }
             }
-
             return missingColumns;
         }
         private void AddNewItemsToAVL(string currentAvl, List<WHitem> newItems)
@@ -2883,16 +2544,13 @@ namespace WH_Panel
                 builder.Provider = "Microsoft.ACE.OLEDB.12.0";
                 builder.DataSource = currentAvl;
                 builder["Extended Properties"] = "Excel 12.0 Xml;HDR=YES;IMEX=0;Mode=ReadWrite";
-
                 using (OleDbConnection connection = new OleDbConnection(builder.ConnectionString))
                 {
                     connection.Open();
-
                     foreach (var item in newItems)
                     {
                         // Assuming you have a sheet named 'YourSheetName' in your Excel file
                         string query = "INSERT INTO [AVL$] (IPN, Manufacturer, MFPN, Description) VALUES (@IPN, @Manufacturer, @MFPN, @Description)";
-
                         using (OleDbCommand command = new OleDbCommand(query, connection))
                         {
                             command.Parameters.AddWithValue("@IPN", item.IPN);
@@ -2902,7 +2560,6 @@ namespace WH_Panel
                             command.ExecuteNonQuery();
                         }
                     }
-
                     MessageBox.Show(newItems.Count.ToString() + " New items added to the AVL file successfully.");
                     button2.PerformClick();
                 }
@@ -2912,6 +2569,112 @@ namespace WH_Panel
                 MessageBox.Show($"Error adding new items to the AVL file: {ex.Message}");
                 // Handle the exception appropriately (log, show a user-friendly message, etc.)
             }
+        }
+        private void button4_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                //MessageBox.Show("right");
+                GenerateHTMLwareHouseBalanceListByIPN();
+            }
+            else
+            {
+                //
+            }
+        }
+        void GenerateHTMLwareHouseBalanceListByIPN()
+        {
+            string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+            string filename = @"\\dbr1\Data\WareHouse\2023\WHsearcher\" + fileTimeStamp + "_" + comboBox3.SelectedItem.ToString() + "_wh_Balance" + ".html";
+            using (StreamWriter writer = new StreamWriter(filename))
+            {
+                writer.WriteLine("<html style='background-color: gray;'>");
+                writer.WriteLine("<head>");
+                writer.WriteLine("<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>");
+                writer.WriteLine("<script src='https://cdnjs.cloudflare.com/ajax/libs/json2/20210202/json2.js'></script>");
+                writer.WriteLine("<script src='https://cdnjs.cloudflare.com/ajax/libs/newtonsoft.json/13.0.1/json.net.min.js'></script>");
+                writer.WriteLine("<h1 id='stickyHeader' style='position: sticky; top: 0; background-color: lightgreen; text-align: center;'>");
+                writer.WriteLine($"{fileTimeStamp}_{comboBox3.SelectedItem}");
+                writer.WriteLine("<br>");
+                writer.WriteLine("<input type='text' id='filterInput' onkeyup='filterItems()' placeholder='Filter IPNs...' style='text-align:center;margin: 10px;'>");
+                writer.WriteLine("<button onclick='clearFilter()' style='margin: 10px;'>CLEAR</button>");
+                writer.WriteLine("</h1>");
+                writer.WriteLine("<script>");
+                writer.WriteLine("function filterItems() {");
+                writer.WriteLine("  var input, filter, table, tr, td, i, txtValue;");
+                writer.WriteLine("  input = document.getElementById('filterInput');");
+                writer.WriteLine("  filter = input.value.toUpperCase();");
+                writer.WriteLine("  table = document.querySelector('table');");
+                writer.WriteLine("  tr = table.getElementsByTagName('tr');");
+                writer.WriteLine("  for (i = 1; i < tr.length; i++) {");  // Start from 1 to skip the header row
+                writer.WriteLine("    var display = 'none';");
+                writer.WriteLine("    td = tr[i].getElementsByTagName('td');");
+                writer.WriteLine("    for (var j = 0; j < td.length; j++) {");
+                writer.WriteLine("      txtValue = td[j].textContent || td[j].innerText;");
+                writer.WriteLine("      if (txtValue.toUpperCase().indexOf(filter) > -1) {");
+                writer.WriteLine("        display = '';");
+                writer.WriteLine("        break;");
+                writer.WriteLine("      }");
+                writer.WriteLine("    }");
+                writer.WriteLine("    tr[i].style.display = display;");
+                writer.WriteLine("  }");
+                writer.WriteLine("}");
+                writer.WriteLine("function clearFilter() {");
+                writer.WriteLine("  document.getElementById('filterInput').value = '';");
+                writer.WriteLine("  filterItems();");
+                writer.WriteLine("}");
+                writer.WriteLine("</script>");
+                writer.WriteLine("</head>");
+                writer.WriteLine("<body>");
+                var orderedStockItems = stockItems.OrderBy(item => item.IPN).ToList();
+                // Group items by IPN and calculate the total stock for each unique IPN
+                var groupedItems = orderedStockItems.GroupBy(item => item.IPN)
+                                            .Select(group => new
+                                            {
+                                                IPN = group.Key,
+                                                TotalStock = group.Sum(item => item.Stock),
+                                                Items = group.Select(item => new
+                                                {
+                                                    item.Manufacturer,
+                                                    item.MFPN,
+                                                    item.Description,
+                                                    item.Stock,
+                                                    item.UpdatedOn,
+                                                    item.ReelBagTrayStick,
+                                                    item.SourceRequester
+                                                })
+                                            });
+                writer.WriteLine("<table style='width:100%; text-align:center;' border='1'>");
+                writer.WriteLine($"<tr style='background-color: lightgray;'><th>IPN</th><th>MFPN</th><th>Description</th><th>TotalStock</th></tr>");
+                var totalQtyOfItemsInWarehouse = groupedItems.Sum(group => group.TotalStock);
+                writer.WriteLine($"<tr style='background-color: lightgray;'><td>{groupedItems.Count()} IPNs found</td><td></td><td></td><td>{totalQtyOfItemsInWarehouse}</td></tr>");
+                foreach (var group in groupedItems)
+                {
+                    string backgroundColor;
+                    if (group.TotalStock > 0)
+                    {
+                        backgroundColor = "lightgreen";
+                    }
+                    else if (group.TotalStock == 0 || group.TotalStock < 0)
+                    {
+                        backgroundColor = "#FF7F7F";
+                    }
+                    else
+                    {
+                        backgroundColor = ""; // Default color or any other desired color
+                    }
+                    writer.WriteLine($"<tr style='background-color: {backgroundColor};'><td>{group.IPN}</td><td>{group.Items.FirstOrDefault()?.MFPN}</td><td>{group.Items.FirstOrDefault()?.Description}</td><td>{group.TotalStock}</td></tr>");
+                }
+                writer.WriteLine("</table>");
+                writer.WriteLine("</body>");
+                writer.WriteLine("</html>");
+            }
+            var process = new Process();
+            process.StartInfo = new ProcessStartInfo(filename)
+            {
+                UseShellExecute = true
+            };
+            process.Start();
         }
     }
 }
