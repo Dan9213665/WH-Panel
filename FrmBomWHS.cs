@@ -622,6 +622,24 @@ namespace WH_Panel
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
             GenerateHTML();
         }
+
+        bool ExcludeColumn(string headerText)
+        {
+            return headerText == "ProjectName" || headerText == "DateOfCreation" || headerText == "QtyPerUnit" || headerText == "Calc";
+        }
+
+        // Helper method to get the index of a specific column by name
+        int GetColumnIndex(string columnName)
+        {
+            for (int i = 0; i < dataGridView1.Columns.Count; i++)
+            {
+                if (dataGridView1.Columns[i].HeaderText == columnName)
+                {
+                    return i;
+                }
+            }
+            return -1; // Column not found
+        }
         private void GenerateHTML()
         {
             int id = 0;
@@ -639,10 +657,9 @@ namespace WH_Panel
                 for (int i = 0; i < dataGridView1.Rows.Count; i++)
                 {
                     string IPN = dataGridView1.Rows[i].Cells["IPN"].Value.ToString();
-                    writer.WriteLine("<tr>");
-                    writer.WriteLine("<td colspan='" + dataGridView1.Columns.Count + "'>");
-                    writer.WriteLine("<table border='1' style='text-align:center; width:auto; margin-right: 0px;margin-left: auto;'>");
-                    writer.WriteLine("</tr>");
+          
+                    writer.WriteLine("<table border='1' id='IPNtable" + i + "' style='text-align:center; width:auto; margin-right: 0px;margin-left: auto;'>");
+
                     writer.WriteLine("<tr>");
                     for (int j = 0; j < dataGridView1.Columns.Count; j++)
                     {
@@ -657,7 +674,7 @@ namespace WH_Panel
                             else if (headerText == "Delta")
                             {
                                 int req = int.Parse(cellValue);
-                                writer.WriteLine("<td style='font-size: 18px;font-weight: bold;background-color: Pink' id='requiredQty'>" + req + "</td>");
+                                writer.WriteLine("<td class='required-qty' style='font-size: 18px;font-weight: bold;background-color: Pink'>" + req + "</td>");
                             }
                             else if (headerText == "WHbalance")
                             {
@@ -686,23 +703,8 @@ namespace WH_Panel
                             }
                         }
                     }
-                    // Helper method to exclude specific columns
-                    bool ExcludeColumn(string headerText)
-                    {
-                        return headerText == "ProjectName" || headerText == "DateOfCreation" || headerText == "QtyPerUnit" || headerText == "Calc";
-                    }
-                    // Helper method to get the index of a specific column by name
-                    int GetColumnIndex(string columnName)
-                    {
-                        for (int i = 0; i < dataGridView1.Columns.Count; i++)
-                        {
-                            if (dataGridView1.Columns[i].HeaderText == columnName)
-                            {
-                                return i;
-                            }
-                        }
-                        return -1; // Column not found
-                    }
+            
+
                     writer.WriteLine("</tr>");
                     DataView dv = new DataView();
                     var negativeQtys = stockItems.Where(item => item.IPN == IPN && item.Stock < 0).ToList();
@@ -744,11 +746,11 @@ namespace WH_Panel
                                     {
                                         writer.WriteLine("<td style='font-size: x-small'>" + filteredData.Rows[l][m].ToString() + "</td>");
                                     }
-                                    //else if (filteredData.Columns[m].ColumnName == "Stock")
-                                    //{
-                                    //    string cellValue = filteredData.Rows[l][m].ToString();
-                                    //    writer.WriteLine($"<td class='qtyInKit-cell' style='font-size: 18px;font-weight: bold;'>{cellValue}</td>");
-                                    //}
+                                    else if (filteredData.Columns[m].ColumnName == "ReelBagTrayStick")
+                                    {
+                                        writer.WriteLine("<td class='packageType' style='font-size: 18px;font-weight: bold;'>" + filteredData.Rows[l][m].ToString() + "</td>");
+                                    }
+
                                     else if (filteredData.Columns[m].ColumnName == "Stock")
                                     {
                                         string cellValue = filteredData.Rows[l][m].ToString();
@@ -764,266 +766,65 @@ namespace WH_Panel
                         }
                         writer.WriteLine("</tr>");
                     }
+
                     writer.WriteLine("</table>");
                     writer.WriteLine("</td>");
                     writer.WriteLine("</tr>");
                 }
+
                 writer.WriteLine("</table>");
-                //writer.WriteLine("<script>");
-                //writer.WriteLine("document.addEventListener('DOMContentLoaded', function() {");
-                //writer.WriteLine("    var tables = document.querySelectorAll('table');");
-                //writer.WriteLine("    tables.forEach(function(table) {");
-                //writer.WriteLine("        highlightCells(table);");
-                //writer.WriteLine("    });");
-                //writer.WriteLine("});");
-                //writer.WriteLine("function highlightCells(table) {");
-                //writer.WriteLine("    var rows = table.querySelectorAll('tr');");
-                //writer.WriteLine("    for (var i = 1; i < rows.length; i++) {");
-                //writer.WriteLine("        var cells = rows[i].querySelectorAll('.qtyInKit-cell');");
-                //writer.WriteLine("        var requiredQty = parseInt(document.getElementById('requiredQty').innerText);");
-                //writer.WriteLine("        var coveredQuantity = 0;");
-                //writer.WriteLine("        var selectedCells = [];");
-                //writer.WriteLine("        for (var j = 0; j < cells.length; j++) {");
-                //writer.WriteLine("            var cellValue = parseInt(cells[j].innerText);");
-                //writer.WriteLine("            coveredQuantity += isNaN(cellValue) ? 0 : cellValue;");
-                //writer.WriteLine("        }");
-                //writer.WriteLine("        if (coveredQuantity >= requiredQty) {");
-                //writer.WriteLine("            cells.forEach(function(cell) {");
-                //writer.WriteLine("                cell.style.backgroundColor = '#FFD300';");
-                //writer.WriteLine("            });");
-                //writer.WriteLine("        }");
-                //writer.WriteLine("    }");
-                //writer.WriteLine("}");
-                //writer.WriteLine("</script>");
-                //writer.WriteLine("<script>");
-                //writer.WriteLine("document.addEventListener('DOMContentLoaded', function() {");
-                //writer.WriteLine("    var tables = document.querySelectorAll('table');");
-                //writer.WriteLine("    tables.forEach(function(table) {");
-                //writer.WriteLine("        highlightCells(table);");
-                //writer.WriteLine("    });");
-                //writer.WriteLine("});");
-                //writer.WriteLine("function highlightCells(table) {");
-                //writer.WriteLine("    var rows = table.querySelectorAll('tr');");
-                //writer.WriteLine("    for (var i = 1; i < rows.length; i++) {");
-                //writer.WriteLine("        var cells = rows[i].querySelectorAll('.qtyInKit-cell');");
-                //writer.WriteLine("        var requiredQty = parseInt(document.getElementById('requiredQty').innerText);");
-                //writer.WriteLine("        var coveredQuantity = 0;");
-                //writer.WriteLine("        var selectedCell = null;");
-                //writer.WriteLine("        for (var j = 0; j < cells.length; j++) {");
-                //writer.WriteLine("            var cellValue = parseInt(cells[j].innerText);");
-                //writer.WriteLine("            coveredQuantity += isNaN(cellValue) ? 0 : cellValue;");
-                //writer.WriteLine("            if (!selectedCell && cellValue >= requiredQty) {");
-                //writer.WriteLine("                selectedCell = cells[j];");
-                //writer.WriteLine("            }");
-                //writer.WriteLine("        }");
-                //writer.WriteLine("        if (selectedCell) {");
-                //writer.WriteLine("            selectedCell.style.backgroundColor = '#FFD300';");
-                //writer.WriteLine("        } else if (coveredQuantity >= requiredQty) {");
-                //writer.WriteLine("            cells.forEach(function(cell) {");
-                //writer.WriteLine("                cell.style.backgroundColor = '#FFD300';");
-                //writer.WriteLine("            });");
-                //writer.WriteLine("        }");
-                //writer.WriteLine("    }");
-                //writer.WriteLine("}");
-                //writer.WriteLine("</script>");
-                //writer.WriteLine("<script>");
-                //writer.WriteLine("document.addEventListener('DOMContentLoaded', function() {");
-                //writer.WriteLine("    var tables = document.querySelectorAll('table');");
-                //writer.WriteLine("    tables.forEach(function(table) {");
-                //writer.WriteLine("        highlightCells(table);");
-                //writer.WriteLine("    });");
-                //writer.WriteLine("});");
-                //writer.WriteLine("function highlightCells(table) {");
-                //writer.WriteLine("    var rows = table.querySelectorAll('tr');");
-                //writer.WriteLine("    for (var i = 1; i < rows.length; i++) {");
-                //writer.WriteLine("        var cells = rows[i].querySelectorAll('.qtyInKit-cell');");
-                //writer.WriteLine("        var requiredQty = parseInt(document.getElementById('requiredQty').innerText);");
-                //writer.WriteLine("        var coveredQuantity = 0;");
-                //writer.WriteLine("        var selectedCells = [];");
-                //writer.WriteLine("        for (var j = 0; j < cells.length; j++) {");
-                //writer.WriteLine("            var cellValue = parseInt(cells[j].innerText);");
-                //writer.WriteLine("            coveredQuantity += isNaN(cellValue) ? 0 : cellValue;");
-                //writer.WriteLine("            if (cellValue >= requiredQty) {");
-                //writer.WriteLine("                selectedCells = [cells[j]];");
-                //writer.WriteLine("                break;");
-                //writer.WriteLine("            }");
-                //writer.WriteLine("        }");
-                //writer.WriteLine("        if (selectedCells.length > 0) {");
-                //writer.WriteLine("            selectedCells.forEach(function(cell) {");
-                //writer.WriteLine("                cell.style.backgroundColor = '#FFD300';");
-                //writer.WriteLine("            });");
-                //writer.WriteLine("        }");
-                //writer.WriteLine("    }");
-                //writer.WriteLine("}");
-                //writer.WriteLine("</script>");
-                //writer.WriteLine("<script>");
-                //writer.WriteLine("document.addEventListener('DOMContentLoaded', function() {");
-                //writer.WriteLine("    var tables = document.querySelectorAll('table');");
-                //writer.WriteLine("    tables.forEach(function(table) {");
-                //writer.WriteLine("        highlightCells(table);");
-                //writer.WriteLine("    });");
-                //writer.WriteLine("});");
-                //writer.WriteLine("function highlightCells(table) {");
-                //writer.WriteLine("    var rows = table.querySelectorAll('tr');");
-                //writer.WriteLine("    for (var i = 1; i < rows.length; i++) {");
-                //writer.WriteLine("        var cells = rows[i].querySelectorAll('.qtyInKit-cell');");
-                //writer.WriteLine("        var requiredQty = parseInt(document.getElementById('requiredQty').innerText);");
-                //writer.WriteLine("        var coveredQuantity = 0;");
-                //writer.WriteLine("        var selectedCellId = null;");
-                //writer.WriteLine("        for (var j = 0; j < cells.length; j++) {");
-                //writer.WriteLine("            var cellValue = parseInt(cells[j].innerText);");
-                //writer.WriteLine("            coveredQuantity += isNaN(cellValue) ? 0 : cellValue;");
-                //writer.WriteLine("            if (cellValue >= requiredQty) {");
-                //writer.WriteLine("                selectedCellId = cells[j].id;");
-                //writer.WriteLine("                break;");
-                //writer.WriteLine("            }");
-                //writer.WriteLine("        }");
-                //writer.WriteLine("        if (selectedCellId) {");
-                //writer.WriteLine("            document.getElementById(selectedCellId).style.backgroundColor = '#FFD300';");
-                //writer.WriteLine("        }");
-                //writer.WriteLine("    }");
-                //writer.WriteLine("}");
-                //writer.WriteLine("</script>");
-                //writer.WriteLine("<script>");
-                //writer.WriteLine("document.addEventListener('DOMContentLoaded', function() {");
-                //writer.WriteLine("    var tables = document.querySelectorAll('table');");
-                //writer.WriteLine("    tables.forEach(function(table) {");
-                //writer.WriteLine("        highlightCells(table);");
-                //writer.WriteLine("    });");
-                //writer.WriteLine("});");
-                //writer.WriteLine("function highlightCells(table) {");
-                //writer.WriteLine("    var rows = table.querySelectorAll('tr');");
-                //writer.WriteLine("    for (var i = 1; i < rows.length; i++) {");
-                //writer.WriteLine("        var cells = rows[i].querySelectorAll('.qtyInKit-cell');");
-                //writer.WriteLine("        var requiredQty = parseInt(document.getElementById('requiredQty').innerText);");
-                //writer.WriteLine("        var coveredQuantity = 0;");
-                //writer.WriteLine("        var selectedCellId = null;");
-                //writer.WriteLine("        for (var j = 0; j < cells.length; j++) {");
-                //writer.WriteLine("            var cellValue = parseInt(cells[j].innerText);");
-                //writer.WriteLine("            coveredQuantity += isNaN(cellValue) ? 0 : cellValue;");
-                //writer.WriteLine("            if (cellValue >= requiredQty) {");
-                //writer.WriteLine("                selectedCellId = cells[j].id;");
-                //writer.WriteLine("                break;");
-                //writer.WriteLine("            }");
-                //writer.WriteLine("        }");
-                //writer.WriteLine("        if (selectedCellId) {");
-                //writer.WriteLine("            document.getElementById(selectedCellId).style.backgroundColor = '#FFD300';");
-                //writer.WriteLine("        }");
-                //writer.WriteLine("    }");
-                //writer.WriteLine("}");
-                //writer.WriteLine("</script>");
-                //writer.WriteLine("<script>");
-                //writer.WriteLine("document.addEventListener('DOMContentLoaded', function() {");
-                //writer.WriteLine("    var tables = document.querySelectorAll('table');");
-                //writer.WriteLine("    tables.forEach(function(table) {");
-                //writer.WriteLine("        highlightCells(table);");
-                //writer.WriteLine("    });");
-                //writer.WriteLine("});");
-                //writer.WriteLine("function highlightCells(table) {");
-                //writer.WriteLine("    var rows = table.querySelectorAll('tr');");
-                //writer.WriteLine("    for (var i = 1; i < rows.length; i++) {");
-                //writer.WriteLine("        var cells = rows[i].querySelectorAll('.qtyInKit-cell');");
-                //writer.WriteLine("        var requiredQty = parseInt(document.getElementById('requiredQty').innerText);");
-                //writer.WriteLine("        var coveredQuantity = 0;");
-                //writer.WriteLine("        var selectedCellId = null;");
-                //writer.WriteLine("        for (var j = 0; j < cells.length; j++) {");
-                //writer.WriteLine("            var cellValue = parseInt(cells[j].innerText);");
-                //writer.WriteLine("            coveredQuantity += isNaN(cellValue) ? 0 : cellValue;");
-                //writer.WriteLine("            if (cellValue >= requiredQty) {");
-                //writer.WriteLine("                selectedCellId = cells[j].id;");
-                //writer.WriteLine("                break;");
-                //writer.WriteLine("            }");
-                //writer.WriteLine("        }");
-                //writer.WriteLine("        if (selectedCellId) {");
-                //writer.WriteLine("            document.getElementById(selectedCellId).style.backgroundColor = '#FFD300';");
-                //writer.WriteLine("        }");
-                //writer.WriteLine("    }");
-                //writer.WriteLine("}");
-                //writer.WriteLine("</script>");
-                //writer.WriteLine("<script>");
-                //writer.WriteLine("document.addEventListener('DOMContentLoaded', function() {");
-                //writer.WriteLine("    var tables = document.querySelectorAll('table');");
-                //writer.WriteLine("    tables.forEach(function(table) {");
-                //writer.WriteLine("        highlightCells(table);");
-                //writer.WriteLine("    });");
-                //writer.WriteLine("});");
-                //writer.WriteLine("function highlightCells(table) {");
-                //writer.WriteLine("    var rows = table.querySelectorAll('tr');");
-                //writer.WriteLine("    for (var i = 1; i < rows.length; i++) {");
-                //writer.WriteLine("        var cells = rows[i].querySelectorAll('.qtyInKit-cell');");
-                //writer.WriteLine("        var requiredQty = parseInt(document.getElementById('requiredQty').innerText);");
-                //writer.WriteLine("        var coveredQuantity = 0;");
-                //writer.WriteLine("        var selectedCells = [];");
-                //writer.WriteLine("        for (var j = 0; j < cells.length; j++) {");
-                //writer.WriteLine("            var cellValue = parseInt(cells[j].innerText);");
-                //writer.WriteLine("            if (!isNaN(cellValue)) {");
-                //writer.WriteLine("                coveredQuantity += cellValue;");
-                //writer.WriteLine("                selectedCells.push(cells[j].id);");
-                //writer.WriteLine("                if (coveredQuantity >= requiredQty) {");
-                //writer.WriteLine("                    break;");
-                //writer.WriteLine("                }");
-                //writer.WriteLine("            }");
-                //writer.WriteLine("        }");
-                //writer.WriteLine("        if (coveredQuantity >= requiredQty) {");
-                //writer.WriteLine("            selectedCells.forEach(function(cellId) {");
-                //writer.WriteLine("                document.getElementById(cellId).style.backgroundColor = '#FFD300';");
-                //writer.WriteLine("            });");
-                //writer.WriteLine("        }");
-                //writer.WriteLine("    }");
-                //writer.WriteLine("}");
-                //writer.WriteLine("</script>");
-                //writer.WriteLine("<script>");
-                //writer.WriteLine("document.addEventListener('DOMContentLoaded', function() {");
-                //writer.WriteLine("    var tables = document.querySelectorAll('table');");
-                //writer.WriteLine("    tables.forEach(function(table) {");
-                //writer.WriteLine("        highlightCells(table);");
-                //writer.WriteLine("    });");
-                //writer.WriteLine("});");
-                //writer.WriteLine("function highlightCells(table) {");
-                //writer.WriteLine("    var rows = table.querySelectorAll('tr');");
-                //writer.WriteLine("    for (var i = 1; i < rows.length; i++) {");
-                //writer.WriteLine("        var cells = rows[i].querySelectorAll('.qtyInKit-cell');");
-                //writer.WriteLine("       var requiredQty = Math.abs(parseInt(document.getElementById('requiredQty').innerText));");
-                //writer.WriteLine("        var coveredQuantity = 0;");
-                //writer.WriteLine("        for (var j = 0; j < cells.length; j++) {");
-                //writer.WriteLine("            var cellValue = parseInt(cells[j].innerText);");
-                //writer.WriteLine("            if (!isNaN(cellValue)) {");
-                //writer.WriteLine("                coveredQuantity += cellValue;");
-                //writer.WriteLine("                if (coveredQuantity >= requiredQty) {");
-                //writer.WriteLine("                    cells[j].style.backgroundColor = '#FFD300';");
-                //writer.WriteLine("                    break;");
-                //writer.WriteLine("                }");
-                //writer.WriteLine("            }");
-                //writer.WriteLine("        }");
-                //writer.WriteLine("    }");
-                //writer.WriteLine("}");
-                //writer.WriteLine("</script>");
+
+
+
                 writer.WriteLine("<script>");
+
+
                 writer.WriteLine("document.addEventListener('DOMContentLoaded', function() {");
-                writer.WriteLine("    var tables = document.querySelectorAll('table');");
+
+                writer.WriteLine("    var tables = document.querySelectorAll('[id^=\"IPNtable\"]');");
+
                 writer.WriteLine("    tables.forEach(function(table) {");
                 writer.WriteLine("        highlightCells(table);");
                 writer.WriteLine("    });");
                 writer.WriteLine("});");
+
+
+
                 writer.WriteLine("function highlightCells(table) {");
                 writer.WriteLine("    var rows = table.querySelectorAll('tr');");
-                writer.WriteLine("    for (var i = 1; i < rows.length; i++) {");
-                writer.WriteLine("        var cells = rows[i].querySelectorAll('.qtyInKit-cell');");
-                writer.WriteLine("        var requiredQty = Math.abs(parseInt(document.getElementById('requiredQty').innerText));");
-                writer.WriteLine("        var coveredQuantity = 0;");
-                writer.WriteLine("        for (var j = 0; j < cells.length; j++) {");
-                writer.WriteLine("            var cellValue = parseInt(cells[j].innerText);");
-                writer.WriteLine("            if (!isNaN(cellValue)) {");
-                writer.WriteLine("                coveredQuantity += cellValue;");
-                writer.WriteLine("                if (coveredQuantity >= requiredQty) {");
-                writer.WriteLine("                    cells[j].style.backgroundColor = '#FFD300';");
-                writer.WriteLine("                    break;");
+                writer.WriteLine("    var requiredQtyCell = table.querySelector('.required-qty');");
+
+                writer.WriteLine("    if (requiredQtyCell) {");
+                writer.WriteLine("        var requiredQty = Math.abs(parseInt(requiredQtyCell.innerText));");
+
+                writer.WriteLine("        for (var rowIndex = 1; rowIndex < rows.length; rowIndex++) {");
+                writer.WriteLine("            var cells = Array.from(rows[rowIndex].querySelectorAll('.qtyInKit-cell'));");
+
+                writer.WriteLine("            for (var cellIndex = 0; cellIndex < cells.length; cellIndex++) {");
+                writer.WriteLine("                var cell = cells[cellIndex];");
+                writer.WriteLine("                var cellValue = Math.abs(parseInt(cell.innerText));");
+
+                writer.WriteLine("                if (!isNaN(cellValue) && cellValue >= requiredQty) {");
+                writer.WriteLine("                    cell.style.backgroundColor = '#FFD300';");
                 writer.WriteLine("                }");
                 writer.WriteLine("            }");
+
+                // Add highlighting to cells with class 'packageType' if the content is 'Bag'
+                writer.WriteLine("            var packageTypeCells = Array.from(rows[rowIndex].querySelectorAll('.packageType'));");
+                writer.WriteLine("            packageTypeCells.forEach(function(packageTypeCell) {");
+                writer.WriteLine("                if (packageTypeCell.innerText.trim() === 'Bag') {");
+                writer.WriteLine("                    packageTypeCell.style.backgroundColor = '#FFD300';");
+                writer.WriteLine("                }");
+                writer.WriteLine("            });");
                 writer.WriteLine("        }");
                 writer.WriteLine("    }");
                 writer.WriteLine("}");
+
+
                 writer.WriteLine("</script>");
+
+
+
                 writer.WriteLine("</body>");
                 writer.WriteLine("</html>");
             }

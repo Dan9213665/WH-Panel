@@ -2596,7 +2596,7 @@ namespace WH_Panel
                 writer.WriteLine("<h1 id='stickyHeader' style='position: sticky; top: 0; background-color: lightgreen; text-align: center;'>");
                 writer.WriteLine($"{fileTimeStamp}_{comboBox3.SelectedItem}");
                 writer.WriteLine("<br>");
-                writer.WriteLine("<input type='text' id='filterInput' onkeyup='filterItems()' placeholder='Filter IPNs...' style='text-align:center;margin: 10px;'>");
+                writer.WriteLine("<input type='text' id='filterInput' onkeyup='filterItems()' placeholder='Type to filter...' style='text-align:center;margin: 10px;'>");
                 writer.WriteLine("<button onclick='clearFilter()' style='margin: 10px;'>CLEAR</button>");
                 writer.WriteLine("</h1>");
                 writer.WriteLine("<script>");
@@ -2645,7 +2645,7 @@ namespace WH_Panel
                                                 })
                                             });
                 writer.WriteLine("<table style='width:100%; text-align:center;' border='1'>");
-                writer.WriteLine($"<tr style='background-color: lightgray;'><th>IPN</th><th>MFPN</th><th>Description</th><th>TotalStock</th></tr>");
+                writer.WriteLine($"<tr style='background-color: lightgray;'><th>IPN</th><th>MFPN</th><th>Description</th><th>Stock</th></tr>");
                 var totalQtyOfItemsInWarehouse = groupedItems.Sum(group => group.TotalStock);
                 writer.WriteLine($"<tr style='background-color: lightgray;'><td>{groupedItems.Count()} IPNs found</td><td></td><td></td><td>{totalQtyOfItemsInWarehouse}</td></tr>");
                 foreach (var group in groupedItems)
