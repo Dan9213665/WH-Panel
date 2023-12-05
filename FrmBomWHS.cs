@@ -1,4 +1,5 @@
 ﻿using FastMember;
+using Microsoft.Office.Interop.Outlook;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,12 +12,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolBar;
 using Button = System.Windows.Forms.Button;
 using ComboBox = System.Windows.Forms.ComboBox;
+using Exception = System.Exception;
 using GroupBox = System.Windows.Forms.GroupBox;
+using String = System.String;
 using TextBox = System.Windows.Forms.TextBox;
 namespace WH_Panel
 {
@@ -777,51 +781,63 @@ namespace WH_Panel
 
 
                 writer.WriteLine("<script>");
-
-
                 writer.WriteLine("document.addEventListener('DOMContentLoaded', function() {");
-
                 writer.WriteLine("    var tables = document.querySelectorAll('[id^=\"IPNtable\"]');");
-
                 writer.WriteLine("    tables.forEach(function(table) {");
                 writer.WriteLine("        highlightCells(table);");
                 writer.WriteLine("    });");
                 writer.WriteLine("});");
 
-
-
                 writer.WriteLine("function highlightCells(table) {");
                 writer.WriteLine("    var rows = table.querySelectorAll('tr');");
                 writer.WriteLine("    var requiredQtyCell = table.querySelector('.required-qty');");
+                writer.WriteLine("");
 
                 writer.WriteLine("    if (requiredQtyCell) {");
                 writer.WriteLine("        var requiredQty = Math.abs(parseInt(requiredQtyCell.innerText));");
+                writer.WriteLine("");
 
-                writer.WriteLine("        for (var rowIndex = 1; rowIndex < rows.length; rowIndex++) {");
+                writer.WriteLine("     outer:    for (var rowIndex = 1; rowIndex < rows.length; rowIndex++) {");
                 writer.WriteLine("            var cells = Array.from(rows[rowIndex].querySelectorAll('.qtyInKit-cell'));");
+                writer.WriteLine("            var totalQty = 0;");
+                writer.WriteLine("");
 
-                writer.WriteLine("            for (var cellIndex = 0; cellIndex < cells.length; cellIndex++) {");
+                writer.WriteLine("          for (var cellIndex = 0; cellIndex < cells.length; cellIndex++) {");
                 writer.WriteLine("                var cell = cells[cellIndex];");
                 writer.WriteLine("                var cellValue = Math.abs(parseInt(cell.innerText));");
+                writer.WriteLine("");
 
-                writer.WriteLine("                if (!isNaN(cellValue) && cellValue >= requiredQty) {");
-                writer.WriteLine("                    cell.style.backgroundColor = '#FFD300';");
+                writer.WriteLine("                if (!isNaN(cellValue)) {");
+                writer.WriteLine("                    totalQty += cellValue;");
+                writer.WriteLine("");
+
+                writer.WriteLine("                    if (cellValue >= requiredQty) {");
+                writer.WriteLine("                        cell.style.backgroundColor = '#FFD300';");
+                writer.WriteLine("                        break outer;  // Exit both the inner and outer loops");
+
+                writer.WriteLine("                    } else if (totalQty < requiredQty) {");
+                writer.WriteLine("                        cell.style.backgroundColor = '#FFD300';");
+                writer.WriteLine("                    } else {");
+                writer.WriteLine("                        break outer;  // Exit the outer loop");
+                writer.WriteLine("                    }");
                 writer.WriteLine("                }");
                 writer.WriteLine("            }");
+                writer.WriteLine("        }");
 
-                // Add highlighting to cells with class 'packageType' if the content is 'Bag'
-                writer.WriteLine("            var packageTypeCells = Array.from(rows[rowIndex].querySelectorAll('.packageType'));");
-                writer.WriteLine("            packageTypeCells.forEach(function(packageTypeCell) {");
-                writer.WriteLine("                if (packageTypeCell.innerText.trim() === 'Bag') {");
-                writer.WriteLine("                    packageTypeCell.style.backgroundColor = '#FFD300';");
+                writer.WriteLine("        for (var rowIndex = 1; rowIndex < rows.length; rowIndex++) {");
+                writer.WriteLine("            var bagCells = Array.from(rows[rowIndex].querySelectorAll('.packageType'));");
+                writer.WriteLine("");
+
+                writer.WriteLine("            bagCells.forEach(function(bagCell) {");
+                writer.WriteLine("                if (bagCell.innerText.trim() === 'Bag') {");
+                writer.WriteLine("                    bagCell.style.backgroundColor = '#FFD300';");
                 writer.WriteLine("                }");
                 writer.WriteLine("            });");
                 writer.WriteLine("        }");
                 writer.WriteLine("    }");
                 writer.WriteLine("}");
-
-
                 writer.WriteLine("</script>");
+
 
 
 
