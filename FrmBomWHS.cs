@@ -720,7 +720,7 @@ namespace WH_Panel
                             }
                         }
                     }
-                    var inWHdata = positiveQtys.AsEnumerable();
+                    var inWHdata = positiveQtys.OrderBy(x=>x.Stock).AsEnumerable();
                     var inWHTable = new DataTable();
                     using (var reader = ObjectReader.Create(inWHdata))
                     {
