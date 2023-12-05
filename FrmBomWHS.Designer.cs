@@ -282,6 +282,7 @@
             // comboBox1
             // 
             comboBox1.Dock = DockStyle.Fill;
+            comboBox1.Enabled = false;
             comboBox1.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
             comboBox1.FormattingEnabled = true;
             comboBox1.Location = new Point(224, 3);

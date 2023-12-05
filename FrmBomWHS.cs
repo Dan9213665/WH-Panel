@@ -313,7 +313,7 @@ namespace WH_Panel
             avlFile = avlParam;
             stockFile = stockParam;
             label1.BackColor = Color.LightGreen;
-            StockViewDataLoader(stockParam, "STOCK");
+            //StockViewDataLoader(stockParam, "STOCK");
             button3_Click(this, new EventArgs());
         }
         private void DataLoaderAVL(string fp, string thesheetName)
@@ -661,7 +661,7 @@ namespace WH_Panel
                 for (int i = 0; i < dataGridView1.Rows.Count; i++)
                 {
                     string IPN = dataGridView1.Rows[i].Cells["IPN"].Value.ToString();
-          
+
                     writer.WriteLine("<table border='1' id='IPNtable" + i + "' style='text-align:center; width:auto; margin-right: 0px;margin-left: auto;'>");
 
                     writer.WriteLine("<tr>");
@@ -707,7 +707,7 @@ namespace WH_Panel
                             }
                         }
                     }
-            
+
 
                     writer.WriteLine("</tr>");
                     DataView dv = new DataView();
@@ -724,7 +724,7 @@ namespace WH_Panel
                             }
                         }
                     }
-                    var inWHdata = positiveQtys.OrderBy(x=>x.Stock).AsEnumerable();
+                    var inWHdata = positiveQtys.OrderBy(x => x.Stock).AsEnumerable();
                     var inWHTable = new DataTable();
                     using (var reader = ObjectReader.Create(inWHdata))
                     {
