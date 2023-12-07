@@ -811,18 +811,17 @@ namespace WH_Panel
                 writer.WriteLine("                    totalQty += cellValue;");
                 writer.WriteLine("");
 
-                writer.WriteLine("                    if (cellValue >= requiredQty) {");
-                writer.WriteLine("                        cell.style.backgroundColor = '#FFD300';");
-                writer.WriteLine("                        break outer;  // Exit both the inner and outer loops");
 
-                writer.WriteLine("                    } else if (totalQty < requiredQty) {");
-                writer.WriteLine("                        cell.style.backgroundColor = '#FFD300';");
-                writer.WriteLine("                    } else {");
-                writer.WriteLine("                        break outer;  // Exit the outer loop");
-                writer.WriteLine("                    }");
+                writer.WriteLine("               if (totalQty >= requiredQty) {cell.style.backgroundColor = '#FFD300';break outer; }");
+                          
+                writer.WriteLine("                    else {  if (totalQty <= requiredQty){cell.style.backgroundColor = '#FFD300';} else{ break outer;}  } ");
+
+             
                 writer.WriteLine("                }");
                 writer.WriteLine("            }");
                 writer.WriteLine("        }");
+
+
 
                 writer.WriteLine("        for (var rowIndex = 1; rowIndex < rows.length; rowIndex++) {");
                 writer.WriteLine("            var bagCells = Array.from(rows[rowIndex].querySelectorAll('.packageType'));");
