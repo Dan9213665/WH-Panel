@@ -46,179 +46,9 @@ namespace WH_Panel
                 comboBox6.Items.Add(warehouse.clName);
             }
         }
-//        public void IntitializeWarehouses()
-//        {
-//            warehouses = new List<ClientWarehouse>
-//{
-//    new ClientWarehouse
-//    {
-//        clName = "NETLINE",
-//        clPrefix = "NET",
-//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_AVL.xlsx",
-//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\NETLINE\\NETLINE_STOCK.xlsm"
-//    },
-//    new ClientWarehouse
-//    {
-//        clName = "LEADER-TECH",
-//        clPrefix = "C100",
-//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_AVL.xlsm",
-//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\G.I.Leader_Tech\\G.I.Leader_Tech_STOCK.xlsm"
-//    },
-//    // Add more warehouses following the same format
-//    new ClientWarehouse
-//    {
-//        clName = "VAYYAR",
-//        clPrefix = "VAY",
-//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_AVL.xlsx",
-//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VAYAR\\VAYAR_stock.xlsm"
-//    },
-//     new ClientWarehouse
-//    {
-//        clName = "CIS",
-//        clPrefix = "CIS",
-//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_AVL.xlsm",
-//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\CIS\\CIS_STOCK.xlsm"
-//    },
-//       new ClientWarehouse
-//    {
-//        clName = "VALENS",
-//        clPrefix = "VAL",
-//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_AVL.xlsx",
-//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\VALENS\\VALENS_STOCK.xlsm"
-//    },
-//          new ClientWarehouse
-//    {
-//        clName = "ROBOTRON",
-//        clPrefix = "ROB",
-//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_AVL.xlsx",
-//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_STOCK.xlsm"
-//    },
-//             new ClientWarehouse
-//    {
-//        clName = "ENERCON",
-//        clPrefix = "ENE",
-//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_AVL.xlsx",
-//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ENERCON\\ENERCON_STOCK.xlsm"
-//    },
-//               new ClientWarehouse
-//    {
-//        clName = "DIGITRONIX",
-//        clPrefix = "DIG",
-//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_AVL.xlsx",
-//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\DIGITRONIX\\DIGITRONIX_STOCK.xlsm"
-//    },
-//                 new ClientWarehouse
-//    {
-//        clName = "HEPTAGON",
-//        clPrefix = "HEP",
-//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_AVL.xlsx",
-//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\HEPTAGON\\HEPTAGON_STOCK.xlsm"
-//    },
-//                   new ClientWarehouse
-//    {
-//        clName = "EPS",
-//        clPrefix = "EPS",
-//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_AVL.xlsx",
-//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\EPS\\EPS_STOCK.xlsm"
-//    },
-//                   new ClientWarehouse
-//    {
-//        clName = "SOS",
-//        clPrefix = "SOS",
-//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_AVL.xlsx",
-//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOS\\SOS_STOCK.xlsm"
-//    },
-//                    new ClientWarehouse
-//    {
-//        clName = "ARAN",
-//        clPrefix = "ARN",
-//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_AVL.xlsx",
-//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ARAN\\ARAN_STOCK.xlsm"
-//    },
-//                    new ClientWarehouse
-//    {
-//        clName = "SOLANIUM",
-//        clPrefix = "BAN",
-//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_AVL.xlsx",
-//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SOLANIUM\\SOLANIUM_STOCK.xlsm"
-//    },
-//                    new ClientWarehouse
-//    {
-//        clName = "SONOTRON",
-//        clPrefix = "SON",
-//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_AVL.xlsx",
-//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SONOTRON\\SONOTRON_STOCK.xlsm"
-//    },
-//                    new ClientWarehouse
-//    {
-//        clName = "ASIO",
-//        clPrefix = "ASO",
-//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_AVL.xlsx",
-//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ASIO\\ASIO_STOCK.xlsm"
-//    },
-//                    new ClientWarehouse
-//    {
-//        clName = "SHILAT",
-//        clPrefix = "SHT",
-//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_AVL.xlsx",
-//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\SHILAT\\SHILAT_STOCK.xlsm"
-//    }
-//                    ,
-//                    new ClientWarehouse
-//    {
-//        clName = "TRILOGICAL",
-//        clPrefix = "UTR",
-//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_AVL.xlsx",
-//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\TRILOGICAL\\TRILOGICAL_STOCK.xlsm"
-//    }
-//                      ,
-//                    new ClientWarehouse
-//    {
-//        clName = "QUANTUM-MACHINES",
-//        clPrefix = "QNT",
-//        clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\QUANTUM-MACHINES\\QUANTUM-MACHINES_AVL.xlsm",
-//        clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\QUANTUM-MACHINES\\QUANTUM-MACHINES_STOCK.xlsm"
-//    }  ,
-//                new ClientWarehouse
-//                {
-//                    clName = "GASNGO",
-//                    clPrefix = "GNG",
-//                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\GASNGO\\GASNGO_AVL.xlsm",
-//                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\GASNGO\\GASNGO_STOCK.xlsm"
-//                }
-//                    ,
-//                new ClientWarehouse
-//                {
-//                    clName = "MS-TECH",
-//                    clPrefix = "MST",
-//                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\MS-TECH\\MS-TECH_AVL.xlsm",
-//                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\MS-TECH\\MS-TECH_STOCK.xlsm"
-//                }
-//                     ,
-//                new ClientWarehouse
-//                {
-//                    clName = "RP-OPTICAL",
-//                    clPrefix = "RPO",
-//                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\RP-OPTICAL\\RP-OPTICAL_AVL.xlsm",
-//                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\RP-OPTICAL\\RP-OPTICAL_STOCK.xlsm"
-//                },
-//                new ClientWarehouse
-//                {
-//                    clName = "ROBOTEAM",
-//                    clPrefix = "RBM",
-//                    clAvlFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTEAM\\ROBOTEAM_AVL.xlsm",
-//                    clStockFile = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTEAM\\ROBOTEAM_STOCK.xlsm"
-//                }
-//    // Add more entries for each warehouse as needed
-//};
-//            // Ordering the warehouses list by clName
-//            warehouses = warehouses.OrderBy(warehouse => warehouse.clName).ToList();
-//            // Adding clNames to comboBox of warehouse name
-//            foreach (ClientWarehouse warehouse in warehouses)
-//            {
-//                comboBox6.Items.Add(warehouse.clName);
-//            }
-//        }
+
+
+
         private void InitializeComboBoxes()
         {
             // Assuming comboBox1, comboBox2, and comboBox3 are the ComboBoxes in your form
@@ -333,28 +163,7 @@ namespace WH_Panel
         private void ComboBoxes_SelectedIndexChanged(object sender, EventArgs e)
         {
             ComboBox selectedComboBox = (ComboBox)sender;
-            //// Update the GroupBox texts based on the selected items in the ComboBoxes
-            //if (selectedComboBox == comboBox1)
-            //{
-            //    groupBox6.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox6";
-            //}
-            //else if (selectedComboBox == comboBox2)
-            //{
-            //    groupBox7.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox7";
-            //}
-            //else if (selectedComboBox == comboBox3)
-            //{
-            //    groupBox8.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox8";
-            //}
-            //else if (selectedComboBox == comboBox4)
-            //{
-            //    groupBox10.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox10";
-            //}
-            //else if (selectedComboBox == comboBox5)
-            //{
-            //    groupBox12.Text = selectedComboBox.SelectedItem?.ToString() ?? "GroupBox12";
-            //}
-            // Update the GroupBox texts based on the selected items in the ComboBoxes
+     
             if (selectedComboBox == comboBox1)
             {
                 groupBox6.Text = selectedComboBox.SelectedItem?.ToString() ?? "Select BOM in the combobox above";
@@ -864,44 +673,7 @@ namespace WH_Panel
                 htmlContent += $"<tr class='{rowColorClass}'><td>{item.IPN}</td><td>{item.MFPN}</td><td>{item.Description}</td><td>{item.StockQuantity}</td><td>{item.TotalRequired}</td><td>{item.StockQuantity + item.TotalRequired}</td></tr>";
             }
             htmlContent += "</table></div></body></html>";
-            //htmlContent += "<div class='container'><table class='table table-striped'>";
-            //foreach (var item in stockData)
-            //{
-            //    var rowColorClass = item.StockQuantity + item.TotalRequired < 0 ? "lightcoral" : "lightgreen";
-            //    htmlContent += $"<tr class='{rowColorClass}'><td><a href='#' data-toggle='modal' data-target='#modal-{item.IPN}'>{item.IPN}</a></td><td>{item.MFPN}</td><td>{item.Description}</td><td>{item.StockQuantity}</td><td>{item.TotalRequired}</td><td>{item.StockQuantity + item.TotalRequired}</td></tr>";
-            //    // Find all the BOMs containing the specific IPN
-            //    var relevantBOMs = BOMs.Where(bom => bom.Items.Any(bomItem => bomItem.IPN == item.IPN));
-            //    // Modal content
-            //    htmlContent += $"<div class='modal fade' id='modal-{item.IPN}' tabindex='-1' role='dialog' aria-labelledby='modal-{item.IPN}-label' aria-hidden='true'>";
-            //    htmlContent += "<div class='modal-dialog' role='document'><div class='modal-content'>";
-            //    htmlContent += "<div class='modal-header'><h5 class='modal-title' id='modal-{item.IPN}-label'>BOMs Information</h5>";
-            //    htmlContent += "<button type='button' class='close' data-dismiss='modal' aria-label='Close'>";
-            //    htmlContent += "<span aria-hidden='true'>&times;</span></button></div><div class='modal-body'><ul>";
-            //    foreach (var bom in relevantBOMs)
-            //    {
-            //        var quantityInBOM = bom.Items.Where(bomItem => bomItem.IPN == item.IPN).Sum(bomItem => bomItem.QtyInKit);
-            //        htmlContent += $"<li>{bom.Name} - Quantity in BOM: {quantityInBOM}</li>";
-            //    }
-            //    htmlContent += "</ul></div><div class='modal-footer'>";
-            //    htmlContent += "<button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button></div></div></div></div>";
-            //}
-            //htmlContent += "</table></div></body></html>";
-            //htmlContent += "<div class='container'><table class='table table-striped'>";
-            //foreach (var item in stockData)
-            //{
-            //    var rowColorClass = item.StockQuantity + item.TotalRequired < 0 ? "lightcoral" : "lightgreen";
-            //    htmlContent += $"<tr class='{rowColorClass}'><td>{item.IPN}</td><td>{item.MFPN}</td><td>{item.Description}</td><td>{item.StockQuantity}</td><td>{item.TotalRequired}</td><td>{item.StockQuantity + item.TotalRequired}</td></tr>";
-            //    // Find all the BOMs containing the specific IPN
-            //    var relevantBOMs = BOMs.Where(bom => bom.Items.Any(bomItem => bomItem.IPN == item.IPN));
-            //    htmlContent += "<tr><td colspan='6'><ul>";
-            //    foreach (var bom in relevantBOMs)
-            //    {
-            //        var quantityInBOM = bom.Items.Where(bomItem => bomItem.IPN == item.IPN).Sum(bomItem => bomItem.QtyInKit);
-            //        htmlContent += $"<li>{bom.Name} - Quantity in BOM: {quantityInBOM}</li>";
-            //    }
-            //    htmlContent += "</ul></td></tr>";
-            //}
-            //htmlContent += "</table></div></body></html>";
+           
             string filename = @"\\dbr1\Data\WareHouse\2023\WHsearcher\" + fileTimeStamp + "_BOMs_sim" + ".html";
             using (StreamWriter writer = new StreamWriter(filename))
             {

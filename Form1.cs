@@ -16,6 +16,25 @@ namespace WH_Panel
             InitializeComponent();
             DateTime fileModifiedDate = File.GetLastWriteTime(@"ImperiumTabulaPrincipalis.exe");
             this.Text = "Imperium Tabula Principalis UPDATED " + fileModifiedDate.ToString();
+            // Check if the machine name is "lgt"
+            if (Environment.MachineName == "RT12")
+            {
+                // Set the starting position for the form
+                SetFormStartPosition();
+            }
+
+        }
+        private void SetFormStartPosition()
+        {
+            // Get the virtual screen bounds spanning multiple monitors
+            Rectangle virtualScreenBounds = SystemInformation.VirtualScreen;
+
+            // Set the starting position to the lower left corner
+            int x = virtualScreenBounds.Left+this.Width-100;
+            int y = virtualScreenBounds.Bottom - this.Height-50;
+
+            this.StartPosition = FormStartPosition.Manual;
+            this.Location = new Point(x, y);
         }
         //public List<ClientWarehouse> warehouses {  get; set; }
         public List<ClientWarehouse> PopulateWarehouses()
