@@ -271,14 +271,45 @@ namespace WH_Panel
             dgw.Columns["packedDate"].DisplayIndex = 4;
             dgw.Columns["Comments"].DisplayIndex = 5;
         }
+        //private void txtbSN_KeyDown(object sender, KeyEventArgs e)
+        //{
+        //    if (e.KeyCode == Keys.Enter)
+        //    {
+        //        addFinishedIGoodsItemToList();
+        //        txtbSN.Clear();
+        //    }
+        //}
         private void txtbSN_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
-                addFinishedIGoodsItemToList();
-                txtbSN.Clear();
+                // Perform validation before adding the item to the list
+                if (IsAlphanumeric(txtbSN.Text))
+                {
+                    addFinishedIGoodsItemToList();
+                    txtbSN.Clear();
+                }
+                else
+                {
+                    MessageBox.Show("Please enter only numbers and letters.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    // Optionally clear the textbox or take other actions
+                    txtbSN.Clear();
+                }
             }
         }
+        // Validation function to check if a string contains only numbers and letters
+        private bool IsAlphanumeric(string input)
+        {
+            foreach (char c in input)
+            {
+                if (!char.IsLetterOrDigit(c))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         private void button2_Click(object sender, EventArgs e)
         {
             string saveToPath = string.Empty;
