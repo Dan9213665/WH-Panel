@@ -1455,15 +1455,7 @@ namespace WH_Panel
                 writer.WriteLine("</head>");
                 writer.WriteLine("<body>");
                 string[] parts = projectName.Substring(0, projectName.Length - 5).ToString().Split('_');
-                string currentIPN = string.Empty;
-                if (MissingItemsList.Count > 0)
-                {
-                    currentIPN = MissingItemsList[0].IPN;
-                }
-                else
-                {
-                    currentIPN = SufficientItemsList[0].IPN;
-                }
+
                 string imageUrl = string.Empty;
                 foreach (ClientWarehouse w in warehouses)
                 {
