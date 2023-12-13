@@ -532,6 +532,9 @@ namespace WH_Panel
                                   TotalRequired = sumItem.TotalRequired
                               })
                    .OrderBy(item => item.IPN);
+
+
+
             string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
             // Generating the HTML content
             // <link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'>
@@ -559,71 +562,8 @@ namespace WH_Panel
         z-index: 1;
     }
                         </style>
-                     <script>
-                         window.onload = function() {
-        var headerElement = document.getElementById('myHeader');
-        var tableElement = document.getElementById('stockTable');
-        var headerBottom = headerElement.offsetTop + headerElement.offsetHeight;
-        tableElement.style.marginTop = Math.max(headerBottom, headerElement.offsetHeight) + 'px';
-    };
-                    function sortTable(columnIndex) {{
-        var table, rows, switching, i, x, y, shouldSwitch;
-        table = document.getElementById('stockTable');
-        switching = true;
-        while (switching) {{
-            switching = false;
-            rows = table.rows;
-            for (i = 1; i < (rows.length - 1); i++) {{
-                x = rows[i].getElementsByTagName('TD')[columnIndex];
-                y = rows[i + 1].getElementsByTagName('TD')[columnIndex];
-                if (isNaN(x.innerHTML) || isNaN(y.innerHTML)) {{
-                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {{
-                        shouldSwitch = true;
-                        break;
-                    }}
-                }} else {{
-                    if (Number(x.innerHTML) > Number(y.innerHTML)) {{
-                        shouldSwitch = true;
-                        break;
-                    }}
-                }}
-            }}
-            if (shouldSwitch) {{
-                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-                switching = true;
-            }}
-        }}
-    }}
-      function filterTable() {{
-        var input, filter, table, tr, td, i, txtValue;
-        input = document.getElementById('searchInput');
-        filter = input.value.toUpperCase();
-        table = document.getElementById('stockTable');
-        tr = table.getElementsByTagName('tr');
-        for (i = 0; i < tr.length; i++) {{
-            tdIPN = tr[i].getElementsByTagName('td')[0];
-            tdMFPN = tr[i].getElementsByTagName('td')[1];
-            if (tdIPN || tdMFPN) {{
-                txtValueIPN = tdIPN.textContent || tdIPN.innerText;
-                txtValueMFPN = tdMFPN.textContent || tdMFPN.innerText;
-                if (txtValueIPN.toUpperCase().indexOf(filter) > -1 || txtValueMFPN.toUpperCase().indexOf(filter) > -1) {{
-                    tr[i].style.display = '';
-                }} else {{
-                    tr[i].style.display = 'none';
-                }}
-            }}
-        }}
-    }}
-     function clearFilter() {
-    document.getElementById('searchInput').value = '';
-    var table = document.getElementById('stockTable');
-    var tr = table.getElementsByTagName('tr');
-    for (var i = 0; i < tr.length; i++) {
-        tr[i].style.display = '';
-    }
-    document.getElementById('searchInput').focus();
-}
-                    </script>
+
+
                         </head>
                         <body>
                         <div style='text-align: center;'>
@@ -661,19 +601,117 @@ namespace WH_Panel
                 }
                 htmlContent = htmlContent.TrimEnd(',');
             }
+
+            htmlContent += @"<div id='completion-perc'> Average completion percentage is  </div>";
+
             // Continuing the HTML content
-            htmlContent += @"</h2>
-<input type='text' id=""searchInput"" placeholder=""Search for IPN or MFPN.."" onkeyup=""filterTable()"" />
+            htmlContent += @" </h2>
+<input type='text' id=""searchInput"" placeholder=""Filter IPN or MFPN.."" onkeyup=""filterTable()"" />
 <button onclick=""clearFilter()"">Clear Filter</button>
+
+<br>
+<br>
+
+
                 <table id='stockTable' border='1'>
-                <tr><th onclick='sortTable(0)'>IPN</th><th onclick='sortTable(1)'>MFPN</th><th onclick='sortTable(2)'>Description</th><th onclick='sortTable(3)'>WH Qty</th><th onclick='sortTable(4)'>KITs BALANCE</th><th onclick='sortTable(5)'>DELTA</th></tr>";
+                <tr><th  onclick='sortTable(0)'>IPN</th><th onclick='sortTable(1)'>MFPN</th><th onclick='sortTable(2)'>Description</th><th onclick='sortTable(3)'>WH Qty</th><th onclick='sortTable(4)'>KITs BALANCE</th><th onclick='sortTable(5)'>DELTA</th></tr>";
             foreach (var item in stockData)
             {
                 var rowColorClass = item.StockQuantity + item.TotalRequired < 0 ? "lightcoral" : "lightgreen";
                 htmlContent += $"<tr class='{rowColorClass}'><td>{item.IPN}</td><td>{item.MFPN}</td><td>{item.Description}</td><td>{item.StockQuantity}</td><td>{item.TotalRequired}</td><td>{item.StockQuantity + item.TotalRequired}</td></tr>";
             }
-            htmlContent += "</table></div></body></html>";
-           
+
+            //var headerElement = document.getElementById('searchInput');
+            //var tableElement = document.getElementById('stockTable');
+            //var headerBottom = headerElement.offsetTop + headerElement.offsetHeight;
+            //tableElement.style.marginTop = Math.max(headerBottom, headerElement.offsetHeight) + 'px';
+
+            htmlContent += "</table></div>";
+            htmlContent += @"<script>
+    window.onload = function() {
+       
+     CalculateCompletion();
+    };
+
+    function sortTable(columnIndex) {
+        var table, rows, switching, i, x, y, shouldSwitch;
+        table = document.getElementById('stockTable');
+        switching = true;
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+            for (i = 1; i < (rows.length - 1); i++) {
+                x = rows[i].getElementsByTagName('TD')[columnIndex];
+                y = rows[i + 1].getElementsByTagName('TD')[columnIndex];
+                if (isNaN(x.innerHTML) || isNaN(y.innerHTML)) {
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                } else {
+                    if (Number(x.innerHTML) > Number(y.innerHTML)) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+            }
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+            }
+        }
+    }
+
+    function filterTable() {
+        var input, filter, table, tr, tdIPN, tdMFPN, txtValueIPN, txtValueMFPN, i;
+        input = document.getElementById('searchInput');
+        filter = input.value.toUpperCase();
+        table = document.getElementById('stockTable');
+        tr = table.getElementsByTagName('tr');
+        for (i = 0; i < tr.length; i++) {
+            tdIPN = tr[i].getElementsByTagName('td')[0];
+            tdMFPN = tr[i].getElementsByTagName('td')[1];
+            if (tdIPN || tdMFPN) {
+                txtValueIPN = tdIPN.textContent || tdIPN.innerText;
+                txtValueMFPN = tdMFPN.textContent || tdMFPN.innerText;
+                if (txtValueIPN.toUpperCase().indexOf(filter) > -1 || txtValueMFPN.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = '';
+                } else {
+                    tr[i].style.display = 'none';
+                }
+            }
+        }
+    }
+
+    function clearFilter() {
+        document.getElementById('searchInput').value = '';
+        var table = document.getElementById('stockTable');
+        var tr = table.getElementsByTagName('tr');
+        for (var i = 0; i < tr.length; i++) {
+            tr[i].style.display = '';
+        }
+    }
+
+    function CalculateCompletion() {
+        var lightcoralRows = document.querySelectorAll('.lightcoral');
+        var lightcoralCount = lightcoralRows.length;
+        console.log(lightcoralCount);
+
+        var lightgreenRows = document.querySelectorAll('.lightgreen');
+        var lightgreenCount = lightgreenRows.length;
+        console.log(lightgreenCount);
+
+        var totalRows = lightcoralCount + lightgreenCount;
+        var percentage = (lightgreenCount / totalRows) * 100;
+        console.log(percentage);
+
+        var completionPercDiv = document.getElementById('completion-perc');
+        completionPercDiv.textContent = ""Average kit completion percentage is "" + percentage.toFixed(2) + ""%"";
+    }
+
+    document.getElementById('searchInput').focus();
+</script>";
+            htmlContent += "</body></html>";
             string filename = @"\\dbr1\Data\WareHouse\2023\WHsearcher\" + fileTimeStamp + "_BOMs_sim" + ".html";
             using (StreamWriter writer = new StreamWriter(filename))
             {

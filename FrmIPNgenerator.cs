@@ -23,7 +23,7 @@ namespace WH_Panel
     {
         public List<WHitem> avlItemsFromTheMainForm = new List<WHitem>();
         List<string> typesNamesList = new List<string> { "CAP", "RES", "IND", "OSC", "TRN", "DID", "PWR", "CON", "ICT", "PCB" };
-        List<string> manufacturersList = new List<string> { "SAMTEC",
+        List<string> manufacturersList = new List<string> { "SAMTEC","Texas Instruments",
 "FINISAR",
 "JDSU",
 "Meanwell",

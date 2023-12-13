@@ -2275,19 +2275,20 @@ namespace WH_Panel
         {
             if (comboBox3.SelectedItem.ToString() == "ROBOTRON")
             {
-                string prefix = string.Empty;
+                string prefix = warehouses.FirstOrDefault(x => x.clName == comboBox3.SelectedItem.ToString()).clPrefix;
+
                 try
                 {
-                    if (avlItems[0].IPN.Contains("_"))
-                    {
-                        List<string> sp = avlItems[0].IPN.Split('_').ToList();
-                        prefix = sp[0];
-                    }
-                    else if (avlItems[0].IPN.Contains("-"))
-                    {
-                        List<string> sp = avlItems[0].IPN.Split('-').ToList();
-                        prefix = sp[0];
-                    }
+                    //if (avlItems[0].IPN.Contains("_"))
+                    //{
+                    //    List<string> sp = avlItems[0].IPN.Split('_').ToList();
+                    //    prefix = sp[0];
+                    //}
+                    //else if (avlItems[0].IPN.Contains("-"))
+                    //{
+                    //    List<string> sp = avlItems[0].IPN.Split('-').ToList();
+                    //    prefix = sp[0];
+                    //}
                     FrmIPNgenerator gen = new FrmIPNgenerator(avlItems, prefix);
                     gen.FormClosed += (s, args) =>
                     {
