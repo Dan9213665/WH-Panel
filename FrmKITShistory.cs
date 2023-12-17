@@ -397,28 +397,7 @@ namespace WH_Panel
             dataGridView1.Columns["Calc"].DisplayIndex = 8;
             dataGridView1.Columns["Alts"].DisplayIndex = 9;
         }
-        //private void FilterTheDataGridView()
-        //{
-        //    try
-        //    {
-        //        DataView dv = UDtable.DefaultView;
-        //        dv.RowFilter = "[IPN] LIKE '%" + textBox1.Text.ToString() +
-        //             "%' AND [ProjectName] LIKE '%" + textBox11.Text.ToString() +
-        //        "%' AND [MFPN] LIKE '%" + textBox2.Text.ToString() +
-        //        "%' AND [Alts] LIKE '%" + textBox9.Text.ToString() +
-        //        "%' AND [Description] LIKE '%" + textBox3.Text.ToString() + "%' ";
-        //        dataGridView1.DataSource = dv;
-        //        SetColumsOrder();
-        //        SetColumsOrder();
-        //        ColorTheDelta(dataGridView1);
-        //        //dataGridView1.Update();
-        //    }
-        //    catch (Exception)
-        //    {
-        //        MessageBox.Show("Incorrect search pattern, remove invalid character and try again !", "Search pattern error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        //        throw;
-        //    }
-        //}
+
         private void FilterTheDataGridView()
         {
             try

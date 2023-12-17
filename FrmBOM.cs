@@ -1456,7 +1456,16 @@ namespace WH_Panel
                 writer.WriteLine("<body>");
                 string[] parts = projectName.Substring(0, projectName.Length - 5).ToString().Split('_');
 
+
+                string ConvertImageToBase64(string imagePath)
+                {
+                    byte[] imageBytes = File.ReadAllBytes(imagePath);
+                    return Convert.ToBase64String(imageBytes);
+                }
+
                 string imageUrl = string.Empty;
+
+                string base64Image = string.Empty;
                 foreach (ClientWarehouse w in warehouses)
                 {
                     //if (currentIPN.StartsWith(w.clPrefix))
@@ -1478,22 +1487,31 @@ namespace WH_Panel
                 string altText = "WH image";
                 for (int i = 0; i < 3; i++)
                 {
-                    writer.WriteLine("<table border='1' style='width: 600px; margin: auto; display: table;'>");
+                    writer.WriteLine("<table border='1' style='width: 600px; margin: auto; display: table;'>");  //background-size: cover;
                     //writer.WriteLine("<col style='width: 25%; background: url(" + backgroundImageUrl + ") no-repeat center center; background-size: contain;'>"); // 25% width for the image column
                     writer.WriteLine("<col style='width: 25%; background: url(" + backgroundImageUrl + ") no-repeat center center; background-size: 100% 100%;'>");
                     writer.WriteLine("<col style='width: 75%;'>"); // 75% width for the text column
                     writer.WriteLine("<tr>");
-                    writer.WriteLine("<td style='vertical-align: middle;'><img src='" + imageUrl + "' alt='" + altText + "' style='height: 100%; width: 100%;'></td>"); // Image column
-                    writer.WriteLine("<td style='text-align: center; vertical-align: middle;'>");
+
+                    writer.WriteLine("<td  style='vertical-align: middle;'><img id='logoImage' src='" + imageUrl + "' alt='" + altText + "' style='height: 100%; width: 100%;'></td>"); // Image column
+
+                    writer.WriteLine("<td style='text-align: center;background: rgba(255, 255, 255, 0.1) url(" + backgroundImageUrl + ") ;no-repeat center center;background-size: 100% 100%; vertical-align: middle;'>");
                     foreach (string part in parts)
                     {
                         // Add a border to each row
-                        writer.WriteLine("<div style='text-align: center; border: 1px solid black; margin: 0px; padding: 5px; vertical-align: middle; font-size: 50px; font-weight: bold;'>" + part + "</div>");
+                        writer.WriteLine("<div style='text-align: center;  border: 1px solid black; margin: 0px; padding: 5px; vertical-align: middle; font-size: 50px; font-weight: bold;text-shadow: -4px -4px 2px #fff, 4px -4px 2px #fff, -4px 4px 2px #fff, 4px 4px 2px #fff;'>" + part + "</div>");
                     }
                     writer.WriteLine("</td>");
                     writer.WriteLine("</tr>");
                     writer.WriteLine("</table>");
+
+
+
                 }
+
+
+                writer.WriteLine("</body>");
+                writer.WriteLine("</html>");
             }
             // Open the file in default browser
             var p = new Process();

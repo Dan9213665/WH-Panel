@@ -813,10 +813,10 @@ namespace WH_Panel
 
 
                 writer.WriteLine("               if (totalQty >= requiredQty) {cell.style.backgroundColor = '#FFD300';break outer; }");
-                          
+
                 writer.WriteLine("                    else {  if (totalQty <= requiredQty){cell.style.backgroundColor = '#FFD300';} else{ break outer;}  } ");
 
-             
+
                 writer.WriteLine("                }");
                 writer.WriteLine("            }");
                 writer.WriteLine("        }");
