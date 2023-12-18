@@ -722,7 +722,7 @@ namespace WH_Panel
 
 var ctx = document.getElementById('completion-chart').getContext('2d');
 var myPieChart = new Chart(ctx, {
-    type: 'pie',
+    type: 'doughnut',
     data: {
         labels: ['Deficient', 'Sufficient'],
         datasets: [{

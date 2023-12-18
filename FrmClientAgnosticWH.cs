@@ -2241,6 +2241,62 @@ namespace WH_Panel
                             if (searchbyMFPN.Contains(cellValue))
                             {
                                 textBox2.Text = cellValue;
+
+                                // Extract the quantity value from the input string
+                                int qtyIndex1 = searchbyMFPN.IndexOf("qty:", StringComparison.OrdinalIgnoreCase);
+                                int qtyIndex2 = searchbyMFPN.IndexOf("11ZPICK", StringComparison.OrdinalIgnoreCase);
+                                int qtyIndex3 = searchbyMFPN.IndexOf("V003331", StringComparison.OrdinalIgnoreCase);
+
+                                if (qtyIndex1 != -1)
+                                {
+                                    int commaIndex = searchbyMFPN.IndexOf(",", qtyIndex1);
+                                    if (commaIndex != -1)
+                                    {
+                                        string qtyValue = searchbyMFPN.Substring(qtyIndex1 + "qty:".Length, commaIndex - qtyIndex1 - "qty:".Length).Trim();
+                                        textBox6.Text = qtyValue;
+                                    }
+                                    else
+                                    {
+                                        // If there is no comma after "qty:", take the remaining string
+                                        string qtyValue = searchbyMFPN.Substring(qtyIndex1 + "qty:".Length).Trim();
+                                        textBox6.Text = qtyValue;
+                                    }
+                                }
+                                else if (qtyIndex2 != -1)
+                                {
+                                    int qtyStartIndex = searchbyMFPN.LastIndexOf("Q", qtyIndex2);
+                                    if (qtyStartIndex != -1)
+                                    {
+                                        string qtyValue = searchbyMFPN.Substring(qtyStartIndex + 1, qtyIndex2 - qtyStartIndex - 1).Trim();
+                                        textBox6.Text = qtyValue;
+                                    }
+                                    else
+                                    {
+                                        // Handle the case where "Q" is not found before "11ZPICK"
+                                        textBox6.Text = "";
+                                    }
+                                }
+                                else if (qtyIndex3 != -1)
+                                {
+                                    int qtyStartIndex = searchbyMFPN.LastIndexOf("Q", qtyIndex3);
+                                    if (qtyStartIndex != -1)
+                                    {
+                                        string qtyValue = searchbyMFPN.Substring(qtyStartIndex + 1, qtyIndex3 - qtyStartIndex - 1).Trim();
+                                        textBox6.Text = qtyValue;
+                                    }
+                                    else
+                                    {
+                                        // Handle the case where "Q" is not found before "V003331"
+                                        textBox6.Text = "";
+                                    }
+                                }
+                                else
+                                {
+                                    // Handle the case where neither "qty:", "11ZPICK," nor "V003331" is found in the input string
+                                    textBox6.Text = "";
+                                }
+
+
                             }
                             else
                             {
