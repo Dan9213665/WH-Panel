@@ -563,12 +563,27 @@ namespace WH_Panel
     }
                         </style>
 
+                        <script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
 
-                        </head>
-                        <body>
-                        <div style='text-align: center;'>
-                            <h2>UPDATED_" + fileTimeStamp+"<br> Multi-BOM simulation for:";
-            htmlContent += "<br>";
+                        </head>";
+
+           
+            htmlContent += @"<body>";
+
+            htmlContent += @"<table style='border: 1px solid; text-align: center; font-weight:bold;'>";
+
+            htmlContent += @"<tr>";
+
+            htmlContent += @"<td style='width: 25%;height: 100%;' id='completion-chart-td'> <div> <canvas id='completion-chart'></canvas> </div></td>";
+
+            htmlContent += @"<td style='width: 50%;'><h2>UPDATED_" + fileTimeStamp + "</h2></td>";    
+            htmlContent += @"<td style='width: 25%;'></td>";
+            htmlContent += @"</tr>";
+            htmlContent += @"<tr><td>Multi-BOM simulation for:</td></tr>";
+
+
+
+
             if (limitOrNot)
             {
                 string[] comboBoxItems = new string[] {
@@ -582,37 +597,33 @@ namespace WH_Panel
                     string selectedText = item?.TrimEnd(".xlsm".ToCharArray());
                     if (!string.IsNullOrEmpty(selectedText))
                     {
-                        htmlContent += $"{selectedText}<br>";
+                        htmlContent += $"<tr><td>{selectedText}</td></tr>";
                     }
                 }
-                // Removing the last comma
-                htmlContent = htmlContent.TrimEnd(',');
+                
             }
             else
             {
                 foreach (var bom in BOMs)
                 {
-                    htmlContent += $"{bom.Name.TrimEnd(".xlsm".ToCharArray())}<br>";
+                    htmlContent += $"<tr><td>{bom.Name.TrimEnd(".xlsm".ToCharArray())}</td></tr>";
                 }
-                // Removing the last <br>
-                if (!string.IsNullOrEmpty(htmlContent))
-                {
-                    htmlContent = htmlContent.Substring(0, htmlContent.Length - 4); // Assuming <br> is of length 4
-                }
-                htmlContent = htmlContent.TrimEnd(',');
+                
             }
 
-            htmlContent += @"<div id='completion-perc'> Average completion percentage is  </div>";
+           
 
-            // Continuing the HTML content
-            htmlContent += @" </h2>
+            
+            htmlContent += @"<tr ><td><div id='completion-perc'> Average completion percentage is  </div></td></tr>";
+
+            
+       
+            htmlContent += @" <tr ><td>
 <input type='text' id=""searchInput"" placeholder=""Filter IPN or MFPN.."" onkeyup=""filterTable()"" />
-<button onclick=""clearFilter()"">Clear Filter</button>
+<button onclick=""clearFilter()"">Clear Filter</button></td></tr>";
+            htmlContent += @"</tbody></table><br>";
 
-<br>
-<br>
-
-
+            htmlContent += @"
                 <table id='stockTable' border='1'>
                 <tr><th  onclick='sortTable(0)'>IPN</th><th onclick='sortTable(1)'>MFPN</th><th onclick='sortTable(2)'>Description</th><th onclick='sortTable(3)'>WH Qty</th><th onclick='sortTable(4)'>KITs BALANCE</th><th onclick='sortTable(5)'>DELTA</th></tr>";
             foreach (var item in stockData)
@@ -695,22 +706,68 @@ namespace WH_Panel
     function CalculateCompletion() {
         var lightcoralRows = document.querySelectorAll('.lightcoral');
         var lightcoralCount = lightcoralRows.length;
-        console.log(lightcoralCount);
+        
 
         var lightgreenRows = document.querySelectorAll('.lightgreen');
         var lightgreenCount = lightgreenRows.length;
-        console.log(lightgreenCount);
+     
 
         var totalRows = lightcoralCount + lightgreenCount;
         var percentage = (lightgreenCount / totalRows) * 100;
-        console.log(percentage);
+      
 
         var completionPercDiv = document.getElementById('completion-perc');
         completionPercDiv.textContent = ""Average kit completion percentage is "" + percentage.toFixed(2) + ""%"";
+
+
+var ctx = document.getElementById('completion-chart').getContext('2d');
+var myPieChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: ['Deficient', 'Sufficient'],
+        datasets: [{
+            data: [lightcoralCount, lightgreenCount],
+            backgroundColor: ['#FF6384', '#4CAF50']
+        }]
+    },
+    options: {
+        plugins: {
+            legend: {
+                display: false, // Hide the legend
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        var label = context.label || '';
+                        var value = context.parsed || 0;
+                        return label + ': ' + value;
+                    }
+                }
+            }
+        }
+    }
+});
+
     }
 
     document.getElementById('searchInput').focus();
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var completionChartTd = document.getElementById('completion-chart-td');
+    if (completionChartTd) {
+      var numberOfRows = document.querySelectorAll('table tr').length;
+      completionChartTd.rowSpan = numberOfRows;
+    } else {
+      console.error(""Element with ID 'completion-chart-td' not found"");
+    }
+  });
+
 </script>";
+
+          
+     
+
+
             htmlContent += "</body></html>";
             string filename = @"\\dbr1\Data\WareHouse\2023\WHsearcher\" + fileTimeStamp + "_BOMs_sim" + ".html";
             using (StreamWriter writer = new StreamWriter(filename))

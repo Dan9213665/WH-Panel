@@ -1062,7 +1062,6 @@ namespace WH_Panel
         private void btnPrintKitLabel_Click(object sender, EventArgs e)
         {
             EXCELinserter(theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));
-            //ExcelInserterUsingEPPlus(theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));
         }
         private void EXCELinserter(string kitName)
         {
@@ -1323,16 +1322,9 @@ namespace WH_Panel
         {
             textBox12.Clear();
         }
-        // Event handler for the button click
         private void btnSendEmail_Click(object sender, EventArgs e)
         {
-            //// Get the contents of the DataGridView
-            //string contents = GetDataGridViewContents(dataGridView1); // Replace 'dataGridView1' with the name of your DataGridView control
-            //// Focus on the current instance of Outlook
-            //FocusOnOutlook();
-            //// Create a new email and paste the contents into the body
-            //CreateNewEmail();
-            //AndPaste(contents);
+
         }
         private void textBox13_Click(object sender, EventArgs e)
         {
@@ -1358,6 +1350,7 @@ namespace WH_Panel
                 }
                 else
                 {
+                    //
                 }
                 lastTxtbInputFromUser = textBox13;
                 textBox2.Focus();
@@ -1435,7 +1428,7 @@ namespace WH_Panel
         private void btnPrintKitLabel_MouseDown(object sender, MouseEventArgs e)
         {
             // Check if the right mouse button was clicked
-            if (e.Button == MouseButtons.Right)
+            if (e.Button == MouseButtons.Right && theExcelFilePath != string.Empty)
             {
                 string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
                 GenerateHTMLkitBoxLabel();
@@ -1456,15 +1449,12 @@ namespace WH_Panel
                 writer.WriteLine("<body>");
                 string[] parts = projectName.Substring(0, projectName.Length - 5).ToString().Split('_');
 
-
                 string ConvertImageToBase64(string imagePath)
                 {
                     byte[] imageBytes = File.ReadAllBytes(imagePath);
                     return Convert.ToBase64String(imageBytes);
                 }
-
                 string imageUrl = string.Empty;
-
                 string base64Image = string.Empty;
                 foreach (ClientWarehouse w in warehouses)
                 {
@@ -1495,21 +1485,17 @@ namespace WH_Panel
 
                     writer.WriteLine("<td  style='vertical-align: middle;'><img id='logoImage' src='" + imageUrl + "' alt='" + altText + "' style='height: 100%; width: 100%;'></td>"); // Image column
 
-                    writer.WriteLine("<td style='text-align: center;background: rgba(255, 255, 255, 0.1) url(" + backgroundImageUrl + ") ;no-repeat center center;background-size: 100% 100%; vertical-align: middle;'>");
+                    writer.WriteLine("<td style='text-align: center; background: rgba(255, 255, 255, 0.1) url(" + backgroundImageUrl + ") no-repeat center center; background-size: 111% 111%; vertical-align: middle; transform: scaleX(-1);'>");
+
                     foreach (string part in parts)
                     {
-                        // Add a border to each row
-                        writer.WriteLine("<div style='text-align: center;  border: 1px solid black; margin: 0px; padding: 5px; vertical-align: middle; font-size: 50px; font-weight: bold;text-shadow: -4px -4px 2px #fff, 4px -4px 2px #fff, -4px 4px 2px #fff, 4px 4px 2px #fff;'>" + part + "</div>");
+                        writer.WriteLine("<div style='text-align: center;  border: 1px solid black; margin: 0px; padding: 5px; vertical-align: middle; font-size: 50px; font-weight: bold;text-shadow: -4px -4px 2px #fff, 4px -4px 2px #fff, -4px 4px 2px #fff, 4px 4px 2px #fff;transform: scaleX(-1);'>" + part + "</div>");
                     }
+
                     writer.WriteLine("</td>");
                     writer.WriteLine("</tr>");
                     writer.WriteLine("</table>");
-
-
-
                 }
-
-
                 writer.WriteLine("</body>");
                 writer.WriteLine("</html>");
             }
