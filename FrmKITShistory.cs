@@ -1060,5 +1060,160 @@ namespace WH_Panel
             int monthsApart = (endDate.Year - startDate.Year) * 12 + endDate.Month - startDate.Month;
             return monthsApart;
         }
+
+        private void button4_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                GenerateHTMLdeficienciesReportKIThistory();
+            }
+
+        }
+
+        private void GenerateHTMLdeficienciesReportKIThistory()
+        {
+            string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+            string filename = @"\\dbr1\Data\WareHouse\2023\WHsearcher\" + fileTimeStamp + "_" + ".html";
+            using (StreamWriter writer = new StreamWriter(filename))
+            {
+                writer.WriteLine("<!DOCTYPE html>");
+                writer.WriteLine("<html>");
+                writer.WriteLine("<head>");
+                writer.WriteLine("<style>");
+                writer.WriteLine("body {");
+                writer.WriteLine("background-color: black;");
+                writer.WriteLine("color: black;");
+                writer.WriteLine("}");
+                writer.WriteLine("table {");
+                writer.WriteLine("font-family: Arial, sans-serif;");
+                writer.WriteLine("border-collapse: collapse;");
+                writer.WriteLine("width: 100%;");
+                writer.WriteLine("}");
+                writer.WriteLine("th {");
+                writer.WriteLine("position: sticky;");
+                writer.WriteLine("top: 0;");
+                writer.WriteLine("background-color: #f04f0a;");
+                writer.WriteLine("color: black;");
+                writer.WriteLine("cursor: pointer;");
+                writer.WriteLine("}");
+                writer.WriteLine("td, th {");
+                writer.WriteLine("border: 1px solid #dddddd;");
+                writer.WriteLine("text-align: center;");
+                writer.WriteLine("padding: 8px;");
+                writer.WriteLine("}");
+                writer.WriteLine("tr {");
+                writer.WriteLine("text-align: center;");
+                writer.WriteLine("}");
+                writer.WriteLine("</style>");
+                writer.WriteLine("<script>");
+                writer.WriteLine("function sortTable(n) {");
+                writer.WriteLine("var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;");
+                writer.WriteLine("table = document.querySelector('table');");
+                writer.WriteLine("switching = true;");
+                writer.WriteLine("dir = 'asc';");
+                writer.WriteLine("while (switching) {");
+                writer.WriteLine("switching = false;");
+                writer.WriteLine("rows = table.rows;");
+                writer.WriteLine("for (i = 1; i < (rows.length - 1); i++) {");
+                writer.WriteLine("shouldSwitch = false;");
+                writer.WriteLine("x = rows[i].getElementsByTagName('TD')[n];");
+                writer.WriteLine("y = rows[i + 1].getElementsByTagName('TD')[n];");
+                writer.WriteLine("var isNumeric = !isNaN(x.innerHTML) && !isNaN(y.innerHTML);");
+                writer.WriteLine("if (isNumeric) {");
+                writer.WriteLine("x = parseInt(x.innerHTML);");
+                writer.WriteLine("y = parseInt(y.innerHTML);");
+                writer.WriteLine("} else {");
+                writer.WriteLine("x = x.innerHTML;");
+                writer.WriteLine("y = y.innerHTML;");
+                writer.WriteLine("}");
+                writer.WriteLine("if (dir === 'asc') {");
+                writer.WriteLine("if (x > y) {");
+                writer.WriteLine("shouldSwitch = true;");
+                writer.WriteLine("break;");
+                writer.WriteLine("}");
+                writer.WriteLine("} else if (dir === 'desc') {");
+                writer.WriteLine("if (x < y) {");
+                writer.WriteLine("shouldSwitch = true;");
+                writer.WriteLine("break;");
+                writer.WriteLine("}");
+                writer.WriteLine("}");
+                writer.WriteLine("}");
+                writer.WriteLine("if (shouldSwitch) {");
+                writer.WriteLine("rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);");
+                writer.WriteLine("switching = true;");
+                writer.WriteLine("switchcount++;");
+                writer.WriteLine("} else {");
+                writer.WriteLine("if (switchcount === 0 && dir === 'asc') {");
+                writer.WriteLine("dir = 'desc';");
+                writer.WriteLine("switching = true;");
+                writer.WriteLine("}");
+                writer.WriteLine("}");
+                writer.WriteLine("}");
+                writer.WriteLine("}");
+                writer.WriteLine("</script>");
+                writer.WriteLine("</head>");
+                writer.WriteLine("<body>");
+                writer.WriteLine("<table>");
+                writer.WriteLine("<tr>");
+                // Add header from DataGridView with specified column order
+                writer.WriteLine("<th onclick='sortTable(0)'>" + dataGridView1.Columns["DateOfCreation"].HeaderText + "</th>");
+                writer.WriteLine("<th onclick='sortTable(1)'>" + dataGridView1.Columns["ProjectName"].HeaderText + "</th>");
+                writer.WriteLine("<th onclick='sortTable(2)'>" + dataGridView1.Columns["IPN"].HeaderText + "</th>");
+                writer.WriteLine("<th onclick='sortTable(3)'>" + dataGridView1.Columns["MFPN"].HeaderText + "</th>");
+                writer.WriteLine("<th onclick='sortTable(4)'>" + dataGridView1.Columns["Description"].HeaderText + "</th>");
+                writer.WriteLine("<th onclick='sortTable(5)'>" + dataGridView1.Columns["QtyInKit"].HeaderText + "</th>");
+                writer.WriteLine("<th onclick='sortTable(6)'>" + dataGridView1.Columns["Delta"].HeaderText + "</th>");
+                writer.WriteLine("<th onclick='sortTable(7)'>" + dataGridView1.Columns["QtyPerUnit"].HeaderText + "</th>");
+                writer.WriteLine("<th onclick='sortTable(8)'>" + dataGridView1.Columns["Calc"].HeaderText + "</th>");
+                writer.WriteLine("<th onclick='sortTable(9)'>" + dataGridView1.Columns["Alts"].HeaderText + "</th>");
+                writer.WriteLine("</tr>");
+                foreach (DataGridViewRow row in dataGridView1.Rows)
+                {
+                    // Check the condition for the Delta column
+                    bool isNegativeDelta = Convert.ToInt32(row.Cells["Delta"].Value) < 0;
+                    // Set the row color based on the Delta value
+                    string rowColor = isNegativeDelta ? "indianred" : "#4CAF50";
+                    // Start the row with the specified color
+                    if (Convert.ToInt32(row.Cells["Delta"].Value) < 0)
+                    {
+                        writer.WriteLine("<tr style='background-color:" + rowColor + "'>");
+                        // Iterate through the cells in the specified column order
+                        writer.WriteLine("<td>" + row.Cells["DateOfCreation"].Value.ToString() + "</td>");
+                        writer.WriteLine("<td>" + row.Cells["ProjectName"].Value.ToString() + "</td>");
+                        writer.WriteLine("<td>" + row.Cells["IPN"].Value.ToString() + "</td>");
+                        writer.WriteLine("<td>" + row.Cells["MFPN"].Value.ToString() + "</td>");
+                        writer.WriteLine("<td>" + row.Cells["Description"].Value.ToString() + "</td>");
+                        writer.WriteLine("<td>" + row.Cells["QtyInKit"].Value.ToString() + "</td>");
+                        writer.WriteLine("<td>" + row.Cells["Delta"].Value.ToString() + "</td>");
+                        writer.WriteLine("<td>" + row.Cells["QtyPerUnit"].Value.ToString() + "</td>");
+                        writer.WriteLine("<td>" + row.Cells["Calc"].Value.ToString() + "</td>");
+                        writer.WriteLine("<td>" + row.Cells["Alts"].Value.ToString() + "</td>");
+                        writer.WriteLine("</tr>");
+                    }
+                    else
+                    {
+                        //
+                    }
+
+                }
+                writer.WriteLine("</table>");
+                writer.WriteLine("</body>");
+                writer.WriteLine("</html>");
+            }
+            var process = new Process();
+            process.StartInfo = new ProcessStartInfo(filename)
+            {
+                UseShellExecute = true
+            };
+            process.Start();
+        }
+
+        private void button4_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                GenerateHTMLdeficienciesReportKIThistory();
+            }
+        }
     }
 }
