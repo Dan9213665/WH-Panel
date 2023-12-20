@@ -1067,7 +1067,7 @@
             // 
             comboBox6.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBox6.FormattingEnabled = true;
-            comboBox6.Items.AddRange(new object[] { "YURI", "QC", "TH", "RWK" });
+            comboBox6.Items.AddRange(new object[] { "YURI", "QC", "TH", "RWK", "SMT" });
             comboBox6.Location = new Point(1757, 32);
             comboBox6.Name = "comboBox6";
             comboBox6.Size = new Size(88, 23);

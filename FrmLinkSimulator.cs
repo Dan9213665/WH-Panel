@@ -624,7 +624,7 @@ namespace WH_Panel
             htmlContent += @"</tbody></table><br>";
 
             htmlContent += @"
-                <table id='stockTable' border='1'>
+                <table id='stockTable' style='border: 1px solid; text-align: center;'>
                 <tr><th  onclick='sortTable(0)'>IPN</th><th onclick='sortTable(1)'>MFPN</th><th onclick='sortTable(2)'>Description</th><th onclick='sortTable(3)'>WH Qty</th><th onclick='sortTable(4)'>KITs BALANCE</th><th onclick='sortTable(5)'>DELTA</th></tr>";
             foreach (var item in stockData)
             {
