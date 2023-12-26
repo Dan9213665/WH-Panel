@@ -550,6 +550,12 @@ namespace WH_Panel
         background-color: gray;
         z-index: 0;
     }
+  #stockTable {
+    max-width: 100%; /* Set the maximum width to 100% of the container (screen) */
+    margin: 0 auto; /* Center the table within its container */
+    border: 1px solid;
+    text-align: center;
+  }
     table {
         border-collapse: collapse;
         width: 100%;
@@ -561,6 +567,10 @@ namespace WH_Panel
         background-color: gray;
         z-index: 1;
     }
+     .wrap-content {
+    overflow-wrap: break-word;
+    word-wrap: break-word; /* For older browsers */
+  }
                         </style>
 
                         <script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
@@ -624,18 +634,32 @@ namespace WH_Panel
             htmlContent += @"</tbody></table><br>";
 
             htmlContent += @"
-                <table id='stockTable' style='border: 1px solid; text-align: center;'>
+                <table id='stockTable' class='wrap-content' style='border: 1px solid; text-align: center;'>
                 <tr><th  onclick='sortTable(0)'>IPN</th><th onclick='sortTable(1)'>MFPN</th><th onclick='sortTable(2)'>Description</th><th onclick='sortTable(3)'>WH Qty</th><th onclick='sortTable(4)'>KITs BALANCE</th><th onclick='sortTable(5)'>DELTA</th></tr>";
-            foreach (var item in stockData)
-            {
-                var rowColorClass = item.StockQuantity + item.TotalRequired < 0 ? "lightcoral" : "lightgreen";
-                htmlContent += $"<tr class='{rowColorClass}'><td>{item.IPN}</td><td>{item.MFPN}</td><td>{item.Description}</td><td>{item.StockQuantity}</td><td>{item.TotalRequired}</td><td>{item.StockQuantity + item.TotalRequired}</td></tr>";
-            }
+            //foreach (var item in stockData)
+            //{
+            //    var rowColorClass = item.StockQuantity + item.TotalRequired < 0 ? "lightcoral" : "lightgreen";
+            //    htmlContent += $"<tr class='{rowColorClass}'><td>{item.IPN}</td><td>{item.MFPN}</td><td>{item.Description}</td><td>{item.StockQuantity}</td><td>{item.TotalRequired}</td><td>{item.StockQuantity + item.TotalRequired}</td></tr>";
+            //}
 
             //var headerElement = document.getElementById('searchInput');
             //var tableElement = document.getElementById('stockTable');
             //var headerBottom = headerElement.offsetTop + headerElement.offsetHeight;
             //tableElement.style.marginTop = Math.max(headerBottom, headerElement.offsetHeight) + 'px';
+
+            foreach (var item in stockData)
+            {
+                var rowColorClass = item.StockQuantity + item.TotalRequired < 0 ? "lightcoral" : "lightgreen";
+                htmlContent += $"<tr class='{rowColorClass}'>";
+                htmlContent += $"<td class='wrap-content'>{item.IPN}</td>";
+                htmlContent += $"<td class='wrap-content'>{item.MFPN}</td>";
+                htmlContent += $"<td class='wrap-content'>{item.Description}</td>";
+                htmlContent += $"<td>{item.StockQuantity}</td>";
+                htmlContent += $"<td>{item.TotalRequired}</td>";
+                htmlContent += $"<td>{item.StockQuantity + item.TotalRequired}</td>";
+                htmlContent += "</tr>";
+            }
+
 
             htmlContent += "</table></div>";
             htmlContent += @"<script>
@@ -701,6 +725,7 @@ namespace WH_Panel
         for (var i = 0; i < tr.length; i++) {
             tr[i].style.display = '';
         }
+        document.getElementById('searchInput').focus();
     }
 
     function CalculateCompletion() {
@@ -717,7 +742,7 @@ namespace WH_Panel
       
 
         var completionPercDiv = document.getElementById('completion-perc');
-        completionPercDiv.textContent = ""Average kit completion percentage is "" + percentage.toFixed(2) + ""%"";
+        completionPercDiv.textContent = ""Average kit completion percentage is "" + percentage.toFixed(2) + ""%"" + "" ( ""+lightgreenCount+"" of ""+totalRows+"" IPNs )"";
 
 
 var ctx = document.getElementById('completion-chart').getContext('2d');
