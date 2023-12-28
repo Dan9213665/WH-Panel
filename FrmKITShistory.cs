@@ -28,6 +28,8 @@ using Label = System.Windows.Forms.Label;
 using Button = System.Windows.Forms.Button;
 using GroupBox = System.Windows.Forms.GroupBox;
 using Application = System.Windows.Forms.Application;
+using System.Web;
+
 namespace WH_Panel
 {
     public partial class FrmKITShistory : Form
@@ -1150,10 +1152,75 @@ namespace WH_Panel
                 writer.WriteLine("}");
                 writer.WriteLine("}");
                 writer.WriteLine("}");
+
+
+
+                //writer.WriteLine("function toggleTableView() {");
+                //writer.WriteLine("  var originalTable = document.getElementById('originalTable');");
+                //writer.WriteLine("  var groupedTable = document.getElementById('groupedTable');");
+                //writer.WriteLine("  if (originalTable.style.display === 'block') {");
+                //writer.WriteLine("    originalTable.style.display = 'none';");
+                //writer.WriteLine("    groupedTable.style.display = 'block';");
+                //writer.WriteLine("    setTimeout(function() { groupByIPN(); }, 100);"); // Delayed call to groupByIPN
+                //writer.WriteLine("  } else {");
+                //writer.WriteLine("    originalTable.style.display = 'block';");
+                //writer.WriteLine("    groupedTable.style.display = 'none';");
+                //writer.WriteLine("  }");
+                //writer.WriteLine("}");
+
+                //writer.WriteLine("function toggleTableView() {");
+                //writer.WriteLine("  var originalTable = document.getElementById('originalTable');");
+                //writer.WriteLine("  var groupedTable = document.getElementById('groupedTable');");
+                //writer.WriteLine("  if (originalTable.style.display === 'block') {");
+                //writer.WriteLine("    originalTable.style.display = 'none';");
+                //writer.WriteLine("    groupedTable.style.display = 'block';");
+                //writer.WriteLine("    setTimeout(groupByIPN, 100);"); // Ensure the function is called after the display is updated
+                //writer.WriteLine("  } else {");
+                //writer.WriteLine("    originalTable.style.display = 'block';");
+                //writer.WriteLine("    groupedTable.style.display = 'none';");
+                //writer.WriteLine("  }");
+                //writer.WriteLine("}");
+
+
+                //writer.WriteLine("function groupByIPN() {");
+                //writer.WriteLine("var table = document.getElementById('originalTable');");
+                //writer.WriteLine("var groupedTable = document.getElementById('groupedTable');");
+                //writer.WriteLine("var ipnIndex = 2; // Index of the IPN column");
+                //writer.WriteLine("var ipnMap = new Map();");
+                //writer.WriteLine("for (var i = 1; i < table.rows.length; i++) {");
+                //writer.WriteLine("var ipn = table.rows[i].cells[ipnIndex].innerHTML;");
+                //writer.WriteLine("if (!ipnMap.has(ipn)) {");
+                //writer.WriteLine("ipnMap.set(ipn, []);");
+                //writer.WriteLine("}");
+                //writer.WriteLine("ipnMap.get(ipn).push(table.rows[i].outerHTML);");
+                //writer.WriteLine("}");
+                //writer.WriteLine("groupedTable.innerHTML = '';");
+                //writer.WriteLine("ipnMap.forEach(function(rows, ipn) {");
+                //writer.WriteLine("groupedTable.innerHTML += '<table><caption>' + ipn + ' - Sum: ' + getSum(rows) + '</caption>' + rows.join('') + '</table>';");
+                //writer.WriteLine("});");
+                //writer.WriteLine("}");
+                //writer.WriteLine("function getSum(rows) {");
+                //writer.WriteLine("var sum = 0;");
+                //writer.WriteLine("for (var i = 0; i < rows.length; i++) {");
+                //writer.WriteLine("var deltaIndex = 6; // Index of the Delta column");
+                //writer.WriteLine("var delta = parseInt(new DOMParser().parseFromString(rows[i], 'text/html').body.querySelectorAll('td')[deltaIndex].innerHTML);");
+                //writer.WriteLine("sum += delta;");
+                //writer.WriteLine("}");
+                //writer.WriteLine("return sum;");
+                //writer.WriteLine("}");
+
+                //writer.WriteLine("function groupByIPN() {");
+                //writer.WriteLine("  var groupedTable = document.getElementById('groupedTable');");
+                //writer.WriteLine("  groupedTable.innerHTML = '<p>Grouped Content</p>';"); // Test content
+                //writer.WriteLine("}");
+
                 writer.WriteLine("</script>");
                 writer.WriteLine("</head>");
                 writer.WriteLine("<body>");
-                writer.WriteLine("<table>");
+
+                //writer.WriteLine("<button onclick='toggleTableView()'>Combine IPNs</button>");
+
+                writer.WriteLine("<table id='originalTable'>");
                 writer.WriteLine("<tr>");
                 // Add header from DataGridView with specified column order
                 writer.WriteLine("<th onclick='sortTable(0)'>" + dataGridView1.Columns["DateOfCreation"].HeaderText + "</th>");
@@ -1179,15 +1246,21 @@ namespace WH_Panel
                         writer.WriteLine("<tr style='background-color:" + rowColor + "'>");
                         // Iterate through the cells in the specified column order
                         writer.WriteLine("<td>" + row.Cells["DateOfCreation"].Value.ToString() + "</td>");
-                        writer.WriteLine("<td>" + row.Cells["ProjectName"].Value.ToString() + "</td>");
-                        writer.WriteLine("<td>" + row.Cells["IPN"].Value.ToString() + "</td>");
+                        string projectName = row.Cells["ProjectName"].Value.ToString();
+                        string truncatedProjectName = projectName.Length > 5 ? projectName.Substring(0, projectName.Length - 5) : projectName;
+
+                        writer.WriteLine("<td>" + HttpUtility.HtmlEncode(truncatedProjectName) + "</td>");
+
+                        //writer.WriteLine("<td>" + row.Cells["ProjectName"].Value.ToString() + "</td>");
+
+                        writer.WriteLine("<td style='white-space: nowrap;'>" + row.Cells["IPN"].Value.ToString() + "</td>");
                         writer.WriteLine("<td>" + row.Cells["MFPN"].Value.ToString() + "</td>");
                         writer.WriteLine("<td>" + row.Cells["Description"].Value.ToString() + "</td>");
                         writer.WriteLine("<td>" + row.Cells["QtyInKit"].Value.ToString() + "</td>");
                         writer.WriteLine("<td>" + row.Cells["Delta"].Value.ToString() + "</td>");
                         writer.WriteLine("<td>" + row.Cells["QtyPerUnit"].Value.ToString() + "</td>");
                         writer.WriteLine("<td>" + row.Cells["Calc"].Value.ToString() + "</td>");
-                        writer.WriteLine("<td>" + row.Cells["Alts"].Value.ToString() + "</td>");
+                        writer.WriteLine("<td style='white-space: nowrap;'>" + row.Cells["Alts"].Value.ToString() + "</td>");
                         writer.WriteLine("</tr>");
                     }
                     else
@@ -1197,6 +1270,12 @@ namespace WH_Panel
 
                 }
                 writer.WriteLine("</table>");
+
+                //writer.WriteLine("<div id='groupedTable' style='display:none;'>");
+                //// Add JavaScript function to group the table by IPN
+
+                //writer.WriteLine("</div>");
+
                 writer.WriteLine("</body>");
                 writer.WriteLine("</html>");
             }

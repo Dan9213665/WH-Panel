@@ -355,6 +355,7 @@
             button3.TabIndex = 3;
             button3.UseVisualStyleBackColor = true;
             button3.Click += button3_Click;
+            button3.MouseClick += button3_MouseClick;
             // 
             // button2
             // 

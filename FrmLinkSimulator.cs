@@ -636,16 +636,7 @@ namespace WH_Panel
             htmlContent += @"
                 <table id='stockTable' class='wrap-content' style='border: 1px solid; text-align: center;'>
                 <tr><th  onclick='sortTable(0)'>IPN</th><th onclick='sortTable(1)'>MFPN</th><th onclick='sortTable(2)'>Description</th><th onclick='sortTable(3)'>WH Qty</th><th onclick='sortTable(4)'>KITs BALANCE</th><th onclick='sortTable(5)'>DELTA</th></tr>";
-            //foreach (var item in stockData)
-            //{
-            //    var rowColorClass = item.StockQuantity + item.TotalRequired < 0 ? "lightcoral" : "lightgreen";
-            //    htmlContent += $"<tr class='{rowColorClass}'><td>{item.IPN}</td><td>{item.MFPN}</td><td>{item.Description}</td><td>{item.StockQuantity}</td><td>{item.TotalRequired}</td><td>{item.StockQuantity + item.TotalRequired}</td></tr>";
-            //}
-
-            //var headerElement = document.getElementById('searchInput');
-            //var tableElement = document.getElementById('stockTable');
-            //var headerBottom = headerElement.offsetTop + headerElement.offsetHeight;
-            //tableElement.style.marginTop = Math.max(headerBottom, headerElement.offsetHeight) + 'px';
+            
 
             foreach (var item in stockData)
             {

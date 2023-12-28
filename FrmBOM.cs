@@ -42,6 +42,9 @@ using GroupBox = System.Windows.Forms.GroupBox;
 using WH_Panel;
 using File = System.IO.File;
 using Point = System.Drawing.Point;
+using System.Runtime.InteropServices;
+using Outlook = Microsoft.Office.Interop.Outlook;
+
 namespace WH_Panel
 {
     public partial class FrmBOM : Form
@@ -1506,6 +1509,37 @@ namespace WH_Panel
                 UseShellExecute = true
             };
             p.Start();
+        }
+
+        private void button3_MouseClick(object sender, MouseEventArgs e)
+        {
+            // Check if the right mouse button is clicked
+            if (e.Button == MouseButtons.Right)
+            {
+                // Right mouse button clicked, send email
+                //SendEmail();
+            }
+        }
+        private void SendEmail()
+        {
+            Outlook.Application outlookApp = new Outlook.Application();
+
+            // Create a new mail item
+            Outlook.MailItem mailItem = (Outlook.MailItem)outlookApp.CreateItem(Outlook.OlItemType.olMailItem);
+
+            // Set email properties
+            mailItem.Subject = "Test Email";
+            mailItem.Body = "This is a test email from my WinForms app.";
+            mailItem.To = "lgt@robotron.co.il";
+
+            // Send the email
+            mailItem.Send();
+
+            // Release COM objects
+            Marshal.ReleaseComObject(mailItem);
+            Marshal.ReleaseComObject(outlookApp);
+
+            MessageBox.Show("Test");
         }
     }
 }
