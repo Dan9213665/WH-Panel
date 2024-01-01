@@ -36,6 +36,7 @@ namespace WH_Panel
         public int colMFPNFoundIndex;
         public List<string> listOfPaths = new List<string>()
             {
+                "\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\2023",
                 "\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\2024"
             };
         public FrmPackingSlips()
