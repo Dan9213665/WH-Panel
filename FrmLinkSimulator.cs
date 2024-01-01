@@ -234,7 +234,7 @@ namespace WH_Panel
         private void button1_Click(object sender, EventArgs e)
         {
             openFileDialog1.Title = "Select BOM File";
-            openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\2023\\" + DateTime.Now.ToString("MM.yyyy");
+            openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.ToString("MM.yyyy");
             openFileDialog1.Filter = "BOM files(*.xlsm) | *.xlsm";
             openFileDialog1.Multiselect = true;
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
@@ -785,7 +785,7 @@ var myPieChart = new Chart(ctx, {
 
 
             htmlContent += "</body></html>";
-            string filename = @"\\dbr1\Data\WareHouse\2023\WHsearcher\" + fileTimeStamp + "_BOMs_sim" + ".html";
+            string filename = @"\\dbr1\Data\WareHouse\2024\WHsearcher\" + fileTimeStamp + "_BOMs_sim" + ".html";
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.Write(htmlContent);

@@ -214,7 +214,7 @@ namespace WH_Panel
         {
             ResetViews();
             var result = openFileDialog1.Title;
-            openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\2023\\" + DateTime.Now.ToString("MM") + ".2023";
+            openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.ToString("MM") + ".2024";
             openFileDialog1.Filter = "BOM files(*.xlsm) | *.xlsm";
             openFileDialog1.Multiselect = false;
             List<KitHistoryItem> BomItemS = new List<KitHistoryItem>();
@@ -1442,7 +1442,7 @@ namespace WH_Panel
         {
             //string fileName = "output.html";
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-            string filename = "\\\\dbr1\\Data\\WareHouse\\2023\\WHsearcher\\" + _fileTimeStamp + "_box label for_" + projectName.Substring(0, projectName.Length - 5).ToString() + ".html";
+            string filename = "\\\\dbr1\\Data\\WareHouse\\2024\\WHsearcher\\" + _fileTimeStamp + "_box label for_" + projectName.Substring(0, projectName.Length - 5).ToString() + ".html";
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.WriteLine("<html style='text-align:center'>");

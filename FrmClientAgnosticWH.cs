@@ -1339,7 +1339,7 @@ namespace WH_Panel
         }
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBox2.SelectedItem.ToString() == "FTK2300")
+            if (comboBox2.SelectedItem.ToString() == "FTK2400")
             {
                 string todayMonth = DateTime.Now.ToString("MM");
                 string todayDay = DateTime.Now.ToString("dd");
@@ -1742,7 +1742,7 @@ namespace WH_Panel
         private void GenerateHTMLwareHouseBalance()
         {
             string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-            string filename = @"\\dbr1\Data\WareHouse\2023\WHsearcher\" + fileTimeStamp + "_" + comboBox3.SelectedItem.ToString() + "_wh_Balance" + ".html";
+            string filename = @"\\dbr1\Data\WareHouse\2024\WHsearcher\" + fileTimeStamp + "_" + comboBox3.SelectedItem.ToString() + "_wh_Balance" + ".html";
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.WriteLine("<html style='background-color: gray;'>");
@@ -2030,7 +2030,7 @@ namespace WH_Panel
         {
             SetSTOCKiewColumsOrder();
             string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-            string filename = @"\\dbr1\Data\WareHouse\2023\WHsearcher\" + fileTimeStamp + "_" + ".html";
+            string filename = @"\\dbr1\Data\WareHouse\2024\WHsearcher\" + fileTimeStamp + "_" + ".html";
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.WriteLine("<html style='text-align:center'>");
@@ -2434,7 +2434,7 @@ namespace WH_Panel
             if (e.Button == MouseButtons.Right)
             {
                 openFileDialog1.Title = "Select BOM File";
-                openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\2023\\" + DateTime.Now.ToString("MM") + ".2023";
+                openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.ToString("MM") + ".2024";
                 openFileDialog1.Filter = "BOM files(*.xlsm) | *.xlsm";
                 openFileDialog1.Multiselect = false;
                 string currentPrefix = string.Empty;
@@ -2642,7 +2642,7 @@ namespace WH_Panel
         void GenerateHTMLwareHouseBalanceListByIPN()
         {
             string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-            string filename = @"\\dbr1\Data\WareHouse\2023\WHsearcher\" + fileTimeStamp + "_" + comboBox3.SelectedItem.ToString() + "_wh_Balance" + ".html";
+            string filename = @"\\dbr1\Data\WareHouse\2024\WHsearcher\" + fileTimeStamp + "_" + comboBox3.SelectedItem.ToString() + "_wh_Balance" + ".html";
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.WriteLine("<html style='background-color: gray;'>");

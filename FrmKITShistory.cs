@@ -44,14 +44,7 @@ namespace WH_Panel
         public int colIpnFoundIndex;
         public int colMFPNFoundIndex;
         List<string> listOfPaths = new List<string>() { };
-        //public List<string> listOfPaths = new List<string>()
-        //    {
-        //       // "\\\\dbr1\\Data\\WareHouse\\2022\\09.2022",
-        //       // "\\\\dbr1\\Data\\WareHouse\\2022\\10.2022",
-        //       // "\\\\dbr1\\Data\\WareHouse\\2022\\11.2022",
-        //        //"\\\\dbr1\\Data\\WareHouse\\2022\\12.2022",
-        //        "\\\\dbr1\\Data\\WareHouse\\2023"
-        //    };
+    
         public FrmKITShistory()
         {
             InitializeComponent();
@@ -899,7 +892,7 @@ namespace WH_Panel
         private void GenerateHTMLfrmKIThistory()
         {
             string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-            string filename = @"\\dbr1\Data\WareHouse\2023\WHsearcher\" + fileTimeStamp + "_" + ".html";
+            string filename = @"\\dbr1\Data\WareHouse\2024\WHsearcher\" + fileTimeStamp + "_" + ".html";
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.WriteLine("<!DOCTYPE html>");
@@ -1075,7 +1068,7 @@ namespace WH_Panel
         private void GenerateHTMLdeficienciesReportKIThistory()
         {
             string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-            string filename = @"\\dbr1\Data\WareHouse\2023\WHsearcher\" + fileTimeStamp + "_" + ".html";
+            string filename = @"\\dbr1\Data\WareHouse\2024\WHsearcher\" + fileTimeStamp + "_" + ".html";
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.WriteLine("<!DOCTYPE html>");
