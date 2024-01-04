@@ -531,7 +531,7 @@ namespace WH_Panel
                                   StockQuantity = stockItemGroup.Sum(item => item.Stock),
                                   TotalRequired = sumItem.TotalRequired
                               })
-                   .OrderBy(item => item.IPN);
+                   .OrderBy(item => item.TotalRequired);
 
 
 
@@ -616,9 +616,41 @@ namespace WH_Panel
             {
                 foreach (var bom in BOMs)
                 {
-                    htmlContent += $"<tr><td>{bom.Name.TrimEnd(".xlsm".ToCharArray())}</td></tr>";
+                    int bomPositiveDelta = 0;
+                    int bomNegativeDelta = 0;
+
+                    for (int i = 0; i < bom.Items.Count; i++)
+                    {
+                        if(bom.Items[i].Delta>=0)
+                        {
+                            bomPositiveDelta++;
+                        }
+                        else
+                        {
+                            bomNegativeDelta++;
+                        }
+                    }
+
+                    int bomTot = bomPositiveDelta + bomNegativeDelta;
+
+                    
+                    double completionPercentage = 0;
+
+                    if(bomTot== bomPositiveDelta)
+                    {
+                        completionPercentage = 100;
+                    }
+                    else
+                    {
+                        completionPercentage = Math.Round((bomPositiveDelta * 100.0) / bomTot, 2);
+                    }
+
+
+
+                    htmlContent += $"<tr{(bomPositiveDelta == bomTot ? " style='background-color: lightgreen;'" : "")}><td>{bom.Name.TrimEnd(".xlsm".ToCharArray())} ( {bomPositiveDelta} of {bomTot} IPNs ) {completionPercentage} % </td></tr>";
+
+
                 }
-                
             }
 
            
