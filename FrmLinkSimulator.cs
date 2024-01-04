@@ -647,7 +647,7 @@ namespace WH_Panel
 
 
 
-                    htmlContent += $"<tr{(bomPositiveDelta == bomTot ? " style='background-color: lightgreen;'" : "")}><td>{bom.Name.TrimEnd(".xlsm".ToCharArray())} ( {bomPositiveDelta} of {bomTot} IPNs ) {completionPercentage} % </td></tr>";
+                    htmlContent += $"<tr{(bomPositiveDelta == bomTot ? " style='background-color: lightgreen;'" : "")}><td>{bom.Name.TrimEnd(".xlsm".ToCharArray())} ( {bomPositiveDelta}/{bomTot} IPNs in KIT ) {completionPercentage} % </td></tr>";
 
 
                 }
@@ -765,7 +765,7 @@ namespace WH_Panel
       
 
         var completionPercDiv = document.getElementById('completion-perc');
-        completionPercDiv.textContent = ""Average kit completion percentage is "" + percentage.toFixed(2) + ""%"" + "" ( ""+lightgreenCount+"" of ""+totalRows+"" IPNs )"";
+        completionPercDiv.textContent = ""Average KIT vs DB simulation is "" + percentage.toFixed(2) + ""%"" + "" ( ""+lightgreenCount+""/""+totalRows+"" unique IPNs )"";
 
 
 var ctx = document.getElementById('completion-chart').getContext('2d');
