@@ -485,7 +485,7 @@ namespace WH_Panel
                             //MessageBox.Show(inQty);
                             int outNumberq;
                             bool successq = int.TryParse(inQty, out outNumberq);
-                            if (successq && outNumberq < 15001 && outNumberq > 0)
+                            if (successq && outNumberq < 50001 && outNumberq > 0)
                             {
                                 MoveIntoDATABASE(outNumberq, sorce_req, toPrintMFG);
                                 FilterStockDataGridView(textBox10.Text);
@@ -502,7 +502,7 @@ namespace WH_Panel
                             inQty = (string)textBox6.Text;
                             int outNumber;
                             bool success = int.TryParse(inQty, out outNumber);
-                            if (success && outNumber < 15001 && outNumber > 0)
+                            if (success && outNumber < 50001 && outNumber > 0)
                             {
                                 MoveIntoDATABASE(outNumber, sorce_req, toPrintMFG);
                                 FilterStockDataGridView(textBox10.Text);
@@ -539,7 +539,7 @@ namespace WH_Panel
                     {
                         int outNumberq;
                         bool successq = int.TryParse(textBox6.Text.ToString().Substring(1), out outNumberq);
-                        if (successq && outNumberq < 15001 && outNumberq > 0)
+                        if (successq && outNumberq < 50001 && outNumberq > 0)
                         {
                             MoveIntoDATABASE(outNumberq, sorce_req, toPrintGILT);
                             FilterStockDataGridView(textBox10.Text);
@@ -556,7 +556,7 @@ namespace WH_Panel
                         ;
                         int outNumberq;
                         bool successq = int.TryParse(textBox6.Text.Replace(",", ""), out outNumberq);
-                        if (successq && outNumberq < 15001 && outNumberq > 0)
+                        if (successq && outNumberq < 50001 && outNumberq > 0)
                         {
                             MoveIntoDATABASE(outNumberq, sorce_req, toPrintGILT);
                             FilterStockDataGridView(textBox10.Text);
@@ -572,7 +572,7 @@ namespace WH_Panel
                     {
                         int outNumber;
                         bool success = int.TryParse(textBox6.Text.ToString(), out outNumber);
-                        if (success && outNumber < 15001 && outNumber > 0)
+                        if (success && outNumber < 50001 && outNumber > 0)
                         {
                             MoveIntoDATABASE(outNumber, sorce_req, toPrintGILT);
                             FilterStockDataGridView(textBox10.Text);
@@ -607,7 +607,7 @@ namespace WH_Panel
                     }
                     int outNumber;
                     bool success = int.TryParse(textBox6.Text, out outNumber);
-                    if (success && outNumber < 15001 && outNumber > 0)
+                    if (success && outNumber < 50001 && outNumber > 0)
                     {
                         int negQty = outNumber * (-1);
                         MoveIntoDATABASE(negQty, sorce_req, toPrintWO);
