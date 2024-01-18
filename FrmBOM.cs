@@ -1208,30 +1208,137 @@ namespace WH_Panel
             }
             return selection;
         }
+        //private void DataInserter(string fp, string thesheetName, WHitem wHitem)
+        //{
+        //    try
+        //    {
+        //        string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+        //        using (OleDbConnection conn = new OleDbConnection(constr))
+        //        {
+        //            conn.Open();
+        //            OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$] (IPN,Manufacturer,MFPN,Description,Stock,Updated_on,Comments,Source_Requester) values('" + wHitem.IPN + "','" + wHitem.Manufacturer + "','" + wHitem.MFPN + "','" + wHitem.Description + "','" + wHitem.Stock + "','" + wHitem.UpdatedOn + "','" + wHitem.ReelBagTrayStick + "','" + wHitem.SourceRequester + "')", conn);
+        //            command.ExecuteNonQuery();
+        //            conn.Close();
+        //        }
+        //        txtbQtyToAdd.Clear();
+        //        lastTxtbInputFromUser.Clear();
+        //        label2.BackColor = Color.LightGreen;
+        //        label3.BackColor = Color.LightGreen;
+        //        lastTxtbInputFromUser.Focus();
+        //        AutoClosingMessageBox.Show(wHitem.IPN + " Transferred to " + wHitem.SourceRequester, " Item Transferred to " + wHitem.SourceRequester, 1000);
+        //    }
+        //    catch (IOException)
+        //    {
+        //        MessageBox.Show("Error");
+        //    }
+        //}
+
+        //private void DataInserter(string fp, string thesheetName, WHitem wHitem)
+        //{
+        //    try
+        //    {
+        //        string connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={fp};Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+
+        //        using (OleDbConnection conn = new OleDbConnection(connectionString))
+        //        {
+        //            conn.Open();
+
+        //            string query = $"INSERT INTO [{thesheetName}$] (IPN, Manufacturer, MFPN, Description, Stock, Updated_on, Comments, Source_Requester) " +
+        //                           "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        //            using (OleDbCommand command = new OleDbCommand(query, conn))
+        //            {
+        //                command.Parameters.AddWithValue("@IPN", wHitem.IPN);
+        //                command.Parameters.AddWithValue("@Manufacturer", wHitem.Manufacturer);
+        //                command.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
+        //                command.Parameters.AddWithValue("@Description", wHitem.Description);
+        //                command.Parameters.AddWithValue("@Stock", wHitem.Stock);
+        //                command.Parameters.AddWithValue("@UpdatedOn", wHitem.UpdatedOn);
+        //                command.Parameters.AddWithValue("@Comments", wHitem.ReelBagTrayStick);
+        //                command.Parameters.AddWithValue("@SourceRequester", wHitem.SourceRequester);
+
+        //                command.ExecuteNonQuery();
+        //            }
+        //        }
+
+        //        txtbQtyToAdd.Clear();
+        //        lastTxtbInputFromUser.Clear();
+        //        label2.BackColor = Color.LightGreen;
+        //        label3.BackColor = Color.LightGreen;
+        //        lastTxtbInputFromUser.Focus();
+        //        AutoClosingMessageBox.Show($"{wHitem.IPN} Transferred to {wHitem.SourceRequester}", $"Item Transferred to {wHitem.SourceRequester}", 1000);
+        //    }
+        //    catch (IOException ex)
+        //    {
+        //        MessageBox.Show($"Error: {ex.Message}");
+        //        // Log the exception details
+        //    }
+        //}
+
         private void DataInserter(string fp, string thesheetName, WHitem wHitem)
         {
-            try
+            const int maxRetries = 3;
+            const int delayMilliseconds = 2000;
+
+            for (int retryCount = 0; retryCount < maxRetries; retryCount++)
             {
-                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
-                using (OleDbConnection conn = new OleDbConnection(constr))
+                try
                 {
-                    conn.Open();
-                    OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$] (IPN,Manufacturer,MFPN,Description,Stock,Updated_on,Comments,Source_Requester) values('" + wHitem.IPN + "','" + wHitem.Manufacturer + "','" + wHitem.MFPN + "','" + wHitem.Description + "','" + wHitem.Stock + "','" + wHitem.UpdatedOn + "','" + wHitem.ReelBagTrayStick + "','" + wHitem.SourceRequester + "')", conn);
-                    command.ExecuteNonQuery();
-                    conn.Close();
+                    string connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={fp};Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+
+                    using (OleDbConnection conn = new OleDbConnection(connectionString))
+                    {
+                        conn.Open();
+
+                        string query = $"INSERT INTO [{thesheetName}$] (IPN, Manufacturer, MFPN, Description, Stock, Updated_on, Comments, Source_Requester) " +
+                                       "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+                        using (OleDbCommand command = new OleDbCommand(query, conn))
+                        {
+                            command.Parameters.AddWithValue("@IPN", wHitem.IPN);
+                            command.Parameters.AddWithValue("@Manufacturer", wHitem.Manufacturer);
+                            command.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
+                            command.Parameters.AddWithValue("@Description", wHitem.Description);
+                            command.Parameters.AddWithValue("@Stock", wHitem.Stock);
+                            command.Parameters.AddWithValue("@UpdatedOn", wHitem.UpdatedOn);
+                            command.Parameters.AddWithValue("@Comments", wHitem.ReelBagTrayStick);
+                            command.Parameters.AddWithValue("@SourceRequester", wHitem.SourceRequester);
+
+                            command.ExecuteNonQuery();
+                        }
+                    }
+
+                    txtbQtyToAdd.Clear();
+                    lastTxtbInputFromUser.Clear();
+                    label2.BackColor = Color.LightGreen;
+                    label3.BackColor = Color.LightGreen;
+                    lastTxtbInputFromUser.Focus();
+                    AutoClosingMessageBox.Show($"{wHitem.IPN} Transferred to {wHitem.SourceRequester}", $"Item Transferred to {wHitem.SourceRequester}", 1000);
+
+                    // Break out of the loop if the insert is successful
+                    break;
                 }
-                txtbQtyToAdd.Clear();
-                lastTxtbInputFromUser.Clear();
-                label2.BackColor = Color.LightGreen;
-                label3.BackColor = Color.LightGreen;
-                lastTxtbInputFromUser.Focus();
-                AutoClosingMessageBox.Show(wHitem.IPN + " Transferred to " + wHitem.SourceRequester, " Item Transferred to " + wHitem.SourceRequester, 1000);
-            }
-            catch (IOException)
-            {
-                MessageBox.Show("Error");
+                catch (IOException ex)
+                {
+                    MessageBox.Show($"Error: {ex.Message}");
+                    // Log the exception details
+
+                    if (retryCount < maxRetries - 1)
+                    {
+                        // Delay before retrying
+                        System.Threading.Thread.Sleep(delayMilliseconds);
+                    }
+                    else
+                    {
+                        // If max retries reached, you might want to handle it accordingly
+                        MessageBox.Show($"Max retries reached. Unable to insert data.");
+                    }
+                }
             }
         }
+
+
+
         public class AutoClosingMessageBox
         {
             System.Threading.Timer _timeoutTimer;
