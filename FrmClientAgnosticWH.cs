@@ -1401,7 +1401,7 @@ namespace WH_Panel
             lblRWK.Text += "requested by ";
             textBox9.Text = lblRWK.Text + comboBox6.SelectedItem.ToString() + " on " + DateTime.Now.ToString("yyyy-MM-dd");
         }
-      
+
         private void AuthorizedExcelFileOpening(string fp)
         {
             if (Environment.UserName == "lgt" || Environment.UserName == "rbtwh" || Environment.UserName == "rbtwh2")
@@ -1420,7 +1420,7 @@ namespace WH_Panel
             excel.StartInfo.Arguments = thePathToFile;
             excel.Start();
         }
-  
+
         private void textBox11_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)

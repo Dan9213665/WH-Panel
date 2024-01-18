@@ -1109,14 +1109,14 @@ namespace WH_Panel
                 };
                 if (!System.String.IsNullOrEmpty(warehouseSelectorBasedOnItem(w)))
                 {
-                    itemToTransfer.Manufacturer = getTheManufacturerFromTheStock(warehouseSelectorBasedOnItem(w), itemToTransfer);
-                    itemToTransfer.ReelBagTrayStick = getTheReelBagTrayStickFromTheStock(warehouseSelectorBasedOnItem(w), itemToTransfer);
+                    //itemToTransfer.Manufacturer = getTheManufacturerFromTheStock(warehouseSelectorBasedOnItem(w), itemToTransfer);
+                    //itemToTransfer.ReelBagTrayStick = getTheReelBagTrayStickFromTheStock(warehouseSelectorBasedOnItem(w), itemToTransfer);
                     DataInserter(warehouseSelectorBasedOnItem(w), "STOCK", itemToTransfer);
                 }
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message);
+                //MessageBox.Show(e.Message);
                 throw;
             }
         }
@@ -1147,7 +1147,7 @@ namespace WH_Panel
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message);
+                //MessageBox.Show(e.Message);
             }
             return manufacturerFromStock;
         }
@@ -1178,7 +1178,7 @@ namespace WH_Panel
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message);
+                //MessageBox.Show(e.Message);
             }
             return ReelBagTrayStickFromStock;
         }
@@ -1278,12 +1278,15 @@ namespace WH_Panel
         private void DataInserter(string fp, string thesheetName, WHitem wHitem)
         {
             const int maxRetries = 3;
-            const int delayMilliseconds = 2000;
+            const int delayMilliseconds = 1500;
 
             for (int retryCount = 0; retryCount < maxRetries; retryCount++)
             {
                 try
                 {
+                    // Set the cursor to an hourglass during the database operation
+                    Cursor.Current = Cursors.WaitCursor;
+
                     string connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={fp};Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
 
                     using (OleDbConnection conn = new OleDbConnection(connectionString))
@@ -1315,12 +1318,15 @@ namespace WH_Panel
                     lastTxtbInputFromUser.Focus();
                     AutoClosingMessageBox.Show($"{wHitem.IPN} Transferred to {wHitem.SourceRequester}", $"Item Transferred to {wHitem.SourceRequester}", 1000);
 
+                    // Reset the cursor after the database operation
+                    Cursor.Current = Cursors.Default;
+
                     // Break out of the loop if the insert is successful
                     break;
                 }
                 catch (IOException ex)
                 {
-                    MessageBox.Show($"Error: {ex.Message}");
+                    //MessageBox.Show($"Error: {ex.Message}");
                     // Log the exception details
 
                     if (retryCount < maxRetries - 1)
@@ -1333,6 +1339,11 @@ namespace WH_Panel
                         // If max retries reached, you might want to handle it accordingly
                         MessageBox.Show($"Max retries reached. Unable to insert data.");
                     }
+                }
+                finally
+                {
+                    // Reset the cursor in case of an exception
+                    Cursor.Current = Cursors.Default;
                 }
             }
         }

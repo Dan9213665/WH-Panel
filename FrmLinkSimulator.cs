@@ -589,7 +589,7 @@ namespace WH_Panel
             htmlContent += @"<td style='width: 50%;'><h2>UPDATED_" + fileTimeStamp + "</h2></td>";    
             htmlContent += @"<td style='width: 25%;'></td>";
             htmlContent += @"</tr>";
-            htmlContent += @"<tr><td>Multi-BOM simulation for:</td></tr>";
+            htmlContent += @"<tr><td>Multi-BOM simulation for "+BOMs.Count+" kits:</td></tr>";
 
 
 
