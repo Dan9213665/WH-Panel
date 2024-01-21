@@ -17,6 +17,12 @@ namespace WH_Panel
         {
             InitializeComponent();
             comboBox1.SelectedIndex = 5;
+
+        }
+
+        public TextBox TextBox1
+        {
+            get { return textBox1; }
         }
         private WHitem getTheItem()
         {
@@ -24,6 +30,8 @@ namespace WH_Panel
             wHitem = wHitemToSplitFromTheMainForm;
             return wHitem;
         }
+
+
         public WHitem wHitemToSplitFromTheMainForm { get; set; }
         private void splitStartLogic(WHitem w)
         {
@@ -71,6 +79,8 @@ namespace WH_Panel
                 MessageBox.Show("Nope");
                 // Handle the case when the object is null
             }
+
+
         }
         private DataTable GetPropertiesAsDataTable(object obj)
         {
@@ -94,6 +104,7 @@ namespace WH_Panel
             if (getTheItem() != null)
             {
                 splitStartLogic(getTheItem());
+
             }
             else
             {
@@ -101,7 +112,7 @@ namespace WH_Panel
                 // Handle the case when wHitemToSplitFromTheMainForm is null
             }
         }
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        public void textBox1_TextChanged(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(textBox1.Text))
             {
@@ -133,6 +144,12 @@ namespace WH_Panel
             if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
             {
                 e.Handled = true; // Suppress the non-digit character
+            }
+            // Check if the pressed key is ENTER
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                // Manually invoke the btnSplit_Click event
+                btnSplit_Click(sender, e);
             }
         }
         private void btnSplit_Click(object sender, EventArgs e)

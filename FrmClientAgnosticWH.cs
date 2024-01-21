@@ -1867,10 +1867,17 @@ namespace WH_Panel
                 fs.Width += widthDifference;
                 // Subscribe to the AdjustmentCompleted event
                 fs.AdjustmentCompleted += SubForm_AdjustmentCompleted;
+
+                // Handle the Load event to set focus on textbox1
+                fs.Load += (s, eventArgs) => { fs.TextBox1.Focus(); };
+
+
                 // Show the subform
                 fs.ShowDialog();
             }
         }
+
+
         private void SubForm_AdjustmentCompleted(object sender, AdjustmentEventArgs e)
         {
             e.OriginalItem.SourceRequester = "SPLIT";
