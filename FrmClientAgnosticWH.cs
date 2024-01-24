@@ -221,6 +221,11 @@ namespace WH_Panel
                     avlFile = w.clAvlFile;
                     stockFile = w.clStockFile;
                     MasterReload(avlFile, stockFile);
+
+                    //if (!string.IsNullOrEmpty(w.claccDBfile))
+                    //{
+                    //    MessageBox.Show(w.claccDBfile);
+                    //}
                 }
             }
         }

@@ -72,7 +72,7 @@
             groupBox1.Size = new Size(1106, 426);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
-            groupBox1.Text = "Missing Items";
+            groupBox1.Text = "Required Items";
             // 
             // dataGridView1
             // 

@@ -36,7 +36,7 @@ namespace WH_Panel
             this.StartPosition = FormStartPosition.Manual;
             this.Location = new Point(x, y);
         }
-        //public List<ClientWarehouse> warehouses {  get; set; }
+        public List<ClientWarehouse> warehouses { get; set; }
         public List<ClientWarehouse> PopulateWarehouses()
         {
             string directoryPath = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS";
@@ -50,6 +50,7 @@ namespace WH_Panel
                 string clAvlFile = Directory.GetFiles(subDir, "*_AVL.XLSM").FirstOrDefault();
                 string clStockFile = Directory.GetFiles(subDir, "*_STOCK.XLSM").FirstOrDefault();
                 string clLogoFile = Directory.GetFiles(subDir, "logo.png").FirstOrDefault();
+                string accDBfile = Directory.GetFiles(subDir, ".accdb").FirstOrDefault();
                 if (!string.IsNullOrEmpty(clAvlFile) && !string.IsNullOrEmpty(clStockFile))
                 {
                     ClientWarehouse warehouse = new ClientWarehouse
@@ -58,13 +59,17 @@ namespace WH_Panel
                         clPrefix = clPrefix,
                         clAvlFile = clAvlFile,
                         clStockFile = clStockFile,
-                        clLogo = clLogoFile
+                        clLogo = clLogoFile,
+                        claccDBfile = accDBfile
                     };
                     warehouses.Add(warehouse);
                 }
             }
             return warehouses;
         }
+
+
+
         private string GetPrefixFromFile(string prefixFilePath)
         {
             if (File.Exists(prefixFilePath))
