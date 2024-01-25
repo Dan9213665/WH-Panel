@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Menu;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolBar;
 using Button = System.Windows.Forms.Button;
 using ComboBox = System.Windows.Forms.ComboBox;
@@ -163,7 +164,7 @@ namespace WH_Panel
         private void ComboBoxes_SelectedIndexChanged(object sender, EventArgs e)
         {
             ComboBox selectedComboBox = (ComboBox)sender;
-     
+
             if (selectedComboBox == comboBox1)
             {
                 groupBox6.Text = selectedComboBox.SelectedItem?.ToString() ?? "Select BOM in the combobox above";
@@ -435,7 +436,9 @@ namespace WH_Panel
             // Sorting by Delta column
             dgw.Sort(dgw.Columns["Delta"], ListSortDirection.Ascending);
         }
-        private void button2_Click(object sender, EventArgs e)
+    
+
+        private void button4_MouseDown(object sender, MouseEventArgs e)
         {
             foreach (ClientWarehouse w in warehouses)
             {
@@ -444,8 +447,388 @@ namespace WH_Panel
                     StockViewDataLoader(w.clStockFile, "STOCK");
                 }
             }
-            GenerateHtmlReport(true);
+
+            if (Control.MouseButtons == MouseButtons.Left)
+            {
+                // This will be executed only on left-click
+                GenerateHtmlReport(true);
+            }
+            else if (Control.MouseButtons == MouseButtons.Right)
+            {
+                GenerateHtmlReportWithKitSeparation();
+            }
         }
+
+        private void button4_MouseClick(object sender, MouseEventArgs e)
+        {
+        //
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+
+            // Right-click logic can be added later
+        }
+        private void GenerateHtmlReportWithKitSeparation()
+        {
+            //MessageBox.Show("GenerateHtmlReportWithKitSeparation");
+
+
+
+            var stockDataDetailed = BOMs
+    .SelectMany(bom => bom.Items)
+    .GroupBy(item => item.IPN)
+    .Select(group => new
+    {
+        IPN = group.Key,
+        BOMs = group.Select(item => new
+        {
+            Title = item.ProjectName,
+            IPN = item.IPN,
+            MFPN = item.MFPN,
+            Description = item.Description,
+            Quantity = item.Delta
+        }),
+        TotalRequired = group.Sum(item => item.Delta)
+    })
+            .OrderBy(item => item.IPN);
+
+
+
+
+
+
+            string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+            // Generating the HTML content
+            // <link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'>
+            string htmlContent = @"<!DOCTYPE html>
+                        <html style='background-color: gray;'>
+                        <head>
+                        <style>
+                        .lightcoral { background-color: lightcoral; }
+                        .lightgreen { background-color: lightgreen; }
+                         .sticky {
+        position: sticky;
+        top: 0;
+        background-color: gray;
+        z-index: 0;
+    }
+  #stockTable {
+    max-width: 100%; /* Set the maximum width to 100% of the container (screen) */
+    margin: 0 auto; /* Center the table within its container */
+    border: 1px solid;
+    text-align: center;
+  }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th {
+        position: sticky;
+        top: calc(0rem + 1px);
+        border: 1px solid black;
+        background-color: gray;
+        z-index: 1;
+    }
+     .wrap-content {
+    overflow-wrap: break-word;
+    word-wrap: break-word; /* For older browsers */
+  }
+                        </style>
+
+                        <script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
+
+                        </head>";
+
+
+            htmlContent += @"<body>";
+
+            htmlContent += @"<table style='border: 1px solid; text-align: center; font-weight:bold;'>";
+
+            htmlContent += @"<tr>";
+
+            htmlContent += @"<td style='width: 25%;height: 100%;' id='completion-chart-td'> <div> <canvas id='completion-chart'></canvas> </div></td>";
+
+            htmlContent += @"<td style='width: 50%;'><h2>UPDATED_" + fileTimeStamp + "</h2></td>";
+            htmlContent += @"<td style='width: 25%;'></td>";
+            htmlContent += @"</tr>";
+            htmlContent += @"<tr><td>Multi-BOM simulation for " + BOMs.Count + " kits:</td></tr>";
+
+            foreach (var bom in BOMs)
+            {
+                int bomPositiveDelta = 0;
+                int bomNegativeDelta = 0;
+
+                for (int i = 0; i < bom.Items.Count; i++)
+                {
+                    if (bom.Items[i].Delta >= 0)
+                    {
+                        bomPositiveDelta++;
+                    }
+                    else
+                    {
+                        bomNegativeDelta++;
+                    }
+                }
+
+                int bomTot = bomPositiveDelta + bomNegativeDelta;
+
+
+                double completionPercentage = 0;
+
+                if (bomTot == bomPositiveDelta)
+                {
+                    completionPercentage = 100;
+                }
+                else
+                {
+                    completionPercentage = Math.Round((bomPositiveDelta * 100.0) / bomTot, 2);
+                }
+
+
+
+                htmlContent += $"<tr{(bomPositiveDelta == bomTot ? " style='background-color: lightgreen;'" : "")}><td>{bom.Name.TrimEnd(".xlsm".ToCharArray())} ({bomPositiveDelta}/{bomTot} IPNs in KIT) {completionPercentage}%</td></tr>";
+
+
+            }
+
+
+            htmlContent += @"<tr ><td><div id='completion-perc'> Average completion percentage is  </div></td></tr>";
+
+
+
+            htmlContent += @" <tr><td>
+
+<input type='text' id=""searchInput"" placeholder=""Filter IPN or MFPN.."" onkeyup=""filterTable()"" />
+<button onclick=""clearFilter()"">Clear Filter</button></td></tr>";
+
+            htmlContent += @"</tbody></table><br>";
+
+
+            htmlContent += @"
+                <table id='stockTable' class='wrap-content' style='border: 1px solid; text-align: center;'>
+                <tr><th>Project</th><th  onclick='sortTable(0)'>IPN</th><th onclick='sortTable(1)'>MFPN</th><th onclick='sortTable(2)'>Description</th><th onclick='sortTable(3)'>WH Qty</th><th onclick='sortTable(4)'>KITs BALANCE</th><th onclick='sortTable(5)'>DELTA</th></tr>";
+
+
+            foreach (var item in stockDataDetailed)
+{
+    // Check if there are BOM items for the current IPN
+    if (item.BOMs.Any())
+    {
+                    var totalStockBalance = stockItems.Where(si => si.IPN == item.IPN).Sum(si => si.Stock);
+                    // Create a new table for each IPN
+
+                    var rowColorClass = totalStockBalance + item.TotalRequired < 0 ? "lightcoral" : "lightgreen";
+                    //htmlContent += $"<tr class='{rowColorClass}'>";
+
+                    htmlContent += $@"
+            <table id='stockTable_{item.IPN}' class='wrap-content' style='border: 1px solid; text-align: center;'>
+                <tr class='{rowColorClass}'>
+                    <td class='wrap-content' style='font-weight: bold;'>{item.IPN}</td>
+                    
+                    <td></td>
+                    <td class='wrap-content'>{totalStockBalance}</td>
+                    <td class='wrap-content'>{item.TotalRequired}</td>
+                    <td></td>
+                    <td class='wrap-content' style='font-weight: bold;'>{totalStockBalance + item.TotalRequired}</td>
+                </tr>";
+
+        // Display the BOM items for the current IPN
+        foreach (var bomItem in item.BOMs)
+        {
+            // Truncate the last 5 characters of Title
+            string truncatedTitle = bomItem.Title.Length > 5
+                ? bomItem.Title.Substring(0, bomItem.Title.Length - 5)
+                : bomItem.Title;
+
+            // Find the corresponding stockItem
+            var stockItem = stockItems.FirstOrDefault(si => si.IPN == item.IPN);
+
+           var BomQtyColorClass = bomItem.Quantity < 0 ? "lightcoral" : "lightgreen";
+
+                        htmlContent += $@"
+    <tr>
+        <td class='wrap-content' style='border: 1px solid;'>{truncatedTitle}</td>
+        <td class='wrap-content' style='border: 1px solid;'>{bomItem.MFPN}</td>
+        <td class='wrap-content' style='border: 1px solid;'>{bomItem.Description}</td>
+        
+
+        <td class='wrap-content'  style='border: 1px solid;background-color: {BomQtyColorClass}'>{bomItem.Quantity}</td> 
+        <td></td>
+        <td></td>
+    </tr>";
+
+
+                    }
+
+        // Close the table for the current IPN
+        htmlContent += "</table><br>";
+    }
+}
+
+htmlContent += "</div></table>";
+
+
+
+
+            //htmlContent += "</table></div>";
+
+
+
+
+
+
+            htmlContent += @"<script>
+    window.onload = function() {
+       
+     CalculateCompletion();
+    };
+
+    function sortTable(columnIndex) {
+        var table, rows, switching, i, x, y, shouldSwitch;
+        table = document.getElementById('stockTable');
+        switching = true;
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+            for (i = 1; i < (rows.length - 1); i++) {
+                x = rows[i].getElementsByTagName('TD')[columnIndex];
+                y = rows[i + 1].getElementsByTagName('TD')[columnIndex];
+                if (isNaN(x.innerHTML) || isNaN(y.innerHTML)) {
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                } else {
+                    if (Number(x.innerHTML) > Number(y.innerHTML)) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+            }
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+            }
+        }
+    }
+
+    function filterTable() {
+        var input, filter, table, tr, tdIPN, tdMFPN, txtValueIPN, txtValueMFPN, i;
+        input = document.getElementById('searchInput');
+        filter = input.value.toUpperCase();
+        table = document.getElementById('stockTable');
+        tr = table.getElementsByTagName('tr');
+        for (i = 0; i < tr.length; i++) {
+            tdIPN = tr[i].getElementsByTagName('td')[0];
+            tdMFPN = tr[i].getElementsByTagName('td')[1];
+            if (tdIPN || tdMFPN) {
+                txtValueIPN = tdIPN.textContent || tdIPN.innerText;
+                txtValueMFPN = tdMFPN.textContent || tdMFPN.innerText;
+                if (txtValueIPN.toUpperCase().indexOf(filter) > -1 || txtValueMFPN.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = '';
+                } else {
+                    tr[i].style.display = 'none';
+                }
+            }
+        }
+    }
+
+    function clearFilter() {
+        document.getElementById('searchInput').value = '';
+        var table = document.getElementById('stockTable');
+        var tr = table.getElementsByTagName('tr');
+        for (var i = 0; i < tr.length; i++) {
+            tr[i].style.display = '';
+        }
+        document.getElementById('searchInput').focus();
+    }
+
+    function CalculateCompletion() {
+        var lightcoralRows = document.querySelectorAll('.lightcoral');
+        var lightcoralCount = lightcoralRows.length;
+        
+
+        var lightgreenRows = document.querySelectorAll('.lightgreen');
+        var lightgreenCount = lightgreenRows.length;
+     
+
+        var totalRows = lightcoralCount + lightgreenCount;
+        var percentage = (lightgreenCount / totalRows) * 100;
+      
+
+        var completionPercDiv = document.getElementById('completion-perc');
+        completionPercDiv.textContent = ""Average KIT vs DB simulation is "" + percentage.toFixed(2) + ""%"" + "" ( ""+lightgreenCount+""/""+totalRows+"" unique IPNs )"";
+
+
+var ctx = document.getElementById('completion-chart').getContext('2d');
+var myPieChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Deficient', 'Sufficient'],
+        datasets: [{
+            data: [lightcoralCount, lightgreenCount],
+            backgroundColor: ['#FF6384', '#4CAF50']
+        }]
+    },
+    options: {
+        plugins: {
+            legend: {
+                display: false, // Hide the legend
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        var label = context.label || '';
+                        var value = context.parsed || 0;
+                        return label + ': ' + value;
+                    }
+                }
+            }
+        }
+    }
+});
+
+    }
+
+    document.getElementById('searchInput').focus();
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var completionChartTd = document.getElementById('completion-chart-td');
+    if (completionChartTd) {
+      var numberOfRows = document.querySelectorAll('table tr').length;
+      completionChartTd.rowSpan = numberOfRows;
+    } else {
+      console.error(""Element with ID 'completion-chart-td' not found"");
+    }
+  });
+
+</script>";
+
+
+
+
+
+            htmlContent += "</body></html>";
+            string filename = @"\\dbr1\Data\WareHouse\2024\WHsearcher\" + fileTimeStamp + "_BOMs_sim" + ".html";
+            using (StreamWriter writer = new StreamWriter(filename))
+            {
+                writer.Write(htmlContent);
+            }
+            // Opening the HTML file in the default browser
+            var process = new Process();
+            process.StartInfo = new ProcessStartInfo(filename)
+            {
+                UseShellExecute = true
+            };
+            process.Start();
+
+
+
+
+
+        }
+
         private void StockViewDataLoader(string fp, string thesheetName)
         {
             stockItems.Clear();
@@ -577,7 +960,7 @@ namespace WH_Panel
 
                         </head>";
 
-           
+
             htmlContent += @"<body>";
 
             htmlContent += @"<table style='border: 1px solid; text-align: center; font-weight:bold;'>";
@@ -586,10 +969,10 @@ namespace WH_Panel
 
             htmlContent += @"<td style='width: 25%;height: 100%;' id='completion-chart-td'> <div> <canvas id='completion-chart'></canvas> </div></td>";
 
-            htmlContent += @"<td style='width: 50%;'><h2>UPDATED_" + fileTimeStamp + "</h2></td>";    
+            htmlContent += @"<td style='width: 50%;'><h2>UPDATED_" + fileTimeStamp + "</h2></td>";
             htmlContent += @"<td style='width: 25%;'></td>";
             htmlContent += @"</tr>";
-            htmlContent += @"<tr><td>Multi-BOM simulation for "+BOMs.Count+" kits:</td></tr>";
+            htmlContent += @"<tr><td>Multi-BOM simulation for " + BOMs.Count + " kits:</td></tr>";
 
 
 
@@ -610,7 +993,7 @@ namespace WH_Panel
                         htmlContent += $"<tr><td>{selectedText}</td></tr>";
                     }
                 }
-                
+
             }
             else
             {
@@ -621,7 +1004,7 @@ namespace WH_Panel
 
                     for (int i = 0; i < bom.Items.Count; i++)
                     {
-                        if(bom.Items[i].Delta>=0)
+                        if (bom.Items[i].Delta >= 0)
                         {
                             bomPositiveDelta++;
                         }
@@ -633,10 +1016,10 @@ namespace WH_Panel
 
                     int bomTot = bomPositiveDelta + bomNegativeDelta;
 
-                    
+
                     double completionPercentage = 0;
 
-                    if(bomTot== bomPositiveDelta)
+                    if (bomTot == bomPositiveDelta)
                     {
                         completionPercentage = 100;
                     }
@@ -653,13 +1036,13 @@ namespace WH_Panel
                 }
             }
 
-           
 
-            
+
+
             htmlContent += @"<tr ><td><div id='completion-perc'> Average completion percentage is  </div></td></tr>";
 
-            
-       
+
+
             htmlContent += @" <tr ><td>
 <input type='text' id=""searchInput"" placeholder=""Filter IPN or MFPN.."" onkeyup=""filterTable()"" />
 <button onclick=""clearFilter()"">Clear Filter</button></td></tr>";
@@ -668,7 +1051,7 @@ namespace WH_Panel
             htmlContent += @"
                 <table id='stockTable' class='wrap-content' style='border: 1px solid; text-align: center;'>
                 <tr><th  onclick='sortTable(0)'>IPN</th><th onclick='sortTable(1)'>MFPN</th><th onclick='sortTable(2)'>Description</th><th onclick='sortTable(3)'>WH Qty</th><th onclick='sortTable(4)'>KITs BALANCE</th><th onclick='sortTable(5)'>DELTA</th></tr>";
-            
+
 
             foreach (var item in stockData)
             {
@@ -812,8 +1195,8 @@ var myPieChart = new Chart(ctx, {
 
 </script>";
 
-          
-     
+
+
 
 
             htmlContent += "</body></html>";
@@ -877,5 +1260,7 @@ var myPieChart = new Chart(ctx, {
             }
             GenerateHtmlReport(false);
         }
+
+       
     }
 }

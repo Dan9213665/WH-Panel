@@ -497,6 +497,8 @@
             button4.TabIndex = 14;
             button4.UseVisualStyleBackColor = true;
             button4.Click += button4_Click;
+            button4.MouseClick += button4_MouseClick;
+            button4.MouseDown += button4_MouseDown;
             // 
             // openFileDialog1
             // 
