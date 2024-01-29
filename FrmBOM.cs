@@ -1109,8 +1109,8 @@ namespace WH_Panel
                 };
                 if (!System.String.IsNullOrEmpty(warehouseSelectorBasedOnItem(w)))
                 {
-                    //itemToTransfer.Manufacturer = getTheManufacturerFromTheStock(warehouseSelectorBasedOnItem(w), itemToTransfer);
-                    //itemToTransfer.ReelBagTrayStick = getTheReelBagTrayStickFromTheStock(warehouseSelectorBasedOnItem(w), itemToTransfer);
+                    itemToTransfer.Manufacturer = getTheManufacturerFromTheStock(warehouseSelectorBasedOnItem(w), itemToTransfer);
+                    itemToTransfer.ReelBagTrayStick = getTheReelBagTrayStickFromTheStock(warehouseSelectorBasedOnItem(w), itemToTransfer);
                     DataInserter(warehouseSelectorBasedOnItem(w), "STOCK", itemToTransfer);
                 }
             }

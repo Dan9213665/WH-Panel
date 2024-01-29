@@ -451,7 +451,7 @@ namespace WH_Panel
             if (Control.MouseButtons == MouseButtons.Left)
             {
                 // This will be executed only on left-click
-                GenerateHtmlReport(true);
+                GenerateHtmlReport(false);
             }
             else if (Control.MouseButtons == MouseButtons.Right)
             {
@@ -471,10 +471,6 @@ namespace WH_Panel
         }
         private void GenerateHtmlReportWithKitSeparation()
         {
-            //MessageBox.Show("GenerateHtmlReportWithKitSeparation");
-
-
-
             var stockDataDetailed = BOMs
     .SelectMany(bom => bom.Items)
     .GroupBy(item => item.IPN)
@@ -492,11 +488,6 @@ namespace WH_Panel
         TotalRequired = group.Sum(item => item.Delta)
     })
             .OrderBy(item => item.IPN);
-
-
-
-
-
 
             string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
             // Generating the HTML content
@@ -535,30 +526,20 @@ namespace WH_Panel
     word-wrap: break-word; /* For older browsers */
   }
                         </style>
-
                         <script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
-
                         </head>";
-
-
             htmlContent += @"<body>";
-
             htmlContent += @"<table style='border: 1px solid; text-align: center; font-weight:bold;'>";
-
             htmlContent += @"<tr>";
-
             htmlContent += @"<td style='width: 25%;height: 100%;' id='completion-chart-td'> <div> <canvas id='completion-chart'></canvas> </div></td>";
-
             htmlContent += @"<td style='width: 50%;'><h2>UPDATED_" + fileTimeStamp + "</h2></td>";
             htmlContent += @"<td style='width: 25%;'></td>";
             htmlContent += @"</tr>";
             htmlContent += @"<tr><td>Multi-BOM simulation for " + BOMs.Count + " kits:</td></tr>";
-
             foreach (var bom in BOMs)
             {
                 int bomPositiveDelta = 0;
                 int bomNegativeDelta = 0;
-
                 for (int i = 0; i < bom.Items.Count; i++)
                 {
                     if (bom.Items[i].Delta >= 0)
@@ -570,10 +551,7 @@ namespace WH_Panel
                         bomNegativeDelta++;
                     }
                 }
-
                 int bomTot = bomPositiveDelta + bomNegativeDelta;
-
-
                 double completionPercentage = 0;
 
                 if (bomTot == bomPositiveDelta)
@@ -584,31 +562,26 @@ namespace WH_Panel
                 {
                     completionPercentage = Math.Round((bomPositiveDelta * 100.0) / bomTot, 2);
                 }
-
-
-
                 htmlContent += $"<tr{(bomPositiveDelta == bomTot ? " style='background-color: lightgreen;'" : "")}><td>{bom.Name.TrimEnd(".xlsm".ToCharArray())} ({bomPositiveDelta}/{bomTot} IPNs in KIT) {completionPercentage}%</td></tr>";
-
-
-            }
-
-
+           }
             htmlContent += @"<tr ><td><div id='completion-perc'> Average completion percentage is  </div></td></tr>";
-
-
-
             htmlContent += @" <tr><td>
 
 <input type='text' id=""searchInput"" placeholder=""Filter IPN or MFPN.."" onkeyup=""filterTable()"" />
 <button onclick=""clearFilter()"">Clear Filter</button></td></tr>";
-
             htmlContent += @"</tbody></table><br>";
-
-
             htmlContent += @"
-                <table id='stockTable' class='wrap-content' style='border: 1px solid; text-align: center;'>
-                <tr><th>Project</th><th  onclick='sortTable(0)'>IPN</th><th onclick='sortTable(1)'>MFPN</th><th onclick='sortTable(2)'>Description</th><th onclick='sortTable(3)'>WH Qty</th><th onclick='sortTable(4)'>KITs BALANCE</th><th onclick='sortTable(5)'>DELTA</th></tr>";
+                <table id='stockTableMain' class='wrap-content' style='border: 1px solid; text-align: center; width: 100%;'>
+                <tr>
+                    <th style='width: 14.2857%;'>Project</th>
+                    <th style='width: 14.2857%;'>IPN</th>
+                    <th style='width: 14.2857%;'>MFPN</th>
+                    <th style='width: 14.2857%;'>Description</th>
+                    <th style='width: 14.2857%;'>WH Qty</th>
+                    <th style='width: 14.2857%;'>KITs BALANCE</th>
+                    <th style='width: 14.2857%; cursor: pointer;' onclick='sortTablesByDelta()'>DELTA</th>
 
+                </tr>";
 
             foreach (var item in stockDataDetailed)
 {
@@ -623,14 +596,13 @@ namespace WH_Panel
 
                     htmlContent += $@"
             <table id='stockTable_{item.IPN}' class='wrap-content' style='border: 1px solid; text-align: center;'>
-                <tr class='{rowColorClass}'>
-                    <td class='wrap-content' style='font-weight: bold;'>{item.IPN}</td>
-                    
-                    <td></td>
-                    <td class='wrap-content'>{totalStockBalance}</td>
-                    <td class='wrap-content'>{item.TotalRequired}</td>
-                    <td></td>
-                    <td class='wrap-content' style='font-weight: bold;'>{totalStockBalance + item.TotalRequired}</td>
+                <tr class='{rowColorClass}' style='border: 1px solid; text-align: center;'>
+                    <td class='wrap-content' style='font-weight: bold;' colspan='2'>{item.IPN}</td>
+                    <td style='width: 14.2857%;'></td>
+                    <td style='width: 14.2857%;'></td>
+                    <td style='width: 14.2857%;' class='wrap-content'>{totalStockBalance}</td>
+                    <td style='width: 14.2857%;' class='wrap-content'>{item.TotalRequired}</td>
+                    <td id='delta_{item.IPN}' class='wrap-content' style='font-weight: bold;width: 14.2857%;'>{totalStockBalance + item.TotalRequired}</td>
                 </tr>";
 
         // Display the BOM items for the current IPN
@@ -640,7 +612,6 @@ namespace WH_Panel
             string truncatedTitle = bomItem.Title.Length > 5
                 ? bomItem.Title.Substring(0, bomItem.Title.Length - 5)
                 : bomItem.Title;
-
             // Find the corresponding stockItem
             var stockItem = stockItems.FirstOrDefault(si => si.IPN == item.IPN);
 
@@ -648,70 +619,66 @@ namespace WH_Panel
 
                         htmlContent += $@"
     <tr>
-        <td class='wrap-content' style='border: 1px solid;'>{truncatedTitle}</td>
-        <td class='wrap-content' style='border: 1px solid;'>{bomItem.MFPN}</td>
-        <td class='wrap-content' style='border: 1px solid;'>{bomItem.Description}</td>
+        <td class='wrap-content' style='border: 1px solid; width: 28.5714%;' colspan='2'>{truncatedTitle}</td>
         
-
-        <td class='wrap-content'  style='border: 1px solid;background-color: {BomQtyColorClass}'>{bomItem.Quantity}</td> 
-        <td></td>
-        <td></td>
+        <td class='wrap-content' style='border: 1px solid; width: 14.2857%;'>{bomItem.MFPN}</td>
+        <td class='wrap-content' style='border: 1px solid; width: 14.2857%;' colspan='2'>{bomItem.Description}</td>
+       
+        <td class='wrap-content' style='border: 1px solid; background-color: {BomQtyColorClass}; width: 14.2857%;'>{bomItem.Quantity}</td> 
     </tr>";
-
-
                     }
+                    // Close the table for the current IPN
+                    htmlContent += "</table><br>";
+    }
+}
+htmlContent += "</div></table>";
+            htmlContent += @"<script>
+    
 
-        // Close the table for the current IPN
-        htmlContent += "</table><br>";
+
+
+
+
+
+window.onload = function() {
+       
+     CalculateCompletion();
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Your sorting function here
+    sortTablesByDelta();
+});
+
+    };
+
+
+
+function sortTablesByDelta() {
+    var mainTable = document.getElementById('stockTableMain');
+    var subTables = mainTable.querySelectorAll('table[id^=""stockTable_""]');
+    console.log(subTables);
+    subTables = Array.from(subTables).sort(function (a, b) {
+        var ipnA = a.id.split('_')[1]; // Extract IPN from the table ID
+        var ipnB = b.id.split('_')[1];
+
+        var deltaA = parseFloat(a.querySelector('#delta_' + ipnA).innerText);
+        var deltaB = parseFloat(b.querySelector('#delta_' + ipnB).innerText);
+
+        return isNaN(deltaA) || isNaN(deltaB) ? 0 : deltaA - deltaB;
+    });
+
+    // Clear the main table
+    while (mainTable.firstChild) {
+        mainTable.removeChild(mainTable.firstChild);
+    }
+
+    // Append sorted sub-tables to the main table
+    for (var i = 0; i < subTables.length; i++) {
+        mainTable.appendChild(subTables[i]);
     }
 }
 
-htmlContent += "</div></table>";
 
-
-
-
-            //htmlContent += "</table></div>";
-
-
-
-
-
-
-            htmlContent += @"<script>
-    window.onload = function() {
-       
-     CalculateCompletion();
-    };
-
-    function sortTable(columnIndex) {
-        var table, rows, switching, i, x, y, shouldSwitch;
-        table = document.getElementById('stockTable');
-        switching = true;
-        while (switching) {
-            switching = false;
-            rows = table.rows;
-            for (i = 1; i < (rows.length - 1); i++) {
-                x = rows[i].getElementsByTagName('TD')[columnIndex];
-                y = rows[i + 1].getElementsByTagName('TD')[columnIndex];
-                if (isNaN(x.innerHTML) || isNaN(y.innerHTML)) {
-                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-                        shouldSwitch = true;
-                        break;
-                    }
-                } else {
-                    if (Number(x.innerHTML) > Number(y.innerHTML)) {
-                        shouldSwitch = true;
-                        break;
-                    }
-                }
-            }
-            if (shouldSwitch) {
-                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-                switching = true;
-            }
-        }
-    }
 
     function filterTable() {
         var input, filter, table, tr, tdIPN, tdMFPN, txtValueIPN, txtValueMFPN, i;
@@ -1251,14 +1218,14 @@ var myPieChart = new Chart(ctx, {
         }
         private void button4_Click(object sender, EventArgs e)
         {
-            foreach (ClientWarehouse w in warehouses)
-            {
-                if (comboBox6.SelectedItem == w.clName)
-                {
-                    StockViewDataLoader(w.clStockFile, "STOCK");
-                }
-            }
-            GenerateHtmlReport(false);
+            //foreach (ClientWarehouse w in warehouses)
+            //{
+            //    if (comboBox6.SelectedItem == w.clName)
+            //    {
+            //        StockViewDataLoader(w.clStockFile, "STOCK");
+            //    }
+            //}
+            //GenerateHtmlReport(false);
         }
 
        
