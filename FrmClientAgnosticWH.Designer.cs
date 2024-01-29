@@ -29,6 +29,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmClientAgnosticWH));
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             groupBox1 = new GroupBox();
+            checkBox1 = new CheckBox();
             pictureBox1 = new PictureBox();
             comboBox3 = new ComboBox();
             tabControl1 = new TabControl();
@@ -137,6 +138,7 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(checkBox1);
             groupBox1.Controls.Add(pictureBox1);
             groupBox1.Controls.Add(comboBox3);
             groupBox1.Controls.Add(tabControl1);
@@ -147,6 +149,17 @@
             groupBox1.TabIndex = 5;
             groupBox1.TabStop = false;
             groupBox1.Text = "AGNOSTIC WAREHOUSE";
+            // 
+            // checkBox1
+            // 
+            checkBox1.AutoSize = true;
+            checkBox1.Location = new Point(694, 0);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new Size(138, 19);
+            checkBox1.TabIndex = 6;
+            checkBox1.Text = "Auto Insert New Item";
+            checkBox1.UseVisualStyleBackColor = true;
+            checkBox1.CheckedChanged += checkBox1_CheckedChanged;
             // 
             // pictureBox1
             // 
@@ -1146,6 +1159,7 @@
             WindowState = FormWindowState.Maximized;
             Load += FrmClientAgnosticWH_Load;
             groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
@@ -1255,5 +1269,6 @@
         private ComboBox comboBox6;
         private OpenFileDialog openFileDialog1;
         private PictureBox pictureBox1;
+        private CheckBox checkBox1;
     }
 }

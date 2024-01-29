@@ -2008,12 +2008,14 @@ namespace WH_Panel
                                     {
                                         string qtyValue = searchbyMFPN.Substring(qtyIndex1 + "qty:".Length, commaIndex - qtyIndex1 - "qty:".Length).Trim();
                                         textBox6.Text = qtyValue;
+                                        BrandNewItemAutoInsertionToDB();
                                     }
                                     else
                                     {
                                         // If there is no comma after "qty:", take the remaining string
                                         string qtyValue = searchbyMFPN.Substring(qtyIndex1 + "qty:".Length).Trim();
                                         textBox6.Text = qtyValue;
+                                        BrandNewItemAutoInsertionToDB();
                                     }
                                 }
                                 else if (qtyIndex2 != -1)
@@ -2023,6 +2025,7 @@ namespace WH_Panel
                                     {
                                         string qtyValue = searchbyMFPN.Substring(qtyStartIndex + 1, qtyIndex2 - qtyStartIndex - 1).Trim();
                                         textBox6.Text = qtyValue;
+                                        BrandNewItemAutoInsertionToDB();
                                     }
                                     else
                                     {
@@ -2037,6 +2040,7 @@ namespace WH_Panel
                                     {
                                         string qtyValue = searchbyMFPN.Substring(qtyStartIndex + 1, qtyIndex3 - qtyStartIndex - 1).Trim();
                                         textBox6.Text = qtyValue;
+                                        BrandNewItemAutoInsertionToDB();
                                     }
                                     else
                                     {
@@ -2065,6 +2069,17 @@ namespace WH_Panel
                 LastInputFromUser = textBox13;
                 textBox2.Focus();
                 textBox2_KeyDown(sender, e);
+            }
+        }
+
+        private void BrandNewItemAutoInsertionToDB()
+        {
+            if (checkBox1.Checked)
+            {
+                SendKeys.Send("{ENTER}");
+
+                // Now, you can handle the KeyPress event if needed
+                //textBox6_KeyPress(sender, new KeyPressEventArgs((char)Keys.Enter));
             }
         }
         private void textBox13_Click(object sender, EventArgs e)
@@ -2486,6 +2501,19 @@ namespace WH_Panel
                 UseShellExecute = true
             };
             process.Start();
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox1.Checked)
+            {
+                checkBox1.BackColor = Color.Red;
+            }
+            else
+            {
+                // Set the background color to the default color (you may replace this with the actual default color)
+                checkBox1.BackColor = Color.LightGray;
+            }
         }
     }
 }
