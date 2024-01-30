@@ -632,11 +632,10 @@ namespace WH_Panel
             {
                 var rowColorClass = mainDataSource.DELTA < 0 ? "lightcoral" : "lightgreen";
                 // Add main data row
-                htmlContent += $"<tr class='{rowColorClass}' style='text-align:center'>";
-                htmlContent += $"<td style='width:28%;'></td>";
-                htmlContent += $"<td style='width:12%;'>{mainDataSource.IPN}</td>";
-                htmlContent += $"<td style='width:12%;'></td>";
-                htmlContent += $"<td style='width:12%;'></td>";
+                htmlContent += $"<tr class='{rowColorClass}' style='text-align:center;border: 1px solid black;'>";
+                
+                htmlContent += $"<td style='width:64%;' columnspan='4'>{mainDataSource.IPN}</td>";
+                
                 htmlContent += $"<td style='width:12%;'>{mainDataSource.WHqty}</td>";
                 htmlContent += $"<td style='width:12%;'>{mainDataSource.KITsBalance}</td>";
                 htmlContent += $"<td style='width:12%;'>{mainDataSource.DELTA}</td>";
