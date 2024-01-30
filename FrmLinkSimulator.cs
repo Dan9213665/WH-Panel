@@ -12,6 +12,7 @@ using System.Drawing;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
@@ -573,22 +574,55 @@ namespace WH_Panel
 <input type='text' id=""searchInput"" placeholder=""Filter IPN or MFPN.."" onkeyup=""filterTable()"" />
 <button onclick=""clearFilter()"">Clear Filter</button></td></tr>";
             htmlContent += @"</tbody></table><br>";
+            //htmlContent += @"
+            //    <table id='stockTableMain' class='wrap-content' style='border: 1px solid; text-align: center; width: 100%;'>
+            //    <tr>
+            //        <th style='width: 28%;'>Project</th>
+            //        <th style='width: 12%;'>IPN</th>
+            //        <th style='width: 12%;'>MFPN</th>
+            //        <th style='width: 12%;'>Description</th>
+            //        <th style='width: 12%;'>WH Qty</th>
+            //        <th style='width: 12%;'>KITs BALANCE</th>
+            //        <th style='width: 12%;'>DELTA</th>
+
+            //    </tr>";
+
+            //        htmlContent += @"
+            //<table id='stockTableMain' class='wrap-content' style='border: 1px solid; text-align: center; width: 100%;'>
+            //    <tr>
+            //        <th style='width: 28%; position: sticky; top: 0; background-color: #f2f2f2;'>Project</th>
+            //        <th style='width: 12%; position: sticky; top: 0; background-color: #f2f2f2;'>IPN</th>
+            //        <th style='width: 12%; position: sticky; top: 0; background-color: #f2f2f2;'>MFPN</th>
+            //        <th style='width: 12%; position: sticky; top: 0; background-color: #f2f2f2;'>Description</th>
+            //        <th style='width: 12%; position: sticky; top: 0; background-color: #f2f2f2;'>WH Qty</th>
+            //        <th style='width: 12%; position: sticky; top: 0; background-color: #f2f2f2;'>KITs BALANCE</th>
+            //        <th style='width: 12%; position: sticky; top: 0; background-color: #f2f2f2;'>DELTA</th>
+            //    </tr>";
+
             htmlContent += @"
-                <table id='stockTableMain' class='wrap-content' style='border: 1px solid; text-align: center; width: 100%;'>
-                <tr>
-                    <th style='width: 28%;'>Project</th>
-                    <th style='width: 12%;'>IPN</th>
-                    <th style='width: 12%;'>MFPN</th>
-                    <th style='width: 12%;'>Description</th>
-                    <th style='width: 12%;'>WH Qty</th>
-                    <th style='width: 12%;'>KITs BALANCE</th>
-                    <th style='width: 12%;'>DELTA</th>
+    <style>
+        #stockTableMain th {
+            position: sticky;
+            top: 0;
+            background-color: #606060
+;
+        }
+    </style>
+    <table id='stockTableMain' class='wrap-content' style='border: 1px solid; text-align: center; width: 100%;'>
+         <thead>        
+            <tr>
+                <th style='width: 28%;'>Project</th>
+                <th style='width: 12%;'>IPN</th>
+                <th style='width: 12%;'>MFPN</th>
+                <th style='width: 12%;'>Description</th>
+                <th style='width: 12%;'>WH Qty</th>
+                <th style='width: 12%;'>KITs BALANCE</th>
+                <th style='width: 12%;'>DELTA</th>
+            </tr>
+        </thead>";
 
-                </tr>";
 
-            
-
-            List< SIMIPNTABLE> MAINDATASOURCE_LIST = new List< SIMIPNTABLE>();
+            List < SIMIPNTABLE> MAINDATASOURCE_LIST = new List< SIMIPNTABLE>();
 
             foreach (var item in stockDataDetailed)
             {
@@ -666,8 +700,8 @@ namespace WH_Panel
 
                     htmlContent += $"<td style='width:28%;'>{truncatedTitle}</td>";
                     
-                    htmlContent += $"<td style='width:12%;'>{bomItem.MFPN}</td>";
-                    htmlContent += $"<td style='width:36%;' columnspan='3'>{bomItem.Description}</td>";
+                    htmlContent += $"<td class='wrap-content' style='width:12%;'>{bomItem.MFPN}</td>";
+                    htmlContent += $"<td class='wrap-content' style='width:36%;' columnspan='3'>{bomItem.Description}</td>";
                     
                     var rowColorClassQ = bomItem.QtyInKit < 0 ? "lightcoral" : "lightgreen";
 
@@ -838,7 +872,7 @@ function sortTablesByDelta() {
       
 
         var completionPercDiv = document.getElementById('completion-perc');
-        completionPercDiv.textContent = ""Average KIT vs DB simulation is "" + percentage.toFixed(2) + ""%"" + "" ( ""+lightgreenCount+""/""+totalRows+"" unique IPNs )"";
+        completionPercDiv.textContent = ""Average KIT vs DB simulation is "" + percentage.toFixed(2) + ""%"" + "" ( ""+lightgreenCount+""/""+totalRows+"" rows )"";
 
 
 var ctx = document.getElementById('completion-chart').getContext('2d');
