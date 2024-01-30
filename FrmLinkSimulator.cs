@@ -1,4 +1,5 @@
 ﻿using FastMember;
+using Microsoft.Office.Interop.Excel;
 using Seagull.Framework.Extensions;
 using System;
 using System.Collections;
@@ -18,6 +19,8 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.Menu;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolBar;
 using Button = System.Windows.Forms.Button;
 using ComboBox = System.Windows.Forms.ComboBox;
+using DataTable = System.Data.DataTable;
+using GroupBox = System.Windows.Forms.GroupBox;
 using Label = System.Windows.Forms.Label;
 using TextBox = System.Windows.Forms.TextBox;
 namespace WH_Panel
@@ -573,65 +576,176 @@ namespace WH_Panel
             htmlContent += @"
                 <table id='stockTableMain' class='wrap-content' style='border: 1px solid; text-align: center; width: 100%;'>
                 <tr>
-                    <th style='width: 14.2857%;'>Project</th>
-                    <th style='width: 14.2857%;'>IPN</th>
-                    <th style='width: 14.2857%;'>MFPN</th>
-                    <th style='width: 14.2857%;'>Description</th>
-                    <th style='width: 14.2857%;'>WH Qty</th>
-                    <th style='width: 14.2857%;'>KITs BALANCE</th>
-                    <th style='width: 14.2857%; cursor: pointer;' onclick='sortTablesByDelta()'>DELTA</th>
+                    <th style='width: 28%;'>Project</th>
+                    <th style='width: 12%;'>IPN</th>
+                    <th style='width: 12%;'>MFPN</th>
+                    <th style='width: 12%;'>Description</th>
+                    <th style='width: 12%;'>WH Qty</th>
+                    <th style='width: 12%;'>KITs BALANCE</th>
+                    <th style='width: 12%;'>DELTA</th>
 
                 </tr>";
+
+            
+
+            List< SIMIPNTABLE> MAINDATASOURCE_LIST = new List< SIMIPNTABLE>();
 
             foreach (var item in stockDataDetailed)
-{
-    // Check if there are BOM items for the current IPN
-    if (item.BOMs.Any())
-    {
-                    var totalStockBalance = stockItems.Where(si => si.IPN == item.IPN).Sum(si => si.Stock);
-                    // Create a new table for each IPN
+            {
+                SIMIPNTABLE MAINDATASOURCE = new SIMIPNTABLE();
 
-                    var rowColorClass = totalStockBalance + item.TotalRequired < 0 ? "lightcoral" : "lightgreen";
-                    //htmlContent += $"<tr class='{rowColorClass}'>";
+                MAINDATASOURCE.IPN = item.IPN;
+                    MAINDATASOURCE.WHqty = stockItems.Where(si => si.IPN == item.IPN).Sum(si => si.Stock);
+                    MAINDATASOURCE.KITsBalance = item.TotalRequired;
+                    MAINDATASOURCE.DELTA = MAINDATASOURCE.WHqty + MAINDATASOURCE.KITsBalance;
 
-                    htmlContent += $@"
-            <table id='stockTable_{item.IPN}' class='wrap-content' style='border: 1px solid; text-align: center;'>
-                <tr class='{rowColorClass}' style='border: 1px solid; text-align: center;'>
-                    <td class='wrap-content' style='font-weight: bold;' colspan='2'>{item.IPN}</td>
-                    <td style='width: 14.2857%;'></td>
-                    <td style='width: 14.2857%;'></td>
-                    <td style='width: 14.2857%;' class='wrap-content'>{totalStockBalance}</td>
-                    <td style='width: 14.2857%;' class='wrap-content'>{item.TotalRequired}</td>
-                    <td id='delta_{item.IPN}' class='wrap-content' style='font-weight: bold;width: 14.2857%;'>{totalStockBalance + item.TotalRequired}</td>
-                </tr>";
+                    MAINDATASOURCE.BOMITEMS = new List<BOMitem>();
 
-        // Display the BOM items for the current IPN
-        foreach (var bomItem in item.BOMs)
-        {
-            // Truncate the last 5 characters of Title
-            string truncatedTitle = bomItem.Title.Length > 5
-                ? bomItem.Title.Substring(0, bomItem.Title.Length - 5)
-                : bomItem.Title;
-            // Find the corresponding stockItem
-            var stockItem = stockItems.FirstOrDefault(si => si.IPN == item.IPN);
+                    foreach (var bomItem in item.BOMs)
+                    {
+                      BOMitem b = new BOMitem();
 
-           var BomQtyColorClass = bomItem.Quantity < 0 ? "lightcoral" : "lightgreen";
+                        b.ProjectName = bomItem.Title;
+                        b.MFPN = bomItem.MFPN;
+                        b.Description   = bomItem.Description;
+                        b.QtyInKit = bomItem.Quantity;
 
-                        htmlContent += $@"
-    <tr>
-        <td class='wrap-content' style='border: 1px solid; width: 28.5714%;' colspan='2'>{truncatedTitle}</td>
-        
-        <td class='wrap-content' style='border: 1px solid; width: 14.2857%;'>{bomItem.MFPN}</td>
-        <td class='wrap-content' style='border: 1px solid; width: 14.2857%;' colspan='2'>{bomItem.Description}</td>
-       
-        <td class='wrap-content' style='border: 1px solid; background-color: {BomQtyColorClass}; width: 14.2857%;'>{bomItem.Quantity}</td> 
-    </tr>";
+                        MAINDATASOURCE.BOMITEMS.Add(b);
                     }
-                    // Close the table for the current IPN
-                    htmlContent += "</table><br>";
-    }
-}
-htmlContent += "</div></table>";
+                MAINDATASOURCE_LIST.Add(MAINDATASOURCE);
+            }
+
+            // Order the MAINDATASOURCE_LIST by DELTA
+            MAINDATASOURCE_LIST = MAINDATASOURCE_LIST.OrderBy(mainDataSource => mainDataSource.DELTA).ToList();
+
+
+            // Generate HTML
+            htmlContent += "<table border='1' style='border-collapse: collapse; width: 100%;'>";
+            //htmlContent += "<tr style='background-color: #f2f2f2;'>";
+            //htmlContent += "<th style='padding: 10px;'>IPN</th>";
+            //htmlContent += "<th style='padding: 10px;'>Warehouse Quantity</th>";
+            //htmlContent += "<th style='padding: 10px;'>KITs Balance</th>";
+            //htmlContent += "<th style='padding: 10px;'>Delta</th>";
+            //htmlContent += "</tr>";
+
+            foreach (var mainDataSource in MAINDATASOURCE_LIST)
+            {
+                var rowColorClass = mainDataSource.DELTA < 0 ? "lightcoral" : "lightgreen";
+                // Add main data row
+                htmlContent += $"<tr class='{rowColorClass}' style='text-align:center'>";
+                htmlContent += $"<td style='width:28%;'></td>";
+                htmlContent += $"<td style='width:12%;'>{mainDataSource.IPN}</td>";
+                htmlContent += $"<td style='width:12%;'></td>";
+                htmlContent += $"<td style='width:12%;'></td>";
+                htmlContent += $"<td style='width:12%;'>{mainDataSource.WHqty}</td>";
+                htmlContent += $"<td style='width:12%;'>{mainDataSource.KITsBalance}</td>";
+                htmlContent += $"<td style='width:12%;'>{mainDataSource.DELTA}</td>";
+                htmlContent += "</tr>";
+
+                // Add sub-table for BOM items style='border: 1px solid black;'
+                htmlContent += "<tr>";
+                htmlContent += "<td  colspan='7'>";
+                htmlContent += "<table border='1' style='border-collapse: collapse; width: 100%;border: 1px solid black;'>";
+
+                // Add BOM item header
+                //htmlContent += "<tr class='{rowColorClass}' style='background-color: #d9edf7;'>";
+                //htmlContent += "<th style='padding: 10px;'>Project Name</th>";
+                //htmlContent += "<th style='padding: 10px;'>MFPN</th>";
+                //htmlContent += "<th style='padding: 10px;'>Description</th>";
+                //htmlContent += "<th style='padding: 10px;'>Quantity in Kit</th>";
+                //htmlContent += "</tr>";
+
+                // Add BOM item data
+                foreach (var bomItem in mainDataSource.BOMITEMS)
+                {
+                    htmlContent += "<tr style='text-align:center;'>";
+
+                    //Truncate the last 5 characters of Title
+                                string truncatedTitle = bomItem.ProjectName.Length > 5
+                                    ? bomItem.ProjectName.Substring(0, bomItem.ProjectName.Length - 5)
+                                    : bomItem.ProjectName;
+
+                    htmlContent += $"<td style='width:28%;'>{truncatedTitle}</td>";
+                    
+                    htmlContent += $"<td style='width:12%;'>{bomItem.MFPN}</td>";
+                    htmlContent += $"<td style='width:36%;' columnspan='3'>{bomItem.Description}</td>";
+                    
+                    var rowColorClassQ = bomItem.QtyInKit < 0 ? "lightcoral" : "lightgreen";
+
+                    htmlContent += $"<td class='{rowColorClassQ}' style='width:12%;'>{bomItem.QtyInKit}</td>";
+                    htmlContent += $"<td style='width:12%;'></td>";
+
+                    htmlContent += "</tr>";
+                }
+
+                // Close sub-table
+                htmlContent += "</table>";
+                htmlContent += "</br>";
+
+                htmlContent += "</td>";
+                htmlContent += "</tr>";
+                
+            }
+
+            // Close the main table
+            htmlContent += "</table>";
+
+
+
+            //                foreach (var item in stockDataDetailed)
+            //{
+            //    // Check if there are BOM items for the current IPN
+            //    if (item.BOMs.Any())
+            //    {
+            //                    var totalStockBalance = stockItems.Where(si => si.IPN == item.IPN).Sum(si => si.Stock);
+            //                    // Create a new table for each IPN
+
+            //                    var rowColorClass = totalStockBalance + item.TotalRequired < 0 ? "lightcoral" : "lightgreen";
+            //                    //htmlContent += $"<tr class='{rowColorClass}'>";
+
+            //                    htmlContent += $@"
+            //            <table id='stockTable_{item.IPN}' class='wrap-content' style='border: 1px solid; text-align: center;'>
+            //                <tr class='{rowColorClass}' style='border: 1px solid; text-align: center;'>
+            //                    <td class='wrap-content' style='font-weight: bold;' colspan='2'>{item.IPN}</td>
+            //                    <td style='width: 14.2857%;'></td>
+            //                    <td style='width: 14.2857%;'></td>
+            //                    <td style='width: 14.2857%;' class='wrap-content'>{totalStockBalance}</td>
+            //                    <td style='width: 14.2857%;' class='wrap-content'>{item.TotalRequired}</td>
+            //                    <td id='delta_{item.IPN}' class='wrap-content' style='font-weight: bold;width: 14.2857%;'>{totalStockBalance + item.TotalRequired}</td>
+            //                </tr>";
+
+            //        // Display the BOM items for the current IPN
+            //        foreach (var bomItem in item.BOMs)
+            //        {
+            //            // Truncate the last 5 characters of Title
+            //            string truncatedTitle = bomItem.Title.Length > 5
+            //                ? bomItem.Title.Substring(0, bomItem.Title.Length - 5)
+            //                : bomItem.Title;
+            //            // Find the corresponding stockItem
+            //            var stockItem = stockItems.FirstOrDefault(si => si.IPN == item.IPN);
+
+            //           var BomQtyColorClass = bomItem.Quantity < 0 ? "lightcoral" : "lightgreen";
+
+            //                        htmlContent += $@"
+            //    <tr>
+            //        <td class='wrap-content' style='border: 1px solid; width: 28.5714%;' colspan='2'>{truncatedTitle}</td>
+
+            //        <td class='wrap-content' style='border: 1px solid; width: 14.2857%;'>{bomItem.MFPN}</td>
+            //        <td class='wrap-content' style='border: 1px solid; width: 14.2857%;' colspan='2'>{bomItem.Description}</td>
+
+            //        <td class='wrap-content' style='border: 1px solid; background-color: {BomQtyColorClass}; width: 14.2857%;'>{bomItem.Quantity}</td> 
+            //    </tr>";
+            //                    }
+            //                    // Close the table for the current IPN
+            //                    htmlContent += "</table><br>";
+            //    }
+            //}
+
+
+
+            htmlContent += "</div></table>";
+
+
             htmlContent += @"<script>
     
 

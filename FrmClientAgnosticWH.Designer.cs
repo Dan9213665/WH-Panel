@@ -101,6 +101,7 @@
             tabPage2 = new TabPage();
             flowLayoutPanel1 = new FlowLayoutPanel();
             openFileDialog1 = new OpenFileDialog();
+            backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             dateTimePicker1 = new DateTimePicker();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
@@ -1270,5 +1271,6 @@
         private OpenFileDialog openFileDialog1;
         private PictureBox pictureBox1;
         private CheckBox checkBox1;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }
