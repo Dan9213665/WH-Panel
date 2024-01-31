@@ -85,7 +85,6 @@ namespace WH_Panel
                 //writer.WriteLine("  }");
                 //writer.WriteLine("}");
                 //writer.WriteLine("</script>");
-
                 //writer.WriteLine("<button onclick='toggleDisplay()'>FILTER for PRINTOUT</button>");
                 //writer.WriteLine("<div id='rowsCount'>Total Rows Loaded : </div>");
                 //writer.WriteLine("<script>");
@@ -111,7 +110,6 @@ namespace WH_Panel
                 //writer.WriteLine("  document.getElementById('rowsCount').innerHTML = 'Total Rows Loaded : ' + totalRows;");
                 //writer.WriteLine("}");
                 //writer.WriteLine("</script>");
-
                 //writer.WriteLine("<button onclick='toggleDisplay()'>FILTER for PRINTOUT</button>");
                 //writer.WriteLine("<div id='rowsCount'>Total Rows Loaded : </div>");
                 //writer.WriteLine("<script>");
@@ -145,7 +143,6 @@ namespace WH_Panel
                 //writer.WriteLine("  document.getElementById('rowsCount').innerHTML = 'Total Rows Loaded : ' + totalRows;");
                 //writer.WriteLine("}");
                 //writer.WriteLine("</script>");
-
                 writer.WriteLine("<button onclick='toggleDisplay()'>FILTER for PRINTOUT</button>");
                 writer.WriteLine("<div id='rowsCount'>Total Rows Loaded : </div>");
                 writer.WriteLine("<script>");
@@ -179,9 +176,6 @@ namespace WH_Panel
                 writer.WriteLine("  document.getElementById('rowsCount').innerHTML = 'Total Rows Loaded : ' + totalRows;");
                 writer.WriteLine("}");
                 writer.WriteLine("</script>");
-
-
-
                 foreach (var group in groupedByIPN)
                 {
                     //writer.WriteLine("<h2>IPN: " + group.Key + "</h2>");

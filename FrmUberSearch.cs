@@ -130,7 +130,7 @@ namespace WH_Panel
                 button.Tag = warehousePath;
                 //button.AutoSize = true; // Adjust the button size based on the text length
                 button.AutoSize = false; // Disable auto-sizing
-                button.Size = new Size(90, 55); // Set the button size
+                button.Size = new Size(85, 55); // Set the button size
                                                  // Add a tooltip to display warehouseName when hovering over the button
                 ToolTip toolTip = new ToolTip();
                 toolTip.SetToolTip(button, warehouseName);

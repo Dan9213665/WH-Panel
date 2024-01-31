@@ -626,12 +626,10 @@ namespace WH_Panel
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
             GenerateHTML();
         }
-
         bool ExcludeColumn(string headerText)
         {
             return headerText == "ProjectName" || headerText == "DateOfCreation" || headerText == "QtyPerUnit" || headerText == "Calc";
         }
-
         // Helper method to get the index of a specific column by name
         int GetColumnIndex(string columnName)
         {
@@ -661,9 +659,7 @@ namespace WH_Panel
                 for (int i = 0; i < dataGridView1.Rows.Count; i++)
                 {
                     string IPN = dataGridView1.Rows[i].Cells["IPN"].Value.ToString();
-
                     writer.WriteLine("<table border='1' id='IPNtable" + i + "' style='text-align:center; width:auto; margin-right: 0px;margin-left: auto;'>");
-
                     writer.WriteLine("<tr>");
                     for (int j = 0; j < dataGridView1.Columns.Count; j++)
                     {
@@ -707,8 +703,6 @@ namespace WH_Panel
                             }
                         }
                     }
-
-
                     writer.WriteLine("</tr>");
                     DataView dv = new DataView();
                     var negativeQtys = stockItems.Where(item => item.IPN == IPN && item.Stock < 0).ToList();
@@ -754,7 +748,6 @@ namespace WH_Panel
                                     {
                                         writer.WriteLine("<td class='packageType' style='font-size: 18px;font-weight: bold;'>" + filteredData.Rows[l][m].ToString() + "</td>");
                                     }
-
                                     else if (filteredData.Columns[m].ColumnName == "Stock")
                                     {
                                         string cellValue = filteredData.Rows[l][m].ToString();
@@ -770,16 +763,11 @@ namespace WH_Panel
                         }
                         writer.WriteLine("</tr>");
                     }
-
                     writer.WriteLine("</table>");
                     writer.WriteLine("</td>");
                     writer.WriteLine("</tr>");
                 }
-
                 writer.WriteLine("</table>");
-
-
-
                 writer.WriteLine("<script>");
                 writer.WriteLine("document.addEventListener('DOMContentLoaded', function() {");
                 writer.WriteLine("    var tables = document.querySelectorAll('[id^=\"IPNtable\"]');");
@@ -787,46 +775,32 @@ namespace WH_Panel
                 writer.WriteLine("        highlightCells(table);");
                 writer.WriteLine("    });");
                 writer.WriteLine("});");
-
                 writer.WriteLine("function highlightCells(table) {");
                 writer.WriteLine("    var rows = table.querySelectorAll('tr');");
                 writer.WriteLine("    var requiredQtyCell = table.querySelector('.required-qty');");
                 writer.WriteLine("");
-
                 writer.WriteLine("    if (requiredQtyCell) {");
                 writer.WriteLine("        var requiredQty = Math.abs(parseInt(requiredQtyCell.innerText));");
                 writer.WriteLine("");
-
                 writer.WriteLine("     outer:    for (var rowIndex = 1; rowIndex < rows.length; rowIndex++) {");
                 writer.WriteLine("            var cells = Array.from(rows[rowIndex].querySelectorAll('.qtyInKit-cell'));");
                 writer.WriteLine("            var totalQty = 0;");
                 writer.WriteLine("");
-
                 writer.WriteLine("          for (var cellIndex = 0; cellIndex < cells.length; cellIndex++) {");
                 writer.WriteLine("                var cell = cells[cellIndex];");
                 writer.WriteLine("                var cellValue = Math.abs(parseInt(cell.innerText));");
                 writer.WriteLine("");
-
                 writer.WriteLine("                if (!isNaN(cellValue)) {");
                 writer.WriteLine("                    totalQty += cellValue;");
                 writer.WriteLine("");
-
-
                 writer.WriteLine("               if (totalQty >= requiredQty) {cell.style.backgroundColor = '#FFD300';break outer; }");
-
                 writer.WriteLine("                    else {  if (totalQty <= requiredQty){cell.style.backgroundColor = '#FFD300';} else{ break outer;}  } ");
-
-
                 writer.WriteLine("                }");
                 writer.WriteLine("            }");
                 writer.WriteLine("        }");
-
-
-
                 writer.WriteLine("        for (var rowIndex = 1; rowIndex < rows.length; rowIndex++) {");
                 writer.WriteLine("            var bagCells = Array.from(rows[rowIndex].querySelectorAll('.packageType'));");
                 writer.WriteLine("");
-
                 writer.WriteLine("            bagCells.forEach(function(bagCell) {");
                 writer.WriteLine("                if (bagCell.innerText.trim() === 'Bag') {");
                 writer.WriteLine("                    bagCell.style.backgroundColor = '#FFD300';");
@@ -836,10 +810,6 @@ namespace WH_Panel
                 writer.WriteLine("    }");
                 writer.WriteLine("}");
                 writer.WriteLine("</script>");
-
-
-
-
                 writer.WriteLine("</body>");
                 writer.WriteLine("</html>");
             }

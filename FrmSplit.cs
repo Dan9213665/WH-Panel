@@ -17,9 +17,7 @@ namespace WH_Panel
         {
             InitializeComponent();
             comboBox1.SelectedIndex = 5;
-
         }
-
         public TextBox TextBox1
         {
             get { return textBox1; }
@@ -30,8 +28,6 @@ namespace WH_Panel
             wHitem = wHitemToSplitFromTheMainForm;
             return wHitem;
         }
-
-
         public WHitem wHitemToSplitFromTheMainForm { get; set; }
         private void splitStartLogic(WHitem w)
         {
@@ -79,8 +75,6 @@ namespace WH_Panel
                 MessageBox.Show("Nope");
                 // Handle the case when the object is null
             }
-
-
         }
         private DataTable GetPropertiesAsDataTable(object obj)
         {
@@ -104,7 +98,6 @@ namespace WH_Panel
             if (getTheItem() != null)
             {
                 splitStartLogic(getTheItem());
-
             }
             else
             {

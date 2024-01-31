@@ -44,7 +44,6 @@ using File = System.IO.File;
 using Point = System.Drawing.Point;
 using System.Runtime.InteropServices;
 using Outlook = Microsoft.Office.Interop.Outlook;
-
 namespace WH_Panel
 {
     public partial class FrmBOM : Form
@@ -1232,20 +1231,16 @@ namespace WH_Panel
         //        MessageBox.Show("Error");
         //    }
         //}
-
         //private void DataInserter(string fp, string thesheetName, WHitem wHitem)
         //{
         //    try
         //    {
         //        string connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={fp};Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
-
         //        using (OleDbConnection conn = new OleDbConnection(connectionString))
         //        {
         //            conn.Open();
-
         //            string query = $"INSERT INTO [{thesheetName}$] (IPN, Manufacturer, MFPN, Description, Stock, Updated_on, Comments, Source_Requester) " +
         //                           "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
         //            using (OleDbCommand command = new OleDbCommand(query, conn))
         //            {
         //                command.Parameters.AddWithValue("@IPN", wHitem.IPN);
@@ -1256,11 +1251,9 @@ namespace WH_Panel
         //                command.Parameters.AddWithValue("@UpdatedOn", wHitem.UpdatedOn);
         //                command.Parameters.AddWithValue("@Comments", wHitem.ReelBagTrayStick);
         //                command.Parameters.AddWithValue("@SourceRequester", wHitem.SourceRequester);
-
         //                command.ExecuteNonQuery();
         //            }
         //        }
-
         //        txtbQtyToAdd.Clear();
         //        lastTxtbInputFromUser.Clear();
         //        label2.BackColor = Color.LightGreen;
@@ -1274,28 +1267,22 @@ namespace WH_Panel
         //        // Log the exception details
         //    }
         //}
-
         private void DataInserter(string fp, string thesheetName, WHitem wHitem)
         {
             const int maxRetries = 3;
             const int delayMilliseconds = 1500;
-
             for (int retryCount = 0; retryCount < maxRetries; retryCount++)
             {
                 try
                 {
                     // Set the cursor to an hourglass during the database operation
                     Cursor.Current = Cursors.WaitCursor;
-
                     string connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={fp};Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
-
                     using (OleDbConnection conn = new OleDbConnection(connectionString))
                     {
                         conn.Open();
-
                         string query = $"INSERT INTO [{thesheetName}$] (IPN, Manufacturer, MFPN, Description, Stock, Updated_on, Comments, Source_Requester) " +
                                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
                         using (OleDbCommand command = new OleDbCommand(query, conn))
                         {
                             command.Parameters.AddWithValue("@IPN", wHitem.IPN);
@@ -1306,21 +1293,17 @@ namespace WH_Panel
                             command.Parameters.AddWithValue("@UpdatedOn", wHitem.UpdatedOn);
                             command.Parameters.AddWithValue("@Comments", wHitem.ReelBagTrayStick);
                             command.Parameters.AddWithValue("@SourceRequester", wHitem.SourceRequester);
-
                             command.ExecuteNonQuery();
                         }
                     }
-
                     txtbQtyToAdd.Clear();
                     lastTxtbInputFromUser.Clear();
                     label2.BackColor = Color.LightGreen;
                     label3.BackColor = Color.LightGreen;
                     lastTxtbInputFromUser.Focus();
                     AutoClosingMessageBox.Show($"{wHitem.IPN} Transferred to {wHitem.SourceRequester}", $"Item Transferred to {wHitem.SourceRequester}", 1000);
-
                     // Reset the cursor after the database operation
                     Cursor.Current = Cursors.Default;
-
                     // Break out of the loop if the insert is successful
                     break;
                 }
@@ -1328,7 +1311,6 @@ namespace WH_Panel
                 {
                     //MessageBox.Show($"Error: {ex.Message}");
                     // Log the exception details
-
                     if (retryCount < maxRetries - 1)
                     {
                         // Delay before retrying
@@ -1347,9 +1329,6 @@ namespace WH_Panel
                 }
             }
         }
-
-
-
         public class AutoClosingMessageBox
         {
             System.Threading.Timer _timeoutTimer;
@@ -1445,7 +1424,6 @@ namespace WH_Panel
         }
         private void btnSendEmail_Click(object sender, EventArgs e)
         {
-
         }
         private void textBox13_Click(object sender, EventArgs e)
         {
@@ -1569,7 +1547,6 @@ namespace WH_Panel
                 writer.WriteLine("</head>");
                 writer.WriteLine("<body>");
                 string[] parts = projectName.Substring(0, projectName.Length - 5).ToString().Split('_');
-
                 string ConvertImageToBase64(string imagePath)
                 {
                     byte[] imageBytes = File.ReadAllBytes(imagePath);
@@ -1603,16 +1580,12 @@ namespace WH_Panel
                     writer.WriteLine("<col style='width: 25%; background: url(" + backgroundImageUrl + ") no-repeat center center; background-size: 100% 100%;'>");
                     writer.WriteLine("<col style='width: 75%;'>"); // 75% width for the text column
                     writer.WriteLine("<tr>");
-
                     writer.WriteLine("<td  style='vertical-align: middle;'><img id='logoImage' src='" + imageUrl + "' alt='" + altText + "' style='height: 100%; width: 100%;'></td>"); // Image column
-
                     writer.WriteLine("<td style='text-align: center; background: rgba(255, 255, 255, 0.1) url(" + backgroundImageUrl + ") no-repeat center center; background-size: 111% 111%; vertical-align: middle; transform: scaleX(-1);'>");
-
                     foreach (string part in parts)
                     {
                         writer.WriteLine("<div style='text-align: center;  border: 1px solid black; margin: 0px; padding: 5px; vertical-align: middle; font-size: 50px; font-weight: bold;text-shadow: -4px -4px 2px #fff, 4px -4px 2px #fff, -4px 4px 2px #fff, 4px 4px 2px #fff;transform: scaleX(-1);'>" + part + "</div>");
                     }
-
                     writer.WriteLine("</td>");
                     writer.WriteLine("</tr>");
                     writer.WriteLine("</table>");
@@ -1628,7 +1601,6 @@ namespace WH_Panel
             };
             p.Start();
         }
-
         private void button3_MouseClick(object sender, MouseEventArgs e)
         {
             // Check if the right mouse button is clicked
@@ -1641,22 +1613,17 @@ namespace WH_Panel
         private void SendEmail()
         {
             Outlook.Application outlookApp = new Outlook.Application();
-
             // Create a new mail item
             Outlook.MailItem mailItem = (Outlook.MailItem)outlookApp.CreateItem(Outlook.OlItemType.olMailItem);
-
             // Set email properties
             mailItem.Subject = "Test Email";
             mailItem.Body = "This is a test email from my WinForms app.";
             mailItem.To = "lgt@robotron.co.il";
-
             // Send the email
             mailItem.Send();
-
             // Release COM objects
             Marshal.ReleaseComObject(mailItem);
             Marshal.ReleaseComObject(outlookApp);
-
             MessageBox.Show("Test");
         }
     }

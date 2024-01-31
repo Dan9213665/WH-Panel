@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace WH_Panel
 {
     public class SIMIPNTABLE
@@ -12,7 +11,6 @@ namespace WH_Panel
         public decimal WHqty { get; set; }
         public int? KITsBalance  { get; set; }
         public decimal? DELTA { get; set;}
-
         public List<BOMitem>BOMITEMS { get; set; }
     }
 }

@@ -309,7 +309,6 @@ namespace WH_Panel
             }
             return true;
         }
-
         private void button2_Click(object sender, EventArgs e)
         {
             string saveToPath = string.Empty;

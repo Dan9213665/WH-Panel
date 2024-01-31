@@ -221,7 +221,6 @@ namespace WH_Panel
                     avlFile = w.clAvlFile;
                     stockFile = w.clStockFile;
                     MasterReload(avlFile, stockFile);
-
                     //if (!string.IsNullOrEmpty(w.claccDBfile))
                     //{
                     //    MessageBox.Show(w.claccDBfile);
@@ -1406,7 +1405,6 @@ namespace WH_Panel
             lblRWK.Text += "requested by ";
             textBox9.Text = lblRWK.Text + comboBox6.SelectedItem.ToString() + " on " + DateTime.Now.ToString("yyyy-MM-dd");
         }
-
         private void AuthorizedExcelFileOpening(string fp)
         {
             if (Environment.UserName == "lgt" || Environment.UserName == "rbtwh" || Environment.UserName == "rbtwh2")
@@ -1425,7 +1423,6 @@ namespace WH_Panel
             excel.StartInfo.Arguments = thePathToFile;
             excel.Start();
         }
-
         private void textBox11_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -1872,17 +1869,12 @@ namespace WH_Panel
                 fs.Width += widthDifference;
                 // Subscribe to the AdjustmentCompleted event
                 fs.AdjustmentCompleted += SubForm_AdjustmentCompleted;
-
                 // Handle the Load event to set focus on textbox1
                 fs.Load += (s, eventArgs) => { fs.TextBox1.Focus(); };
-
-
                 // Show the subform
                 fs.ShowDialog();
             }
         }
-
-
         private void SubForm_AdjustmentCompleted(object sender, AdjustmentEventArgs e)
         {
             e.OriginalItem.SourceRequester = "SPLIT";
@@ -1995,12 +1987,10 @@ namespace WH_Panel
                             if (searchbyMFPN.Contains(cellValue))
                             {
                                 textBox2.Text = cellValue;
-
                                 // Extract the quantity value from the input string
                                 int qtyIndex1 = searchbyMFPN.IndexOf("qty:", StringComparison.OrdinalIgnoreCase);
                                 int qtyIndex2 = searchbyMFPN.IndexOf("11ZPICK", StringComparison.OrdinalIgnoreCase);
                                 int qtyIndex3 = searchbyMFPN.IndexOf("V003331", StringComparison.OrdinalIgnoreCase);
-
                                 if (qtyIndex1 != -1)
                                 {
                                     int commaIndex = searchbyMFPN.IndexOf(",", qtyIndex1);
@@ -2053,8 +2043,6 @@ namespace WH_Panel
                                     // Handle the case where neither "qty:", "11ZPICK," nor "V003331" is found in the input string
                                     textBox6.Text = "";
                                 }
-
-
                             }
                             else
                             {
@@ -2071,13 +2059,11 @@ namespace WH_Panel
                 textBox2_KeyDown(sender, e);
             }
         }
-
         private void BrandNewItemAutoInsertionToDB()
         {
             if (checkBox1.Checked)
             {
                 SendKeys.Send("{ENTER}");
-
                 // Now, you can handle the KeyPress event if needed
                 //textBox6_KeyPress(sender, new KeyPressEventArgs((char)Keys.Enter));
             }
@@ -2101,7 +2087,6 @@ namespace WH_Panel
             if (comboBox3.SelectedItem.ToString() == "ROBOTRON")
             {
                 string prefix = warehouses.FirstOrDefault(x => x.clName == comboBox3.SelectedItem.ToString()).clPrefix;
-
                 try
                 {
                     //if (avlItems[0].IPN.Contains("_"))
@@ -2502,7 +2487,6 @@ namespace WH_Panel
             };
             process.Start();
         }
-
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox1.Checked)
