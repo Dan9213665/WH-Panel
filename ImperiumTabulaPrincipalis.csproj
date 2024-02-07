@@ -36,6 +36,7 @@
     <PackageReference Include="OfficeOpenXml.Core.ExcelPackage" Version="1.0.0" />
     <PackageReference Include="Seagull" Version="2.3.5" />
     <PackageReference Include="System.Data.OleDb" Version="7.0.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Office.Interop.Outlook">

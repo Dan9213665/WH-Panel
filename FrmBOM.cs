@@ -772,7 +772,7 @@ namespace WH_Panel
                     itemToPrint.MFPN = w.MFPN;
                     itemToPrint.Description = w.Description;
                     itemToPrint.Stock = validQty;
-                    itemToPrint.UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
+                    itemToPrint.Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
                     printSticker(itemToPrint);
                 }
             }
@@ -856,13 +856,13 @@ namespace WH_Panel
                 using (OleDbConnection conn = new OleDbConnection(constr))
                 {
                     conn.Open();
-                    using (OleDbCommand cmd = new OleDbCommand($"UPDATE [{thesheetName}$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @UPDATEDON", conn))
+                    using (OleDbCommand cmd = new OleDbCommand($"UPDATE [{thesheetName}$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, Updated_on = @Updated_on", conn))
                     {
                         cmd.Parameters.AddWithValue("@PN", wHitem.IPN);
                         cmd.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
                         cmd.Parameters.AddWithValue("@ItemDesc", wHitem.Description);
                         cmd.Parameters.AddWithValue("@QTY", wHitem.Stock);
-                        cmd.Parameters.AddWithValue("@UPDATEDON", wHitem.UpdatedOn);
+                        cmd.Parameters.AddWithValue("@Updated_on", wHitem.Updated_on);
                         cmd.ExecuteNonQuery();
                     }
                 }
@@ -1102,14 +1102,14 @@ namespace WH_Panel
                     MFPN = w.MFPN,
                     Description = w.Description,
                     Stock = qtyToMove * (-1),
-                    UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss"),
-                    ReelBagTrayStick = cmbReelSelector.SelectedItem.ToString(),
-                    SourceRequester = kitName
+                    Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss"),
+                    Comments = cmbReelSelector.SelectedItem.ToString(),
+                    Source_Requester = kitName
                 };
                 if (!System.String.IsNullOrEmpty(warehouseSelectorBasedOnItem(w)))
                 {
                     itemToTransfer.Manufacturer = getTheManufacturerFromTheStock(warehouseSelectorBasedOnItem(w), itemToTransfer);
-                    itemToTransfer.ReelBagTrayStick = getTheReelBagTrayStickFromTheStock(warehouseSelectorBasedOnItem(w), itemToTransfer);
+                    itemToTransfer.Comments = getTheCommentsFromTheStock(warehouseSelectorBasedOnItem(w), itemToTransfer);
                     DataInserter(warehouseSelectorBasedOnItem(w), "STOCK", itemToTransfer);
                 }
             }
@@ -1150,9 +1150,9 @@ namespace WH_Panel
             }
             return manufacturerFromStock;
         }
-        private string getTheReelBagTrayStickFromTheStock(string fp, WHitem itemTolookby)
+        private string getTheCommentsFromTheStock(string fp, WHitem itemTolookby)
         {
-            string ReelBagTrayStickFromStock = string.Empty;
+            string CommentsFromStock = string.Empty;
             try
             {
                 string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
@@ -1166,8 +1166,8 @@ namespace WH_Panel
                     OleDbDataReader reader = command.ExecuteReader();
                     while (reader.Read())
                     {
-                        //MessageBox.Show("ReelBagTrayStick from stock: " + reader["Comments"].ToString());
-                        ReelBagTrayStickFromStock = reader["Comments"].ToString();
+                        //MessageBox.Show("Comments from stock: " + reader["Comments"].ToString());
+                        CommentsFromStock = reader["Comments"].ToString();
                         break;
                         // Add more code here to display other columns or perform other actions on each row
                     }
@@ -1179,7 +1179,7 @@ namespace WH_Panel
             {
                 //MessageBox.Show(e.Message);
             }
-            return ReelBagTrayStickFromStock;
+            return CommentsFromStock;
         }
         private string ConvertStockFileFormat(string originalStockFile)
         {
@@ -1215,7 +1215,7 @@ namespace WH_Panel
         //        using (OleDbConnection conn = new OleDbConnection(constr))
         //        {
         //            conn.Open();
-        //            OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$] (IPN,Manufacturer,MFPN,Description,Stock,Updated_on,Comments,Source_Requester) values('" + wHitem.IPN + "','" + wHitem.Manufacturer + "','" + wHitem.MFPN + "','" + wHitem.Description + "','" + wHitem.Stock + "','" + wHitem.UpdatedOn + "','" + wHitem.ReelBagTrayStick + "','" + wHitem.SourceRequester + "')", conn);
+        //            OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$] (IPN,Manufacturer,MFPN,Description,Stock,Updated_on,Comments,Source_Requester) values('" + wHitem.IPN + "','" + wHitem.Manufacturer + "','" + wHitem.MFPN + "','" + wHitem.Description + "','" + wHitem.Stock + "','" + wHitem.Updated_on + "','" + wHitem.Comments + "','" + wHitem.Source_Requester + "')", conn);
         //            command.ExecuteNonQuery();
         //            conn.Close();
         //        }
@@ -1224,7 +1224,7 @@ namespace WH_Panel
         //        label2.BackColor = Color.LightGreen;
         //        label3.BackColor = Color.LightGreen;
         //        lastTxtbInputFromUser.Focus();
-        //        AutoClosingMessageBox.Show(wHitem.IPN + " Transferred to " + wHitem.SourceRequester, " Item Transferred to " + wHitem.SourceRequester, 1000);
+        //        AutoClosingMessageBox.Show(wHitem.IPN + " Transferred to " + wHitem.Source_Requester, " Item Transferred to " + wHitem.Source_Requester, 1000);
         //    }
         //    catch (IOException)
         //    {
@@ -1248,9 +1248,9 @@ namespace WH_Panel
         //                command.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
         //                command.Parameters.AddWithValue("@Description", wHitem.Description);
         //                command.Parameters.AddWithValue("@Stock", wHitem.Stock);
-        //                command.Parameters.AddWithValue("@UpdatedOn", wHitem.UpdatedOn);
-        //                command.Parameters.AddWithValue("@Comments", wHitem.ReelBagTrayStick);
-        //                command.Parameters.AddWithValue("@SourceRequester", wHitem.SourceRequester);
+        //                command.Parameters.AddWithValue("@Updated_on", wHitem.Updated_on);
+        //                command.Parameters.AddWithValue("@Comments", wHitem.Comments);
+        //                command.Parameters.AddWithValue("@Source_Requester", wHitem.Source_Requester);
         //                command.ExecuteNonQuery();
         //            }
         //        }
@@ -1259,7 +1259,7 @@ namespace WH_Panel
         //        label2.BackColor = Color.LightGreen;
         //        label3.BackColor = Color.LightGreen;
         //        lastTxtbInputFromUser.Focus();
-        //        AutoClosingMessageBox.Show($"{wHitem.IPN} Transferred to {wHitem.SourceRequester}", $"Item Transferred to {wHitem.SourceRequester}", 1000);
+        //        AutoClosingMessageBox.Show($"{wHitem.IPN} Transferred to {wHitem.Source_Requester}", $"Item Transferred to {wHitem.Source_Requester}", 1000);
         //    }
         //    catch (IOException ex)
         //    {
@@ -1290,9 +1290,9 @@ namespace WH_Panel
                             command.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
                             command.Parameters.AddWithValue("@Description", wHitem.Description);
                             command.Parameters.AddWithValue("@Stock", wHitem.Stock);
-                            command.Parameters.AddWithValue("@UpdatedOn", wHitem.UpdatedOn);
-                            command.Parameters.AddWithValue("@Comments", wHitem.ReelBagTrayStick);
-                            command.Parameters.AddWithValue("@SourceRequester", wHitem.SourceRequester);
+                            command.Parameters.AddWithValue("@Updated_on", wHitem.Updated_on);
+                            command.Parameters.AddWithValue("@Comments", wHitem.Comments);
+                            command.Parameters.AddWithValue("@Source_Requester", wHitem.Source_Requester);
                             command.ExecuteNonQuery();
                         }
                     }
@@ -1301,7 +1301,7 @@ namespace WH_Panel
                     label2.BackColor = Color.LightGreen;
                     label3.BackColor = Color.LightGreen;
                     lastTxtbInputFromUser.Focus();
-                    AutoClosingMessageBox.Show($"{wHitem.IPN} Transferred to {wHitem.SourceRequester}", $"Item Transferred to {wHitem.SourceRequester}", 1000);
+                    AutoClosingMessageBox.Show($"{wHitem.IPN} Transferred to {wHitem.Source_Requester}", $"Item Transferred to {wHitem.Source_Requester}", 1000);
                     // Reset the cursor after the database operation
                     Cursor.Current = Cursors.Default;
                     // Break out of the loop if the insert is successful
@@ -1368,7 +1368,7 @@ namespace WH_Panel
                 itemToPrint.MFPN = dataGridView2.Rows[rowindex].Cells["MFPN"].Value.ToString();
                 itemToPrint.Description = dataGridView2.Rows[rowindex].Cells["Description"].Value.ToString();
                 itemToPrint.Stock = int.Parse(dataGridView2.Rows[rowindex].Cells["QtyInKit"].Value.ToString());
-                itemToPrint.UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
+                itemToPrint.Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
             }
             printSticker(itemToPrint);
         }

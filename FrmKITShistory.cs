@@ -639,7 +639,7 @@ namespace WH_Panel
             bool success = int.TryParse(txtbQty.Text, out outNumber);
             if (success && outNumber < 50001 && outNumber > 0)
             {
-                WHitem w = new WHitem() { IPN = txtbIPN.Text, MFPN = txtbMFPN.Text, Description = txtbDescription.Text, Stock = outNumber, UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss") };
+                WHitem w = new WHitem() { IPN = txtbIPN.Text, MFPN = txtbMFPN.Text, Description = txtbDescription.Text, Stock = outNumber, Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss") };
                 printSticker(w);
                 ResetAllTexboxes(textBox1);
             }
@@ -662,12 +662,12 @@ namespace WH_Panel
                 OleDbCommand cmd = new OleDbCommand();
                 cmd.Connection = conn;
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @UPDATEDON";
+                cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @Updated_on";
                 cmd.Parameters.AddWithValue("@PN", wHitem.IPN);
                 cmd.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
                 cmd.Parameters.AddWithValue("@ItemDesc", wHitem.Description);
                 cmd.Parameters.AddWithValue("@QTY", wHitem.Stock);
-                cmd.Parameters.AddWithValue("@UPDATEDON", wHitem.UpdatedOn);
+                cmd.Parameters.AddWithValue("@Updated_on", wHitem.Updated_on);
                 conn.Open();
                 cmd.ExecuteNonQuery();
                 conn.Close();

@@ -221,10 +221,6 @@ namespace WH_Panel
                     avlFile = w.clAvlFile;
                     stockFile = w.clStockFile;
                     MasterReload(avlFile, stockFile);
-                    //if (!string.IsNullOrEmpty(w.claccDBfile))
-                    //{
-                    //    MessageBox.Show(w.claccDBfile);
-                    //}
                 }
             }
         }
@@ -260,9 +256,9 @@ namespace WH_Panel
                                 MFPN = reader[3].ToString(),
                                 Description = reader[4].ToString(),
                                 Stock = 0,
-                                UpdatedOn = string.Empty,
-                                ReelBagTrayStick = string.Empty,
-                                SourceRequester = string.Empty
+                                Updated_on = string.Empty,
+                                Comments = string.Empty,
+                                Source_Requester = string.Empty
                             };
                             if (iAVL > 0)
                             {
@@ -646,9 +642,9 @@ namespace WH_Panel
                 MFPN = textBox4.Text,
                 Description = textBox5.Text,
                 Stock = qty,
-                UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss"), //tt
-                ReelBagTrayStick = comboBox1.Text,
-                SourceRequester = sorce_req
+                Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss"), //tt
+                Comments = comboBox1.Text,
+                Source_Requester = sorce_req
             };
             DataInserter(stockFile, "STOCK", inputWHitem, toPrint);
             stockItems.Add(inputWHitem);
@@ -665,7 +661,7 @@ namespace WH_Panel
                 using (OleDbConnection conn = new OleDbConnection(constr))
                 {
                     conn.Open();
-                    OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$] (IPN,Manufacturer,MFPN,Description,Stock,Updated_on,Comments,Source_Requester) values('" + wHitem.IPN + "','" + wHitem.Manufacturer + "','" + wHitem.MFPN + "','" + wHitem.Description + "','" + wHitem.Stock + "','" + wHitem.UpdatedOn + "','" + wHitem.ReelBagTrayStick + "','" + wHitem.SourceRequester + "')", conn);
+                    OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$] (IPN,Manufacturer,MFPN,Description,Stock,Updated_on,Comments,Source_Requester) values('" + wHitem.IPN + "','" + wHitem.Manufacturer + "','" + wHitem.MFPN + "','" + wHitem.Description + "','" + wHitem.Stock + "','" + wHitem.Updated_on + "','" + wHitem.Comments + "','" + wHitem.Source_Requester + "')", conn);
                     command.ExecuteNonQuery();
                     conn.Close();
                 }
@@ -684,7 +680,7 @@ namespace WH_Panel
                 }
                 else
                 {
-                    AutoClosingMessageBox.Show(wHitem.Stock.ToString() + " PCS of " + wHitem.IPN + " in a " + wHitem.ReelBagTrayStick + " MOVED to DB ", "Item added to DB", 2000);
+                    AutoClosingMessageBox.Show(wHitem.Stock.ToString() + " PCS of " + wHitem.IPN + " in a " + wHitem.Comments + " MOVED to DB ", "Item added to DB", 2000);
                 }
             }
             catch (IOException)
@@ -701,7 +697,7 @@ namespace WH_Panel
                 using (OleDbConnection conn = new OleDbConnection(constr))
                 {
                     conn.Open();
-                    OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$] (IPN,Manufacturer,MFPN,Description,Stock,Updated_on,Comments,Source_Requester) values('" + wHitem.IPN + "','" + wHitem.Manufacturer + "','" + wHitem.MFPN + "','" + wHitem.Description + "','" + wHitem.Stock + "','" + wHitem.UpdatedOn + "','" + wHitem.ReelBagTrayStick + "','" + wHitem.SourceRequester + "')", conn);
+                    OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$] (IPN,Manufacturer,MFPN,Description,Stock,Updated_on,Comments,Source_Requester) values('" + wHitem.IPN + "','" + wHitem.Manufacturer + "','" + wHitem.MFPN + "','" + wHitem.Description + "','" + wHitem.Stock + "','" + wHitem.Updated_on + "','" + wHitem.Comments + "','" + wHitem.Source_Requester + "')", conn);
                     command.ExecuteNonQuery();
                     conn.Close();
                 }
@@ -749,60 +745,26 @@ namespace WH_Panel
             try
             {
                 string userName = Environment.UserName;
-                string fp = @"C:\\Users\\" + userName + "\\Desktop\\Print_Stickers.xlsx"; // //////Print_StickersWH.xlsm
-                //string fp = @"C:\\Users\\lgt\\Desktop";
+                string fp = @"C:\\Users\\" + userName + "\\Desktop\\Print_Stickers.xlsx";
+
                 string thesheetName = "Sheet1";
                 string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0;HDR=YES;IMEX=0\"";
                 OleDbConnection conn = new OleDbConnection(constr);
                 OleDbCommand cmd = new OleDbCommand();
                 cmd.Connection = conn;
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @UPDATEDON";
-                //string fp = $@"C:\Users\{userName}\Desktop\Print_Stickers.xlsx";
-                //string thesheetName = "Sheet1$"; // Note the '$' at the end to reference the sheet directly
-                //string constr = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={fp};Extended Properties=\"Excel 12.0;HDR=YES;IMEX=0\"";
-                //OleDbConnection conn = new OleDbConnection(constr);
-                //OleDbCommand cmd = new OleDbCommand();
-                //cmd.Connection = conn;
-                //cmd.CommandType = CommandType.Text;
-                //cmd.CommandText = $"UPDATE [{thesheetName}] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @UPDATEDON";
-                //// Rest of your code remains unchanged
+                cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @Updated_on";
+
                 cmd.Parameters.AddWithValue("@PN", wHitem.IPN);
                 cmd.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
                 cmd.Parameters.AddWithValue("@ItemDesc", wHitem.Description);
                 cmd.Parameters.AddWithValue("@QTY", wHitem.Stock);
-                cmd.Parameters.AddWithValue("@UPDATEDON", wHitem.UpdatedOn);
+                cmd.Parameters.AddWithValue("@Updated_on", wHitem.Updated_on);
+
                 conn.Open();
                 cmd.ExecuteNonQuery();
                 conn.Close();
-                //string userName = Environment.UserName;
-                //string fp = $@"C:\Users\{userName}\Desktop\Print_Stickers.xlsx";
-                //string constr = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={fp};Extended Properties='Excel 12.0 Macro;HDR=YES;IMEX=0'";
-                //OleDbConnection conn = new OleDbConnection(constr);
-                //conn.Open();
-                //DataTable dtSheet = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
-                //conn.Close();
-                //if (dtSheet != null && dtSheet.Rows.Count > 0)
-                //{
-                //    string firstSheetName = dtSheet.Rows[0]["TABLE_NAME"].ToString().Trim('\'');
-                //    conn.Open();
-                //    OleDbCommand cmd = new OleDbCommand();
-                //    cmd.Connection = conn;
-                //    cmd.CommandType = CommandType.Text;
-                //    cmd.CommandText = $"UPDATE [{firstSheetName}] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @UPDATEDON";
-                //    cmd.Parameters.AddWithValue("@PN", wHitem.IPN);
-                //    cmd.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
-                //    cmd.Parameters.AddWithValue("@ItemDesc", wHitem.Description);
-                //    cmd.Parameters.AddWithValue("@QTY", wHitem.Stock);
-                //    cmd.Parameters.AddWithValue("@UPDATEDON", wHitem.UpdatedOn);
-                //    cmd.ExecuteNonQuery();
-                //    conn.Close();
-                //}
-                //else
-                //{
-                //    MessageBox.Show("Print error");
-                //    // Handle the case when there are no sheets in the Excel file.
-                //}
+
                 Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
                 SendKeys.SendWait("^p");
                 SendKeys.SendWait("{Enter}");
@@ -827,12 +789,12 @@ namespace WH_Panel
                 OleDbCommand cmd = new OleDbCommand();
                 cmd.Connection = conn;
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFpn = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @UPDATEDON";
+                cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFpn = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @Updated_on";
                 cmd.Parameters.AddWithValue("@PN", wHitem.IPN);
                 cmd.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
                 cmd.Parameters.AddWithValue("@ItemDesc", wHitem.Description);
                 cmd.Parameters.AddWithValue("@QTY", wHitem.Stock);
-                cmd.Parameters.AddWithValue("@UPDATEDON", wHitem.UpdatedOn);
+                cmd.Parameters.AddWithValue("@Updated_on", wHitem.Updated_on);
                 conn.Open();
                 cmd.ExecuteNonQuery();
                 conn.Close();
@@ -860,7 +822,7 @@ namespace WH_Panel
                     Messages messages = null;
                     LabelFormatDocument labelFormat =
                         btengine.Documents.Open(@"C:\1\PN_STICKER_2022.btw");
-                    labelFormat.SubStrings["Date"].Value = wHitem.UpdatedOn;
+                    labelFormat.SubStrings["Date"].Value = wHitem.Updated_on;
                     labelFormat.SubStrings["DESC"].Value = wHitem.Description;
                     labelFormat.SubStrings["MFPN"].Value = wHitem.MFPN;
                     labelFormat.SubStrings["PN"].Value = wHitem.IPN;
@@ -960,17 +922,30 @@ namespace WH_Panel
                                 {
                                     toStk = 0;
                                 }
+                                //WHitem abc = new WHitem
+                                //{
+                                //    IPN = reader[0].ToString(),
+                                //    Manufacturer = reader[1].ToString(),
+                                //    MFPN = reader[2].ToString(),
+                                //    Description = reader[3].ToString(),
+                                //    Stock = toStk,
+                                //    Updated_on = reader[5].ToString(),
+                                //    Comments = reader[6].ToString(),
+                                //    Source_Requester = reader[7].ToString()
+                                //};
+
                                 WHitem abc = new WHitem
                                 {
-                                    IPN = reader[0].ToString(),
-                                    Manufacturer = reader[1].ToString(),
-                                    MFPN = reader[2].ToString(),
-                                    Description = reader[3].ToString(),
+                                    IPN = reader["IPN"].ToString(),
+                                    Manufacturer = reader["Manufacturer"].ToString(),
+                                    MFPN = reader["MFPN"].ToString(),
+                                    Description = reader["Description"].ToString(),
                                     Stock = toStk,
-                                    UpdatedOn = reader[5].ToString(),
-                                    ReelBagTrayStick = reader[6].ToString(),
-                                    SourceRequester = reader[7].ToString()
+                                    Updated_on = reader["Updated_on"].ToString(),
+                                    Comments = reader["Comments"].ToString(),
+                                    Source_Requester = reader["Source_Requester"].ToString()
                                 };
+
                                 countStockItems = iStock;
                                 button3.Text = "Rows in STOCK: " + (countStockItems).ToString();
                                 if (countStockItems % 1000 == 0)
@@ -1035,10 +1010,10 @@ namespace WH_Panel
             dataGridView1.Columns["MFPN"].DisplayIndex = 2;
             dataGridView1.Columns["Description"].DisplayIndex = 3;
             dataGridView1.Columns["Stock"].DisplayIndex = 4;
-            dataGridView1.Columns["UpdatedOn"].DisplayIndex = 5;
-            dataGridView1.Columns["ReelBagTrayStick"].DisplayIndex = 6;
-            dataGridView1.Columns["SourceRequester"].DisplayIndex = 7;
-            dataGridView1.Sort(dataGridView1.Columns["UpdatedOn"], ListSortDirection.Descending);
+            dataGridView1.Columns["Updated_on"].DisplayIndex = 5;
+            dataGridView1.Columns["Comments"].DisplayIndex = 6;
+            dataGridView1.Columns["Source_Requester"].DisplayIndex = 7;
+            dataGridView1.Sort(dataGridView1.Columns["Updated_on"], ListSortDirection.Descending);
         }
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
@@ -1130,9 +1105,9 @@ namespace WH_Panel
                     MFPN = dataGridView1.Rows[i].Cells[dataGridView1.Columns["MFPN"].Index].Value.ToString(),
                     Description = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Description"].Index].Value.ToString(),
                     Stock = toStk,
-                    UpdatedOn = dataGridView1.Rows[i].Cells[dataGridView1.Columns["UpdatedOn"].Index].Value.ToString(),
-                    ReelBagTrayStick = dataGridView1.Rows[i].Cells[dataGridView1.Columns["ReelBagTrayStick"].Index].Value.ToString(),
-                    SourceRequester = dataGridView1.Rows[i].Cells[dataGridView1.Columns["SourceRequester"].Index].Value.ToString()
+                    Updated_on = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Updated_on"].Index].Value.ToString(),
+                    Comments = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Comments"].Index].Value.ToString(),
+                    Source_Requester = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Source_Requester"].Index].Value.ToString()
                 };
                 inWHstock.Add(wHitemABC);
             }
@@ -1257,9 +1232,9 @@ namespace WH_Panel
                 MFPN = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["MFPN"].Index].Value.ToString(),
                 Description = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Description"].Index].Value.ToString(),
                 Stock = int.Parse(dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString()),
-                UpdatedOn = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["UpdatedOn"].Index].Value.ToString(),
-                ReelBagTrayStick = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["ReelBagTrayStick"].Index].Value.ToString(),
-                SourceRequester = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["SourceRequester"].Index].Value.ToString()
+                Updated_on = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Updated_on"].Index].Value.ToString(),
+                Comments = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Comments"].Index].Value.ToString(),
+                Source_Requester = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Source_Requester"].Index].Value.ToString()
             };
             if (wHitemABCD.Stock > 0)
             {
@@ -1282,9 +1257,9 @@ namespace WH_Panel
                     MFPN = dataGridView1.Rows[i].Cells[dataGridView1.Columns["MFPN"].Index].Value.ToString(),
                     Description = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Description"].Index].Value.ToString(),
                     Stock = int.Parse(dataGridView1.Rows[i].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString()),
-                    UpdatedOn = dataGridView1.Rows[i].Cells[dataGridView1.Columns["UpdatedOn"].Index].Value.ToString(),
-                    ReelBagTrayStick = dataGridView1.Rows[i].Cells[dataGridView1.Columns["ReelBagTrayStick"].Index].Value.ToString(),
-                    SourceRequester = dataGridView1.Rows[i].Cells[dataGridView1.Columns["SourceRequester"].Index].Value.ToString()
+                    Updated_on = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Updated_on"].Index].Value.ToString(),
+                    Comments = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Comments"].Index].Value.ToString(),
+                    Source_Requester = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Source_Requester"].Index].Value.ToString()
                 };
                 inWHstock.Add(wHitemABC);
             }
@@ -1548,23 +1523,23 @@ namespace WH_Panel
                                                     item.MFPN,
                                                     item.Description,
                                                     item.Stock,
-                                                    item.UpdatedOn,
-                                                    item.ReelBagTrayStick,
-                                                    item.SourceRequester
+                                                    item.Updated_on,
+                                                    item.Comments,
+                                                    item.Source_Requester
                                                 })
                                             });
-                var groupedPositiveBalanceByReelBagTrayStick = orderedStockItems
+                var groupedPositiveBalanceByComments = orderedStockItems
     .Where(item => item.Stock > 0 && !orderedStockItems.Any(otherItem =>
         otherItem.IPN == item.IPN && otherItem.Stock == -item.Stock))
-    .GroupBy(item => new { item.ReelBagTrayStick })
+    .GroupBy(item => new { item.Comments })
     .Select(group => new
     {
-        ReelBagTrayStick = group.Key.ReelBagTrayStick,
+        Comments = group.Key.Comments,
         Count = group.Count()
     });
                 // Generate the chart data based on the grouped data
-                var labels = groupedPositiveBalanceByReelBagTrayStick.Select(item => item.ReelBagTrayStick).ToList();
-                var data = groupedPositiveBalanceByReelBagTrayStick.Select(item => item.Count).ToList();
+                var labels = groupedPositiveBalanceByComments.Select(item => item.Comments).ToList();
+                var data = groupedPositiveBalanceByComments.Select(item => item.Count).ToList();
                 // Generate random colors for the chart
                 var colors = new List<string>();
                 var random = new Random();
@@ -1689,7 +1664,7 @@ namespace WH_Panel
                     writer.WriteLine($"<strong>{group.IPN}</strong> - Current Balance: <strong>{group.TotalStock}</strong></button>");
                     writer.WriteLine("<div class='panel'><p>");
                     writer.WriteLine("<table style='width:100%; text-align:center;' border='1'>");
-                    writer.WriteLine("<tr style='background-color: lightgray;'><th>Manufacturer</th><th>MFPN</th><th>Description</th><th>Stock</th><th>Updated On</th><th>ReelBagTrayStick</th><th>Source Requester</th></tr>");
+                    writer.WriteLine("<tr style='background-color: lightgray;'><th>Manufacturer</th><th>MFPN</th><th>Description</th><th>Stock</th><th>Updated On</th><th>Comments</th><th>Source Requester</th></tr>");
                     foreach (var item in group.Items)
                     {
                         string stockColor = item.Stock > 0 && !group.Items.Any(otherItem =>
@@ -1699,9 +1674,9 @@ namespace WH_Panel
                         writer.WriteLine($"<td>{item.MFPN}</td>");
                         writer.WriteLine($"<td>{item.Description}</td>");
                         writer.WriteLine($"<td style='background-color: {stockColor}'>{item.Stock}</td>");
-                        writer.WriteLine($"<td>{item.UpdatedOn}</td>");
-                        writer.WriteLine($"<td>{item.ReelBagTrayStick}</td>");
-                        writer.WriteLine($"<td>{item.SourceRequester}</td>");
+                        writer.WriteLine($"<td>{item.Updated_on}</td>");
+                        writer.WriteLine($"<td>{item.Comments}</td>");
+                        writer.WriteLine($"<td>{item.Source_Requester}</td>");
                         writer.WriteLine("</tr>");
                     }
                     writer.WriteLine("</table>");
@@ -1821,9 +1796,9 @@ namespace WH_Panel
                 writer.WriteLine("<th>" + dataGridView1.Columns["MFPN"].HeaderText + "</th>");
                 writer.WriteLine("<th>" + dataGridView1.Columns["Description"].HeaderText + "</th>");
                 writer.WriteLine("<th>" + dataGridView1.Columns["Stock"].HeaderText + "</th>");
-                writer.WriteLine("<th>" + dataGridView1.Columns["UpdatedOn"].HeaderText + "</th>");
-                writer.WriteLine("<th>" + dataGridView1.Columns["ReelBagTrayStick"].HeaderText + "</th>");
-                writer.WriteLine("<th>" + dataGridView1.Columns["SourceRequester"].HeaderText + "</th>");
+                writer.WriteLine("<th>" + dataGridView1.Columns["Updated_on"].HeaderText + "</th>");
+                writer.WriteLine("<th>" + dataGridView1.Columns["Comments"].HeaderText + "</th>");
+                writer.WriteLine("<th>" + dataGridView1.Columns["Source_Requester"].HeaderText + "</th>");
                 writer.WriteLine("</tr>");
                 // Iterate through the rows
                 foreach (DataGridViewRow row in dataGridView1.Rows)
@@ -1842,9 +1817,9 @@ namespace WH_Panel
                     {
                         writer.WriteLine("<td style=\"background-color: lightgreen;\">" + row.Cells["Stock"].Value.ToString() + "</td>");
                     }
-                    writer.WriteLine("<td>" + row.Cells["UpdatedOn"].Value.ToString() + "</td>");
-                    writer.WriteLine("<td>" + row.Cells["ReelBagTrayStick"].Value.ToString() + "</td>");
-                    writer.WriteLine("<td>" + row.Cells["SourceRequester"].Value.ToString() + "</td>");
+                    writer.WriteLine("<td>" + row.Cells["Updated_on"].Value.ToString() + "</td>");
+                    writer.WriteLine("<td>" + row.Cells["Comments"].Value.ToString() + "</td>");
+                    writer.WriteLine("<td>" + row.Cells["Source_Requester"].Value.ToString() + "</td>");
                     writer.WriteLine("</tr>");
                 }
                 writer.WriteLine("</table>");
@@ -1877,16 +1852,16 @@ namespace WH_Panel
         }
         private void SubForm_AdjustmentCompleted(object sender, AdjustmentEventArgs e)
         {
-            e.OriginalItem.SourceRequester = "SPLIT";
+            e.OriginalItem.Source_Requester = "SPLIT";
             e.OriginalItem.Stock = e.OriginalItem.Stock * (-1);
-            e.OriginalItem.UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
+            e.OriginalItem.Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
             DataInserterSplitter(stockFile, "STOCK", e.OriginalItem, false);
             stockItems.Add(e.OriginalItem);
             Thread.Sleep(1000);
-            e.AdjustedItemA.UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
+            e.AdjustedItemA.Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
             DataInserterSplitter(stockFile, "STOCK", e.AdjustedItemA, true);
             stockItems.Add(e.AdjustedItemA);
-            e.AdjustedItemB.UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
+            e.AdjustedItemB.Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
             DataInserterSplitter(stockFile, "STOCK", e.AdjustedItemB, true);
             stockItems.Add(e.AdjustedItemB);
             PopulateStockView();
@@ -1900,9 +1875,9 @@ namespace WH_Panel
                 $"MFPN: {item.MFPN}\n" +
                 $"Description: {item.Description}\n" +
                 $"Stock: {item.Stock}\n" +
-                $"UpdatedOn: {item.UpdatedOn}\n" +
-                $"ReelBagTrayStick: {item.ReelBagTrayStick}\n" +
-                $"SourceRequester: {item.SourceRequester}";
+                $"Updated_on: {item.Updated_on}\n" +
+                $"Comments: {item.Comments}\n" +
+                $"Source_Requester: {item.Source_Requester}";
             return properties;
         }
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -1916,9 +1891,9 @@ namespace WH_Panel
                 MFPN = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["MFPN"].Index].Value.ToString(),
                 Description = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Description"].Index].Value.ToString(),
                 Stock = int.Parse(dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString()),
-                UpdatedOn = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["UpdatedOn"].Index].Value.ToString(),
-                ReelBagTrayStick = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["ReelBagTrayStick"].Index].Value.ToString(),
-                SourceRequester = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["SourceRequester"].Index].Value.ToString()
+                Updated_on = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Updated_on"].Index].Value.ToString(),
+                Comments = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Comments"].Index].Value.ToString(),
+                Source_Requester = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Source_Requester"].Index].Value.ToString()
             };
             wHitemToSplit = whi;
         }
@@ -2116,7 +2091,7 @@ namespace WH_Panel
             if (e.Button == MouseButtons.Right && e.RowIndex >= 0)
             {
                 DataGridViewRow selectedRow = dataGridView1.Rows[e.RowIndex];
-                string currentReelBagTrayStick = selectedRow.Cells["ReelBagTrayStick"].Value.ToString();
+                string currentComments = selectedRow.Cells["Comments"].Value.ToString();
                 int rowindex = dataGridView1.CurrentCell.RowIndex;
                 WHitem wHitemABCD = new WHitem()
                 {
@@ -2125,9 +2100,9 @@ namespace WH_Panel
                     MFPN = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["MFPN"].Index].Value.ToString(),
                     Description = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Description"].Index].Value.ToString(),
                     Stock = int.Parse(dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString()),
-                    UpdatedOn = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["UpdatedOn"].Index].Value.ToString(),
-                    ReelBagTrayStick = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["ReelBagTrayStick"].Index].Value.ToString(),
-                    SourceRequester = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["SourceRequester"].Index].Value.ToString()
+                    Updated_on = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Updated_on"].Index].Value.ToString(),
+                    Comments = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Comments"].Index].Value.ToString(),
+                    Source_Requester = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Source_Requester"].Index].Value.ToString()
                 };
                 ContextMenuStrip contextMenu = new ContextMenuStrip();
                 foreach (string option in comboBox1.Items)
@@ -2136,13 +2111,13 @@ namespace WH_Panel
                     item.Click += (sender, args) =>
                     {
                         ToolStripMenuItem clickedItem = (ToolStripMenuItem)sender;
-                        string newReelBagTrayStick = clickedItem.Text;
+                        string newComments = clickedItem.Text;
                         // Show a confirmation message box before applying the changes
-                        DialogResult dialogResult = MessageBox.Show($"Apply changes to Warehouse Item? Change from {currentReelBagTrayStick} to {newReelBagTrayStick} ?", "Confirmation", MessageBoxButtons.YesNo);
+                        DialogResult dialogResult = MessageBox.Show($"Apply changes to Warehouse Item? Change from {currentComments} to {newComments} ?", "Confirmation", MessageBoxButtons.YesNo);
                         if (dialogResult == DialogResult.Yes)
                         {
-                            selectedRow.Cells["ReelBagTrayStick"].Value = newReelBagTrayStick;
-                            DataUpdater(stockFile, "STOCK", currentReelBagTrayStick, wHitemABCD, newReelBagTrayStick);
+                            selectedRow.Cells["Comments"].Value = newComments;
+                            DataUpdater(stockFile, "STOCK", currentComments, wHitemABCD, newComments);
                         }
                     };
                     contextMenu.Items.Add(item);
@@ -2151,7 +2126,7 @@ namespace WH_Panel
                 contextMenu.Show(dataGridView1, dataGridView1.PointToClient(Cursor.Position));
             }
         }
-        private void DataUpdater(string fp, string thesheetName, string currentReelBagTrayStick, WHitem wHitem, string newReelBagTrayStick)
+        private void DataUpdater(string fp, string thesheetName, string currentComments, WHitem wHitem, string newComments)
         {
             //AND Manufacturer = @Manufacturer
             try
@@ -2160,16 +2135,16 @@ namespace WH_Panel
                 using (OleDbConnection conn = new OleDbConnection(constr))
                 {
                     conn.Open();
-                    OleDbCommand command = new OleDbCommand($"UPDATE [{thesheetName}$] SET Comments = @NewReelBagTrayStick WHERE Comments = @currentReelBagTrayStick AND IPN = @IPN AND MFPN = @MFPN AND Description = @Description AND Stock = @Stock AND Updated_on = @UpdatedOn AND Source_Requester = @SourceRequester", conn);
-                    command.Parameters.AddWithValue("@NewReelBagTrayStick", newReelBagTrayStick);
-                    command.Parameters.AddWithValue("@currentReelBagTrayStick", currentReelBagTrayStick);
+                    OleDbCommand command = new OleDbCommand($"UPDATE [{thesheetName}$] SET Comments = @NewComments WHERE Comments = @currentComments AND IPN = @IPN AND MFPN = @MFPN AND Description = @Description AND Stock = @Stock AND Updated_on = @Updated_on AND Source_Requester = @Source_Requester", conn);
+                    command.Parameters.AddWithValue("@NewComments", newComments);
+                    command.Parameters.AddWithValue("@currentComments", currentComments);
                     command.Parameters.AddWithValue("@IPN", wHitem.IPN);
                     //command.Parameters.AddWithValue("@Manufacturer", wHitem.Manufacturer);
                     command.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
                     command.Parameters.AddWithValue("@Description", wHitem.Description);
                     command.Parameters.AddWithValue("@Stock", wHitem.Stock);
-                    command.Parameters.AddWithValue("@UpdatedOn", wHitem.UpdatedOn);
-                    command.Parameters.AddWithValue("@SourceRequester", wHitem.SourceRequester);
+                    command.Parameters.AddWithValue("@Updated_on", wHitem.Updated_on);
+                    command.Parameters.AddWithValue("@Source_Requester", wHitem.Source_Requester);
                     command.ExecuteNonQuery();
                     conn.Close();
                 }
@@ -2450,9 +2425,9 @@ namespace WH_Panel
                                                     item.MFPN,
                                                     item.Description,
                                                     item.Stock,
-                                                    item.UpdatedOn,
-                                                    item.ReelBagTrayStick,
-                                                    item.SourceRequester
+                                                    item.Updated_on,
+                                                    item.Comments,
+                                                    item.Source_Requester
                                                 })
                                             });
                 writer.WriteLine("<table style='width:100%; text-align:center;' border='1'>");

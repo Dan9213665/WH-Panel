@@ -55,9 +55,9 @@ namespace WH_Panel
                     }
                 }
                 //dataGridView1.DefaultCellStyle.Font = new Font("Arial", 10); // Adjust "Arial" to the desired font family
-                if (w.ReelBagTrayStick != null)
+                if (w.Comments != null)
                 {
-                    string rbg = w.ReelBagTrayStick.ToString();
+                    string rbg = w.Comments.ToString();
                     int index = comboBox2.FindStringExact(rbg);
                     if (index != -1)  // Check if the item was found
                     {
@@ -158,9 +158,9 @@ namespace WH_Panel
                 MFPN = wHitemToSplitFromTheMainForm.MFPN,
                 Description = wHitemToSplitFromTheMainForm.Description,
                 Stock = int.Parse(textBox1.Text), // Use the value from textBox1
-                UpdatedOn = wHitemToSplitFromTheMainForm.UpdatedOn, // Keep original value
-                ReelBagTrayStick = comboBox1.Text, // Use the selected value from comboBox1
-                SourceRequester = wHitemToSplitFromTheMainForm.SourceRequester
+                Updated_on = wHitemToSplitFromTheMainForm.Updated_on, // Keep original value
+                Comments = comboBox1.Text, // Use the selected value from comboBox1
+                Source_Requester = wHitemToSplitFromTheMainForm.Source_Requester
             };
             WHitem adjustedItemB = new WHitem
             {
@@ -169,9 +169,9 @@ namespace WH_Panel
                 MFPN = wHitemToSplitFromTheMainForm.MFPN,
                 Description = wHitemToSplitFromTheMainForm.Description,
                 Stock = int.Parse(textBox2.Text), // Use the value from textBox1
-                UpdatedOn = wHitemToSplitFromTheMainForm.UpdatedOn, // Keep original value
-                ReelBagTrayStick = comboBox2.Text, // Use the selected value from comboBox1
-                SourceRequester = wHitemToSplitFromTheMainForm.SourceRequester
+                Updated_on = wHitemToSplitFromTheMainForm.Updated_on, // Keep original value
+                Comments = comboBox2.Text, // Use the selected value from comboBox1
+                Source_Requester = wHitemToSplitFromTheMainForm.Source_Requester
             };
             AdjustmentCompleted?.Invoke(this, new AdjustmentEventArgs(originalItem, adjustedItemA, adjustedItemB));
             // Close the subform

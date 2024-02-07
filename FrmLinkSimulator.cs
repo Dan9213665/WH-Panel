@@ -457,7 +457,7 @@ namespace WH_Panel
         }
         private void button4_MouseClick(object sender, MouseEventArgs e)
         {
-        //
+            //
         }
         private void button2_Click(object sender, EventArgs e)
         {
@@ -555,7 +555,7 @@ namespace WH_Panel
                     completionPercentage = Math.Round((bomPositiveDelta * 100.0) / bomTot, 2);
                 }
                 htmlContent += $"<tr{(bomPositiveDelta == bomTot ? " style='background-color: lightgreen;'" : "")}><td>{bom.Name.TrimEnd(".xlsm".ToCharArray())} ({bomPositiveDelta}/{bomTot} IPNs in KIT) {completionPercentage}%</td></tr>";
-           }
+            }
             htmlContent += @"<tr ><td><div id='completion-perc'> Average completion percentage is  </div></td></tr>";
             htmlContent += @" <tr><td>
 <input type='text' id=""searchInput"" placeholder=""Filter IPN or MFPN.."" onkeyup=""filterTable()"" />
@@ -582,24 +582,24 @@ namespace WH_Panel
                 <th style='width: 12%;'>DELTA</th>
             </tr>
         </thead>";
-            List < SIMIPNTABLE> MAINDATASOURCE_LIST = new List< SIMIPNTABLE>();
+            List<SIMIPNTABLE> MAINDATASOURCE_LIST = new List<SIMIPNTABLE>();
             foreach (var item in stockDataDetailed)
             {
                 SIMIPNTABLE MAINDATASOURCE = new SIMIPNTABLE();
                 MAINDATASOURCE.IPN = item.IPN;
-                    MAINDATASOURCE.WHqty = stockItems.Where(si => si.IPN == item.IPN).Sum(si => si.Stock);
-                    MAINDATASOURCE.KITsBalance = item.TotalRequired;
-                    MAINDATASOURCE.DELTA = MAINDATASOURCE.WHqty + MAINDATASOURCE.KITsBalance;
-                    MAINDATASOURCE.BOMITEMS = new List<BOMitem>();
-                    foreach (var bomItem in item.BOMs)
-                    {
-                      BOMitem b = new BOMitem();
-                        b.ProjectName = bomItem.Title;
-                        b.MFPN = bomItem.MFPN;
-                        b.Description   = bomItem.Description;
-                        b.QtyInKit = bomItem.Quantity;
-                        MAINDATASOURCE.BOMITEMS.Add(b);
-                    }
+                MAINDATASOURCE.WHqty = stockItems.Where(si => si.IPN == item.IPN).Sum(si => si.Stock);
+                MAINDATASOURCE.KITsBalance = item.TotalRequired;
+                MAINDATASOURCE.DELTA = MAINDATASOURCE.WHqty + MAINDATASOURCE.KITsBalance;
+                MAINDATASOURCE.BOMITEMS = new List<BOMitem>();
+                foreach (var bomItem in item.BOMs)
+                {
+                    BOMitem b = new BOMitem();
+                    b.ProjectName = bomItem.Title;
+                    b.MFPN = bomItem.MFPN;
+                    b.Description = bomItem.Description;
+                    b.QtyInKit = bomItem.Quantity;
+                    MAINDATASOURCE.BOMITEMS.Add(b);
+                }
                 MAINDATASOURCE_LIST.Add(MAINDATASOURCE);
             }
             // Order the MAINDATASOURCE_LIST by DELTA
@@ -638,9 +638,9 @@ namespace WH_Panel
                 {
                     htmlContent += "<tr style='text-align:center;'>";
                     //Truncate the last 5 characters of Title
-                                string truncatedTitle = bomItem.ProjectName.Length > 5
-                                    ? bomItem.ProjectName.Substring(0, bomItem.ProjectName.Length - 5)
-                                    : bomItem.ProjectName;
+                    string truncatedTitle = bomItem.ProjectName.Length > 5
+                        ? bomItem.ProjectName.Substring(0, bomItem.ProjectName.Length - 5)
+                        : bomItem.ProjectName;
                     htmlContent += $"<td style='width:28%;'>{truncatedTitle}</td>";
                     htmlContent += $"<td class='wrap-content' style='width:12%;'>{bomItem.MFPN}</td>";
                     htmlContent += $"<td class='wrap-content' style='width:36%;' columnspan='3'>{bomItem.Description}</td>";
@@ -812,9 +812,9 @@ var myPieChart = new Chart(ctx, {
                                     MFPN = reader[2].ToString(),
                                     Description = reader[3].ToString(),
                                     Stock = toStk,
-                                    UpdatedOn = reader[5].ToString(),
-                                    ReelBagTrayStick = reader[6].ToString(),
-                                    SourceRequester = reader[7].ToString()
+                                    Updated_on = reader[5].ToString(),
+                                    Comments = reader[6].ToString(),
+                                    Source_Requester = reader[7].ToString()
                                 };
                                 stockItems.Add(abc);
                             }
@@ -1148,5 +1148,362 @@ var myPieChart = new Chart(ctx, {
             //}
             //GenerateHtmlReport(false);
         }
+
+        private void button5_Click(object sender, EventArgs e)
+            {
+
+            foreach (ClientWarehouse w in warehouses)
+            {
+                if (comboBox6.SelectedItem == w.clName)
+                {
+                    StockViewDataLoader(w.clStockFile, "STOCK");
+                }
+            }
+
+            var stockDataDetailed = BOMs
+        .SelectMany(bom => bom.Items)
+        .GroupBy(item => item.ProjectName)
+        .Select(group => new
+        {
+            IPN = group.Key,
+            BOMs = group.Select(item => new
+            {
+                Title = item.ProjectName,
+                IPN = item.IPN,
+                MFPN = item.MFPN,
+                Description = item.Description,
+                Quantity = item.Delta
+            }),
+            TotalRequired = group.Sum(item => item.Delta)
+        })
+                .OrderBy(item => item.BOMs.FirstOrDefault().Title);
+                string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+                // Generating the HTML content
+                // <link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'>
+                string htmlContent = @"<!DOCTYPE html>
+                        <html style='background-color: gray;'>
+                        <head>
+                        <style>
+                        .lightcoral { background-color: lightcoral; }
+                        .lightgreen { background-color: lightgreen; }
+                         .sticky {
+        position: sticky;
+        top: 0;
+        background-color: gray;
+        z-index: 0;
     }
+  #stockTable {
+    max-width: 100%; /* Set the maximum width to 100% of the container (screen) */
+    margin: 0 auto; /* Center the table within its container */
+    border: 1px solid;
+    text-align: center;
+  }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th {
+        position: sticky;
+        top: calc(0rem + 1px);
+        border: 1px solid black;
+        background-color: gray;
+        z-index: 1;
+    }
+     .wrap-content {
+    overflow-wrap: break-word;
+    word-wrap: break-word; /* For older browsers */
+  }
+                        </style>
+                        <script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
+                        </head>";
+                htmlContent += @"<body>";
+                htmlContent += @"<table style='border: 1px solid; text-align: center; font-weight:bold;'>";
+                htmlContent += @"<tr>";
+                htmlContent += @"<td style='width: 25%;height: 100%;' id='completion-chart-td'> <div> <canvas id='completion-chart'></canvas> </div></td>";
+                htmlContent += @"<td style='width: 50%;'><h2>UPDATED_" + fileTimeStamp + "</h2></td>";
+                htmlContent += @"<td style='width: 25%;'></td>";
+                htmlContent += @"</tr>";
+                htmlContent += @"<tr><td>Multi-BOM simulation for " + BOMs.Count + " kits:</td></tr>";
+                foreach (var bom in BOMs)
+                {
+                    int bomPositiveDelta = 0;
+                    int bomNegativeDelta = 0;
+                    for (int i = 0; i < bom.Items.Count; i++)
+                    {
+                        if (bom.Items[i].Delta >= 0)
+                        {
+                            bomPositiveDelta++;
+                        }
+                        else
+                        {
+                            bomNegativeDelta++;
+                        }
+                    }
+                    int bomTot = bomPositiveDelta + bomNegativeDelta;
+                    double completionPercentage = 0;
+                    if (bomTot == bomPositiveDelta)
+                    {
+                        completionPercentage = 100;
+                    }
+                    else
+                    {
+                        completionPercentage = Math.Round((bomPositiveDelta * 100.0) / bomTot, 2);
+                    }
+                    htmlContent += $"<tr{(bomPositiveDelta == bomTot ? " style='background-color: lightgreen;'" : "")}><td>{bom.Name.TrimEnd(".xlsm".ToCharArray())} ({bomPositiveDelta}/{bomTot} IPNs in KIT) {completionPercentage}%</td></tr>";
+                }
+                htmlContent += @"<tr ><td><div id='completion-perc'> Average completion percentage is  </div></td></tr>";
+                htmlContent += @" <tr><td>
+<input type='text' id=""searchInput"" placeholder=""Filter IPN or MFPN.."" onkeyup=""filterTable()"" />
+<button onclick=""clearFilter()"">Clear Filter</button></td></tr>";
+                htmlContent += @"</tbody></table><br>";
+                htmlContent += @"
+    <style>
+        #stockTableMain th {
+            position: sticky;
+            top: 0;
+            background-color: #606060
+;
+        }
+    </style>
+    <table id='stockTableMain' class='wrap-content' style='border: 1px solid; text-align: center; width: 100%;'>
+         <thead>        
+            <tr>
+                <th style='width: 28%;'>Project</th>
+                <th style='width: 12%;'>IPN</th>
+                <th style='width: 12%;'>MFPN</th>
+                <th style='width: 12%;'>Description</th>
+                <th style='width: 12%;'>WH Qty</th>
+                <th style='width: 12%;'>KITs BALANCE</th>
+                <th style='width: 12%;'>DELTA</th>
+            </tr>
+        </thead>";
+                List<SIMIPNTABLE> MAINDATASOURCE_LIST = new List<SIMIPNTABLE>();
+                foreach (var item in stockDataDetailed)
+                {
+                    SIMIPNTABLE MAINDATASOURCE = new SIMIPNTABLE();
+                    MAINDATASOURCE.IPN = item.IPN;
+                    //MAINDATASOURCE.WHqty = stockItems.Where(si => si.IPN == item.IPN).Sum(si => si.Stock);
+                    //MAINDATASOURCE.KITsBalance = item.TotalRequired;
+                    //MAINDATASOURCE.DELTA = MAINDATASOURCE.WHqty + MAINDATASOURCE.KITsBalance;
+                    MAINDATASOURCE.BOMITEMS = new List<BOMitem>();
+                    foreach (var bomItem in item.BOMs)
+                    {
+                        BOMitem b = new BOMitem();
+                        b.ProjectName = bomItem.Title;
+                        b.MFPN = bomItem.MFPN;
+                        b.IPN = bomItem.IPN;
+                        b.Description = bomItem.Description;
+                        b.QtyInKit = bomItem.Quantity;
+                        MAINDATASOURCE.BOMITEMS.Add(b);
+                    }
+                    MAINDATASOURCE_LIST.Add(MAINDATASOURCE);
+                }
+                // Order the MAINDATASOURCE_LIST by DELTA
+                MAINDATASOURCE_LIST = MAINDATASOURCE_LIST.OrderBy(mainDataSource => mainDataSource.DELTA).ToList();
+                // Generate HTML
+                htmlContent += "<table border='1' style='border-collapse: collapse; width: 100%;'>";
+                //htmlContent += "<tr style='background-color: #f2f2f2;'>";
+                //htmlContent += "<th style='padding: 10px;'>IPN</th>";
+                //htmlContent += "<th style='padding: 10px;'>Warehouse Quantity</th>";
+                //htmlContent += "<th style='padding: 10px;'>KITs Balance</th>";
+                //htmlContent += "<th style='padding: 10px;'>Delta</th>";
+                //htmlContent += "</tr>";
+                foreach (var mainDataSource in MAINDATASOURCE_LIST)
+                {
+                    var rowColorClass = mainDataSource.DELTA < 0 ? "lightcoral" : "lightgreen";
+                    // Add main data row
+                    htmlContent += $"<tr class='{rowColorClass}' style='text-align:center;border: 1px solid black;'>";
+
+                string truncatedTitle = mainDataSource.IPN.Length > 5
+                           ? mainDataSource.IPN.Substring(0, mainDataSource.IPN.Length - 5)
+                           : mainDataSource.IPN;
+
+
+                htmlContent += $"<td style='width:64%;' columnspan='4'>{truncatedTitle}</td>";
+                    //htmlContent += $"<td style='width:12%;'>{mainDataSource.WHqty}</td>";
+                    //htmlContent += $"<td style='width:12%;'>{mainDataSource.KITsBalance}</td>";
+                    //htmlContent += $"<td class='DELTAFIELD' style='width:12%;'>{mainDataSource.DELTA}</td>";
+                    htmlContent += "</tr>";
+                    // Add sub-table for BOM items style='border: 1px solid black;'
+                    htmlContent += "<tr>";
+                    htmlContent += "<td  colspan='7'>";
+                    htmlContent += "<table border='1' style='border-collapse: collapse; width: 100%;border: 1px solid black;'>";
+                    // Add BOM item header
+                    //htmlContent += "<tr class='{rowColorClass}' style='background-color: #d9edf7;'>";
+                    //htmlContent += "<th style='padding: 10px;'>Project Name</th>";
+                    //htmlContent += "<th style='padding: 10px;'>MFPN</th>";
+                    //htmlContent += "<th style='padding: 10px;'>Description</th>";
+                    //htmlContent += "<th style='padding: 10px;'>Quantity in Kit</th>";
+                    //htmlContent += "</tr>";
+                    // Add BOM item data
+                    foreach (var bomItem in mainDataSource.BOMITEMS)
+                    {
+                        int whQty = stockItems.Where(si => si.IPN == bomItem.IPN).Sum(si => si.Stock);
+
+                    if (bomItem.QtyInKit<0 && (bomItem.QtyInKit+whQty)<0)
+                    {
+                        
+
+                        htmlContent += "<tr style='text-align:center;'>";
+                        //Truncate the last 5 characters of Title
+                        //string truncatedTitle = bomItem.ProjectName.Length > 5
+                        //    ? bomItem.ProjectName.Substring(0, bomItem.ProjectName.Length - 5)
+                        //    : bomItem.ProjectName;
+                        // htmlContent += $"<td style='width:28%;'>{truncatedTitle}</td>";
+                        htmlContent += $"<td class='wrap-content' style='width:12%;white-space: nowrap;'>{bomItem.IPN}</td>";
+                        htmlContent += $"<td class='wrap-content' style='width:12%;'>{bomItem.MFPN}</td>";
+                        htmlContent += $"<td class='wrap-content' style='width:36%;' columnspan='3'>{bomItem.Description}</td>";
+
+                     
+                       
+                        htmlContent += $"<td style='width:12%;'>{whQty}</td>";
+
+                        var rowColorClassQ = bomItem.QtyInKit < 0 ? "lightcoral" : "lightgreen";
+
+
+
+                        htmlContent += $"<td class='{rowColorClassQ}' style='width:12%;'>{bomItem.QtyInKit}</td>";
+
+                        htmlContent += $"<td style='width:12%;'>{bomItem.QtyInKit + whQty}</td>";
+
+                        whQty +=int.Parse(bomItem.QtyInKit.ToString());
+
+                        htmlContent += "</tr>";
+                    }
+                    else
+                    {
+                        //
+                    }
+                        
+                    
+                    }
+                    // Close sub-table
+                    htmlContent += "</table>";
+                    htmlContent += "</br>";
+                    htmlContent += "</td>";
+                    htmlContent += "</tr>";
+                }
+                // Close the main table
+                htmlContent += "</table>";
+                htmlContent += "</div></table>";
+                htmlContent += @"<script>
+window.onload = function() {
+     CalculateCompletion();
+document.addEventListener('DOMContentLoaded', function() {
+    // Your sorting function here
+    sortTablesByDelta();
+});
+    };
+function sortTablesByDelta() {
+    var mainTable = document.getElementById('stockTableMain');
+    var subTables = mainTable.querySelectorAll('table[id^=""stockTable_""]');
+    console.log(subTables);
+    subTables = Array.from(subTables).sort(function (a, b) {
+        var ipnA = a.id.split('_')[1]; // Extract IPN from the table ID
+        var ipnB = b.id.split('_')[1];
+        var deltaA = parseFloat(a.querySelector('#delta_' + ipnA).innerText);
+        var deltaB = parseFloat(b.querySelector('#delta_' + ipnB).innerText);
+        return isNaN(deltaA) || isNaN(deltaB) ? 0 : deltaA - deltaB;
+    });
+    // Clear the main table
+    while (mainTable.firstChild) {
+        mainTable.removeChild(mainTable.firstChild);
+    }
+    // Append sorted sub-tables to the main table
+    for (var i = 0; i < subTables.length; i++) {
+        mainTable.appendChild(subTables[i]);
+    }
+}
+    function filterTable() {
+        var input, filter, table, tr, tdIPN, tdMFPN, txtValueIPN, txtValueMFPN, i;
+        input = document.getElementById('searchInput');
+        filter = input.value.toUpperCase();
+        table = document.getElementById('stockTable');
+        tr = table.getElementsByTagName('tr');
+        for (i = 0; i < tr.length; i++) {
+            tdIPN = tr[i].getElementsByTagName('td')[0];
+            tdMFPN = tr[i].getElementsByTagName('td')[1];
+            if (tdIPN || tdMFPN) {
+                txtValueIPN = tdIPN.textContent || tdIPN.innerText;
+                txtValueMFPN = tdMFPN.textContent || tdMFPN.innerText;
+                if (txtValueIPN.toUpperCase().indexOf(filter) > -1 || txtValueMFPN.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = '';
+                } else {
+                    tr[i].style.display = 'none';
+                }
+            }
+        }
+    }
+    function clearFilter() {
+        document.getElementById('searchInput').value = '';
+        var table = document.getElementById('stockTable');
+        var tr = table.getElementsByTagName('tr');
+        for (var i = 0; i < tr.length; i++) {
+            tr[i].style.display = '';
+        }
+        document.getElementById('searchInput').focus();
+    }
+    function CalculateCompletion() {
+        var lightcoralRows = document.querySelectorAll('.lightcoral');
+        var lightcoralCount = lightcoralRows.length;
+        var lightgreenRows = document.querySelectorAll('.lightgreen');
+        var lightgreenCount = lightgreenRows.length;
+        var totalRows = lightcoralCount + lightgreenCount;
+        var percentage = (lightgreenCount / totalRows) * 100;
+        var completionPercDiv = document.getElementById('completion-perc');
+        completionPercDiv.textContent = ""Average KIT vs DB simulation is "" + percentage.toFixed(2) + ""%"" + "" ( ""+lightgreenCount+""/""+totalRows+"" rows )"";
+var ctx = document.getElementById('completion-chart').getContext('2d');
+var myPieChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Deficient', 'Sufficient'],
+        datasets: [{
+            data: [lightcoralCount, lightgreenCount],
+            backgroundColor: ['#FF6384', '#4CAF50']
+        }]
+    },
+    options: {
+        plugins: {
+            legend: {
+                display: false, // Hide the legend
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        var label = context.label || '';
+                        var value = context.parsed || 0;
+                        return label + ': ' + value;
+                    }
+                }
+            }
+        }
+    }
+});
+    }
+    document.getElementById('searchInput').focus();
+  document.addEventListener('DOMContentLoaded', function() {
+    var completionChartTd = document.getElementById('completion-chart-td');
+    if (completionChartTd) {
+      var numberOfRows = document.querySelectorAll('table tr').length;
+      completionChartTd.rowSpan = numberOfRows;
+    } else {
+      console.error(""Element with ID 'completion-chart-td' not found"");
+    }
+  });
+</script>";
+                htmlContent += "</body></html>";
+                string filename = @"\\dbr1\Data\WareHouse\2024\WHsearcher\" + fileTimeStamp + "_BOMs_sim" + ".html";
+                using (StreamWriter writer = new StreamWriter(filename))
+                {
+                    writer.Write(htmlContent);
+                }
+                // Opening the HTML file in the default browser
+                var process = new Process();
+                process.StartInfo = new ProcessStartInfo(filename)
+                {
+                    UseShellExecute = true
+                };
+                process.Start();
+            }
+        }
 }

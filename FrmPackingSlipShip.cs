@@ -235,9 +235,9 @@ namespace WH_Panel
             dgw.Columns["MFPN"].DisplayIndex = 1;
             dgw.Columns["Description"].DisplayIndex = 2;
             dgw.Columns["Stock"].DisplayIndex = 3;
-            dgw.Columns["UpdatedOn"].DisplayIndex = 4;
-            dgw.Columns["ReelBagTrayStick"].Visible = false;
-            dgw.Columns["SourceRequester"].Visible = false;
+            dgw.Columns["Updated_on"].DisplayIndex = 4;
+            dgw.Columns["Comments"].Visible = false;
+            dgw.Columns["Source_Requester"].Visible = false;
             dgw.AutoResizeColumns();
         }
         private void DataLoader(string fp, string excelFIleName)
@@ -531,7 +531,7 @@ namespace WH_Panel
             bool success = int.TryParse(txtbQty.Text, out outNumber);
             if (success && outNumber < 50001 && outNumber > 0)
             {
-                WHitem w = new WHitem() { IPN = txtbIPN.Text, MFPN = txtbMFPN.Text, Description = txtbDescription.Text, Stock = outNumber, UpdatedOn = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss") };
+                WHitem w = new WHitem() { IPN = txtbIPN.Text, MFPN = txtbMFPN.Text, Description = txtbDescription.Text, Stock = outNumber, Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss") };
                 if (checkBox1.Checked)
                 {
                     printSticker(w);
@@ -561,12 +561,12 @@ namespace WH_Panel
                 OleDbCommand cmd = new OleDbCommand();
                 cmd.Connection = conn;
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @UPDATEDON";
+                cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, Updated_on = @Updated_on";
                 cmd.Parameters.AddWithValue("@PN", wHitem.IPN);
                 cmd.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
                 cmd.Parameters.AddWithValue("@ItemDesc", wHitem.Description);
                 cmd.Parameters.AddWithValue("@QTY", wHitem.Stock);
-                cmd.Parameters.AddWithValue("@UPDATEDON", wHitem.UpdatedOn);
+                cmd.Parameters.AddWithValue("@Updated_on", wHitem.Updated_on);
                 conn.Open();
                 cmd.ExecuteNonQuery();
                 conn.Close();

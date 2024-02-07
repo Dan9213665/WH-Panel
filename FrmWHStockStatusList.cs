@@ -187,9 +187,9 @@ namespace WH_Panel
                     writer.WriteLine("<th>MFPN</th>");
                     writer.WriteLine("<th>Description</th>");
                     writer.WriteLine("<th>Stock</th>");
-                    writer.WriteLine("<th>UpdatedOn</th>");
-                    writer.WriteLine("<th>ReelBagTrayStick</th>");
-                    writer.WriteLine("<th>SourceRequester</th>");
+                    writer.WriteLine("<th>Updated_on</th>");
+                    writer.WriteLine("<th>Comments</th>");
+                    writer.WriteLine("<th>Source_Requester</th>");
                     writer.WriteLine("</tr>");
                     writer.WriteLine("<h2>" + group.Key + " - Warehouse Balance: " + group.Sum(item => item.Stock) + "</h2>");
                     foreach (var item in group)
@@ -209,9 +209,9 @@ namespace WH_Panel
                             // No background color for other cells
                             writer.WriteLine("<td style='text-align: center;'>" + item.Stock + "</td>");
                         }
-                        writer.WriteLine("<td style='text-align: center;'>" + item.UpdatedOn + "</td>");
-                        writer.WriteLine("<td style='text-align: center;'>" + item.ReelBagTrayStick + "</td>");
-                        writer.WriteLine("<td style='text-align: center;'>" + item.SourceRequester + "</td>");
+                        writer.WriteLine("<td style='text-align: center;'>" + item.Updated_on + "</td>");
+                        writer.WriteLine("<td style='text-align: center;'>" + item.Comments + "</td>");
+                        writer.WriteLine("<td style='text-align: center;'>" + item.Source_Requester + "</td>");
                         writer.WriteLine("</tr>");
                     }
                 }
@@ -318,9 +318,9 @@ namespace WH_Panel
                                     MFPN = reader[2].ToString(),
                                     Description = reader[3].ToString(),
                                     Stock = toStk,
-                                    UpdatedOn = reader[5].ToString(),
-                                    ReelBagTrayStick = reader[6].ToString(),
-                                    SourceRequester = reader[7].ToString()
+                                    Updated_on = reader[5].ToString(),
+                                    Comments = reader[6].ToString(),
+                                    Source_Requester = reader[7].ToString()
                                 };
                                  stockItems.Add(abc);
                             }

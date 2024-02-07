@@ -337,9 +337,9 @@ namespace WH_Panel
                                 MFPN = reader[3].ToString(),
                                 Description = reader[4].ToString(),
                                 Stock = 0,
-                                UpdatedOn = string.Empty,
-                                ReelBagTrayStick = string.Empty,
-                                SourceRequester = string.Empty
+                                Updated_on = string.Empty,
+                                Comments = string.Empty,
+                                Source_Requester = string.Empty
                             };
                             if (iAVL > 0)
                             {
@@ -397,9 +397,9 @@ namespace WH_Panel
                                     MFPN = reader[2].ToString(),
                                     Description = reader[3].ToString(),
                                     Stock = toStk,
-                                    UpdatedOn = reader[5].ToString(),
-                                    ReelBagTrayStick = reader[6].ToString(),
-                                    SourceRequester = reader[7].ToString()
+                                    Updated_on = reader[5].ToString(),
+                                    Comments = reader[6].ToString(),
+                                    Source_Requester = reader[7].ToString()
                                 };
                                 countStockItems = iStock;
                                 label1.Text = "Rows in STOCK: " + (countStockItems).ToString();
@@ -454,10 +454,10 @@ namespace WH_Panel
             dataGridView2.Columns["MFPN"].DisplayIndex = 2;
             dataGridView2.Columns["Description"].DisplayIndex = 3;
             dataGridView2.Columns["Stock"].DisplayIndex = 4;
-            dataGridView2.Columns["UpdatedOn"].DisplayIndex = 5;
-            dataGridView2.Columns["ReelBagTrayStick"].DisplayIndex = 6;
-            dataGridView2.Columns["SourceRequester"].DisplayIndex = 7;
-            dataGridView2.Sort(dataGridView2.Columns["UpdatedOn"], ListSortDirection.Descending);
+            dataGridView2.Columns["Updated_on"].DisplayIndex = 5;
+            dataGridView2.Columns["Comments"].DisplayIndex = 6;
+            dataGridView2.Columns["Source_Requester"].DisplayIndex = 7;
+            dataGridView2.Sort(dataGridView2.Columns["Updated_on"], ListSortDirection.Descending);
         }
         private void FilterStockDataGridView(string IPN)
         {
@@ -570,9 +570,9 @@ namespace WH_Panel
                     MFPN = dataGridView2.Rows[i].Cells[dataGridView2.Columns["MFPN"].Index].Value.ToString(),
                     Description = dataGridView2.Rows[i].Cells[dataGridView2.Columns["Description"].Index].Value.ToString(),
                     Stock = toStk,
-                    UpdatedOn = dataGridView2.Rows[i].Cells[dataGridView2.Columns["UpdatedOn"].Index].Value.ToString(),
-                    ReelBagTrayStick = dataGridView2.Rows[i].Cells[dataGridView2.Columns["ReelBagTrayStick"].Index].Value.ToString(),
-                    SourceRequester = dataGridView2.Rows[i].Cells[dataGridView2.Columns["SourceRequester"].Index].Value.ToString()
+                    Updated_on = dataGridView2.Rows[i].Cells[dataGridView2.Columns["Updated_on"].Index].Value.ToString(),
+                    Comments = dataGridView2.Rows[i].Cells[dataGridView2.Columns["Comments"].Index].Value.ToString(),
+                    Source_Requester = dataGridView2.Rows[i].Cells[dataGridView2.Columns["Source_Requester"].Index].Value.ToString()
                 };
                 inWHstock.Add(wHitemABC);
             }
@@ -744,7 +744,7 @@ namespace WH_Panel
                                     {
                                         writer.WriteLine("<td style='font-size: x-small'>" + filteredData.Rows[l][m].ToString() + "</td>");
                                     }
-                                    else if (filteredData.Columns[m].ColumnName == "ReelBagTrayStick")
+                                    else if (filteredData.Columns[m].ColumnName == "Comments")
                                     {
                                         writer.WriteLine("<td class='packageType' style='font-size: 18px;font-weight: bold;'>" + filteredData.Rows[l][m].ToString() + "</td>");
                                     }
@@ -899,7 +899,7 @@ namespace WH_Panel
                 };
                 p.Start();
                 //dataGridView.Columns["Calc"].Visible = true;
-                dataGridView2.Columns["SourceRequester"].Visible = true;
+                dataGridView2.Columns["Source_Requester"].Visible = true;
                 dataGridView2.Columns["Manufacturer"].Visible = true;
                 dataGridView2.Columns["Description"].Visible = true;
                 dataGridView.Columns["Calc"].Visible = true;
@@ -965,9 +965,9 @@ namespace WH_Panel
                         MFPN = dataGridView2.Rows[i].Cells[dataGridView2.Columns["MFPN"].Index].Value.ToString(),
                         Description = dataGridView2.Rows[i].Cells[dataGridView2.Columns["Description"].Index].Value.ToString(),
                         Stock = toStk,
-                        UpdatedOn = dataGridView2.Rows[i].Cells[dataGridView2.Columns["UpdatedOn"].Index].Value.ToString(),
-                        ReelBagTrayStick = dataGridView2.Rows[i].Cells[dataGridView2.Columns["ReelBagTrayStick"].Index].Value.ToString(),
-                        SourceRequester = dataGridView2.Rows[i].Cells[dataGridView2.Columns["SourceRequester"].Index].Value.ToString()
+                        Updated_on = dataGridView2.Rows[i].Cells[dataGridView2.Columns["Updated_on"].Index].Value.ToString(),
+                        Comments = dataGridView2.Rows[i].Cells[dataGridView2.Columns["Comments"].Index].Value.ToString(),
+                        Source_Requester = dataGridView2.Rows[i].Cells[dataGridView2.Columns["Source_Requester"].Index].Value.ToString()
                     };
                     inWHstock.Add(wHitemABC);
                 }
@@ -1009,7 +1009,7 @@ namespace WH_Panel
                 dataGridView2.DataSource = dv;
                 foreach (DataGridViewColumn column in dataGridView2.Columns)
                 {
-                    dataGridView2.Columns["SourceRequester"].Visible = false;
+                    dataGridView2.Columns["Source_Requester"].Visible = false;
                     dataGridView2.Columns["Manufacturer"].Visible = false;
                     dataGridView2.Columns["Description"].Visible = false;
                     if (column.Visible)
@@ -1044,7 +1044,7 @@ namespace WH_Panel
             };
             p.Start();
             //dataGridView.Columns["Calc"].Visible = true;
-            dataGridView2.Columns["SourceRequester"].Visible = true;
+            dataGridView2.Columns["Source_Requester"].Visible = true;
             dataGridView2.Columns["Manufacturer"].Visible = true;
             dataGridView2.Columns["Description"].Visible = true;
             dataGridView.Columns["Calc"].Visible = true;

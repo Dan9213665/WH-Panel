@@ -28,8 +28,8 @@ namespace WH_Panel
             // Get the virtual screen bounds spanning multiple monitors
             Rectangle virtualScreenBounds = SystemInformation.VirtualScreen;
             // Set the starting position to the lower left corner
-            int x = virtualScreenBounds.Left+this.Width-100;
-            int y = virtualScreenBounds.Bottom - this.Height-50;
+            int x = virtualScreenBounds.Left + this.Width - 100;
+            int y = virtualScreenBounds.Bottom - this.Height - 50;
             this.StartPosition = FormStartPosition.Manual;
             this.Location = new Point(x, y);
         }
@@ -238,6 +238,12 @@ namespace WH_Panel
             List<ClientWarehouse> warehouses = PopulateWarehouses();
             w.InitializeGlobalWarehouses(warehouses);
             w.Show();
+        }
+
+        private void button15_Click(object sender, EventArgs e)
+        {
+            FrmSQLWHDB frm = new FrmSQLWHDB();
+            frm.Show();
         }
     }
 }

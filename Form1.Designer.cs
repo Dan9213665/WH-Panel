@@ -36,13 +36,14 @@ namespace WH_Panel
             groupBox6 = new GroupBox();
             button1 = new Button();
             groupBox9 = new GroupBox();
-            button12 = new Button();
             button14 = new Button();
             groupBox10 = new GroupBox();
             button10 = new Button();
             button6 = new Button();
             button11 = new Button();
             groupBox7 = new GroupBox();
+            button15 = new Button();
+            button12 = new Button();
             button9 = new Button();
             button3 = new Button();
             groupBox3 = new GroupBox();
@@ -169,17 +170,6 @@ namespace WH_Panel
             groupBox9.TabStop = false;
             groupBox9.Text = "AGNOSTIC WH";
             // 
-            // button12
-            // 
-            button12.BackgroundImage = (Image)resources.GetObject("button12.BackgroundImage");
-            button12.BackgroundImageLayout = ImageLayout.Zoom;
-            button12.Location = new Point(76, 21);
-            button12.Name = "button12";
-            button12.Size = new Size(52, 51);
-            button12.TabIndex = 13;
-            button12.UseVisualStyleBackColor = true;
-            button12.Click += button12_Click;
-            // 
             // button14
             // 
             button14.BackgroundImage = (Image)resources.GetObject("button14.BackgroundImage");
@@ -244,6 +234,7 @@ namespace WH_Panel
             // 
             // groupBox7
             // 
+            groupBox7.Controls.Add(button15);
             groupBox7.Controls.Add(button12);
             groupBox7.Controls.Add(button9);
             groupBox7.Controls.Add(button3);
@@ -254,6 +245,28 @@ namespace WH_Panel
             groupBox7.TabIndex = 19;
             groupBox7.TabStop = false;
             groupBox7.Text = "PANDA-tabase";
+            // 
+            // button15
+            // 
+            button15.BackgroundImage = (Image)resources.GetObject("button15.BackgroundImage");
+            button15.BackgroundImageLayout = ImageLayout.Stretch;
+            button15.Location = new Point(8, 78);
+            button15.Name = "button15";
+            button15.Size = new Size(62, 41);
+            button15.TabIndex = 14;
+            button15.UseVisualStyleBackColor = true;
+            button15.Click += button15_Click;
+            // 
+            // button12
+            // 
+            button12.BackgroundImage = (Image)resources.GetObject("button12.BackgroundImage");
+            button12.BackgroundImageLayout = ImageLayout.Zoom;
+            button12.Location = new Point(76, 21);
+            button12.Name = "button12";
+            button12.Size = new Size(52, 51);
+            button12.TabIndex = 13;
+            button12.UseVisualStyleBackColor = true;
+            button12.Click += button12_Click;
             // 
             // button9
             // 
@@ -432,5 +445,6 @@ namespace WH_Panel
         private GroupBox groupBox4;
         private Button button10;
         private Button button12;
+        private Button button15;
     }
 }

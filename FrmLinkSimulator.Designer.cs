@@ -61,6 +61,8 @@
             groupBox12 = new GroupBox();
             dataGridView5 = new DataGridView();
             button3 = new Button();
+            tableLayoutPanel3 = new TableLayoutPanel();
+            button5 = new Button();
             button4 = new Button();
             openFileDialog1 = new OpenFileDialog();
             tableLayoutPanel1.SuspendLayout();
@@ -83,6 +85,7 @@
             groupBox11.SuspendLayout();
             groupBox12.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView5).BeginInit();
+            tableLayoutPanel3.SuspendLayout();
             SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -107,7 +110,7 @@
             tableLayoutPanel1.Controls.Add(groupBox11, 4, 1);
             tableLayoutPanel1.Controls.Add(groupBox12, 4, 2);
             tableLayoutPanel1.Controls.Add(button3, 3, 0);
-            tableLayoutPanel1.Controls.Add(button4, 4, 0);
+            tableLayoutPanel1.Controls.Add(tableLayoutPanel3, 4, 0);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -124,7 +127,7 @@
             groupBox1.Dock = DockStyle.Fill;
             groupBox1.Location = new Point(3, 3);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(258, 86);
+            groupBox1.Size = new Size(258, 100);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "Actions";
@@ -136,7 +139,7 @@
             flowLayoutPanel1.Dock = DockStyle.Fill;
             flowLayoutPanel1.Location = new Point(3, 19);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(252, 64);
+            flowLayoutPanel1.Size = new Size(252, 78);
             flowLayoutPanel1.TabIndex = 0;
             // 
             // button1
@@ -163,7 +166,7 @@
             groupBox2.Controls.Add(label1);
             groupBox2.Controls.Add(comboBox1);
             groupBox2.Dock = DockStyle.Fill;
-            groupBox2.Location = new Point(3, 95);
+            groupBox2.Location = new Point(3, 109);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(258, 100);
             groupBox2.TabIndex = 1;
@@ -193,7 +196,7 @@
             groupBox3.Controls.Add(label2);
             groupBox3.Controls.Add(comboBox2);
             groupBox3.Dock = DockStyle.Fill;
-            groupBox3.Location = new Point(267, 95);
+            groupBox3.Location = new Point(267, 109);
             groupBox3.Name = "groupBox3";
             groupBox3.Size = new Size(258, 100);
             groupBox3.TabIndex = 2;
@@ -223,7 +226,7 @@
             groupBox4.Controls.Add(label3);
             groupBox4.Controls.Add(comboBox3);
             groupBox4.Dock = DockStyle.Fill;
-            groupBox4.Location = new Point(531, 95);
+            groupBox4.Location = new Point(531, 109);
             groupBox4.Name = "groupBox4";
             groupBox4.Size = new Size(258, 100);
             groupBox4.TabIndex = 3;
@@ -254,7 +257,7 @@
             groupBox5.Dock = DockStyle.Fill;
             groupBox5.Location = new Point(267, 3);
             groupBox5.Name = "groupBox5";
-            groupBox5.Size = new Size(258, 86);
+            groupBox5.Size = new Size(258, 100);
             groupBox5.TabIndex = 4;
             groupBox5.TabStop = false;
             groupBox5.Text = "Warehouse";
@@ -273,7 +276,7 @@
             // 
             groupBox7.Controls.Add(dataGridView2);
             groupBox7.Dock = DockStyle.Fill;
-            groupBox7.Location = new Point(267, 201);
+            groupBox7.Location = new Point(267, 215);
             groupBox7.Name = "groupBox7";
             groupBox7.Size = new Size(258, 286);
             groupBox7.TabIndex = 6;
@@ -297,7 +300,7 @@
             // 
             groupBox8.Controls.Add(dataGridView3);
             groupBox8.Dock = DockStyle.Fill;
-            groupBox8.Location = new Point(531, 201);
+            groupBox8.Location = new Point(531, 215);
             groupBox8.Name = "groupBox8";
             groupBox8.Size = new Size(258, 286);
             groupBox8.TabIndex = 7;
@@ -321,7 +324,7 @@
             // 
             groupBox6.Controls.Add(tableLayoutPanel2);
             groupBox6.Dock = DockStyle.Fill;
-            groupBox6.Location = new Point(3, 201);
+            groupBox6.Location = new Point(3, 215);
             groupBox6.Name = "groupBox6";
             groupBox6.Size = new Size(258, 286);
             groupBox6.TabIndex = 5;
@@ -361,7 +364,7 @@
             button2.Dock = DockStyle.Fill;
             button2.Location = new Point(531, 3);
             button2.Name = "button2";
-            button2.Size = new Size(258, 86);
+            button2.Size = new Size(258, 100);
             button2.TabIndex = 8;
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
@@ -371,7 +374,7 @@
             groupBox9.Controls.Add(label4);
             groupBox9.Controls.Add(comboBox4);
             groupBox9.Dock = DockStyle.Fill;
-            groupBox9.Location = new Point(795, 95);
+            groupBox9.Location = new Point(795, 109);
             groupBox9.Name = "groupBox9";
             groupBox9.Size = new Size(258, 100);
             groupBox9.TabIndex = 9;
@@ -400,7 +403,7 @@
             // 
             groupBox10.Controls.Add(dataGridView4);
             groupBox10.Dock = DockStyle.Fill;
-            groupBox10.Location = new Point(795, 201);
+            groupBox10.Location = new Point(795, 215);
             groupBox10.Name = "groupBox10";
             groupBox10.Size = new Size(258, 286);
             groupBox10.TabIndex = 10;
@@ -425,7 +428,7 @@
             groupBox11.Controls.Add(label5);
             groupBox11.Controls.Add(comboBox5);
             groupBox11.Dock = DockStyle.Fill;
-            groupBox11.Location = new Point(1059, 95);
+            groupBox11.Location = new Point(1059, 109);
             groupBox11.Name = "groupBox11";
             groupBox11.Size = new Size(260, 100);
             groupBox11.TabIndex = 11;
@@ -454,7 +457,7 @@
             // 
             groupBox12.Controls.Add(dataGridView5);
             groupBox12.Dock = DockStyle.Fill;
-            groupBox12.Location = new Point(1059, 201);
+            groupBox12.Location = new Point(1059, 215);
             groupBox12.Name = "groupBox12";
             groupBox12.Size = new Size(260, 286);
             groupBox12.TabIndex = 12;
@@ -481,19 +484,46 @@
             button3.Dock = DockStyle.Fill;
             button3.Location = new Point(795, 3);
             button3.Name = "button3";
-            button3.Size = new Size(258, 86);
+            button3.Size = new Size(258, 100);
             button3.TabIndex = 13;
             button3.UseVisualStyleBackColor = true;
             button3.Click += button3_Click;
+            // 
+            // tableLayoutPanel3
+            // 
+            tableLayoutPanel3.ColumnCount = 2;
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel3.Controls.Add(button5, 1, 0);
+            tableLayoutPanel3.Controls.Add(button4, 0, 0);
+            tableLayoutPanel3.Dock = DockStyle.Fill;
+            tableLayoutPanel3.Location = new Point(1059, 3);
+            tableLayoutPanel3.Name = "tableLayoutPanel3";
+            tableLayoutPanel3.RowCount = 1;
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel3.Size = new Size(260, 100);
+            tableLayoutPanel3.TabIndex = 14;
+            // 
+            // button5
+            // 
+            button5.BackgroundImage = (Image)resources.GetObject("button5.BackgroundImage");
+            button5.BackgroundImageLayout = ImageLayout.Stretch;
+            button5.Dock = DockStyle.Fill;
+            button5.Location = new Point(133, 3);
+            button5.Name = "button5";
+            button5.Size = new Size(124, 94);
+            button5.TabIndex = 2;
+            button5.UseVisualStyleBackColor = true;
+            button5.Click += button5_Click;
             // 
             // button4
             // 
             button4.BackgroundImage = (Image)resources.GetObject("button4.BackgroundImage");
             button4.BackgroundImageLayout = ImageLayout.Zoom;
             button4.Dock = DockStyle.Fill;
-            button4.Location = new Point(1059, 3);
+            button4.Location = new Point(3, 3);
             button4.Name = "button4";
-            button4.Size = new Size(260, 86);
+            button4.Size = new Size(124, 94);
             button4.TabIndex = 14;
             button4.UseVisualStyleBackColor = true;
             button4.Click += button4_Click;
@@ -540,6 +570,7 @@
             groupBox11.PerformLayout();
             groupBox12.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView5).EndInit();
+            tableLayoutPanel3.ResumeLayout(false);
             ResumeLayout(false);
         }
         #endregion
@@ -580,5 +611,7 @@
         private Label label4;
         private Label label5;
         private Button button4;
+        private Button button5;
+        private TableLayoutPanel tableLayoutPanel3;
     }
 }

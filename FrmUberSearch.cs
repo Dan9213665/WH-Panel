@@ -212,9 +212,9 @@ namespace WH_Panel
                                     MFPN = reader[2].ToString(),
                                     Description = reader[3].ToString(),
                                     Stock = number,
-                                    UpdatedOn = reader[5].ToString(),
-                                    ReelBagTrayStick = reader[6].ToString(),
-                                    SourceRequester = reader[7].ToString()
+                                    Updated_on = reader[5].ToString(),
+                                    Comments = reader[6].ToString(),
+                                    Source_Requester = reader[7].ToString()
                                 };
                                 if (i > 0)
                                 {
@@ -263,9 +263,9 @@ namespace WH_Panel
             dataGridView1.Columns["MFPN"].DisplayIndex = 2;
             dataGridView1.Columns["Description"].DisplayIndex = 3;
             dataGridView1.Columns["Stock"].DisplayIndex = 4;
-            dataGridView1.Columns["UpdatedOn"].DisplayIndex = 5;
-            dataGridView1.Columns["ReelBagTrayStick"].DisplayIndex = 6;
-            dataGridView1.Columns["SourceRequester"].DisplayIndex = 7;
+            dataGridView1.Columns["Updated_on"].DisplayIndex = 5;
+            dataGridView1.Columns["Comments"].DisplayIndex = 6;
+            dataGridView1.Columns["Source_Requester"].DisplayIndex = 7;
         }
         private void button1_Click(object sender, EventArgs e)
         {
@@ -310,7 +310,7 @@ namespace WH_Panel
                     }
                 }
                 if (!string.IsNullOrEmpty(textBox9.Text))
-                    filterQuery.Append("[SourceRequester] LIKE '%" + textBox9.Text + "%' AND ");
+                    filterQuery.Append("[Source_Requester] LIKE '%" + textBox9.Text + "%' AND ");
                 if (filterQuery.Length > 0)
                 {
                     filterQuery.Remove(filterQuery.Length - 5, 5); // Remove the extra 'AND' at the end
