@@ -2358,23 +2358,47 @@ namespace WH_Panel
             //AND Manufacturer = @Manufacturer
             try
             {
-                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
-                using (OleDbConnection conn = new OleDbConnection(constr))
+
+                if (isSql)
                 {
-                    conn.Open();
-                    OleDbCommand command = new OleDbCommand($"UPDATE [{thesheetName}$] SET Comments = @NewComments WHERE Comments = @currentComments AND IPN = @IPN AND MFPN = @MFPN AND Description = @Description AND Stock = @Stock AND Updated_on = @Updated_on AND Source_Requester = @Source_Requester", conn);
-                    command.Parameters.AddWithValue("@NewComments", newComments);
-                    command.Parameters.AddWithValue("@currentComments", currentComments);
-                    command.Parameters.AddWithValue("@IPN", wHitem.IPN);
-                    //command.Parameters.AddWithValue("@Manufacturer", wHitem.Manufacturer);
-                    command.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
-                    command.Parameters.AddWithValue("@Description", wHitem.Description);
-                    command.Parameters.AddWithValue("@Stock", wHitem.Stock);
-                    command.Parameters.AddWithValue("@Updated_on", wHitem.Updated_on);
-                    command.Parameters.AddWithValue("@Source_Requester", wHitem.Source_Requester);
-                    command.ExecuteNonQuery();
-                    conn.Close();
+                    string constr = fp;
+                    using (SqlConnection conn = new SqlConnection(constr))
+                    {
+                        conn.Open();
+                        SqlCommand command = new SqlCommand($"UPDATE [{thesheetName}] SET Comments = @NewComments WHERE Comments = @currentComments AND IPN = @IPN AND MFPN = @MFPN AND Description = @Description AND Stock = @Stock AND Updated_on = @Updated_on AND Source_Requester = @Source_Requester", conn);
+                        command.Parameters.AddWithValue("@NewComments", newComments);
+                        command.Parameters.AddWithValue("@currentComments", currentComments);
+                        command.Parameters.AddWithValue("@IPN", wHitem.IPN);
+                        command.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
+                        command.Parameters.AddWithValue("@Description", wHitem.Description);
+                        command.Parameters.AddWithValue("@Stock", wHitem.Stock);
+                        command.Parameters.AddWithValue("@Updated_on", wHitem.Updated_on);
+                        command.Parameters.AddWithValue("@Source_Requester", wHitem.Source_Requester);
+                        command.ExecuteNonQuery();
+                        conn.Close();
+                    }
                 }
+                else
+                {
+                    string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+                    using (OleDbConnection conn = new OleDbConnection(constr))
+                    {
+                        conn.Open();
+                        OleDbCommand command = new OleDbCommand($"UPDATE [{thesheetName}$] SET Comments = @NewComments WHERE Comments = @currentComments AND IPN = @IPN AND MFPN = @MFPN AND Description = @Description AND Stock = @Stock AND Updated_on = @Updated_on AND Source_Requester = @Source_Requester", conn);
+                        command.Parameters.AddWithValue("@NewComments", newComments);
+                        command.Parameters.AddWithValue("@currentComments", currentComments);
+                        command.Parameters.AddWithValue("@IPN", wHitem.IPN);
+                        //command.Parameters.AddWithValue("@Manufacturer", wHitem.Manufacturer);
+                        command.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
+                        command.Parameters.AddWithValue("@Description", wHitem.Description);
+                        command.Parameters.AddWithValue("@Stock", wHitem.Stock);
+                        command.Parameters.AddWithValue("@Updated_on", wHitem.Updated_on);
+                        command.Parameters.AddWithValue("@Source_Requester", wHitem.Source_Requester);
+                        command.ExecuteNonQuery();
+                        conn.Close();
+                    }
+                }
+
                 // Update the UI or perform any necessary actions after the update
             }
             catch (IOException)
