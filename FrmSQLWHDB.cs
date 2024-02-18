@@ -58,14 +58,6 @@ namespace WH_Panel
 
             try
             {
-                //// Load STOCK table into dataGridView1
-                //using (SqlConnection connection = new SqlConnection(connectionString))
-                //{
-                //    SqlDataAdapter adapterStock = new SqlDataAdapter("SELECT * FROM STOCK", connection);
-                //    DataTable dtStock = new DataTable();
-                //    adapterStock.Fill(dtStock);
-                //    dataGridView1.DataSource = dtStock;
-                //}
 
                 // Load AVL table into dataGridView2
                 using (SqlConnection connection = new SqlConnection(connectionString))

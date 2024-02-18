@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.OleDb;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -32,6 +33,7 @@ namespace WH_Panel
         List<ClientWarehouse> warehouses { get; set; }
         public List<WHitem> stockItems = new List<WHitem>();
         List<string> selectedFileNames = new List<string>();
+        public bool isSql =false;
         public FrmLinkSimulator()
         {
             InitializeComponent();
@@ -442,7 +444,18 @@ namespace WH_Panel
             {
                 if (comboBox6.SelectedItem == w.clName)
                 {
-                    StockViewDataLoader(w.clStockFile, "STOCK");
+                    if(w.sqlStock!=null)
+                    {
+                        isSql = true;
+                        StockViewDataLoader(w.sqlStock, "STOCK");
+                        
+                    }
+                    else
+                    {
+                        isSql = false;
+                        StockViewDataLoader(w.clStockFile, "STOCK");
+                    }
+                    
                 }
             }
             if (Control.MouseButtons == MouseButtons.Left)
@@ -782,51 +795,100 @@ var myPieChart = new Chart(ctx, {
             stockItems.Clear();
             try
             {
-                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
-                using (OleDbConnection conn = new OleDbConnection(constr))
+                if(isSql)
                 {
-                    conn.Open();
-                    OleDbCommand command = new OleDbCommand("Select * from [" + thesheetName + "$]", conn);
-                    OleDbDataReader reader = command.ExecuteReader();
-                    if (reader.HasRows)
+                    // Connection string for SQL Server Express
+                    string connectionString = fp;
+
+                    try
                     {
-                        while (reader.Read())
+                        // Load STOCK table into dataGridView1
+                        using (SqlConnection connection = new SqlConnection(connectionString))
                         {
-                            try
+
+
+                            SqlDataAdapter adapterStock = new SqlDataAdapter("SELECT * FROM STOCK", connection);
+
+                            DataTable stockTable = new DataTable();
+                            adapterStock.Fill(stockTable);
+
+                            foreach (DataRow row in stockTable.Rows)
                             {
-                                int res = 0;
-                                int toStk;
-                                bool stk = int.TryParse(reader[4].ToString(), out res);
-                                if (stk)
+                                WHitem item = new WHitem
                                 {
-                                    toStk = res;
-                                }
-                                else
-                                {
-                                    toStk = 0;
-                                }
-                                WHitem abc = new WHitem
-                                {
-                                    IPN = reader[0].ToString(),
-                                    Manufacturer = reader[1].ToString(),
-                                    MFPN = reader[2].ToString(),
-                                    Description = reader[3].ToString(),
-                                    Stock = toStk,
-                                    Updated_on = reader[5].ToString(),
-                                    Comments = reader[6].ToString(),
-                                    Source_Requester = reader[7].ToString()
+                                    IPN = row["IPN"].ToString(),
+                                    Manufacturer = row["Manufacturer"].ToString(),
+                                    MFPN = row["MFPN"].ToString(),
+                                    Description = row["Description"].ToString(),
+                                    Stock = Convert.ToInt32(row["Stock"]), // Assuming Stock is an integer field
+                                    Updated_on = row["Updated_on"].ToString(),
+                                    Comments = row["Comments"].ToString(),
+                                    Source_Requester = row["Source_Requester"].ToString()
                                 };
-                                stockItems.Add(abc);
+
+                                stockItems.Add(item);
                             }
-                            catch (Exception E)
-                            {
-                                MessageBox.Show(E.Message);
-                                throw;
-                            }
+
                         }
                     }
-                    conn.Close();
+                    catch (Exception ex)
+                    {
+                        // MessageBox.Show($"Error loading STOCK table: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+
+
                 }
+
+                else
+                {
+
+                    string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+                    using (OleDbConnection conn = new OleDbConnection(constr))
+                    {
+                        conn.Open();
+                        OleDbCommand command = new OleDbCommand("Select * from [" + thesheetName + "$]", conn);
+                        OleDbDataReader reader = command.ExecuteReader();
+                        if (reader.HasRows)
+                        {
+                            while (reader.Read())
+                            {
+                                try
+                                {
+                                    int res = 0;
+                                    int toStk;
+                                    bool stk = int.TryParse(reader[4].ToString(), out res);
+                                    if (stk)
+                                    {
+                                        toStk = res;
+                                    }
+                                    else
+                                    {
+                                        toStk = 0;
+                                    }
+                                    WHitem abc = new WHitem
+                                    {
+                                        IPN = reader[0].ToString(),
+                                        Manufacturer = reader[1].ToString(),
+                                        MFPN = reader[2].ToString(),
+                                        Description = reader[3].ToString(),
+                                        Stock = toStk,
+                                        Updated_on = reader[5].ToString(),
+                                        Comments = reader[6].ToString(),
+                                        Source_Requester = reader[7].ToString()
+                                    };
+                                    stockItems.Add(abc);
+                                }
+                                catch (Exception E)
+                                {
+                                    MessageBox.Show(E.Message);
+                                    throw;
+                                }
+                            }
+                        }
+                        conn.Close();
+                    }
+                }
+
             }
             catch (IOException)
             {
@@ -1362,9 +1424,9 @@ var myPieChart = new Chart(ctx, {
 
 
 
-                        htmlContent += $"<td class='{rowColorClassQ}' style='width:12%;'>{bomItem.QtyInKit}</td>";
+                        htmlContent += $"<td style='width:12%;'>{bomItem.QtyInKit}</td>";
 
-                        htmlContent += $"<td style='width:12%;'>{bomItem.QtyInKit + whQty}</td>";
+                        htmlContent += $"<td class='{rowColorClassQ}' style='width:12%;'>{bomItem.QtyInKit + whQty}</td>";
 
                         whQty +=int.Parse(bomItem.QtyInKit.ToString());
 

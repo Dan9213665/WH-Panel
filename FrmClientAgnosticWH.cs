@@ -23,6 +23,9 @@ using Label = System.Windows.Forms.Label;
 using GroupBox = System.Windows.Forms.GroupBox;
 using Application = System.Windows.Forms.Application;
 using Seagull.Framework.Extensions;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
+using System.Data.SqlClient;
+
 namespace WH_Panel
 {
     public partial class FrmClientAgnosticWH : Form
@@ -48,7 +51,15 @@ namespace WH_Panel
                 groupBox.Height = 130;
                 Button stockButton = new Button();
                 //stockButton.Text = "Open Stock File";
-                stockButton.Click += (sender, e) => AuthorizedExcelFileOpening(warehouse.clStockFile);
+                if (warehouse.sqlStock == string.Empty)
+                {
+                    stockButton.Click += (sender, e) => AuthorizedExcelFileOpening(warehouse.clStockFile);
+                }
+                else
+                {
+                    stockButton.Click += (sender, e) => MessageBox.Show("SQL Managment Studio only");
+                }
+
                 stockButton.Top = 15; // Adjust the top position as needed
                 stockButton.Left = 5; // Adjust the left position as needed
                 //stockButton.Width = 66;
@@ -60,9 +71,18 @@ namespace WH_Panel
                     stockButton.Width = 140;
                     stockButton.Height = 50;
                 }
+
                 Button avlButton = new Button();
                 //avlButton.Text = "Open AVL File";
-                avlButton.Click += (sender, e) => AuthorizedExcelFileOpening(warehouse.clAvlFile);
+                if (warehouse.sqlAvl == string.Empty)
+                {
+                    avlButton.Click += (sender, e) => AuthorizedExcelFileOpening(warehouse.clAvlFile);
+                }
+                else
+                {
+                    avlButton.Click += (sender, e) => MessageBox.Show("SQL Managment Studio only");
+                }
+
                 avlButton.Top = stockButton.Bottom + 2; // Adjust the top position as needed
                 avlButton.Left = 5;
                 string avlImagePath = Path.Combine(Application.StartupPath, "Resources", "AVL.png");
@@ -93,6 +113,7 @@ namespace WH_Panel
         int iStock = 0;
         private object cmd;
         public TextBox LastInputFromUser = new TextBox();
+        bool isSql = false;
         private void UpdateControlColors(Control parentControl)
         {
             foreach (Control control in parentControl.Controls)
@@ -218,8 +239,22 @@ namespace WH_Panel
                     // Set the image in PictureBox based on the selected warehouse
                     pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
                     pictureBox1.Image = Image.FromFile(w.clLogo);
-                    avlFile = w.clAvlFile;
-                    stockFile = w.clStockFile;
+
+
+                    if (w.sqlAvl != string.Empty && w.sqlStock != string.Empty)
+                    {
+
+                        avlFile = w.sqlAvl;
+                        stockFile = w.sqlStock;
+                        //MasterReload(avlFile, stockFile);
+                        isSql = true;
+                    }
+                    else
+                    {
+                        avlFile = w.clAvlFile;
+                        stockFile = w.clStockFile;
+                        isSql = false;
+                    }
                     MasterReload(avlFile, stockFile);
                 }
             }
@@ -232,9 +267,68 @@ namespace WH_Panel
             countAVLItems = 0;
             iAVL = 0;
             label1.Text = "RELOAD AVL";
-            DataLoaderAVL(avlFile, "AVL");
+            if (isSql)
+            {
+                DataLoaderAVLSql(avlFile);
+            }
+            else
+            {
+                DataLoaderAVL(avlFile, "AVL");
+            }
+
             PopulateAVLGridView();
         }
+
+        private void DataLoaderAVLSql(string fp)
+        {
+            // Connection string for SQL Server Express
+            string connectionString = fp;
+            try
+            {
+                avlItems.Clear();
+
+                // Load AVL table into avlItems list
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    SqlCommand command = new SqlCommand("SELECT * FROM AVL", connection);
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        WHitem abc = new WHitem
+                        {
+                            IPN = reader["IPN"].ToString(),
+                            Manufacturer = reader["Manufacturer"].ToString(),
+                            MFPN = reader["MFPN"].ToString(),
+                            Description = reader["Description"].ToString(),
+                            Stock = 0,
+                            Updated_on = string.Empty,
+                            Comments = string.Empty,
+                            Source_Requester = string.Empty
+                        };
+                        if (iAVL > 0)
+                        {
+                            countAVLItems = iAVL;
+                            label1.Text = "Rows in AVL: " + (countAVLItems).ToString();
+                            if (countAVLItems % 1000 == 0)
+                            {
+                                label1.Update();
+                            }
+                            avlItems.Add(abc);
+                        }
+                        iAVL++;
+                    }
+                    reader.Close();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading AVL items: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void DataLoaderAVL(string fp, string thesheetName)
         {
             try
@@ -646,12 +740,62 @@ namespace WH_Panel
                 Comments = comboBox1.Text,
                 Source_Requester = sorce_req
             };
-            DataInserter(stockFile, "STOCK", inputWHitem, toPrint);
+
+            if (isSql)
+            {
+                DataInserterSql(stockFile, inputWHitem, toPrint);
+            }
+            else
+            {
+                DataInserter(stockFile, "STOCK", inputWHitem, toPrint);
+            }
+
+
             stockItems.Add(inputWHitem);
             textBox10.Text = inputWHitem.IPN;
             textBox10.BackColor = Color.LightGreen;
             PopulateStockView();
         }
+
+        private void DataInserterSql(string fp, WHitem wHitem, bool toPrintOrNotToPrint)
+        {
+            bool toPrint = toPrintOrNotToPrint;
+            try
+            {
+                string constr = fp;
+                using (SqlConnection conn = new SqlConnection(constr))
+                {
+                    conn.Open();
+                    SqlCommand command = new SqlCommand("INSERT INTO STOCK (IPN,Manufacturer,MFPN,Description,Stock,Updated_on,Comments,Source_Requester) values('" + wHitem.IPN + "','" + wHitem.Manufacturer + "','" + wHitem.MFPN + "','" + wHitem.Description + "','" + wHitem.Stock + "','" + wHitem.Updated_on + "','" + wHitem.Comments + "','" + wHitem.Source_Requester + "')", conn);
+                    command.ExecuteNonQuery();
+                    conn.Close();
+                }
+                textBox6.Clear();
+                LastInputFromUser.Text = string.Empty;
+                label2.BackColor = Color.LightGreen;
+                label3.BackColor = Color.LightGreen;
+                LastInputFromUser.Focus();
+                if (toPrintOrNotToPrint)
+                {
+                    printSticker(wHitem);
+                }
+                if (radioButton4.Checked == true)
+                {
+                    AutoClosingMessageBox.Show(wHitem.IPN + " MOVED to " + textBox9.Text.ToString(), " Item added to " + textBox9.Text.ToString(), 1000);
+                }
+                else
+                {
+                    AutoClosingMessageBox.Show(wHitem.Stock.ToString() + " PCS of " + wHitem.IPN + " in a " + wHitem.Comments + " MOVED to DB ", "Item added to DB", 2000);
+                }
+            }
+            catch (IOException)
+            {
+                MessageBox.Show("Error");
+            }
+        }
+
+
+
         private void DataInserter(string fp, string thesheetName, WHitem wHitem, bool toPrintOrNotToPrint)
         {
             bool toPrint = toPrintOrNotToPrint;
@@ -693,14 +837,32 @@ namespace WH_Panel
             bool toPrint = toPrintOrNotToPrint;
             try
             {
-                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
-                using (OleDbConnection conn = new OleDbConnection(constr))
+                if (isSql)
                 {
-                    conn.Open();
-                    OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$] (IPN,Manufacturer,MFPN,Description,Stock,Updated_on,Comments,Source_Requester) values('" + wHitem.IPN + "','" + wHitem.Manufacturer + "','" + wHitem.MFPN + "','" + wHitem.Description + "','" + wHitem.Stock + "','" + wHitem.Updated_on + "','" + wHitem.Comments + "','" + wHitem.Source_Requester + "')", conn);
-                    command.ExecuteNonQuery();
-                    conn.Close();
+                    string constr = fp;
+                    using (SqlConnection conn = new SqlConnection(constr))
+                    {
+                        conn.Open();
+                        SqlCommand command = new SqlCommand("INSERT INTO STOCK (IPN,Manufacturer,MFPN,Description,Stock,Updated_on,Comments,Source_Requester) values('" + wHitem.IPN + "','" + wHitem.Manufacturer + "','" + wHitem.MFPN + "','" + wHitem.Description + "','" + wHitem.Stock + "','" + wHitem.Updated_on + "','" + wHitem.Comments + "','" + wHitem.Source_Requester + "')", conn);
+                        command.ExecuteNonQuery();
+                        conn.Close();
+                    }
                 }
+                else
+                {
+                    string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+                    using (OleDbConnection conn = new OleDbConnection(constr))
+                    {
+                        conn.Open();
+                        OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$] (IPN,Manufacturer,MFPN,Description,Stock,Updated_on,Comments,Source_Requester) values('" + wHitem.IPN + "','" + wHitem.Manufacturer + "','" + wHitem.MFPN + "','" + wHitem.Description + "','" + wHitem.Stock + "','" + wHitem.Updated_on + "','" + wHitem.Comments + "','" + wHitem.Source_Requester + "')", conn);
+                        command.ExecuteNonQuery();
+                        conn.Close();
+                    }
+                }
+
+
+
+
                 if (toPrintOrNotToPrint)
                 {
                     printStickerSplitter(wHitem);
@@ -745,10 +907,10 @@ namespace WH_Panel
             try
             {
                 string userName = Environment.UserName;
-                string fp = @"C:\\Users\\" + userName + "\\Desktop\\Print_Stickers.xlsx";
+                string fpst = @"C:\\Users\\" + userName + "\\Desktop\\Print_Stickers.xlsx";
 
                 string thesheetName = "Sheet1";
-                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0;HDR=YES;IMEX=0\"";
+                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fpst + "; Extended Properties=\"Excel 12.0;HDR=YES;IMEX=0\"";
                 OleDbConnection conn = new OleDbConnection(constr);
                 OleDbCommand cmd = new OleDbCommand();
                 cmd.Connection = conn;
@@ -782,9 +944,9 @@ namespace WH_Panel
             try
             {
                 string userName = Environment.UserName;
-                string fp = @"C:\\Users\\" + userName + "\\Desktop\\Print_Stickers.xlsx"; // //////Print_StickersWH.xlsm
+                string fpspt = @"C:\\Users\\" + userName + "\\Desktop\\Print_Stickers.xlsx"; // //////Print_StickersWH.xlsm
                 string thesheetName = "Sheet1";
-                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fpspt + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
                 OleDbConnection conn = new OleDbConnection(constr);
                 OleDbCommand cmd = new OleDbCommand();
                 cmd.Connection = conn;
@@ -895,6 +1057,65 @@ namespace WH_Panel
                 dataGridView2.Focus();
             }
         }
+
+
+        private void StockViewDataLoaderSql(string fp)
+        {
+            stockItems.Clear();
+            // Connection string for SQL Server Express
+            string connectionString = fp;
+
+            try
+            {
+                // Load STOCK table into dataGridView1
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+
+
+                    SqlDataAdapter adapterStock = new SqlDataAdapter("SELECT * FROM STOCK", connection);
+
+                    DataTable stockTable = new DataTable();
+                    adapterStock.Fill(stockTable);
+
+                    foreach (DataRow row in stockTable.Rows)
+                    {
+                        WHitem item = new WHitem
+                        {
+                            IPN = row["IPN"].ToString(),
+                            Manufacturer = row["Manufacturer"].ToString(),
+                            MFPN = row["MFPN"].ToString(),
+                            Description = row["Description"].ToString(),
+                            Stock = Convert.ToInt32(row["Stock"]), // Assuming Stock is an integer field
+                            Updated_on = row["Updated_on"].ToString(),
+                            Comments = row["Comments"].ToString(),
+                            Source_Requester = row["Source_Requester"].ToString()
+                        };
+
+                        stockItems.Add(item);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // MessageBox.Show($"Error loading STOCK table: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            // Update UI elements
+            countStockItems = stockItems.Count;
+            button3.Text = "Rows in STOCK: " + countStockItems.ToString();
+            if (countStockItems % 1000 == 0)
+            {
+                button3.Update();
+            }
+
+            textBox1.Focus();
+            LastInputFromUser = textBox1;
+        }
+
+
+
+
+
         private void StockViewDataLoader(string fp, string thesheetName)
         {
             try
@@ -922,17 +1143,7 @@ namespace WH_Panel
                                 {
                                     toStk = 0;
                                 }
-                                //WHitem abc = new WHitem
-                                //{
-                                //    IPN = reader[0].ToString(),
-                                //    Manufacturer = reader[1].ToString(),
-                                //    MFPN = reader[2].ToString(),
-                                //    Description = reader[3].ToString(),
-                                //    Stock = toStk,
-                                //    Updated_on = reader[5].ToString(),
-                                //    Comments = reader[6].ToString(),
-                                //    Source_Requester = reader[7].ToString()
-                                //};
+
 
                                 WHitem abc = new WHitem
                                 {
@@ -980,11 +1191,26 @@ namespace WH_Panel
             dataGridView1.DataSource = null;
             button3.Text = "LOAD STOCK";
             button3.Update();
-            StockViewDataLoader(stockFile, "STOCK");
-            PopulateStockView();
+
+            if (isSql)
+            {
+
+                StockViewDataLoaderSql(stockFile);
+                PopulateStockView();
+            }
+            else
+            {
+                StockViewDataLoader(stockFile, "STOCK");
+                PopulateStockView();
+            }
+
+
+
         }
         private void PopulateStockView()
         {
+            dataGridView1.DataSource = null;
+
             IEnumerable<WHitem> data = stockItems;
             stockDTable.Clear();
             using (var reader = ObjectReader.Create(data))
@@ -1005,6 +1231,7 @@ namespace WH_Panel
             dataGridView1.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dataGridView1.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dataGridView1.Columns[7].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+
             dataGridView1.Columns["IPN"].DisplayIndex = 0;
             dataGridView1.Columns["Manufacturer"].DisplayIndex = 1;
             dataGridView1.Columns["MFPN"].DisplayIndex = 2;
@@ -1020,7 +1247,7 @@ namespace WH_Panel
         }
         private void FilterStockDataGridView(string IPN)
         {
-            if (textBox3.Text != string.Empty)
+            if (textBox3.Text != string.Empty && stockDTable != null)
             {
                 try
                 {
@@ -2173,7 +2400,16 @@ namespace WH_Panel
                     if (comboBox3.Text == w.clName)
                     {
                         currentPrefix = w.clPrefix;
-                        currentAvl = w.clAvlFile;
+                        if (w.sqlAvl != null)
+                        {
+                            currentAvl = w.sqlAvl;
+                            isSql = true;
+                        }
+                        else
+                        {
+                            currentAvl = w.clAvlFile;
+                            isSql = false;
+                        }
                     }
                 }
                 List<WHitem> ItemsToAddToAvl = new List<WHitem>();
@@ -2326,29 +2562,54 @@ namespace WH_Panel
             //MessageBox.Show(currentAvl);
             try
             {
-                OleDbConnectionStringBuilder builder = new OleDbConnectionStringBuilder();
-                builder.Provider = "Microsoft.ACE.OLEDB.12.0";
-                builder.DataSource = currentAvl;
-                builder["Extended Properties"] = "Excel 12.0 Xml;HDR=YES;IMEX=0;Mode=ReadWrite";
-                using (OleDbConnection connection = new OleDbConnection(builder.ConnectionString))
+                if (isSql)
                 {
-                    connection.Open();
-                    foreach (var item in newItems)
+                    using (SqlConnection connection = new SqlConnection(currentAvl))
                     {
-                        // Assuming you have a sheet named 'YourSheetName' in your Excel file
-                        string query = "INSERT INTO [AVL$] (IPN, Manufacturer, MFPN, Description) VALUES (@IPN, @Manufacturer, @MFPN, @Description)";
-                        using (OleDbCommand command = new OleDbCommand(query, connection))
+                        connection.Open();
+                        foreach (var item in newItems)
                         {
-                            command.Parameters.AddWithValue("@IPN", item.IPN);
-                            command.Parameters.AddWithValue("@Manufacturer", item.Manufacturer);
-                            command.Parameters.AddWithValue("@MFPN", item.MFPN);
-                            command.Parameters.AddWithValue("@Description", item.Description);
-                            command.ExecuteNonQuery();
+                            string query = "INSERT INTO AVL (IPN, Manufacturer, MFPN, Description) VALUES (@IPN, @Manufacturer, @MFPN, @Description)";
+                            using (SqlCommand command = new SqlCommand(query, connection))
+                            {
+                                command.Parameters.AddWithValue("@IPN", item.IPN);
+                                command.Parameters.AddWithValue("@Manufacturer", item.Manufacturer);
+                                command.Parameters.AddWithValue("@MFPN", item.MFPN);
+                                command.Parameters.AddWithValue("@Description", item.Description);
+                                command.ExecuteNonQuery();
+                            }
                         }
+                        MessageBox.Show(newItems.Count.ToString() + " New items added successfully.");
+                        button2.PerformClick();
                     }
-                    MessageBox.Show(newItems.Count.ToString() + " New items added to the AVL file successfully.");
-                    button2.PerformClick();
                 }
+                else
+                {
+                    OleDbConnectionStringBuilder builder = new OleDbConnectionStringBuilder();
+                    builder.Provider = "Microsoft.ACE.OLEDB.12.0";
+                    builder.DataSource = currentAvl;
+                    builder["Extended Properties"] = "Excel 12.0 Xml;HDR=YES;IMEX=0;Mode=ReadWrite";
+                    using (OleDbConnection connection = new OleDbConnection(builder.ConnectionString))
+                    {
+                        connection.Open();
+                        foreach (var item in newItems)
+                        {
+                            // Assuming you have a sheet named 'YourSheetName' in your Excel file
+                            string query = "INSERT INTO [AVL$] (IPN, Manufacturer, MFPN, Description) VALUES (@IPN, @Manufacturer, @MFPN, @Description)";
+                            using (OleDbCommand command = new OleDbCommand(query, connection))
+                            {
+                                command.Parameters.AddWithValue("@IPN", item.IPN);
+                                command.Parameters.AddWithValue("@Manufacturer", item.Manufacturer);
+                                command.Parameters.AddWithValue("@MFPN", item.MFPN);
+                                command.Parameters.AddWithValue("@Description", item.Description);
+                                command.ExecuteNonQuery();
+                            }
+                        }
+                        MessageBox.Show(newItems.Count.ToString() + " New items added to the AVL file successfully.");
+                        button2.PerformClick();
+                    }
+                }
+
             }
             catch (Exception ex)
             {

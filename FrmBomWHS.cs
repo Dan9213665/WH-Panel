@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.OleDb;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -216,7 +217,7 @@ namespace WH_Panel
                 if (clientWH.clName == selectedWHname)
                 {
                     selection = clientWH.clName;
-                    MasterReload(clientWH.clAvlFile, clientWH.clStockFile);
+                    MasterReload(clientWH.sqlStock, clientWH.clStockFile);
                 }
             return selection;
         }
@@ -297,23 +298,62 @@ namespace WH_Panel
                 }
             }
         }
+        public bool isSql = false;
+        //private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    foreach (ClientWarehouse client in clList)
+        //    {
+        //        if (comboBox1.Text == client.clPrefix)
+        //        {
+        //            if (client.sqlStock != null)
+        //            {
+        //                MasterReload(client.sqlStock);
+        //                isSql = true;
+        //                break;
+        //            }
+        //            else
+        //            {
+        //                MasterReload(client.clStockFile);
+        //                isSql = false;
+        //                break;
+        //            }
+
+
+        //        }
+        //    }
+        //}
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            foreach (ClientWarehouse client in clList)
+            // Ensure clList is not null and not empty
+            if (clList != null && clList.Count > 0)
             {
-                if (comboBox1.Text == client.clPrefix)
+                // Iterate through each client in clList
+                foreach (ClientWarehouse client in clList)
                 {
-                    MasterReload(client.clAvlFile, client.clStockFile);
-                    break;
+                    // Check if the selected item in comboBox1 matches the client's prefix
+                    if (comboBox1.Text == client.clPrefix)
+                    {
+                        MasterReload(client.sqlStock, client.clStockFile);
+                        // Exit the loop since we found a matching client
+                        break;
+                    }
                 }
             }
         }
-        private void MasterReload(string avlParam, string stockParam)
+
+        private void MasterReload(string stockParamSql, string stockParamExl)
         {
-            avlFile = avlParam;
-            stockFile = stockParam;
+            if (stockParamSql != string.Empty)
+            {
+                stockFile = stockParamSql;
+                isSql = true;
+            }
+            else
+            {
+                stockFile = stockParamExl;
+                isSql = false;
+            }
             label1.BackColor = Color.LightGreen;
-            //StockViewDataLoader(stockParam, "STOCK");
             button3_Click(this, new EventArgs());
         }
         private void DataLoaderAVL(string fp, string thesheetName)
@@ -362,6 +402,44 @@ namespace WH_Panel
                 MessageBox.Show("Error");
             }
         }
+        private void StockViewDataLoaderSql(string fp)
+        {
+            stockItems.Clear();
+            try
+            {
+                string constr = fp;
+
+
+                SqlDataAdapter adapterStock = new SqlDataAdapter("SELECT * FROM STOCK", constr);
+
+                DataTable stockTable = new DataTable();
+                adapterStock.Fill(stockTable);
+
+                foreach (DataRow row in stockTable.Rows)
+                {
+                    WHitem item = new WHitem
+                    {
+                        IPN = row["IPN"].ToString(),
+                        Manufacturer = row["Manufacturer"].ToString(),
+                        MFPN = row["MFPN"].ToString(),
+                        Description = row["Description"].ToString(),
+                        Stock = Convert.ToInt32(row["Stock"]), // Assuming Stock is an integer field
+                        Updated_on = row["Updated_on"].ToString(),
+                        Comments = row["Comments"].ToString(),
+                        Source_Requester = row["Source_Requester"].ToString()
+                    };
+
+                    stockItems.Add(item);
+                }
+
+            }
+            catch (IOException)
+            {
+                MessageBox.Show("Error");
+            }
+        }
+
+
         private void StockViewDataLoader(string fp, string thesheetName)
         {
             //stockItems.Clear();
@@ -533,8 +611,17 @@ namespace WH_Panel
             countStockItems = 0;
             iStock = 0;
             label1.Text = "RELOAD STOCK";
-            StockViewDataLoader(stockFile, "STOCK");
-            PopulateStockView();
+            if (isSql)
+            {
+                StockViewDataLoaderSql(stockFile);
+                PopulateStockView();
+            }
+            else
+            {
+                StockViewDataLoader(stockFile, "STOCK");
+                PopulateStockView();
+            }
+
         }
         private void button4_Click(object sender, EventArgs e)
         {
@@ -603,12 +690,26 @@ namespace WH_Panel
             System.Windows.Forms.CheckBox chk = (System.Windows.Forms.CheckBox)sender;
             if (chk.Checked)
             {
-                StockViewDataLoader(stockFile, "STOCK");
+                if (isSql)
+                {
+                    StockViewDataLoaderSql(stockFile);
+                }
+                else
+                {
+                    StockViewDataLoader(stockFile, "STOCK");
+                }
                 FilterInStockItemsOnly();
             }
             else
             {
-                StockViewDataLoader(stockFile, "STOCK");
+                if (isSql)
+                {
+                    StockViewDataLoaderSql(stockFile);
+                }
+                else
+                {
+                    StockViewDataLoader(stockFile, "STOCK");
+                }
             }
         }
         private void btnFound_Click(object sender, EventArgs e)
@@ -1264,8 +1365,17 @@ namespace WH_Panel
                 if (cw != null && comboBox1.Text == cw.clName)
                 {
                     h.SetComboBoxText(cw.clName);
-                    h.MasterReload(cw.clAvlFile, cw.clStockFile);
-                    h.Show();
+                    if (isSql)
+                    {
+                        h.MasterReload(cw.sqlAvl, cw.sqlStock);
+                        h.Show();
+                    }
+                    else
+                    {
+                        h.MasterReload(cw.clAvlFile, cw.clStockFile);
+                        h.Show();
+                    }
+
                 }
             }
         }

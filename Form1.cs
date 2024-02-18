@@ -7,6 +7,11 @@ using System.IO;
 using System.Windows.Forms;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using System.Data.SqlClient;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Reflection.Emit;
+
 namespace WH_Panel
 {
     public partial class Form1 : Form
@@ -34,6 +39,39 @@ namespace WH_Panel
             this.Location = new Point(x, y);
         }
         public List<ClientWarehouse> warehouses { get; set; }
+        //public List<ClientWarehouse> PopulateWarehouses()
+        //{
+        //    string directoryPath = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS";
+        //    List<ClientWarehouse> warehouses = new List<ClientWarehouse>();
+        //    // Get all subdirectories under the specified directory
+        //    string[] subDirectories = Directory.GetDirectories(directoryPath);
+        //    foreach (string subDir in subDirectories)
+        //    {
+        //        string clName = new DirectoryInfo(subDir).Name;
+        //        string clPrefix = GetPrefixFromFile(Path.Combine(subDir, "prefix.txt"));
+        //        string clAvlFile = Directory.GetFiles(subDir, "*_AVL.XLSM").FirstOrDefault();
+        //        string clStockFile = Directory.GetFiles(subDir, "*_STOCK.XLSM").FirstOrDefault();
+        //        string clLogoFile = Directory.GetFiles(subDir, "logo.png").FirstOrDefault();
+        //        string accDBfile = Directory.GetFiles(subDir, ".accdb").FirstOrDefault();
+        //        if (!string.IsNullOrEmpty(clAvlFile) && !string.IsNullOrEmpty(clStockFile))
+        //        {
+        //            ClientWarehouse warehouse = new ClientWarehouse
+        //            {
+        //                clName = clName,
+        //                clPrefix = clPrefix,
+        //                clAvlFile = clAvlFile,
+        //                clStockFile = clStockFile,
+        //                clLogo = clLogoFile,
+        //                claccDBfile = accDBfile
+        //            };
+        //            warehouses.Add(warehouse);
+        //        }
+        //    }
+        //    return warehouses;
+        //}
+
+
+
         public List<ClientWarehouse> PopulateWarehouses()
         {
             string directoryPath = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS";
@@ -44,26 +82,70 @@ namespace WH_Panel
             {
                 string clName = new DirectoryInfo(subDir).Name;
                 string clPrefix = GetPrefixFromFile(Path.Combine(subDir, "prefix.txt"));
-                string clAvlFile = Directory.GetFiles(subDir, "*_AVL.XLSM").FirstOrDefault();
-                string clStockFile = Directory.GetFiles(subDir, "*_STOCK.XLSM").FirstOrDefault();
                 string clLogoFile = Directory.GetFiles(subDir, "logo.png").FirstOrDefault();
                 string accDBfile = Directory.GetFiles(subDir, ".accdb").FirstOrDefault();
-                if (!string.IsNullOrEmpty(clAvlFile) && !string.IsNullOrEmpty(clStockFile))
+                string clAvlFile = Directory.GetFiles(subDir, "*_AVL.XLSM").FirstOrDefault();
+               string clStockFile = Directory.GetFiles(subDir, "*_STOCK.XLSM").FirstOrDefault();
+
+                // Determine migration status based on database existence in SQL Server
+                bool isSqlMigrated = IsDatabaseInSQLServer(clName);
+
+                // Use SQL columns if migrated
+                string sqlAvl = isSqlMigrated ? GetSqlAvl(clName) : string.Empty;
+                string sqlStock = isSqlMigrated ? GetSqlStock(clName) : string.Empty;
+
+                if ((!isSqlMigrated && !string.IsNullOrEmpty(clAvlFile) && !string.IsNullOrEmpty(clStockFile)) || (isSqlMigrated && !string.IsNullOrEmpty(sqlAvl) && !string.IsNullOrEmpty(sqlStock)))
                 {
                     ClientWarehouse warehouse = new ClientWarehouse
                     {
                         clName = clName,
                         clPrefix = clPrefix,
-                        clAvlFile = clAvlFile,
-                        clStockFile = clStockFile,
+                        clAvlFile = isSqlMigrated ? string.Empty : Directory.GetFiles(subDir, "*_AVL.XLSM").FirstOrDefault(),
+                        clStockFile = isSqlMigrated ? string.Empty : Directory.GetFiles(subDir, "*_STOCK.XLSM").FirstOrDefault(),
                         clLogo = clLogoFile,
-                        claccDBfile = accDBfile
+                        claccDBfile = accDBfile,
+                        sqlAvl = sqlAvl,
+                        sqlStock = sqlStock
                     };
                     warehouses.Add(warehouse);
                 }
             }
             return warehouses;
         }
+        public bool IsDatabaseInSQLServer(string clName)
+        {
+            string connectionString = "Data Source=RT12\\SQLEXPRESS;Integrated Security=True;";
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                SqlCommand command = connection.CreateCommand();
+                command.CommandText = "SELECT COUNT(*) FROM sys.databases WHERE name = @DatabaseName";
+                command.Parameters.AddWithValue("@DatabaseName", clName);
+                int count = Convert.ToInt32(command.ExecuteScalar());
+                return count > 0;
+            }
+        }
+
+        // Function to retrieve SQL Avl file
+        private string GetSqlAvl(string clName)
+        {
+            // Connection string for SQL Server Express
+            return $"Data Source=RT12\\SQLEXPRESS;Initial Catalog={clName};Integrated Security=True;";
+
+        }
+
+        // Function to retrieve SQL Stock file
+        private string GetSqlStock(string clName)
+        {
+            // Connection string for SQL Server Express
+            return $"Data Source=RT12\\SQLEXPRESS;Initial Catalog={clName};Integrated Security=True;";
+        }
+
+
+
+
+
+
         private string GetPrefixFromFile(string prefixFilePath)
         {
             if (File.Exists(prefixFilePath))

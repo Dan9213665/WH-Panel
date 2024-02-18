@@ -13,5 +13,8 @@ namespace WH_Panel
         public string? clStockFile { get; set; }
         public string? clLogo { get; set; }
         public string? claccDBfile { get; set; }
+        public string? sqlAvl { get; set; }
+        public string? sqlStock { get; set; }
+
     }
 }

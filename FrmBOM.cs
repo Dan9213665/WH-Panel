@@ -44,6 +44,8 @@ using File = System.IO.File;
 using Point = System.Drawing.Point;
 using System.Runtime.InteropServices;
 using Outlook = Microsoft.Office.Interop.Outlook;
+using System.Data.SqlClient;
+
 namespace WH_Panel
 {
     public partial class FrmBOM : Form
@@ -67,6 +69,7 @@ namespace WH_Panel
         public int colMFPNFoundIndex;
         public TextBox lastTxtbInputFromUser = new TextBox();
         public string theExcelFilePath = string.Empty;
+        public bool isSql = false;
         public FrmBOM()
         {
             InitializeComponent();
@@ -764,7 +767,9 @@ namespace WH_Panel
             if (qtyOK)
             {
                 updateQtyInBomFile(w, validQty);
+
                 transferFromDatabaseToKit(w, validQty, theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));
+
                 if (checkBox1.Checked)
                 {
                     WHitem itemToPrint = new WHitem();
@@ -1106,79 +1111,161 @@ namespace WH_Panel
                     Comments = cmbReelSelector.SelectedItem.ToString(),
                     Source_Requester = kitName
                 };
-                if (!System.String.IsNullOrEmpty(warehouseSelectorBasedOnItem(w)))
-                {
-                    itemToTransfer.Manufacturer = getTheManufacturerFromTheStock(warehouseSelectorBasedOnItem(w), itemToTransfer);
-                    itemToTransfer.Comments = getTheCommentsFromTheStock(warehouseSelectorBasedOnItem(w), itemToTransfer);
-                    DataInserter(warehouseSelectorBasedOnItem(w), "STOCK", itemToTransfer);
-                }
+                //if (!System.String.IsNullOrEmpty(warehouseSelectorBasedOnItem(w)))
+                //{
+                itemToTransfer.Manufacturer = getTheManufacturerFromTheStock(warehouseSelectorBasedOnItem(w), itemToTransfer);
+                //MessageBox.Show(itemToTransfer.Manufacturer.ToString());
+                itemToTransfer.Comments = getTheCommentsFromTheStock(warehouseSelectorBasedOnItem(w), itemToTransfer);
+                //MessageBox.Show(itemToTransfer.Comments.ToString());
+
+                DataInserter(warehouseSelectorBasedOnItem(w), "STOCK", itemToTransfer);
+                //}
             }
             catch (Exception e)
             {
-                //MessageBox.Show(e.Message);
+                MessageBox.Show(e.Message);
                 throw;
             }
         }
         private string getTheManufacturerFromTheStock(string fp, WHitem itemTolookby)
         {
             string manufacturerFromStock = string.Empty;
-            try
+
+            if (isSql)
             {
-                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
-                using (OleDbConnection conn = new OleDbConnection(constr))
+                try
                 {
-                    conn.Open();
-                    OleDbCommand command = new OleDbCommand("SELECT * FROM [STOCK$] WHERE IPN=? AND MFPN=? AND Stock=?", conn);
-                    command.Parameters.AddWithValue("@IPN", itemTolookby.IPN);
-                    command.Parameters.AddWithValue("@MFPN", itemTolookby.MFPN);
-                    command.Parameters.AddWithValue("@Stock", Math.Abs(itemTolookby.Stock));
-                    OleDbDataReader reader = command.ExecuteReader();
-                    while (reader.Read())
+                    string constr = fp;
+                    using (SqlConnection conn = new SqlConnection(constr))
                     {
-                        //MessageBox.Show("Manufacturer from stock: " + reader["Manufacturer"].ToString());
-                        manufacturerFromStock = reader["Manufacturer"].ToString();
-                        break;
-                        // Add more code here to display other columns or perform other actions on each row
+                        conn.Open();
+                        SqlCommand command = new SqlCommand("SELECT * FROM STOCK WHERE IPN=@IPN AND MFPN=@MFPN AND Stock=@Stock", conn);
+                        command.Parameters.AddWithValue("@IPN", itemTolookby.IPN);
+                        command.Parameters.AddWithValue("@MFPN", itemTolookby.MFPN);
+                        command.Parameters.AddWithValue("@Stock", Math.Abs(itemTolookby.Stock));
+
+                        //MessageBox.Show(itemTolookby.IPN + " " + itemTolookby.MFPN + " " + itemTolookby.Stock);
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                //MessageBox.Show("Manufacturer from stock: " + reader["Manufacturer"].ToString());
+                                manufacturerFromStock = reader["Manufacturer"].ToString();
+                                // Add more code here to display other columns or perform other actions on each row
+                            }
+                        }
+                        conn.Close();
                     }
-                    reader.Close();
-                    conn.Close();
+                }
+                catch (Exception e)
+                {
+                    //MessageBox.Show(e.Message);
                 }
             }
-            catch (Exception e)
+
+            else
             {
-                //MessageBox.Show(e.Message);
+                try
+                {
+                    string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+                    using (OleDbConnection conn = new OleDbConnection(constr))
+                    {
+                        conn.Open();
+                        OleDbCommand command = new OleDbCommand("SELECT * FROM [STOCK$] WHERE IPN=? AND MFPN=? AND Stock=?", conn);
+                        command.Parameters.AddWithValue("@IPN", itemTolookby.IPN);
+                        command.Parameters.AddWithValue("@MFPN", itemTolookby.MFPN);
+                        command.Parameters.AddWithValue("@Stock", Math.Abs(itemTolookby.Stock));
+                        OleDbDataReader reader = command.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            //MessageBox.Show("Manufacturer from stock: " + reader["Manufacturer"].ToString());
+                            manufacturerFromStock = reader["Manufacturer"].ToString();
+                            break;
+                            // Add more code here to display other columns or perform other actions on each row
+                        }
+                        reader.Close();
+                        conn.Close();
+                    }
+                }
+                catch (Exception e)
+                {
+                    //MessageBox.Show(e.Message);
+                }
             }
+
+
             return manufacturerFromStock;
         }
+
+
+
+
         private string getTheCommentsFromTheStock(string fp, WHitem itemTolookby)
         {
             string CommentsFromStock = string.Empty;
-            try
+
+
+            if (isSql)
             {
-                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
-                using (OleDbConnection conn = new OleDbConnection(constr))
+                try
                 {
-                    conn.Open();
-                    OleDbCommand command = new OleDbCommand("SELECT * FROM [STOCK$] WHERE IPN=? AND MFPN=? AND Stock=?", conn);
-                    command.Parameters.AddWithValue("@IPN", itemTolookby.IPN);
-                    command.Parameters.AddWithValue("@MFPN", itemTolookby.MFPN);
-                    command.Parameters.AddWithValue("@Stock", Math.Abs(itemTolookby.Stock));
-                    OleDbDataReader reader = command.ExecuteReader();
-                    while (reader.Read())
+                    string constr = fp;
+                    using (SqlConnection connc = new SqlConnection(constr))
                     {
-                        //MessageBox.Show("Comments from stock: " + reader["Comments"].ToString());
-                        CommentsFromStock = reader["Comments"].ToString();
-                        break;
-                        // Add more code here to display other columns or perform other actions on each row
+                        connc.Open();
+                        SqlCommand command = new SqlCommand("SELECT * FROM STOCK WHERE IPN=@IPN AND MFPN=@MFPN AND Stock=@Stock", connc);
+                        command.Parameters.AddWithValue("@IPN", itemTolookby.IPN);
+                        command.Parameters.AddWithValue("@MFPN", itemTolookby.MFPN);
+                        command.Parameters.AddWithValue("@Stock", Math.Abs(itemTolookby.Stock));
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                //MessageBox.Show("Manufacturer from stock: " + reader["Manufacturer"].ToString());
+                                CommentsFromStock = reader["Comments"].ToString();
+                                // Add more code here to display other columns or perform other actions on each row
+                            }
+                        }
+                        connc.Close();
                     }
-                    reader.Close();
-                    conn.Close();
+                }
+                catch (Exception e)
+                {
+                    //MessageBox.Show(e.Message);
                 }
             }
-            catch (Exception e)
+
+            else
             {
-                //MessageBox.Show(e.Message);
+                try
+                {
+                    string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+                    using (OleDbConnection conn = new OleDbConnection(constr))
+                    {
+                        conn.Open();
+                        OleDbCommand command = new OleDbCommand("SELECT * FROM [STOCK$] WHERE IPN=? AND MFPN=? AND Stock=?", conn);
+                        command.Parameters.AddWithValue("@IPN", itemTolookby.IPN);
+                        command.Parameters.AddWithValue("@MFPN", itemTolookby.MFPN);
+                        command.Parameters.AddWithValue("@Stock", Math.Abs(itemTolookby.Stock));
+                        OleDbDataReader reader = command.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            //MessageBox.Show("Manufacturer from stock: " + reader["Manufacturer"].ToString());
+                            CommentsFromStock = reader["Comments"].ToString();
+                            break;
+                            // Add more code here to display other columns or perform other actions on each row
+                        }
+                        reader.Close();
+                        conn.Close();
+                    }
+                }
+                catch (Exception e)
+                {
+                    //MessageBox.Show(e.Message);
+                }
             }
+
+
             return CommentsFromStock;
         }
         private string ConvertStockFileFormat(string originalStockFile)
@@ -1196,7 +1283,16 @@ namespace WH_Panel
                 {
                     if (wh.clName == comboBox1.SelectedItem.ToString())
                     {
-                        selection = wh.clStockFile;
+                        if (wh.sqlStock != null)
+                        {
+                            isSql = true;
+                            selection = wh.sqlStock;
+                        }
+                        else
+                        {
+                            selection = wh.clStockFile;
+                        }
+
                         break;
                     }
                 }
@@ -1207,76 +1303,50 @@ namespace WH_Panel
             }
             return selection;
         }
-        //private void DataInserter(string fp, string thesheetName, WHitem wHitem)
-        //{
-        //    try
-        //    {
-        //        string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
-        //        using (OleDbConnection conn = new OleDbConnection(constr))
-        //        {
-        //            conn.Open();
-        //            OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$] (IPN,Manufacturer,MFPN,Description,Stock,Updated_on,Comments,Source_Requester) values('" + wHitem.IPN + "','" + wHitem.Manufacturer + "','" + wHitem.MFPN + "','" + wHitem.Description + "','" + wHitem.Stock + "','" + wHitem.Updated_on + "','" + wHitem.Comments + "','" + wHitem.Source_Requester + "')", conn);
-        //            command.ExecuteNonQuery();
-        //            conn.Close();
-        //        }
-        //        txtbQtyToAdd.Clear();
-        //        lastTxtbInputFromUser.Clear();
-        //        label2.BackColor = Color.LightGreen;
-        //        label3.BackColor = Color.LightGreen;
-        //        lastTxtbInputFromUser.Focus();
-        //        AutoClosingMessageBox.Show(wHitem.IPN + " Transferred to " + wHitem.Source_Requester, " Item Transferred to " + wHitem.Source_Requester, 1000);
-        //    }
-        //    catch (IOException)
-        //    {
-        //        MessageBox.Show("Error");
-        //    }
-        //}
-        //private void DataInserter(string fp, string thesheetName, WHitem wHitem)
-        //{
-        //    try
-        //    {
-        //        string connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={fp};Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
-        //        using (OleDbConnection conn = new OleDbConnection(connectionString))
-        //        {
-        //            conn.Open();
-        //            string query = $"INSERT INTO [{thesheetName}$] (IPN, Manufacturer, MFPN, Description, Stock, Updated_on, Comments, Source_Requester) " +
-        //                           "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        //            using (OleDbCommand command = new OleDbCommand(query, conn))
-        //            {
-        //                command.Parameters.AddWithValue("@IPN", wHitem.IPN);
-        //                command.Parameters.AddWithValue("@Manufacturer", wHitem.Manufacturer);
-        //                command.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
-        //                command.Parameters.AddWithValue("@Description", wHitem.Description);
-        //                command.Parameters.AddWithValue("@Stock", wHitem.Stock);
-        //                command.Parameters.AddWithValue("@Updated_on", wHitem.Updated_on);
-        //                command.Parameters.AddWithValue("@Comments", wHitem.Comments);
-        //                command.Parameters.AddWithValue("@Source_Requester", wHitem.Source_Requester);
-        //                command.ExecuteNonQuery();
-        //            }
-        //        }
-        //        txtbQtyToAdd.Clear();
-        //        lastTxtbInputFromUser.Clear();
-        //        label2.BackColor = Color.LightGreen;
-        //        label3.BackColor = Color.LightGreen;
-        //        lastTxtbInputFromUser.Focus();
-        //        AutoClosingMessageBox.Show($"{wHitem.IPN} Transferred to {wHitem.Source_Requester}", $"Item Transferred to {wHitem.Source_Requester}", 1000);
-        //    }
-        //    catch (IOException ex)
-        //    {
-        //        MessageBox.Show($"Error: {ex.Message}");
-        //        // Log the exception details
-        //    }
-        //}
+
         private void DataInserter(string fp, string thesheetName, WHitem wHitem)
         {
-            const int maxRetries = 3;
-            const int delayMilliseconds = 1500;
-            for (int retryCount = 0; retryCount < maxRetries; retryCount++)
+
+            Cursor.Current = Cursors.WaitCursor;
+
+            try
             {
-                try
+
+
+                if (isSql)
                 {
-                    // Set the cursor to an hourglass during the database operation
-                    Cursor.Current = Cursors.WaitCursor;
+                    try
+                    {
+                        string connectionString = fp;
+                        //MessageBox.Show(fp);
+                        using (SqlConnection conn = new SqlConnection(connectionString))
+                        {
+                            conn.Open();
+                            string query = $"INSERT INTO STOCK (IPN, Manufacturer, MFPN, Description, Stock, Updated_on, Comments, Source_Requester) " +
+                                            "VALUES (@IPN, @Manufacturer, @MFPN, @Description, @Stock, @Updated_on, @Comments, @Source_Requester)";
+                            using (SqlCommand command = new SqlCommand(query, conn))
+                            {
+                                command.Parameters.AddWithValue("@IPN", wHitem.IPN);
+                                command.Parameters.AddWithValue("@Manufacturer", wHitem.Manufacturer);
+                                command.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
+                                command.Parameters.AddWithValue("@Description", wHitem.Description);
+                                command.Parameters.AddWithValue("@Stock", wHitem.Stock);
+                                command.Parameters.AddWithValue("@Updated_on", wHitem.Updated_on);
+                                command.Parameters.AddWithValue("@Comments", wHitem.Comments);
+                                command.Parameters.AddWithValue("@Source_Requester", wHitem.Source_Requester);
+                                command.ExecuteNonQuery();
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show(e.Message);
+                        throw;
+                    }
+
+                }
+                else
+                {
                     string connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={fp};Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
                     using (OleDbConnection conn = new OleDbConnection(connectionString))
                     {
@@ -1296,38 +1366,30 @@ namespace WH_Panel
                             command.ExecuteNonQuery();
                         }
                     }
-                    txtbQtyToAdd.Clear();
-                    lastTxtbInputFromUser.Clear();
-                    label2.BackColor = Color.LightGreen;
-                    label3.BackColor = Color.LightGreen;
-                    lastTxtbInputFromUser.Focus();
-                    AutoClosingMessageBox.Show($"{wHitem.IPN} Transferred to {wHitem.Source_Requester}", $"Item Transferred to {wHitem.Source_Requester}", 1000);
-                    // Reset the cursor after the database operation
-                    Cursor.Current = Cursors.Default;
-                    // Break out of the loop if the insert is successful
-                    break;
                 }
-                catch (IOException ex)
-                {
-                    //MessageBox.Show($"Error: {ex.Message}");
-                    // Log the exception details
-                    if (retryCount < maxRetries - 1)
-                    {
-                        // Delay before retrying
-                        System.Threading.Thread.Sleep(delayMilliseconds);
-                    }
-                    else
-                    {
-                        // If max retries reached, you might want to handle it accordingly
-                        MessageBox.Show($"Max retries reached. Unable to insert data.");
-                    }
-                }
-                finally
-                {
-                    // Reset the cursor in case of an exception
-                    Cursor.Current = Cursors.Default;
-                }
+
+
+                txtbQtyToAdd.Clear();
+                lastTxtbInputFromUser.Clear();
+                label2.BackColor = Color.LightGreen;
+                label3.BackColor = Color.LightGreen;
+                lastTxtbInputFromUser.Focus();
+                AutoClosingMessageBox.Show($"{wHitem.IPN} Transferred to {wHitem.Source_Requester}", $"Item Transferred to {wHitem.Source_Requester}", 1000);
+                // Reset the cursor after the database operation
+                Cursor.Current = Cursors.Default;
+
             }
+            catch (IOException ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}");
+
+            }
+            finally
+            {
+                // Reset the cursor in case of an exception
+                Cursor.Current = Cursors.Default;
+            }
+            //}
         }
         public class AutoClosingMessageBox
         {
