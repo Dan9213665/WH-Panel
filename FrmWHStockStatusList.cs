@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.OleDb;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -32,18 +33,67 @@ namespace WH_Panel
         {
             if (textBox1.Lines.Length > 0)
             {
-                //MessageBox.Show(textBox1.Lines.Length.ToString());
-                string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-                //ExportToHTML(dataGridView1, "\\\\dbr1\\Data\\WareHouse\\2024\\WHsearcher\\"+ _fileTimeStamp+"_"+projectName.Substring(0, projectName.Length - 5) + ".html");
-                //ExportToHTML20(dataGridView1, "\\\\dbr1\\Data\\WareHouse\\2024\\WHsearcher\\" + _fileTimeStamp + "_" + projectName.Substring(0, projectName.Length - 5) + ".html");
-                StockViewDataLoader(selectedWH.clStockFile, "STOCK");
-                //GenerateHTML();
+               string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+
+                if(isSql)
+                {
+                    StockViewDataLoaderSql(selectedWH.sqlStock);
+
+                }
+                else
+                {
+
+                    StockViewDataLoader(selectedWH.clStockFile, "STOCK");
+                }
+               
+
                 GenerateFilteredReport();
             }
             else
             {
                 MessageBox.Show("Paste IPNs to search for in the textbox !");
                 textBox1.Focus();
+            }
+        }
+        private void StockViewDataLoaderSql(string sqlStock)
+        {
+            stockItems.Clear();
+            // Connection string for SQL Server Express
+            string connectionString = sqlStock;
+
+            try
+            {
+                // Load STOCK table into dataGridView1
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+
+
+                    SqlDataAdapter adapterStock = new SqlDataAdapter("SELECT * FROM STOCK", connection);
+
+                    DataTable stockTable = new DataTable();
+                    adapterStock.Fill(stockTable);
+
+                    foreach (DataRow row in stockTable.Rows)
+                    {
+                        WHitem item = new WHitem
+                        {
+                            IPN = row["IPN"].ToString(),
+                            Manufacturer = row["Manufacturer"].ToString(),
+                            MFPN = row["MFPN"].ToString(),
+                            Description = row["Description"].ToString(),
+                            Stock = Convert.ToInt32(row["Stock"]), // Assuming Stock is an integer field
+                            Updated_on = row["Updated_on"].ToString(),
+                            Comments = row["Comments"].ToString(),
+                            Source_Requester = row["Source_Requester"].ToString()
+                        };
+
+                        stockItems.Add(item);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // MessageBox.Show($"Error loading STOCK table: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private void GenerateFilteredReport()
@@ -258,6 +308,7 @@ namespace WH_Panel
             label1.Text = "Total rows to search for: " + rowCount;
             LoadImageBasedOnPrefix(lines);
         }
+        public bool isSql=false;
         private void LoadImageBasedOnPrefix(string[] lines)
         {
             foreach (ClientWarehouse w in warehouses)
@@ -267,6 +318,14 @@ namespace WH_Panel
                     try
                     {
                         selectedWH = w;
+                        if(w.sqlStock!=string.Empty)
+                        {
+                            isSql=true;
+                        }
+                        else
+                        {
+                            isSql = false;
+                        }
                         button2.BackgroundImageLayout = ImageLayout.Zoom;
                         button2.BackgroundImage = Image.FromFile(w.clLogo);
                         // Optionally, provide feedback to the user about the loaded image

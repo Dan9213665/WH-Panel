@@ -85,7 +85,7 @@ namespace WH_Panel
                 string clLogoFile = Directory.GetFiles(subDir, "logo.png").FirstOrDefault();
                 string accDBfile = Directory.GetFiles(subDir, ".accdb").FirstOrDefault();
                 string clAvlFile = Directory.GetFiles(subDir, "*_AVL.XLSM").FirstOrDefault();
-               string clStockFile = Directory.GetFiles(subDir, "*_STOCK.XLSM").FirstOrDefault();
+                string clStockFile = Directory.GetFiles(subDir, "*_STOCK.XLSM").FirstOrDefault();
 
                 // Determine migration status based on database existence in SQL Server
                 bool isSqlMigrated = IsDatabaseInSQLServer(clName);

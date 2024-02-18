@@ -255,6 +255,7 @@ namespace WH_Panel
             button15.Size = new Size(62, 41);
             button15.TabIndex = 14;
             button15.UseVisualStyleBackColor = true;
+            button15.Visible = false;
             button15.Click += button15_Click;
             // 
             // button12
@@ -278,6 +279,7 @@ namespace WH_Panel
             button9.Size = new Size(54, 41);
             button9.TabIndex = 10;
             button9.UseVisualStyleBackColor = true;
+            button9.Visible = false;
             button9.Click += button9_Click_1;
             // 
             // button3

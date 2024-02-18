@@ -101,33 +101,7 @@ namespace WH_Panel
                 
             }
             PopulateGridView();
-            //for (int i = 0; i < listOfWareHouses.Count; i++)
-            //{
-            //    DataLoader(listOfWareHouses[i].Key, listOfWareHouses[i].Value);
-            //}
-            //// Create a list to hold the buttons
-            //List<Button> buttons = new List<Button>();
-            //for (int i = 0; i < warehouses.Count; i++)
-            //{
-            //    string warehousePath = warehouses[i].clStockFile; // Get the warehouse path from the KeyValuePair
-            //    // Extract the warehouse name from the warehouse path
-            //    string[] pathParts = warehousePath.Split('\\');
-            //    string warehouseName = warehouses[i].clName;
-            //    Button button = new Button();
-            //    button.Text = warehouseName;
-            //    button.Tag = warehousePath;
-            //    button.AutoSize = true; // Adjust the button size based on the text length
-            //    button.Click += Button_Click; // Assign a common event handler for button click event
-            //    buttons.Add(button); // Add the button to the list
-            //}
-            //// Sort the buttons alphabetically based on their text
-            //buttons.Sort((x, y) => x.Text.CompareTo(y.Text));
-            //flowLayoutPanel1.Controls.Clear();
-            //// Add the sorted buttons to the flowLayoutPanel1 control
-            //foreach (Button button in buttons)
-            //{
-            //    flowLayoutPanel1.Controls.Add(button); // Add the button to the FlowLayoutPanel
-            //}
+          
             // Create a list to hold the buttons
             List<Button> buttons = new List<Button>();
             for (int i = 0; i < warehouses.Count; i++)
