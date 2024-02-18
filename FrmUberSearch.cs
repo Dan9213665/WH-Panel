@@ -24,6 +24,8 @@ using TextBox = System.Windows.Forms.TextBox;
 using ComboBox = System.Windows.Forms.ComboBox;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolBar;
 using ToolTip = System.Windows.Forms.ToolTip;
+using System.Data.SqlClient;
+
 namespace WH_Panel
 {
     public partial class FrmUberSearch : Form
@@ -88,7 +90,15 @@ namespace WH_Panel
             label1.BackColor = Color.IndianRed;
             foreach (ClientWarehouse warehouse in warehouses)
             {
-                DataLoader(warehouse.clStockFile, "STOCK");
+                if(warehouse.sqlStock!=null)
+                {
+                    DataLoaderSql(warehouse.sqlStock);
+                }
+                else
+                {
+                    DataLoader(warehouse.clStockFile, "STOCK");
+                }
+                
             }
             PopulateGridView();
             //for (int i = 0; i < listOfWareHouses.Count; i++)
@@ -186,6 +196,52 @@ namespace WH_Panel
             w.Focus();
             // Call the public method to set the ComboBox text
             w.SetComboBoxText(warehouseName);
+        }
+        private void DataLoaderSql (string fp)
+        {
+            string connectionString = fp;
+
+            try
+            {
+                // Load STOCK table into dataGridView1
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+
+
+                    SqlDataAdapter adapterStock = new SqlDataAdapter("SELECT * FROM STOCK", connection);
+
+                    DataTable stockTable = new DataTable();
+                    adapterStock.Fill(stockTable);
+
+                    foreach (DataRow row in stockTable.Rows)
+                    {
+                        WHitem item = new WHitem
+                        {
+                            IPN = row["IPN"].ToString(),
+                            Manufacturer = row["Manufacturer"].ToString(),
+                            MFPN = row["MFPN"].ToString(),
+                            Description = row["Description"].ToString(),
+                            Stock = Convert.ToInt32(row["Stock"]), // Assuming Stock is an integer field
+                            Updated_on = row["Updated_on"].ToString(),
+                            Comments = row["Comments"].ToString(),
+                            Source_Requester = row["Source_Requester"].ToString()
+                        };
+                        if (i > 0)
+                        {
+                            countItems = i;
+                            label1.Text = "Rows:" + (countItems).ToString();
+                            if (countItems % 5000 == 0)
+                            { label1.Update(); }
+                            wHitems.Add(item);
+                        }
+                        i++;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // MessageBox.Show($"Error loading STOCK table: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
         private void DataLoader(string fp, string thesheetName)
         {

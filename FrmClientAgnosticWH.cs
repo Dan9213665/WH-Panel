@@ -25,6 +25,7 @@ using Application = System.Windows.Forms.Application;
 using Seagull.Framework.Extensions;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 using System.Data.SqlClient;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Header;
 
 namespace WH_Panel
 {
@@ -2332,20 +2333,86 @@ namespace WH_Panel
                     Source_Requester = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Source_Requester"].Index].Value.ToString()
                 };
                 ContextMenuStrip contextMenu = new ContextMenuStrip();
+
+                List<string> list = new List<string>();
+
                 foreach (string option in comboBox1.Items)
+                {
+                    list.Add(option);
+                }
+                list.Add("DELETE");
+
+                foreach (string option in list)
                 {
                     ToolStripMenuItem item = new ToolStripMenuItem(option);
                     item.Click += (sender, args) =>
                     {
                         ToolStripMenuItem clickedItem = (ToolStripMenuItem)sender;
                         string newComments = clickedItem.Text;
-                        // Show a confirmation message box before applying the changes
-                        DialogResult dialogResult = MessageBox.Show($"Apply changes to Warehouse Item? Change from {currentComments} to {newComments} ?", "Confirmation", MessageBoxButtons.YesNo);
-                        if (dialogResult == DialogResult.Yes)
+
+                        if (newComments == "DELETE")
                         {
-                            selectedRow.Cells["Comments"].Value = newComments;
-                            DataUpdater(stockFile, "STOCK", currentComments, wHitemABCD, newComments);
+                            // Show a confirmation message box before applying the changes
+                            // DialogResult dialogResult = MessageBox.Show($"DELETE the {wHitemABCD.IPN} {wHitemABCD.MFPN} {wHitemABCD.Description} {wHitemABCD.Stock} {wHitemABCD.Updated_on} {wHitemABCD.Source_Requester}?", "Confirmation", MessageBoxButtons.YesNo);
+
+                            //                            DialogResult dialogResult = MessageBox.Show(
+                            //    $"DELETE ? \n IPN: {wHitemABCD.IPN}\n MFPN: {wHitemABCD.MFPN}\n Description: {wHitemABCD.Description}\n Stock: {wHitemABCD.Stock}\n Updated_on: {wHitemABCD.Updated_on}\n Source_Requester: {wHitemABCD.Source_Requester}",
+                            //    "Confirmation", $"DELETE {wHitemABCD.IPN}",
+                            //    MessageBoxButtons.YesNo, MessageBoxIcon.Stop
+                            //);
+                            DialogResult dialogResult = MessageBox.Show(
+                                $"DELETE {wHitemABCD.IPN} ?\nIPN: {wHitemABCD.IPN}\nMFPN: {wHitemABCD.MFPN}\nDescription: {wHitemABCD.Description}\nStock: {wHitemABCD.Stock}\nUpdated_on: {wHitemABCD.Updated_on}\nSource_Requester: {wHitemABCD.Source_Requester}",
+                                $"DELETE {wHitemABCD.IPN}",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Stop
+                            );
+
+
+
+                            if (dialogResult == DialogResult.Yes)
+                            {
+                                string selectedWarehouseName = comboBox3.SelectedItem.ToString(); // Get the selected name from ComboBox1
+
+                                // Assuming warehouses is a collection of Warehouse objects
+                                string fp = warehouses
+                                    .Where(w => w.clName == selectedWarehouseName) // Filter warehouses by selected name
+                                    .Select(w => w.sqlStock)
+                                    .FirstOrDefault(); // Use FirstOrDefault() instead of First() to handle the case where no warehouse matches the selected name
+
+                                string constr = fp;
+                                using (SqlConnection conn = new SqlConnection(constr))
+                                {
+                                    conn.Open();
+                                    SqlCommand command = new SqlCommand($"DELETE FROM [STOCK] WHERE Comments = @currentComments AND IPN = @IPN AND MFPN = @MFPN AND Description = @Description AND Stock = @Stock AND Updated_on = @Updated_on AND Source_Requester = @Source_Requester", conn);
+                                    command.Parameters.AddWithValue("@currentComments", currentComments);
+                                    command.Parameters.AddWithValue("@IPN", wHitemABCD.IPN); // Use wHitemABCD.IPN instead of wHitem.IPN
+                                    command.Parameters.AddWithValue("@MFPN", wHitemABCD.MFPN); // Use wHitemABCD.MFPN instead of wHitem.MFPN
+                                    command.Parameters.AddWithValue("@Description", wHitemABCD.Description); // Use wHitemABCD.Description instead of wHitem.Description
+                                    command.Parameters.AddWithValue("@Stock", wHitemABCD.Stock); // Use wHitemABCD.Stock instead of wHitem.Stock
+                                    command.Parameters.AddWithValue("@Updated_on", wHitemABCD.Updated_on); // Use wHitemABCD.Updated_on instead of wHitem.Updated_on
+                                    command.Parameters.AddWithValue("@Source_Requester", wHitemABCD.Source_Requester); // Use wHitemABCD.Source_Requester instead of wHitem.Source_Requester
+                                    command.ExecuteNonQuery();
+                                    conn.Close();
+                                }
+                                MessageBox.Show($"{wHitemABCD.IPN} {wHitemABCD.Stock} PCS  deleted");
+                                button3_Click(button3, EventArgs.Empty);
+                                textBox1.Text = wHitemABCD.IPN;
+
+                            }
                         }
+                        else
+                        {
+                            // Show a confirmation message box before applying the changes
+                            DialogResult dialogResult = MessageBox.Show($"Apply changes to Warehouse Item? Change from {currentComments} to {newComments} ?", "Confirmation", MessageBoxButtons.YesNo);
+                            if (dialogResult == DialogResult.Yes)
+                            {
+                                selectedRow.Cells["Comments"].Value = newComments;
+                                DataUpdater(stockFile, "STOCK", currentComments, wHitemABCD, newComments);
+
+
+                            }
+                        }
+
                     };
                     contextMenu.Items.Add(item);
                 }
