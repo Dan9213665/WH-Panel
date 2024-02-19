@@ -1057,7 +1057,7 @@ namespace WH_Panel
                 wh.fromTheMainBom = new List<KitHistoryItem>();
                 wh.fromTheMainBom.Clear();
                 wh.fromTheMainBom = MissingItemsList;
-                wh.InitializeGlobalWarehouses(warehouses, comboBox1.SelectedItem.ToString());
+                wh.InitializeGlobalWarehouses(warehouses, comboBox1.SelectedItem.ToString().Trim());
                 wh.Show();
                 openBomWHSForm = wh; // Set the reference to the newly opened form
             }

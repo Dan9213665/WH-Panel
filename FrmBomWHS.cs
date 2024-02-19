@@ -42,7 +42,7 @@ namespace WH_Panel
             // Adding clNames to comboBox4
             foreach (ClientWarehouse warehouse in clList)
             {
-                comboBox1.Items.Add(warehouse.clName);
+                comboBox1.Items.Add(warehouse.clName.ToString());
             }
         }
         private void UpdateControlColors(Control parentControl)
@@ -331,7 +331,7 @@ namespace WH_Panel
                 foreach (ClientWarehouse client in clList)
                 {
                     // Check if the selected item in comboBox1 matches the client's prefix
-                    if (comboBox1.Text == client.clPrefix)
+                    if (comboBox1.SelectedItem.ToString() == client.clPrefix)
                     {
                         MasterReload(client.sqlStock, client.clStockFile);
                         // Exit the loop since we found a matching client
@@ -345,15 +345,17 @@ namespace WH_Panel
         {
             if (stockParamSql != string.Empty)
             {
-                stockFile = stockParamSql;
                 isSql = true;
-            }
+                stockFile = stockParamSql;
+                
+        }
             else
             {
-                stockFile = stockParamExl;
                 isSql = false;
+                stockFile = stockParamExl;
+                
             }
-            label1.BackColor = Color.LightGreen;
+    label1.BackColor = Color.LightGreen;
             button3_Click(this, new EventArgs());
         }
         private void DataLoaderAVL(string fp, string thesheetName)
@@ -405,6 +407,7 @@ namespace WH_Panel
         private void StockViewDataLoaderSql(string fp)
         {
             stockItems.Clear();
+
             try
             {
                 string constr = fp;
@@ -412,10 +415,10 @@ namespace WH_Panel
 
                 SqlDataAdapter adapterStock = new SqlDataAdapter("SELECT * FROM STOCK", constr);
 
-                DataTable stockTable = new DataTable();
-                adapterStock.Fill(stockTable);
+                DataTable stockTablesql = new DataTable();
+                adapterStock.Fill(stockTablesql);
 
-                foreach (DataRow row in stockTable.Rows)
+                foreach (DataRow row in stockTablesql.Rows)
                 {
                     WHitem item = new WHitem
                     {
@@ -615,14 +618,14 @@ namespace WH_Panel
             {
                 StockViewDataLoaderSql(stockFile);
                 PopulateStockView();
-            }
+        }
             else
             {
                 StockViewDataLoader(stockFile, "STOCK");
-                PopulateStockView();
-            }
+        PopulateStockView();
+    }
 
-        }
+}
         private void button4_Click(object sender, EventArgs e)
         {
             FilterInStockItemsOnly();
