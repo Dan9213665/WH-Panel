@@ -835,13 +835,10 @@ var myPieChart = new Chart(ctx, {
                     {
                         // MessageBox.Show($"Error loading STOCK table: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-
-
                 }
 
                 else
                 {
-
                     string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
                     using (OleDbConnection conn = new OleDbConnection(constr))
                     {
@@ -888,7 +885,6 @@ var myPieChart = new Chart(ctx, {
                         conn.Close();
                     }
                 }
-
             }
             catch (IOException)
             {

@@ -111,10 +111,10 @@ namespace WH_Panel
                 string[] pathParts = warehousePath.Split('\\');
                 string warehouseName = warehouses[i].clName;
                 Button button = new Button();
-                button.Tag = warehousePath;
+                button.Tag = warehouseName;
                 //button.AutoSize = true; // Adjust the button size based on the text length
                 button.AutoSize = false; // Disable auto-sizing
-                button.Size = new Size(85, 55); // Set the button size
+                button.Size = new Size(90, 40); // Set the button size
                                                  // Add a tooltip to display warehouseName when hovering over the button
                 ToolTip toolTip = new ToolTip();
                 toolTip.SetToolTip(button, warehouseName);
@@ -163,7 +163,7 @@ namespace WH_Panel
             Button clickedButton = (Button)sender;
             string warehousePath = (string)clickedButton.Tag;
             string[] pathParts = warehousePath.Split('\\');
-            string warehouseName = pathParts[pathParts.Length - 2];
+            //string warehouseName = pathParts[pathParts.Length - 2];
             FrmClientAgnosticWH w = new FrmClientAgnosticWH();
             w.InitializeGlobalWarehouses(warehouses);
             w.Show();
