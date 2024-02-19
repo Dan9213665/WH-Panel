@@ -106,7 +106,7 @@ namespace WH_Panel
             List<Button> buttons = new List<Button>();
             for (int i = 0; i < warehouses.Count; i++)
             {
-                string warehousePath = warehouses[i].clStockFile; // Get the warehouse path from the KeyValuePair
+                string warehousePath = warehouses[i].sqlStock; // Get the warehouse path from the KeyValuePair
                 // Extract the warehouse name from the warehouse path
                 string[] pathParts = warehousePath.Split('\\');
                 string warehouseName = warehouses[i].clName;
@@ -169,7 +169,7 @@ namespace WH_Panel
             w.Show();
             w.Focus();
             // Call the public method to set the ComboBox text
-            w.SetComboBoxText(warehouseName);
+            w.SetComboBoxText(warehousePath);
         }
         private void DataLoaderSql (string fp)
         {

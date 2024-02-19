@@ -48,7 +48,7 @@ namespace WH_Panel
                 GroupBox groupBox = new GroupBox();
                 groupBox.Name = warehouse.clName;
                 groupBox.Text = warehouse.clName;
-                groupBox.Width = 150;
+                groupBox.Width = 140;
                 groupBox.Height = 130;
                 Button stockButton = new Button();
                 //stockButton.Text = "Open Stock File";

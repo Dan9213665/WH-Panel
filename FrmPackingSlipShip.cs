@@ -561,12 +561,12 @@ namespace WH_Panel
                 OleDbCommand cmd = new OleDbCommand();
                 cmd.Connection = conn;
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, Updated_on = @Updated_on";
+                cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @UPDATEDON";
                 cmd.Parameters.AddWithValue("@PN", wHitem.IPN);
                 cmd.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
                 cmd.Parameters.AddWithValue("@ItemDesc", wHitem.Description);
                 cmd.Parameters.AddWithValue("@QTY", wHitem.Stock);
-                cmd.Parameters.AddWithValue("@Updated_on", wHitem.Updated_on);
+                cmd.Parameters.AddWithValue("@UPDATEDON", wHitem.Updated_on);
                 conn.Open();
                 cmd.ExecuteNonQuery();
                 conn.Close();
@@ -714,6 +714,7 @@ namespace WH_Panel
         }
         private void btnPrintSticker_Click_1(object sender, EventArgs e)
         {
+
         }
         private void button2_Click(object sender, EventArgs e)
         {
