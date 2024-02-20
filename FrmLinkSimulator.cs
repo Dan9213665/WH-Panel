@@ -1474,7 +1474,15 @@ var myPieChart = new Chart(ctx, {
                         htmlContent += $"<td class='wrap-content' style='width:12%;white-space: nowrap;'>{currentBomItem.IPN}</td>";
                         htmlContent += $"<td class='wrap-content' style='width:12%;'>{currentBomItem.MFPN}</td>";
                         htmlContent += $"<td class='wrap-content' style='width:36%;' columnspan='3'>{currentBomItem.Description}</td>";
-                        htmlContent += $"<td style='width:12%;'>{whQty}</td>";
+                        if(whQty<0)
+                        {
+                            htmlContent += $"<td style='width:12%;'>0 ({whQty})</td>";
+                        }
+                        else
+                        {
+                            htmlContent += $"<td style='width:12%;'>{whQty}</td>";
+                        }
+                        
 
                         var rowColorClassQ = currentBomItem.QtyInKit < 0 ? "lightcoral" : "lightgreen";
                         htmlContent += $"<td style='width:12%;'>{currentBomItem.QtyInKit}</td>";
@@ -1493,6 +1501,10 @@ var myPieChart = new Chart(ctx, {
                     }
                     else
                     {
+                        WHitem deducter = new WHitem();
+                        deducter.IPN = currentBomItem.IPN;
+                        deducter.Stock = int.Parse(currentBomItem.QtyInKit.ToString());
+                        stockItems.Add(deducter);
                         // Handle other cases if needed
                     }
                 }
