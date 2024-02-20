@@ -347,15 +347,15 @@ namespace WH_Panel
             {
                 isSql = true;
                 stockFile = stockParamSql;
-                
-        }
+
+            }
             else
             {
                 isSql = false;
                 stockFile = stockParamExl;
-                
+
             }
-    label1.BackColor = Color.LightGreen;
+            label1.BackColor = Color.LightGreen;
             button3_Click(this, new EventArgs());
         }
         private void DataLoaderAVL(string fp, string thesheetName)
@@ -618,14 +618,14 @@ namespace WH_Panel
             {
                 StockViewDataLoaderSql(stockFile);
                 PopulateStockView();
-        }
+            }
             else
             {
                 StockViewDataLoader(stockFile, "STOCK");
-        PopulateStockView();
-    }
+                PopulateStockView();
+            }
 
-}
+        }
         private void button4_Click(object sender, EventArgs e)
         {
             FilterInStockItemsOnly();

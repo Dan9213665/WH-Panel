@@ -1214,7 +1214,18 @@ var myPieChart = new Chart(ctx, {
             {
                 if (comboBox6.SelectedItem == w.clName)
                 {
-                    StockViewDataLoader(w.clStockFile, "STOCK");
+                    if (w.sqlStock != null)
+                    {
+                        isSql = true;
+                        StockViewDataLoader(w.sqlStock, "STOCK");
+
+                    }
+                    else
+                    {
+                        isSql = false;
+                        StockViewDataLoader(w.clStockFile, "STOCK");
+                    }
+
                 }
             }
 
