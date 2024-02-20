@@ -1027,7 +1027,7 @@ var myPieChart = new Chart(ctx, {
             {
                 var rowColorClass = item.StockQuantity + item.TotalRequired < 0 ? "lightcoral" : "lightgreen";
                 htmlContent += $"<tr class='{rowColorClass}'>";
-                htmlContent += $"<td class='wrap-content'>{item.IPN}</td>";
+                htmlContent += $"<td class='wrap-content;white-space: nowrap;'>{item.IPN}</td>";
                 htmlContent += $"<td class='wrap-content'>{item.MFPN}</td>";
                 htmlContent += $"<td class='wrap-content'>{item.Description}</td>";
                 htmlContent += $"<td>{item.StockQuantity}</td>";
@@ -1397,57 +1397,108 @@ var myPieChart = new Chart(ctx, {
                     htmlContent += "<tr>";
                     htmlContent += "<td  colspan='7'>";
                     htmlContent += "<table border='1' style='border-collapse: collapse; width: 100%;border: 1px solid black;'>";
-                    // Add BOM item header
-                    //htmlContent += "<tr class='{rowColorClass}' style='background-color: #d9edf7;'>";
-                    //htmlContent += "<th style='padding: 10px;'>Project Name</th>";
-                    //htmlContent += "<th style='padding: 10px;'>MFPN</th>";
-                    //htmlContent += "<th style='padding: 10px;'>Description</th>";
-                    //htmlContent += "<th style='padding: 10px;'>Quantity in Kit</th>";
-                    //htmlContent += "</tr>";
-                    // Add BOM item data
-                    foreach (var bomItem in mainDataSource.BOMITEMS)
-                    {
-                        int whQty = stockItems.Where(si => si.IPN == bomItem.IPN).Sum(si => si.Stock);
+                // Add BOM item header
+                //htmlContent += "<tr class='{rowColorClass}' style='background-color: #d9edf7;'>";
+                //htmlContent += "<th style='padding: 10px;'>Project Name</th>";
+                //htmlContent += "<th style='padding: 10px;'>MFPN</th>";
+                //htmlContent += "<th style='padding: 10px;'>Description</th>";
+                //htmlContent += "<th style='padding: 10px;'>Quantity in Kit</th>";
+                //htmlContent += "</tr>";
+                // Add BOM item data
 
-                    if (bomItem.QtyInKit<0 && (bomItem.QtyInKit+whQty)<0)
-                    {
-                        
+                //List<WHitem> updatedStockList = new List<WHitem>();
 
+
+                //foreach (var bomItem in mainDataSource.BOMITEMS)
+                //{
+
+                //int updatedStockQty = 0;
+
+                ////int whQty = stockItems.Where(si => si.IPN == bomItem.IPN).Sum(si => si.Stock);
+
+                //if(updatedStockList.Count>0)
+                //{
+                //    updatedStockQty = updatedStockList.FirstOrDefault(w => w.IPN == bomItem.IPN).Stock;
+                //}
+
+
+                //int whQty = stockItems.Where(si => si.IPN == bomItem.IPN).Sum(si => si.Stock) + updatedStockQty;
+
+
+
+                //if (bomItem.QtyInKit<0 && (bomItem.QtyInKit+whQty)<0)
+                //{
+                //    htmlContent += "<tr style='text-align:center;'>";
+
+                //    htmlContent += $"<td class='wrap-content' style='width:12%;white-space: nowrap;'>{bomItem.IPN}</td>";
+                //    htmlContent += $"<td class='wrap-content' style='width:12%;'>{bomItem.MFPN}</td>";
+                //    htmlContent += $"<td class='wrap-content' style='width:36%;' columnspan='3'>{bomItem.Description}</td>";
+                //    htmlContent += $"<td style='width:12%;'>{whQty}</td>";
+                //    var rowColorClassQ = bomItem.QtyInKit < 0 ? "lightcoral" : "lightgreen";
+                //    htmlContent += $"<td style='width:12%;'>{bomItem.QtyInKit}</td>";
+                //    htmlContent += $"<td class='{rowColorClassQ}' style='width:12%;'>{bomItem.QtyInKit + whQty}</td>";
+
+                //    updatedStockList.Add(new WHitem { IPN = bomItem.IPN, Stock = int.Parse(bomItem.QtyInKit.ToString())} );
+
+                //    htmlContent += "</tr>";
+                //}
+                //else
+                //{
+                //    //
+                //}
+
+
+                //}
+
+
+                //Dictionary<string, int> updatedStockDictionary = new Dictionary<string, int>();
+
+                foreach (var currentBomItem in mainDataSource.BOMITEMS)
+                {
+                    //int updatedStockQty = 0;
+
+                    // Check if the current IPN has an updated stock quantity
+                    //if (updatedStockDictionary.ContainsKey(currentBomItem.IPN))
+                    //{
+                    //    updatedStockQty = updatedStockDictionary[currentBomItem.IPN];
+                    //}
+
+                    int whQty = stockItems.Where(si => si.IPN == currentBomItem.IPN).Sum(si => si.Stock);
+
+                    //whQty += updatedStockQty;
+
+                    if (currentBomItem.QtyInKit < 0 && (currentBomItem.QtyInKit + whQty) < 0)
+                    {
                         htmlContent += "<tr style='text-align:center;'>";
-                        //Truncate the last 5 characters of Title
-                        //string truncatedTitle = bomItem.ProjectName.Length > 5
-                        //    ? bomItem.ProjectName.Substring(0, bomItem.ProjectName.Length - 5)
-                        //    : bomItem.ProjectName;
-                        // htmlContent += $"<td style='width:28%;'>{truncatedTitle}</td>";
-                        htmlContent += $"<td class='wrap-content' style='width:12%;white-space: nowrap;'>{bomItem.IPN}</td>";
-                        htmlContent += $"<td class='wrap-content' style='width:12%;'>{bomItem.MFPN}</td>";
-                        htmlContent += $"<td class='wrap-content' style='width:36%;' columnspan='3'>{bomItem.Description}</td>";
 
-                     
-                       
+                        htmlContent += $"<td class='wrap-content' style='width:12%;white-space: nowrap;'>{currentBomItem.IPN}</td>";
+                        htmlContent += $"<td class='wrap-content' style='width:12%;'>{currentBomItem.MFPN}</td>";
+                        htmlContent += $"<td class='wrap-content' style='width:36%;' columnspan='3'>{currentBomItem.Description}</td>";
                         htmlContent += $"<td style='width:12%;'>{whQty}</td>";
 
-                        var rowColorClassQ = bomItem.QtyInKit < 0 ? "lightcoral" : "lightgreen";
+                        var rowColorClassQ = currentBomItem.QtyInKit < 0 ? "lightcoral" : "lightgreen";
+                        htmlContent += $"<td style='width:12%;'>{currentBomItem.QtyInKit}</td>";
+                        htmlContent += $"<td class='{rowColorClassQ}' style='width:12%;'>{currentBomItem.QtyInKit + whQty}</td>";
 
+                        // Update the dictionary with the new stock quantity for the current IPN
+                        //updatedStockDictionary[currentBomItem.IPN] = int.Parse(currentBomItem.QtyInKit.ToString());
 
+                        WHitem deducter = new   WHitem();
+                        deducter.IPN= currentBomItem.IPN;
+                        deducter.Stock = int.Parse(currentBomItem.QtyInKit.ToString());
+                        stockItems.Add(deducter);
 
-                        htmlContent += $"<td style='width:12%;'>{bomItem.QtyInKit}</td>";
-
-                        htmlContent += $"<td class='{rowColorClassQ}' style='width:12%;'>{bomItem.QtyInKit + whQty}</td>";
-
-                        whQty +=int.Parse(bomItem.QtyInKit.ToString());
 
                         htmlContent += "</tr>";
                     }
                     else
                     {
-                        //
+                        // Handle other cases if needed
                     }
-                        
-                    
-                    }
-                    // Close sub-table
-                    htmlContent += "</table>";
+                }
+
+                // Close sub-table
+                htmlContent += "</table>";
                     htmlContent += "</br>";
                     htmlContent += "</td>";
                     htmlContent += "</tr>";
@@ -1527,8 +1578,8 @@ var myPieChart = new Chart(ctx, {
     data: {
         labels: ['Deficient', 'Sufficient'],
         datasets: [{
-            data: [lightcoralCount, lightgreenCount],
-            backgroundColor: ['#FF6384', '#4CAF50']
+            data: [lightcoralCount],
+            backgroundColor: ['#FF6384']
         }]
     },
     options: {
