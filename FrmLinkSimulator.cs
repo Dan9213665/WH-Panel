@@ -1229,6 +1229,49 @@ var myPieChart = new Chart(ctx, {
                 }
             }
 
+
+
+
+            var sumRequiredByIPN = BOMs.SelectMany(bom => bom.Items)
+                                   .GroupBy(item => item.IPN)
+                                   .Select(group => new
+                                   {
+                                       IPN = group.Key,
+                                       TotalRequired = group.Sum(item => item.Delta)
+                                   });
+
+            List<WHitem> stockItemsOriginal = new List<WHitem>();
+            stockItemsOriginal.AddRange(stockItems);
+
+
+
+            var stockData = BOMs.SelectMany(bom => bom.Items)
+                   .GroupBy(item => item.IPN)
+                   .Select(group => new
+                   {
+                       IPN = group.Key,
+                       MFPN = group.Select(x => x.MFPN).FirstOrDefault(),
+                       Description = group.Select(x => x.Description).FirstOrDefault(),
+                       TotalRequired = group.Sum(item => item.Delta)
+                   })
+                   .GroupJoin(stockItems,
+                              sumItem => sumItem.IPN,
+                              stockItem => stockItem.IPN,
+                              (sumItem, stockItemGroup) => new
+                              {
+                                  IPN = sumItem.IPN,
+                                  MFPN = sumItem.MFPN,
+                                  Description = sumItem.Description,
+                                  StockQuantity = stockItemGroup.Sum(item => item.Stock),
+                                  TotalRequired = sumItem.TotalRequired
+                              })
+                   .OrderBy(item => item.TotalRequired);
+
+
+
+
+
+
             var stockDataDetailed = BOMs
         .SelectMany(bom => bom.Items)
         .GroupBy(item => item.ProjectName)
@@ -1467,7 +1510,18 @@ var myPieChart = new Chart(ctx, {
 
                     //whQty += updatedStockQty;
 
-                    if (currentBomItem.QtyInKit < 0 && (currentBomItem.QtyInKit + whQty) < 0)
+                    int? totalReqPerIPN = stockData
+     .Where(si => si.IPN == currentBomItem.IPN)
+     .Select(w => w.TotalRequired)
+     .FirstOrDefault();
+
+                    int totalStockPerIpn = stockItemsOriginal.Where(si => si.IPN == currentBomItem.IPN).Sum(si => si.Stock);
+
+                    int totalDeltaforIPN = totalStockPerIpn + int.Parse(totalReqPerIPN.ToString());
+
+
+
+                    if (currentBomItem.QtyInKit < 0 && (currentBomItem.QtyInKit + whQty) < 0 && totalDeltaforIPN <0)
                     {
                         htmlContent += "<tr style='text-align:center;'>";
 
@@ -1486,13 +1540,24 @@ var myPieChart = new Chart(ctx, {
 
                         var rowColorClassQ = currentBomItem.QtyInKit < 0 ? "lightcoral" : "lightgreen";
                         htmlContent += $"<td style='width:12%;'>{currentBomItem.QtyInKit}</td>";
-                        htmlContent += $"<td class='{rowColorClassQ}' style='width:12%;'>{currentBomItem.QtyInKit + whQty}</td>";
+
+                        //int totalReqPerIPN =stockData.Where(si => si.IPN==currentBomItem.IPN).Select(w=>w.TotalRequired);
+
+                        
+
+
+                        //htmlContent += $"<td class='{rowColorClassQ}' style='width:12%;'>{currentBomItem.QtyInKit + whQty}</td>";
+
+                        
+                            htmlContent += $"<td class='{rowColorClassQ}' style='width:12%;'>{totalDeltaforIPN}</td>";
+                        
+                        
 
                         // Update the dictionary with the new stock quantity for the current IPN
                         //updatedStockDictionary[currentBomItem.IPN] = int.Parse(currentBomItem.QtyInKit.ToString());
 
-                        WHitem deducter = new   WHitem();
-                        deducter.IPN= currentBomItem.IPN;
+                        WHitem deducter = new WHitem();
+                        deducter.IPN = currentBomItem.IPN;
                         deducter.Stock = int.Parse(currentBomItem.QtyInKit.ToString());
                         stockItems.Add(deducter);
 
