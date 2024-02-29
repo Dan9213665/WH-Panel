@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.OleDb;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Reflection.Emit;
@@ -22,6 +23,7 @@ namespace WH_Panel
     public partial class FrmIPNgenerator : Form
     {
         public List<WHitem> avlItemsFromTheMainForm = new List<WHitem>();
+        public string sqlAvlConnectionStringFromMainForm = string.Empty;
         List<string> typesNamesList = new List<string> { "CAP", "RES", "IND", "OSC", "TRN", "DID", "PWR", "CON", "ICT", "PCB" };
         List<string> manufacturersList = new List<string> { "SAMTEC","Texas Instruments",
 "FINISAR",
@@ -428,11 +430,14 @@ namespace WH_Panel
 };
         public string _clientPrefix = string.Empty;
         //public List<WHitem> avlItems = new List<WHitem>();
-        public string avlROBOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_AVL.xlsm";
-        public FrmIPNgenerator(List<WHitem> avlItems, string clientPrefix)
+        //public string avlROBOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_AVL.xlsm";
+        public FrmIPNgenerator(List<WHitem> avlItems, string clientPrefix, string sqlAvl)
         {
             this._clientPrefix = clientPrefix;
             this.avlItemsFromTheMainForm = avlItems;
+            this.sqlAvlConnectionStringFromMainForm = sqlAvl;
+
+
             InitializeComponent();
             StartUpLogic();
             UpdateControlColors(this);
@@ -613,7 +618,8 @@ namespace WH_Panel
                 itemToAddToAvl.Manufacturer = comboBox2.SelectedItem.ToString();
                 itemToAddToAvl.MFPN = textBox2.Text.ToString();
                 itemToAddToAvl.Description = richTextBox1.Text.ToString();
-                DataInserter(avlROBOTRON, "AVL", itemToAddToAvl);
+                DataInserter(itemToAddToAvl);
+
                 //this.Dispose();
                 this.Close();
             }
@@ -638,24 +644,54 @@ namespace WH_Panel
                 MessageBox.Show("Please populate all the required fields before proceeding.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        private void DataInserter(string fp, string thesheetName, WHitem wHitem)
+        private void DataInserter(WHitem wHitem)
         {
+            //try
+            //{
+            //    string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+            //    using (OleDbConnection conn = new OleDbConnection(constr))
+            //    {
+            //        conn.Open();
+            //        OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$] (IPN,Manufacturer,MFPN,Description) values('" + wHitem.IPN + "','" + wHitem.Manufacturer + "','" + wHitem.MFPN + "','" + wHitem.Description + "')", conn);
+            //        command.ExecuteNonQuery();
+            //        conn.Close();
+            //    }
+            //    MessageBox.Show(wHitem.IPN.ToString() + " added to AVL");
+            //}
+            //catch (IOException)
+            //{
+            //    MessageBox.Show("Error");
+            //}
+
+
             try
             {
-                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
-                using (OleDbConnection conn = new OleDbConnection(constr))
+                string constr = sqlAvlConnectionStringFromMainForm;
+                using (SqlConnection conn = new SqlConnection(constr))
                 {
                     conn.Open();
-                    OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$] (IPN,Manufacturer,MFPN,Description) values('" + wHitem.IPN + "','" + wHitem.Manufacturer + "','" + wHitem.MFPN + "','" + wHitem.Description + "')", conn);
+                    SqlCommand command = new SqlCommand("INSERT INTO AVL (IPN, Manufacturer, MFPN, Description) VALUES (@IPN, @Manufacturer, @MFPN, @Description)", conn);
+                    command.Parameters.AddWithValue("@IPN", wHitem.IPN);
+                    command.Parameters.AddWithValue("@Manufacturer", wHitem.Manufacturer);
+                    command.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
+                    command.Parameters.AddWithValue("@Description", wHitem.Description);
                     command.ExecuteNonQuery();
                     conn.Close();
                 }
-                MessageBox.Show(wHitem.IPN.ToString() + " added to AVL");
+
+                string successMessage = "Item successfully added to AVL!" + Environment.NewLine +
+        "IPN: " + wHitem.IPN + Environment.NewLine +
+        "Manufacturer: " + wHitem.Manufacturer + Environment.NewLine +
+        "MFPN: " + wHitem.MFPN + Environment.NewLine +
+        "Description: " + wHitem.Description;
+
+                MessageBox.Show(successMessage, "Success");
             }
             catch (IOException)
             {
                 MessageBox.Show("Error");
             }
+
         }
         private void textBox1_KeyUp(object sender, KeyEventArgs e)
         {

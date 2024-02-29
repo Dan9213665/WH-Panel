@@ -2302,7 +2302,7 @@ namespace WH_Panel
                     //    List<string> sp = avlItems[0].IPN.Split('-').ToList();
                     //    prefix = sp[0];
                     //}
-                    FrmIPNgenerator gen = new FrmIPNgenerator(avlItems, prefix);
+                    FrmIPNgenerator gen = new FrmIPNgenerator(avlItems, prefix, warehouses.FirstOrDefault(x => x.clName == comboBox3.SelectedItem.ToString()).sqlAvl);
                     gen.FormClosed += (s, args) =>
                     {
                         button2.PerformClick(); // Replace button2 with your actual button name
