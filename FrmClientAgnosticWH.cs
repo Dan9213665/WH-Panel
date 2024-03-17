@@ -962,11 +962,33 @@ namespace WH_Panel
                 cmd.ExecuteNonQuery();
                 conn.Close();
                 Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
-                Thread.Sleep(500);
+                if(Environment.UserName == "rbtwh")
+                {
+                    Thread.Sleep(1500);
+                }
+                else
+                {
+                    Thread.Sleep(500);
+                }
+                
                 SendKeys.SendWait("^p");
-                Thread.Sleep(500);
+                if (Environment.UserName == "rbtwh")
+                {
+                    Thread.Sleep(1500);
+                }
+                else
+                {
+                    Thread.Sleep(500);
+                }
                 SendKeys.SendWait("{Enter}");
-                Thread.Sleep(500);
+                if (Environment.UserName == "rbtwh")
+                {
+                    Thread.Sleep(1500);
+                }
+                else
+                {
+                    Thread.Sleep(500);
+                }
             }
             catch (Exception e)
             {

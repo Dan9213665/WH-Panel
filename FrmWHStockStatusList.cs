@@ -106,6 +106,9 @@ namespace WH_Panel
                 .Where(item => filterValues.Contains(item.IPN))
                 .GroupBy(item => item.IPN).OrderBy(item => item.Key)
             .ToList();
+
+         
+
             //groupedByIPN.OrderBy(item => item.Key);
             // Generate and display the HTML report using the grouped list
             GenerateHTMLReport(groupedByIPN);
@@ -228,6 +231,7 @@ namespace WH_Panel
                 writer.WriteLine("</script>");
                 foreach (var group in groupedByIPN)
                 {
+                    group.OrderBy(item => item.Updated_on);
                     //writer.WriteLine("<h2>IPN: " + group.Key + "</h2>");
                     writer.WriteLine("<table border='1'>");
                     // Table headers
