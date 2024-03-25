@@ -33,7 +33,7 @@ namespace WH_Panel
         List<ClientWarehouse> warehouses { get; set; }
         public List<WHitem> stockItems = new List<WHitem>();
         List<string> selectedFileNames = new List<string>();
-        public bool isSql =false;
+        public bool isSql = false;
         public FrmLinkSimulator()
         {
             InitializeComponent();
@@ -234,6 +234,8 @@ namespace WH_Panel
                 }
             }
         }
+
+        string[] fileNames { get; set; }
         private void button1_Click(object sender, EventArgs e)
         {
             openFileDialog1.Title = "Select BOM File";
@@ -242,7 +244,7 @@ namespace WH_Panel
             openFileDialog1.Multiselect = true;
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                string[] fileNames = openFileDialog1.FileNames; // Get all selected file names
+                fileNames = openFileDialog1.FileNames; // Get all selected file names
                 foreach (string fileName in fileNames)
                 {
                     string theExcelFilePath = Path.GetFileName(fileName);
@@ -444,18 +446,18 @@ namespace WH_Panel
             {
                 if (comboBox6.SelectedItem == w.clName)
                 {
-                    if(w.sqlStock!=null)
+                    if (w.sqlStock != null)
                     {
                         isSql = true;
                         StockViewDataLoader(w.sqlStock, "STOCK");
-                        
+
                     }
                     else
                     {
                         isSql = false;
                         StockViewDataLoader(w.clStockFile, "STOCK");
                     }
-                    
+
                 }
             }
             if (Control.MouseButtons == MouseButtons.Left)
@@ -795,7 +797,7 @@ var myPieChart = new Chart(ctx, {
             stockItems.Clear();
             try
             {
-                if(isSql)
+                if (isSql)
                 {
                     // Connection string for SQL Server Express
                     string connectionString = fp;
@@ -1208,7 +1210,7 @@ var myPieChart = new Chart(ctx, {
         }
 
         private void button5_Click(object sender, EventArgs e)
-            {
+        {
 
             foreach (ClientWarehouse w in warehouses)
             {
@@ -1289,10 +1291,10 @@ var myPieChart = new Chart(ctx, {
             TotalRequired = group.Sum(item => item.Delta)
         })
                 .OrderBy(item => item.BOMs.FirstOrDefault().Title);
-                string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-                // Generating the HTML content
-                // <link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'>
-                string htmlContent = @"<!DOCTYPE html>
+            string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+            // Generating the HTML content
+            // <link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'>
+            string htmlContent = @"<!DOCTYPE html>
                         <html style='background-color: gray;'>
                         <head>
                         <style>
@@ -1328,47 +1330,47 @@ var myPieChart = new Chart(ctx, {
                         </style>
                         <script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
                         </head>";
-                htmlContent += @"<body>";
-                htmlContent += @"<table style='border: 1px solid; text-align: center; font-weight:bold;'>";
-                htmlContent += @"<tr>";
-                htmlContent += @"<td style='width: 25%;height: 100%;' id='completion-chart-td'> <div> <canvas id='completion-chart'></canvas> </div></td>";
-                htmlContent += @"<td style='width: 50%;'><h2>UPDATED_" + fileTimeStamp + "</h2></td>";
-                htmlContent += @"<td style='width: 25%;'></td>";
-                htmlContent += @"</tr>";
-                htmlContent += @"<tr><td>Multi-BOM simulation for " + BOMs.Count + " kits:</td></tr>";
-                foreach (var bom in BOMs)
+            htmlContent += @"<body>";
+            htmlContent += @"<table style='border: 1px solid; text-align: center; font-weight:bold;'>";
+            htmlContent += @"<tr>";
+            htmlContent += @"<td style='width: 25%;height: 100%;' id='completion-chart-td'> <div> <canvas id='completion-chart'></canvas> </div></td>";
+            htmlContent += @"<td style='width: 50%;'><h2>UPDATED_" + fileTimeStamp + "</h2></td>";
+            htmlContent += @"<td style='width: 25%;'></td>";
+            htmlContent += @"</tr>";
+            htmlContent += @"<tr><td>Multi-BOM simulation for " + BOMs.Count + " kits:</td></tr>";
+            foreach (var bom in BOMs)
+            {
+                int bomPositiveDelta = 0;
+                int bomNegativeDelta = 0;
+                for (int i = 0; i < bom.Items.Count; i++)
                 {
-                    int bomPositiveDelta = 0;
-                    int bomNegativeDelta = 0;
-                    for (int i = 0; i < bom.Items.Count; i++)
+                    if (bom.Items[i].Delta >= 0)
                     {
-                        if (bom.Items[i].Delta >= 0)
-                        {
-                            bomPositiveDelta++;
-                        }
-                        else
-                        {
-                            bomNegativeDelta++;
-                        }
-                    }
-                    int bomTot = bomPositiveDelta + bomNegativeDelta;
-                    double completionPercentage = 0;
-                    if (bomTot == bomPositiveDelta)
-                    {
-                        completionPercentage = 100;
+                        bomPositiveDelta++;
                     }
                     else
                     {
-                        completionPercentage = Math.Round((bomPositiveDelta * 100.0) / bomTot, 2);
+                        bomNegativeDelta++;
                     }
-                    htmlContent += $"<tr{(bomPositiveDelta == bomTot ? " style='background-color: lightgreen;'" : "")}><td>{bom.Name.TrimEnd(".xlsm".ToCharArray())} ({bomPositiveDelta}/{bomTot} IPNs in KIT) {completionPercentage}%</td></tr>";
                 }
-                htmlContent += @"<tr ><td><div id='completion-perc'> Average completion percentage is  </div></td></tr>";
-                htmlContent += @" <tr><td>
+                int bomTot = bomPositiveDelta + bomNegativeDelta;
+                double completionPercentage = 0;
+                if (bomTot == bomPositiveDelta)
+                {
+                    completionPercentage = 100;
+                }
+                else
+                {
+                    completionPercentage = Math.Round((bomPositiveDelta * 100.0) / bomTot, 2);
+                }
+                htmlContent += $"<tr{(bomPositiveDelta == bomTot ? " style='background-color: lightgreen;'" : "")}><td>{bom.Name.TrimEnd(".xlsm".ToCharArray())} ({bomPositiveDelta}/{bomTot} IPNs in KIT) {completionPercentage}%</td></tr>";
+            }
+            htmlContent += @"<tr ><td><div id='completion-perc'> Average completion percentage is  </div></td></tr>";
+            htmlContent += @" <tr><td>
 <input type='text' id=""searchInput"" placeholder=""Filter IPN or MFPN.."" onkeyup=""filterTable()"" />
 <button onclick=""clearFilter()"">Clear Filter</button></td></tr>";
-                htmlContent += @"</tbody></table><br>";
-                htmlContent += @"
+            htmlContent += @"</tbody></table><br>";
+            htmlContent += @"
     <style>
         #stockTableMain th {
             position: sticky;
@@ -1389,42 +1391,42 @@ var myPieChart = new Chart(ctx, {
                 <th style='width: 12%;'>DELTA</th>
             </tr>
         </thead>";
-                List<SIMIPNTABLE> MAINDATASOURCE_LIST = new List<SIMIPNTABLE>();
-                foreach (var item in stockDataDetailed)
+            List<SIMIPNTABLE> MAINDATASOURCE_LIST = new List<SIMIPNTABLE>();
+            foreach (var item in stockDataDetailed)
+            {
+                SIMIPNTABLE MAINDATASOURCE = new SIMIPNTABLE();
+                MAINDATASOURCE.IPN = item.IPN;
+                //MAINDATASOURCE.WHqty = stockItems.Where(si => si.IPN == item.IPN).Sum(si => si.Stock);
+                //MAINDATASOURCE.KITsBalance = item.TotalRequired;
+                //MAINDATASOURCE.DELTA = MAINDATASOURCE.WHqty + MAINDATASOURCE.KITsBalance;
+                MAINDATASOURCE.BOMITEMS = new List<BOMitem>();
+                foreach (var bomItem in item.BOMs)
                 {
-                    SIMIPNTABLE MAINDATASOURCE = new SIMIPNTABLE();
-                    MAINDATASOURCE.IPN = item.IPN;
-                    //MAINDATASOURCE.WHqty = stockItems.Where(si => si.IPN == item.IPN).Sum(si => si.Stock);
-                    //MAINDATASOURCE.KITsBalance = item.TotalRequired;
-                    //MAINDATASOURCE.DELTA = MAINDATASOURCE.WHqty + MAINDATASOURCE.KITsBalance;
-                    MAINDATASOURCE.BOMITEMS = new List<BOMitem>();
-                    foreach (var bomItem in item.BOMs)
-                    {
-                        BOMitem b = new BOMitem();
-                        b.ProjectName = bomItem.Title;
-                        b.MFPN = bomItem.MFPN;
-                        b.IPN = bomItem.IPN;
-                        b.Description = bomItem.Description;
-                        b.QtyInKit = bomItem.Quantity;
-                        MAINDATASOURCE.BOMITEMS.Add(b);
-                    }
-                    MAINDATASOURCE_LIST.Add(MAINDATASOURCE);
+                    BOMitem b = new BOMitem();
+                    b.ProjectName = bomItem.Title;
+                    b.MFPN = bomItem.MFPN;
+                    b.IPN = bomItem.IPN;
+                    b.Description = bomItem.Description;
+                    b.QtyInKit = bomItem.Quantity;
+                    MAINDATASOURCE.BOMITEMS.Add(b);
                 }
-                // Order the MAINDATASOURCE_LIST by DELTA
-                MAINDATASOURCE_LIST = MAINDATASOURCE_LIST.OrderBy(mainDataSource => mainDataSource.DELTA).ToList();
-                // Generate HTML
-                htmlContent += "<table border='1' style='border-collapse: collapse; width: 100%;'>";
-                //htmlContent += "<tr style='background-color: #f2f2f2;'>";
-                //htmlContent += "<th style='padding: 10px;'>IPN</th>";
-                //htmlContent += "<th style='padding: 10px;'>Warehouse Quantity</th>";
-                //htmlContent += "<th style='padding: 10px;'>KITs Balance</th>";
-                //htmlContent += "<th style='padding: 10px;'>Delta</th>";
-                //htmlContent += "</tr>";
-                foreach (var mainDataSource in MAINDATASOURCE_LIST)
-                {
-                    var rowColorClass = mainDataSource.DELTA < 0 ? "lightcoral" : "lightgreen";
-                    // Add main data row
-                    htmlContent += $"<tr class='{rowColorClass}' style='text-align:center;border: 1px solid black;'>";
+                MAINDATASOURCE_LIST.Add(MAINDATASOURCE);
+            }
+            // Order the MAINDATASOURCE_LIST by DELTA
+            MAINDATASOURCE_LIST = MAINDATASOURCE_LIST.OrderBy(mainDataSource => mainDataSource.DELTA).ToList();
+            // Generate HTML
+            htmlContent += "<table border='1' style='border-collapse: collapse; width: 100%;'>";
+            //htmlContent += "<tr style='background-color: #f2f2f2;'>";
+            //htmlContent += "<th style='padding: 10px;'>IPN</th>";
+            //htmlContent += "<th style='padding: 10px;'>Warehouse Quantity</th>";
+            //htmlContent += "<th style='padding: 10px;'>KITs Balance</th>";
+            //htmlContent += "<th style='padding: 10px;'>Delta</th>";
+            //htmlContent += "</tr>";
+            foreach (var mainDataSource in MAINDATASOURCE_LIST)
+            {
+                var rowColorClass = mainDataSource.DELTA < 0 ? "lightcoral" : "lightgreen";
+                // Add main data row
+                htmlContent += $"<tr class='{rowColorClass}' style='text-align:center;border: 1px solid black;'>";
 
                 string truncatedTitle = mainDataSource.IPN.Length > 5
                            ? mainDataSource.IPN.Substring(0, mainDataSource.IPN.Length - 5)
@@ -1432,14 +1434,14 @@ var myPieChart = new Chart(ctx, {
 
 
                 htmlContent += $"<td style='width:64%;' columnspan='4'>{truncatedTitle}</td>";
-                    //htmlContent += $"<td style='width:12%;'>{mainDataSource.WHqty}</td>";
-                    //htmlContent += $"<td style='width:12%;'>{mainDataSource.KITsBalance}</td>";
-                    //htmlContent += $"<td class='DELTAFIELD' style='width:12%;'>{mainDataSource.DELTA}</td>";
-                    htmlContent += "</tr>";
-                    // Add sub-table for BOM items style='border: 1px solid black;'
-                    htmlContent += "<tr>";
-                    htmlContent += "<td  colspan='7'>";
-                    htmlContent += "<table border='1' style='border-collapse: collapse; width: 100%;border: 1px solid black;'>";
+                //htmlContent += $"<td style='width:12%;'>{mainDataSource.WHqty}</td>";
+                //htmlContent += $"<td style='width:12%;'>{mainDataSource.KITsBalance}</td>";
+                //htmlContent += $"<td class='DELTAFIELD' style='width:12%;'>{mainDataSource.DELTA}</td>";
+                htmlContent += "</tr>";
+                // Add sub-table for BOM items style='border: 1px solid black;'
+                htmlContent += "<tr>";
+                htmlContent += "<td  colspan='7'>";
+                htmlContent += "<table border='1' style='border-collapse: collapse; width: 100%;border: 1px solid black;'>";
                 // Add BOM item header
                 //htmlContent += "<tr class='{rowColorClass}' style='background-color: #d9edf7;'>";
                 //htmlContent += "<th style='padding: 10px;'>Project Name</th>";
@@ -1521,14 +1523,14 @@ var myPieChart = new Chart(ctx, {
 
 
 
-                    if (currentBomItem.QtyInKit < 0 && (currentBomItem.QtyInKit + whQty) < 0 && totalDeltaforIPN <0)
+                    if (currentBomItem.QtyInKit < 0 && (currentBomItem.QtyInKit + whQty) < 0 && totalDeltaforIPN < 0)
                     {
                         htmlContent += "<tr style='text-align:center;'>";
 
                         htmlContent += $"<td class='wrap-content' style='width:12%;white-space: nowrap;'>{currentBomItem.IPN}</td>";
                         htmlContent += $"<td class='wrap-content' style='width:12%;'>{currentBomItem.MFPN}</td>";
                         htmlContent += $"<td class='wrap-content' style='width:36%;' columnspan='3'>{currentBomItem.Description}</td>";
-                        if(whQty<0)
+                        if (whQty < 0)
                         {
                             htmlContent += $"<td style='width:12%;'>0 ({whQty})</td>";
                         }
@@ -1536,22 +1538,22 @@ var myPieChart = new Chart(ctx, {
                         {
                             htmlContent += $"<td style='width:12%;'>{whQty}</td>";
                         }
-                        
+
 
                         var rowColorClassQ = currentBomItem.QtyInKit < 0 ? "lightcoral" : "lightgreen";
                         htmlContent += $"<td style='width:12%;'>{currentBomItem.QtyInKit}</td>";
 
                         //int totalReqPerIPN =stockData.Where(si => si.IPN==currentBomItem.IPN).Select(w=>w.TotalRequired);
 
-                        
+
 
 
                         //htmlContent += $"<td class='{rowColorClassQ}' style='width:12%;'>{currentBomItem.QtyInKit + whQty}</td>";
 
-                        
-                            htmlContent += $"<td class='{rowColorClassQ}' style='width:12%;'>{totalDeltaforIPN}</td>";
-                        
-                        
+
+                        htmlContent += $"<td class='{rowColorClassQ}' style='width:12%;'>{totalDeltaforIPN}</td>";
+
+
 
                         // Update the dictionary with the new stock quantity for the current IPN
                         //updatedStockDictionary[currentBomItem.IPN] = int.Parse(currentBomItem.QtyInKit.ToString());
@@ -1576,14 +1578,14 @@ var myPieChart = new Chart(ctx, {
 
                 // Close sub-table
                 htmlContent += "</table>";
-                    htmlContent += "</br>";
-                    htmlContent += "</td>";
-                    htmlContent += "</tr>";
-                }
-                // Close the main table
-                htmlContent += "</table>";
-                htmlContent += "</div></table>";
-                htmlContent += @"<script>
+                htmlContent += "</br>";
+                htmlContent += "</td>";
+                htmlContent += "</tr>";
+            }
+            // Close the main table
+            htmlContent += "</table>";
+            htmlContent += "</div></table>";
+            htmlContent += @"<script>
 window.onload = function() {
      CalculateCompletion();
 document.addEventListener('DOMContentLoaded', function() {
@@ -1688,19 +1690,46 @@ var myPieChart = new Chart(ctx, {
     }
   });
 </script>";
-                htmlContent += "</body></html>";
-                string filename = @"\\dbr1\Data\WareHouse\2024\WHsearcher\" + fileTimeStamp + "_BOMs_sim" + ".html";
-                using (StreamWriter writer = new StreamWriter(filename))
-                {
-                    writer.Write(htmlContent);
-                }
-                // Opening the HTML file in the default browser
-                var process = new Process();
-                process.StartInfo = new ProcessStartInfo(filename)
-                {
-                    UseShellExecute = true
-                };
-                process.Start();
+            htmlContent += "</body></html>";
+            string filename = @"\\dbr1\Data\WareHouse\2024\WHsearcher\" + fileTimeStamp + "_BOMs_sim" + ".html";
+            using (StreamWriter writer = new StreamWriter(filename))
+            {
+                writer.Write(htmlContent);
             }
+            // Opening the HTML file in the default browser
+            var process = new Process();
+            process.StartInfo = new ProcessStartInfo(filename)
+            {
+                UseShellExecute = true
+            };
+            process.Start();
         }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            BOMs.Clear();
+
+            if (fileNames != null && fileNames.Length > 0)
+            {
+                foreach (string fileName in fileNames)
+                {
+                    string theExcelFilePath = Path.GetFileName(fileName);
+                    string Litem = Path.GetFileName(fileName);
+                    //if (IsFileLoaded(theExcelFilePath))
+                    //{
+                    //    MessageBox.Show("File already loaded!");
+                    //}
+                    //else
+                    //{
+                    DataLoader(fileName, theExcelFilePath);
+                    // Add the selected file path to the list
+                    selectedFileNames.Add(theExcelFilePath);
+                    //}
+                }
+            }
+
+
+
+        }
+    }
 }

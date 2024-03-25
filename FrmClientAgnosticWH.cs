@@ -962,7 +962,7 @@ namespace WH_Panel
                 cmd.ExecuteNonQuery();
                 conn.Close();
                 Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
-                if(Environment.UserName == "rbtwh")
+                if (Environment.UserName == "rbtwh")
                 {
                     Thread.Sleep(1500);
                 }
@@ -970,7 +970,7 @@ namespace WH_Panel
                 {
                     Thread.Sleep(500);
                 }
-                
+
                 SendKeys.SendWait("^p");
                 if (Environment.UserName == "rbtwh")
                 {
