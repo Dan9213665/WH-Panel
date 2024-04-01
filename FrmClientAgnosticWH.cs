@@ -574,7 +574,25 @@ namespace WH_Panel
                     {
                         string qInqty = (string)textBox6.Text;
                         string inQty = string.Empty;
-                        if (qInqty.StartsWith("Q"))
+                        if (qInqty.StartsWith("QTY:"))
+                        {
+                            inQty = qInqty.Substring(4);
+                            //MessageBox.Show("QTY:" + inQty);
+                            int outNumberq;
+                            bool successq = int.TryParse(inQty, out outNumberq);
+                            if (successq && outNumberq < 50001 && outNumberq > 0)
+                            {
+                                MoveIntoDATABASE(outNumberq, sorce_req, toPrintMFG);
+                                FilterStockDataGridView(textBox10.Text);
+                            }
+                            else
+                            {
+                                MessageBox.Show("Input positive numeric values ONLY !");
+                                textBox6.Text = string.Empty;
+                                textBox6.Focus();
+                            }
+                        }
+                        else if (qInqty.StartsWith("Q"))
                         {
                             inQty = qInqty.Substring(1);
                             //MessageBox.Show(inQty);
@@ -592,6 +610,7 @@ namespace WH_Panel
                                 textBox6.Focus();
                             }
                         }
+
                         else
                         {
                             inQty = (string)textBox6.Text;
@@ -630,7 +649,23 @@ namespace WH_Panel
                 if (textBox8.Text != string.Empty)
                 {
                     sorce_req = comboBox2.Text + textBox8.Text;
-                    if (textBox6.Text.ToString().StartsWith("Q"))
+                    if (textBox6.Text.ToString().StartsWith("QTY:"))
+                    {
+                        int outNumberq;
+                        bool successq = int.TryParse(textBox6.Text.ToString().Substring(4), out outNumberq);
+                        if (successq && outNumberq < 50001 && outNumberq > 0)
+                        {
+                            MoveIntoDATABASE(outNumberq, sorce_req, toPrintGILT);
+                            FilterStockDataGridView(textBox10.Text);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Input positive numeric values ONLY !");
+                            textBox6.Text = string.Empty;
+                            textBox6.Focus();
+                        }
+                    }
+                    else if (textBox6.Text.ToString().StartsWith("Q"))
                     {
                         int outNumberq;
                         bool successq = int.TryParse(textBox6.Text.ToString().Substring(1), out outNumberq);
@@ -2611,13 +2646,20 @@ namespace WH_Panel
                     {
                         foreach (DataRow item in dtExcelData.Rows)
                         {
-                            ItemsToAddToAvl.Add(new WHitem
+                            if (item["MFPN"]?.ToString()?.Trim() != string.Empty)
                             {
-                                IPN = item["IPN"]?.ToString()?.Trim(),
-                                Manufacturer = item["Manufacturer"]?.ToString(),
-                                MFPN = item["MFPN"]?.ToString()?.Trim(),
-                                Description = item["Description"]?.ToString()
-                            });
+                                ItemsToAddToAvl.Add(new WHitem
+                                {
+                                    IPN = item["IPN"]?.ToString()?.Trim(),
+                                    Manufacturer = item["Manufacturer"]?.ToString().ToUpper(),
+                                    MFPN = item["MFPN"]?.ToString()?.Trim(),
+                                    Description = item["Description"]?.ToString()
+                                });
+                            }
+                            else
+                            {
+                                MessageBox.Show($"{item["IPN"]?.ToString()?.Trim()} has no valid MFPN definition !!!", "MFPN missing !", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                            }
                         }
                     }
                     // Helper method to check for unique MFPN items and handle accordingly
@@ -2634,6 +2676,7 @@ namespace WH_Panel
                                 message += $"IPN: {item.IPN}, Manufacturer: {item.Manufacturer}, MFPN: {item.MFPN}, Description: {item.Description}\n\n";
                             }
                             MessageBox.Show(message);
+
                             // Call the function to add new items to the database
                             AddNewItemsToAVL(currentAvl, uniqueMFPNItems);
                         }
@@ -2848,5 +2891,124 @@ namespace WH_Panel
                 checkBox1.BackColor = Color.LightGray;
             }
         }
+
+        //private void dataGridView2_MouseClick(object sender, MouseEventArgs e)
+        //{
+        //   WHitem avlItem = new WHitem();
+        //    {
+
+        //    }
+
+
+        //    if (e.Button == MouseButtons.Right)
+        //    {
+        //        string selectedWarehouseName = comboBox3.SelectedItem.ToString(); // Get the selected name from ComboBox1
+
+        //        // Assuming warehouses is a collection of Warehouse objects
+        //        string fp = warehouses
+        //            .Where(w => w.clName == selectedWarehouseName) // Filter warehouses by selected name
+        //            .Select(w => w.sqlAvl)
+        //            .FirstOrDefault(); // Use FirstOrDefault() instead of First() to handle the case where no warehouse matches the selected name
+
+        //        string constr = fp;
+        //        using (SqlConnection conn = new SqlConnection(constr))
+        //        {
+        //            conn.Open();
+        //            SqlCommand command = new SqlCommand($"DELETE FROM [AVL] WHERE IPN = @IPN AND MFPN = @MFPN AND Description = @Description AND Manufacturer = @Manufacturer", conn);
+        //            command.Parameters.AddWithValue("@IPN", avlItem.IPN);
+        //            command.Parameters.AddWithValue("@MFPN", avlItem.MFPN); // Use wHitemABCD.IPN instead of wHitem.IPN
+        //            command.Parameters.AddWithValue("@Description", avlItem.Description); // Use wHitemABCD.MFPN instead of wHitem.MFPN
+        //            command.Parameters.AddWithValue("@Manufacturer", avlItem.Manufacturer); // Use wHitemABCD.Description instead of wHitem.Descriptio
+
+        //            command.ExecuteNonQuery();
+        //            conn.Close();
+        //        }
+        //        MessageBox.Show($"{avlItem.IPN} {avlItem.MFPN} {avlItem.Description} {avlItem.Manufacturer} deleted");
+        //        button2_Click(button3, EventArgs.Empty);
+        //    }
+        //}
+
+        private void dataGridView2_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                int rowIndex = dataGridView2.HitTest(e.X, e.Y).RowIndex;
+
+                if (rowIndex >= 0)
+                {
+                    // Create a new WHitem object
+                    WHitem avlItem = new WHitem();
+
+                    DataGridViewRow selectedRow = dataGridView2.Rows[rowIndex];
+
+                    // Loop through each cell in the row
+                    foreach (DataGridViewCell cell in selectedRow.Cells)
+                    {
+                        // Get the column name of the current cell
+                        string columnName = dataGridView2.Columns[cell.ColumnIndex].Name;
+
+                        // Populate WHitem object based on column name
+                        switch (columnName)
+                        {
+                            case "IPN":
+                                avlItem.IPN = cell.Value.ToString();
+                                break;
+                            case "MFPN":
+                                avlItem.MFPN = cell.Value.ToString();
+                                break;
+                            case "Description":
+                                avlItem.Description = cell.Value.ToString();
+                                break;
+                            case "Manufacturer":
+                                avlItem.Manufacturer = cell.Value.ToString();
+                                break;
+                                // Add cases for other columns as needed
+                        }
+                    }
+
+                    // Confirmation message
+                    DialogResult result = MessageBox.Show(
+                        $"Are you sure you want to delete the following item?\n\n" +
+                        $"IPN: {avlItem.IPN}\n" +
+                        $"MFPN: {avlItem.MFPN}\n" +
+                        $"Description: {avlItem.Description}\n" +
+                        $"Manufacturer: {avlItem.Manufacturer}\n",
+                        "Confirmation",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Warning
+                    );
+
+                    if (result == DialogResult.Yes)
+                    {
+                        // Continue with your existing logic for deletion
+
+                        string selectedWarehouseName = comboBox3.SelectedItem.ToString(); // Get the selected name from ComboBox1
+
+                        // Assuming warehouses is a collection of Warehouse objects
+                        string fp = warehouses
+                            .Where(w => w.clName == selectedWarehouseName) // Filter warehouses by selected name
+                            .Select(w => w.sqlAvl)
+                            .FirstOrDefault(); // Use FirstOrDefault() instead of First() to handle the case where no warehouse matches the selected name
+
+                        string constr = fp;
+                        using (SqlConnection conn = new SqlConnection(constr))
+                        {
+                            conn.Open();
+                            SqlCommand command = new SqlCommand($"DELETE TOP (1) FROM [AVL] WHERE IPN = @IPN AND MFPN = @MFPN AND Description = @Description AND Manufacturer = @Manufacturer", conn);
+                            command.Parameters.AddWithValue("@IPN", avlItem.IPN);
+                            command.Parameters.AddWithValue("@MFPN", avlItem.MFPN);
+                            command.Parameters.AddWithValue("@Description", avlItem.Description);
+                            command.Parameters.AddWithValue("@Manufacturer", avlItem.Manufacturer);
+
+                            command.ExecuteNonQuery();
+                            conn.Close();
+                        }
+                        MessageBox.Show($"{avlItem.IPN} {avlItem.MFPN} {avlItem.Description} {avlItem.Manufacturer} deleted");
+                        button2_Click(button3, EventArgs.Empty);
+                    }
+                }
+            }
+        }
+
     }
 }
