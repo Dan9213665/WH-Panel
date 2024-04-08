@@ -1,6 +1,8 @@
 ﻿using FastMember;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Office.Interop.Excel;
 using Seagull.Framework.Extensions;
+using Seagull.Framework.Utility;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,6 +13,7 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading;
@@ -20,6 +23,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Menu;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolBar;
 using Button = System.Windows.Forms.Button;
+using CheckBox = System.Windows.Forms.CheckBox;
 using ComboBox = System.Windows.Forms.ComboBox;
 using DataTable = System.Data.DataTable;
 using GroupBox = System.Windows.Forms.GroupBox;
@@ -34,13 +38,21 @@ namespace WH_Panel
         public List<WHitem> stockItems = new List<WHitem>();
         List<string> selectedFileNames = new List<string>();
         public bool isSql = false;
+        List<BOMList> loadedBOMs { get; set; }
+        List<BOMList> selectedBOMs { get; set; }
+        public int selectedBOMscount = 0;
+        public string fileName = string.Empty;
+        public string theExcelFilePath = string.Empty;
+        public DataTable BOM1Dtable = new DataTable();
         public FrmLinkSimulator()
         {
             InitializeComponent();
-            InitializeComboBoxes();
-            //IntitializeWarehouses();
             UpdateControlColors(this);
-            BOMs = new List<BOMList>();
+            loadedBOMs = new List<BOMList>();
+            selectedBOMs = new List<BOMList>();
+            dataGridView1.CellContentClick += DataGridView1_CellContentClick;
+            dataGridView1.CellClick += dataGridView1_CellClick;
+
         }
         public void InitializeGlobalWarehouses(List<ClientWarehouse> warehousesFromTheMain)
         {
@@ -53,19 +65,14 @@ namespace WH_Panel
                 comboBox6.Items.Add(warehouse.clName);
             }
         }
-        private void InitializeComboBoxes()
-        {
-            // Assuming comboBox1, comboBox2, and comboBox3 are the ComboBoxes in your form
-            comboBox1.SelectedIndexChanged += ComboBoxes_SelectedIndexChanged;
-            comboBox2.SelectedIndexChanged += ComboBoxes_SelectedIndexChanged;
-            comboBox3.SelectedIndexChanged += ComboBoxes_SelectedIndexChanged;
-            comboBox4.SelectedIndexChanged += ComboBoxes_SelectedIndexChanged;
-            comboBox5.SelectedIndexChanged += ComboBoxes_SelectedIndexChanged;
-        }
         private void UpdateControlColors(Control parentControl)
         {
             foreach (Control control in parentControl.Controls)
             {
+                // Skip processing of CheckedListBox controls
+                if (control is CheckedListBox)
+                    // Update control colors based on your criteria
+                    continue;
                 // Update control colors based on your criteria
                 control.BackColor = Color.LightGray;
                 control.ForeColor = Color.Black;
@@ -160,81 +167,9 @@ namespace WH_Panel
                 Items = new List<KitHistoryItem>();
             }
         }
-        public List<BOMList> BOMs { get; set; }
-        public string fileName = string.Empty;
-        public string theExcelFilePath = string.Empty;
-        public DataTable BOM1Dtable = new DataTable();
         private void ComboBoxes_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ComboBox selectedComboBox = (ComboBox)sender;
-            if (selectedComboBox == comboBox1)
-            {
-                groupBox6.Text = selectedComboBox.SelectedItem?.ToString() ?? "Select BOM in the combobox above";
-                UpdateLabelBasedOnComboBoxSelection(label1, selectedComboBox);
-            }
-            else if (selectedComboBox == comboBox2)
-            {
-                groupBox7.Text = selectedComboBox.SelectedItem?.ToString() ?? "Select BOM in the combobox above";
-                UpdateLabelBasedOnComboBoxSelection(label2, selectedComboBox);
-            }
-            else if (selectedComboBox == comboBox3)
-            {
-                groupBox8.Text = selectedComboBox.SelectedItem?.ToString() ?? "Select BOM in the combobox above";
-                UpdateLabelBasedOnComboBoxSelection(label3, selectedComboBox);
-            }
-            else if (selectedComboBox == comboBox4)
-            {
-                groupBox10.Text = selectedComboBox.SelectedItem?.ToString() ?? "Select BOM in the combobox above";
-                UpdateLabelBasedOnComboBoxSelection(label4, selectedComboBox);
-            }
-            else if (selectedComboBox == comboBox5)
-            {
-                groupBox12.Text = selectedComboBox.SelectedItem?.ToString() ?? "Select BOM in the combobox above";
-                UpdateLabelBasedOnComboBoxSelection(label5, selectedComboBox);
-            }
-            // Remove the selected item from other ComboBoxes
-            foreach (ComboBox comboBox in new[] { comboBox1, comboBox2, comboBox3, comboBox4, comboBox5 }.Where(c => c != selectedComboBox))
-            {
-                if (comboBox.SelectedItem == selectedComboBox.SelectedItem)
-                {
-                    comboBox.SelectedItem = null;
-                }
-            }
-            // Load data based on the selected items in the ComboBoxes
-            LoadDataIntoDataGridViews();
         }
-        private void UpdateLabelBasedOnComboBoxSelection(Label label, ComboBox selectedComboBox)
-        {
-            int selectedComboBoxIndex = Array.IndexOf(new[] { comboBox1, comboBox2, comboBox3, comboBox4, comboBox5 }, selectedComboBox);
-            if (selectedComboBoxIndex >= 0 && selectedComboBoxIndex < BOMs.Count)
-            {
-                int totalRows = BOMs[selectedComboBoxIndex].Items.Count;
-                int positiveCount = BOMs[selectedComboBoxIndex].Items.Count(item => (item.Delta ?? 0) >= 0);
-                double positivePercentage = (double)positiveCount / totalRows * 100;
-                label.Text = $"Positive Delta Percentage: {positivePercentage:F2}%";
-            }
-        }
-        private void LoadDataIntoDataGridViews()
-        {
-            for (int i = 0; i < 5; i++)
-            {
-                //if (i == 3) continue; // Skip the processing for ComboBox4 and DataGridView4
-                ComboBox currentComboBox = Controls.Find($"comboBox{i + 1}", true).FirstOrDefault() as ComboBox;
-                DataGridView currentDataGridView = Controls.Find($"dataGridView{i + 1}", true).FirstOrDefault() as DataGridView;
-                if (currentComboBox.SelectedItem != null)
-                {
-                    int selectedIndex = currentComboBox.SelectedIndex;
-                    PopulateBOMGridView(selectedIndex, currentDataGridView);
-                }
-                else
-                {
-                    currentDataGridView.DataSource = null;
-                    currentDataGridView.Rows.Clear();
-                    currentDataGridView.Refresh();
-                }
-            }
-        }
-
         string[] fileNames { get; set; }
         private void button1_Click(object sender, EventArgs e)
         {
@@ -261,19 +196,203 @@ namespace WH_Panel
                     }
                 }
             }
+            PopulateDataGridView();
+            SetSelectedBoms();
         }
-        private void SetComboBoxItems(List<string> fileNames)
+        private void SetSelectedBoms()
         {
-            // Set the ComboBox items in the order of selected file paths
-            comboBox1.SelectedItem = fileNames.Count > 0 ? fileNames[0] : null;
-            comboBox2.SelectedItem = fileNames.Count > 1 ? fileNames[1] : null;
-            comboBox3.SelectedItem = fileNames.Count > 2 ? fileNames[2] : null;
-            comboBox4.SelectedItem = fileNames.Count > 3 ? fileNames[3] : null;
-            comboBox5.SelectedItem = fileNames.Count > 4 ? fileNames[4] : null;
+            selectedBOMs.Clear(); // Clear the selectedBOMs list before populating
+            selectedBOMscount = 0;
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                // Ensure row is not null
+                if (row != null)
+                {
+                    // Check if row index is within range
+                    if (row.Index >= 0 && row.Index < dataGridView1.Rows.Count)
+                    {
+                        DataGridViewCheckBoxCell checkBoxCell = row.Cells[0] as DataGridViewCheckBoxCell;
+                        // Ensure checkBoxCell is not null
+                        if (checkBoxCell != null && checkBoxCell.Value != null)
+                        {
+                            bool isChecked = Convert.ToBoolean(checkBoxCell.Value);
+                            if (isChecked)
+                            {
+                                // Ensure column index 1 is within range
+                                if (row.Cells.Count > 1)
+                                {
+                                    string bomName = row.Cells[1].Value?.ToString(); // Safely get cell value
+                                    if (!string.IsNullOrEmpty(bomName))
+                                    {
+                                        if (loadedBOMs != null)
+                                        {
+                                            var selectedBom = loadedBOMs.FirstOrDefault(b => b.Name == bomName);
+                                            if (selectedBom != null)
+                                            {
+                                                selectedBOMscount++;
+                                                selectedBOMs.Add(selectedBom);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            label1.Text = $"Loaded: {dataGridView1.RowCount.ToString()}   Selected: {selectedBOMscount}";
+            label1.Parent?.Invalidate();
         }
+        private void PopulateDataGridView()
+        {
+            // Clear existing rows in the DataGridView
+            dataGridView1.Rows.Clear();
+            dataGridView1.Columns.Clear();
+            // Create DataGridView columns
+            DataGridViewCheckBoxColumn projectCheckBoxColumn = new DataGridViewCheckBoxColumn();
+            projectCheckBoxColumn.HeaderText = "Calculate"; // Header text of the checkbox column
+            projectCheckBoxColumn.ReadOnly = false; // Enable editing
+            dataGridView1.Columns.Add(projectCheckBoxColumn);
+            // Add CellContentClick event handler to the DataGridView
+
+            DataGridViewTextBoxColumn projectColumn = new DataGridViewTextBoxColumn();
+            projectColumn.HeaderText = "Project";
+            projectColumn.ReadOnly = true;
+            dataGridView1.Columns.Add(projectColumn);
+            DataGridViewTextBoxColumn ipnsColumn = new DataGridViewTextBoxColumn();
+            ipnsColumn.HeaderText = "IPNs in KIT";
+            ipnsColumn.ReadOnly = true;
+            dataGridView1.Columns.Add(ipnsColumn);
+            DataGridViewTextBoxColumn percentageColumn = new DataGridViewTextBoxColumn();
+            percentageColumn.HeaderText = "Percentage";
+            percentageColumn.ReadOnly = true;
+            dataGridView1.Columns.Add(percentageColumn);
+            dataGridView1.EditMode = DataGridViewEditMode.EditOnKeystrokeOrF2; // E
+            foreach (var bom in loadedBOMs)
+            {
+                int bomPositiveDelta = 0;
+                int bomNegativeDelta = 0;
+                for (int i = 0; i < bom.Items.Count; i++)
+                {
+                    if (bom.Items[i].Delta >= 0)
+                    {
+                        bomPositiveDelta++;
+                    }
+                    else
+                    {
+                        bomNegativeDelta++;
+                    }
+                }
+                int bomTot = bomPositiveDelta + bomNegativeDelta;
+                double completionPercentage = 0;
+                if (bomTot == bomPositiveDelta)
+                {
+                    completionPercentage = 100;
+                }
+                else
+                {
+                    completionPercentage = Math.Round((bomPositiveDelta * 100.0) / bomTot, 2);
+                }
+                string projectName = bom.Items.Count > 0 ? bom.Items[0].ProjectName : bom.Name;
+                string ipnsText = bomPositiveDelta + "/" + bomTot;
+                // Create a new row and add it to the DataGridView
+                DataGridViewRow row = new DataGridViewRow();
+                // Create a DataGridViewCheckBoxCell for the checkbox column
+                DataGridViewCheckBoxCell checkBoxCell = new DataGridViewCheckBoxCell();
+                checkBoxCell.Value = true; // Set the default value to false
+                row.Cells.Add(checkBoxCell); // Add the checkbox cell to the row
+                // Add other cells for project name, IPNs in KIT, and percentage
+                row.Cells.Add(new DataGridViewTextBoxCell { Value = projectName });
+                row.Cells.Add(new DataGridViewTextBoxCell { Value = ipnsText });
+                // Create a DataGridViewTextBoxCell for the percentage column
+                DataGridViewTextBoxCell percentageCell = new DataGridViewTextBoxCell { Value = completionPercentage };
+                // Check if the completion percentage is 100% and set the background color accordingly
+                if (completionPercentage == 100)
+                {
+                    percentageCell.Style.BackColor = Color.LightGreen;
+                }
+                // Add the percentage cell to the row
+                row.Cells.Add(percentageCell);
+                // Add the row to the DataGridView
+                dataGridView1.Rows.Add(row);
+            }
+            // Autofit columns
+            foreach (DataGridViewColumn column in dataGridView1.Columns)
+            {
+                column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
+        }
+        // Define the CellContentClick event handler
+        private void DataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (dataGridView1 != null && dataGridView1.Columns.Count > 0)
+            {
+                // Display column header text and indices for debugging
+                string columnInfo = "Columns in DataGridView:\n\n";
+                //foreach (DataGridViewColumn column in dataGridView1.Columns)
+                //{
+                //    columnInfo += "Header Text: " + column.HeaderText + ", Index: " + column.Index + "\n";
+                //}
+
+                //MessageBox.Show(columnInfo, "DataGridView Columns Information");
+
+                // Check if the clicked cell belongs to the checkbox column
+                //if (dataGridView1.Columns.Contains("Calculate") && e.ColumnIndex == dataGridView1.Columns["Calculate"].Index && e.RowIndex >= 0)
+                    if (e.RowIndex >= 0 && dataGridView1.Columns[e.ColumnIndex].HeaderText == "Calculate")
+                    {
+                    // Handle checkbox click event here
+                    DataGridViewCheckBoxCell cell = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex] as DataGridViewCheckBoxCell;
+                    if (cell != null)
+                    {
+                        bool isChecked = (bool)cell.EditedFormattedValue;
+                        // Perform actions based on the checkbox state (isChecked)
+                        // For example:
+                        if (isChecked)
+                        {
+                            // Checkbox is checked
+                            SetSelectedBoms();
+                            //MessageBox.Show("SetSelectedBoms called - Checkbox Checked");
+                        }
+                        else
+                        {
+                            // Checkbox is unchecked
+                            SetSelectedBoms();
+                            //MessageBox.Show("SetSelectedBoms called - Checkbox unchecked");
+                        }
+                    }
+                }
+            }
+        }
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+            // Check if the clicked cell belongs to the checkbox column
+            if (dataGridView1.Columns.Contains("Calculate") && e.ColumnIndex == dataGridView1.Columns["Calculate"].Index)
+            {
+                // Handle checkbox click event here
+                DataGridViewCheckBoxCell cell = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex] as DataGridViewCheckBoxCell;
+                if (cell != null)
+                {
+                    bool isChecked = (bool)cell.EditedFormattedValue;
+                    if (isChecked)
+                    {
+                        SetSelectedBoms();
+                        //MessageBox.Show("SetSelectedBoms called - Checkbox Checked");
+                    }
+                    else
+                    {
+                        SetSelectedBoms();
+                        //MessageBox.Show("SetSelectedBoms called - Checkbox Unchecked");
+                    }
+                }
+            }
+            //MessageBox.Show("Cell Clicked!");
+
+        }
+
         private bool IsFileLoaded(string fileName)
         {
-            foreach (BOMList bom in BOMs)
+            foreach (BOMList bom in loadedBOMs)
             {
                 if (bom.Name == fileName)
                 {
@@ -285,19 +404,6 @@ namespace WH_Panel
         private void DataLoader(string fp, string excelFIleName)
         {
             BOMList a = new BOMList(excelFIleName);
-            comboBox1.Items.Add(a.Name);
-            comboBox2.Items.Add(a.Name);
-            comboBox3.Items.Add(a.Name);
-            comboBox4.Items.Add(a.Name);
-            comboBox5.Items.Add(a.Name);
-            richTextBox1.Text += a.Name + "\n";
-            // Assuming comboBox1, comboBox2, and comboBox3 are the names of your ComboBox controls
-            // Set the SelectedIndex for each ComboBox based on its own count
-            comboBox1.SelectedIndex = comboBox1.Items.Count - 1;
-            comboBox2.SelectedIndex = comboBox2.Items.Count - 1;
-            comboBox3.SelectedIndex = comboBox3.Items.Count - 1;
-            comboBox4.SelectedIndex = comboBox4.Items.Count - 1;
-            comboBox5.SelectedIndex = comboBox5.Items.Count - 1;
             try
             {
                 string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=1\"";
@@ -359,12 +465,11 @@ namespace WH_Panel
                         conn.Close();
                     }
                 }
-                BOMs.Add(a);
+                loadedBOMs.Add(a);
                 if (a.Items.Count > 0)
                 {
                     CheckAndSetWarehouse(a.Items[0].IPN);
                 }
-                //PopulateBOMGridView();
             }
             catch (IOException e)
             {
@@ -382,64 +487,6 @@ namespace WH_Panel
                 }
             }
         }
-        private void PopulateBOMGridView(int selectedIndex, DataGridView dataGridView)
-        {
-            //if (dataGridView.Name == "dataGridView4") return; // Skip Populating DataGridView4
-            dataGridView.DataSource = null;
-            dataGridView.Rows.Clear();
-            dataGridView.Refresh();
-            if (selectedIndex >= 0 && selectedIndex < BOMs.Count)
-            {
-                DataTable table = new DataTable();
-                IEnumerable<KitHistoryItem> data = BOMs[selectedIndex].Items;
-                using (var reader = ObjectReader.Create(data))
-                {
-                    table.Load(reader);
-                }
-                dataGridView.DataSource = table;
-                SetColumsOrder(dataGridView);
-            }
-        }
-        private void SetColumsOrder(DataGridView dgw)
-        {
-            dgw.Columns["DateOfCreation"].Visible = false;
-            dgw.Columns["ProjectName"].Visible = false;
-            dgw.Columns["Description"].Visible = false;
-            dgw.Columns["Calc"].Visible = false;
-            dgw.Columns["Alts"].Visible = false;
-            dgw.Columns["MFPN"].Visible = false;
-            dgw.Columns["QtyPerUnit"].Visible = false;
-            dgw.Columns["IPN"].DisplayIndex = 0;
-            dgw.Columns["QtyInKit"].DisplayIndex = 1;
-            dgw.Columns["Delta"].DisplayIndex = 2;
-            // Set AutoSizeMode for the displayed columns
-            foreach (DataGridViewColumn column in dgw.Columns)
-            {
-                if (column.Visible)
-                {
-                    column.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-                }
-            }
-            // Handling the CellFormatting event
-            dgw.CellFormatting += (sender, e) =>
-            {
-                if (e.ColumnIndex == dgw.Columns["Delta"].Index && e.Value != null)
-                {
-                    // Change the cell color based on the value
-                    var deltaValue = Convert.ToDecimal(e.Value);
-                    if (deltaValue >= 0)
-                    {
-                        e.CellStyle.BackColor = Color.LightGreen;
-                    }
-                    else
-                    {
-                        e.CellStyle.BackColor = Color.IndianRed;
-                    }
-                }
-            };
-            // Sorting by Delta column
-            dgw.Sort(dgw.Columns["Delta"], ListSortDirection.Ascending);
-        }
         private void button4_MouseDown(object sender, MouseEventArgs e)
         {
             foreach (ClientWarehouse w in warehouses)
@@ -450,23 +497,23 @@ namespace WH_Panel
                     {
                         isSql = true;
                         StockViewDataLoader(w.sqlStock, "STOCK");
-
                     }
                     else
                     {
                         isSql = false;
                         StockViewDataLoader(w.clStockFile, "STOCK");
                     }
-
                 }
             }
             if (Control.MouseButtons == MouseButtons.Left)
             {
                 // This will be executed only on left-click
+                SetSelectedBoms();
                 GenerateHtmlReport(false);
             }
             else if (Control.MouseButtons == MouseButtons.Right)
             {
+                SetSelectedBoms();
                 GenerateHtmlReportWithKitSeparation();
             }
         }
@@ -480,7 +527,7 @@ namespace WH_Panel
         }
         private void GenerateHtmlReportWithKitSeparation()
         {
-            var stockDataDetailed = BOMs
+            var stockDataDetailed = selectedBOMs
     .SelectMany(bom => bom.Items)
     .GroupBy(item => item.IPN)
     .Select(group => new
@@ -543,8 +590,8 @@ namespace WH_Panel
             htmlContent += @"<td style='width: 50%;'><h2>UPDATED_" + fileTimeStamp + "</h2></td>";
             htmlContent += @"<td style='width: 25%;'></td>";
             htmlContent += @"</tr>";
-            htmlContent += @"<tr><td>Multi-BOM simulation for " + BOMs.Count + " kits:</td></tr>";
-            foreach (var bom in BOMs)
+            htmlContent += @"<tr><td>Multi-BOM simulation for " + selectedBOMs.Count + " kits:</td></tr>";
+            foreach (var bom in selectedBOMs)
             {
                 int bomPositiveDelta = 0;
                 int bomNegativeDelta = 0;
@@ -801,19 +848,14 @@ var myPieChart = new Chart(ctx, {
                 {
                     // Connection string for SQL Server Express
                     string connectionString = fp;
-
                     try
                     {
                         // Load STOCK table into dataGridView1
                         using (SqlConnection connection = new SqlConnection(connectionString))
                         {
-
-
                             SqlDataAdapter adapterStock = new SqlDataAdapter("SELECT * FROM STOCK", connection);
-
                             DataTable stockTable = new DataTable();
                             adapterStock.Fill(stockTable);
-
                             foreach (DataRow row in stockTable.Rows)
                             {
                                 WHitem item = new WHitem
@@ -827,10 +869,8 @@ var myPieChart = new Chart(ctx, {
                                     Comments = row["Comments"].ToString(),
                                     Source_Requester = row["Source_Requester"].ToString()
                                 };
-
                                 stockItems.Add(item);
                             }
-
                         }
                     }
                     catch (Exception ex)
@@ -838,7 +878,6 @@ var myPieChart = new Chart(ctx, {
                         // MessageBox.Show($"Error loading STOCK table: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
-
                 else
                 {
                     string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
@@ -895,14 +934,14 @@ var myPieChart = new Chart(ctx, {
         }
         private void GenerateHtmlReport(bool limitOrNot)
         {
-            var sumRequiredByIPN = BOMs.SelectMany(bom => bom.Items)
+            var sumRequiredByIPN = selectedBOMs.SelectMany(bom => bom.Items)
                                       .GroupBy(item => item.IPN)
                                       .Select(group => new
                                       {
                                           IPN = group.Key,
                                           TotalRequired = group.Sum(item => item.Delta)
                                       });
-            var stockData = BOMs.SelectMany(bom => bom.Items)
+            var stockData = selectedBOMs.SelectMany(bom => bom.Items)
                    .GroupBy(item => item.IPN)
                    .Select(group => new
                    {
@@ -969,27 +1008,14 @@ var myPieChart = new Chart(ctx, {
             htmlContent += @"<td style='width: 50%;'><h2>UPDATED_" + fileTimeStamp + "</h2></td>";
             htmlContent += @"<td style='width: 25%;'></td>";
             htmlContent += @"</tr>";
-            htmlContent += @"<tr><td>Multi-BOM simulation for " + BOMs.Count + " kits:</td></tr>";
+            htmlContent += @"<tr><td>Multi-BOM simulation for " + selectedBOMs.Count + " kits:</td></tr>";
             if (limitOrNot)
             {
-                string[] comboBoxItems = new string[] {
-                                        comboBox1.SelectedItem?.ToString(),
-                                        comboBox2.SelectedItem?.ToString(),
-                                        comboBox3.SelectedItem?.ToString(),
-                                        comboBox4.SelectedItem?.ToString(),
-                                        comboBox5.SelectedItem?.ToString() };
-                foreach (string item in comboBoxItems)
-                {
-                    string selectedText = item?.TrimEnd(".xlsm".ToCharArray());
-                    if (!string.IsNullOrEmpty(selectedText))
-                    {
-                        htmlContent += $"<tr><td>{selectedText}</td></tr>";
-                    }
-                }
+                //
             }
             else
             {
-                foreach (var bom in BOMs)
+                foreach (var bom in selectedBOMs)
                 {
                     int bomPositiveDelta = 0;
                     int bomNegativeDelta = 0;
@@ -1167,14 +1193,14 @@ var myPieChart = new Chart(ctx, {
         }
         private void OptimizeBOMOrder()
         {
-            if (BOMs.Count >= 2)
+            if (selectedBOMs.Count >= 2)
             {
                 int maxPositivePercentageIndex = -1;
                 double maxPositivePercentage = 0;
-                for (int j = 1; j < BOMs.Count; j++)
+                for (int j = 1; j < selectedBOMs.Count; j++)
                 {
-                    int totalRows = BOMs[j].Items.Count;
-                    int positiveCount = BOMs[j].Items.Count(item => (item.Delta ?? 0) > 0);
+                    int totalRows = selectedBOMs[j].Items.Count;
+                    int positiveCount = selectedBOMs[j].Items.Count(item => (item.Delta ?? 0) > 0);
                     double currentPositivePercentage = (double)positiveCount / totalRows;
                     if (currentPositivePercentage > maxPositivePercentage)
                     {
@@ -1185,15 +1211,15 @@ var myPieChart = new Chart(ctx, {
                 if (maxPositivePercentageIndex != -1 && maxPositivePercentageIndex != 0)
                 {
                     // Swap the BOMLists in the data grid views
-                    BOMList temp = BOMs[0];
-                    BOMs[0] = BOMs[maxPositivePercentageIndex];
-                    BOMs[maxPositivePercentageIndex] = temp;
+                    BOMList temp = selectedBOMs[0];
+                    selectedBOMs[0] = selectedBOMs[maxPositivePercentageIndex];
+                    selectedBOMs[maxPositivePercentageIndex] = temp;
                     // Reload the data in the respective ComboBoxes
-                    ComboBox[] comboBoxes = new ComboBox[] { comboBox1, comboBox2, comboBox3, comboBox4, comboBox5 };
-                    for (int i = 0; i < Math.Min(BOMs.Count, 5); i++)
-                    {
-                        comboBoxes[i].SelectedItem = BOMs[i].Name;
-                    }
+                    //ComboBox[] comboBoxes = new ComboBox[] { comboBox1, comboBox2, comboBox3, comboBox4, comboBox5 };
+                    //for (int i = 0; i < Math.Min(BOMs.Count, 5); i++)
+                    //{
+                    //    comboBoxes[i].SelectedItem = BOMs[i].Name;
+                    //}
                 }
             }
         }
@@ -1208,10 +1234,9 @@ var myPieChart = new Chart(ctx, {
             //}
             //GenerateHtmlReport(false);
         }
-
         private void button5_Click(object sender, EventArgs e)
         {
-
+            SetSelectedBoms();
             foreach (ClientWarehouse w in warehouses)
             {
                 if (comboBox6.SelectedItem == w.clName)
@@ -1220,34 +1245,24 @@ var myPieChart = new Chart(ctx, {
                     {
                         isSql = true;
                         StockViewDataLoader(w.sqlStock, "STOCK");
-
                     }
                     else
                     {
                         isSql = false;
                         StockViewDataLoader(w.clStockFile, "STOCK");
                     }
-
                 }
             }
-
-
-
-
-            var sumRequiredByIPN = BOMs.SelectMany(bom => bom.Items)
+            var sumRequiredByIPN = selectedBOMs.SelectMany(bom => bom.Items)
                                    .GroupBy(item => item.IPN)
                                    .Select(group => new
                                    {
                                        IPN = group.Key,
                                        TotalRequired = group.Sum(item => item.Delta)
                                    });
-
             List<WHitem> stockItemsOriginal = new List<WHitem>();
             stockItemsOriginal.AddRange(stockItems);
-
-
-
-            var stockData = BOMs.SelectMany(bom => bom.Items)
+            var stockData = selectedBOMs.SelectMany(bom => bom.Items)
                    .GroupBy(item => item.IPN)
                    .Select(group => new
                    {
@@ -1268,13 +1283,7 @@ var myPieChart = new Chart(ctx, {
                                   TotalRequired = sumItem.TotalRequired
                               })
                    .OrderBy(item => item.TotalRequired);
-
-
-
-
-
-
-            var stockDataDetailed = BOMs
+            var stockDataDetailed = selectedBOMs
         .SelectMany(bom => bom.Items)
         .GroupBy(item => item.ProjectName)
         .Select(group => new
@@ -1337,8 +1346,8 @@ var myPieChart = new Chart(ctx, {
             htmlContent += @"<td style='width: 50%;'><h2>UPDATED_" + fileTimeStamp + "</h2></td>";
             htmlContent += @"<td style='width: 25%;'></td>";
             htmlContent += @"</tr>";
-            htmlContent += @"<tr><td>Multi-BOM simulation for " + BOMs.Count + " kits:</td></tr>";
-            foreach (var bom in BOMs)
+            htmlContent += @"<tr><td>Multi-BOM simulation for " + selectedBOMs.Count + " kits:</td></tr>";
+            foreach (var bom in selectedBOMs)
             {
                 int bomPositiveDelta = 0;
                 int bomNegativeDelta = 0;
@@ -1427,106 +1436,27 @@ var myPieChart = new Chart(ctx, {
                 var rowColorClass = mainDataSource.DELTA < 0 ? "lightcoral" : "lightgreen";
                 // Add main data row
                 htmlContent += $"<tr class='{rowColorClass}' style='text-align:center;border: 1px solid black;'>";
-
                 string truncatedTitle = mainDataSource.IPN.Length > 5
                            ? mainDataSource.IPN.Substring(0, mainDataSource.IPN.Length - 5)
                            : mainDataSource.IPN;
-
-
                 htmlContent += $"<td style='width:64%;' columnspan='4'>{truncatedTitle}</td>";
-                //htmlContent += $"<td style='width:12%;'>{mainDataSource.WHqty}</td>";
-                //htmlContent += $"<td style='width:12%;'>{mainDataSource.KITsBalance}</td>";
-                //htmlContent += $"<td class='DELTAFIELD' style='width:12%;'>{mainDataSource.DELTA}</td>";
                 htmlContent += "</tr>";
                 // Add sub-table for BOM items style='border: 1px solid black;'
                 htmlContent += "<tr>";
                 htmlContent += "<td  colspan='7'>";
                 htmlContent += "<table border='1' style='border-collapse: collapse; width: 100%;border: 1px solid black;'>";
-                // Add BOM item header
-                //htmlContent += "<tr class='{rowColorClass}' style='background-color: #d9edf7;'>";
-                //htmlContent += "<th style='padding: 10px;'>Project Name</th>";
-                //htmlContent += "<th style='padding: 10px;'>MFPN</th>";
-                //htmlContent += "<th style='padding: 10px;'>Description</th>";
-                //htmlContent += "<th style='padding: 10px;'>Quantity in Kit</th>";
-                //htmlContent += "</tr>";
-                // Add BOM item data
-
-                //List<WHitem> updatedStockList = new List<WHitem>();
-
-
-                //foreach (var bomItem in mainDataSource.BOMITEMS)
-                //{
-
-                //int updatedStockQty = 0;
-
-                ////int whQty = stockItems.Where(si => si.IPN == bomItem.IPN).Sum(si => si.Stock);
-
-                //if(updatedStockList.Count>0)
-                //{
-                //    updatedStockQty = updatedStockList.FirstOrDefault(w => w.IPN == bomItem.IPN).Stock;
-                //}
-
-
-                //int whQty = stockItems.Where(si => si.IPN == bomItem.IPN).Sum(si => si.Stock) + updatedStockQty;
-
-
-
-                //if (bomItem.QtyInKit<0 && (bomItem.QtyInKit+whQty)<0)
-                //{
-                //    htmlContent += "<tr style='text-align:center;'>";
-
-                //    htmlContent += $"<td class='wrap-content' style='width:12%;white-space: nowrap;'>{bomItem.IPN}</td>";
-                //    htmlContent += $"<td class='wrap-content' style='width:12%;'>{bomItem.MFPN}</td>";
-                //    htmlContent += $"<td class='wrap-content' style='width:36%;' columnspan='3'>{bomItem.Description}</td>";
-                //    htmlContent += $"<td style='width:12%;'>{whQty}</td>";
-                //    var rowColorClassQ = bomItem.QtyInKit < 0 ? "lightcoral" : "lightgreen";
-                //    htmlContent += $"<td style='width:12%;'>{bomItem.QtyInKit}</td>";
-                //    htmlContent += $"<td class='{rowColorClassQ}' style='width:12%;'>{bomItem.QtyInKit + whQty}</td>";
-
-                //    updatedStockList.Add(new WHitem { IPN = bomItem.IPN, Stock = int.Parse(bomItem.QtyInKit.ToString())} );
-
-                //    htmlContent += "</tr>";
-                //}
-                //else
-                //{
-                //    //
-                //}
-
-
-                //}
-
-
-                //Dictionary<string, int> updatedStockDictionary = new Dictionary<string, int>();
-
                 foreach (var currentBomItem in mainDataSource.BOMITEMS)
                 {
-                    //int updatedStockQty = 0;
-
-                    // Check if the current IPN has an updated stock quantity
-                    //if (updatedStockDictionary.ContainsKey(currentBomItem.IPN))
-                    //{
-                    //    updatedStockQty = updatedStockDictionary[currentBomItem.IPN];
-                    //}
-
                     int whQty = stockItems.Where(si => si.IPN == currentBomItem.IPN).Sum(si => si.Stock);
-
-                    //whQty += updatedStockQty;
-
                     int? totalReqPerIPN = stockData
      .Where(si => si.IPN == currentBomItem.IPN)
      .Select(w => w.TotalRequired)
      .FirstOrDefault();
-
                     int totalStockPerIpn = stockItemsOriginal.Where(si => si.IPN == currentBomItem.IPN).Sum(si => si.Stock);
-
                     int totalDeltaforIPN = totalStockPerIpn + int.Parse(totalReqPerIPN.ToString());
-
-
-
                     if (currentBomItem.QtyInKit < 0 && (currentBomItem.QtyInKit + whQty) < 0 && totalDeltaforIPN < 0)
                     {
                         htmlContent += "<tr style='text-align:center;'>";
-
                         htmlContent += $"<td class='wrap-content' style='width:12%;white-space: nowrap;'>{currentBomItem.IPN}</td>";
                         htmlContent += $"<td class='wrap-content' style='width:12%;'>{currentBomItem.MFPN}</td>";
                         htmlContent += $"<td class='wrap-content' style='width:36%;' columnspan='3'>{currentBomItem.Description}</td>";
@@ -1538,32 +1468,13 @@ var myPieChart = new Chart(ctx, {
                         {
                             htmlContent += $"<td style='width:12%;'>{whQty}</td>";
                         }
-
-
                         var rowColorClassQ = currentBomItem.QtyInKit < 0 ? "lightcoral" : "lightgreen";
                         htmlContent += $"<td style='width:12%;'>{currentBomItem.QtyInKit}</td>";
-
-                        //int totalReqPerIPN =stockData.Where(si => si.IPN==currentBomItem.IPN).Select(w=>w.TotalRequired);
-
-
-
-
-                        //htmlContent += $"<td class='{rowColorClassQ}' style='width:12%;'>{currentBomItem.QtyInKit + whQty}</td>";
-
-
                         htmlContent += $"<td class='{rowColorClassQ}' style='width:12%;'>{totalDeltaforIPN}</td>";
-
-
-
-                        // Update the dictionary with the new stock quantity for the current IPN
-                        //updatedStockDictionary[currentBomItem.IPN] = int.Parse(currentBomItem.QtyInKit.ToString());
-
                         WHitem deducter = new WHitem();
                         deducter.IPN = currentBomItem.IPN;
                         deducter.Stock = int.Parse(currentBomItem.QtyInKit.ToString());
                         stockItems.Add(deducter);
-
-
                         htmlContent += "</tr>";
                     }
                     else
@@ -1575,7 +1486,6 @@ var myPieChart = new Chart(ctx, {
                         // Handle other cases if needed
                     }
                 }
-
                 // Close sub-table
                 htmlContent += "</table>";
                 htmlContent += "</br>";
@@ -1704,32 +1614,25 @@ var myPieChart = new Chart(ctx, {
             };
             process.Start();
         }
-
         private void button6_Click(object sender, EventArgs e)
         {
-            BOMs.Clear();
-
+            loadedBOMs.Clear();
+            selectedBOMs.Clear();
             if (fileNames != null && fileNames.Length > 0)
             {
                 foreach (string fileName in fileNames)
                 {
                     string theExcelFilePath = Path.GetFileName(fileName);
                     string Litem = Path.GetFileName(fileName);
-                    //if (IsFileLoaded(theExcelFilePath))
-                    //{
-                    //    MessageBox.Show("File already loaded!");
-                    //}
-                    //else
-                    //{
                     DataLoader(fileName, theExcelFilePath);
                     // Add the selected file path to the list
                     selectedFileNames.Add(theExcelFilePath);
-                    //}
                 }
             }
-
-
-
+            PopulateDataGridView();
+            SetSelectedBoms();
         }
+
+      
     }
 }
