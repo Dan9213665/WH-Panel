@@ -323,71 +323,165 @@ namespace WH_Panel
             }
         }
         // Define the CellContentClick event handler
+        //private void DataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        //{
+        //    if (dataGridView1 != null && dataGridView1.Columns.Count > 0)
+        //    {
+        //        // Display column header text and indices for debugging
+        //        //string columnInfo = "Columns in DataGridView:\n\n";
+        //        //foreach (DataGridViewColumn column in dataGridView1.Columns)
+        //        //{
+        //        //    columnInfo += "Header Text: " + column.HeaderText + ", Index: " + column.Index + "\n";
+        //        //}
+
+        //        //MessageBox.Show(columnInfo, "DataGridView Columns Information");
+
+        //        // Check if the clicked cell belongs to the checkbox column
+        //        //if (dataGridView1.Columns.Contains("Calculate") && e.ColumnIndex == dataGridView1.Columns["Calculate"].Index && e.RowIndex >= 0)
+        //        if (e.RowIndex >= 0 && dataGridView1.Columns[e.ColumnIndex].HeaderText == "Calculate")
+        //        {
+        //            // Handle checkbox click event here
+        //            DataGridViewCheckBoxCell cell = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex] as DataGridViewCheckBoxCell;
+        //            if (cell != null)
+        //            {
+        //                bool isChecked = (bool)cell.EditedFormattedValue;
+        //                // Perform actions based on the checkbox state (isChecked)
+        //                // For example:
+        //                if (isChecked)
+        //                {
+        //                    // Checkbox is checked
+        //                    SetSelectedBoms();
+        //                    //MessageBox.Show("SetSelectedBoms called - Checkbox Checked");
+        //                }
+        //                else
+        //                {
+        //                    // Checkbox is unchecked
+        //                    SetSelectedBoms();
+        //                    //MessageBox.Show("SetSelectedBoms called - Checkbox unchecked");
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
         private void DataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (dataGridView1 != null && dataGridView1.Columns.Count > 0)
+            if (IsCalculateColumn(e.ColumnIndex) && e.RowIndex >= 0)
             {
-                // Display column header text and indices for debugging
-                string columnInfo = "Columns in DataGridView:\n\n";
-                //foreach (DataGridViewColumn column in dataGridView1.Columns)
-                //{
-                //    columnInfo += "Header Text: " + column.HeaderText + ", Index: " + column.Index + "\n";
-                //}
-
-                //MessageBox.Show(columnInfo, "DataGridView Columns Information");
-
-                // Check if the clicked cell belongs to the checkbox column
-                //if (dataGridView1.Columns.Contains("Calculate") && e.ColumnIndex == dataGridView1.Columns["Calculate"].Index && e.RowIndex >= 0)
-                    if (e.RowIndex >= 0 && dataGridView1.Columns[e.ColumnIndex].HeaderText == "Calculate")
+                HandleCheckboxClick(e.RowIndex);
+            }
+        }
+        private void HandleCheckboxClick(int rowIndex)
+        {
+            // Iterate through each column in the DataGridView
+            foreach (DataGridViewColumn column in dataGridView1.Columns)
+            {
+                // Check if the column header text is "Calculate"
+                if (column.HeaderText == "Calculate")
+                {
+                    // Get the cell in the current row corresponding to the "Calculate" column
+                    DataGridViewCheckBoxCell checkBoxCell = dataGridView1.Rows[rowIndex].Cells[column.Index] as DataGridViewCheckBoxCell;
+                    if (checkBoxCell != null)
                     {
-                    // Handle checkbox click event here
-                    DataGridViewCheckBoxCell cell = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex] as DataGridViewCheckBoxCell;
-                    if (cell != null)
-                    {
-                        bool isChecked = (bool)cell.EditedFormattedValue;
-                        // Perform actions based on the checkbox state (isChecked)
-                        // For example:
+                        bool isChecked = (bool)checkBoxCell.EditedFormattedValue;
                         if (isChecked)
                         {
                             // Checkbox is checked
                             SetSelectedBoms();
-                            //MessageBox.Show("SetSelectedBoms called - Checkbox Checked");
                         }
                         else
                         {
                             // Checkbox is unchecked
                             SetSelectedBoms();
-                            //MessageBox.Show("SetSelectedBoms called - Checkbox unchecked");
                         }
                     }
                 }
             }
         }
-        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
 
-            // Check if the clicked cell belongs to the checkbox column
-            if (dataGridView1.Columns.Contains("Calculate") && e.ColumnIndex == dataGridView1.Columns["Calculate"].Index)
+        private bool IsCalculateColumn(int columnIndex)
+        {
+            if (dataGridView1.Columns[columnIndex].HeaderText == "Calculate")
             {
-                // Handle checkbox click event here
-                DataGridViewCheckBoxCell cell = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex] as DataGridViewCheckBoxCell;
-                if (cell != null)
+                return true;
+            }
+            return false;
+        }
+
+        //private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        //{
+
+        //    // Check if the clicked cell belongs to the checkbox column
+        //    if (dataGridView1.Columns.Contains("Calculate") && e.ColumnIndex == dataGridView1.Columns["Calculate"].Index)
+        //    {
+        //        // Handle checkbox click event here
+        //        DataGridViewCheckBoxCell cell = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex] as DataGridViewCheckBoxCell;
+        //        if (cell != null)
+        //        {
+        //            bool isChecked = (bool)cell.EditedFormattedValue;
+        //            if (isChecked)
+        //            {
+        //                SetSelectedBoms();
+        //                //MessageBox.Show("SetSelectedBoms called - Checkbox Checked");
+        //            }
+        //            else
+        //            {
+        //                SetSelectedBoms();
+        //                //MessageBox.Show("SetSelectedBoms called - Checkbox Unchecked");
+        //            }
+        //        }
+        //    }
+        //    //MessageBox.Show("Cell Clicked!");
+
+        //}
+        private void button7_Click(object sender, EventArgs e)
+        {
+            // Iterate through each column in the DataGridView
+            foreach (DataGridViewColumn column in dataGridView1.Columns)
+            {
+                // Check if the column header text is "Percentage"
+                if (column.HeaderText == "Percentage")
                 {
-                    bool isChecked = (bool)cell.EditedFormattedValue;
-                    if (isChecked)
+                    // Iterate through each row in the DataGridView
+                    foreach (DataGridViewRow row in dataGridView1.Rows)
                     {
-                        SetSelectedBoms();
-                        //MessageBox.Show("SetSelectedBoms called - Checkbox Checked");
-                    }
-                    else
-                    {
-                        SetSelectedBoms();
-                        //MessageBox.Show("SetSelectedBoms called - Checkbox Unchecked");
+                        // Get the cell in the current row corresponding to the "Percentage" column
+                        DataGridViewCell cell = row.Cells[column.Index];
+
+                        // Check if the cell value is not null and equals "100"
+                        if (cell.Value != null && cell.Value.ToString() == "100")
+                        {
+                            // Get the checkbox cell in the "Calculate" column for this row
+                            string calculateColumnHeaderText = "Calculate";
+                            foreach (DataGridViewColumn col in dataGridView1.Columns)
+                            {
+                                if (col.HeaderText == calculateColumnHeaderText)
+                                {
+                                    DataGridViewCheckBoxCell checkBoxCell = row.Cells[col.Index] as DataGridViewCheckBoxCell;
+                                    if (checkBoxCell != null)
+                                    {
+                                        // Toggle the checkbox
+                                        bool currentValue = (bool)checkBoxCell.Value;
+                                        checkBoxCell.Value = !currentValue;
+                                    }
+
+                                    // Handle checkbox click event
+                                    HandleCheckboxClick(row.Index);
+                                    break; // Break the inner loop once we've found the "Calculate" column
+                                }
+                            }
+                        }
                     }
                 }
             }
-            //MessageBox.Show("Cell Clicked!");
+        }
 
+
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (IsCalculateColumn(e.ColumnIndex) && e.RowIndex >= 0)
+            {
+                HandleCheckboxClick(e.RowIndex);
+            }
         }
 
         private bool IsFileLoaded(string fileName)
@@ -1633,6 +1727,7 @@ var myPieChart = new Chart(ctx, {
             SetSelectedBoms();
         }
 
-      
+
+
     }
 }

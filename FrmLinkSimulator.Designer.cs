@@ -32,6 +32,7 @@
             button1 = new Button();
             button6 = new Button();
             label1 = new Label();
+            button7 = new Button();
             groupBox5 = new GroupBox();
             comboBox6 = new ComboBox();
             button2 = new Button();
@@ -93,6 +94,7 @@
             tableLayoutPanel2.Controls.Add(button1, 0, 0);
             tableLayoutPanel2.Controls.Add(button6, 1, 0);
             tableLayoutPanel2.Controls.Add(label1, 2, 0);
+            tableLayoutPanel2.Controls.Add(button7, 3, 0);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.Location = new Point(3, 19);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -134,6 +136,17 @@
             label1.Size = new Size(57, 78);
             label1.TabIndex = 3;
             label1.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // button7
+            // 
+            button7.Dock = DockStyle.Fill;
+            button7.Location = new Point(192, 3);
+            button7.Name = "button7";
+            button7.Size = new Size(57, 72);
+            button7.TabIndex = 4;
+            button7.Text = "Toggle 100%";
+            button7.UseVisualStyleBackColor = true;
+            button7.Click += button7_Click;
             // 
             // groupBox5
             // 
@@ -275,5 +288,6 @@
         private DataGridView dataGridView1;
         private TableLayoutPanel tableLayoutPanel2;
         private Label label1;
+        private Button button7;
     }
 }
