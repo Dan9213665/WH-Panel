@@ -249,8 +249,8 @@ namespace WH_Panel
         }
         private void SetColumsOrder(DataGridView dgw)
         {
-            dgw.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dgw.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dgw.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             dgw.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dgw.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dgw.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
