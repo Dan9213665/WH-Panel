@@ -251,12 +251,12 @@ namespace WH_Panel
         {
             dgw.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             dgw.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dgw.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dgw.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dgw.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dgw.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dgw.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dgw.Columns[7].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dgw.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dgw.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dgw.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dgw.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dgw.Columns[7].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             //dgw.Columns[8].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             //dgw.Columns[9].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             //dgw.Columns["DateOfCreation"].DisplayIndex = 0;
@@ -264,11 +264,12 @@ namespace WH_Panel
             //dgw.Columns["ProjectName"].DisplayIndex = 1;
             dgw.Columns["ProjectName"].Visible = false;
             dgw.Columns["IPN"].DisplayIndex = 0;
-            dgw.Columns["MFPN"].DisplayIndex = 1;
-            dgw.Columns["Description"].DisplayIndex = 2;
-            dgw.Columns["WHbalance"].DisplayIndex = 3;
-            dgw.Columns["QtyInKit"].DisplayIndex = 4;
-            dgw.Columns["Delta"].DisplayIndex = 5;
+            dgw.Columns["WHbalance"].DisplayIndex = 1;
+            dgw.Columns["QtyInKit"].DisplayIndex = 2;
+            dgw.Columns["Delta"].DisplayIndex = 3;
+            dgw.Columns["MFPN"].DisplayIndex = 4;
+            dgw.Columns["Description"].DisplayIndex = 5;
+
             //dgw.Columns["QtyPerUnit"].DisplayIndex = 7;
             dgw.Columns["QtyPerUnit"].Visible = false;
             dgw.Columns["Calc"].DisplayIndex = 6;
@@ -522,14 +523,14 @@ namespace WH_Panel
         }
         private void SetSTOCKiewColumsOrder()
         {
-            dataGridView2.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridView2.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridView2.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridView2.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridView2.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridView2.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridView2.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridView2.Columns[7].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGridView2.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridView2.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridView2.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridView2.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridView2.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridView2.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridView2.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridView2.Columns[7].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             dataGridView2.Columns["IPN"].DisplayIndex = 0;
             dataGridView2.Columns["Manufacturer"].DisplayIndex = 1;
             dataGridView2.Columns["MFPN"].DisplayIndex = 2;
@@ -538,7 +539,8 @@ namespace WH_Panel
             dataGridView2.Columns["Updated_on"].DisplayIndex = 5;
             dataGridView2.Columns["Comments"].DisplayIndex = 6;
             dataGridView2.Columns["Source_Requester"].DisplayIndex = 7;
-            dataGridView2.Sort(dataGridView2.Columns["Updated_on"], ListSortDirection.Descending);
+            //dataGridView2.Sort(dataGridView2.Columns["Updated_on"], ListSortDirection.Descending);
+            dataGridView2.Sort(dataGridView2.Columns["Stock"], ListSortDirection.Ascending);
         }
         private void FilterStockDataGridView(string IPN)
         {
@@ -572,21 +574,49 @@ namespace WH_Panel
                 throw;
             }
         }
+        //private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        //{
+        //    if (dataGridView1.SelectedCells.Count > 0)
+        //    {
+        //        int rowindex = dataGridView1.CurrentCell.RowIndex;
+        //        //int columnindex = dataGridView1.CurrentCell.ColumnIndex;
+        //        string cellValue = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["IPN"].Index].Value.ToString();
+        //        textBox10.Text = cellValue;
+        //        FilterStockDataGridView(cellValue);
+        //        if (chkBlockInWHonly.Checked)
+        //        {
+        //            FilterInStockItemsOnly();
+        //        }
+        //    }
+        //}
+
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (dataGridView1.SelectedCells.Count > 0)
+            if (e.RowIndex >= 0) // Make sure a valid row index is clicked
             {
-                int rowindex = dataGridView1.CurrentCell.RowIndex;
-                //int columnindex = dataGridView1.CurrentCell.ColumnIndex;
-                string cellValue = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["IPN"].Index].Value.ToString();
+                // Clear previous selections
+                dataGridView1.ClearSelection();
+
+                // Select the entire row of the clicked cell
+                dataGridView1.Rows[e.RowIndex].Selected = true;
+
+                // Optionally, you can also set the row's appearance
+                // dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.Yellow;
+
+                // Get the value of the clicked cell in the "IPN" column
+                string cellValue = dataGridView1.Rows[e.RowIndex].Cells["IPN"].Value.ToString();
                 textBox10.Text = cellValue;
+
+                // Perform actions based on the clicked cell
                 FilterStockDataGridView(cellValue);
+
                 if (chkBlockInWHonly.Checked)
                 {
                     FilterInStockItemsOnly();
                 }
             }
         }
+
         private bool dataGridViewIsBound = false;
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
@@ -724,6 +754,11 @@ namespace WH_Panel
             string selMFPN = dataGridView1.Rows[rowindex].Cells["MFPN"].Value.ToString();
             misBOMItemsLST.Remove(misBOMItemsLST.Find(r => r.IPN == selIPN && r.MFPN == selMFPN));
             PopulateMissingGridView();
+
+            // Manually trigger the CellClick event
+            dataGridView1_CellClick(dataGridView1, new DataGridViewCellEventArgs(columnindex, rowindex));
+
+
         }
         private void button1_Click(object sender, EventArgs e)
         {
