@@ -300,29 +300,7 @@ namespace WH_Panel
             }
         }
         public bool isSql = false;
-        //private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        //{
-        //    foreach (ClientWarehouse client in clList)
-        //    {
-        //        if (comboBox1.Text == client.clPrefix)
-        //        {
-        //            if (client.sqlStock != null)
-        //            {
-        //                MasterReload(client.sqlStock);
-        //                isSql = true;
-        //                break;
-        //            }
-        //            else
-        //            {
-        //                MasterReload(client.clStockFile);
-        //                isSql = false;
-        //                break;
-        //            }
 
-
-        //        }
-        //    }
-        //}
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             // Ensure clList is not null and not empty
@@ -532,13 +510,14 @@ namespace WH_Panel
             dataGridView2.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             dataGridView2.Columns[7].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             dataGridView2.Columns["IPN"].DisplayIndex = 0;
-            dataGridView2.Columns["Manufacturer"].DisplayIndex = 1;
-            dataGridView2.Columns["MFPN"].DisplayIndex = 2;
-            dataGridView2.Columns["Description"].DisplayIndex = 3;
-            dataGridView2.Columns["Stock"].DisplayIndex = 4;
-            dataGridView2.Columns["Updated_on"].DisplayIndex = 5;
-            dataGridView2.Columns["Comments"].DisplayIndex = 6;
-            dataGridView2.Columns["Source_Requester"].DisplayIndex = 7;
+            dataGridView2.Columns["Stock"].DisplayIndex = 1;
+            dataGridView2.Columns["Comments"].DisplayIndex = 2;
+            dataGridView2.Columns["Source_Requester"].DisplayIndex = 3;
+            dataGridView2.Columns["Updated_on"].DisplayIndex = 4;
+            dataGridView2.Columns["MFPN"].DisplayIndex = 5;
+            dataGridView2.Columns["Manufacturer"].DisplayIndex = 6;
+            dataGridView2.Columns["Description"].DisplayIndex = 7;
+
             //dataGridView2.Sort(dataGridView2.Columns["Updated_on"], ListSortDirection.Descending);
             dataGridView2.Sort(dataGridView2.Columns["Stock"], ListSortDirection.Ascending);
         }
