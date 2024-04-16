@@ -249,34 +249,69 @@ namespace WH_Panel
         }
         private void SetColumsOrder(DataGridView dgw)
         {
-            dgw.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dgw.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dgw.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dgw.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dgw.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dgw.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dgw.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dgw.Columns[7].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            //dgw.Columns[8].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            //dgw.Columns[9].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            //dgw.Columns["DateOfCreation"].DisplayIndex = 0;
-            dgw.Columns["DateOfCreation"].Visible = false;
-            //dgw.Columns["ProjectName"].DisplayIndex = 1;
-            dgw.Columns["ProjectName"].Visible = false;
-            dgw.Columns["IPN"].DisplayIndex = 0;
-            dgw.Columns["WHbalance"].DisplayIndex = 1;
-            dgw.Columns["QtyInKit"].DisplayIndex = 2;
-            dgw.Columns["Delta"].DisplayIndex = 3;
-            dgw.Columns["MFPN"].DisplayIndex = 4;
-            dgw.Columns["Description"].DisplayIndex = 5;
+            if (Environment.MachineName == "RT17")
+            {
+                dgw.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                dgw.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                dgw.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                dgw.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                dgw.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                dgw.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                dgw.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                dgw.Columns[7].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                //dgw.Columns[8].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                //dgw.Columns[9].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                //dgw.Columns["DateOfCreation"].DisplayIndex = 0;
+                dgw.Columns["DateOfCreation"].Visible = false;
+                //dgw.Columns["ProjectName"].DisplayIndex = 1;
+                dgw.Columns["ProjectName"].Visible = false;
+                dgw.Columns["IPN"].DisplayIndex = 0;
+                dgw.Columns["WHbalance"].DisplayIndex = 1;
+                dgw.Columns["QtyInKit"].DisplayIndex = 2;
+                dgw.Columns["Delta"].DisplayIndex = 3;
+                dgw.Columns["MFPN"].DisplayIndex = 4;
+                dgw.Columns["Description"].DisplayIndex = 5;
 
-            //dgw.Columns["QtyPerUnit"].DisplayIndex = 7;
-            dgw.Columns["QtyPerUnit"].Visible = false;
-            dgw.Columns["Calc"].DisplayIndex = 6;
-            dgw.Columns["Alts"].DisplayIndex = 7;
-            dgw.Sort(dgw.Columns["IPN"], ListSortDirection.Ascending);
-            // Attach CellFormatting event handler
-            dgw.CellFormatting += Dgw_CellFormatting;
+                //dgw.Columns["QtyPerUnit"].DisplayIndex = 7;
+                dgw.Columns["QtyPerUnit"].Visible = false;
+                dgw.Columns["Calc"].DisplayIndex = 6;
+                dgw.Columns["Alts"].DisplayIndex = 7;
+                dgw.Sort(dgw.Columns["IPN"], ListSortDirection.Ascending);
+                // Attach CellFormatting event handler
+                dgw.CellFormatting += Dgw_CellFormatting;
+
+            }
+            else
+            {
+                dgw.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                dgw.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                dgw.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                dgw.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                dgw.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                dgw.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                dgw.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                dgw.Columns[7].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                //dgw.Columns[8].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                //dgw.Columns[9].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                //dgw.Columns["DateOfCreation"].DisplayIndex = 0;
+                dgw.Columns["DateOfCreation"].Visible = false;
+                //dgw.Columns["ProjectName"].DisplayIndex = 1;
+                dgw.Columns["ProjectName"].Visible = false;
+                dgw.Columns["IPN"].DisplayIndex = 0;
+                dgw.Columns["WHbalance"].DisplayIndex = 1;
+                dgw.Columns["QtyInKit"].DisplayIndex = 2;
+                dgw.Columns["Delta"].DisplayIndex = 3;
+                dgw.Columns["MFPN"].DisplayIndex = 4;
+                dgw.Columns["Description"].DisplayIndex = 5;
+
+                //dgw.Columns["QtyPerUnit"].DisplayIndex = 7;
+                dgw.Columns["QtyPerUnit"].Visible = false;
+                dgw.Columns["Calc"].DisplayIndex = 6;
+                dgw.Columns["Alts"].DisplayIndex = 7;
+                dgw.Sort(dgw.Columns["IPN"], ListSortDirection.Ascending);
+                // Attach CellFormatting event handler
+                dgw.CellFormatting += Dgw_CellFormatting;
+            }
         }
         private void Dgw_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
@@ -501,25 +536,54 @@ namespace WH_Panel
         }
         private void SetSTOCKiewColumsOrder()
         {
-            dataGridView2.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridView2.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridView2.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridView2.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridView2.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridView2.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridView2.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridView2.Columns[7].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridView2.Columns["IPN"].DisplayIndex = 0;
-            dataGridView2.Columns["Stock"].DisplayIndex = 1;
-            dataGridView2.Columns["Comments"].DisplayIndex = 2;
-            dataGridView2.Columns["Source_Requester"].DisplayIndex = 3;
-            dataGridView2.Columns["Updated_on"].DisplayIndex = 4;
-            dataGridView2.Columns["MFPN"].DisplayIndex = 5;
-            dataGridView2.Columns["Manufacturer"].DisplayIndex = 6;
-            dataGridView2.Columns["Description"].DisplayIndex = 7;
+            if (Environment.MachineName == "RT17")
+            {
+                dataGridView2.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                dataGridView2.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                dataGridView2.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                dataGridView2.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                dataGridView2.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                dataGridView2.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                dataGridView2.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                dataGridView2.Columns[7].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                dataGridView2.Columns["IPN"].DisplayIndex = 0;
+                dataGridView2.Columns["Stock"].DisplayIndex = 1;
+                dataGridView2.Columns["Comments"].DisplayIndex = 2;
+                dataGridView2.Columns["Source_Requester"].DisplayIndex = 3;
+                dataGridView2.Columns["Updated_on"].DisplayIndex = 4;
+                dataGridView2.Columns["MFPN"].DisplayIndex = 5;
+                dataGridView2.Columns["Manufacturer"].DisplayIndex = 6;
+                dataGridView2.Columns["Description"].DisplayIndex = 7;
 
-            //dataGridView2.Sort(dataGridView2.Columns["Updated_on"], ListSortDirection.Descending);
-            dataGridView2.Sort(dataGridView2.Columns["Stock"], ListSortDirection.Ascending);
+                //dataGridView2.Sort(dataGridView2.Columns["Updated_on"], ListSortDirection.Descending);
+                dataGridView2.Sort(dataGridView2.Columns["Stock"], ListSortDirection.Ascending);
+            }
+            else
+            {
+                dataGridView2.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                dataGridView2.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                dataGridView2.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                dataGridView2.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                dataGridView2.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                dataGridView2.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                dataGridView2.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                dataGridView2.Columns[7].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                dataGridView2.Columns["IPN"].DisplayIndex = 0;
+                dataGridView2.Columns["Manufacturer"].DisplayIndex = 1;
+                dataGridView2.Columns["MFPN"].DisplayIndex = 2;
+                dataGridView2.Columns["Description"].DisplayIndex = 3;
+                dataGridView2.Columns["Stock"].DisplayIndex = 4;
+                dataGridView2.Columns["Updated_on"].DisplayIndex = 5;
+                dataGridView2.Columns["Comments"].DisplayIndex = 6;
+                dataGridView2.Columns["Source_Requester"].DisplayIndex = 7;
+
+
+
+                dataGridView2.Sort(dataGridView2.Columns["Updated_on"], ListSortDirection.Descending);
+                //dataGridView2.Sort(dataGridView2.Columns["Stock"], ListSortDirection.Ascending);
+            }
+
+
         }
         private void FilterStockDataGridView(string IPN)
         {
