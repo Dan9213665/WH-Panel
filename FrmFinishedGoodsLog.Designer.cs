@@ -129,7 +129,9 @@
             txtbSN.Size = new Size(241, 39);
             txtbSN.TabIndex = 7;
             txtbSN.TextAlign = HorizontalAlignment.Center;
+            txtbSN.Enter += txtbSN_Enter;
             txtbSN.KeyDown += txtbSN_KeyDown;
+            txtbSN.Leave += txtbSN_Leave;
             // 
             // comboBox2
             // 
@@ -379,6 +381,7 @@
             txtbComments.TextAlign = HorizontalAlignment.Center;
             txtbComments.Enter += txtbComments_Enter;
             txtbComments.KeyDown += txtbComments_KeyDown;
+            txtbComments.Leave += txtbComments_Leave;
             // 
             // lblCounter
             // 
@@ -429,7 +432,9 @@
             txtbSetLimit.Size = new Size(104, 39);
             txtbSetLimit.TabIndex = 1;
             txtbSetLimit.TextAlign = HorizontalAlignment.Center;
+            txtbSetLimit.Enter += txtbSetLimit_Enter;
             txtbSetLimit.KeyDown += textBox1_KeyDown;
+            txtbSetLimit.Leave += txtbSetLimit_Leave;
             // 
             // checkBox5
             // 

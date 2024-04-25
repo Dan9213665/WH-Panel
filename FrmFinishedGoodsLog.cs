@@ -310,38 +310,13 @@ namespace WH_Panel
             }
             return true;
         }
-        //private void button2_Click(object sender, EventArgs e)
-        //{
-        //    string saveToPath = string.Empty;
-        //    if (comboBox3.SelectedIndex != -1)
-        //    {
-        //        saveToPath = initialPath + comboBox1.SelectedItem.ToString() + "\\" + comboBox2.SelectedItem.ToString() + "\\" + comboBox3.SelectedItem.ToString();
 
-        //        if (Environment.MachineName == "RT12")
-        //        {
-
-        //        }
-        //        else
-        //        {
-        //            EXCELinserter(PackedItemsList, saveToPath);
-        //        }
-
-        //    }
-        //    else
-        //    {
-        //        saveToPath = initialPath + comboBox1.SelectedItem.ToString() + "\\" + comboBox2.SelectedItem.ToString();
-        //        if (Environment.MachineName == "RT12")
-        //        {
-
-        //        }
-        //        else
-        //        {
-        //            EXCELinserter(PackedItemsList, saveToPath);
-        //        }
-        //    }
-        //}
         private void button2_Click(object sender, EventArgs e)
         {
+            // Order the list by the serialNumber column in the dataGridView1
+            dataGridView1.Sort(dataGridView1.Columns["serialNumber"], ListSortDirection.Ascending);
+
+
             string saveToPath = string.Empty;
             if (comboBox3.SelectedIndex != -1)
             {
@@ -400,7 +375,7 @@ namespace WH_Panel
 
 
             // Save HTML content to file
-            string filePath = saveToPath + "\\" + po + "_" + dataGridView1.Rows.Count + "_packed_Serials_" + DateTime.Now.ToString("yyyyMMddHHmm") + ".html";
+            string filePath = saveToPath + "\\" + po + "_" + dataGridView1.Rows.Count + "of" + limit + "_packed_Serials_" + DateTime.Now.ToString("yyyyMMddHHmm") + ".html";
 
             File.WriteAllText(filePath, htmlContent);
             // Get the directory of the file
@@ -497,11 +472,11 @@ namespace WH_Panel
         {
             if (checkBox4.Checked)
             {
-                txtbComments.ReadOnly = true;
+                txtbComments.Enabled = false;
             }
             else if (!checkBox4.Checked)
             {
-                txtbComments.ReadOnly = false;
+                txtbComments.Enabled = true;
             }
         }
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
@@ -536,11 +511,13 @@ namespace WH_Panel
         {
             if (checkBox5.Checked)
             {
-                txtbSetLimit.ReadOnly = true;
+                //txtbSetLimit.ReadOnly = true;
+                txtbSetLimit.Enabled = false;
             }
             else if (!checkBox5.Checked)
             {
                 txtbSetLimit.ReadOnly = false;
+                txtbSetLimit.Enabled = true;
                 txtbSetLimit.Focus();
             }
         }
@@ -549,6 +526,32 @@ namespace WH_Panel
         {
             // Move the cursor to the end of the text
             txtbComments.SelectionStart = txtbComments.Text.Length;
+            txtbComments.BackColor = Color.LightGreen;
+        }
+
+        private void txtbComments_Leave(object sender, EventArgs e)
+        {
+            txtbComments.BackColor = Color.White;
+        }
+
+        private void txtbSN_Enter(object sender, EventArgs e)
+        {
+            txtbSN.BackColor = Color.LightGreen;
+        }
+
+        private void txtbSN_Leave(object sender, EventArgs e)
+        {
+            txtbSN.BackColor = Color.White;
+        }
+
+        private void txtbSetLimit_Enter(object sender, EventArgs e)
+        {
+            txtbSetLimit.BackColor = Color.LightGreen;
+        }
+
+        private void txtbSetLimit_Leave(object sender, EventArgs e)
+        {
+            txtbSetLimit.BackColor = Color.White;
         }
     }
 }
