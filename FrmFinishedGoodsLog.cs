@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -309,19 +310,105 @@ namespace WH_Panel
             }
             return true;
         }
+        //private void button2_Click(object sender, EventArgs e)
+        //{
+        //    string saveToPath = string.Empty;
+        //    if (comboBox3.SelectedIndex != -1)
+        //    {
+        //        saveToPath = initialPath + comboBox1.SelectedItem.ToString() + "\\" + comboBox2.SelectedItem.ToString() + "\\" + comboBox3.SelectedItem.ToString();
+
+        //        if (Environment.MachineName == "RT12")
+        //        {
+
+        //        }
+        //        else
+        //        {
+        //            EXCELinserter(PackedItemsList, saveToPath);
+        //        }
+
+        //    }
+        //    else
+        //    {
+        //        saveToPath = initialPath + comboBox1.SelectedItem.ToString() + "\\" + comboBox2.SelectedItem.ToString();
+        //        if (Environment.MachineName == "RT12")
+        //        {
+
+        //        }
+        //        else
+        //        {
+        //            EXCELinserter(PackedItemsList, saveToPath);
+        //        }
+        //    }
+        //}
         private void button2_Click(object sender, EventArgs e)
         {
             string saveToPath = string.Empty;
             if (comboBox3.SelectedIndex != -1)
             {
                 saveToPath = initialPath + comboBox1.SelectedItem.ToString() + "\\" + comboBox2.SelectedItem.ToString() + "\\" + comboBox3.SelectedItem.ToString();
-                EXCELinserter(PackedItemsList, saveToPath);
             }
             else
             {
                 saveToPath = initialPath + comboBox1.SelectedItem.ToString() + "\\" + comboBox2.SelectedItem.ToString();
+            }
+
+            if (Environment.MachineName == "RT12")
+            {
+                SaveToHTML(saveToPath, comboBox1.SelectedItem.ToString(), comboBox2.SelectedItem.ToString(), comboBox3.SelectedItem.ToString(), txtbComments.Text, txtbSetLimit.Text);
+            }
+            else
+            {
                 EXCELinserter(PackedItemsList, saveToPath);
             }
+        }
+        private void SaveToHTML(string saveToPath, string customer, string project, string revision, string po, string qty)
+        {
+            // Create HTML content
+            string htmlContent = "<html><head><title>Packed Serials List</title></head><body>";
+
+            htmlContent += "<H1>Packed Serials List</H1>";
+            // Write additional information table with headers from DataGridView
+            htmlContent += "<table border='1'  width='100%' style='text-align: center;'>";
+            htmlContent += "<tr><th>Customer:</th><td>" + customer + "</td></tr>";
+            htmlContent += "<tr><th>Project:</th><td>" + project + "</td></tr>";
+            htmlContent += "<tr><th>Revision:</th><td>" + revision + "</td></tr>";
+            htmlContent += "<tr><th>PO:</th><td>" + po + "</td></tr>";
+            htmlContent += "<tr><th>Qty:</th><td>" + limit + "</td></tr>";
+            htmlContent += "</table>";
+
+            // Write DataGridView contents
+            htmlContent += "<table border='1' width='100%' style='text-align: center;'>";
+            // Add table headers
+            htmlContent += "<thead><tr>";
+            foreach (DataGridViewColumn column in dataGridView1.Columns)
+            {
+                htmlContent += "<th>" + column.HeaderText + "</th>";
+            }
+            htmlContent += "</tr></thead>";
+            // Add data rows
+            htmlContent += "<tbody>";
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                htmlContent += "<tr>";
+                foreach (DataGridViewCell cell in row.Cells)
+                {
+                    htmlContent += "<td>" + cell.Value.ToString() + "</td>";
+                }
+                htmlContent += "</tr>";
+            }
+            htmlContent += "</tbody></table>";
+
+
+            // Save HTML content to file
+            string filePath = saveToPath + "\\" + po + "_" + dataGridView1.Rows.Count + "_packed_Serials_" + DateTime.Now.ToString("yyyyMMddHHmm") + ".html";
+
+            File.WriteAllText(filePath, htmlContent);
+            // Get the directory of the file
+            // Get the directory of the file
+            string directory = Path.GetDirectoryName(filePath);
+
+            // Open containing folder
+            Process.Start("explorer.exe", directory);
         }
         private void EXCELinserter(List<FinishedGoodsItem> lst, string saveToPa)
         {
@@ -456,6 +543,12 @@ namespace WH_Panel
                 txtbSetLimit.ReadOnly = false;
                 txtbSetLimit.Focus();
             }
+        }
+
+        private void txtbComments_Enter(object sender, EventArgs e)
+        {
+            // Move the cursor to the end of the text
+            txtbComments.SelectionStart = txtbComments.Text.Length;
         }
     }
 }

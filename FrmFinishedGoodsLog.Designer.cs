@@ -375,7 +375,9 @@
             txtbComments.Name = "txtbComments";
             txtbComments.Size = new Size(229, 29);
             txtbComments.TabIndex = 0;
+            txtbComments.Text = "PO2400";
             txtbComments.TextAlign = HorizontalAlignment.Center;
+            txtbComments.Enter += txtbComments_Enter;
             txtbComments.KeyDown += txtbComments_KeyDown;
             // 
             // lblCounter
