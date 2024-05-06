@@ -29,6 +29,11 @@ using Button = System.Windows.Forms.Button;
 using GroupBox = System.Windows.Forms.GroupBox;
 using Application = System.Windows.Forms.Application;
 using System.Web;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Xml.Serialization;
+
 namespace WH_Panel
 {
     public partial class FrmKITShistory : Form
@@ -43,11 +48,106 @@ namespace WH_Panel
         public int colIpnFoundIndex;
         public int colMFPNFoundIndex;
         List<string> listOfPaths = new List<string>() { };
+        private const string BaseDirectory = @"\\dbr1\Data\WareHouse\2024\ExcelRipperCache\";
+        bool cachedDataLoaded = false;
         public FrmKITShistory()
         {
             InitializeComponent();
+
             UpdateControlColors(this);
+
+            LoadCachedData();
         }
+
+        public List<KitHistoryItem> LoadCachedData()
+        {
+            try
+            {
+                // Check if BaseDirectory exists
+                if (!Directory.Exists(BaseDirectory))
+                {
+                    MessageBox.Show("Base directory does not exist.");
+                }
+
+                // Get today's file name
+                string fileName = DateTime.Now.ToString("yyyyMMdd") + ".xml";
+                string filePath = Path.Combine(BaseDirectory, fileName);
+
+                // Check if today's file exists
+                if (File.Exists(filePath))
+                {
+                    // Load data from today's file
+                    KitHistoryItemsList = LoadDataFromFile(filePath);
+                    listOfPaths = KitHistoryItemsList.Select(w => w.filePath).ToList();
+                    OrganizeDisplay();
+                }
+                else
+                {
+                    // If today's file doesn't exist, get the latest file
+                    string[] xmlFiles = Directory.GetFiles(BaseDirectory, "*.xml");
+                    if (xmlFiles.Length > 0)
+                    {
+                        Array.Sort(xmlFiles);
+                        Array.Reverse(xmlFiles);
+                        string latestFile = xmlFiles[0];
+
+                        // Prompt user to load the latest file
+                        DialogResult result = MessageBox.Show($"Do you want to load the {latestFile} ?", "Load Latest File", MessageBoxButtons.YesNo);
+                        if (result == DialogResult.Yes)
+                        {
+                            KitHistoryItemsList = LoadDataFromFile(latestFile);
+                            OrganizeDisplay();
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("No XML files found in the directory.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading cached data: " + ex.Message);
+            }
+
+            cachedDataLoaded = true;
+            return KitHistoryItemsList;
+        }
+
+        private void OrganizeDisplay()
+        {
+            stopWatch.Reset();
+            stopWatch.Start();
+            PopulateGridView();
+            SetColumsOrder();
+            stopWatch.Stop();
+            TimeSpan ts = stopWatch.Elapsed;
+            label12.Text = "Loaded " + KitHistoryItemsList.Count.ToString() + " Rows from cache. In " + string.Format("{00:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
+            label12.Update();
+
+        }
+
+        private List<KitHistoryItem> LoadDataFromFile(string filePath)
+        {
+            List<KitHistoryItem> kitHistoryItemsList = new List<KitHistoryItem>();
+
+            try
+            {
+                // Deserialize XML file
+                XmlSerializer serializer = new XmlSerializer(typeof(List<KitHistoryItem>));
+                using (StreamReader reader = new StreamReader(filePath))
+                {
+                    kitHistoryItemsList = (List<KitHistoryItem>)serializer.Deserialize(reader);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading data from file: " + ex.Message);
+            }
+
+            return kitHistoryItemsList;
+        }
+
         private void UpdateControlColors(Control parentControl)
         {
             foreach (Control control in parentControl.Controls)
@@ -206,9 +306,12 @@ namespace WH_Panel
                     }
                 }
             }
+
+            cachedDataLoaded = false;
             PopulateGridView();
             SetColumsOrder();
             stopWatch.Stop();
+            SaveToCachedXML(KitHistoryItemsList);
         }
         private List<string> listOfPathsAggregator(int numMonths)
         {
@@ -324,10 +427,11 @@ namespace WH_Panel
                                     Delta = del,
                                     QtyPerUnit = qpu,
                                     Calc = reader[indQty + 1].ToString(),
-                                    Alts = reader[indQty + 2].ToString()
+                                    Alts = reader[indQty + 2].ToString(),
+                                    filePath = fp.Replace("Copy_", "")
                                 };
                                 countItems = i;
-                                label12.Text = "Loaded " + (countItems).ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{0:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
+                                label12.Text = "Loaded " + (countItems).ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{00:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
                                 if (countItems % 1000 == 0)
                                 { label12.Update(); }
                                 KitHistoryItemsList.Add(abc);
@@ -366,7 +470,43 @@ namespace WH_Panel
             dataGridView1.DataSource = UDtable;
             SetColumsOrder();
             label12.BackColor = Color.LightGreen;
+
         }
+
+
+
+
+        public void SaveToCachedXML(List<KitHistoryItem> list)
+        {
+            try
+            {
+                // Create the directory if it doesn't exist
+                if (!Directory.Exists(BaseDirectory))
+                {
+                    Directory.CreateDirectory(BaseDirectory);
+                }
+                string fileName = DateTime.Now.ToString("yyyyMMdd") + ".xml";
+
+                // Create the XML file path
+                string filePath = Path.Combine(BaseDirectory, fileName);
+
+                // Create XmlSerializer for KitHistoryItem list
+                XmlSerializer serializer = new XmlSerializer(typeof(List<KitHistoryItem>));
+
+                // Serialize the list to XML
+                using (StreamWriter writer = new StreamWriter(filePath))
+                {
+                    serializer.Serialize(writer, list);
+                }
+
+                Console.WriteLine("Data saved to: " + filePath);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error saving data: " + ex.Message);
+            }
+        }
+
         private void SetColumsOrder()
         {
             dataGridView1.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -389,6 +529,7 @@ namespace WH_Panel
             dataGridView1.Columns["QtyPerUnit"].DisplayIndex = 7;
             dataGridView1.Columns["Calc"].DisplayIndex = 8;
             dataGridView1.Columns["Alts"].DisplayIndex = 9;
+            dataGridView1.Update();
         }
         private void FilterTheDataGridView()
         {
@@ -536,29 +677,44 @@ namespace WH_Panel
         }
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            int rowindex = dataGridView1.CurrentCell.RowIndex;
-            int columnindex = dataGridView1.CurrentCell.ColumnIndex;
-            string fp = dataGridView1.Rows[rowindex].Cells["ProjectName"].Value.ToString();
-            string fullpath = string.Empty;
-            foreach (string path in listOfPaths)
+            if (cachedDataLoaded)
             {
-                foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
+                int rowindex = dataGridView1.CurrentCell.RowIndex;
+                int columnindex = dataGridView1.CurrentCell.ColumnIndex;
+                string fp = dataGridView1.Rows[rowindex].Cells["filePath"].Value.ToString();
+                DialogResult result = MessageBox.Show("Open the file : " + fp + " ?", "Open file", MessageBoxButtons.OKCancel);
+                if (result == DialogResult.OK)
                 {
-                    string Litem = Path.GetFileName(file);
-                    if (Litem == fp)
+                    openWHexcelDB(fp);
+                }
+            }
+            else
+            {
+                int rowindex = dataGridView1.CurrentCell.RowIndex;
+                int columnindex = dataGridView1.CurrentCell.ColumnIndex;
+                string fp = dataGridView1.Rows[rowindex].Cells["ProjectName"].Value.ToString();
+                string fullpath = string.Empty;
+                foreach (string path in listOfPaths)
+                {
+                    foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
                     {
-                        string str = @file.ToString();
-                        DialogResult result = MessageBox.Show("Open the file : " + str + " ?", "Open file", MessageBoxButtons.OKCancel);
-                        if (result == DialogResult.OK)
+                        string Litem = Path.GetFileName(file);
+                        if (Litem == fp)
                         {
-                            openWHexcelDB(@str);
-                        }
-                        else
-                        {
+                            string str = @file.ToString();
+                            DialogResult result = MessageBox.Show("Open the file : " + str + " ?", "Open file", MessageBoxButtons.OKCancel);
+                            if (result == DialogResult.OK)
+                            {
+                                openWHexcelDB(@str);
+                            }
+                            else
+                            {
+                            }
                         }
                     }
                 }
             }
+
         }
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
@@ -838,48 +994,66 @@ namespace WH_Panel
             }
             else if (e.Button == MouseButtons.Right)
             {
-                int rowindex = dataGridView1.CurrentCell.RowIndex;
-                int columnindex = dataGridView1.CurrentCell.ColumnIndex;
-                string fp = dataGridView1.Rows[rowindex].Cells["ProjectName"].Value.ToString();
-                string fullpath = string.Empty;
-                foreach (string path in listOfPaths)
+                if (cachedDataLoaded)
                 {
-                    foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
+                    int rowindex = dataGridView1.CurrentCell.RowIndex;
+                    int columnindex = dataGridView1.CurrentCell.ColumnIndex;
+                    string fp = dataGridView1.Rows[rowindex].Cells["filePath"].Value.ToString();
+                    DialogResult result = MessageBox.Show("Open the file : " + fp + " ?", "Open file", MessageBoxButtons.OKCancel);
+                    if (result == DialogResult.OK)
                     {
-                        string Litem = Path.GetFileName(file);
-                        if (Litem == fp)
+                        // Check if Form1 is open
+                        Form1 form1 = Application.OpenForms.OfType<Form1>().FirstOrDefault();
+                        if (form1 != null)
                         {
-                            string str = @file.ToString();
-                            DialogResult result = MessageBox.Show("Open the file : " + str + " ?", "Open file", MessageBoxButtons.OKCancel);
-                            if (result == DialogResult.OK)
+                            FrmBOM frmBOM = new FrmBOM();
+                            frmBOM.InitializeGlobalWarehouses(form1.PopulateWarehouses()); // Accessing the warehouses list from Form1
+                            frmBOM.ExternalLinktoFile(fp);
+                            frmBOM.Show();
+                            frmBOM.ReloadLogic();
+                        }
+                    }
+
+                }
+                else
+                {
+
+                    int rowindex = dataGridView1.CurrentCell.RowIndex;
+                    int columnindex = dataGridView1.CurrentCell.ColumnIndex;
+                    string fp = dataGridView1.Rows[rowindex].Cells["ProjectName"].Value.ToString();
+                    string fullpath = string.Empty;
+                    foreach (string path in listOfPaths)
+                    {
+                        foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
+                        {
+                            string Litem = Path.GetFileName(file);
+                            if (Litem == fp)
                             {
-                                // Check if Form1 is open
-                                Form1 form1 = Application.OpenForms.OfType<Form1>().FirstOrDefault();
-                                if (form1 != null)
+                                string str = @file.ToString();
+                                DialogResult result = MessageBox.Show("Open the file : " + str + " ?", "Open file", MessageBoxButtons.OKCancel);
+                                if (result == DialogResult.OK)
                                 {
-                                    FrmBOM frmBOM = new FrmBOM();
-                                    frmBOM.InitializeGlobalWarehouses(form1.PopulateWarehouses()); // Accessing the warehouses list from Form1
-                                    frmBOM.ExternalLinktoFile(@str);
-                                    frmBOM.Show();
-                                    frmBOM.ReloadLogic();
+                                    // Check if Form1 is open
+                                    Form1 form1 = Application.OpenForms.OfType<Form1>().FirstOrDefault();
+                                    if (form1 != null)
+                                    {
+                                        FrmBOM frmBOM = new FrmBOM();
+                                        frmBOM.InitializeGlobalWarehouses(form1.PopulateWarehouses()); // Accessing the warehouses list from Form1
+                                        frmBOM.ExternalLinktoFile(@str);
+                                        frmBOM.Show();
+                                        frmBOM.ReloadLogic();
+                                    }
                                 }
-                                //FrmBOM frmBOM = new FrmBOM();
-                                //frmBOM.InitializeGlobalWarehouses(Form1.ActiveForm.warehoses);
-                                //frmBOM.ExternalLinktoFile(@str);
-                                //frmBOM.Show();
-                                //frmBOM.ReloadLogic();
-                                ////openWHexcelDB(@str);
-                            }
-                            else
-                            {
-                                //
+                                else
+                                {
+                                    //
+                                }
                             }
                         }
                     }
+
                 }
-                // Right mouse click logic
-                // Additional right-click logic
-                //MessageBox.Show("Test");
+
             }
         }
         private void button4_Click(object sender, EventArgs e)

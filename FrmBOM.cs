@@ -1586,17 +1586,51 @@ namespace WH_Panel
         {
             textBox14.Clear();
         }
+        //private void btnPrintKitLabel_MouseDown(object sender, MouseEventArgs e)
+        //{
+        //    // Check if the right mouse button was clicked
+        //    if (e.Button == MouseButtons.Right && theExcelFilePath != string.Empty)
+        //    {
+        //        string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+        //        GenerateHTMLkitBoxLabel(3);
+        //    }
+        //}
         private void btnPrintKitLabel_MouseDown(object sender, MouseEventArgs e)
         {
             // Check if the right mouse button was clicked
             if (e.Button == MouseButtons.Right && theExcelFilePath != string.Empty)
             {
                 string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-                GenerateHTMLkitBoxLabel();
+
+                using (CustomPrintDialog customDialog = new CustomPrintDialog())
+                {
+                    // Show the custom dialog
+                    DialogResult result = customDialog.ShowDialog();
+
+                    int copiesToPrint = 0;
+
+                    // Determine the number of copies based on the user's selection
+                    switch (result)
+                    {
+                        case DialogResult.OK:
+                            copiesToPrint = 1;
+                            break;
+                        case DialogResult.Yes:
+                            copiesToPrint = 2;
+                            break;
+                        case DialogResult.No:
+                            copiesToPrint = 3;
+                            break;
+                    }
+
+                    // Call the method with the chosen number of copies
+                    GenerateHTMLkitBoxLabel(copiesToPrint);
+                }
             }
         }
+
         public string projectName = string.Empty;
-        private void GenerateHTMLkitBoxLabel()
+        private void GenerateHTMLkitBoxLabel(int qtyToPrint)
         {
             //string fileName = "output.html";
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
@@ -1635,7 +1669,7 @@ namespace WH_Panel
                 string backgroundImageUrl = "eleBackGND.png";
                 //Console.WriteLine("Background Image Path: " + backgroundImageUrl);
                 string altText = "WH image";
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < qtyToPrint; i++)
                 {
                     writer.WriteLine("<table border='1' style='width: 600px; margin: auto; display: table;'>");  //background-size: cover;
                     //writer.WriteLine("<col style='width: 25%; background: url(" + backgroundImageUrl + ") no-repeat center center; background-size: contain;'>"); // 25% width for the image column

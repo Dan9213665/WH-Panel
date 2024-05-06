@@ -562,186 +562,82 @@ namespace WH_Panel
         }
         private void btnMove_Click(object sender, EventArgs e)
         {
-            int qty = 0;
-            string sorce_req = string.Empty;
-            if (radioButton1.Checked == true)
+            if (Environment.MachineName == "RT13" || Environment.MachineName == "RT12" || Environment.MachineName == "RT1")
             {
-                bool toPrintMFG = true;
-                sorce_req = "MFG";
-                if (textBox6.Text != string.Empty)
-                {
-                    try
-                    {
-                        string qInqty = (string)textBox6.Text;
-                        string inQty = string.Empty;
-                        if (qInqty.StartsWith("QTY:"))
-                        {
-                            inQty = qInqty.Substring(4);
-                            //MessageBox.Show("QTY:" + inQty);
-                            int outNumberq;
-                            bool successq = int.TryParse(inQty, out outNumberq);
-                            if (successq && outNumberq < 50001 && outNumberq > 0)
-                            {
-                                MoveIntoDATABASE(outNumberq, sorce_req, toPrintMFG);
-                                FilterStockDataGridView(textBox10.Text);
-                            }
-                            else
-                            {
-                                MessageBox.Show("Input positive numeric values ONLY !");
-                                textBox6.Text = string.Empty;
-                                textBox6.Focus();
-                            }
-                        }
-                        else if (qInqty.StartsWith("Q"))
-                        {
-                            inQty = qInqty.Substring(1);
-                            //MessageBox.Show(inQty);
-                            int outNumberq;
-                            bool successq = int.TryParse(inQty, out outNumberq);
-                            if (successq && outNumberq < 50001 && outNumberq > 0)
-                            {
-                                MoveIntoDATABASE(outNumberq, sorce_req, toPrintMFG);
-                                FilterStockDataGridView(textBox10.Text);
-                            }
-                            else
-                            {
-                                MessageBox.Show("Input positive numeric values ONLY !");
-                                textBox6.Text = string.Empty;
-                                textBox6.Focus();
-                            }
-                        }
 
-                        else
+                int qty = 0;
+                string sorce_req = string.Empty;
+                if (radioButton1.Checked == true)
+                {
+                    bool toPrintMFG = true;
+                    sorce_req = "MFG";
+                    if (textBox6.Text != string.Empty)
+                    {
+                        try
                         {
-                            inQty = (string)textBox6.Text;
-                            int outNumber;
-                            bool success = int.TryParse(inQty, out outNumber);
-                            if (success && outNumber < 50001 && outNumber > 0)
+                            string qInqty = (string)textBox6.Text;
+                            string inQty = string.Empty;
+                            if (qInqty.StartsWith("QTY:"))
                             {
-                                MoveIntoDATABASE(outNumber, sorce_req, toPrintMFG);
-                                FilterStockDataGridView(textBox10.Text);
+                                inQty = qInqty.Substring(4);
+                                //MessageBox.Show("QTY:" + inQty);
+                                int outNumberq;
+                                bool successq = int.TryParse(inQty, out outNumberq);
+                                if (successq && outNumberq < 50001 && outNumberq > 0)
+                                {
+                                    MoveIntoDATABASE(outNumberq, sorce_req, toPrintMFG);
+                                    FilterStockDataGridView(textBox10.Text);
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Input positive numeric values ONLY !");
+                                    textBox6.Text = string.Empty;
+                                    textBox6.Focus();
+                                }
                             }
+                            else if (qInqty.StartsWith("Q"))
+                            {
+                                inQty = qInqty.Substring(1);
+                                //MessageBox.Show(inQty);
+                                int outNumberq;
+                                bool successq = int.TryParse(inQty, out outNumberq);
+                                if (successq && outNumberq < 50001 && outNumberq > 0)
+                                {
+                                    MoveIntoDATABASE(outNumberq, sorce_req, toPrintMFG);
+                                    FilterStockDataGridView(textBox10.Text);
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Input positive numeric values ONLY !");
+                                    textBox6.Text = string.Empty;
+                                    textBox6.Focus();
+                                }
+                            }
+
                             else
                             {
-                                MessageBox.Show("Input positive numeric values ONLY !");
-                                textBox6.Text = string.Empty;
-                                textBox6.Focus();
+                                inQty = (string)textBox6.Text;
+                                int outNumber;
+                                bool success = int.TryParse(inQty, out outNumber);
+                                if (success && outNumber < 50001 && outNumber > 0)
+                                {
+                                    MoveIntoDATABASE(outNumber, sorce_req, toPrintMFG);
+                                    FilterStockDataGridView(textBox10.Text);
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Input positive numeric values ONLY !");
+                                    textBox6.Text = string.Empty;
+                                    textBox6.Focus();
+                                }
                             }
                         }
-                    }
-                    catch (Exception)
-                    {
-                        textBox6.Text = string.Empty;
-                        textBox6.Focus();
-                        throw;
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Input Qty !");
-                    textBox6.Text = string.Empty;
-                    textBox6.Focus();
-                }
-            }
-            else if (radioButton2.Checked == true)
-            {
-                bool toPrintGILT = true;
-                if (textBox8.Text != string.Empty)
-                {
-                    sorce_req = comboBox2.Text + textBox8.Text;
-                    if (textBox6.Text.ToString().StartsWith("QTY:"))
-                    {
-                        int outNumberq;
-                        bool successq = int.TryParse(textBox6.Text.ToString().Substring(4), out outNumberq);
-                        if (successq && outNumberq < 50001 && outNumberq > 0)
+                        catch (Exception)
                         {
-                            MoveIntoDATABASE(outNumberq, sorce_req, toPrintGILT);
-                            FilterStockDataGridView(textBox10.Text);
-                        }
-                        else
-                        {
-                            MessageBox.Show("Input positive numeric values ONLY !");
                             textBox6.Text = string.Empty;
                             textBox6.Focus();
+                            throw;
                         }
-                    }
-                    else if (textBox6.Text.ToString().StartsWith("Q"))
-                    {
-                        int outNumberq;
-                        bool successq = int.TryParse(textBox6.Text.ToString().Substring(1), out outNumberq);
-                        if (successq && outNumberq < 50001 && outNumberq > 0)
-                        {
-                            MoveIntoDATABASE(outNumberq, sorce_req, toPrintGILT);
-                            FilterStockDataGridView(textBox10.Text);
-                        }
-                        else
-                        {
-                            MessageBox.Show("Input positive numeric values ONLY !");
-                            textBox6.Text = string.Empty;
-                            textBox6.Focus();
-                        }
-                    }
-                    else if (textBox6.Text.ToString().Contains(","))
-                    {
-                        ;
-                        int outNumberq;
-                        bool successq = int.TryParse(textBox6.Text.Replace(",", ""), out outNumberq);
-                        if (successq && outNumberq < 50001 && outNumberq > 0)
-                        {
-                            MoveIntoDATABASE(outNumberq, sorce_req, toPrintGILT);
-                            FilterStockDataGridView(textBox10.Text);
-                        }
-                        else
-                        {
-                            MessageBox.Show("Input positive numeric values ONLY !");
-                            textBox6.Text = string.Empty;
-                            textBox6.Focus();
-                        }
-                    }
-                    else
-                    {
-                        int outNumber;
-                        bool success = int.TryParse(textBox6.Text.ToString(), out outNumber);
-                        if (success && outNumber < 50001 && outNumber > 0)
-                        {
-                            MoveIntoDATABASE(outNumber, sorce_req, toPrintGILT);
-                            FilterStockDataGridView(textBox10.Text);
-                        }
-                        else
-                        {
-                            MessageBox.Show("Input positive numeric values ONLY !");
-                            textBox6.Text = string.Empty;
-                            textBox6.Focus();
-                        }
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Input " + comboBox2.Text + "_XXX ID !");
-                    textBox8.Focus();
-                }
-            }
-            else if (radioButton4.Checked == true)
-            {
-                bool toPrintWO = false;
-                if (textBox9.Text != string.Empty)
-                {
-                    if (textBox9.Text.Contains("_"))
-                    {
-                        string[] theWOsplit = textBox9.Text.Split("_");
-                        sorce_req = theWOsplit[1] + "_" + theWOsplit[2];
-                    }
-                    else
-                    {
-                        sorce_req = textBox9.Text;
-                    }
-                    int outNumber;
-                    bool success = int.TryParse(textBox6.Text, out outNumber);
-                    if (success && outNumber < 50001 && outNumber > 0)
-                    {
-                        int negQty = outNumber * (-1);
-                        MoveIntoDATABASE(negQty, sorce_req, toPrintWO);
-                        FilterStockDataGridView(textBox10.Text);
                     }
                     else
                     {
@@ -750,12 +646,124 @@ namespace WH_Panel
                         textBox6.Focus();
                     }
                 }
-                else
+                else if (radioButton2.Checked == true)
                 {
-                    MessageBox.Show("INPUT WO !");
-                    textBox9.Focus();
+                    bool toPrintGILT = true;
+                    if (textBox8.Text != string.Empty)
+                    {
+                        sorce_req = comboBox2.Text + textBox8.Text;
+                        if (textBox6.Text.ToString().StartsWith("QTY:"))
+                        {
+                            int outNumberq;
+                            bool successq = int.TryParse(textBox6.Text.ToString().Substring(4), out outNumberq);
+                            if (successq && outNumberq < 50001 && outNumberq > 0)
+                            {
+                                MoveIntoDATABASE(outNumberq, sorce_req, toPrintGILT);
+                                FilterStockDataGridView(textBox10.Text);
+                            }
+                            else
+                            {
+                                MessageBox.Show("Input positive numeric values ONLY !");
+                                textBox6.Text = string.Empty;
+                                textBox6.Focus();
+                            }
+                        }
+                        else if (textBox6.Text.ToString().StartsWith("Q"))
+                        {
+                            int outNumberq;
+                            bool successq = int.TryParse(textBox6.Text.ToString().Substring(1), out outNumberq);
+                            if (successq && outNumberq < 50001 && outNumberq > 0)
+                            {
+                                MoveIntoDATABASE(outNumberq, sorce_req, toPrintGILT);
+                                FilterStockDataGridView(textBox10.Text);
+                            }
+                            else
+                            {
+                                MessageBox.Show("Input positive numeric values ONLY !");
+                                textBox6.Text = string.Empty;
+                                textBox6.Focus();
+                            }
+                        }
+                        else if (textBox6.Text.ToString().Contains(","))
+                        {
+                            ;
+                            int outNumberq;
+                            bool successq = int.TryParse(textBox6.Text.Replace(",", ""), out outNumberq);
+                            if (successq && outNumberq < 50001 && outNumberq > 0)
+                            {
+                                MoveIntoDATABASE(outNumberq, sorce_req, toPrintGILT);
+                                FilterStockDataGridView(textBox10.Text);
+                            }
+                            else
+                            {
+                                MessageBox.Show("Input positive numeric values ONLY !");
+                                textBox6.Text = string.Empty;
+                                textBox6.Focus();
+                            }
+                        }
+                        else
+                        {
+                            int outNumber;
+                            bool success = int.TryParse(textBox6.Text.ToString(), out outNumber);
+                            if (success && outNumber < 50001 && outNumber > 0)
+                            {
+                                MoveIntoDATABASE(outNumber, sorce_req, toPrintGILT);
+                                FilterStockDataGridView(textBox10.Text);
+                            }
+                            else
+                            {
+                                MessageBox.Show("Input positive numeric values ONLY !");
+                                textBox6.Text = string.Empty;
+                                textBox6.Focus();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Input " + comboBox2.Text + "_XXX ID !");
+                        textBox8.Focus();
+                    }
                 }
+                else if (radioButton4.Checked == true)
+                {
+                    bool toPrintWO = false;
+                    if (textBox9.Text != string.Empty)
+                    {
+                        if (textBox9.Text.Contains("_"))
+                        {
+                            string[] theWOsplit = textBox9.Text.Split("_");
+                            sorce_req = theWOsplit[1] + "_" + theWOsplit[2];
+                        }
+                        else
+                        {
+                            sorce_req = textBox9.Text;
+                        }
+                        int outNumber;
+                        bool success = int.TryParse(textBox6.Text, out outNumber);
+                        if (success && outNumber < 50001 && outNumber > 0)
+                        {
+                            int negQty = outNumber * (-1);
+                            MoveIntoDATABASE(negQty, sorce_req, toPrintWO);
+                            FilterStockDataGridView(textBox10.Text);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Input Qty !");
+                            textBox6.Text = string.Empty;
+                            textBox6.Focus();
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("INPUT WO !");
+                        textBox9.Focus();
+                    }
+                }
+
+
+
             }
+
         }
         private void ComeBackFromPrint()
         {
@@ -2930,81 +2938,84 @@ namespace WH_Panel
 
         private void dataGridView2_MouseClick(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Right)
+            if (Environment.MachineName == "RT12" || Environment.MachineName == "RT13" || Environment.MachineName == "RT1")
             {
-                int rowIndex = dataGridView2.HitTest(e.X, e.Y).RowIndex;
-
-                if (rowIndex >= 0)
+                if (e.Button == MouseButtons.Right)
                 {
-                    // Create a new WHitem object
-                    WHitem avlItem = new WHitem();
+                    int rowIndex = dataGridView2.HitTest(e.X, e.Y).RowIndex;
 
-                    DataGridViewRow selectedRow = dataGridView2.Rows[rowIndex];
-
-                    // Loop through each cell in the row
-                    foreach (DataGridViewCell cell in selectedRow.Cells)
+                    if (rowIndex >= 0)
                     {
-                        // Get the column name of the current cell
-                        string columnName = dataGridView2.Columns[cell.ColumnIndex].Name;
+                        // Create a new WHitem object
+                        WHitem avlItem = new WHitem();
 
-                        // Populate WHitem object based on column name
-                        switch (columnName)
+                        DataGridViewRow selectedRow = dataGridView2.Rows[rowIndex];
+
+                        // Loop through each cell in the row
+                        foreach (DataGridViewCell cell in selectedRow.Cells)
                         {
-                            case "IPN":
-                                avlItem.IPN = cell.Value.ToString();
-                                break;
-                            case "MFPN":
-                                avlItem.MFPN = cell.Value.ToString();
-                                break;
-                            case "Description":
-                                avlItem.Description = cell.Value.ToString();
-                                break;
-                            case "Manufacturer":
-                                avlItem.Manufacturer = cell.Value.ToString();
-                                break;
-                                // Add cases for other columns as needed
+                            // Get the column name of the current cell
+                            string columnName = dataGridView2.Columns[cell.ColumnIndex].Name;
+
+                            // Populate WHitem object based on column name
+                            switch (columnName)
+                            {
+                                case "IPN":
+                                    avlItem.IPN = cell.Value.ToString();
+                                    break;
+                                case "MFPN":
+                                    avlItem.MFPN = cell.Value.ToString();
+                                    break;
+                                case "Description":
+                                    avlItem.Description = cell.Value.ToString();
+                                    break;
+                                case "Manufacturer":
+                                    avlItem.Manufacturer = cell.Value.ToString();
+                                    break;
+                                    // Add cases for other columns as needed
+                            }
                         }
-                    }
 
-                    // Confirmation message
-                    DialogResult result = MessageBox.Show(
-                        $"Are you sure you want to delete the following item?\n\n" +
-                        $"IPN: {avlItem.IPN}\n" +
-                        $"MFPN: {avlItem.MFPN}\n" +
-                        $"Description: {avlItem.Description}\n" +
-                        $"Manufacturer: {avlItem.Manufacturer}\n",
-                        "Confirmation",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Warning
-                    );
+                        // Confirmation message
+                        DialogResult result = MessageBox.Show(
+                            $"Are you sure you want to delete the following item?\n\n" +
+                            $"IPN: {avlItem.IPN}\n" +
+                            $"MFPN: {avlItem.MFPN}\n" +
+                            $"Description: {avlItem.Description}\n" +
+                            $"Manufacturer: {avlItem.Manufacturer}\n",
+                            "Confirmation",
+                            MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Warning
+                        );
 
-                    if (result == DialogResult.Yes)
-                    {
-                        // Continue with your existing logic for deletion
-
-                        string selectedWarehouseName = comboBox3.SelectedItem.ToString(); // Get the selected name from ComboBox1
-
-                        // Assuming warehouses is a collection of Warehouse objects
-                        string fp = warehouses
-                            .Where(w => w.clName == selectedWarehouseName) // Filter warehouses by selected name
-                            .Select(w => w.sqlAvl)
-                            .FirstOrDefault(); // Use FirstOrDefault() instead of First() to handle the case where no warehouse matches the selected name
-
-                        string constr = fp;
-                        using (SqlConnection conn = new SqlConnection(constr))
+                        if (result == DialogResult.Yes)
                         {
-                            conn.Open();
-                            SqlCommand command = new SqlCommand($"DELETE TOP (1) FROM [AVL] WHERE IPN = @IPN AND MFPN = @MFPN AND Description = @Description AND Manufacturer = @Manufacturer", conn);
-                            command.Parameters.AddWithValue("@IPN", avlItem.IPN);
-                            command.Parameters.AddWithValue("@MFPN", avlItem.MFPN);
-                            command.Parameters.AddWithValue("@Description", avlItem.Description);
-                            command.Parameters.AddWithValue("@Manufacturer", avlItem.Manufacturer);
+                            // Continue with your existing logic for deletion
 
-                            command.ExecuteNonQuery();
-                            conn.Close();
+                            string selectedWarehouseName = comboBox3.SelectedItem.ToString(); // Get the selected name from ComboBox1
+
+                            // Assuming warehouses is a collection of Warehouse objects
+                            string fp = warehouses
+                                .Where(w => w.clName == selectedWarehouseName) // Filter warehouses by selected name
+                                .Select(w => w.sqlAvl)
+                                .FirstOrDefault(); // Use FirstOrDefault() instead of First() to handle the case where no warehouse matches the selected name
+
+                            string constr = fp;
+                            using (SqlConnection conn = new SqlConnection(constr))
+                            {
+                                conn.Open();
+                                SqlCommand command = new SqlCommand($"DELETE TOP (1) FROM [AVL] WHERE IPN = @IPN AND MFPN = @MFPN AND Description = @Description AND Manufacturer = @Manufacturer", conn);
+                                command.Parameters.AddWithValue("@IPN", avlItem.IPN);
+                                command.Parameters.AddWithValue("@MFPN", avlItem.MFPN);
+                                command.Parameters.AddWithValue("@Description", avlItem.Description);
+                                command.Parameters.AddWithValue("@Manufacturer", avlItem.Manufacturer);
+
+                                command.ExecuteNonQuery();
+                                conn.Close();
+                            }
+                            MessageBox.Show($"{avlItem.IPN} {avlItem.MFPN} {avlItem.Description} {avlItem.Manufacturer} deleted");
+                            button2_Click(button3, EventArgs.Empty);
                         }
-                        MessageBox.Show($"{avlItem.IPN} {avlItem.MFPN} {avlItem.Description} {avlItem.Manufacturer} deleted");
-                        button2_Click(button3, EventArgs.Empty);
                     }
                 }
             }

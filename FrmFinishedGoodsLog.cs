@@ -32,6 +32,7 @@ namespace WH_Panel
             InitializeComponent();
             populateComboBox(comboBox1, initialPath);
             UpdateControlColors(this);
+            btbFinalizeShipment.Enabled = false;
         }
         private void UpdateControlColors(Control parentControl)
         {
@@ -239,6 +240,7 @@ namespace WH_Panel
                 PackedItemsList.Insert(0, fg);
                 lblCounter.Text = $"QTY: {++counter} / {limit}";
                 PopulatePackedItemsGridView();
+                btbFinalizeShipment.Enabled = true;
             }
             else
             {
@@ -313,28 +315,36 @@ namespace WH_Panel
 
         private void button2_Click(object sender, EventArgs e)
         {
-            // Order the list by the serialNumber column in the dataGridView1
-            dataGridView1.Sort(dataGridView1.Columns["serialNumber"], ListSortDirection.Ascending);
+            // Prompt user for confirmation
+            DialogResult result = MessageBox.Show("Are you sure you want to close the shipment?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+            // If user confirms, proceed with logic
+            if (result == DialogResult.Yes)
+            {
+                // Order the list by the serialNumber column in the dataGridView1
+                dataGridView1.Sort(dataGridView1.Columns["serialNumber"], ListSortDirection.Ascending);
 
 
-            string saveToPath = string.Empty;
-            if (comboBox3.SelectedIndex != -1)
-            {
-                saveToPath = initialPath + comboBox1.SelectedItem.ToString() + "\\" + comboBox2.SelectedItem.ToString() + "\\" + comboBox3.SelectedItem.ToString();
-            }
-            else
-            {
-                saveToPath = initialPath + comboBox1.SelectedItem.ToString() + "\\" + comboBox2.SelectedItem.ToString();
-            }
+                string saveToPath = string.Empty;
+                if (comboBox3.SelectedIndex != -1)
+                {
+                    saveToPath = initialPath + comboBox1.SelectedItem.ToString() + "\\" + comboBox2.SelectedItem.ToString() + "\\" + comboBox3.SelectedItem.ToString();
+                }
+                else
+                {
+                    saveToPath = initialPath + comboBox1.SelectedItem.ToString() + "\\" + comboBox2.SelectedItem.ToString();
+                }
 
-            if (Environment.MachineName == "RT12")
-            {
+                //if (Environment.MachineName == "RT12")
+                //{
                 SaveToHTML(saveToPath, comboBox1.SelectedItem.ToString(), comboBox2.SelectedItem.ToString(), comboBox3.SelectedItem.ToString(), txtbComments.Text, txtbSetLimit.Text);
+                //}
+                //else
+                //{
+                //    EXCELinserter(PackedItemsList, saveToPath);
+                //}
             }
-            else
-            {
-                EXCELinserter(PackedItemsList, saveToPath);
-            }
+
         }
         private void SaveToHTML(string saveToPath, string customer, string project, string revision, string po, string qty)
         {
@@ -375,7 +385,7 @@ namespace WH_Panel
 
 
             // Save HTML content to file
-            string filePath = saveToPath + "\\" + po + "_" + dataGridView1.Rows.Count + "of" + limit + "_packed_Serials_" + DateTime.Now.ToString("yyyyMMddHHmm") + ".html";
+            string filePath = saveToPath + "\\" + po + "_" + DateTime.Now.ToString("yyyyMMddHHmm") + "_" + dataGridView1.Rows.Count + "of" + limit + "_packed_Serials.html";
 
             File.WriteAllText(filePath, htmlContent);
             // Get the directory of the file

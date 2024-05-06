@@ -27,7 +27,7 @@
         {
             DateTimePicker dateTimePicker1;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmClientAgnosticWH));
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             groupBox1 = new GroupBox();
             checkBox1 = new CheckBox();
             pictureBox1 = new PictureBox();
@@ -408,7 +408,7 @@
             // 
             comboBox4.Dock = DockStyle.Fill;
             comboBox4.FormattingEnabled = true;
-            comboBox4.Items.AddRange(new object[] { "1P", "6P1P" });
+            comboBox4.Items.AddRange(new object[] { "1P", "6P1P", "pm:" });
             comboBox4.Location = new Point(3, 3);
             comboBox4.Name = "comboBox4";
             comboBox4.Size = new Size(176, 23);
@@ -418,7 +418,7 @@
             // 
             comboBox5.Dock = DockStyle.Fill;
             comboBox5.FormattingEnabled = true;
-            comboBox5.Items.AddRange(new object[] { "30P", "K1K", "6P2" });
+            comboBox5.Items.AddRange(new object[] { "30P", "K1K", "6P2", ",qty:" });
             comboBox5.Location = new Point(367, 3);
             comboBox5.Name = "comboBox5";
             comboBox5.Size = new Size(178, 23);
@@ -1102,14 +1102,14 @@
             // 
             dataGridView2.AllowUserToAddRows = false;
             dataGridView2.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = SystemColors.ControlDark;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            dataGridViewCellStyle2.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
-            dataGridView2.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = SystemColors.ControlDark;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dataGridView2.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView2.Dock = DockStyle.Fill;
             dataGridView2.Location = new Point(3, 19);
