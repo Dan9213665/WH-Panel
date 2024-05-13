@@ -75,25 +75,50 @@ namespace WH_Panel
                 MessageBox.Show("GIF file not found!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Close(); // Close the form if the GIF file is not found
             }
+
+
+            // Load GIF from Resources folder
+
+            string gifYesFilePath = Path.Combine(resourcesFolder, "yes.gif");
+
+            // Check if the GIF file exists
+            if (File.Exists(gifYesFilePath))
+            {
+                // Load the GIF into the PictureBox control
+                pictureBox2Yes.SizeMode = PictureBoxSizeMode.StretchImage;
+                pictureBox2Yes.Image = Image.FromFile(gifYesFilePath);
+            }
+            else
+            {
+                MessageBox.Show("GIF file not found!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Close(); // Close the form if the GIF file is not found
+            }
+
+            string gifNoFilePath = Path.Combine(resourcesFolder, "no.gif");
+
+            // Check if the GIF file exists
+            if (File.Exists(gifNoFilePath))
+            {
+                // Load the GIF into the PictureBox control
+                pictureBoxNo.SizeMode = PictureBoxSizeMode.StretchImage;
+                pictureBoxNo.Image = Image.FromFile(gifNoFilePath);
+            }
+            else
+            {
+                MessageBox.Show("GIF file not found!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Close(); // Close the form if the GIF file is not found
+            }
         }
 
-        private void yesButton_Click(object sender, EventArgs e)
-        {
 
-        }
 
-        private void noButton_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnYes_Click(object sender, EventArgs e)
+        private void pictureBox2Yes_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Yes;
             Close();
         }
 
-        private void btnNo_Click(object sender, EventArgs e)
+        private void pictureBoxNo_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.No;
             Close();

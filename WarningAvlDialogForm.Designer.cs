@@ -31,10 +31,12 @@
             lblMessage = new Label();
             pictureBox1 = new PictureBox();
             tableLayoutPanel1 = new TableLayoutPanel();
-            btnNo = new Button();
-            btnYes = new Button();
+            pictureBox2Yes = new PictureBox();
+            pictureBoxNo = new PictureBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             tableLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox2Yes).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxNo).BeginInit();
             SuspendLayout();
             // 
             // lblMessage
@@ -63,10 +65,10 @@
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel1.Controls.Add(btnNo, 2, 1);
             tableLayoutPanel1.Controls.Add(pictureBox1, 0, 0);
             tableLayoutPanel1.Controls.Add(lblMessage, 1, 1);
-            tableLayoutPanel1.Controls.Add(btnYes, 0, 1);
+            tableLayoutPanel1.Controls.Add(pictureBox2Yes, 0, 1);
+            tableLayoutPanel1.Controls.Add(pictureBoxNo, 2, 1);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -76,27 +78,25 @@
             tableLayoutPanel1.Size = new Size(604, 581);
             tableLayoutPanel1.TabIndex = 2;
             // 
-            // btnNo
+            // pictureBox2Yes
             // 
-            btnNo.Dock = DockStyle.Fill;
-            btnNo.Location = new Point(405, 473);
-            btnNo.Name = "btnNo";
-            btnNo.Size = new Size(196, 105);
-            btnNo.TabIndex = 3;
-            btnNo.Text = "No";
-            btnNo.UseVisualStyleBackColor = true;
-            btnNo.Click += btnNo_Click;
+            pictureBox2Yes.Dock = DockStyle.Fill;
+            pictureBox2Yes.Location = new Point(3, 473);
+            pictureBox2Yes.Name = "pictureBox2Yes";
+            pictureBox2Yes.Size = new Size(195, 105);
+            pictureBox2Yes.TabIndex = 4;
+            pictureBox2Yes.TabStop = false;
+            pictureBox2Yes.Click += pictureBox2Yes_Click;
             // 
-            // btnYes
+            // pictureBoxNo
             // 
-            btnYes.Dock = DockStyle.Fill;
-            btnYes.Location = new Point(3, 473);
-            btnYes.Name = "btnYes";
-            btnYes.Size = new Size(195, 105);
-            btnYes.TabIndex = 2;
-            btnYes.Text = "Yes";
-            btnYes.UseVisualStyleBackColor = true;
-            btnYes.Click += btnYes_Click;
+            pictureBoxNo.Dock = DockStyle.Fill;
+            pictureBoxNo.Location = new Point(405, 473);
+            pictureBoxNo.Name = "pictureBoxNo";
+            pictureBoxNo.Size = new Size(196, 105);
+            pictureBoxNo.TabIndex = 5;
+            pictureBoxNo.TabStop = false;
+            pictureBoxNo.Click += pictureBoxNo_Click;
             // 
             // WarningAvlDialogForm
             // 
@@ -111,6 +111,8 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox2Yes).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxNo).EndInit();
             ResumeLayout(false);
         }
 
@@ -119,7 +121,7 @@
         private Label lblMessage;
         private PictureBox pictureBox1;
         private TableLayoutPanel tableLayoutPanel1;
-        private Button btnYes;
-        private Button btnNo;
+        private PictureBox pictureBox2Yes;
+        private PictureBox pictureBoxNo;
     }
 }
