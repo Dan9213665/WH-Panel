@@ -2976,17 +2976,28 @@ namespace WH_Panel
                             }
                         }
 
-                        // Confirmation message
-                        DialogResult result = MessageBox.Show(
+                        //// Confirmation message
+                        //DialogResult result = MessageBox.Show(
+                        //    $"Are you sure you want to delete the following item?\n\n" +
+                        //    $"IPN: {avlItem.IPN}\n" +
+                        //    $"MFPN: {avlItem.MFPN}\n" +
+                        //    $"Description: {avlItem.Description}\n" +
+                        //    $"Manufacturer: {avlItem.Manufacturer}\n",
+                        //    "Confirmation",
+                        //    MessageBoxButtons.YesNo,
+                        //    MessageBoxIcon.Warning
+                        //);
+
+                        // Display custom confirmation dialog
+                        WarningAvlDialogForm customDialog = new WarningAvlDialogForm(
                             $"Are you sure you want to delete the following item?\n\n" +
                             $"IPN: {avlItem.IPN}\n" +
                             $"MFPN: {avlItem.MFPN}\n" +
                             $"Description: {avlItem.Description}\n" +
-                            $"Manufacturer: {avlItem.Manufacturer}\n",
-                            "Confirmation",
-                            MessageBoxButtons.YesNo,
-                            MessageBoxIcon.Warning
+                            $"Manufacturer: {avlItem.Manufacturer}\n"
                         );
+
+                        DialogResult result = customDialog.ShowDialog();
 
                         if (result == DialogResult.Yes)
                         {
