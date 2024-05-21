@@ -124,78 +124,7 @@ namespace WH_Panel
                 writer.WriteLine("<head>");
                 writer.WriteLine("<title>Listed items to search for</title>");
                 writer.WriteLine("</head>");
-                // Assuming this is part of your HTML generation
-                //writer.WriteLine("<button onclick='toggleDisplay()'>FILTER for PRINTOUT</button>");
-                //writer.WriteLine("<div id='rowsCount'>Total Rows Loaded : </div>");
-                //writer.WriteLine("<script>");
-                //writer.WriteLine("var filterOn = false;"); // Variable to track filtering state
-                //writer.WriteLine("function toggleDisplay() {");
-                //writer.WriteLine("  filterOn = !filterOn;"); // Toggle the filter state
-                //writer.WriteLine("  var rows = document.getElementsByTagName('tr');");
-                //writer.WriteLine("  for (var i = 0; i < rows.length; i++) {");
-                //writer.WriteLine("    var stockCell = rows[i].getElementsByTagName('td')[4];"); // Assuming the stock cell is at index 4
-                //writer.WriteLine("    rows[i].style.display = filterOn ? (stockCell && stockCell.style.backgroundColor === 'lightgreen' ? '' : 'none') : '';");
-                //writer.WriteLine("  }");
-                //writer.WriteLine("}");
-                //writer.WriteLine("</script>");
-                //writer.WriteLine("<button onclick='toggleDisplay()'>FILTER for PRINTOUT</button>");
-                //writer.WriteLine("<div id='rowsCount'>Total Rows Loaded : </div>");
-                //writer.WriteLine("<script>");
-                //writer.WriteLine("var filterOn = false;"); // Variable to track filtering state
-                //writer.WriteLine("function toggleDisplay() {");
-                //writer.WriteLine("  filterOn = !filterOn;"); // Toggle the filter state
-                //writer.WriteLine("  var rows = document.getElementsByTagName('tr');");
-                //writer.WriteLine("  var totalRows = 0;"); // Variable to track total rows
-                //writer.WriteLine("  for (var i = 0; i < rows.length; i++) {");
-                //writer.WriteLine("    var stockCell = rows[i].getElementsByTagName('td')[4];"); // Assuming the stock cell is at index 4
-                //writer.WriteLine("    if (filterOn) {");
-                //writer.WriteLine("      if (stockCell && stockCell.style.backgroundColor === 'lightgreen') {");
-                //writer.WriteLine("        rows[i].style.display = '';");
-                //writer.WriteLine("        totalRows++;");
-                //writer.WriteLine("      } else {");
-                //writer.WriteLine("        rows[i].style.display = 'none';");
-                //writer.WriteLine("      }");
-                //writer.WriteLine("    } else {");
-                //writer.WriteLine("      rows[i].style.display = '';");
-                //writer.WriteLine("      totalRows++;");
-                //writer.WriteLine("    }");
-                //writer.WriteLine("  }");
-                //writer.WriteLine("  document.getElementById('rowsCount').innerHTML = 'Total Rows Loaded : ' + totalRows;");
-                //writer.WriteLine("}");
-                //writer.WriteLine("</script>");
-                //writer.WriteLine("<button onclick='toggleDisplay()'>FILTER for PRINTOUT</button>");
-                //writer.WriteLine("<div id='rowsCount'>Total Rows Loaded : </div>");
-                //writer.WriteLine("<script>");
-                //writer.WriteLine("var filterOn = false;"); // Variable to track filtering state
-                //writer.WriteLine("document.addEventListener('DOMContentLoaded', function() {");
-                //writer.WriteLine("  countRows();"); // Call the countRows function after the page has finished loading
-                //writer.WriteLine("});");
-                //writer.WriteLine("function toggleDisplay() {");
-                //writer.WriteLine("  filterOn = !filterOn;"); // Toggle the filter state
-                //writer.WriteLine("  var rows = document.getElementsByTagName('tr');");
-                //writer.WriteLine("  var totalRows = 0;"); // Variable to track total rows
-                //writer.WriteLine("  for (var i = 0; i < rows.length; i++) {");
-                //writer.WriteLine("    var stockCell = rows[i].getElementsByTagName('td')[4];"); // Assuming the stock cell is at index 4
-                //writer.WriteLine("    if (filterOn) {");
-                //writer.WriteLine("      if (stockCell && stockCell.style.backgroundColor === 'lightgreen') {");
-                //writer.WriteLine("        rows[i].style.display = '';");
-                //writer.WriteLine("        totalRows++;");
-                //writer.WriteLine("      } else {");
-                //writer.WriteLine("        rows[i].style.display = 'none';");
-                //writer.WriteLine("      }");
-                //writer.WriteLine("    } else {");
-                //writer.WriteLine("      rows[i].style.display = '';");
-                //writer.WriteLine("      totalRows++;");
-                //writer.WriteLine("    }");
-                //writer.WriteLine("  }");
-                //writer.WriteLine("  document.getElementById('rowsCount').innerHTML = 'Total Rows Loaded : ' + totalRows;");
-                //writer.WriteLine("}");
-                //writer.WriteLine("function countRows() {");
-                //writer.WriteLine("  var rows = document.getElementsByTagName('tr');");
-                //writer.WriteLine("  var totalRows = rows.length;");
-                //writer.WriteLine("  document.getElementById('rowsCount').innerHTML = 'Total Rows Loaded : ' + totalRows;");
-                //writer.WriteLine("}");
-                //writer.WriteLine("</script>");
+            
                 writer.WriteLine("<button onclick='toggleDisplay()'>FILTER for PRINTOUT</button>");
                 writer.WriteLine("<div id='rowsCount'>Total Rows Loaded : </div>");
                 writer.WriteLine("<script>");

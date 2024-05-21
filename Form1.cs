@@ -327,5 +327,11 @@ namespace WH_Panel
             FrmSQLWHDB frm = new FrmSQLWHDB();
             frm.Show();
         }
+
+        private void btnMFPN_Click(object sender, EventArgs e)
+        {
+            FrmMFPNsearcher frm = new FrmMFPNsearcher();    
+            frm.Show();
+        }
     }
 }

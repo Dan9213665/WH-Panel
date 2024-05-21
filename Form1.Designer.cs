@@ -55,6 +55,7 @@ namespace WH_Panel
             groupBox11 = new GroupBox();
             button7 = new Button();
             notifyIcon1 = new NotifyIcon(components);
+            btnMFPN = new Button();
             groupBox1.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
             groupBox4.SuspendLayout();
@@ -341,6 +342,7 @@ namespace WH_Panel
             // 
             // groupBox2
             // 
+            groupBox2.Controls.Add(btnMFPN);
             groupBox2.Controls.Add(button5);
             groupBox2.ForeColor = Color.White;
             groupBox2.Location = new Point(421, 3);
@@ -391,6 +393,18 @@ namespace WH_Panel
             notifyIcon1.Visible = true;
             notifyIcon1.MouseClick += notifyIcon1_MouseClick;
             notifyIcon1.MouseDoubleClick += notifyIcon1_MouseDoubleClick;
+            // 
+            // btnMFPN
+            // 
+            btnMFPN.BackColor = Color.Black;
+            btnMFPN.BackgroundImage = (Image)resources.GetObject("btnMFPN.BackgroundImage");
+            btnMFPN.BackgroundImageLayout = ImageLayout.Zoom;
+            btnMFPN.Location = new Point(6, 85);
+            btnMFPN.Name = "btnMFPN";
+            btnMFPN.Size = new Size(123, 34);
+            btnMFPN.TabIndex = 12;
+            btnMFPN.UseVisualStyleBackColor = false;
+            btnMFPN.Click += btnMFPN_Click;
             // 
             // Form1
             // 
@@ -448,5 +462,6 @@ namespace WH_Panel
         private Button button10;
         private Button button12;
         private Button button15;
+        private Button btnMFPN;
     }
 }
