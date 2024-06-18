@@ -330,7 +330,7 @@ namespace WH_Panel
 
         private void btnMFPN_Click(object sender, EventArgs e)
         {
-            FrmMFPNsearcher frm = new FrmMFPNsearcher();    
+            FrmMFPNsearcher frm = new FrmMFPNsearcher();
             frm.Show();
         }
     }

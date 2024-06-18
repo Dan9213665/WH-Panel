@@ -51,11 +51,11 @@ namespace WH_Panel
             button8 = new Button();
             button2 = new Button();
             groupBox2 = new GroupBox();
+            btnMFPN = new Button();
             button5 = new Button();
             groupBox11 = new GroupBox();
             button7 = new Button();
             notifyIcon1 = new NotifyIcon(components);
-            btnMFPN = new Button();
             groupBox1.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
             groupBox4.SuspendLayout();
@@ -235,9 +235,8 @@ namespace WH_Panel
             // 
             // groupBox7
             // 
-            groupBox7.Controls.Add(button15);
             groupBox7.Controls.Add(button12);
-            groupBox7.Controls.Add(button9);
+            groupBox7.Controls.Add(btnMFPN);
             groupBox7.Controls.Add(button3);
             groupBox7.ForeColor = Color.White;
             groupBox7.Location = new Point(281, 3);
@@ -251,9 +250,9 @@ namespace WH_Panel
             // 
             button15.BackgroundImage = (Image)resources.GetObject("button15.BackgroundImage");
             button15.BackgroundImageLayout = ImageLayout.Stretch;
-            button15.Location = new Point(8, 78);
+            button15.Location = new Point(6, 83);
             button15.Name = "button15";
-            button15.Size = new Size(62, 41);
+            button15.Size = new Size(70, 36);
             button15.TabIndex = 14;
             button15.UseVisualStyleBackColor = true;
             button15.Visible = false;
@@ -275,9 +274,9 @@ namespace WH_Panel
             button9.BackgroundImage = (Image)resources.GetObject("button9.BackgroundImage");
             button9.BackgroundImageLayout = ImageLayout.Stretch;
             button9.ForeColor = Color.Black;
-            button9.Location = new Point(74, 78);
+            button9.Location = new Point(82, 83);
             button9.Name = "button9";
-            button9.Size = new Size(54, 41);
+            button9.Size = new Size(47, 34);
             button9.TabIndex = 10;
             button9.UseVisualStyleBackColor = true;
             button9.Visible = false;
@@ -342,8 +341,9 @@ namespace WH_Panel
             // 
             // groupBox2
             // 
-            groupBox2.Controls.Add(btnMFPN);
+            groupBox2.Controls.Add(button15);
             groupBox2.Controls.Add(button5);
+            groupBox2.Controls.Add(button9);
             groupBox2.ForeColor = Color.White;
             groupBox2.Location = new Point(421, 3);
             groupBox2.Name = "groupBox2";
@@ -351,6 +351,18 @@ namespace WH_Panel
             groupBox2.TabIndex = 24;
             groupBox2.TabStop = false;
             groupBox2.Text = "Excel Ripper";
+            // 
+            // btnMFPN
+            // 
+            btnMFPN.BackColor = Color.Black;
+            btnMFPN.BackgroundImage = (Image)resources.GetObject("btnMFPN.BackgroundImage");
+            btnMFPN.BackgroundImageLayout = ImageLayout.Zoom;
+            btnMFPN.Location = new Point(8, 83);
+            btnMFPN.Name = "btnMFPN";
+            btnMFPN.Size = new Size(120, 34);
+            btnMFPN.TabIndex = 12;
+            btnMFPN.UseVisualStyleBackColor = false;
+            btnMFPN.Click += btnMFPN_Click;
             // 
             // button5
             // 
@@ -393,18 +405,6 @@ namespace WH_Panel
             notifyIcon1.Visible = true;
             notifyIcon1.MouseClick += notifyIcon1_MouseClick;
             notifyIcon1.MouseDoubleClick += notifyIcon1_MouseDoubleClick;
-            // 
-            // btnMFPN
-            // 
-            btnMFPN.BackColor = Color.Black;
-            btnMFPN.BackgroundImage = (Image)resources.GetObject("btnMFPN.BackgroundImage");
-            btnMFPN.BackgroundImageLayout = ImageLayout.Zoom;
-            btnMFPN.Location = new Point(6, 85);
-            btnMFPN.Name = "btnMFPN";
-            btnMFPN.Size = new Size(123, 34);
-            btnMFPN.TabIndex = 12;
-            btnMFPN.UseVisualStyleBackColor = false;
-            btnMFPN.Click += btnMFPN_Click;
             // 
             // Form1
             // 
