@@ -298,6 +298,7 @@ namespace WH_Panel
                         if (reader.HasRows)
                         {
                             int indIPN = reader.GetOrdinal("IPN");
+                            //MessageBox.Show("indIPN:"+ indIPN);
                             int indMFPN = reader.GetOrdinal("MFPN");
                             int indDescription = reader.GetOrdinal("Description");
                             int indDELTA = reader.GetOrdinal("DELTA");
@@ -361,7 +362,7 @@ namespace WH_Panel
                     catch (Exception e)
                     {
                         loadingErrors++;
-                        label13.Text = loadingErrors.ToString() + " Loading Errors detected: " + e.Message;
+                        label13.Text = loadingErrors.ToString() + " DataLoader Errors detected: " + e.Message;
                         listBox1.Items.Add(e.Message.ToString());
                         listBox1.Height = 50;
                         listBox1.Update();
@@ -377,7 +378,7 @@ namespace WH_Panel
             }
             catch (IOException e)
             {
-                MessageBox.Show(e.Message);
+                MessageBox.Show("DataLoader error: " + e.Message);
             }
         }
         private Form dynamicForm; // Declare dynamicForm at the class level
@@ -1621,11 +1622,66 @@ namespace WH_Panel
                         case DialogResult.No:
                             copiesToPrint = 3;
                             break;
-                    }
+                        case DialogResult.Ignore:
 
+                            string modifiedProjectName = projectName.Substring(0, projectName.Length - 5);
+                            string[] splitParts = modifiedProjectName.Split('_');
+
+                            WHitem itemToPrint = new WHitem();
+                            itemToPrint.IPN = "קיט מלא";
+                            itemToPrint.MFPN = splitParts[1];
+                            itemToPrint.Description = splitParts[0];
+                            itemToPrint.Stock = int.Parse(splitParts[2].Substring(0, splitParts[2].Length - 3));
+                            itemToPrint.Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
+                            printStickerFullKit(itemToPrint);
+
+                            break;
+                    }
+                    if (result != DialogResult.Ignore)
+                    {
+                        GenerateHTMLkitBoxLabel(copiesToPrint);
+                    }
                     // Call the method with the chosen number of copies
-                    GenerateHTMLkitBoxLabel(copiesToPrint);
+
                 }
+            }
+        }
+
+        private void printStickerFullKit(WHitem wHitem)
+        {
+            try
+            {
+                string userName = Environment.UserName;
+                string fpst = @"C:\\Users\\" + userName + "\\Desktop\\Print_Stickers.xlsx";
+
+                string thesheetName = "Sheet1";
+                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fpst + "; Extended Properties=\"Excel 12.0;HDR=YES;IMEX=0\"";
+                OleDbConnection conn = new OleDbConnection(constr);
+                OleDbCommand cmd = new OleDbCommand();
+                cmd.Connection = conn;
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @Updated_on";
+
+                cmd.Parameters.AddWithValue("@PN", wHitem.IPN);
+                cmd.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
+                cmd.Parameters.AddWithValue("@ItemDesc", wHitem.Description);
+                cmd.Parameters.AddWithValue("@QTY", wHitem.Stock);
+                cmd.Parameters.AddWithValue("@Updated_on", wHitem.Updated_on);
+
+                conn.Open();
+                cmd.ExecuteNonQuery();
+                conn.Close();
+
+                Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
+                SendKeys.SendWait("^p");
+                SendKeys.SendWait("{Enter}");
+                //ComeBackFromPrint();
+                Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
+
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Sticker printing failed : " + e.Message);
             }
         }
 

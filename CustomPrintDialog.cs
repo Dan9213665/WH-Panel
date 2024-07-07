@@ -34,5 +34,11 @@ namespace WH_Panel
             this.DialogResult = DialogResult.No;
             this.Close();
         }
+
+        private void btnFullKit_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.Ignore;
+            this.Close();
+        }
     }
 }
