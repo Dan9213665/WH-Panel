@@ -1636,8 +1636,24 @@ namespace WH_Panel
                             printStickerFullKit(itemToPrint);
 
                             break;
+
+                        case DialogResult.Abort:
+
+                            string modifiedProjectName2 = projectName.Substring(0, projectName.Length - 5);
+                            string[] splitParts2 = modifiedProjectName2.Split('_');
+
+                            WHitem itemToPrint2 = new WHitem();
+                            itemToPrint2.IPN = "רכיבים בגלילה";
+                            itemToPrint2.MFPN = splitParts2[1];
+                            itemToPrint2.Description = splitParts2[0];
+                            itemToPrint2.Stock = int.Parse(splitParts2[2].Substring(0, splitParts2[2].Length - 3));
+                            itemToPrint2.Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
+                            printStickerFullKit(itemToPrint2);
+
+
+                            break;
                     }
-                    if (result != DialogResult.Ignore)
+                    if (result != DialogResult.Ignore && result != DialogResult.Abort)
                     {
                         GenerateHTMLkitBoxLabel(copiesToPrint);
                     }

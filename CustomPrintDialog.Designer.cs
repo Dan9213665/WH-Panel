@@ -33,20 +33,23 @@
             btn2 = new Button();
             btn1 = new Button();
             btnFullKit = new Button();
+            button1 = new Button();
             tableLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
             // tableLayoutPanel1
             // 
-            tableLayoutPanel1.ColumnCount = 4;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.ColumnCount = 5;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
             tableLayoutPanel1.Controls.Add(btn3, 2, 0);
             tableLayoutPanel1.Controls.Add(btn2, 1, 0);
             tableLayoutPanel1.Controls.Add(btn1, 0, 0);
             tableLayoutPanel1.Controls.Add(btnFullKit, 3, 0);
+            tableLayoutPanel1.Controls.Add(button1, 4, 0);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -59,9 +62,9 @@
             // 
             btn3.Dock = DockStyle.Fill;
             btn3.Font = new Font("Segoe UI", 26.25F, FontStyle.Bold, GraphicsUnit.Point);
-            btn3.Location = new Point(295, 3);
+            btn3.Location = new Point(235, 3);
             btn3.Name = "btn3";
-            btn3.Size = new Size(140, 115);
+            btn3.Size = new Size(110, 115);
             btn3.TabIndex = 2;
             btn3.Text = "3";
             btn3.UseVisualStyleBackColor = true;
@@ -71,9 +74,9 @@
             // 
             btn2.Dock = DockStyle.Fill;
             btn2.Font = new Font("Segoe UI", 26.25F, FontStyle.Bold, GraphicsUnit.Point);
-            btn2.Location = new Point(149, 3);
+            btn2.Location = new Point(119, 3);
             btn2.Name = "btn2";
-            btn2.Size = new Size(140, 115);
+            btn2.Size = new Size(110, 115);
             btn2.TabIndex = 1;
             btn2.Text = "2";
             btn2.UseVisualStyleBackColor = true;
@@ -85,7 +88,7 @@
             btn1.Font = new Font("Segoe UI", 26.25F, FontStyle.Bold, GraphicsUnit.Point);
             btn1.Location = new Point(3, 3);
             btn1.Name = "btn1";
-            btn1.Size = new Size(140, 115);
+            btn1.Size = new Size(110, 115);
             btn1.TabIndex = 0;
             btn1.Text = "1";
             btn1.UseVisualStyleBackColor = true;
@@ -95,13 +98,25 @@
             // 
             btnFullKit.Dock = DockStyle.Fill;
             btnFullKit.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
-            btnFullKit.Location = new Point(441, 3);
+            btnFullKit.Location = new Point(351, 3);
             btnFullKit.Name = "btnFullKit";
-            btnFullKit.Size = new Size(140, 115);
+            btnFullKit.Size = new Size(110, 115);
             btnFullKit.TabIndex = 3;
-            btnFullKit.Text = "Full Kit Sticker";
+            btnFullKit.Text = "קיט מלא";
             btnFullKit.UseVisualStyleBackColor = true;
             btnFullKit.Click += btnFullKit_Click;
+            // 
+            // button1
+            // 
+            button1.Dock = DockStyle.Fill;
+            button1.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
+            button1.Location = new Point(467, 3);
+            button1.Name = "button1";
+            button1.Size = new Size(114, 115);
+            button1.TabIndex = 4;
+            button1.Text = "רכיבים בגלילה";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
             // 
             // CustomPrintDialog
             // 
@@ -123,5 +138,6 @@
         private Button btn1;
         private Button btn3;
         private Button btnFullKit;
+        private Button button1;
     }
 }
