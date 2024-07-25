@@ -2405,7 +2405,9 @@ namespace WH_Panel
                 {
                     list.Add(option);
                 }
+                list.Add("UPDATE Source_Requester");
                 list.Add("DELETE");
+
 
                 foreach (string option in list)
                 {
@@ -2465,6 +2467,109 @@ namespace WH_Panel
 
                             }
                         }
+                        //else if (newComments == "UPDATE Source_Requester")
+                        //{
+                        //    DialogResult dialogResult = MessageBox.Show(
+                        //      $"UPDATE {wHitemABCD.IPN} ?\nIPN: {wHitemABCD.IPN}\nMFPN: {wHitemABCD.MFPN}\nDescription: {wHitemABCD.Description}\nStock: {wHitemABCD.Stock}\nUpdated_on: {wHitemABCD.Updated_on}\nSource_Requester: {wHitemABCD.Source_Requester}",
+                        //      $"UPDATE {wHitemABCD.IPN}",
+                        //      MessageBoxButtons.YesNo,
+                        //      MessageBoxIcon.Stop
+                        //  );
+
+
+                        //    if (dialogResult == DialogResult.Yes)
+                        //    {
+                        //        string selectedWarehouseName = comboBox3.SelectedItem.ToString(); // Get the selected name from ComboBox1
+
+                        //        // Assuming warehouses is a collection of Warehouse objects
+                        //        string fp = warehouses
+                        //            .Where(w => w.clName == selectedWarehouseName) // Filter warehouses by selected name
+                        //            .Select(w => w.sqlStock)
+                        //            .FirstOrDefault(); // Use FirstOrDefault() instead of First() to handle the case where no warehouse matches the selected name
+
+                        //        string constr = fp;
+                        //        using (SqlConnection conn = new SqlConnection(constr))
+                        //        {
+                        //            conn.Open();
+                        //            SqlCommand command = new SqlCommand($"UPDATE [STOCK] WHERE Comments = @currentComments AND IPN = @IPN AND MFPN = @MFPN AND Description = @Description AND Stock = @Stock AND Updated_on = @Updated_on AND Source_Requester = @Source_Requester", conn);
+                        //            command.Parameters.AddWithValue("@currentComments", currentComments);
+                        //            command.Parameters.AddWithValue("@IPN", wHitemABCD.IPN); // Use wHitemABCD.IPN instead of wHitem.IPN
+                        //            command.Parameters.AddWithValue("@MFPN", wHitemABCD.MFPN); // Use wHitemABCD.MFPN instead of wHitem.MFPN
+                        //            command.Parameters.AddWithValue("@Description", wHitemABCD.Description); // Use wHitemABCD.Description instead of wHitem.Description
+                        //            command.Parameters.AddWithValue("@Stock", wHitemABCD.Stock); // Use wHitemABCD.Stock instead of wHitem.Stock
+                        //            command.Parameters.AddWithValue("@Updated_on", wHitemABCD.Updated_on); // Use wHitemABCD.Updated_on instead of wHitem.Updated_on
+                        //            command.Parameters.AddWithValue("@Source_Requester", textBox8.Text); // Use wHitemABCD.Source_Requester instead of wHitem.Source_Requester
+                        //            command.ExecuteNonQuery();
+                        //            conn.Close();
+                        //        }
+                        //        MessageBox.Show($"{wHitemABCD.IPN} {wHitemABCD.Stock} PCS Source_Requester value UPDATED");
+                        //        button3_Click(button3, EventArgs.Empty);
+                        //        textBox1.Text = wHitemABCD.IPN;
+
+                        //    }
+                        //    else
+                        //    {
+
+                        //    }
+                        //}
+
+                        else if (newComments == "UPDATE Source_Requester")
+                        {
+                            DialogResult dialogResult = MessageBox.Show(
+                                $"UPDATE {wHitemABCD.IPN} ?\nIPN: {wHitemABCD.IPN}\nMFPN: {wHitemABCD.MFPN}\nDescription: {wHitemABCD.Description}\nStock: {wHitemABCD.Stock}\nUpdated_on: {wHitemABCD.Updated_on}\nSource_Requester: {wHitemABCD.Source_Requester}",
+                                $"UPDATE {wHitemABCD.IPN}",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Stop
+                            );
+
+                            if (dialogResult == DialogResult.Yes)
+                            {
+                                string selectedWarehouseName = comboBox3.SelectedItem.ToString(); // Get the selected name from ComboBox3
+
+                                // Assuming warehouses is a collection of Warehouse objects
+                                string fp = warehouses
+                                    .Where(w => w.clName == selectedWarehouseName) // Filter warehouses by selected name
+                                    .Select(w => w.sqlStock)
+                                    .FirstOrDefault(); // Use FirstOrDefault() to handle the case where no warehouse matches the selected name
+
+                                string constr = fp;
+                                using (SqlConnection conn = new SqlConnection(constr))
+                                {
+                                    conn.Open();
+
+                                    // Corrected SQL Command Syntax
+                                    string sqlCommandText = @"
+                UPDATE [STOCK] 
+                SET Source_Requester = @Source_Requester
+                WHERE Comments = @currentComments 
+                AND IPN = @IPN 
+                AND MFPN = @MFPN 
+                AND Description = @Description 
+                AND Stock = @Stock 
+                AND Updated_on = @Updated_on";
+
+                                    using (SqlCommand command = new SqlCommand(sqlCommandText, conn))
+                                    {
+                                        command.Parameters.AddWithValue("@currentComments", currentComments);
+                                        command.Parameters.AddWithValue("@IPN", wHitemABCD.IPN);
+                                        command.Parameters.AddWithValue("@MFPN", wHitemABCD.MFPN);
+                                        command.Parameters.AddWithValue("@Description", wHitemABCD.Description);
+                                        command.Parameters.AddWithValue("@Stock", wHitemABCD.Stock);
+                                        command.Parameters.AddWithValue("@Updated_on", wHitemABCD.Updated_on);
+                                        command.Parameters.AddWithValue("@Source_Requester", textBox8.Text);
+
+                                        command.ExecuteNonQuery();
+                                    }
+                                }
+
+                                MessageBox.Show($"{wHitemABCD.IPN} {wHitemABCD.Stock} PCS Source_Requester value UPDATED");
+                                button3_Click(button3, EventArgs.Empty);
+                                textBox1.Text = wHitemABCD.IPN;
+                            }
+                        }
+
+
+
                         else
                         {
                             // Show a confirmation message box before applying the changes
