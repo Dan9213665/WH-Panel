@@ -201,6 +201,7 @@ namespace WH_Panel
 
                 stockItems.Add(item);
             }
+            stockItems.OrderBy(x => x.Updated_on);
         }
 
         private void GenerateHTMLReport(List<IGrouping<string?, WHitem>> groupedByIPN)
@@ -246,9 +247,17 @@ namespace WH_Panel
                 writer.WriteLine("  document.getElementById('rowsCount').innerHTML = 'Total Rows Loaded : ' + totalRows;");
                 writer.WriteLine("}");
                 writer.WriteLine("</script>");
+
+              
+
                 foreach (var group in groupedByIPN)
                 {
-                    group.OrderBy(item => item.Updated_on);
+                    //group.OrderBy(item => item.Updated_on);
+
+
+                    // Order the items by Updated_on
+                    var orderedItems = group.OrderBy(item => item.Updated_on);
+
                     //writer.WriteLine("<h2>IPN: " + group.Key + "</h2>");
                     writer.WriteLine("<table border='1'>");
                     // Table headers
@@ -263,7 +272,8 @@ namespace WH_Panel
                     writer.WriteLine("<th>Source_Requester</th>");
                     writer.WriteLine("</tr>");
                     writer.WriteLine("<h2>" + group.Key + " - Warehouse Balance: " + group.Sum(item => item.Stock) + "</h2>");
-                    foreach (var item in group)
+                    //foreach (var item in group)
+                    foreach (var item in orderedItems)
                     {
                         writer.WriteLine("<tr>");
                         writer.WriteLine("<td style='text-align: center;'>" + item.IPN + "</td>");
