@@ -432,11 +432,42 @@ namespace WH_Panel
             }
             try
             {
+
+
                 DataView dv = avlDTable.DefaultView;
-                dv.RowFilter = "[IPN] LIKE '%" + searchByIPN.ToString() +
-                    "%' AND [MFPN] LIKE '%" + searchbyMFPN.ToString() +
-                    "%' AND [DESCRIPTION] LIKE '%" + txtbFiltAVLbyDESCR.Text.ToString() +
-                    "%'";
+                //dv.RowFilter = "[IPN] LIKE '%" + searchByIPN.ToString() +
+                //    "%' AND [MFPN] LIKE '%" + searchbyMFPN.ToString() +
+                //    "%' AND [DESCRIPTION] LIKE '%" + txtbFiltAVLbyDESCR.Text.ToString() +
+                //    "%'";
+
+                StringBuilder filterQuery = new StringBuilder();
+
+                if (!string.IsNullOrEmpty(textBox1.Text))
+                    filterQuery.Append("[IPN] LIKE '%" + textBox1.Text + "%' AND ");
+                if (!string.IsNullOrEmpty(textBox2.Text))
+                    filterQuery.Append("[MFPN] LIKE '%" + textBox2.Text + "%' AND ");
+                if (!string.IsNullOrEmpty(textBox9.Text))
+                    filterQuery.Append("[Description] LIKE '%" + txtbFiltAVLbyDESCR.Text + "%' AND ");
+                if (!string.IsNullOrEmpty(textBox3.Text))
+                {
+                    string[] searchTerms = txtbFiltAVLbyDESCR.Text.Split(new char[] { '+', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (string term in searchTerms)
+                    {
+                        filterQuery.Append("[Description] LIKE '%" + term + "%' AND ");
+                    }
+                }
+
+                if (filterQuery.Length > 0)
+                {
+                    filterQuery.Remove(filterQuery.Length - 5, 5); // Remove the extra 'AND' at the end
+                    dv.RowFilter = filterQuery.ToString();
+                }
+                else
+                {
+                    dv.RowFilter = string.Empty; // No filter applied
+                }
+
+
                 dataGridView2.DataSource = dv;
                 SetColumsOrder();
             }
