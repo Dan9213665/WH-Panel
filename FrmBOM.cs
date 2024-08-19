@@ -1748,7 +1748,22 @@ namespace WH_Panel
                     writer.WriteLine("<col style='width: 25%; background: url(" + backgroundImageUrl + ") no-repeat center center; background-size: 100% 100%;'>");
                     writer.WriteLine("<col style='width: 75%;'>"); // 75% width for the text column
                     writer.WriteLine("<tr>");
-                    writer.WriteLine("<td  style='vertical-align: middle;'><img id='logoImage' src='" + imageUrl + "' alt='" + altText + "' style='height: 100%; width: 100%;'></td>"); // Image column
+
+                    //writer.WriteLine("<td  style='vertical-align: middle;'><img id='logoImage' src='" + imageUrl + "' alt='" + altText + "' style='height: 100%; width: 100%;'></td>"); // Image column
+
+                    writer.WriteLine("<td style='position: relative; vertical-align: middle;'>");
+                    writer.WriteLine("    <img id='logoImage' src='" + imageUrl + "' alt='" + altText + "' style='height: 100%; width: 100%;'>");
+                    writer.WriteLine("    <div style='position: absolute; top: 1%; left: 5%; transform: translate(-1%, -1%); color: white; font-size: 15px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);'>");
+                    // Get the current date and time
+                    string currentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+                    // Write the current date and time to the output
+                    writer.WriteLine(currentDateTime);
+                    writer.WriteLine("    </div>");
+                    writer.WriteLine("</td>");
+
+
+
                     writer.WriteLine("<td style='text-align: center; background: rgba(255, 255, 255, 0.1) url(" + backgroundImageUrl + ") no-repeat center center; background-size: 111% 111%; vertical-align: middle; transform: scaleX(-1);'>");
                     foreach (string part in parts)
                     {
