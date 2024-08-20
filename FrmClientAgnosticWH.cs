@@ -26,6 +26,7 @@ using Seagull.Framework.Extensions;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 using System.Data.SqlClient;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Header;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace WH_Panel
 {
@@ -3168,5 +3169,49 @@ namespace WH_Panel
             }
         }
 
+
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            // Create SaveFileDialog
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Excel Files|*.xls;*.xlsx";
+            saveFileDialog.Title = "Save as Excel File";
+            saveFileDialog.FileName = "AVL_" + DateTime.Now.ToString("yyyyMMdd") + ".xls";
+
+            // Show SaveFileDialog and check if the user clicked Save
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                // Create Excel application instance
+                Excel.Application excelApp = new Excel.Application();
+                excelApp.Workbooks.Add();
+
+                // Get active worksheet
+                Excel._Worksheet workSheet = (Excel._Worksheet)excelApp.ActiveSheet;
+
+                // Export column headers to Excel
+                for (int i = 0; i < dataGridView2.Columns.Count; i++)
+                {
+                    workSheet.Cells[1, i + 1] = dataGridView2.Columns[i].HeaderText;
+                }
+
+                // Export data to Excel
+                for (int i = 0; i < dataGridView2.Rows.Count; i++)
+                {
+                    for (int j = 0; j < dataGridView2.Columns.Count; j++)
+                    {
+                        workSheet.Cells[i + 2, j + 1] = dataGridView2.Rows[i].Cells[j].Value?.ToString();
+                    }
+                }
+
+                // Save the file
+                workSheet.SaveAs(saveFileDialog.FileName);
+
+                // Close Excel application
+                excelApp.Quit();
+
+                MessageBox.Show("Data Exported Successfully", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
     }
 }
