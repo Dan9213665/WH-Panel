@@ -312,7 +312,7 @@ namespace WH_Panel
                         if (iAVL > 0)
                         {
                             countAVLItems = iAVL;
-                            label1.Text = "Rows in AVL: " + (countAVLItems).ToString();
+                            label1.Text =  (countAVLItems).ToString();
                             if (countAVLItems % 1000 == 0)
                             {
                                 label1.Update();
@@ -359,7 +359,7 @@ namespace WH_Panel
                             if (iAVL > 0)
                             {
                                 countAVLItems = iAVL;
-                                label1.Text = "Rows in AVL: " + (countAVLItems).ToString();
+                                label1.Text = (countAVLItems).ToString();
                                 if (countAVLItems % 1000 == 0)
                                 {
                                     label1.Update();
@@ -3177,7 +3177,7 @@ namespace WH_Panel
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "Excel Files|*.xls;*.xlsx";
             saveFileDialog.Title = "Save as Excel File";
-            saveFileDialog.FileName = "AVL_" + DateTime.Now.ToString("yyyyMMdd") + ".xls";
+            saveFileDialog.FileName = "AVL_" + comboBox3.SelectedItem.ToString() + ".xlsx";
 
             // Show SaveFileDialog and check if the user clicked Save
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
