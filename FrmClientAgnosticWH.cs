@@ -312,7 +312,7 @@ namespace WH_Panel
                         if (iAVL > 0)
                         {
                             countAVLItems = iAVL;
-                            label1.Text =  (countAVLItems).ToString();
+                            label1.Text = (countAVLItems).ToString();
                             if (countAVLItems % 1000 == 0)
                             {
                                 label1.Update();

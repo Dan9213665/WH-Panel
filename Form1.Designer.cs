@@ -42,17 +42,17 @@ namespace WH_Panel
             button6 = new Button();
             button11 = new Button();
             groupBox7 = new GroupBox();
-            button15 = new Button();
             button12 = new Button();
-            button9 = new Button();
+            btnMFPN = new Button();
             button3 = new Button();
             groupBox3 = new GroupBox();
             button13 = new Button();
             button8 = new Button();
             button2 = new Button();
             groupBox2 = new GroupBox();
-            btnMFPN = new Button();
+            button15 = new Button();
             button5 = new Button();
+            button9 = new Button();
             groupBox11 = new GroupBox();
             button7 = new Button();
             notifyIcon1 = new NotifyIcon(components);
@@ -153,6 +153,7 @@ namespace WH_Panel
             button1.BackgroundImage = Properties.Resources.kitLabelPrint;
             button1.BackgroundImageLayout = ImageLayout.Stretch;
             button1.Dock = DockStyle.Fill;
+            button1.Enabled = false;
             button1.Location = new Point(3, 19);
             button1.Name = "button1";
             button1.Size = new Size(126, 103);
@@ -246,18 +247,6 @@ namespace WH_Panel
             groupBox7.TabStop = false;
             groupBox7.Text = "PANDA-tabase";
             // 
-            // button15
-            // 
-            button15.BackgroundImage = (Image)resources.GetObject("button15.BackgroundImage");
-            button15.BackgroundImageLayout = ImageLayout.Stretch;
-            button15.Location = new Point(6, 83);
-            button15.Name = "button15";
-            button15.Size = new Size(70, 36);
-            button15.TabIndex = 14;
-            button15.UseVisualStyleBackColor = true;
-            button15.Visible = false;
-            button15.Click += button15_Click;
-            // 
             // button12
             // 
             button12.BackgroundImage = (Image)resources.GetObject("button12.BackgroundImage");
@@ -269,18 +258,17 @@ namespace WH_Panel
             button12.UseVisualStyleBackColor = true;
             button12.Click += button12_Click;
             // 
-            // button9
+            // btnMFPN
             // 
-            button9.BackgroundImage = (Image)resources.GetObject("button9.BackgroundImage");
-            button9.BackgroundImageLayout = ImageLayout.Stretch;
-            button9.ForeColor = Color.Black;
-            button9.Location = new Point(82, 83);
-            button9.Name = "button9";
-            button9.Size = new Size(47, 34);
-            button9.TabIndex = 10;
-            button9.UseVisualStyleBackColor = true;
-            button9.Visible = false;
-            button9.Click += button9_Click_1;
+            btnMFPN.BackColor = Color.Black;
+            btnMFPN.BackgroundImage = (Image)resources.GetObject("btnMFPN.BackgroundImage");
+            btnMFPN.BackgroundImageLayout = ImageLayout.Zoom;
+            btnMFPN.Location = new Point(8, 83);
+            btnMFPN.Name = "btnMFPN";
+            btnMFPN.Size = new Size(120, 34);
+            btnMFPN.TabIndex = 12;
+            btnMFPN.UseVisualStyleBackColor = false;
+            btnMFPN.Click += btnMFPN_Click;
             // 
             // button3
             // 
@@ -352,17 +340,17 @@ namespace WH_Panel
             groupBox2.TabStop = false;
             groupBox2.Text = "Excel Ripper";
             // 
-            // btnMFPN
+            // button15
             // 
-            btnMFPN.BackColor = Color.Black;
-            btnMFPN.BackgroundImage = (Image)resources.GetObject("btnMFPN.BackgroundImage");
-            btnMFPN.BackgroundImageLayout = ImageLayout.Zoom;
-            btnMFPN.Location = new Point(8, 83);
-            btnMFPN.Name = "btnMFPN";
-            btnMFPN.Size = new Size(120, 34);
-            btnMFPN.TabIndex = 12;
-            btnMFPN.UseVisualStyleBackColor = false;
-            btnMFPN.Click += btnMFPN_Click;
+            button15.BackgroundImage = (Image)resources.GetObject("button15.BackgroundImage");
+            button15.BackgroundImageLayout = ImageLayout.Stretch;
+            button15.Location = new Point(6, 83);
+            button15.Name = "button15";
+            button15.Size = new Size(70, 36);
+            button15.TabIndex = 14;
+            button15.UseVisualStyleBackColor = true;
+            button15.Visible = false;
+            button15.Click += button15_Click;
             // 
             // button5
             // 
@@ -373,6 +361,19 @@ namespace WH_Panel
             button5.TabIndex = 11;
             button5.UseVisualStyleBackColor = true;
             button5.Click += button5_Click;
+            // 
+            // button9
+            // 
+            button9.BackgroundImage = (Image)resources.GetObject("button9.BackgroundImage");
+            button9.BackgroundImageLayout = ImageLayout.Stretch;
+            button9.ForeColor = Color.Black;
+            button9.Location = new Point(82, 83);
+            button9.Name = "button9";
+            button9.Size = new Size(47, 34);
+            button9.TabIndex = 10;
+            button9.UseVisualStyleBackColor = true;
+            button9.Visible = false;
+            button9.Click += button9_Click_1;
             // 
             // groupBox11
             // 
