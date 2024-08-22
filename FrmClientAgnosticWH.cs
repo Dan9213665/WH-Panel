@@ -3213,5 +3213,92 @@ namespace WH_Panel
                 MessageBox.Show("Data Exported Successfully", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
+
+        private void button1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+
+
+                string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+                string filename = @"\\dbr1\Data\WareHouse\2024\WHsearcher\" + fileTimeStamp + "_AVL" + ".html";
+                using (StreamWriter writer = new StreamWriter(filename))
+                {
+                    writer.WriteLine("<html style='text-align:center'>");
+                    writer.WriteLine("<head>");
+                    writer.WriteLine("<title> AVL </title>");
+                    writer.WriteLine("</head>");
+                    writer.WriteLine("<body style=\"background-color:#000;\">");
+                    writer.WriteLine("<table border='1' style=\"background-color:  #D3D3D3;\">");
+                    writer.WriteLine("<tr style='text-align:center'>");
+                    // Assuming you have a reference to the selected DataGridViewCell
+                    //DataGridViewCell selectedCell = dataGridView2.SelectedCells[0];
+                    //int ipnColumnIndex = dataGridView2.Columns["IPN"].Index; // Replace "IPN" with the actual column name
+                    // string cellValue = string.Empty;
+                    //if (dataGridView2.Rows.Count > 0 && ipnColumnIndex >= 0)
+                    //{
+                    //    // Getting the value of the cell in the first row and "IPN" column
+                    //    cellValue = dataGridView2.Rows[0].Cells[ipnColumnIndex].Value != null
+                    //       ? dataGridView2.Rows[0].Cells[ipnColumnIndex].Value.ToString()
+                    //       : "";
+                    //}
+                    writer.WriteLine("<td>" + comboBox3.SelectedItem.ToString() + " AVL UPDATED " + fileTimeStamp + " selected " + dataGridView2.RowCount + " items</td>");
+
+                    writer.WriteLine("</tr>");
+                    writer.WriteLine("<tr style='text-align:center'>");
+                    // Set column order and autosize mode
+                    dataGridView2.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    dataGridView2.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    dataGridView2.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    dataGridView2.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    //dataGridView2.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    //dataGridView2.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    //dataGridView2.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    //dataGridView2.Columns[7].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    // Add header from DataGridView with specified column order
+                    writer.WriteLine("<th>" + dataGridView2.Columns["IPN"].HeaderText + "</th>");
+                    writer.WriteLine("<th>" + dataGridView2.Columns["Manufacturer"].HeaderText + "</th>");
+                    writer.WriteLine("<th>" + dataGridView2.Columns["MFPN"].HeaderText + "</th>");
+                    writer.WriteLine("<th>" + dataGridView2.Columns["Description"].HeaderText + "</th>");
+                    //writer.WriteLine("<th>" + dataGridView2.Columns["Stock"].HeaderText + "</th>");
+                    //writer.WriteLine("<th>" + dataGridView2.Columns["Updated_on"].HeaderText + "</th>");
+                    //writer.WriteLine("<th>" + dataGridView2.Columns["Comments"].HeaderText + "</th>");
+                    //writer.WriteLine("<th>" + dataGridView2.Columns["Source_Requester"].HeaderText + "</th>");
+                    writer.WriteLine("</tr>");
+                    // Iterate through the rows
+                    foreach (DataGridViewRow row in dataGridView2.Rows)
+                    {
+                        writer.WriteLine("<tr style='text-align:center'>");
+                        // Iterate through the cells in the specified column order
+                        writer.WriteLine("<td>" + row.Cells["IPN"].Value.ToString() + "</td>");
+                        writer.WriteLine("<td>" + row.Cells["Manufacturer"].Value.ToString() + "</td>");
+                        writer.WriteLine("<td>" + row.Cells["MFPN"].Value.ToString() + "</td>");
+                        writer.WriteLine("<td>" + row.Cells["Description"].Value.ToString() + "</td>");
+                        //if (row.Cells["Stock"].Value.ToString().Contains("-"))
+                        //{
+                        //    writer.WriteLine("<td style=\"background-color:  #FF7F7F;\">" + row.Cells["Stock"].Value.ToString() + "</td>");
+                        //}
+                        //else
+                        //{
+                        //    writer.WriteLine("<td style=\"background-color: lightgreen;\">" + row.Cells["Stock"].Value.ToString() + "</td>");
+                        //}
+                        //writer.WriteLine("<td>" + row.Cells["Updated_on"].Value.ToString() + "</td>");
+                        //writer.WriteLine("<td>" + row.Cells["Comments"].Value.ToString() + "</td>");
+                        //writer.WriteLine("<td>" + row.Cells["Source_Requester"].Value.ToString() + "</td>");
+                        writer.WriteLine("</tr>");
+                    }
+                    writer.WriteLine("</table>");
+                    writer.WriteLine("</body>");
+                    writer.WriteLine("</html>");
+                }
+                var process = new Process();
+                process.StartInfo = new ProcessStartInfo(filename)
+                {
+                    UseShellExecute = true
+                };
+                process.Start();
+
+            }
+        }
     }
 }

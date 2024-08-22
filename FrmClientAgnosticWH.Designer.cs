@@ -509,6 +509,7 @@
             button1.TabIndex = 14;
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
+            button1.MouseDown += button1_MouseDown;
             // 
             // groupBox3
             // 
