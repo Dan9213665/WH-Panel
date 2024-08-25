@@ -155,7 +155,7 @@ namespace WH_Panel
             {
                 BOMitem n = new BOMitem
                 {
-                    IPN = it.IPN,
+                    IPN = it.IPN.Trim(),
                     MFPN = it.MFPN,
                     Description = it.Description,
                     WHbalance = 0,
