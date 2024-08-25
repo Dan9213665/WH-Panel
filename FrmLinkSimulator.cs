@@ -954,7 +954,7 @@ var myPieChart = new Chart(ctx, {
                             {
                                 WHitem item = new WHitem
                                 {
-                                    IPN = row["IPN"].ToString(),
+                                    IPN = row["IPN"].ToString().Trim(),
                                     Manufacturer = row["Manufacturer"].ToString(),
                                     MFPN = row["MFPN"].ToString(),
                                     Description = row["Description"].ToString(),
