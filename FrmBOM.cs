@@ -551,7 +551,7 @@ namespace WH_Panel
             dgw.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dgw.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dgw.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dgw.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
             dgw.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dgw.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dgw.Columns[7].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;

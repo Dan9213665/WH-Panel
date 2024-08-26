@@ -1434,13 +1434,16 @@ var myPieChart = new Chart(ctx, {
                         <script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
                         </head>";
             htmlContent += @"<body>";
-            htmlContent += @"<table style='border: 1px solid; text-align: center; font-weight:bold;'>";
-            htmlContent += @"<tr>";
-            htmlContent += @"<td style='width: 25%;height: 100%;' id='completion-chart-td'> <div> <canvas id='completion-chart'></canvas> </div></td>";
+            htmlContent += @"<table style='border: 1px solid; text-align: center; font-weight:bold;width:100%;'>";
+            htmlContent += @"<tr><td style='width: 25%;'></td>";
+            //htmlContent += @"<td style='width: 25%;height: 100%;' id='completion-chart-td'> <div> <canvas id='completion-chart'></canvas> </div></td>";
             htmlContent += @"<td style='width: 50%;'><h2>UPDATED_" + fileTimeStamp + "</h2></td>";
             htmlContent += @"<td style='width: 25%;'></td>";
             htmlContent += @"</tr>";
-            htmlContent += @"<tr><td>Multi-BOM simulation for " + selectedBOMs.Count + " kits:</td></tr>";
+            //htmlContent += @"<tr style='text-align:center;'><td>Multi-BOM simulation for " + selectedBOMs.Count + " kits:</td></tr>";
+
+            htmlContent += @"<tr style='text-align:center;'><td></td><td>Multi-BOM simulation for " + selectedBOMs.Count.ToString() + " kits:</td></tr>";
+
             foreach (var bom in selectedBOMs)
             {
                 int bomPositiveDelta = 0;
@@ -1466,12 +1469,12 @@ var myPieChart = new Chart(ctx, {
                 {
                     completionPercentage = Math.Round((bomPositiveDelta * 100.0) / bomTot, 2);
                 }
-                htmlContent += $"<tr{(bomPositiveDelta == bomTot ? " style='background-color: lightgreen;'" : "")}><td>{bom.Name.TrimEnd(".xlsm".ToCharArray())} ({bomPositiveDelta}/{bomTot} IPNs in KIT) {completionPercentage}%</td></tr>";
+                htmlContent += $"<tr{(bomPositiveDelta == bomTot ? " style='background-color: lightgreen;'" : "")}><td></td><td>{bom.Name.TrimEnd(".xlsm".ToCharArray())} ({bomPositiveDelta}/{bomTot} IPNs in KIT) {completionPercentage}%</td></tr>";
             }
-            htmlContent += @"<tr ><td><div id='completion-perc'> Average completion percentage is  </div></td></tr>";
-            htmlContent += @" <tr><td>
-<input type='text' id=""searchInput"" placeholder=""Filter IPN or MFPN.."" onkeyup=""filterTable()"" />
-<button onclick=""clearFilter()"">Clear Filter</button></td></tr>";
+//            htmlContent += @"<tr ><td><div id='completion-perc'> Average completion percentage is  </div></td></tr>";
+//            htmlContent += @" <tr><td>
+//<input type='text' id=""searchInput"" placeholder=""Filter IPN or MFPN.."" onkeyup=""filterTable()"" />
+//<button onclick=""clearFilter()"">Clear Filter</button></td></tr>";
             htmlContent += @"</tbody></table><br>";
             htmlContent += @"
     <style>
