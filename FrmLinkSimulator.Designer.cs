@@ -34,6 +34,9 @@
             label1 = new Label();
             button7 = new Button();
             groupBox5 = new GroupBox();
+            button10 = new Button();
+            button9 = new Button();
+            button8 = new Button();
             comboBox6 = new ComboBox();
             button2 = new Button();
             button3 = new Button();
@@ -42,6 +45,7 @@
             button4 = new Button();
             dataGridView1 = new DataGridView();
             openFileDialog1 = new OpenFileDialog();
+            button11 = new Button();
             tableLayoutPanel1.SuspendLayout();
             groupBox1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
@@ -150,6 +154,10 @@
             // 
             // groupBox5
             // 
+            groupBox5.Controls.Add(button11);
+            groupBox5.Controls.Add(button10);
+            groupBox5.Controls.Add(button9);
+            groupBox5.Controls.Add(button8);
             groupBox5.Controls.Add(comboBox6);
             groupBox5.Dock = DockStyle.Fill;
             groupBox5.Location = new Point(267, 3);
@@ -158,6 +166,36 @@
             groupBox5.TabIndex = 4;
             groupBox5.TabStop = false;
             groupBox5.Text = "Warehouse";
+            // 
+            // button10
+            // 
+            button10.Location = new Point(126, 48);
+            button10.Name = "button10";
+            button10.Size = new Size(53, 46);
+            button10.TabIndex = 3;
+            button10.Text = "3 M";
+            button10.UseVisualStyleBackColor = true;
+            button10.Click += button10_Click;
+            // 
+            // button9
+            // 
+            button9.Location = new Point(68, 48);
+            button9.Name = "button9";
+            button9.Size = new Size(52, 46);
+            button9.TabIndex = 2;
+            button9.Text = "2 M";
+            button9.UseVisualStyleBackColor = true;
+            button9.Click += button9_Click;
+            // 
+            // button8
+            // 
+            button8.Location = new Point(6, 48);
+            button8.Name = "button8";
+            button8.Size = new Size(56, 46);
+            button8.TabIndex = 1;
+            button8.Text = "1 M";
+            button8.UseVisualStyleBackColor = true;
+            button8.Click += button8_Click;
             // 
             // comboBox6
             // 
@@ -252,6 +290,16 @@
             // 
             openFileDialog1.FileName = "openFileDialog1";
             // 
+            // button11
+            // 
+            button11.Location = new Point(185, 48);
+            button11.Name = "button11";
+            button11.Size = new Size(52, 46);
+            button11.TabIndex = 4;
+            button11.Text = "4 M";
+            button11.UseVisualStyleBackColor = true;
+            button11.Click += button11_Click;
+            // 
             // FrmLinkSimulator
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -289,5 +337,9 @@
         private TableLayoutPanel tableLayoutPanel2;
         private Label label1;
         private Button button7;
+        private Button button10;
+        private Button button9;
+        private Button button8;
+        private Button button11;
     }
 }

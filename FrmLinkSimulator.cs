@@ -1471,10 +1471,10 @@ var myPieChart = new Chart(ctx, {
                 }
                 htmlContent += $"<tr{(bomPositiveDelta == bomTot ? " style='background-color: lightgreen;'" : "")}><td></td><td>{bom.Name.TrimEnd(".xlsm".ToCharArray())} ({bomPositiveDelta}/{bomTot} IPNs in KIT) {completionPercentage}%</td></tr>";
             }
-//            htmlContent += @"<tr ><td><div id='completion-perc'> Average completion percentage is  </div></td></tr>";
-//            htmlContent += @" <tr><td>
-//<input type='text' id=""searchInput"" placeholder=""Filter IPN or MFPN.."" onkeyup=""filterTable()"" />
-//<button onclick=""clearFilter()"">Clear Filter</button></td></tr>";
+            //            htmlContent += @"<tr ><td><div id='completion-perc'> Average completion percentage is  </div></td></tr>";
+            //            htmlContent += @" <tr><td>
+            //<input type='text' id=""searchInput"" placeholder=""Filter IPN or MFPN.."" onkeyup=""filterTable()"" />
+            //<button onclick=""clearFilter()"">Clear Filter</button></td></tr>";
             htmlContent += @"</tbody></table><br>";
             htmlContent += @"
     <style>
@@ -1730,7 +1730,208 @@ var myPieChart = new Chart(ctx, {
             SetSelectedBoms();
         }
 
+        private void button8_Click(object sender, EventArgs e)
+        {
+            // Get the warehouse name from comboBox6
+            string selectedWarehouseName = comboBox6.SelectedItem.ToString();
 
+            // Construct the directory path for the current month
+            string directoryPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.ToString("MM.yyyy");
 
+            // Get all files in the directory that start with the selected warehouse name and have the .xlsm extension
+            string[] files = Directory.GetFiles(directoryPath, $"{selectedWarehouseName}*.xlsm");
+
+            if (files.Length == 0)
+            {
+                MessageBox.Show("No files found for the selected warehouse.");
+                return;
+            }
+
+            foreach (string fileName in files)
+            {
+                string theExcelFilePath = Path.GetFileName(fileName);
+                if (IsFileLoaded(theExcelFilePath))
+                {
+                    MessageBox.Show($"File {theExcelFilePath} is already loaded!");
+                }
+                else
+                {
+                    DataLoader(fileName, theExcelFilePath);
+                    // Add the selected file path to the list
+                    selectedFileNames.Add(theExcelFilePath);
+                }
+            }
+
+            // Update the DataGridView and selected BOMs
+            PopulateDataGridView();
+            SetSelectedBoms();
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            // Check if a warehouse has been selected
+            if (comboBox6.SelectedItem == null)
+            {
+                // If no selection has been made, open the drop-down list
+                MessageBox.Show("Please select a warehouse before proceeding.");
+                comboBox6.DroppedDown = true; // Opens the drop-down list
+                return; // Exit the method until a selection is made
+            }
+
+            // Get the warehouse name from comboBox6
+            string selectedWarehouseName = comboBox6.SelectedItem.ToString();
+
+            // Construct the directory paths for the current and previous months
+            string currentMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.ToString("MM.yyyy");
+            string previousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.AddMonths(-1).ToString("MM.yyyy");
+
+            // Get all files in the directories that start with the selected warehouse name and have the .xlsm extension
+            string[] currentMonthFiles = Directory.GetFiles(currentMonthPath, $"{selectedWarehouseName}*.xlsm");
+            string[] previousMonthFiles = Directory.GetFiles(previousMonthPath, $"{selectedWarehouseName}*.xlsm");
+
+            // Combine the files from both months
+            string[] allFiles = currentMonthFiles.Concat(previousMonthFiles).ToArray();
+
+            if (allFiles.Length == 0)
+            {
+                MessageBox.Show("No files found for the selected warehouse.");
+                return;
+            }
+
+            foreach (string fileName in allFiles)
+            {
+                string theExcelFilePath = Path.GetFileName(fileName);
+                if (IsFileLoaded(theExcelFilePath))
+                {
+                    MessageBox.Show($"File {theExcelFilePath} is already loaded!");
+                }
+                else
+                {
+                    DataLoader(fileName, theExcelFilePath);
+                    // Add the selected file path to the list
+                    selectedFileNames.Add(theExcelFilePath);
+                }
+            }
+
+            // Update the DataGridView and selected BOMs
+            PopulateDataGridView();
+            SetSelectedBoms();
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            // Check if a warehouse has been selected
+            if (comboBox6.SelectedItem == null)
+            {
+                // If no selection has been made, open the drop-down list
+                MessageBox.Show("Please select a warehouse before proceeding.");
+                comboBox6.DroppedDown = true; // Opens the drop-down list
+                return; // Exit the method until a selection is made
+            }
+
+            // Get the warehouse name from comboBox6
+            string selectedWarehouseName = comboBox6.SelectedItem.ToString();
+
+            // Construct the directory paths for the current and previous three months
+            string currentMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.ToString("MM.yyyy");
+            string previousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.AddMonths(-1).ToString("MM.yyyy");
+            string prepreviousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.AddMonths(-2).ToString("MM.yyyy");
+
+            // Get all files in the directories that start with the selected warehouse name and have the .xlsm extension
+            string[] currentMonthFiles = Directory.GetFiles(currentMonthPath, $"{selectedWarehouseName}*.xlsm");
+            string[] previousMonthFiles = Directory.GetFiles(previousMonthPath, $"{selectedWarehouseName}*.xlsm");
+            string[] prepreviousMonthFiles = Directory.GetFiles(prepreviousMonthPath, $"{selectedWarehouseName}*.xlsm");
+
+            // Combine the files from all three months
+            string[] allFiles = currentMonthFiles
+                .Concat(previousMonthFiles)
+                .Concat(prepreviousMonthFiles)
+                .ToArray();
+
+            if (allFiles.Length == 0)
+            {
+                MessageBox.Show("No files found for the selected warehouse.");
+                return;
+            }
+
+            foreach (string fileName in allFiles)
+            {
+                string theExcelFilePath = Path.GetFileName(fileName);
+                if (IsFileLoaded(theExcelFilePath))
+                {
+                    MessageBox.Show($"File {theExcelFilePath} is already loaded!");
+                }
+                else
+                {
+                    DataLoader(fileName, theExcelFilePath);
+                    // Add the selected file path to the list
+                    selectedFileNames.Add(theExcelFilePath);
+                }
+            }
+
+            // Update the DataGridView and selected BOMs
+            PopulateDataGridView();
+            SetSelectedBoms();
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+
+            // Check if a warehouse has been selected
+            if (comboBox6.SelectedItem == null)
+            {
+                // If no selection has been made, open the drop-down list
+                MessageBox.Show("Please select a warehouse before proceeding.");
+                comboBox6.DroppedDown = true; // Opens the drop-down list
+                return; // Exit the method until a selection is made
+            }
+
+            // Get the warehouse name from comboBox6
+            string selectedWarehouseName = comboBox6.SelectedItem.ToString();
+
+            // Construct the directory paths for the current and previous three months
+            string currentMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.ToString("MM.yyyy");
+            string previousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.AddMonths(-1).ToString("MM.yyyy");
+            string prepreviousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.AddMonths(-2).ToString("MM.yyyy");
+            string preprepreviousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.AddMonths(-3).ToString("MM.yyyy");
+
+            // Get all files in the directories that start with the selected warehouse name and have the .xlsm extension
+            string[] currentMonthFiles = Directory.GetFiles(currentMonthPath, $"{selectedWarehouseName}*.xlsm");
+            string[] previousMonthFiles = Directory.GetFiles(previousMonthPath, $"{selectedWarehouseName}*.xlsm");
+            string[] prepreviousMonthFiles = Directory.GetFiles(prepreviousMonthPath, $"{selectedWarehouseName}*.xlsm");
+            string[] preprepreviousMonthFiles = Directory.GetFiles(preprepreviousMonthPath, $"{selectedWarehouseName}*.xlsm");
+
+            // Combine the files from all three months
+            string[] allFiles = currentMonthFiles
+                .Concat(previousMonthFiles)
+                .Concat(prepreviousMonthFiles)
+                .Concat(preprepreviousMonthFiles)
+                .ToArray();
+
+            if (allFiles.Length == 0)
+            {
+                MessageBox.Show("No files found for the selected warehouse.");
+                return;
+            }
+
+            foreach (string fileName in allFiles)
+            {
+                string theExcelFilePath = Path.GetFileName(fileName);
+                if (IsFileLoaded(theExcelFilePath))
+                {
+                    MessageBox.Show($"File {theExcelFilePath} is already loaded!");
+                }
+                else
+                {
+                    DataLoader(fileName, theExcelFilePath);
+                    // Add the selected file path to the list
+                    selectedFileNames.Add(theExcelFilePath);
+                }
+            }
+
+            // Update the DataGridView and selected BOMs
+            PopulateDataGridView();
+            SetSelectedBoms();
+        }
     }
 }

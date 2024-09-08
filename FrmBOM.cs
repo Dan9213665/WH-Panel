@@ -767,9 +767,11 @@ namespace WH_Panel
             bool qtyOK = int.TryParse(inputQty, out validQty);
             if (qtyOK)
             {
-                updateQtyInBomFile(w, validQty);
+
 
                 transferFromDatabaseToKit(w, validQty, theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));
+
+                //updateQtyInBomFile(w, validQty);
 
                 if (checkBox1.Checked)
                 {
@@ -1119,7 +1121,16 @@ namespace WH_Panel
                 itemToTransfer.Comments = getTheCommentsFromTheStock(warehouseSelectorBasedOnItem(w), itemToTransfer);
                 //MessageBox.Show(itemToTransfer.Comments.ToString());
 
-                DataInserter(warehouseSelectorBasedOnItem(w), "STOCK", itemToTransfer);
+                if (checkBalance(warehouseSelectorBasedOnItem(w), itemToTransfer))
+                {
+
+                    DataInserter(warehouseSelectorBasedOnItem(w), "STOCK", itemToTransfer);
+                    updateQtyInBomFile(w, validQty);
+                }
+                else
+                {
+                    MessageBox.Show("Overdraft ! Check WH balance !");
+                }
                 //}
             }
             catch (Exception e)
@@ -1128,6 +1139,92 @@ namespace WH_Panel
                 throw;
             }
         }
+
+        //private static bool checkBalance(string selectedWarehouseConStr, WHitem wHitem)
+        //{
+        //    int balance = 0;
+
+        //    try
+        //    {
+        //        using (SqlConnection conn = new SqlConnection(selectedWarehouseConStr))
+        //        {
+        //            conn.Open();
+
+        //            // Calculate the sum of Stock where IPN = wHitem.IPN
+        //            string sumQuery = "SELECT SUM(Stock) FROM STOCK WHERE IPN = @IPN";
+        //            int totalStock = 0;
+
+        //            using (SqlCommand sumCommand = new SqlCommand(sumQuery, conn))
+        //            {
+        //                sumCommand.Parameters.AddWithValue("@IPN", wHitem.IPN);
+
+        //                // If there are no matching records, the result could be null, so handle that case.
+        //                object result = sumCommand.ExecuteScalar();
+        //                balance = result != DBNull.Value ? Convert.ToInt32(result) : 0;
+        //            }
+
+
+        //            if (balance >= 0)
+        //            {
+        //                MessageBox.Show("balance:" + balance);
+        //                return true;
+        //            }
+
+        //            else return false;
+        //        }
+        //    }
+        //    catch (Exception ec)
+        //    {
+        //        MessageBox.Show(ec.Message);
+        //        return false;
+        //    }
+        //}
+
+        private static bool checkBalance(string selectedWarehouseConStr, WHitem wHitem)
+        {
+            int balance = 0;
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(selectedWarehouseConStr))
+                {
+                    conn.Open();
+
+                    // Calculate the sum of Stock where IPN = wHitem.IPN, converting Stock to int
+                    string sumQuery = "SELECT SUM(CAST(Stock AS INT)) FROM STOCK WHERE IPN = @IPN";
+                    int totalStock = 0;
+
+                    using (SqlCommand sumCommand = new SqlCommand(sumQuery, conn))
+                    {
+                        sumCommand.Parameters.AddWithValue("@IPN", wHitem.IPN);
+
+                        // If there are no matching records, the result could be null, so handle that case.
+                        object result = sumCommand.ExecuteScalar();
+                        balance = result != DBNull.Value ? Convert.ToInt32(result) : 0;
+                        balance += wHitem.Stock;
+                    }
+
+                    if (balance >= 0)
+                    {
+                        //MessageBox.Show("balance:" + balance);
+                        return true;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Calculated overdraft :" + balance);
+                        return false;
+                    }
+
+                }
+            }
+            catch (Exception ec)
+            {
+                MessageBox.Show(ec.Message);
+                return false;
+            }
+        }
+
+
         private string getTheManufacturerFromTheStock(string fp, WHitem itemTolookby)
         {
             string manufacturerFromStock = string.Empty;
