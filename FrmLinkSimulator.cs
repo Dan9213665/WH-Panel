@@ -1153,7 +1153,9 @@ var myPieChart = new Chart(ctx, {
                 htmlContent += $"<td class='wrap-content'>{item.MFPN}</td>";
                 htmlContent += $"<td class='wrap-content'>{item.Description}</td>";
                 htmlContent += $"<td>{item.StockQuantity}</td>";
-                htmlContent += $"<td>{item.TotalRequired}</td>";
+                //htmlContent += $"<td>{item.TotalRequired}</td>";
+                htmlContent += $"<td style='background-color: {(item.TotalRequired < 0 ? "lightcoral" : "lightgreen")}'>{item.TotalRequired}</td>";
+
                 htmlContent += $"<td>{item.StockQuantity + item.TotalRequired}</td>";
                 htmlContent += "</tr>";
             }
