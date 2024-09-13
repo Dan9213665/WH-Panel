@@ -2808,11 +2808,41 @@ namespace WH_Panel
                         }
                     }
                     // Helper method to check for unique MFPN items and handle accordingly
+                    //void CheckAndHandleUniqueItems()
+                    //{
+                    //    var uniqueMFPNItems = ItemsToAddToAvl
+                    //        .Where(newItem => !avlItems.Any(existingItem => existingItem.MFPN == newItem.MFPN))
+                    //        .ToList();
+                    //    if (uniqueMFPNItems.Count > 0)
+                    //    {
+                    //        string message = $"{uniqueMFPNItems.Count} new ITEMS found:\n\n";
+                    //        foreach (var item in uniqueMFPNItems)
+                    //        {
+                    //            message += $"IPN: {item.IPN}, Manufacturer: {item.Manufacturer}, MFPN: {item.MFPN}, Description: {item.Description}\n\n";
+                    //        }
+                    //        MessageBox.Show(message);
+
+                    //        // Call the function to add new items to the database
+                    //        AddNewItemsToAVL(currentAvl, uniqueMFPNItems);
+                    //    }
+                    //    else
+                    //    {
+                    //        MessageBox.Show("Nothing new here");
+                    //    }
+                    //}
                     void CheckAndHandleUniqueItems()
                     {
+                        // Find items with unique MFPN
                         var uniqueMFPNItems = ItemsToAddToAvl
                             .Where(newItem => !avlItems.Any(existingItem => existingItem.MFPN == newItem.MFPN))
                             .ToList();
+
+                        // Find items with the same MFPN but different IPN
+                        var duplicateMFPNItems = ItemsToAddToAvl
+                            .Where(newItem => avlItems.Any(existingItem => existingItem.MFPN == newItem.MFPN && existingItem.IPN != newItem.IPN))
+                            .ToList();
+
+                        // Handle unique MFPN items
                         if (uniqueMFPNItems.Count > 0)
                         {
                             string message = $"{uniqueMFPNItems.Count} new ITEMS found:\n\n";
@@ -2827,9 +2857,28 @@ namespace WH_Panel
                         }
                         else
                         {
-                            MessageBox.Show("Nothing new here");
+                            MessageBox.Show("No unique items found.");
+                        }
+
+                        // Handle duplicate MFPN items
+                        if (duplicateMFPNItems.Count > 0)
+                        {
+                            string message = $"{duplicateMFPNItems.Count} items with duplicate MFPN but different IPN found:\n\n";
+                            foreach (var item in duplicateMFPNItems)
+                            {
+                                message += $"IPN: {item.IPN}, Manufacturer: {item.Manufacturer}, MFPN: {item.MFPN}, Description: {item.Description}\n\n";
+                            }
+
+                            // Ask for user confirmation
+                            DialogResult result = MessageBox.Show(message + "Do you want to add these items to the database?", "Confirmation", MessageBoxButtons.YesNo);
+                            if (result == DialogResult.Yes)
+                            {
+                                // Call the function to add these items to the database
+                                AddNewItemsToAVL(currentAvl, duplicateMFPNItems);
+                            }
                         }
                     }
+
                 }
             }
         }
