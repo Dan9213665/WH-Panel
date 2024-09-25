@@ -1,4 +1,5 @@
 ﻿using FastMember;
+using Microsoft.Office.Interop.Excel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,6 +17,9 @@ using System.Xml.Serialization;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Button = System.Windows.Forms.Button;
 using ComboBox = System.Windows.Forms.ComboBox;
+using DataTable = System.Data.DataTable;
+using GroupBox = System.Windows.Forms.GroupBox;
+using Label = System.Windows.Forms.Label;
 using TextBox = System.Windows.Forms.TextBox;
 
 namespace WH_Panel
@@ -475,6 +479,7 @@ namespace WH_Panel
             // Step 3: Search through DataGridView for matching items
             List<DataGridViewRow> matchingRows = new List<DataGridViewRow>(); // Store matching rows
 
+            bool alreadyCounted = false;
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
                 if (row.IsNewRow) continue; // Skip new row placeholder
@@ -484,18 +489,37 @@ namespace WH_Panel
                 string rowMFPN = row.Cells["MFPN"].Value?.ToString();
                 int rowStock = Convert.ToInt32(row.Cells["Stock"].Value);
                 string rowComments = row.Cells["Comments"].Value?.ToString();
+                string user = row.Cells["User"].Value?.ToString();
 
                 // Check if this row matches the input item
                 if (rowIPN == ipn && rowMFPN == mfpn && rowStock == stock)
                 {
-                    matchingRows.Add(row);
+                    if ( user == string.Empty)
+                    {
+                        matchingRows.Add(row);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Already counted on " +  row.Cells["Counted"].Value?.ToString(),"Already counted !!!",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                        alreadyCounted = true;
+                        break;
+                    }
+                    
                 }
             }
 
             // Step 4: Handle match cases
-            if (matchingRows.Count == 0)
+            if (matchingRows.Count == 0 )
             {
-                MessageBox.Show("No matching items found in the DataGridView.");
+                if(alreadyCounted)
+                {
+                    //
+                }
+                else
+                {
+                    MessageBox.Show("No matching items found in the DataGridView.");
+                }
+               
             }
             else if (matchingRows.Count == 1)
             {
