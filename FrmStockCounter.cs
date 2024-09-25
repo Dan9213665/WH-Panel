@@ -494,24 +494,24 @@ namespace WH_Panel
                 // Check if this row matches the input item
                 if (rowIPN == ipn && rowMFPN == mfpn && rowStock == stock)
                 {
-                    if ( user == string.Empty)
+                    if (user == string.Empty)
                     {
                         matchingRows.Add(row);
                     }
                     else
                     {
-                        MessageBox.Show("Already counted on " +  row.Cells["Counted"].Value?.ToString(),"Already counted !!!",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                        MessageBox.Show("Already counted on " + row.Cells["Counted"].Value?.ToString(), "Already counted !!!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         alreadyCounted = true;
                         break;
                     }
-                    
+
                 }
             }
 
             // Step 4: Handle match cases
-            if (matchingRows.Count == 0 )
+            if (matchingRows.Count == 0)
             {
-                if(alreadyCounted)
+                if (alreadyCounted)
                 {
                     //
                 }
@@ -519,7 +519,7 @@ namespace WH_Panel
                 {
                     MessageBox.Show("No matching items found in the DataGridView.");
                 }
-               
+
             }
             else if (matchingRows.Count == 1)
             {

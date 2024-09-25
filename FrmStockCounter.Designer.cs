@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmStockCounter));
             comboBox3 = new ComboBox();
             textBox1 = new TextBox();
             groupBox1 = new GroupBox();
@@ -262,6 +263,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1260, 578);
             Controls.Add(tableLayoutPanel1);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FrmStockCounter";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "FrmStockCounter";
