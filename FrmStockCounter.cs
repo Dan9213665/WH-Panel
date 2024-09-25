@@ -348,7 +348,7 @@ namespace WH_Panel
 
 
 
-      
+
 
         private void SetSTOCKiewColumsOrder()
         {
@@ -447,6 +447,7 @@ namespace WH_Panel
 
 
 
+
         private void countLogic()
         {
             // Step 1: Ensure XML file path is set
@@ -472,6 +473,8 @@ namespace WH_Panel
             }
 
             // Step 3: Search through DataGridView for matching items
+            List<DataGridViewRow> matchingRows = new List<DataGridViewRow>(); // Store matching rows
+
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
                 if (row.IsNewRow) continue; // Skip new row placeholder
@@ -481,38 +484,43 @@ namespace WH_Panel
                 string rowMFPN = row.Cells["MFPN"].Value?.ToString();
                 int rowStock = Convert.ToInt32(row.Cells["Stock"].Value);
                 string rowComments = row.Cells["Comments"].Value?.ToString();
-                string id = row.Cells["Id"].Value?.ToString(); // Consider using this ID if needed for updates
 
                 // Check if this row matches the input item
-                if (rowIPN == ipn && rowMFPN == mfpn && rowStock == stock && rowComments == comments)
+                if (rowIPN == ipn && rowMFPN == mfpn && rowStock == stock)
                 {
-                    // Step 4: Update "Counted" and "User" properties in DataGridView
-                    row.Cells["Counted"].Value = DateTime.Now.ToString(); // Set the "Counted" column to the current date and time
-                    row.Cells["User"].Value = currentUser; // Set the "User" column to the current Windows user
-
-                    // Create a single counted item to pass to the save method
-                    whItemStockCounter countedItem = new whItemStockCounter()
-                    {
-                        IPN = row.Cells["IPN"].Value?.ToString(),
-                        MFPN = row.Cells["MFPN"].Value?.ToString(),
-                        Stock = Convert.ToInt32(row.Cells["Stock"].Value),
-                        Id = int.Parse(row.Cells["Id"].Value.ToString()),
-                        Comments = row.Cells["Comments"].Value?.ToString(),
-                        Counted = row.Cells["Counted"].Value?.ToString(),
-                        User = row.Cells["User"].Value?.ToString()
-                    };
-
-                    // Step 5: Save the counted item to the selected XML file
-                    SaveCountedItemsToSelectedFile(countedItem);
-                    return; // Exit after saving the counted item
+                    matchingRows.Add(row);
                 }
             }
 
-            MessageBox.Show("No matching items found in the DataGridView.");
+            // Step 4: Handle match cases
+            if (matchingRows.Count == 0)
+            {
+                MessageBox.Show("No matching items found in the DataGridView.");
+            }
+            else if (matchingRows.Count == 1)
+            {
+                // Only one match, update it directly
+                string rowComments = matchingRows[0].Cells["Comments"].Value?.ToString();
+
+                if (rowComments == comments)
+                {
+                    // Update the matched row
+                    UpdateRow(matchingRows[0], currentUser);
+                }
+                else
+                {
+                    // Prompt user to select correct comments
+                    MessageBox.Show("Selected package not found!");
+                    comboBox1.Focus();
+                    comboBox1.DroppedDown = true;
+                }
+            }
+            else
+            {
+                // Step 5: Multiple matches, prompt user to select correct one by showing dynamic form
+                ShowMatchSelectionForm(matchingRows);
+            }
         }
-
-      
-
 
         private void SaveCountedItemsToSelectedFile(whItemStockCounter countedItem)
         {
@@ -552,14 +560,53 @@ namespace WH_Panel
             // Step 5: Save the document back to the XML file
             xdoc.Save(selectedXmlFilePath);
 
-            MessageBox.Show($"Counting progress has been saved to {selectedXmlFilePath}");
+            //MessageBox.Show($"Counting progress has been saved to {selectedXmlFilePath}");
+
+            ShowMessageWithAutoClose($"Counting progress has been saved to {selectedXmlFilePath}", 2000); // 2000 milliseconds = 2 seconds
         }
 
 
+        private void ShowMessageWithAutoClose(string message, int delay)
+        {
+            // Create a new form to display the message
+            Form messageForm = new Form()
+            {
+                StartPosition = FormStartPosition.CenterScreen,
+                Size = new Size(600, 200),
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                MaximizeBox = false,
+                MinimizeBox = false,
+                ShowInTaskbar = false
+            };
+
+            Label messageLabel = new Label()
+            {
+                Text = message,
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter,
+                BackColor = Color.LightGreen
+            };
+
+            messageForm.Controls.Add(messageLabel);
+            messageForm.Show();
+
+            // Create a timer to close the message form after the specified delay
+            System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
+            timer.Interval = delay; // Set the interval to the delay time
+            timer.Tick += (s, e) =>
+            {
+                messageForm.Close(); // Close the message form
+                timer.Stop(); // Stop the timer
+            };
+            timer.Start();
+        }
+
         private void textBox1_Enter(object sender, EventArgs e)
         {
+
             txtbColorGreenOnEnter(sender);
             textBox1.SelectAll();
+
         }
 
 
@@ -624,7 +671,7 @@ namespace WH_Panel
             }
 
             // Set the column order and potentially sort again
-           
+
 
             // Add sorting logic if you want to sort the DataGridView after changing the data source
             if (dataGridView1.DataSource is DataTable)
@@ -632,9 +679,8 @@ namespace WH_Panel
                 var dataTable = (DataTable)dataGridView1.DataSource;
                 dataTable.DefaultView.Sort = "Updated_on DESC"; // Adjust to your desired sort column
             }
-           
-        }
 
+        }
 
 
 
@@ -675,10 +721,17 @@ namespace WH_Panel
             List<whItemStockCounter> negativeQTYs = inWHstock.Where(item => item.Stock < 0).ToList();
             List<whItemStockCounter> positiveInWH = inWHstock.Where(item => item.Stock > 0).ToList();
 
-            // Remove positive stock items that match negative quantities
+            // Iterate through negative stock items and match them with positive stock items
             foreach (var negativeItem in negativeQTYs)
             {
-                positiveInWH.RemoveAll(positiveItem => Math.Abs(negativeItem.Stock) == positiveItem.Stock);
+                // Find the first matching positive item with the same absolute stock value
+                var matchingPositive = positiveInWH.FirstOrDefault(positiveItem => Math.Abs(negativeItem.Stock) == positiveItem.Stock);
+
+                // If a matching positive item is found, remove it from the positive list
+                if (matchingPositive != null)
+                {
+                    positiveInWH.Remove(matchingPositive);
+                }
             }
 
             // Load data into DataTable for DataGridView
@@ -697,6 +750,7 @@ namespace WH_Panel
             {
                 dataGridView1.Columns.Remove("User");
             }
+
             // Bind the DataTable to the DataGridView
             DataView dv = INWH.DefaultView;
             dataGridView1.DataSource = dv;
@@ -715,12 +769,13 @@ namespace WH_Panel
             SetSTOCKiewColumsOrder();
         }
 
+
         private void button1_Click(object sender, EventArgs e)
         {
-           
+
         }
 
-      
+
         private void button1_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -820,7 +875,7 @@ namespace WH_Panel
 
                         // Set this as the file for further saving
                         selectedXmlFilePath = newFilePath;
-                        button1.Text= newFilePath;
+                        button1.Text = newFilePath;
                     }
                     catch (Exception ex)
                     {
@@ -832,6 +887,111 @@ namespace WH_Panel
             }
 
         }
+        private void ShowMatchSelectionForm(List<DataGridViewRow> matchingRows)
+        {
+            // Create a new form dynamically
+            Form selectionForm = new Form();
+            selectionForm.Text = "Select a Matching Item";
+            selectionForm.Size = new Size(800, 400);
+            selectionForm.StartPosition = FormStartPosition.CenterParent;
 
+            // Create a DataGridView dynamically
+            DataGridView dataGridView = new DataGridView();
+            dataGridView.Dock = DockStyle.Top;
+            dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridView.MultiSelect = false;
+            dataGridView.Height = 300;
+
+            // Create columns for DataGridView
+            dataGridView.Columns.Add("IPN", "IPN");
+            dataGridView.Columns.Add("MFPN", "MFPN");
+            dataGridView.Columns.Add("Stock", "Stock");
+            dataGridView.Columns.Add("Comments", "Comments");
+            dataGridView.Columns.Add("Id", "Id");
+            dataGridView.Columns.Add("Updated_on", "Updated On");
+
+            // Sort matching rows by Updated_on date
+            matchingRows = matchingRows.OrderBy(row => DateTime.Parse(row.Cells["Updated_on"].Value.ToString())).ToList();
+
+            // Populate DataGridView with matching rows
+            foreach (var row in matchingRows)
+            {
+                dataGridView.Rows.Add(
+                    row.Cells["IPN"].Value.ToString(),
+                    row.Cells["MFPN"].Value.ToString(),
+                    row.Cells["Stock"].Value.ToString(),
+                    row.Cells["Comments"].Value.ToString(),
+                    row.Cells["Id"].Value.ToString(),
+                    row.Cells["Updated_on"].Value.ToString()
+                );
+            }
+
+            // Create a Select button dynamically
+            Button btnSelect = new Button();
+            btnSelect.Text = "Select";
+            btnSelect.Dock = DockStyle.Bottom;
+            btnSelect.Click += (sender, e) =>
+            {
+                if (dataGridView.SelectedRows.Count > 0)
+                {
+                    // Get the selected row from the dynamically created DataGridView
+                    int selectedIndex = dataGridView.SelectedRows[0].Index;
+                    DataGridViewRow selectedRow = matchingRows[selectedIndex];
+
+                    // Update the selected row
+                    string currentUser = Environment.UserName; // Get the current user
+                    UpdateRow(selectedRow, currentUser);
+
+                    // Close the form after selection
+                    selectionForm.DialogResult = DialogResult.OK;
+                    selectionForm.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Please select a row.");
+                }
+            };
+
+            // Add DataGridView and Select button to the form
+            selectionForm.Controls.Add(dataGridView);
+            selectionForm.Controls.Add(btnSelect);
+
+            // Show the form as a dialog
+            selectionForm.ShowDialog();
+        }
+
+        private void UpdateRow(DataGridViewRow row, string currentUser)
+        {
+            // Update "Counted" and "User" properties
+            row.Cells["Counted"].Value = DateTime.Now.ToString(); // Set "Counted" to current date and time
+            row.Cells["User"].Value = currentUser; // Set "User" to current Windows user
+
+            // Create a counted item and save it to the XML file
+            whItemStockCounter countedItem = new whItemStockCounter()
+            {
+                IPN = row.Cells["IPN"].Value?.ToString(),
+                MFPN = row.Cells["MFPN"].Value?.ToString(),
+                Stock = Convert.ToInt32(row.Cells["Stock"].Value),
+                Id = int.Parse(row.Cells["Id"].Value.ToString()),
+                Comments = row.Cells["Comments"].Value?.ToString(),
+                Counted = row.Cells["Counted"].Value?.ToString(),
+                User = row.Cells["User"].Value?.ToString()
+            };
+
+            // Save the counted item to the selected XML file
+            SaveCountedItemsToSelectedFile(countedItem);
+            SetSTOCKiewColumsOrder();
+        }
+
+        private void textBox1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            textBox1.SelectAll();
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            textBox3.Focus();
+        }
     }
 }

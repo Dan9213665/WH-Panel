@@ -83,6 +83,7 @@
             textBox1.Enter += textBox1_Enter;
             textBox1.KeyDown += textBox1_KeyDown;
             textBox1.Leave += textBox1_Leave;
+            textBox1.MouseDoubleClick += textBox1_MouseDoubleClick;
             // 
             // groupBox1
             // 
@@ -237,6 +238,7 @@
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(240, 33);
             comboBox1.TabIndex = 0;
+            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
             // 
             // button1
             // 
