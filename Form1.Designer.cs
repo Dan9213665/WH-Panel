@@ -182,7 +182,7 @@ namespace WH_Panel
             button14.Size = new Size(128, 103);
             button14.TabIndex = 12;
             button14.UseVisualStyleBackColor = true;
-            button14.Click += button14_Click;
+            button14.MouseDown += button14_MouseClick;
             // 
             // groupBox10
             // 

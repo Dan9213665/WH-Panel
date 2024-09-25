@@ -1305,6 +1305,8 @@ namespace WH_Panel
 
 
         }
+
+
         private void PopulateStockView()
         {
             dataGridView1.DataSource = null;

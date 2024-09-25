@@ -164,11 +164,11 @@ namespace WH_Panel
         }
         private void button14_Click(object sender, EventArgs e)
         {
-            FrmClientAgnosticWH cl = new FrmClientAgnosticWH();
-            //List<ClientWarehouse> warehouses = InitializeWarehouses();
-            List<ClientWarehouse> warehouses = PopulateWarehouses();
-            cl.InitializeGlobalWarehouses(warehouses);
-            cl.Show();
+            //FrmClientAgnosticWH cl = new FrmClientAgnosticWH();
+            ////List<ClientWarehouse> warehouses = InitializeWarehouses();
+            //List<ClientWarehouse> warehouses = PopulateWarehouses();
+            //cl.InitializeGlobalWarehouses(warehouses);
+            //cl.Show();
         }
         private void button3_Click(object sender, EventArgs e)
         {
@@ -332,6 +332,32 @@ namespace WH_Panel
         {
             FrmMFPNsearcher frm = new FrmMFPNsearcher();
             frm.Show();
+        }
+
+        private void button14_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                FrmClientAgnosticWH cl = new FrmClientAgnosticWH();
+                List<ClientWarehouse> warehouses = PopulateWarehouses();
+                cl.InitializeGlobalWarehouses(warehouses);
+                cl.Show();
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                try
+                {
+                    FrmStockCounter FrmStockCounter = new FrmStockCounter();
+                    List<ClientWarehouse> warehouses = PopulateWarehouses();
+                    FrmStockCounter.InitializeGlobalWarehouses(warehouses);
+                    FrmStockCounter.Show();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+
         }
     }
 }
