@@ -41,6 +41,10 @@ namespace WH_Panel
             public string? User { get; set; }
         }
         List<whItemStockCounter> inWHstock { get; set; }
+
+        int actualSum { get; set; }
+        public decimal stockSum { get; set; }
+
         private string selectedXmlFilePath = null; // To store the user-selected XML file path
 
         private void StartCountingProcess()
@@ -150,6 +154,8 @@ namespace WH_Panel
                 {
                     UpdateControlColors(control);
                 }
+
+               
             }
         }
         private void FrmStockCounter_Load(object sender, EventArgs e)
@@ -173,6 +179,7 @@ namespace WH_Panel
             textBox1.Focus();
             comboBox1.SelectedIndex = 5;
             button1.BackColor = Color.IndianRed;
+            lblCalc.BackColor = Color.IndianRed;
             //StartCountingProcess();
         }
         List<ClientWarehouse> warehouses { get; set; }
@@ -386,12 +393,31 @@ namespace WH_Panel
             }
 
 
+
+            
+
+
+
             // Step to color the rows based on the "User" column
             ColorRowsBasedOnUserColumn();
+
+            lblCalc.Text = actualSum + "/" + stockSum.ToString();
+
+            if (actualSum==stockSum)
+            {
+                lblCalc.BackColor = Color.LightGreen;
+            }
+            else
+            {
+                lblCalc.BackColor = Color.IndianRed;
+            }
         }
 
+        
         private void ColorRowsBasedOnUserColumn()
         {
+            actualSum = 0;
+
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
                 if (row.IsNewRow) continue; // Skip the new row placeholder
@@ -400,6 +426,7 @@ namespace WH_Panel
                 string userValue = row.Cells["User"].Value?.ToString();
                 if (!string.IsNullOrEmpty(userValue))
                 {
+                    actualSum += int.Parse(row.Cells["Stock"].Value?.ToString());
                     // Set the entire row's background color to LightGreen
                     row.DefaultCellStyle.BackColor = Color.LightGreen;
                     row.DefaultCellStyle.ForeColor = Color.Black;
@@ -412,8 +439,8 @@ namespace WH_Panel
         private void UpdateGroupBoxText(string ipn, DataTable dataTable)
         {
             // Assuming the Stock column is named "Stock"
-            decimal stockSum = 0;
 
+            stockSum = 0;
             // Calculate the sum of the stock values
             foreach (DataRow row in dataTable.Rows)
             {
@@ -745,11 +772,14 @@ namespace WH_Panel
             List<whItemStockCounter> negativeQTYs = inWHstock.Where(item => item.Stock < 0).ToList();
             List<whItemStockCounter> positiveInWH = inWHstock.Where(item => item.Stock > 0).ToList();
 
-            // Iterate through negative stock items and match them with positive stock items
+
             foreach (var negativeItem in negativeQTYs)
             {
-                // Find the first matching positive item with the same absolute stock value
-                var matchingPositive = positiveInWH.FirstOrDefault(positiveItem => Math.Abs(negativeItem.Stock) == positiveItem.Stock);
+                // Find the oldest matching positive item (same absolute stock value, ordered by Updated_on)
+                var matchingPositive = positiveInWH
+                    .Where(positiveItem => Math.Abs(negativeItem.Stock) == positiveItem.Stock)
+                    .OrderBy(positiveItem => positiveItem.Updated_on) // Order by Updated_on ascending (oldest first)
+                    .FirstOrDefault();
 
                 // If a matching positive item is found, remove it from the positive list
                 if (matchingPositive != null)
@@ -757,7 +787,6 @@ namespace WH_Panel
                     positiveInWH.Remove(matchingPositive);
                 }
             }
-
             // Load data into DataTable for DataGridView
             DataTable INWH = new DataTable();
             using (var reader = ObjectReader.Create(positiveInWH))
@@ -1023,6 +1052,8 @@ namespace WH_Panel
             RecalculateBalance();
         }
 
+
+
         private void RecalculateBalance()
         {
             // A list to hold unmatched movements
@@ -1051,12 +1082,23 @@ namespace WH_Panel
                 }
             }
 
-            // Step 3: Match pairs (incoming with outgoing of the same quantity)
             foreach (var outgoing in outgoingMovements)
             {
-                int outgoingQuantity = Math.Abs(Convert.ToInt32(outgoing.Cells["Stock"].Value)); // make it positive
+                int outgoingQuantity = Math.Abs(Convert.ToInt32(outgoing.Cells["Stock"].Value)); // Make it positive
+
+                // Try to find a matching incoming where the User property is filled
                 var matchingIncoming = incomingMovements
-                    .FirstOrDefault(incoming => Convert.ToInt32(incoming.Cells["Stock"].Value) == outgoingQuantity);
+                    .FirstOrDefault(incoming =>
+                        Convert.ToInt32(incoming.Cells["Stock"].Value) == outgoingQuantity &&
+                        string.IsNullOrEmpty(Convert.ToString(incoming.Cells["User"].Value))); // Prioritize User-filled
+
+                // If no such incoming exists, fall back to any matching incoming
+                if (matchingIncoming == null)
+                {
+                    matchingIncoming = incomingMovements
+                        .FirstOrDefault(incoming =>
+                            Convert.ToInt32(incoming.Cells["Stock"].Value) == outgoingQuantity);
+                }
 
                 if (matchingIncoming != null)
                 {
@@ -1077,13 +1119,46 @@ namespace WH_Panel
             Form popupForm = new Form();
             popupForm.Text = "Unmatched Movements";
             popupForm.Size = new Size(1666, 666);
-            // Set the form's start position to center of the screen
             popupForm.StartPosition = FormStartPosition.CenterScreen;
 
             DataGridView popupDataGridView = new DataGridView
             {
                 Dock = DockStyle.Fill,
-                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                ContextMenuStrip = new ContextMenuStrip(), // Right-click menu
+                ReadOnly = true, // Make the DataGridView uneditable
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect, // Select entire row on cell click
+                MultiSelect = false // Allow only single row selection
+            };
+
+            // Create the right-click menu item for deletion
+            var deleteMenuItem = new ToolStripMenuItem("Delete");
+            popupDataGridView.ContextMenuStrip.Items.Add(deleteMenuItem);
+
+            // Handle right-click and delete operation
+            deleteMenuItem.Click += (s, e) =>
+            {
+                // Ensure a row is selected
+                if (popupDataGridView.SelectedRows.Count > 0)
+                {
+                    // Get the selected row (right-clicked)
+                    var selectedRow = popupDataGridView.SelectedRows[0]; // Now use [0] as it's the only selected row
+
+                    // Assuming "Id" is the column with the primary key
+                    int itemId = Convert.ToInt32(selectedRow.Cells["Id"].Value);
+
+                    // Confirm deletion
+                    var result = MessageBox.Show($"Are you sure you want to delete item with Id {itemId}?", "Confirm Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    if (result == DialogResult.Yes)
+                    {
+                        // Call the delete function
+                        DeleteFromDatabase(itemId);
+                        MessageBox.Show($"Item with Id {itemId} has been deleted from the database.");
+
+                        // Remove the row from the DataGridView
+                        popupDataGridView.Rows.Remove(selectedRow);
+                    }
+                }
             };
 
             // Step 5: Add columns from the original DataGridView to the popup DataGridView
@@ -1101,7 +1176,7 @@ namespace WH_Panel
                     popupDataGridView.Rows[index].Cells[i].Value = unmatched.Cells[i].Value;
                 }
 
-                // Check the stock balance (assuming 'Quantity' is the relevant column)
+                // Check the stock balance (assuming 'Stock' is the relevant column)
                 int quantity = Convert.ToInt32(unmatched.Cells["Stock"].Value);
 
                 // Apply row color based on stock balance
@@ -1115,10 +1190,71 @@ namespace WH_Panel
                 }
             }
 
+            // Handle row right-click to select the row
+            popupDataGridView.CellMouseDown += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Right && e.RowIndex >= 0)
+                {
+                    // Select the clicked row
+                    popupDataGridView.ClearSelection();
+                    popupDataGridView.Rows[e.RowIndex].Selected = true;
+                    popupDataGridView.CurrentCell = popupDataGridView.Rows[e.RowIndex].Cells[0]; // Ensure CurrentCell is set to this row
+                }
+            };
+
             // Add the DataGridView to the form and show it as a popup
             popupForm.Controls.Add(popupDataGridView);
             popupForm.ShowDialog(); // Show the form as a modal dialog
         }
+
+        private void DeleteFromDatabase(int itemId)
+        {
+            // Get the selected table name from the ComboBox
+            string selectedTable = comboBox3.SelectedItem?.ToString();
+
+            // Check if selectedTable is valid
+            if (string.IsNullOrEmpty(selectedTable))
+            {
+                MessageBox.Show("Please select a valid warehouse.");
+                return;
+            }
+
+            // Connection string for the selected warehouse
+            string connectionString = selectedWHconnstring; // Ensure this is set previously
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open(); // Open the connection
+
+                    // Define the DELETE command using the selected table
+                    string deleteCommandText = $"DELETE FROM [{selectedTable}].dbo.STOCK WHERE Id = @ItemId"; // Adjust if necessary
+
+                    using (SqlCommand command = new SqlCommand(deleteCommandText, connection))
+                    {
+                        command.Parameters.AddWithValue("@ItemId", itemId); // Use parameterized query to prevent SQL injection
+
+                        int rowsAffected = command.ExecuteNonQuery(); // Execute the command
+
+                        if (rowsAffected > 0)
+                        {
+                            MessageBox.Show($"Item with Id {itemId} has been successfully deleted from the {selectedTable} table.");
+                        }
+                        else
+                        {
+                            MessageBox.Show($"No item found with Id {itemId} in the {selectedTable} table. Deletion failed.");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Handle exceptions (e.g., log the error, show a message to the user)
+                    MessageBox.Show($"An error occurred while trying to delete the item: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
 
     }
 }

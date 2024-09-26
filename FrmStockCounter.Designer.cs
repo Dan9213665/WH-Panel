@@ -44,8 +44,9 @@
             groupBox6 = new GroupBox();
             comboBox1 = new ComboBox();
             button1 = new Button();
-            openFileDialog1 = new OpenFileDialog();
             button2 = new Button();
+            lblCalc = new Label();
+            openFileDialog1 = new OpenFileDialog();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             groupBox3.SuspendLayout();
@@ -196,6 +197,7 @@
             tableLayoutPanel1.Controls.Add(groupBox6, 4, 0);
             tableLayoutPanel1.Controls.Add(button1, 0, 1);
             tableLayoutPanel1.Controls.Add(button2, 2, 1);
+            tableLayoutPanel1.Controls.Add(lblCalc, 3, 1);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -255,10 +257,6 @@
             button1.Click += button1_Click;
             button1.MouseDown += button1_MouseDown;
             // 
-            // openFileDialog1
-            // 
-            openFileDialog1.FileName = "openFileDialog1";
-            // 
             // button2
             // 
             button2.Dock = DockStyle.Fill;
@@ -269,6 +267,21 @@
             button2.Text = "Recalculate balance";
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
+            // 
+            // lblCalc
+            // 
+            lblCalc.AutoSize = true;
+            lblCalc.Dock = DockStyle.Fill;
+            lblCalc.Font = new Font("Segoe UI", 20.25F, FontStyle.Regular, GraphicsUnit.Point);
+            lblCalc.Location = new Point(759, 57);
+            lblCalc.Name = "lblCalc";
+            lblCalc.Size = new Size(246, 57);
+            lblCalc.TabIndex = 20;
+            lblCalc.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // openFileDialog1
+            // 
+            openFileDialog1.FileName = "openFileDialog1";
             // 
             // FrmStockCounter
             // 
@@ -316,5 +329,6 @@
         private Button button1;
         private OpenFileDialog openFileDialog1;
         private Button button2;
+        private Label lblCalc;
     }
 }
