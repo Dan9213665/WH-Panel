@@ -503,51 +503,94 @@ namespace WH_Panel
                 return;
             }
 
-            // Step 3: Search through DataGridView for matching items
-            List<DataGridViewRow> matchingRows = new List<DataGridViewRow>(); // Store matching rows
+            //// Step 3: Search through DataGridView for matching items
+            //List<DataGridViewRow> matchingRows = new List<DataGridViewRow>(); // Store matching rows
+
+            //bool alreadyCounted = false;
+            //foreach (DataGridViewRow row in dataGridView1.Rows)
+            //{
+            //    if (row.IsNewRow) continue; // Skip new row placeholder
+
+            //    // Get values from the current row
+            //    string rowIPN = row.Cells["IPN"].Value?.ToString();
+            //    string rowMFPN = row.Cells["MFPN"].Value?.ToString();
+            //    int rowStock = Convert.ToInt32(row.Cells["Stock"].Value);
+            //    string rowComments = row.Cells["Comments"].Value?.ToString();
+            //    string user = row.Cells["User"].Value?.ToString();
+
+
+            //    // Check if this row matches the input item
+            //    if (rowIPN == ipn && rowMFPN == mfpn && rowStock == stock)
+            //    {
+            //        //if (user == string.Empty)
+            //        if (string.IsNullOrEmpty(user))
+            //        {
+            //            matchingRows.Add(row);
+            //        }
+            //        else
+            //        {
+            //            MessageBox.Show("Already counted on " + row.Cells["Counted"].Value?.ToString(), "Already counted !!!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            //            alreadyCounted = true;
+            //            //break;
+            //        }
+            //    }
+            //}
+
+            //// Step 4: Handle match cases
+            //if (matchingRows.Count == 0)
+            //{
+            //    if (alreadyCounted)
+            //    {
+            //        //
+            //    }
+            //    else
+            //    {
+            //        MessageBox.Show("No matching items found in the DataGridView.");
+            //    }
+
+            //}
 
             bool alreadyCounted = false;
-            foreach (DataGridViewRow row in dataGridView1.Rows)
-            {
-                if (row.IsNewRow) continue; // Skip new row placeholder
+            List<DataGridViewRow> matchingRows = new List<DataGridViewRow>();
 
-                // Get values from the current row
-                string rowIPN = row.Cells["IPN"].Value?.ToString();
-                string rowMFPN = row.Cells["MFPN"].Value?.ToString();
-                int rowStock = Convert.ToInt32(row.Cells["Stock"].Value);
-                string rowComments = row.Cells["Comments"].Value?.ToString();
+            // First, check how many rows have the same IPN, MFPN, and Stock values
+            var similarRows = dataGridView1.Rows.Cast<DataGridViewRow>()
+                               .Where(row => !row.IsNewRow && row.Cells["IPN"].Value?.ToString() == ipn
+                                             && row.Cells["MFPN"].Value?.ToString() == mfpn
+                                             && Convert.ToInt32(row.Cells["Stock"].Value) == stock)
+                               .ToList();
+
+            // Loop through the similar rows
+            foreach (var row in similarRows)
+            {
                 string user = row.Cells["User"].Value?.ToString();
 
-                // Check if this row matches the input item
-                if (rowIPN == ipn && rowMFPN == mfpn && rowStock == stock)
+                // If User is empty, the item hasn't been counted
+                if (string.IsNullOrEmpty(user))
                 {
-                    if (user == string.Empty)
-                    {
-                        matchingRows.Add(row);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Already counted on " + row.Cells["Counted"].Value?.ToString(), "Already counted !!!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        alreadyCounted = true;
-                        break;
-                    }
-
-                }
-            }
-
-            // Step 4: Handle match cases
-            if (matchingRows.Count == 0)
-            {
-                if (alreadyCounted)
-                {
-                    //
+                    matchingRows.Add(row); // Add to the list for further processing
                 }
                 else
                 {
-                    MessageBox.Show("No matching items found in the DataGridView.");
+                    // Mark as already counted, but only show the message if all similar rows have been counted
+                    alreadyCounted = true;
                 }
-
             }
+
+            // Show the message only if all similar rows have been counted
+            if (alreadyCounted && matchingRows.Count == 0)
+            {
+                MessageBox.Show("Already counted on " + similarRows[0].Cells["Counted"].Value?.ToString(),
+                                "Already counted !!!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
+            // If no rows are found for counting, display a message
+            else if (matchingRows.Count == 0 && !alreadyCounted)
+            {
+                MessageBox.Show("No items found that haven't been counted yet.", "No Matches", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
+
             else if (matchingRows.Count == 1)
             {
                 // Only one match, update it directly
@@ -1153,7 +1196,7 @@ namespace WH_Panel
                     {
                         // Call the delete function
                         DeleteFromDatabase(itemId);
-                        MessageBox.Show($"Item with Id {itemId} has been deleted from the database.");
+                        //MessageBox.Show($"Item with Id {itemId} has been deleted from the database.");
 
                         // Remove the row from the DataGridView
                         popupDataGridView.Rows.Remove(selectedRow);
@@ -1188,6 +1231,15 @@ namespace WH_Panel
                 {
                     popupDataGridView.Rows[index].DefaultCellStyle.BackColor = Color.IndianRed;  // Negative or zero balance
                 }
+
+                // After the dialog is closed, set selection to the last row of popupDataGridView
+                if (popupDataGridView.Rows.Count > 0)
+                {
+                    int lastRowIndex = popupDataGridView.Rows.Count - 1; // Get the last row index
+                    popupDataGridView.ClearSelection(); // Clear any previous selection
+                    popupDataGridView.Rows[lastRowIndex].Selected = true; // Select the last row
+                    popupDataGridView.CurrentCell = popupDataGridView.Rows[lastRowIndex].Cells[0]; // Set CurrentCell to the first cell of the last row
+                }
             }
 
             // Handle row right-click to select the row
@@ -1205,6 +1257,8 @@ namespace WH_Panel
             // Add the DataGridView to the form and show it as a popup
             popupForm.Controls.Add(popupDataGridView);
             popupForm.ShowDialog(); // Show the form as a modal dialog
+
+        
         }
 
         private void DeleteFromDatabase(int itemId)
