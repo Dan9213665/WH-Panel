@@ -1017,5 +1017,108 @@ namespace WH_Panel
         {
             textBox3.Focus();
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            RecalculateBalance();
+        }
+
+        private void RecalculateBalance()
+        {
+            // A list to hold unmatched movements
+            List<DataGridViewRow> unmatchedMovements = new List<DataGridViewRow>();
+
+            // Step 1: Get all movements from the DataGridView and sort by Updated_on
+            var rows = dataGridView1.Rows.Cast<DataGridViewRow>()
+                           .Where(r => r.Cells["Stock"].Value != null && r.Cells["Updated_on"].Value != null)
+                           .OrderByDescending(r => Convert.ToDateTime(r.Cells["Updated_on"].Value))
+                           .ToList();
+
+            // Step 2: Separate incoming and outgoing movements
+            var incomingMovements = new List<DataGridViewRow>();
+            var outgoingMovements = new List<DataGridViewRow>();
+
+            foreach (var row in rows)
+            {
+                int quantity = Convert.ToInt32(row.Cells["Stock"].Value);
+                if (quantity > 0)
+                {
+                    incomingMovements.Add(row); // Positive quantity means incoming
+                }
+                else if (quantity < 0)
+                {
+                    outgoingMovements.Add(row); // Negative quantity means outgoing
+                }
+            }
+
+            // Step 3: Match pairs (incoming with outgoing of the same quantity)
+            foreach (var outgoing in outgoingMovements)
+            {
+                int outgoingQuantity = Math.Abs(Convert.ToInt32(outgoing.Cells["Stock"].Value)); // make it positive
+                var matchingIncoming = incomingMovements
+                    .FirstOrDefault(incoming => Convert.ToInt32(incoming.Cells["Stock"].Value) == outgoingQuantity);
+
+                if (matchingIncoming != null)
+                {
+                    // Remove matched movements
+                    incomingMovements.Remove(matchingIncoming);
+                }
+                else
+                {
+                    // Add to unmatched if no match is found
+                    unmatchedMovements.Add(outgoing);
+                }
+            }
+
+            // Add any remaining unmatched incoming movements
+            unmatchedMovements.AddRange(incomingMovements);
+
+            // Step 4: Create a new window and display the unmatched movements
+            Form popupForm = new Form();
+            popupForm.Text = "Unmatched Movements";
+            popupForm.Size = new Size(1666, 666);
+            // Set the form's start position to center of the screen
+            popupForm.StartPosition = FormStartPosition.CenterScreen;
+
+            DataGridView popupDataGridView = new DataGridView
+            {
+                Dock = DockStyle.Fill,
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+            };
+
+            // Step 5: Add columns from the original DataGridView to the popup DataGridView
+            foreach (DataGridViewColumn col in dataGridView1.Columns)
+            {
+                popupDataGridView.Columns.Add((DataGridViewColumn)col.Clone()); // Clone the structure of the original DataGridView
+            }
+
+            // Step 6: Add unmatched rows to the popup DataGridView and color them
+            foreach (var unmatched in unmatchedMovements)
+            {
+                int index = popupDataGridView.Rows.Add();
+                for (int i = 0; i < unmatched.Cells.Count; i++)
+                {
+                    popupDataGridView.Rows[index].Cells[i].Value = unmatched.Cells[i].Value;
+                }
+
+                // Check the stock balance (assuming 'Quantity' is the relevant column)
+                int quantity = Convert.ToInt32(unmatched.Cells["Stock"].Value);
+
+                // Apply row color based on stock balance
+                if (quantity > 0)
+                {
+                    popupDataGridView.Rows[index].DefaultCellStyle.BackColor = Color.LightGreen; // Positive balance
+                }
+                else
+                {
+                    popupDataGridView.Rows[index].DefaultCellStyle.BackColor = Color.IndianRed;  // Negative or zero balance
+                }
+            }
+
+            // Add the DataGridView to the form and show it as a popup
+            popupForm.Controls.Add(popupDataGridView);
+            popupForm.ShowDialog(); // Show the form as a modal dialog
+        }
+
     }
 }

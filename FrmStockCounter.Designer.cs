@@ -45,6 +45,7 @@
             comboBox1 = new ComboBox();
             button1 = new Button();
             openFileDialog1 = new OpenFileDialog();
+            button2 = new Button();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             groupBox3.SuspendLayout();
@@ -194,6 +195,7 @@
             tableLayoutPanel1.Controls.Add(checkBox1, 1, 1);
             tableLayoutPanel1.Controls.Add(groupBox6, 4, 0);
             tableLayoutPanel1.Controls.Add(button1, 0, 1);
+            tableLayoutPanel1.Controls.Add(button2, 2, 1);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -257,6 +259,17 @@
             // 
             openFileDialog1.FileName = "openFileDialog1";
             // 
+            // button2
+            // 
+            button2.Dock = DockStyle.Fill;
+            button2.Location = new Point(507, 60);
+            button2.Name = "button2";
+            button2.Size = new Size(246, 51);
+            button2.TabIndex = 19;
+            button2.Text = "Recalculate balance";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
+            // 
             // FrmStockCounter
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -302,5 +315,6 @@
         private ComboBox comboBox1;
         private Button button1;
         private OpenFileDialog openFileDialog1;
+        private Button button2;
     }
 }
