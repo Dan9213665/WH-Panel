@@ -1,6 +1,7 @@
 ﻿using FastMember;
 using Microsoft.Office.Interop.Excel;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -155,7 +156,7 @@ namespace WH_Panel
                     UpdateControlColors(control);
                 }
 
-               
+
             }
         }
         private void FrmStockCounter_Load(object sender, EventArgs e)
@@ -394,7 +395,7 @@ namespace WH_Panel
 
 
 
-            
+
 
 
 
@@ -403,7 +404,7 @@ namespace WH_Panel
 
             lblCalc.Text = actualSum + "/" + stockSum.ToString();
 
-            if (actualSum==stockSum)
+            if (actualSum == stockSum)
             {
                 lblCalc.BackColor = Color.LightGreen;
             }
@@ -413,7 +414,7 @@ namespace WH_Panel
             }
         }
 
-        
+
         private void ColorRowsBasedOnUserColumn()
         {
             actualSum = 0;
@@ -757,6 +758,7 @@ namespace WH_Panel
             if (checkBox1.Checked)
             {
                 showOnlyInStock();
+                
             }
             else
             {
@@ -850,6 +852,7 @@ namespace WH_Panel
             // Bind the DataTable to the DataGridView
             DataView dv = INWH.DefaultView;
             dataGridView1.DataSource = dv;
+            dv.Sort = "Updated_on DESC";
 
             // Ensure the "Counted" column is added again if it's needed
             if (!dataGridView1.Columns.Contains("Counted"))
@@ -1258,7 +1261,7 @@ namespace WH_Panel
             popupForm.Controls.Add(popupDataGridView);
             popupForm.ShowDialog(); // Show the form as a modal dialog
 
-        
+
         }
 
         private void DeleteFromDatabase(int itemId)
@@ -1309,6 +1312,24 @@ namespace WH_Panel
             }
         }
 
+        private void comboBox3_MouseClick(object sender, MouseEventArgs e)
+        {
+           
+        }
 
+        private void button3_Click(object sender, EventArgs e)
+        {
+            FrmClientAgnosticWH h = new FrmClientAgnosticWH();
+            h.InitializeGlobalWarehouses(warehouses);
+            foreach (ClientWarehouse cw in warehouses)
+            {
+                if (cw != null && comboBox3.Text == cw.clName)
+                {
+                    h.SetComboBoxText(cw.clName);
+                    h.MasterReload(cw.sqlAvl, cw.sqlStock);
+                    h.Show();
+                }
+            }
+        }
     }
 }

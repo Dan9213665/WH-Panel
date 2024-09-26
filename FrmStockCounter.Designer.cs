@@ -47,6 +47,7 @@
             button2 = new Button();
             lblCalc = new Label();
             openFileDialog1 = new OpenFileDialog();
+            button3 = new Button();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             groupBox3.SuspendLayout();
@@ -73,6 +74,7 @@
             comboBox3.Sorted = true;
             comboBox3.TabIndex = 8;
             comboBox3.SelectedIndexChanged += comboBox3_SelectedIndexChanged;
+            comboBox3.MouseClick += comboBox3_MouseClick;
             // 
             // textBox1
             // 
@@ -198,6 +200,7 @@
             tableLayoutPanel1.Controls.Add(button1, 0, 1);
             tableLayoutPanel1.Controls.Add(button2, 2, 1);
             tableLayoutPanel1.Controls.Add(lblCalc, 3, 1);
+            tableLayoutPanel1.Controls.Add(button3, 4, 1);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -283,6 +286,17 @@
             // 
             openFileDialog1.FileName = "openFileDialog1";
             // 
+            // button3
+            // 
+            button3.Dock = DockStyle.Fill;
+            button3.Location = new Point(1011, 60);
+            button3.Name = "button3";
+            button3.Size = new Size(246, 51);
+            button3.TabIndex = 21;
+            button3.Text = "Open WH";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
+            // 
             // FrmStockCounter
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -330,5 +344,6 @@
         private OpenFileDialog openFileDialog1;
         private Button button2;
         private Label lblCalc;
+        private Button button3;
     }
 }
