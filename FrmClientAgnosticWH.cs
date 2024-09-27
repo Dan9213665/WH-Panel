@@ -217,7 +217,7 @@ namespace WH_Panel
             stockFile = stockParam;
             textBox8.ReadOnly = true;
             radioButton1.Checked = true;
-            comboBox1.SelectedIndex = 1;
+            comboBox1.SelectedIndex = 5;
             button2_Click(this, new EventArgs());
             button3_Click(this, new EventArgs());
             comboBox2.Enabled = false;

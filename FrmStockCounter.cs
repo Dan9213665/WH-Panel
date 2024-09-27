@@ -986,6 +986,80 @@ namespace WH_Panel
             }
 
         }
+        //private void ShowMatchSelectionForm(List<DataGridViewRow> matchingRows)
+        //{
+        //    // Create a new form dynamically
+        //    Form selectionForm = new Form();
+        //    selectionForm.Text = "Select a Matching Item";
+        //    selectionForm.Size = new Size(800, 400);
+        //    selectionForm.StartPosition = FormStartPosition.CenterParent;
+
+        //    // Create a DataGridView dynamically
+        //    DataGridView dataGridView = new DataGridView();
+        //    dataGridView.Dock = DockStyle.Top;
+        //    dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        //    dataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+        //    dataGridView.MultiSelect = false;
+        //    dataGridView.Height = 300;
+
+        //    // Create columns for DataGridView
+        //    dataGridView.Columns.Add("IPN", "IPN");
+        //    dataGridView.Columns.Add("MFPN", "MFPN");
+        //    dataGridView.Columns.Add("Stock", "Stock");
+        //    dataGridView.Columns.Add("Comments", "Comments");
+        //    dataGridView.Columns.Add("Id", "Id");
+        //    dataGridView.Columns.Add("Updated_on", "Updated On");
+
+        //    // Sort matching rows by Updated_on date
+        //    matchingRows = matchingRows.OrderBy(row => DateTime.Parse(row.Cells["Updated_on"].Value.ToString())).ToList();
+
+        //    // Populate DataGridView with matching rows
+        //    foreach (var row in matchingRows)
+        //    {
+        //        dataGridView.Rows.Add(
+        //            row.Cells["IPN"].Value.ToString(),
+        //            row.Cells["MFPN"].Value.ToString(),
+        //            row.Cells["Stock"].Value.ToString(),
+        //            row.Cells["Comments"].Value.ToString(),
+        //            row.Cells["Id"].Value.ToString(),
+        //            row.Cells["Updated_on"].Value.ToString()
+        //        );
+        //    }
+
+        //    // Create a Select button dynamically
+        //    Button btnSelect = new Button();
+        //    btnSelect.Text = "Select";
+        //    btnSelect.Dock = DockStyle.Bottom;
+        //    btnSelect.Click += (sender, e) =>
+        //    {
+        //        if (dataGridView.SelectedRows.Count > 0)
+        //        {
+        //            // Get the selected row from the dynamically created DataGridView
+        //            int selectedIndex = dataGridView.SelectedRows[0].Index;
+        //            DataGridViewRow selectedRow = matchingRows[selectedIndex];
+
+        //            // Update the selected row
+        //            string currentUser = Environment.UserName; // Get the current user
+        //            UpdateRow(selectedRow, currentUser);
+
+        //            // Close the form after selection
+        //            selectionForm.DialogResult = DialogResult.OK;
+        //            selectionForm.Close();
+        //        }
+        //        else
+        //        {
+        //            MessageBox.Show("Please select a row.");
+        //        }
+        //    };
+
+        //    // Add DataGridView and Select button to the form
+        //    selectionForm.Controls.Add(dataGridView);
+        //    selectionForm.Controls.Add(btnSelect);
+
+        //    // Show the form as a dialog
+        //    selectionForm.ShowDialog();
+        //}
+
         private void ShowMatchSelectionForm(List<DataGridViewRow> matchingRows)
         {
             // Create a new form dynamically
@@ -1026,17 +1100,13 @@ namespace WH_Panel
                 );
             }
 
-            // Create a Select button dynamically
-            Button btnSelect = new Button();
-            btnSelect.Text = "Select";
-            btnSelect.Dock = DockStyle.Bottom;
-            btnSelect.Click += (sender, e) =>
+            // Handle double-click event on DataGridView
+            dataGridView.CellDoubleClick += (sender, e) =>
             {
-                if (dataGridView.SelectedRows.Count > 0)
+                if (e.RowIndex >= 0 && e.RowIndex < matchingRows.Count)
                 {
-                    // Get the selected row from the dynamically created DataGridView
-                    int selectedIndex = dataGridView.SelectedRows[0].Index;
-                    DataGridViewRow selectedRow = matchingRows[selectedIndex];
+                    // Get the selected row based on the double-clicked cell
+                    DataGridViewRow selectedRow = matchingRows[e.RowIndex];
 
                     // Update the selected row
                     string currentUser = Environment.UserName; // Get the current user
@@ -1046,15 +1116,10 @@ namespace WH_Panel
                     selectionForm.DialogResult = DialogResult.OK;
                     selectionForm.Close();
                 }
-                else
-                {
-                    MessageBox.Show("Please select a row.");
-                }
             };
 
-            // Add DataGridView and Select button to the form
+            // Add DataGridView to the form (no need for the Select button)
             selectionForm.Controls.Add(dataGridView);
-            selectionForm.Controls.Add(btnSelect);
 
             // Show the form as a dialog
             selectionForm.ShowDialog();
