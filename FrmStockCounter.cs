@@ -1433,7 +1433,9 @@ namespace WH_Panel
                 popupForm.Controls.Add(popupDataGridView);
                 popupForm.ShowDialog(); // Show the form as a modal dialog
 
-
+                // Actions to perform when the form closes:
+                textBox1.Clear();  // Clear the contents of textbox1
+                textBox1.Focus();  // Move focus to textbox1
 
             }
             else
