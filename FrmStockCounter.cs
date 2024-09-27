@@ -215,6 +215,7 @@ namespace WH_Panel
                 textBox3.Clear();
 
                 getDataFromStock();
+                preRecalc();
             }
         }
 
@@ -1060,6 +1061,71 @@ namespace WH_Panel
         //    selectionForm.ShowDialog();
         //}
 
+        //private void ShowMatchSelectionForm(List<DataGridViewRow> matchingRows)
+        //{
+        //    // Create a new form dynamically
+        //    Form selectionForm = new Form();
+        //    selectionForm.Text = "Select a Matching Item";
+        //    selectionForm.Size = new Size(800, 400);
+        //    selectionForm.StartPosition = FormStartPosition.CenterParent;
+
+        //    // Create a DataGridView dynamically
+        //    DataGridView dataGridView = new DataGridView();
+        //    dataGridView.Dock = DockStyle.Top;
+        //    dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        //    dataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+        //    dataGridView.MultiSelect = false;
+        //    dataGridView.Height = 300;
+
+        //    // Create columns for DataGridView
+        //    dataGridView.Columns.Add("IPN", "IPN");
+        //    dataGridView.Columns.Add("MFPN", "MFPN");
+        //    dataGridView.Columns.Add("Stock", "Stock");
+        //    dataGridView.Columns.Add("Comments", "Comments");
+        //    dataGridView.Columns.Add("Id", "Id");
+        //    dataGridView.Columns.Add("Updated_on", "Updated On");
+
+        //    // Sort matching rows by Updated_on date
+        //    matchingRows = matchingRows.OrderBy(row => DateTime.Parse(row.Cells["Updated_on"].Value.ToString())).ToList();
+
+        //    // Populate DataGridView with matching rows
+        //    foreach (var row in matchingRows)
+        //    {
+        //        dataGridView.Rows.Add(
+        //            row.Cells["IPN"].Value.ToString(),
+        //            row.Cells["MFPN"].Value.ToString(),
+        //            row.Cells["Stock"].Value.ToString(),
+        //            row.Cells["Comments"].Value.ToString(),
+        //            row.Cells["Id"].Value.ToString(),
+        //            row.Cells["Updated_on"].Value.ToString()
+        //        );
+        //    }
+
+        //    // Handle double-click event on DataGridView
+        //    dataGridView.CellDoubleClick += (sender, e) =>
+        //    {
+        //        if (e.RowIndex >= 0 && e.RowIndex < matchingRows.Count)
+        //        {
+        //            // Get the selected row based on the double-clicked cell
+        //            DataGridViewRow selectedRow = matchingRows[e.RowIndex];
+
+        //            // Update the selected row
+        //            string currentUser = Environment.UserName; // Get the current user
+        //            UpdateRow(selectedRow, currentUser);
+
+        //            // Close the form after selection
+        //            selectionForm.DialogResult = DialogResult.OK;
+        //            selectionForm.Close();
+        //        }
+        //    };
+
+        //    // Add DataGridView to the form (no need for the Select button)
+        //    selectionForm.Controls.Add(dataGridView);
+
+        //    // Show the form as a dialog
+        //    selectionForm.ShowDialog();
+        //}
+
         private void ShowMatchSelectionForm(List<DataGridViewRow> matchingRows)
         {
             // Create a new form dynamically
@@ -1118,12 +1184,39 @@ namespace WH_Panel
                 }
             };
 
-            // Add DataGridView to the form (no need for the Select button)
+            // Handle ENTER key event
+            dataGridView.KeyDown += (sender, e) =>
+            {
+                if (e.KeyCode == Keys.Enter && dataGridView.SelectedRows.Count > 0)
+                {
+                    // Prevent the 'ding' sound from happening when ENTER is pressed
+                    e.Handled = true;
+                    e.SuppressKeyPress = true;
+
+                    // Get the selected row based on the currently selected row in the DataGridView
+                    int selectedIndex = dataGridView.SelectedRows[0].Index;
+                    if (selectedIndex >= 0 && selectedIndex < matchingRows.Count)
+                    {
+                        DataGridViewRow selectedRow = matchingRows[selectedIndex];
+
+                        // Update the selected row
+                        string currentUser = Environment.UserName; // Get the current user
+                        UpdateRow(selectedRow, currentUser);
+
+                        // Close the form after selection
+                        selectionForm.DialogResult = DialogResult.OK;
+                        selectionForm.Close();
+                    }
+                }
+            };
+
+            // Add DataGridView to the form
             selectionForm.Controls.Add(dataGridView);
 
             // Show the form as a dialog
             selectionForm.ShowDialog();
         }
+
 
         private void UpdateRow(DataGridViewRow row, string currentUser)
         {
@@ -1164,6 +1257,86 @@ namespace WH_Panel
         }
 
 
+        private void preRecalc()
+        {
+            // A list to hold unmatched movements
+            List<DataGridViewRow> unmatchedMovements = new List<DataGridViewRow>();
+
+            // Step 1: Get all movements from the DataGridView and sort by Updated_on
+            var rows = dataGridView1.Rows.Cast<DataGridViewRow>()
+                           .Where(r => r.Cells["Stock"].Value != null && r.Cells["Updated_on"].Value != null)
+                           .OrderByDescending(r => Convert.ToDateTime(r.Cells["Updated_on"].Value))
+                           .ToList();
+
+            // Step 2: Separate incoming and outgoing movements
+            var incomingMovements = new List<DataGridViewRow>();
+            var outgoingMovements = new List<DataGridViewRow>();
+
+            foreach (var row in rows)
+            {
+                int quantity = Convert.ToInt32(row.Cells["Stock"].Value);
+                if (quantity > 0)
+                {
+                    incomingMovements.Add(row); // Positive quantity means incoming
+                }
+                else if (quantity < 0)
+                {
+                    outgoingMovements.Add(row); // Negative quantity means outgoing
+                }
+            }
+
+            foreach (var outgoing in outgoingMovements)
+            {
+                int outgoingQuantity = Math.Abs(Convert.ToInt32(outgoing.Cells["Stock"].Value)); // Make it positive
+
+                // Try to find a matching incoming where the User property is filled
+                var matchingIncoming = incomingMovements
+                    .FirstOrDefault(incoming =>
+                        Convert.ToInt32(incoming.Cells["Stock"].Value) == outgoingQuantity &&
+                        string.IsNullOrEmpty(Convert.ToString(incoming.Cells["User"].Value))); // Prioritize User-filled
+
+                // If no such incoming exists, fall back to any matching incoming
+                if (matchingIncoming == null)
+                {
+                    matchingIncoming = incomingMovements
+                        .FirstOrDefault(incoming =>
+                            Convert.ToInt32(incoming.Cells["Stock"].Value) == outgoingQuantity);
+                }
+
+                if (matchingIncoming != null)
+                {
+                    // Remove matched movements
+                    incomingMovements.Remove(matchingIncoming);
+                }
+                else
+                {
+                    // Add to unmatched if no match is found
+                    unmatchedMovements.Add(outgoing);
+                }
+            }
+
+            // Add any remaining unmatched incoming movements
+            unmatchedMovements.AddRange(incomingMovements);
+
+            int countNeg = 0;
+
+            foreach (var incoming in unmatchedMovements)
+            {
+                if (int.Parse(incoming.Cells["Stock"].Value.ToString())<0)
+                {
+                    countNeg += 1;
+                }
+            }
+            if(countNeg > 0)
+            {
+                button2.Text = string.Format("Recalculate balance ({0})", countNeg);
+            }
+            else
+            {
+                button2.Text = "Recalculate balance";
+            }
+            
+        }
 
         private void RecalculateBalance()
         {
