@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
+using System.Drawing;
 using System.Xml.Serialization;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Button = System.Windows.Forms.Button;
@@ -22,6 +23,8 @@ using DataTable = System.Data.DataTable;
 using GroupBox = System.Windows.Forms.GroupBox;
 using Label = System.Windows.Forms.Label;
 using TextBox = System.Windows.Forms.TextBox;
+
+
 
 namespace WH_Panel
 {
@@ -987,144 +990,7 @@ namespace WH_Panel
             }
 
         }
-        //private void ShowMatchSelectionForm(List<DataGridViewRow> matchingRows)
-        //{
-        //    // Create a new form dynamically
-        //    Form selectionForm = new Form();
-        //    selectionForm.Text = "Select a Matching Item";
-        //    selectionForm.Size = new Size(800, 400);
-        //    selectionForm.StartPosition = FormStartPosition.CenterParent;
 
-        //    // Create a DataGridView dynamically
-        //    DataGridView dataGridView = new DataGridView();
-        //    dataGridView.Dock = DockStyle.Top;
-        //    dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-        //    dataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-        //    dataGridView.MultiSelect = false;
-        //    dataGridView.Height = 300;
-
-        //    // Create columns for DataGridView
-        //    dataGridView.Columns.Add("IPN", "IPN");
-        //    dataGridView.Columns.Add("MFPN", "MFPN");
-        //    dataGridView.Columns.Add("Stock", "Stock");
-        //    dataGridView.Columns.Add("Comments", "Comments");
-        //    dataGridView.Columns.Add("Id", "Id");
-        //    dataGridView.Columns.Add("Updated_on", "Updated On");
-
-        //    // Sort matching rows by Updated_on date
-        //    matchingRows = matchingRows.OrderBy(row => DateTime.Parse(row.Cells["Updated_on"].Value.ToString())).ToList();
-
-        //    // Populate DataGridView with matching rows
-        //    foreach (var row in matchingRows)
-        //    {
-        //        dataGridView.Rows.Add(
-        //            row.Cells["IPN"].Value.ToString(),
-        //            row.Cells["MFPN"].Value.ToString(),
-        //            row.Cells["Stock"].Value.ToString(),
-        //            row.Cells["Comments"].Value.ToString(),
-        //            row.Cells["Id"].Value.ToString(),
-        //            row.Cells["Updated_on"].Value.ToString()
-        //        );
-        //    }
-
-        //    // Create a Select button dynamically
-        //    Button btnSelect = new Button();
-        //    btnSelect.Text = "Select";
-        //    btnSelect.Dock = DockStyle.Bottom;
-        //    btnSelect.Click += (sender, e) =>
-        //    {
-        //        if (dataGridView.SelectedRows.Count > 0)
-        //        {
-        //            // Get the selected row from the dynamically created DataGridView
-        //            int selectedIndex = dataGridView.SelectedRows[0].Index;
-        //            DataGridViewRow selectedRow = matchingRows[selectedIndex];
-
-        //            // Update the selected row
-        //            string currentUser = Environment.UserName; // Get the current user
-        //            UpdateRow(selectedRow, currentUser);
-
-        //            // Close the form after selection
-        //            selectionForm.DialogResult = DialogResult.OK;
-        //            selectionForm.Close();
-        //        }
-        //        else
-        //        {
-        //            MessageBox.Show("Please select a row.");
-        //        }
-        //    };
-
-        //    // Add DataGridView and Select button to the form
-        //    selectionForm.Controls.Add(dataGridView);
-        //    selectionForm.Controls.Add(btnSelect);
-
-        //    // Show the form as a dialog
-        //    selectionForm.ShowDialog();
-        //}
-
-        //private void ShowMatchSelectionForm(List<DataGridViewRow> matchingRows)
-        //{
-        //    // Create a new form dynamically
-        //    Form selectionForm = new Form();
-        //    selectionForm.Text = "Select a Matching Item";
-        //    selectionForm.Size = new Size(800, 400);
-        //    selectionForm.StartPosition = FormStartPosition.CenterParent;
-
-        //    // Create a DataGridView dynamically
-        //    DataGridView dataGridView = new DataGridView();
-        //    dataGridView.Dock = DockStyle.Top;
-        //    dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-        //    dataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-        //    dataGridView.MultiSelect = false;
-        //    dataGridView.Height = 300;
-
-        //    // Create columns for DataGridView
-        //    dataGridView.Columns.Add("IPN", "IPN");
-        //    dataGridView.Columns.Add("MFPN", "MFPN");
-        //    dataGridView.Columns.Add("Stock", "Stock");
-        //    dataGridView.Columns.Add("Comments", "Comments");
-        //    dataGridView.Columns.Add("Id", "Id");
-        //    dataGridView.Columns.Add("Updated_on", "Updated On");
-
-        //    // Sort matching rows by Updated_on date
-        //    matchingRows = matchingRows.OrderBy(row => DateTime.Parse(row.Cells["Updated_on"].Value.ToString())).ToList();
-
-        //    // Populate DataGridView with matching rows
-        //    foreach (var row in matchingRows)
-        //    {
-        //        dataGridView.Rows.Add(
-        //            row.Cells["IPN"].Value.ToString(),
-        //            row.Cells["MFPN"].Value.ToString(),
-        //            row.Cells["Stock"].Value.ToString(),
-        //            row.Cells["Comments"].Value.ToString(),
-        //            row.Cells["Id"].Value.ToString(),
-        //            row.Cells["Updated_on"].Value.ToString()
-        //        );
-        //    }
-
-        //    // Handle double-click event on DataGridView
-        //    dataGridView.CellDoubleClick += (sender, e) =>
-        //    {
-        //        if (e.RowIndex >= 0 && e.RowIndex < matchingRows.Count)
-        //        {
-        //            // Get the selected row based on the double-clicked cell
-        //            DataGridViewRow selectedRow = matchingRows[e.RowIndex];
-
-        //            // Update the selected row
-        //            string currentUser = Environment.UserName; // Get the current user
-        //            UpdateRow(selectedRow, currentUser);
-
-        //            // Close the form after selection
-        //            selectionForm.DialogResult = DialogResult.OK;
-        //            selectionForm.Close();
-        //        }
-        //    };
-
-        //    // Add DataGridView to the form (no need for the Select button)
-        //    selectionForm.Controls.Add(dataGridView);
-
-        //    // Show the form as a dialog
-        //    selectionForm.ShowDialog();
-        //}
 
         private void ShowMatchSelectionForm(List<DataGridViewRow> matchingRows)
         {
@@ -1217,6 +1083,109 @@ namespace WH_Panel
             selectionForm.ShowDialog();
         }
 
+        //private void ShowMatchSelectionForm(List<DataGridViewRow> matchingRows)
+        //{
+        //    // Create a new form dynamically
+        //    Form selectionForm = new Form();
+        //    selectionForm.Text = "Select a Matching Item";
+        //    selectionForm.Size = new Size(800, 400);
+        //    selectionForm.StartPosition = FormStartPosition.CenterParent;
+
+        //    // Create a DataGridView dynamically
+        //    DataGridView dataGridView = new DataGridView();
+        //    dataGridView.Dock = DockStyle.Top;
+        //    dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        //    dataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+        //    dataGridView.MultiSelect = false;
+        //    dataGridView.Height = 300;
+
+        //    // Create columns for DataGridView
+        //    dataGridView.Columns.Add("IPN", "IPN");
+        //    dataGridView.Columns.Add("MFPN", "MFPN");
+        //    dataGridView.Columns.Add("Stock", "Stock");
+        //    dataGridView.Columns.Add("Comments", "Comments");
+
+        //    // Create a column for the barcode/QR code (Id)
+        //    DataGridViewImageColumn barcodeColumn = new DataGridViewImageColumn();
+        //    barcodeColumn.Name = "Id";
+        //    barcodeColumn.HeaderText = "Barcode/QR Code";
+        //    dataGridView.Columns.Add(barcodeColumn);
+
+        //    dataGridView.Columns.Add("Updated_on", "Updated On");
+
+        //    // Sort matching rows by Updated_on date
+        //    matchingRows = matchingRows.OrderBy(row => DateTime.Parse(row.Cells["Updated_on"].Value.ToString())).ToList();
+
+        //    foreach (var row in matchingRows)
+        //    {
+
+
+
+        //        // Add a new row to the DataGridView
+        //        dataGridView.Rows.Add(
+        //            row.Cells["IPN"].Value.ToString(),
+        //            row.Cells["MFPN"].Value.ToString(),
+        //            row.Cells["Stock"].Value.ToString(),
+        //            row.Cells["Comments"].Value.ToString(),
+        //             row.Cells["Id"].Value.ToString(),
+        //            row.Cells["Updated_on"].Value.ToString()
+        //        );
+        //    }
+
+        //    // Handle double-click event on DataGridView
+        //    dataGridView.CellDoubleClick += (sender, e) =>
+        //    {
+        //        if (e.RowIndex >= 0 && e.RowIndex < matchingRows.Count)
+        //        {
+        //            // Get the selected row based on the double-clicked cell
+        //            DataGridViewRow selectedRow = matchingRows[e.RowIndex];
+
+        //            // Update the selected row
+        //            string currentUser = Environment.UserName; // Get the current user
+        //            UpdateRow(selectedRow, currentUser);
+
+        //            // Close the form after selection
+        //            selectionForm.DialogResult = DialogResult.OK;
+        //            selectionForm.Close();
+        //        }
+        //    };
+
+        //    // Handle ENTER key event
+        //    dataGridView.KeyDown += (sender, e) =>
+        //    {
+        //        if (e.KeyCode == Keys.Enter && dataGridView.SelectedRows.Count > 0)
+        //        {
+        //            // Prevent the 'ding' sound from happening when ENTER is pressed
+        //            e.Handled = true;
+        //            e.SuppressKeyPress = true;
+
+        //            // Get the selected row based on the currently selected row in the DataGridView
+        //            int selectedIndex = dataGridView.SelectedRows[0].Index;
+        //            if (selectedIndex >= 0 && selectedIndex < matchingRows.Count)
+        //            {
+        //                DataGridViewRow selectedRow = matchingRows[selectedIndex];
+
+        //                // Update the selected row
+        //                string currentUser = Environment.UserName; // Get the current user
+        //                UpdateRow(selectedRow, currentUser);
+
+        //                // Close the form after selection
+        //                selectionForm.DialogResult = DialogResult.OK;
+        //                selectionForm.Close();
+        //            }
+        //        }
+        //    };
+
+        //    // Add DataGridView to the form
+        //    selectionForm.Controls.Add(dataGridView);
+
+        //    // Show the form as a dialog
+        //    selectionForm.ShowDialog();
+        //}
+
+
+
+
 
         private void UpdateRow(DataGridViewRow row, string currentUser)
         {
@@ -1256,195 +1225,6 @@ namespace WH_Panel
             RecalculateBalance();
         }
 
-
-        //private void preRecalc()
-        //{
-        //    // A list to hold unmatched movements
-        //    List<DataGridViewRow> unmatchedMovements = new List<DataGridViewRow>();
-
-        //    // Step 1: Get all movements from the DataGridView and sort by Updated_on
-        //    var rows = dataGridView1.Rows.Cast<DataGridViewRow>()
-        //                   .Where(r => r.Cells["Stock"].Value != null && r.Cells["Updated_on"].Value != null)
-        //                   .OrderByDescending(r => Convert.ToDateTime(r.Cells["Updated_on"].Value))
-        //                   .ToList();
-
-        //    // Step 2: Separate incoming and outgoing movements
-        //    var incomingMovements = new List<DataGridViewRow>();
-        //    var outgoingMovements = new List<DataGridViewRow>();
-
-        //    foreach (var row in rows)
-        //    {
-        //        int quantity = Convert.ToInt32(row.Cells["Stock"].Value);
-        //        if (quantity > 0)
-        //        {
-        //            incomingMovements.Add(row); // Positive quantity means incoming
-        //        }
-        //        else if (quantity < 0)
-        //        {
-        //            outgoingMovements.Add(row); // Negative quantity means outgoing
-        //        }
-        //    }
-
-        //    foreach (var outgoing in outgoingMovements)
-        //    {
-        //        int outgoingQuantity = Math.Abs(Convert.ToInt32(outgoing.Cells["Stock"].Value)); // Make it positive
-
-        //        // Try to find a matching incoming where the User property is filled
-        //        var matchingIncoming = incomingMovements
-        //            .FirstOrDefault(incoming =>
-        //                Convert.ToInt32(incoming.Cells["Stock"].Value) == outgoingQuantity &&
-        //                string.IsNullOrEmpty(Convert.ToString(incoming.Cells["User"].Value))); // Prioritize User-filled
-
-        //        // If no such incoming exists, fall back to any matching incoming
-        //        if (matchingIncoming == null)
-        //        {
-        //            matchingIncoming = incomingMovements
-        //                .FirstOrDefault(incoming =>
-        //                    Convert.ToInt32(incoming.Cells["Stock"].Value) == outgoingQuantity);
-        //        }
-
-        //        if (matchingIncoming != null)
-        //        {
-        //            // Remove matched movements
-        //            incomingMovements.Remove(matchingIncoming);
-        //        }
-        //        else
-        //        {
-        //            // Add to unmatched if no match is found
-        //            unmatchedMovements.Add(outgoing);
-        //        }
-        //    }
-
-        //    // Add any remaining unmatched incoming movements
-        //    unmatchedMovements.AddRange(incomingMovements);
-
-        //    int countNeg = 0;
-
-        //    foreach (var incoming in unmatchedMovements)
-        //    {
-        //        if (int.Parse(incoming.Cells["Stock"].Value.ToString())<0)
-        //        {
-        //            countNeg += 1;
-        //        }
-        //    }
-        //    if(countNeg > 0)
-        //    {
-        //        button2.Text = string.Format("Recalculate balance ({0})", countNeg);
-        //        button2.BackColor = Color.IndianRed;
-
-
-        //        // Step 4: Create a new window and display the unmatched movements
-        //        Form popupForm = new Form();
-        //        popupForm.Text = "Unmatched Movements";
-        //        popupForm.Size = new Size(1666, 666);
-        //        popupForm.StartPosition = FormStartPosition.CenterScreen;
-
-        //        DataGridView popupDataGridView = new DataGridView
-        //        {
-        //            Dock = DockStyle.Fill,
-        //            AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-        //            ContextMenuStrip = new ContextMenuStrip(), // Right-click menu
-        //            ReadOnly = true, // Make the DataGridView uneditable
-        //            SelectionMode = DataGridViewSelectionMode.FullRowSelect, // Select entire row on cell click
-        //            MultiSelect = false // Allow only single row selection
-        //        };
-
-        //        // Create the right-click menu item for deletion
-        //        var deleteMenuItem = new ToolStripMenuItem("Delete");
-        //        popupDataGridView.ContextMenuStrip.Items.Add(deleteMenuItem);
-
-        //        // Handle right-click and delete operation
-        //        deleteMenuItem.Click += (s, e) =>
-        //        {
-        //            // Ensure a row is selected
-        //            if (popupDataGridView.SelectedRows.Count > 0)
-        //            {
-        //                // Get the selected row (right-clicked)
-        //                var selectedRow = popupDataGridView.SelectedRows[0]; // Now use [0] as it's the only selected row
-
-        //                // Assuming "Id" is the column with the primary key
-        //                int itemId = Convert.ToInt32(selectedRow.Cells["Id"].Value);
-
-        //                // Confirm deletion
-        //                var result = MessageBox.Show($"Are you sure you want to delete item with Id {itemId}?", "Confirm Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-        //                if (result == DialogResult.Yes)
-        //                {
-        //                    // Call the delete function
-        //                    DeleteFromDatabase(itemId);
-        //                    //MessageBox.Show($"Item with Id {itemId} has been deleted from the database.");
-
-        //                    // Remove the row from the DataGridView
-        //                    popupDataGridView.Rows.Remove(selectedRow);
-        //                }
-        //            }
-        //        };
-
-        //        // Step 5: Add columns from the original DataGridView to the popup DataGridView
-        //        foreach (DataGridViewColumn col in dataGridView1.Columns)
-        //        {
-        //            popupDataGridView.Columns.Add((DataGridViewColumn)col.Clone()); // Clone the structure of the original DataGridView
-        //        }
-
-        //        // Step 6: Add unmatched rows to the popup DataGridView and color them
-        //        foreach (var unmatched in unmatchedMovements)
-        //        {
-        //            int index = popupDataGridView.Rows.Add();
-        //            for (int i = 0; i < unmatched.Cells.Count; i++)
-        //            {
-        //                popupDataGridView.Rows[index].Cells[i].Value = unmatched.Cells[i].Value;
-        //            }
-
-        //            // Check the stock balance (assuming 'Stock' is the relevant column)
-        //            int quantity = Convert.ToInt32(unmatched.Cells["Stock"].Value);
-
-        //            // Apply row color based on stock balance
-        //            if (quantity > 0)
-        //            {
-        //                popupDataGridView.Rows[index].DefaultCellStyle.BackColor = Color.LightGreen; // Positive balance
-        //            }
-        //            else
-        //            {
-        //                popupDataGridView.Rows[index].DefaultCellStyle.BackColor = Color.IndianRed;  // Negative or zero balance
-        //            }
-
-        //            // After the dialog is closed, set selection to the last row of popupDataGridView
-        //            if (popupDataGridView.Rows.Count > 0)
-        //            {
-        //                int lastRowIndex = popupDataGridView.Rows.Count - 1; // Get the last row index
-        //                popupDataGridView.ClearSelection(); // Clear any previous selection
-        //                popupDataGridView.Rows[lastRowIndex].Selected = true; // Select the last row
-        //                popupDataGridView.CurrentCell = popupDataGridView.Rows[lastRowIndex].Cells[0]; // Set CurrentCell to the first cell of the last row
-        //            }
-        //        }
-
-        //        // Handle row right-click to select the row
-        //        popupDataGridView.CellMouseDown += (s, e) =>
-        //        {
-        //            if (e.Button == MouseButtons.Right && e.RowIndex >= 0)
-        //            {
-        //                // Select the clicked row
-        //                popupDataGridView.ClearSelection();
-        //                popupDataGridView.Rows[e.RowIndex].Selected = true;
-        //                popupDataGridView.CurrentCell = popupDataGridView.Rows[e.RowIndex].Cells[0]; // Ensure CurrentCell is set to this row
-        //            }
-        //        };
-
-        //        // Add the DataGridView to the form and show it as a popup
-        //        popupForm.Controls.Add(popupDataGridView);
-        //        popupForm.ShowDialog(); // Show the form as a modal dialog
-
-        //        // Actions to perform when the form closes:
-        //        textBox1.Clear();  // Clear the contents of textbox1
-        //        textBox1.Focus();  // Move focus to textbox1
-
-        //    }
-        //    else
-        //    {
-        //        button2.Text = "Recalculate balance";
-        //        button2.BackColor = Color.LightGreen;
-        //    }
-
-        //}
 
 
         private void preRecalc()
