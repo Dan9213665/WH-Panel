@@ -582,7 +582,7 @@ namespace WH_Panel
             // Show the message only if all similar rows have been counted
             if (alreadyCounted && matchingRows.Count == 0)
             {
-                MessageBox.Show("Already counted on " + similarRows[0].Cells["Counted"].Value?.ToString(),
+                MessageBox.Show("Already counted on " + similarRows[0].Cells["Counted"].Value?.ToString()+" by "+ similarRows[0].Cells["User"].Value?.ToString(),
                                 "Already counted !!!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
@@ -1257,6 +1257,196 @@ namespace WH_Panel
         }
 
 
+        //private void preRecalc()
+        //{
+        //    // A list to hold unmatched movements
+        //    List<DataGridViewRow> unmatchedMovements = new List<DataGridViewRow>();
+
+        //    // Step 1: Get all movements from the DataGridView and sort by Updated_on
+        //    var rows = dataGridView1.Rows.Cast<DataGridViewRow>()
+        //                   .Where(r => r.Cells["Stock"].Value != null && r.Cells["Updated_on"].Value != null)
+        //                   .OrderByDescending(r => Convert.ToDateTime(r.Cells["Updated_on"].Value))
+        //                   .ToList();
+
+        //    // Step 2: Separate incoming and outgoing movements
+        //    var incomingMovements = new List<DataGridViewRow>();
+        //    var outgoingMovements = new List<DataGridViewRow>();
+
+        //    foreach (var row in rows)
+        //    {
+        //        int quantity = Convert.ToInt32(row.Cells["Stock"].Value);
+        //        if (quantity > 0)
+        //        {
+        //            incomingMovements.Add(row); // Positive quantity means incoming
+        //        }
+        //        else if (quantity < 0)
+        //        {
+        //            outgoingMovements.Add(row); // Negative quantity means outgoing
+        //        }
+        //    }
+
+        //    foreach (var outgoing in outgoingMovements)
+        //    {
+        //        int outgoingQuantity = Math.Abs(Convert.ToInt32(outgoing.Cells["Stock"].Value)); // Make it positive
+
+        //        // Try to find a matching incoming where the User property is filled
+        //        var matchingIncoming = incomingMovements
+        //            .FirstOrDefault(incoming =>
+        //                Convert.ToInt32(incoming.Cells["Stock"].Value) == outgoingQuantity &&
+        //                string.IsNullOrEmpty(Convert.ToString(incoming.Cells["User"].Value))); // Prioritize User-filled
+
+        //        // If no such incoming exists, fall back to any matching incoming
+        //        if (matchingIncoming == null)
+        //        {
+        //            matchingIncoming = incomingMovements
+        //                .FirstOrDefault(incoming =>
+        //                    Convert.ToInt32(incoming.Cells["Stock"].Value) == outgoingQuantity);
+        //        }
+
+        //        if (matchingIncoming != null)
+        //        {
+        //            // Remove matched movements
+        //            incomingMovements.Remove(matchingIncoming);
+        //        }
+        //        else
+        //        {
+        //            // Add to unmatched if no match is found
+        //            unmatchedMovements.Add(outgoing);
+        //        }
+        //    }
+
+        //    // Add any remaining unmatched incoming movements
+        //    unmatchedMovements.AddRange(incomingMovements);
+
+        //    int countNeg = 0;
+
+        //    foreach (var incoming in unmatchedMovements)
+        //    {
+        //        if (int.Parse(incoming.Cells["Stock"].Value.ToString())<0)
+        //        {
+        //            countNeg += 1;
+        //        }
+        //    }
+        //    if(countNeg > 0)
+        //    {
+        //        button2.Text = string.Format("Recalculate balance ({0})", countNeg);
+        //        button2.BackColor = Color.IndianRed;
+
+
+        //        // Step 4: Create a new window and display the unmatched movements
+        //        Form popupForm = new Form();
+        //        popupForm.Text = "Unmatched Movements";
+        //        popupForm.Size = new Size(1666, 666);
+        //        popupForm.StartPosition = FormStartPosition.CenterScreen;
+
+        //        DataGridView popupDataGridView = new DataGridView
+        //        {
+        //            Dock = DockStyle.Fill,
+        //            AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+        //            ContextMenuStrip = new ContextMenuStrip(), // Right-click menu
+        //            ReadOnly = true, // Make the DataGridView uneditable
+        //            SelectionMode = DataGridViewSelectionMode.FullRowSelect, // Select entire row on cell click
+        //            MultiSelect = false // Allow only single row selection
+        //        };
+
+        //        // Create the right-click menu item for deletion
+        //        var deleteMenuItem = new ToolStripMenuItem("Delete");
+        //        popupDataGridView.ContextMenuStrip.Items.Add(deleteMenuItem);
+
+        //        // Handle right-click and delete operation
+        //        deleteMenuItem.Click += (s, e) =>
+        //        {
+        //            // Ensure a row is selected
+        //            if (popupDataGridView.SelectedRows.Count > 0)
+        //            {
+        //                // Get the selected row (right-clicked)
+        //                var selectedRow = popupDataGridView.SelectedRows[0]; // Now use [0] as it's the only selected row
+
+        //                // Assuming "Id" is the column with the primary key
+        //                int itemId = Convert.ToInt32(selectedRow.Cells["Id"].Value);
+
+        //                // Confirm deletion
+        //                var result = MessageBox.Show($"Are you sure you want to delete item with Id {itemId}?", "Confirm Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+        //                if (result == DialogResult.Yes)
+        //                {
+        //                    // Call the delete function
+        //                    DeleteFromDatabase(itemId);
+        //                    //MessageBox.Show($"Item with Id {itemId} has been deleted from the database.");
+
+        //                    // Remove the row from the DataGridView
+        //                    popupDataGridView.Rows.Remove(selectedRow);
+        //                }
+        //            }
+        //        };
+
+        //        // Step 5: Add columns from the original DataGridView to the popup DataGridView
+        //        foreach (DataGridViewColumn col in dataGridView1.Columns)
+        //        {
+        //            popupDataGridView.Columns.Add((DataGridViewColumn)col.Clone()); // Clone the structure of the original DataGridView
+        //        }
+
+        //        // Step 6: Add unmatched rows to the popup DataGridView and color them
+        //        foreach (var unmatched in unmatchedMovements)
+        //        {
+        //            int index = popupDataGridView.Rows.Add();
+        //            for (int i = 0; i < unmatched.Cells.Count; i++)
+        //            {
+        //                popupDataGridView.Rows[index].Cells[i].Value = unmatched.Cells[i].Value;
+        //            }
+
+        //            // Check the stock balance (assuming 'Stock' is the relevant column)
+        //            int quantity = Convert.ToInt32(unmatched.Cells["Stock"].Value);
+
+        //            // Apply row color based on stock balance
+        //            if (quantity > 0)
+        //            {
+        //                popupDataGridView.Rows[index].DefaultCellStyle.BackColor = Color.LightGreen; // Positive balance
+        //            }
+        //            else
+        //            {
+        //                popupDataGridView.Rows[index].DefaultCellStyle.BackColor = Color.IndianRed;  // Negative or zero balance
+        //            }
+
+        //            // After the dialog is closed, set selection to the last row of popupDataGridView
+        //            if (popupDataGridView.Rows.Count > 0)
+        //            {
+        //                int lastRowIndex = popupDataGridView.Rows.Count - 1; // Get the last row index
+        //                popupDataGridView.ClearSelection(); // Clear any previous selection
+        //                popupDataGridView.Rows[lastRowIndex].Selected = true; // Select the last row
+        //                popupDataGridView.CurrentCell = popupDataGridView.Rows[lastRowIndex].Cells[0]; // Set CurrentCell to the first cell of the last row
+        //            }
+        //        }
+
+        //        // Handle row right-click to select the row
+        //        popupDataGridView.CellMouseDown += (s, e) =>
+        //        {
+        //            if (e.Button == MouseButtons.Right && e.RowIndex >= 0)
+        //            {
+        //                // Select the clicked row
+        //                popupDataGridView.ClearSelection();
+        //                popupDataGridView.Rows[e.RowIndex].Selected = true;
+        //                popupDataGridView.CurrentCell = popupDataGridView.Rows[e.RowIndex].Cells[0]; // Ensure CurrentCell is set to this row
+        //            }
+        //        };
+
+        //        // Add the DataGridView to the form and show it as a popup
+        //        popupForm.Controls.Add(popupDataGridView);
+        //        popupForm.ShowDialog(); // Show the form as a modal dialog
+
+        //        // Actions to perform when the form closes:
+        //        textBox1.Clear();  // Clear the contents of textbox1
+        //        textBox1.Focus();  // Move focus to textbox1
+
+        //    }
+        //    else
+        //    {
+        //        button2.Text = "Recalculate balance";
+        //        button2.BackColor = Color.LightGreen;
+        //    }
+
+        //}
+
+
         private void preRecalc()
         {
             // A list to hold unmatched movements
@@ -1322,16 +1512,16 @@ namespace WH_Panel
 
             foreach (var incoming in unmatchedMovements)
             {
-                if (int.Parse(incoming.Cells["Stock"].Value.ToString())<0)
+                if (int.Parse(incoming.Cells["Stock"].Value.ToString()) < 0)
                 {
                     countNeg += 1;
                 }
             }
-            if(countNeg > 0)
+
+            if (countNeg > 0)
             {
                 button2.Text = string.Format("Recalculate balance ({0})", countNeg);
                 button2.BackColor = Color.IndianRed;
-
 
                 // Step 4: Create a new window and display the unmatched movements
                 Form popupForm = new Form();
@@ -1356,24 +1546,15 @@ namespace WH_Panel
                 // Handle right-click and delete operation
                 deleteMenuItem.Click += (s, e) =>
                 {
-                    // Ensure a row is selected
                     if (popupDataGridView.SelectedRows.Count > 0)
                     {
-                        // Get the selected row (right-clicked)
                         var selectedRow = popupDataGridView.SelectedRows[0]; // Now use [0] as it's the only selected row
-
-                        // Assuming "Id" is the column with the primary key
                         int itemId = Convert.ToInt32(selectedRow.Cells["Id"].Value);
 
-                        // Confirm deletion
                         var result = MessageBox.Show($"Are you sure you want to delete item with Id {itemId}?", "Confirm Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                         if (result == DialogResult.Yes)
                         {
-                            // Call the delete function
-                            DeleteFromDatabase(itemId);
-                            //MessageBox.Show($"Item with Id {itemId} has been deleted from the database.");
-
-                            // Remove the row from the DataGridView
+                            DeleteFromDatabase(itemId, false);
                             popupDataGridView.Rows.Remove(selectedRow);
                         }
                     }
@@ -1394,56 +1575,67 @@ namespace WH_Panel
                         popupDataGridView.Rows[index].Cells[i].Value = unmatched.Cells[i].Value;
                     }
 
-                    // Check the stock balance (assuming 'Stock' is the relevant column)
                     int quantity = Convert.ToInt32(unmatched.Cells["Stock"].Value);
 
-                    // Apply row color based on stock balance
                     if (quantity > 0)
                     {
-                        popupDataGridView.Rows[index].DefaultCellStyle.BackColor = Color.LightGreen; // Positive balance
+                        popupDataGridView.Rows[index].DefaultCellStyle.BackColor = Color.LightGreen;
                     }
                     else
                     {
-                        popupDataGridView.Rows[index].DefaultCellStyle.BackColor = Color.IndianRed;  // Negative or zero balance
+                        popupDataGridView.Rows[index].DefaultCellStyle.BackColor = Color.IndianRed;
                     }
 
-                    // After the dialog is closed, set selection to the last row of popupDataGridView
                     if (popupDataGridView.Rows.Count > 0)
                     {
-                        int lastRowIndex = popupDataGridView.Rows.Count - 1; // Get the last row index
-                        popupDataGridView.ClearSelection(); // Clear any previous selection
-                        popupDataGridView.Rows[lastRowIndex].Selected = true; // Select the last row
-                        popupDataGridView.CurrentCell = popupDataGridView.Rows[lastRowIndex].Cells[0]; // Set CurrentCell to the first cell of the last row
+                        int lastRowIndex = popupDataGridView.Rows.Count - 1;
+                        popupDataGridView.ClearSelection();
+                        popupDataGridView.Rows[lastRowIndex].Selected = true;
+                        popupDataGridView.CurrentCell = popupDataGridView.Rows[lastRowIndex].Cells[0];
                     }
                 }
 
-                // Handle row right-click to select the row
                 popupDataGridView.CellMouseDown += (s, e) =>
                 {
                     if (e.Button == MouseButtons.Right && e.RowIndex >= 0)
                     {
-                        // Select the clicked row
                         popupDataGridView.ClearSelection();
                         popupDataGridView.Rows[e.RowIndex].Selected = true;
-                        popupDataGridView.CurrentCell = popupDataGridView.Rows[e.RowIndex].Cells[0]; // Ensure CurrentCell is set to this row
+                        popupDataGridView.CurrentCell = popupDataGridView.Rows[e.RowIndex].Cells[0];
                     }
                 };
 
-                // Add the DataGridView to the form and show it as a popup
                 popupForm.Controls.Add(popupDataGridView);
-                popupForm.ShowDialog(); // Show the form as a modal dialog
+                //popupForm.ShowDialog();
 
-                // Actions to perform when the form closes:
-                textBox1.Clear();  // Clear the contents of textbox1
-                textBox1.Focus();  // Move focus to textbox1
+                popupForm.Show();
 
+                // Ask the user if they want to auto-remove negative quantities
+                var autoRemoveResult = MessageBox.Show("Do you want to automatically remove all negative quantities?", "Auto-Remove Negative Quantities", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (autoRemoveResult == DialogResult.Yes)
+                {
+                    // Automatically remove all rows with negative quantities
+                    foreach (DataGridViewRow row in popupDataGridView.Rows)
+                    {
+                        if (Convert.ToInt32(row.Cells["Stock"].Value) < 0)
+                        {
+                            int itemId = Convert.ToInt32(row.Cells["Id"].Value);
+                            DeleteFromDatabase(itemId, true); // Delete from the database
+                            //popupDataGridView.Rows.Remove(row); // Remove from DataGridView
+                        }
+                    }
+                    popupForm.Close(); // Close the popup form completely
+                }
+
+                textBox1.Clear();
+                textBox1.Focus();
             }
             else
             {
                 button2.Text = "Recalculate balance";
                 button2.BackColor = Color.LightGreen;
             }
-            
         }
 
         private void RecalculateBalance()
@@ -1544,7 +1736,7 @@ namespace WH_Panel
                     if (result == DialogResult.Yes)
                     {
                         // Call the delete function
-                        DeleteFromDatabase(itemId);
+                        DeleteFromDatabase(itemId,false);
                         //MessageBox.Show($"Item with Id {itemId} has been deleted from the database.");
 
                         // Remove the row from the DataGridView
@@ -1610,7 +1802,7 @@ namespace WH_Panel
 
         }
 
-        private void DeleteFromDatabase(int itemId)
+        private void DeleteFromDatabase(int itemId,bool Auto)
         {
             // Get the selected table name from the ComboBox
             string selectedTable = comboBox3.SelectedItem?.ToString();
@@ -1642,7 +1834,11 @@ namespace WH_Panel
 
                         if (rowsAffected > 0)
                         {
-                            MessageBox.Show($"Item with Id {itemId} has been successfully deleted from the {selectedTable} table.");
+                            if(!Auto)
+                            {
+                                MessageBox.Show($"Item with Id {itemId} has been successfully deleted from the {selectedTable} table.");
+                            }
+                            
                         }
                         else
                         {
