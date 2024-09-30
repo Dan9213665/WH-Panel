@@ -181,6 +181,7 @@
             dataGridView1.RowTemplate.Height = 25;
             dataGridView1.Size = new Size(1248, 436);
             dataGridView1.TabIndex = 0;
+            dataGridView1.MouseDown += dataGridView1_MouseDown;
             // 
             // tableLayoutPanel1
             // 

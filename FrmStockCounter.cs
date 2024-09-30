@@ -324,65 +324,6 @@ namespace WH_Panel
             }
         }
 
-        //    private void MergeCountDataFromSQL(DataTable dataTable)
-        //    {
-        //        // Step 1: Define your SQL connection string
-        //        string connectionString = selectedWHconnstring; // Update with your actual connection string
-
-        //        // Step 2: Create a SQL query to retrieve Counted and User data from the COUNT table
-        //        string query = "SELECT Id, Counted, [User] FROM [COUNT] WHERE Id IN (@IdList)";
-
-        //        // Create a list of Ids to use in the query
-        //        //var idList = string.Join(",", dataTable.Rows.Cast<DataRow>().Select(row => row["Id"].ToString()).Distinct());
-
-        //        var idList = string.Join(",", dataTable.Rows.Cast<DataRow>()
-        //.Where(row => row["Id"] != DBNull.Value) // Ensure Id is not null
-        //.Select(row => (int)row["Id"]) // Cast to int
-        //.Distinct());
-
-        //        // Step 3: Use a using statement for the SQL connection and command
-        //        using (SqlConnection connection = new SqlConnection(connectionString))
-        //        {
-        //            // Step 4: Create a command to execute the query
-        //            using (SqlCommand command = new SqlCommand(query, connection))
-        //            {
-        //                // Add the Ids as a parameter
-        //                command.Parameters.AddWithValue("@IdList", idList);
-
-        //                // Step 5: Open the connection and execute the command
-        //                try
-        //                {
-        //                    connection.Open();
-
-        //                    // Execute the command and read the data
-        //                    using (SqlDataReader reader = command.ExecuteReader())
-        //                    {
-        //                        // Step 6: Loop through each row in the DataTable from the database
-        //                        while (reader.Read())
-        //                        {
-        //                            string stockId = reader["Id"].ToString();
-        //                            string countedValue = reader["Counted"]?.ToString();
-        //                            string userValue = reader["User"]?.ToString();
-
-        //                            // Find the matching row in the dataTable by Id
-        //                            DataRow[] matchingRows = dataTable.Select($"Id = '{stockId}'");
-
-        //                            if (matchingRows.Length > 0)
-        //                            {
-        //                                // If a match is found, update the Counted and User fields
-        //                                matchingRows[0]["Counted"] = countedValue;
-        //                                matchingRows[0]["User"] = userValue;
-        //                            }
-        //                        }
-        //                    }
-        //                }
-        //                catch (SqlException ex)
-        //                {
-        //                    MessageBox.Show($"An error occurred while accessing the database: {ex.Message}");
-        //                }
-        //            }
-        //        }
-        //    }
 
         private void MergeCountDataFromSQL(DataTable dataTable)
         {
@@ -542,9 +483,13 @@ namespace WH_Panel
             {
                 lblCalc.BackColor = Color.LightGreen;
             }
-            else
+            else if (actualSum < stockSum)
             {
                 lblCalc.BackColor = Color.IndianRed;
+            }
+            else if (actualSum > stockSum)
+            {
+                lblCalc.BackColor = Color.YellowGreen;
             }
         }
 
@@ -1061,42 +1006,42 @@ namespace WH_Panel
         {
             if (e.Button == MouseButtons.Left)
             {
-                // Left-click logic: Select an existing XML file
-                if (comboBox3.SelectedItem == null)
-                {
-                    MessageBox.Show("Please select a valid item from the dropdown.");
-                    return;
-                }
+                //// Left-click logic: Select an existing XML file
+                //if (comboBox3.SelectedItem == null)
+                //{
+                //    MessageBox.Show("Please select a valid item from the dropdown.");
+                //    return;
+                //}
 
-                // Get the currently selected item from comboBox3
-                string selectedFolder = comboBox3.SelectedItem.ToString();
+                //// Get the currently selected item from comboBox3
+                //string selectedFolder = comboBox3.SelectedItem.ToString();
 
-                // Build the start folder path using the selected item
-                string startFolder = $@"\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\{selectedFolder}";
+                //// Build the start folder path using the selected item
+                //string startFolder = $@"\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\{selectedFolder}";
 
-                // Create and configure OpenFileDialog
-                OpenFileDialog openFileDialog1 = new OpenFileDialog
-                {
-                    InitialDirectory = startFolder,
-                    Filter = "XML files (*.xml)|*.xml",
-                    Title = "Select an XML File"
-                };
+                //// Create and configure OpenFileDialog
+                //OpenFileDialog openFileDialog1 = new OpenFileDialog
+                //{
+                //    InitialDirectory = startFolder,
+                //    Filter = "XML files (*.xml)|*.xml",
+                //    Title = "Select an XML File"
+                //};
 
-                // Show the dialog and check if the user selected a file
-                if (openFileDialog1.ShowDialog() == DialogResult.OK)
-                {
-                    string selectedFilePath = openFileDialog1.FileName;
-                    //MessageBox.Show($"You selected: {selectedFilePath}");
-                    button1.Text = selectedFilePath;
-                    button1.BackColor = Color.LightGreen;
-                    selectedXmlFilePath = openFileDialog1.FileName;
-                    // You can now process the selected file path further as needed
-                }
-                textBox1.Focus();
+                //// Show the dialog and check if the user selected a file
+                //if (openFileDialog1.ShowDialog() == DialogResult.OK)
+                //{
+                //    string selectedFilePath = openFileDialog1.FileName;
+                //    //MessageBox.Show($"You selected: {selectedFilePath}");
+                //    button1.Text = selectedFilePath;
+                //    button1.BackColor = Color.LightGreen;
+                //    selectedXmlFilePath = openFileDialog1.FileName;
+                //    // You can now process the selected file path further as needed
+                //}
+                //textBox1.Focus();
             }
             else if (e.Button == MouseButtons.Right)
             {
-                uploadXMLdataIntoSQLdataBase();
+                //uploadXMLdataIntoSQLdataBase();
                 //// Right-click logic: Prompt to create a new XML file
                 //if (comboBox3.SelectedItem == null)
                 //{
@@ -1262,22 +1207,6 @@ namespace WH_Panel
                 string idValue = row.Cells["Id"].Value.ToString();
                 byte[] qrCodeImage = GenerateQrCodeImage(idValue);
 
-                //// Create an Image object from the byte array
-                //using (var ms = new MemoryStream(qrCodeImage))
-                //{
-                //    Image qrCodeBitmap = Image.FromStream(ms);
-
-                //    // Add a new row to the DataGridView, including the QR code as an image
-                //    dataGridView.Rows.Add(
-                //        row.Cells["IPN"].Value.ToString(),
-                //        row.Cells["MFPN"].Value.ToString(),
-                //        row.Cells["Stock"].Value.ToString(),
-                //        row.Cells["Comments"].Value.ToString(),
-                //        qrCodeBitmap, // Set the QR code image in the image column
-                //        row.Cells["Updated_on"].Value.ToString()
-                //    );
-
-                //}
                 // Create an Image object from the byte array
                 using (var ms = new MemoryStream(qrCodeImage))
                 {
@@ -1307,23 +1236,6 @@ namespace WH_Panel
                 PlaceholderText = "Scan or enter ID here..."
             };
 
-
-            //// Handle text changed event to search in the DataGridView
-            //scanTextBox.TextChanged += (sender, e) =>
-            //{
-            //    string searchText = scanTextBox.Text;
-            //    foreach (DataGridViewRow row in dataGridView.Rows)
-            //    {
-            //        // Check if the ID in the DataGridView matches the scanned input
-            //        if (row.Cells["Id"].Value.ToString().Equals(searchText, StringComparison.OrdinalIgnoreCase))
-            //        {
-            //            dataGridView.ClearSelection();
-            //            row.Selected = true; // Select the matching row
-            //            dataGridView.CurrentCell = row.Cells[0]; // Set the current cell to the first column
-            //            break;
-            //        }
-            //    }
-            //};
 
             // Handle the scanTextBox ENTER key event for scanning
             scanTextBox.KeyDown += (sender, e) =>
@@ -1933,5 +1845,94 @@ namespace WH_Panel
                 }
             }
         }
+
+        private void dataGridView1_MouseDown(object sender, MouseEventArgs e)
+        {
+            // Check if it is a right-click
+            if (e.Button == MouseButtons.Right)
+            {
+                // Get the clicked row using HitTest
+                var hitTestInfo = dataGridView1.HitTest(e.X, e.Y);
+
+                if (hitTestInfo.RowIndex >= 0) // Ensure a row was clicked
+                {
+                    // Select the clicked row
+                    dataGridView1.ClearSelection();
+                    dataGridView1.Rows[hitTestInfo.RowIndex].Selected = true;
+
+                    // Retrieve the selected row
+                    DataGridViewRow selectedRow = dataGridView1.Rows[hitTestInfo.RowIndex];
+
+                    // Get the Id and other properties from the selected row
+                    int id = Convert.ToInt32(selectedRow.Cells["Id"].Value);
+                    string ipn = selectedRow.Cells["IPN"].Value?.ToString();
+                    string manufacturer = selectedRow.Cells["Manufacturer"].Value?.ToString();
+                    string description = selectedRow.Cells["Description"].Value?.ToString();
+                    int stock = Convert.ToInt32(selectedRow.Cells["Stock"].Value);
+                    string updatedOn = selectedRow.Cells["Updated_on"].Value?.ToString();
+                    string comments = selectedRow.Cells["Comments"].Value?.ToString();
+                    string user = selectedRow.Cells["User"].Value?.ToString();
+
+                    // Prepare the confirmation message with item details
+                    string message = $"Are you sure you want to UNCOUNT the item:\n\n" +
+                                     $"Id: {id}\n" +
+                                     $"IPN: {ipn}\n" +
+                                     $"Manufacturer: {manufacturer}\n" +
+                                     $"Description: {description}\n" +
+                                     $"Stock: {stock}\n" +
+                                     $"Updated On: {updatedOn}\n" +
+                                     $"Comments: {comments}\n" +
+                                     $"User: {user}";
+
+                    // Ask for user confirmation
+                    DialogResult dialogResult = MessageBox.Show(message, "Confirm UNCOUNT", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                    if (dialogResult == DialogResult.Yes)
+                    {
+                        // If user confirms, delete the row from the COUNT table
+                        DeleteFromCountTable(id);
+                    }
+                }
+            }
+        }
+
+        private void DeleteFromCountTable(int id)
+        {
+            // Step 1: Define your SQL connection string
+            string connectionString = selectedWHconnstring; // Update with your actual connection string
+
+            string selectedTable = comboBox3.SelectedItem?.ToString();
+            // Step 2: Create a SQL DELETE statement
+            string deleteQuery = $"DELETE FROM [{selectedTable}].dbo.COUNT WHERE Id = @Id";
+
+            // Step 3: Use a using statement for the SQL connection and command
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                // Step 4: Create a command to execute the query
+                using (SqlCommand command = new SqlCommand(deleteQuery, connection))
+                {
+                    // Step 5: Add the Id parameter
+                    command.Parameters.AddWithValue("@Id", id);
+
+                    // Step 6: Open the connection and execute the command
+                    try
+                    {
+                        connection.Open();
+                        command.ExecuteNonQuery();
+
+                        // Optional: Notify the user of successful deletion
+                        MessageBox.Show($"Item with Id {id} has been successfully UNCOUNTED and removed from the database.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        textBox1.Focus();
+                        SendKeys.Send("{ENTER}"); // Simulate pressing Enter
+
+                    }
+                    catch (SqlException ex)
+                    {
+                        MessageBox.Show($"An error occurred while deleting from the database: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
+
     }
 }
