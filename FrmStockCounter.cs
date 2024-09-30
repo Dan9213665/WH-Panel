@@ -288,11 +288,19 @@ namespace WH_Panel
                                 dataTable.Columns.Add("User", typeof(string)); // Add "User" column
                             }
 
-                            // Merge the data from the XML log with the DataTable
-                            if (!string.IsNullOrEmpty(selectedXmlFilePath))
-                            {
-                                MergeXmlData(dataTable);
-                            }
+                            //// Merge the data from the XML log with the DataTable
+                            //if (!string.IsNullOrEmpty(selectedXmlFilePath))
+                            //{
+                            //    MergeXmlData(dataTable);
+                            //}
+
+                            MergeCountDataFromSQL(dataTable);
+
+                            // After the while loop in MergeCountDataFromSQL
+                            dataTable.AcceptChanges(); // Optional: Mark all rows as unchanged
+                            dataGridView1.DataSource = null; // Reset the DataSource
+                            dataGridView1.DataSource = dataTable; // Rebind the updated DataTable
+                            dataGridView1.Refresh(); // Refresh the DataGridView
 
                             // Update GroupBox text with the IPN and stock sum after loading data
                             UpdateGroupBoxText(ipn, dataTable);
@@ -316,6 +324,128 @@ namespace WH_Panel
             }
         }
 
+        //    private void MergeCountDataFromSQL(DataTable dataTable)
+        //    {
+        //        // Step 1: Define your SQL connection string
+        //        string connectionString = selectedWHconnstring; // Update with your actual connection string
+
+        //        // Step 2: Create a SQL query to retrieve Counted and User data from the COUNT table
+        //        string query = "SELECT Id, Counted, [User] FROM [COUNT] WHERE Id IN (@IdList)";
+
+        //        // Create a list of Ids to use in the query
+        //        //var idList = string.Join(",", dataTable.Rows.Cast<DataRow>().Select(row => row["Id"].ToString()).Distinct());
+
+        //        var idList = string.Join(",", dataTable.Rows.Cast<DataRow>()
+        //.Where(row => row["Id"] != DBNull.Value) // Ensure Id is not null
+        //.Select(row => (int)row["Id"]) // Cast to int
+        //.Distinct());
+
+        //        // Step 3: Use a using statement for the SQL connection and command
+        //        using (SqlConnection connection = new SqlConnection(connectionString))
+        //        {
+        //            // Step 4: Create a command to execute the query
+        //            using (SqlCommand command = new SqlCommand(query, connection))
+        //            {
+        //                // Add the Ids as a parameter
+        //                command.Parameters.AddWithValue("@IdList", idList);
+
+        //                // Step 5: Open the connection and execute the command
+        //                try
+        //                {
+        //                    connection.Open();
+
+        //                    // Execute the command and read the data
+        //                    using (SqlDataReader reader = command.ExecuteReader())
+        //                    {
+        //                        // Step 6: Loop through each row in the DataTable from the database
+        //                        while (reader.Read())
+        //                        {
+        //                            string stockId = reader["Id"].ToString();
+        //                            string countedValue = reader["Counted"]?.ToString();
+        //                            string userValue = reader["User"]?.ToString();
+
+        //                            // Find the matching row in the dataTable by Id
+        //                            DataRow[] matchingRows = dataTable.Select($"Id = '{stockId}'");
+
+        //                            if (matchingRows.Length > 0)
+        //                            {
+        //                                // If a match is found, update the Counted and User fields
+        //                                matchingRows[0]["Counted"] = countedValue;
+        //                                matchingRows[0]["User"] = userValue;
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //                catch (SqlException ex)
+        //                {
+        //                    MessageBox.Show($"An error occurred while accessing the database: {ex.Message}");
+        //                }
+        //            }
+        //        }
+        //    }
+
+        private void MergeCountDataFromSQL(DataTable dataTable)
+        {
+            // Step 1: Define your SQL connection string
+            string connectionString = selectedWHconnstring; // Update with your actual connection string
+
+            // Create a list of Ids to use in the query
+            var idList = dataTable.Rows.Cast<DataRow>()
+                .Where(row => row["Id"] != DBNull.Value) // Ensure Id is not null
+                .Select(row => (int)row["Id"]) // Cast to int
+                .Distinct()
+                .ToList();
+
+            // Check if there are any Ids to query
+            if (idList.Count == 0)
+            {
+                MessageBox.Show("No valid IDs found to merge data.");
+                return;
+            }
+
+            // Step 2: Create a SQL query to retrieve Counted and User data from the COUNT table
+            string query = "SELECT Id, Counted, [User] FROM [COUNT] WHERE Id IN (" + string.Join(",", idList) + ")";
+
+            // Step 3: Use a using statement for the SQL connection and command
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                // Step 4: Create a command to execute the query
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    // Step 5: Open the connection and execute the command
+                    try
+                    {
+                        connection.Open();
+
+                        // Execute the command and read the data
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            // Step 6: Loop through each row in the DataTable from the database
+                            while (reader.Read())
+                            {
+                                int stockId = (int)reader["Id"]; // Cast to int directly
+                                string countedValue = reader["Counted"]?.ToString();
+                                string userValue = reader["User"]?.ToString();
+
+                                // Find the matching row in the dataTable by Id
+                                DataRow[] matchingRows = dataTable.Select($"Id = {stockId}");
+
+                                if (matchingRows.Length > 0)
+                                {
+                                    // If a match is found, update the Counted and User fields
+                                    matchingRows[0]["Counted"] = countedValue;
+                                    matchingRows[0]["User"] = userValue;
+                                }
+                            }
+                        }
+                    }
+                    catch (SqlException ex)
+                    {
+                        MessageBox.Show($"An error occurred while accessing the database: {ex.Message}");
+                    }
+                }
+            }
+        }
 
 
         private void MergeXmlData(DataTable dataTable)
@@ -487,11 +617,11 @@ namespace WH_Panel
         private void countLogic()
         {
             // Step 1: Ensure XML file path is set
-            if (string.IsNullOrEmpty(selectedXmlFilePath))
-            {
-                MessageBox.Show("Please start the counting process by selecting an XML file first.");
-                return;
-            }
+            //if (string.IsNullOrEmpty(selectedXmlFilePath))
+            //{
+            //    MessageBox.Show("Please start the counting process by selecting an XML file first.");
+            //    return;
+            //}
 
             // Step 2: Collect data from UI
             string ipn = textBox1.Text; // IPN from textbox1
@@ -508,52 +638,6 @@ namespace WH_Panel
                 return;
             }
 
-            //// Step 3: Search through DataGridView for matching items
-            //List<DataGridViewRow> matchingRows = new List<DataGridViewRow>(); // Store matching rows
-
-            //bool alreadyCounted = false;
-            //foreach (DataGridViewRow row in dataGridView1.Rows)
-            //{
-            //    if (row.IsNewRow) continue; // Skip new row placeholder
-
-            //    // Get values from the current row
-            //    string rowIPN = row.Cells["IPN"].Value?.ToString();
-            //    string rowMFPN = row.Cells["MFPN"].Value?.ToString();
-            //    int rowStock = Convert.ToInt32(row.Cells["Stock"].Value);
-            //    string rowComments = row.Cells["Comments"].Value?.ToString();
-            //    string user = row.Cells["User"].Value?.ToString();
-
-
-            //    // Check if this row matches the input item
-            //    if (rowIPN == ipn && rowMFPN == mfpn && rowStock == stock)
-            //    {
-            //        //if (user == string.Empty)
-            //        if (string.IsNullOrEmpty(user))
-            //        {
-            //            matchingRows.Add(row);
-            //        }
-            //        else
-            //        {
-            //            MessageBox.Show("Already counted on " + row.Cells["Counted"].Value?.ToString(), "Already counted !!!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            //            alreadyCounted = true;
-            //            //break;
-            //        }
-            //    }
-            //}
-
-            //// Step 4: Handle match cases
-            //if (matchingRows.Count == 0)
-            //{
-            //    if (alreadyCounted)
-            //    {
-            //        //
-            //    }
-            //    else
-            //    {
-            //        MessageBox.Show("No matching items found in the DataGridView.");
-            //    }
-
-            //}
 
             bool alreadyCounted = false;
             List<DataGridViewRow> matchingRows = new List<DataGridViewRow>();
@@ -585,7 +669,7 @@ namespace WH_Panel
             // Show the message only if all similar rows have been counted
             if (alreadyCounted && matchingRows.Count == 0)
             {
-                MessageBox.Show("Already counted on " + similarRows[0].Cells["Counted"].Value?.ToString()+" by "+ similarRows[0].Cells["User"].Value?.ToString(),
+                MessageBox.Show("Already counted on " + similarRows[0].Cells["Counted"].Value?.ToString() + " by " + similarRows[0].Cells["User"].Value?.ToString(),
                                 "Already counted !!!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
@@ -620,6 +704,100 @@ namespace WH_Panel
                 ShowMatchSelectionForm(matchingRows);
             }
         }
+
+
+        //private void SaveCountedItemsToDatabase(whItemStockCounter countedItem)
+        //{
+        //    // Step 1: Define your SQL connection string
+        //    string connectionString = selectedWHconnstring; // Update with your actual connection string
+
+        //    string selectedTable = comboBox3.SelectedItem?.ToString();
+
+
+        //    // Step 2: Create an SQL INSERT statement
+        //    string insertQuery = $@"
+        //INSERT INTO [{selectedTable}].dbo.COUNT (IPN, MFPN, Stock, Comments, Id, Counted, [User])
+        //VALUES (@IPN, @MFPN, @Stock, @Comments, @Id, @Counted, @User)";
+
+        //    // Step 3: Use a using statement for the SQL connection and command
+        //    using (SqlConnection connection = new SqlConnection(connectionString))
+        //    {
+        //        // Step 4: Create a command to execute the query
+        //        using (SqlCommand command = new SqlCommand(insertQuery, connection))
+        //        {
+        //            // Step 5: Add parameters to prevent SQL injection
+        //            command.Parameters.AddWithValue("@IPN", countedItem.IPN);
+        //            command.Parameters.AddWithValue("@MFPN", countedItem.MFPN);
+        //            command.Parameters.AddWithValue("@Stock", countedItem.Stock);
+        //            command.Parameters.AddWithValue("@Comments", countedItem.Comments);
+        //            command.Parameters.AddWithValue("@Id", countedItem.Id);
+        //            command.Parameters.AddWithValue("@Counted", countedItem.Counted);
+        //            command.Parameters.AddWithValue("@User", countedItem.User);
+
+        //            // Step 6: Open the connection and execute the command
+        //            try
+        //            {
+        //                connection.Open();
+        //                command.ExecuteNonQuery();
+        //                ShowMessageWithAutoClose($"Counting progress has been saved to the database.", 2000); // 2000 milliseconds = 2 seconds
+        //            }
+        //            catch (SqlException ex)
+        //            {
+        //                MessageBox.Show($"An error occurred while saving to the database: {ex.Message}");
+        //            }
+        //        }
+        //    }
+        //}
+
+
+        private void SaveCountedItemsToDatabase(whItemStockCounter countedItem)
+        {
+            // Step 1: Define your SQL connection string
+            string connectionString = selectedWHconnstring; // Update with your actual connection string
+
+            string selectedTable = comboBox3.SelectedItem?.ToString();
+
+            // Step 2: Create an SQL INSERT statement
+            string insertQuery = $@"
+        INSERT INTO [{selectedTable}].dbo.COUNT 
+        (IPN, MFPN, Stock, Comments, Id, Counted, [User], Manufacturer, Description, Updated_on, Source_Requester)
+        VALUES 
+        (@IPN, @MFPN, @Stock, @Comments, @Id, @Counted, @User, @Manufacturer, @Description, @Updated_on, @Source_Requester)";
+
+            // Step 3: Use a using statement for the SQL connection and command
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                // Step 4: Create a command to execute the query
+                using (SqlCommand command = new SqlCommand(insertQuery, connection))
+                {
+                    // Step 5: Add parameters to prevent SQL injection and handle nulls
+                    command.Parameters.AddWithValue("@IPN", (object)countedItem.IPN ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@MFPN", (object)countedItem.MFPN ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@Stock", countedItem.Stock); // Assuming Stock is an int, it can't be null
+                    command.Parameters.AddWithValue("@Comments", (object)countedItem.Comments ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@Id", countedItem.Id);
+                    command.Parameters.AddWithValue("@Counted", (object)countedItem.Counted ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@User", (object)countedItem.User ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@Manufacturer", (object)countedItem.Manufacturer ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@Description", (object)countedItem.Description ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@Updated_on", (object)countedItem.Updated_on ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@Source_Requester", (object)countedItem.Source_Requester ?? DBNull.Value);
+
+                    // Step 6: Open the connection and execute the command
+                    try
+                    {
+                        connection.Open();
+                        command.ExecuteNonQuery();
+                        ShowMessageWithAutoClose($"Counting progress has been saved to the database.", 2000); // 2000 milliseconds = 2 seconds
+                    }
+                    catch (SqlException ex)
+                    {
+                        MessageBox.Show($"An error occurred while saving to the database: {ex.Message}");
+                    }
+                }
+            }
+        }
+
 
         private void SaveCountedItemsToSelectedFile(whItemStockCounter countedItem)
         {
@@ -762,7 +940,7 @@ namespace WH_Panel
             if (checkBox1.Checked)
             {
                 showOnlyInStock();
-                
+
             }
             else
             {
@@ -918,393 +1096,118 @@ namespace WH_Panel
             }
             else if (e.Button == MouseButtons.Right)
             {
-                // Right-click logic: Prompt to create a new XML file
-                if (comboBox3.SelectedItem == null)
-                {
-                    MessageBox.Show("Please select a valid item from the dropdown.");
-                    return;
-                }
+                uploadXMLdataIntoSQLdataBase();
+                //// Right-click logic: Prompt to create a new XML file
+                //if (comboBox3.SelectedItem == null)
+                //{
+                //    MessageBox.Show("Please select a valid item from the dropdown.");
+                //    return;
+                //}
 
-                // Get the currently selected item from comboBox3
-                string selectedItem = comboBox3.SelectedItem.ToString();
+                //// Get the currently selected item from comboBox3
+                //string selectedItem = comboBox3.SelectedItem.ToString();
 
-                // Generate the filename based on the current date and selected item
-                string currentDate = DateTime.Now.ToString("yyyyMMdd");
-                string newFileName = $"{currentDate}_{selectedItem}_count.xml";
+                //// Generate the filename based on the current date and selected item
+                //string currentDate = DateTime.Now.ToString("yyyyMMdd");
+                //string newFileName = $"{currentDate}_{selectedItem}_count.xml";
 
-                // Build the folder path using the selected item
-                string startFolder = $@"\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\{selectedItem}";
+                //// Build the folder path using the selected item
+                //string startFolder = $@"\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\{selectedItem}";
 
-                // Create and configure SaveFileDialog
-                SaveFileDialog saveFileDialog1 = new SaveFileDialog
-                {
-                    InitialDirectory = startFolder,
-                    FileName = newFileName, // Pre-fill the file name
-                    Filter = "XML files (*.xml)|*.xml",
-                    Title = "Create a new XML File for Counting"
-                };
+                //// Create and configure SaveFileDialog
+                //SaveFileDialog saveFileDialog1 = new SaveFileDialog
+                //{
+                //    InitialDirectory = startFolder,
+                //    FileName = newFileName, // Pre-fill the file name
+                //    Filter = "XML files (*.xml)|*.xml",
+                //    Title = "Create a new XML File for Counting"
+                //};
 
-                // Show the dialog and check if the user selected a file
-                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-                {
-                    string newFilePath = saveFileDialog1.FileName;
+                //// Show the dialog and check if the user selected a file
+                //if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                //{
+                //    string newFilePath = saveFileDialog1.FileName;
 
-                    try
-                    {
-                        var testItem = new
-                        {
-                            Id = 1,
-                            Counted = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), // Current date and time
-                            User = Environment.UserName // Current logged-in Windows user
-                        };
+                //    try
+                //    {
+                //        var testItem = new
+                //        {
+                //            Id = 1,
+                //            Counted = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), // Current date and time
+                //            User = Environment.UserName // Current logged-in Windows user
+                //        };
 
-                        // Create the XML file and write the test object
-                        using (XmlWriter writer = XmlWriter.Create(newFilePath))
-                        {
-                            writer.WriteStartDocument();
-                            writer.WriteStartElement("CountedItems"); // Root element for your data
+                //        // Create the XML file and write the test object
+                //        using (XmlWriter writer = XmlWriter.Create(newFilePath))
+                //        {
+                //            writer.WriteStartDocument();
+                //            writer.WriteStartElement("CountedItems"); // Root element for your data
 
-                            writer.WriteStartElement("Item"); // Individual item element
-                            writer.WriteElementString("Id", testItem.Id.ToString());
-                            writer.WriteElementString("Counted", testItem.Counted);
-                            writer.WriteElementString("User", testItem.User);
-                            writer.WriteEndElement(); // Close Item
+                //            writer.WriteStartElement("Item"); // Individual item element
+                //            writer.WriteElementString("Id", testItem.Id.ToString());
+                //            writer.WriteElementString("Counted", testItem.Counted);
+                //            writer.WriteElementString("User", testItem.User);
+                //            writer.WriteEndElement(); // Close Item
 
-                            writer.WriteEndElement(); // Close CountedItems
-                            writer.WriteEndDocument();
-                        }
+                //            writer.WriteEndElement(); // Close CountedItems
+                //            writer.WriteEndDocument();
+                //        }
 
-                        MessageBox.Show($"New file created: {newFilePath}");
+                //        MessageBox.Show($"New file created: {newFilePath}");
 
-                        // Set this as the file for further saving
-                        selectedXmlFilePath = newFilePath;
-                        button1.Text = newFilePath;
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"An error occurred while creating the file: {ex.Message}");
-                    }
-                }
+                //        // Set this as the file for further saving
+                //        selectedXmlFilePath = newFilePath;
+                //        button1.Text = newFilePath;
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //        MessageBox.Show($"An error occurred while creating the file: {ex.Message}");
+                //    }
+                //}
 
-                textBox1.Focus();
+                //textBox1.Focus();
             }
 
         }
 
+        private void uploadXMLdataIntoSQLdataBase()
+        {
+            // Step 1: Ensure the XML file path is valid
+            if (string.IsNullOrEmpty(selectedXmlFilePath) || !File.Exists(selectedXmlFilePath))
+            {
+                MessageBox.Show("No valid XML file selected to upload.");
+                return;
+            }
 
-        //private void ShowMatchSelectionForm(List<DataGridViewRow> matchingRows)
-        //{
-        //    // Create a new form dynamically
-        //    Form selectionForm = new Form();
-        //    selectionForm.Text = "Select a Matching Item";
-        //    selectionForm.Size = new Size(800, 400);
-        //    selectionForm.StartPosition = FormStartPosition.CenterParent;
+            // Step 2: Load the XML document
+            XDocument xdoc = XDocument.Load(selectedXmlFilePath);
 
-        //    // Create a DataGridView dynamically
-        //    DataGridView dataGridView = new DataGridView();
-        //    dataGridView.Dock = DockStyle.Top;
-        //    dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-        //    dataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-        //    dataGridView.MultiSelect = false;
-        //    dataGridView.Height = 300;
+            // Step 3: Iterate through each item in the XML
+            foreach (var item in xdoc.Descendants("whItemStockCounter"))
+            {
+                // Extract the values from the XML elements
+                whItemStockCounter countedItem = new whItemStockCounter
+                {
+                    IPN = (string)item.Element("IPN"),
+                    MFPN = (string)item.Element("MFPN"),
+                    Stock = (int)item.Element("Stock"),
+                    Comments = (string)item.Element("Comments"),
+                    Id = (int)item.Element("Id"),
+                    Counted = (string)item.Element("Counted"),
+                    User = (string)item.Element("User"),
+                    Manufacturer = (string)item.Element("Manufacturer"),
+                    Description = (string)item.Element("Description"),
+                    Updated_on = (string)item.Element("Updated_on"),
+                    Source_Requester = (string)item.Element("Source_Requester")
+                };
 
-        //    // Create columns for DataGridView
-        //    dataGridView.Columns.Add("IPN", "IPN");
-        //    dataGridView.Columns.Add("MFPN", "MFPN");
-        //    dataGridView.Columns.Add("Stock", "Stock");
-        //    dataGridView.Columns.Add("Comments", "Comments");
-        //    dataGridView.Columns.Add("Id", "Id");
-        //    dataGridView.Columns.Add("Updated_on", "Updated On");
+                // Step 4: Save the counted item to the database
+                SaveCountedItemsToDatabase(countedItem);
+            }
 
-        //    // Sort matching rows by Updated_on date
-        //    matchingRows = matchingRows.OrderBy(row => DateTime.Parse(row.Cells["Updated_on"].Value.ToString())).ToList();
-
-        //    // Populate DataGridView with matching rows
-        //    foreach (var row in matchingRows)
-        //    {
-        //        dataGridView.Rows.Add(
-        //            row.Cells["IPN"].Value.ToString(),
-        //            row.Cells["MFPN"].Value.ToString(),
-        //            row.Cells["Stock"].Value.ToString(),
-        //            row.Cells["Comments"].Value.ToString(),
-        //            row.Cells["Id"].Value.ToString(),
-        //            row.Cells["Updated_on"].Value.ToString()
-        //        );
-        //    }
-
-        //    // Handle double-click event on DataGridView
-        //    dataGridView.CellDoubleClick += (sender, e) =>
-        //    {
-        //        if (e.RowIndex >= 0 && e.RowIndex < matchingRows.Count)
-        //        {
-        //            // Get the selected row based on the double-clicked cell
-        //            DataGridViewRow selectedRow = matchingRows[e.RowIndex];
-
-        //            // Update the selected row
-        //            string currentUser = Environment.UserName; // Get the current user
-        //            UpdateRow(selectedRow, currentUser);
-
-        //            // Close the form after selection
-        //            selectionForm.DialogResult = DialogResult.OK;
-        //            selectionForm.Close();
-        //        }
-        //    };
-
-        //    // Handle ENTER key event
-        //    dataGridView.KeyDown += (sender, e) =>
-        //    {
-        //        if (e.KeyCode == Keys.Enter && dataGridView.SelectedRows.Count > 0)
-        //        {
-        //            // Prevent the 'ding' sound from happening when ENTER is pressed
-        //            e.Handled = true;
-        //            e.SuppressKeyPress = true;
-
-        //            // Get the selected row based on the currently selected row in the DataGridView
-        //            int selectedIndex = dataGridView.SelectedRows[0].Index;
-        //            if (selectedIndex >= 0 && selectedIndex < matchingRows.Count)
-        //            {
-        //                DataGridViewRow selectedRow = matchingRows[selectedIndex];
-
-        //                // Update the selected row
-        //                string currentUser = Environment.UserName; // Get the current user
-        //                UpdateRow(selectedRow, currentUser);
-
-        //                // Close the form after selection
-        //                selectionForm.DialogResult = DialogResult.OK;
-        //                selectionForm.Close();
-        //            }
-        //        }
-        //    };
-
-        //    // Add DataGridView to the form
-        //    selectionForm.Controls.Add(dataGridView);
-
-        //    // Show the form as a dialog
-        //    selectionForm.ShowDialog();
-        //}
-
-
-        //private void ShowMatchSelectionForm(List<DataGridViewRow> matchingRows)
-        //{
-        //    // Create a new form dynamically
-        //    Form selectionForm = new Form
-        //    {
-        //        Text = "Select a Matching Item",
-        //        Size = new Size(800, 400),
-        //        StartPosition = FormStartPosition.CenterParent
-        //    };
-
-        //    // Create a DataGridView dynamically
-        //    DataGridView dataGridView = new DataGridView
-        //    {
-        //        Dock = DockStyle.Top,
-        //        AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-        //        SelectionMode = DataGridViewSelectionMode.FullRowSelect,
-        //        MultiSelect = false,
-        //        Height = 300
-        //    };
-
-        //    // Create columns for DataGridView
-        //    dataGridView.Columns.Add("IPN", "IPN");
-        //    dataGridView.Columns.Add("MFPN", "MFPN");
-        //    dataGridView.Columns.Add("Stock", "Stock");
-        //    dataGridView.Columns.Add("Comments", "Comments");
-        //    dataGridView.Columns.Add("Id", "Id"); // Optional: Keep this for reference if needed
-        //    dataGridView.Columns.Add("Updated_on", "Updated On");
-
-        //    // Sort matching rows by Updated_on date
-        //    matchingRows = matchingRows.OrderBy(row => DateTime.Parse(row.Cells["Updated_on"].Value.ToString())).ToList();
-
-        //    // Populate DataGridView with matching rows
-        //    foreach (var row in matchingRows)
-        //    {
-        //        // Generate the QR code for the Id
-        //        string idValue = row.Cells["Id"].Value.ToString();
-        //        byte[] qrCodeImage = GenerateQrCodeImage(idValue);
-
-        //        // Create an Image object from the byte array
-        //        using (var ms = new MemoryStream(qrCodeImage))
-        //        {
-        //            Image qrCodeBitmap = Image.FromStream(ms);
-        //            dataGridView.Rows.Add(
-        //                row.Cells["IPN"].Value.ToString(),
-        //                row.Cells["MFPN"].Value.ToString(),
-        //                row.Cells["Stock"].Value.ToString(),
-        //                row.Cells["Comments"].Value.ToString(),
-        //                qrCodeBitmap, // Set the QR code image
-        //                row.Cells["Updated_on"].Value.ToString()
-        //            );
-        //        }
-        //    }
-
-        //    // Handle double-click event on DataGridView
-        //    dataGridView.CellDoubleClick += (sender, e) =>
-        //    {
-        //        if (e.RowIndex >= 0 && e.RowIndex < matchingRows.Count)
-        //        {
-        //            // Get the selected row based on the double-clicked cell
-        //            DataGridViewRow selectedRow = matchingRows[e.RowIndex];
-
-        //            // Update the selected row
-        //            string currentUser = Environment.UserName; // Get the current user
-        //            UpdateRow(selectedRow, currentUser);
-
-        //            // Close the form after selection
-        //            selectionForm.DialogResult = DialogResult.OK;
-        //            selectionForm.Close();
-        //        }
-        //    };
-
-        //    // Handle ENTER key event
-        //    dataGridView.KeyDown += (sender, e) =>
-        //    {
-        //        if (e.KeyCode == Keys.Enter && dataGridView.SelectedRows.Count > 0)
-        //        {
-        //            // Prevent the 'ding' sound from happening when ENTER is pressed
-        //            e.Handled = true;
-        //            e.SuppressKeyPress = true;
-
-        //            // Get the selected row based on the currently selected row in the DataGridView
-        //            int selectedIndex = dataGridView.SelectedRows[0].Index;
-        //            if (selectedIndex >= 0 && selectedIndex < matchingRows.Count)
-        //            {
-        //                DataGridViewRow selectedRow = matchingRows[selectedIndex];
-
-        //                // Update the selected row
-        //                string currentUser = Environment.UserName; // Get the current user
-        //                UpdateRow(selectedRow, currentUser);
-
-        //                // Close the form after selection
-        //                selectionForm.DialogResult = DialogResult.OK;
-        //                selectionForm.Close();
-        //            }
-        //        }
-        //    };
-
-        //    // Add DataGridView to the form
-        //    selectionForm.Controls.Add(dataGridView);
-
-        //    // Show the form as a dialog
-        //    selectionForm.ShowDialog();
-        //}
-
-
-        //private void ShowMatchSelectionForm(List<DataGridViewRow> matchingRows)
-        //{
-        //    // Create a new form dynamically
-        //    Form selectionForm = new Form
-        //    {
-        //        Text = "Select a Matching Item",
-        //        Size = new Size(800, 400),
-        //        StartPosition = FormStartPosition.CenterParent
-        //    };
-
-        //    // Create a DataGridView dynamically
-        //    DataGridView dataGridView = new DataGridView
-        //    {
-        //        Dock = DockStyle.Top,
-        //        AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-        //        SelectionMode = DataGridViewSelectionMode.FullRowSelect,
-        //        MultiSelect = false,
-        //        Height = 300
-        //    };
-
-        //    // Set the height of the rows to 70 pixels
-        //    dataGridView.RowTemplate.Height = 70;
-
-        //    // Create columns for DataGridView
-        //    dataGridView.Columns.Add("IPN", "IPN");
-        //    dataGridView.Columns.Add("MFPN", "MFPN");
-        //    dataGridView.Columns.Add("Stock", "Stock");
-        //    dataGridView.Columns.Add("Comments", "Comments");
-
-        //    // Create a column specifically for the QR code image
-        //    DataGridViewImageColumn qrCodeColumn = new DataGridViewImageColumn
-        //    {
-        //        Name = "QRCode",
-        //        HeaderText = "QR Code"
-        //    };
-        //    dataGridView.Columns.Add(qrCodeColumn);
-
-        //    dataGridView.Columns.Add("Updated_on", "Updated On");
-
-        //    // Sort matching rows by Updated_on date
-        //    matchingRows = matchingRows.OrderBy(row => DateTime.Parse(row.Cells["Updated_on"].Value.ToString())).ToList();
-
-        //    // Populate DataGridView with matching rows
-        //    foreach (var row in matchingRows)
-        //    {
-        //        // Generate the QR code for the Id
-        //        string idValue = row.Cells["Id"].Value.ToString();
-        //        byte[] qrCodeImage = GenerateQrCodeImage(idValue);
-
-        //        // Create an Image object from the byte array
-        //        using (var ms = new MemoryStream(qrCodeImage))
-        //        {
-        //            Image qrCodeBitmap = Image.FromStream(ms);
-
-        //            // Add a new row to the DataGridView, including the QR code as an image
-        //            dataGridView.Rows.Add(
-        //                row.Cells["IPN"].Value.ToString(),
-        //                row.Cells["MFPN"].Value.ToString(),
-        //                row.Cells["Stock"].Value.ToString(),
-        //                row.Cells["Comments"].Value.ToString(),
-        //                qrCodeBitmap, // Set the QR code image in the image column
-        //                row.Cells["Updated_on"].Value.ToString()
-        //            );
-        //        }
-        //    }
-
-        //    // Handle double-click event on DataGridView
-        //    dataGridView.CellDoubleClick += (sender, e) =>
-        //    {
-        //        if (e.RowIndex >= 0 && e.RowIndex < matchingRows.Count)
-        //        {
-        //            // Get the selected row based on the double-clicked cell
-        //            DataGridViewRow selectedRow = matchingRows[e.RowIndex];
-
-        //            // Update the selected row
-        //            string currentUser = Environment.UserName; // Get the current user
-        //            UpdateRow(selectedRow, currentUser);
-
-        //            // Close the form after selection
-        //            selectionForm.DialogResult = DialogResult.OK;
-        //            selectionForm.Close();
-        //        }
-        //    };
-
-        //    // Handle ENTER key event
-        //    dataGridView.KeyDown += (sender, e) =>
-        //    {
-        //        if (e.KeyCode == Keys.Enter && dataGridView.SelectedRows.Count > 0)
-        //        {
-        //            // Prevent the 'ding' sound from happening when ENTER is pressed
-        //            e.Handled = true;
-        //            e.SuppressKeyPress = true;
-
-        //            // Get the selected row based on the currently selected row in the DataGridView
-        //            int selectedIndex = dataGridView.SelectedRows[0].Index;
-        //            if (selectedIndex >= 0 && selectedIndex < matchingRows.Count)
-        //            {
-        //                DataGridViewRow selectedRow = matchingRows[selectedIndex];
-
-        //                // Update the selected row
-        //                string currentUser = Environment.UserName; // Get the current user
-        //                UpdateRow(selectedRow, currentUser);
-
-        //                // Close the form after selection
-        //                selectionForm.DialogResult = DialogResult.OK;
-        //                selectionForm.Close();
-        //            }
-        //        }
-        //    };
-
-        //    // Add DataGridView to the form
-        //    selectionForm.Controls.Add(dataGridView);
-
-        //    // Show the form as a dialog
-        //    selectionForm.ShowDialog();
-        //}
+            // Step 5: Provide feedback to the user
+            MessageBox.Show("Data has been successfully uploaded to the database.");
+        }
 
 
         private void ShowMatchSelectionForm(List<DataGridViewRow> matchingRows)
@@ -1314,7 +1217,7 @@ namespace WH_Panel
             Form selectionForm = new Form
             {
                 Text = "Select a Matching Item",
-                Size = new Size(800, matchingRows.Count* heightMultiplier),
+                Size = new Size(800, matchingRows.Count * heightMultiplier),
                 StartPosition = FormStartPosition.CenterParent
             };
 
@@ -1350,7 +1253,7 @@ namespace WH_Panel
             // Sort matching rows by Updated_on date
             matchingRows = matchingRows.OrderBy(row => DateTime.Parse(row.Cells["Updated_on"].Value.ToString())).ToList();
 
-       
+
 
             // Populate DataGridView with matching rows
             foreach (var row in matchingRows)
@@ -1460,23 +1363,23 @@ namespace WH_Panel
                     }
                 }
             };
-                // Handle double-click event on DataGridView
-                dataGridView.CellDoubleClick += (sender, e) =>
+            // Handle double-click event on DataGridView
+            dataGridView.CellDoubleClick += (sender, e) =>
+        {
+            if (e.RowIndex >= 0 && e.RowIndex < matchingRows.Count)
             {
-                if (e.RowIndex >= 0 && e.RowIndex < matchingRows.Count)
-                {
-                    // Get the selected row based on the double-clicked cell
-                    DataGridViewRow selectedRow = matchingRows[e.RowIndex];
+                // Get the selected row based on the double-clicked cell
+                DataGridViewRow selectedRow = matchingRows[e.RowIndex];
 
-                    // Update the selected row
-                    string currentUser = Environment.UserName; // Get the current user
-                    UpdateRow(selectedRow, currentUser);
+                // Update the selected row
+                string currentUser = Environment.UserName; // Get the current user
+                UpdateRow(selectedRow, currentUser);
 
-                    // Close the form after selection
-                    selectionForm.DialogResult = DialogResult.OK;
-                    selectionForm.Close();
-                }
-            };
+                // Close the form after selection
+                selectionForm.DialogResult = DialogResult.OK;
+                selectionForm.Close();
+            }
+        };
 
             // Handle ENTER key event
             dataGridView.KeyDown += (sender, e) =>
@@ -1516,11 +1419,11 @@ namespace WH_Panel
 
             // Show the form as a dialog
             selectionForm.ShowDialog();
-      
+
 
         }
 
-     
+
 
 
         private byte[] GenerateQrCodeImage(string text)
@@ -1558,109 +1461,6 @@ namespace WH_Panel
 
 
 
-        //private void ShowMatchSelectionForm(List<DataGridViewRow> matchingRows)
-        //{
-        //    // Create a new form dynamically
-        //    Form selectionForm = new Form();
-        //    selectionForm.Text = "Select a Matching Item";
-        //    selectionForm.Size = new Size(800, 400);
-        //    selectionForm.StartPosition = FormStartPosition.CenterParent;
-
-        //    // Create a DataGridView dynamically
-        //    DataGridView dataGridView = new DataGridView();
-        //    dataGridView.Dock = DockStyle.Top;
-        //    dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-        //    dataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-        //    dataGridView.MultiSelect = false;
-        //    dataGridView.Height = 300;
-
-        //    // Create columns for DataGridView
-        //    dataGridView.Columns.Add("IPN", "IPN");
-        //    dataGridView.Columns.Add("MFPN", "MFPN");
-        //    dataGridView.Columns.Add("Stock", "Stock");
-        //    dataGridView.Columns.Add("Comments", "Comments");
-
-        //    // Create a column for the barcode/QR code (Id)
-        //    DataGridViewImageColumn barcodeColumn = new DataGridViewImageColumn();
-        //    barcodeColumn.Name = "Id";
-        //    barcodeColumn.HeaderText = "Barcode/QR Code";
-        //    dataGridView.Columns.Add(barcodeColumn);
-
-        //    dataGridView.Columns.Add("Updated_on", "Updated On");
-
-        //    // Sort matching rows by Updated_on date
-        //    matchingRows = matchingRows.OrderBy(row => DateTime.Parse(row.Cells["Updated_on"].Value.ToString())).ToList();
-
-        //    foreach (var row in matchingRows)
-        //    {
-
-
-
-        //        // Add a new row to the DataGridView
-        //        dataGridView.Rows.Add(
-        //            row.Cells["IPN"].Value.ToString(),
-        //            row.Cells["MFPN"].Value.ToString(),
-        //            row.Cells["Stock"].Value.ToString(),
-        //            row.Cells["Comments"].Value.ToString(),
-        //             row.Cells["Id"].Value.ToString(),
-        //            row.Cells["Updated_on"].Value.ToString()
-        //        );
-        //    }
-
-        //    // Handle double-click event on DataGridView
-        //    dataGridView.CellDoubleClick += (sender, e) =>
-        //    {
-        //        if (e.RowIndex >= 0 && e.RowIndex < matchingRows.Count)
-        //        {
-        //            // Get the selected row based on the double-clicked cell
-        //            DataGridViewRow selectedRow = matchingRows[e.RowIndex];
-
-        //            // Update the selected row
-        //            string currentUser = Environment.UserName; // Get the current user
-        //            UpdateRow(selectedRow, currentUser);
-
-        //            // Close the form after selection
-        //            selectionForm.DialogResult = DialogResult.OK;
-        //            selectionForm.Close();
-        //        }
-        //    };
-
-        //    // Handle ENTER key event
-        //    dataGridView.KeyDown += (sender, e) =>
-        //    {
-        //        if (e.KeyCode == Keys.Enter && dataGridView.SelectedRows.Count > 0)
-        //        {
-        //            // Prevent the 'ding' sound from happening when ENTER is pressed
-        //            e.Handled = true;
-        //            e.SuppressKeyPress = true;
-
-        //            // Get the selected row based on the currently selected row in the DataGridView
-        //            int selectedIndex = dataGridView.SelectedRows[0].Index;
-        //            if (selectedIndex >= 0 && selectedIndex < matchingRows.Count)
-        //            {
-        //                DataGridViewRow selectedRow = matchingRows[selectedIndex];
-
-        //                // Update the selected row
-        //                string currentUser = Environment.UserName; // Get the current user
-        //                UpdateRow(selectedRow, currentUser);
-
-        //                // Close the form after selection
-        //                selectionForm.DialogResult = DialogResult.OK;
-        //                selectionForm.Close();
-        //            }
-        //        }
-        //    };
-
-        //    // Add DataGridView to the form
-        //    selectionForm.Controls.Add(dataGridView);
-
-        //    // Show the form as a dialog
-        //    selectionForm.ShowDialog();
-        //}
-
-
-
-
 
         private void UpdateRow(DataGridViewRow row, string currentUser)
         {
@@ -1673,15 +1473,20 @@ namespace WH_Panel
             {
                 IPN = row.Cells["IPN"].Value?.ToString(),
                 MFPN = row.Cells["MFPN"].Value?.ToString(),
+                Manufacturer = row.Cells["Manufacturer"].Value?.ToString(),
+                Description = row.Cells["Description"].Value?.ToString(),
                 Stock = Convert.ToInt32(row.Cells["Stock"].Value),
                 Id = int.Parse(row.Cells["Id"].Value.ToString()),
+                Updated_on = row.Cells["Updated_on"].Value?.ToString(),
                 Comments = row.Cells["Comments"].Value?.ToString(),
+                Source_Requester = row.Cells["Source_Requester"].Value?.ToString(),
                 Counted = row.Cells["Counted"].Value?.ToString(),
                 User = row.Cells["User"].Value?.ToString()
             };
 
             // Save the counted item to the selected XML file
-            SaveCountedItemsToSelectedFile(countedItem);
+            //SaveCountedItemsToSelectedFile(countedItem);
+            SaveCountedItemsToDatabase(countedItem);
             SetSTOCKiewColumsOrder();
         }
 
@@ -1991,7 +1796,7 @@ namespace WH_Panel
                     if (result == DialogResult.Yes)
                     {
                         // Call the delete function
-                        DeleteFromDatabase(itemId,false);
+                        DeleteFromDatabase(itemId, false);
                         //MessageBox.Show($"Item with Id {itemId} has been deleted from the database.");
 
                         // Remove the row from the DataGridView
@@ -2057,7 +1862,7 @@ namespace WH_Panel
 
         }
 
-        private void DeleteFromDatabase(int itemId,bool Auto)
+        private void DeleteFromDatabase(int itemId, bool Auto)
         {
             // Get the selected table name from the ComboBox
             string selectedTable = comboBox3.SelectedItem?.ToString();
@@ -2089,11 +1894,11 @@ namespace WH_Panel
 
                         if (rowsAffected > 0)
                         {
-                            if(!Auto)
+                            if (!Auto)
                             {
                                 MessageBox.Show($"Item with Id {itemId} has been successfully deleted from the {selectedTable} table.");
                             }
-                            
+
                         }
                         else
                         {
@@ -2111,7 +1916,7 @@ namespace WH_Panel
 
         private void comboBox3_MouseClick(object sender, MouseEventArgs e)
         {
-           
+
         }
 
         private void button3_Click(object sender, EventArgs e)

@@ -46,8 +46,8 @@
             button1 = new Button();
             button2 = new Button();
             lblCalc = new Label();
-            openFileDialog1 = new OpenFileDialog();
             button3 = new Button();
+            openFileDialog1 = new OpenFileDialog();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             groupBox3.SuspendLayout();
@@ -257,6 +257,7 @@
             button1.TabIndex = 18;
             button1.Text = "LOAD count log";
             button1.UseVisualStyleBackColor = true;
+            button1.Visible = false;
             button1.Click += button1_Click;
             button1.MouseDown += button1_MouseDown;
             // 
@@ -282,10 +283,6 @@
             lblCalc.TabIndex = 20;
             lblCalc.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // openFileDialog1
-            // 
-            openFileDialog1.FileName = "openFileDialog1";
-            // 
             // button3
             // 
             button3.Dock = DockStyle.Fill;
@@ -296,6 +293,10 @@
             button3.Text = "Open WH";
             button3.UseVisualStyleBackColor = true;
             button3.Click += button3_Click;
+            // 
+            // openFileDialog1
+            // 
+            openFileDialog1.FileName = "openFileDialog1";
             // 
             // FrmStockCounter
             // 
