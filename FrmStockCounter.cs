@@ -23,7 +23,7 @@ using DataTable = System.Data.DataTable;
 using GroupBox = System.Windows.Forms.GroupBox;
 using Label = System.Windows.Forms.Label;
 using TextBox = System.Windows.Forms.TextBox;
-
+using QRCoder;
 
 
 namespace WH_Panel
@@ -992,48 +992,476 @@ namespace WH_Panel
         }
 
 
+        //private void ShowMatchSelectionForm(List<DataGridViewRow> matchingRows)
+        //{
+        //    // Create a new form dynamically
+        //    Form selectionForm = new Form();
+        //    selectionForm.Text = "Select a Matching Item";
+        //    selectionForm.Size = new Size(800, 400);
+        //    selectionForm.StartPosition = FormStartPosition.CenterParent;
+
+        //    // Create a DataGridView dynamically
+        //    DataGridView dataGridView = new DataGridView();
+        //    dataGridView.Dock = DockStyle.Top;
+        //    dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        //    dataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+        //    dataGridView.MultiSelect = false;
+        //    dataGridView.Height = 300;
+
+        //    // Create columns for DataGridView
+        //    dataGridView.Columns.Add("IPN", "IPN");
+        //    dataGridView.Columns.Add("MFPN", "MFPN");
+        //    dataGridView.Columns.Add("Stock", "Stock");
+        //    dataGridView.Columns.Add("Comments", "Comments");
+        //    dataGridView.Columns.Add("Id", "Id");
+        //    dataGridView.Columns.Add("Updated_on", "Updated On");
+
+        //    // Sort matching rows by Updated_on date
+        //    matchingRows = matchingRows.OrderBy(row => DateTime.Parse(row.Cells["Updated_on"].Value.ToString())).ToList();
+
+        //    // Populate DataGridView with matching rows
+        //    foreach (var row in matchingRows)
+        //    {
+        //        dataGridView.Rows.Add(
+        //            row.Cells["IPN"].Value.ToString(),
+        //            row.Cells["MFPN"].Value.ToString(),
+        //            row.Cells["Stock"].Value.ToString(),
+        //            row.Cells["Comments"].Value.ToString(),
+        //            row.Cells["Id"].Value.ToString(),
+        //            row.Cells["Updated_on"].Value.ToString()
+        //        );
+        //    }
+
+        //    // Handle double-click event on DataGridView
+        //    dataGridView.CellDoubleClick += (sender, e) =>
+        //    {
+        //        if (e.RowIndex >= 0 && e.RowIndex < matchingRows.Count)
+        //        {
+        //            // Get the selected row based on the double-clicked cell
+        //            DataGridViewRow selectedRow = matchingRows[e.RowIndex];
+
+        //            // Update the selected row
+        //            string currentUser = Environment.UserName; // Get the current user
+        //            UpdateRow(selectedRow, currentUser);
+
+        //            // Close the form after selection
+        //            selectionForm.DialogResult = DialogResult.OK;
+        //            selectionForm.Close();
+        //        }
+        //    };
+
+        //    // Handle ENTER key event
+        //    dataGridView.KeyDown += (sender, e) =>
+        //    {
+        //        if (e.KeyCode == Keys.Enter && dataGridView.SelectedRows.Count > 0)
+        //        {
+        //            // Prevent the 'ding' sound from happening when ENTER is pressed
+        //            e.Handled = true;
+        //            e.SuppressKeyPress = true;
+
+        //            // Get the selected row based on the currently selected row in the DataGridView
+        //            int selectedIndex = dataGridView.SelectedRows[0].Index;
+        //            if (selectedIndex >= 0 && selectedIndex < matchingRows.Count)
+        //            {
+        //                DataGridViewRow selectedRow = matchingRows[selectedIndex];
+
+        //                // Update the selected row
+        //                string currentUser = Environment.UserName; // Get the current user
+        //                UpdateRow(selectedRow, currentUser);
+
+        //                // Close the form after selection
+        //                selectionForm.DialogResult = DialogResult.OK;
+        //                selectionForm.Close();
+        //            }
+        //        }
+        //    };
+
+        //    // Add DataGridView to the form
+        //    selectionForm.Controls.Add(dataGridView);
+
+        //    // Show the form as a dialog
+        //    selectionForm.ShowDialog();
+        //}
+
+
+        //private void ShowMatchSelectionForm(List<DataGridViewRow> matchingRows)
+        //{
+        //    // Create a new form dynamically
+        //    Form selectionForm = new Form
+        //    {
+        //        Text = "Select a Matching Item",
+        //        Size = new Size(800, 400),
+        //        StartPosition = FormStartPosition.CenterParent
+        //    };
+
+        //    // Create a DataGridView dynamically
+        //    DataGridView dataGridView = new DataGridView
+        //    {
+        //        Dock = DockStyle.Top,
+        //        AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+        //        SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+        //        MultiSelect = false,
+        //        Height = 300
+        //    };
+
+        //    // Create columns for DataGridView
+        //    dataGridView.Columns.Add("IPN", "IPN");
+        //    dataGridView.Columns.Add("MFPN", "MFPN");
+        //    dataGridView.Columns.Add("Stock", "Stock");
+        //    dataGridView.Columns.Add("Comments", "Comments");
+        //    dataGridView.Columns.Add("Id", "Id"); // Optional: Keep this for reference if needed
+        //    dataGridView.Columns.Add("Updated_on", "Updated On");
+
+        //    // Sort matching rows by Updated_on date
+        //    matchingRows = matchingRows.OrderBy(row => DateTime.Parse(row.Cells["Updated_on"].Value.ToString())).ToList();
+
+        //    // Populate DataGridView with matching rows
+        //    foreach (var row in matchingRows)
+        //    {
+        //        // Generate the QR code for the Id
+        //        string idValue = row.Cells["Id"].Value.ToString();
+        //        byte[] qrCodeImage = GenerateQrCodeImage(idValue);
+
+        //        // Create an Image object from the byte array
+        //        using (var ms = new MemoryStream(qrCodeImage))
+        //        {
+        //            Image qrCodeBitmap = Image.FromStream(ms);
+        //            dataGridView.Rows.Add(
+        //                row.Cells["IPN"].Value.ToString(),
+        //                row.Cells["MFPN"].Value.ToString(),
+        //                row.Cells["Stock"].Value.ToString(),
+        //                row.Cells["Comments"].Value.ToString(),
+        //                qrCodeBitmap, // Set the QR code image
+        //                row.Cells["Updated_on"].Value.ToString()
+        //            );
+        //        }
+        //    }
+
+        //    // Handle double-click event on DataGridView
+        //    dataGridView.CellDoubleClick += (sender, e) =>
+        //    {
+        //        if (e.RowIndex >= 0 && e.RowIndex < matchingRows.Count)
+        //        {
+        //            // Get the selected row based on the double-clicked cell
+        //            DataGridViewRow selectedRow = matchingRows[e.RowIndex];
+
+        //            // Update the selected row
+        //            string currentUser = Environment.UserName; // Get the current user
+        //            UpdateRow(selectedRow, currentUser);
+
+        //            // Close the form after selection
+        //            selectionForm.DialogResult = DialogResult.OK;
+        //            selectionForm.Close();
+        //        }
+        //    };
+
+        //    // Handle ENTER key event
+        //    dataGridView.KeyDown += (sender, e) =>
+        //    {
+        //        if (e.KeyCode == Keys.Enter && dataGridView.SelectedRows.Count > 0)
+        //        {
+        //            // Prevent the 'ding' sound from happening when ENTER is pressed
+        //            e.Handled = true;
+        //            e.SuppressKeyPress = true;
+
+        //            // Get the selected row based on the currently selected row in the DataGridView
+        //            int selectedIndex = dataGridView.SelectedRows[0].Index;
+        //            if (selectedIndex >= 0 && selectedIndex < matchingRows.Count)
+        //            {
+        //                DataGridViewRow selectedRow = matchingRows[selectedIndex];
+
+        //                // Update the selected row
+        //                string currentUser = Environment.UserName; // Get the current user
+        //                UpdateRow(selectedRow, currentUser);
+
+        //                // Close the form after selection
+        //                selectionForm.DialogResult = DialogResult.OK;
+        //                selectionForm.Close();
+        //            }
+        //        }
+        //    };
+
+        //    // Add DataGridView to the form
+        //    selectionForm.Controls.Add(dataGridView);
+
+        //    // Show the form as a dialog
+        //    selectionForm.ShowDialog();
+        //}
+
+
+        //private void ShowMatchSelectionForm(List<DataGridViewRow> matchingRows)
+        //{
+        //    // Create a new form dynamically
+        //    Form selectionForm = new Form
+        //    {
+        //        Text = "Select a Matching Item",
+        //        Size = new Size(800, 400),
+        //        StartPosition = FormStartPosition.CenterParent
+        //    };
+
+        //    // Create a DataGridView dynamically
+        //    DataGridView dataGridView = new DataGridView
+        //    {
+        //        Dock = DockStyle.Top,
+        //        AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+        //        SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+        //        MultiSelect = false,
+        //        Height = 300
+        //    };
+
+        //    // Set the height of the rows to 70 pixels
+        //    dataGridView.RowTemplate.Height = 70;
+
+        //    // Create columns for DataGridView
+        //    dataGridView.Columns.Add("IPN", "IPN");
+        //    dataGridView.Columns.Add("MFPN", "MFPN");
+        //    dataGridView.Columns.Add("Stock", "Stock");
+        //    dataGridView.Columns.Add("Comments", "Comments");
+
+        //    // Create a column specifically for the QR code image
+        //    DataGridViewImageColumn qrCodeColumn = new DataGridViewImageColumn
+        //    {
+        //        Name = "QRCode",
+        //        HeaderText = "QR Code"
+        //    };
+        //    dataGridView.Columns.Add(qrCodeColumn);
+
+        //    dataGridView.Columns.Add("Updated_on", "Updated On");
+
+        //    // Sort matching rows by Updated_on date
+        //    matchingRows = matchingRows.OrderBy(row => DateTime.Parse(row.Cells["Updated_on"].Value.ToString())).ToList();
+
+        //    // Populate DataGridView with matching rows
+        //    foreach (var row in matchingRows)
+        //    {
+        //        // Generate the QR code for the Id
+        //        string idValue = row.Cells["Id"].Value.ToString();
+        //        byte[] qrCodeImage = GenerateQrCodeImage(idValue);
+
+        //        // Create an Image object from the byte array
+        //        using (var ms = new MemoryStream(qrCodeImage))
+        //        {
+        //            Image qrCodeBitmap = Image.FromStream(ms);
+
+        //            // Add a new row to the DataGridView, including the QR code as an image
+        //            dataGridView.Rows.Add(
+        //                row.Cells["IPN"].Value.ToString(),
+        //                row.Cells["MFPN"].Value.ToString(),
+        //                row.Cells["Stock"].Value.ToString(),
+        //                row.Cells["Comments"].Value.ToString(),
+        //                qrCodeBitmap, // Set the QR code image in the image column
+        //                row.Cells["Updated_on"].Value.ToString()
+        //            );
+        //        }
+        //    }
+
+        //    // Handle double-click event on DataGridView
+        //    dataGridView.CellDoubleClick += (sender, e) =>
+        //    {
+        //        if (e.RowIndex >= 0 && e.RowIndex < matchingRows.Count)
+        //        {
+        //            // Get the selected row based on the double-clicked cell
+        //            DataGridViewRow selectedRow = matchingRows[e.RowIndex];
+
+        //            // Update the selected row
+        //            string currentUser = Environment.UserName; // Get the current user
+        //            UpdateRow(selectedRow, currentUser);
+
+        //            // Close the form after selection
+        //            selectionForm.DialogResult = DialogResult.OK;
+        //            selectionForm.Close();
+        //        }
+        //    };
+
+        //    // Handle ENTER key event
+        //    dataGridView.KeyDown += (sender, e) =>
+        //    {
+        //        if (e.KeyCode == Keys.Enter && dataGridView.SelectedRows.Count > 0)
+        //        {
+        //            // Prevent the 'ding' sound from happening when ENTER is pressed
+        //            e.Handled = true;
+        //            e.SuppressKeyPress = true;
+
+        //            // Get the selected row based on the currently selected row in the DataGridView
+        //            int selectedIndex = dataGridView.SelectedRows[0].Index;
+        //            if (selectedIndex >= 0 && selectedIndex < matchingRows.Count)
+        //            {
+        //                DataGridViewRow selectedRow = matchingRows[selectedIndex];
+
+        //                // Update the selected row
+        //                string currentUser = Environment.UserName; // Get the current user
+        //                UpdateRow(selectedRow, currentUser);
+
+        //                // Close the form after selection
+        //                selectionForm.DialogResult = DialogResult.OK;
+        //                selectionForm.Close();
+        //            }
+        //        }
+        //    };
+
+        //    // Add DataGridView to the form
+        //    selectionForm.Controls.Add(dataGridView);
+
+        //    // Show the form as a dialog
+        //    selectionForm.ShowDialog();
+        //}
+
+
         private void ShowMatchSelectionForm(List<DataGridViewRow> matchingRows)
         {
+            int heightMultiplier = 160;
             // Create a new form dynamically
-            Form selectionForm = new Form();
-            selectionForm.Text = "Select a Matching Item";
-            selectionForm.Size = new Size(800, 400);
-            selectionForm.StartPosition = FormStartPosition.CenterParent;
+            Form selectionForm = new Form
+            {
+                Text = "Select a Matching Item",
+                Size = new Size(800, matchingRows.Count* heightMultiplier),
+                StartPosition = FormStartPosition.CenterParent
+            };
 
             // Create a DataGridView dynamically
-            DataGridView dataGridView = new DataGridView();
-            dataGridView.Dock = DockStyle.Top;
-            dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridView.MultiSelect = false;
-            dataGridView.Height = 300;
+            DataGridView dataGridView = new DataGridView
+            {
+                Dock = DockStyle.Top,
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                MultiSelect = false,
+                Height = (matchingRows.Count) * heightMultiplier
+            };
+
+            // Set the height of the rows to 70 pixels
+            dataGridView.RowTemplate.Height = 90;
 
             // Create columns for DataGridView
             dataGridView.Columns.Add("IPN", "IPN");
             dataGridView.Columns.Add("MFPN", "MFPN");
             dataGridView.Columns.Add("Stock", "Stock");
             dataGridView.Columns.Add("Comments", "Comments");
-            dataGridView.Columns.Add("Id", "Id");
+
+            // Create a column specifically for the QR code image
+            DataGridViewImageColumn qrCodeColumn = new DataGridViewImageColumn
+            {
+                Name = "QRCode",
+                HeaderText = "QR Code"
+            };
+            dataGridView.Columns.Add(qrCodeColumn);
+
             dataGridView.Columns.Add("Updated_on", "Updated On");
 
             // Sort matching rows by Updated_on date
             matchingRows = matchingRows.OrderBy(row => DateTime.Parse(row.Cells["Updated_on"].Value.ToString())).ToList();
 
+       
+
             // Populate DataGridView with matching rows
             foreach (var row in matchingRows)
             {
-                dataGridView.Rows.Add(
-                    row.Cells["IPN"].Value.ToString(),
-                    row.Cells["MFPN"].Value.ToString(),
-                    row.Cells["Stock"].Value.ToString(),
-                    row.Cells["Comments"].Value.ToString(),
-                    row.Cells["Id"].Value.ToString(),
-                    row.Cells["Updated_on"].Value.ToString()
-                );
+                // Generate the QR code for the Id
+                string idValue = row.Cells["Id"].Value.ToString();
+                byte[] qrCodeImage = GenerateQrCodeImage(idValue);
+
+                //// Create an Image object from the byte array
+                //using (var ms = new MemoryStream(qrCodeImage))
+                //{
+                //    Image qrCodeBitmap = Image.FromStream(ms);
+
+                //    // Add a new row to the DataGridView, including the QR code as an image
+                //    dataGridView.Rows.Add(
+                //        row.Cells["IPN"].Value.ToString(),
+                //        row.Cells["MFPN"].Value.ToString(),
+                //        row.Cells["Stock"].Value.ToString(),
+                //        row.Cells["Comments"].Value.ToString(),
+                //        qrCodeBitmap, // Set the QR code image in the image column
+                //        row.Cells["Updated_on"].Value.ToString()
+                //    );
+
+                //}
+                // Create an Image object from the byte array
+                using (var ms = new MemoryStream(qrCodeImage))
+                {
+                    Image qrCodeBitmap = Image.FromStream(ms);
+
+                    // Add a new row to the DataGridView, including the QR code as an image
+                    int rowIndex = dataGridView.Rows.Add(
+                        row.Cells["IPN"].Value.ToString(),
+                        row.Cells["MFPN"].Value.ToString(),
+                        row.Cells["Stock"].Value.ToString(),
+                        row.Cells["Comments"].Value.ToString(),
+                        qrCodeBitmap, // Set the QR code image in the image column
+                        row.Cells["Updated_on"].Value.ToString()
+                    );
+
+                    // Set the ToolTipText for the QR Code image cell to display the Id
+                    dataGridView.Rows[rowIndex].Cells["QRCode"].ToolTipText = idValue;
+                }
             }
 
-            // Handle double-click event on DataGridView
-            dataGridView.CellDoubleClick += (sender, e) =>
+            // Create a TextBox for scanning input
+            TextBox scanTextBox = new TextBox
+            {
+                Dock = DockStyle.Top,
+                Height = 30,
+                TextAlign = HorizontalAlignment.Center,
+                PlaceholderText = "Scan or enter ID here..."
+            };
+
+
+            //// Handle text changed event to search in the DataGridView
+            //scanTextBox.TextChanged += (sender, e) =>
+            //{
+            //    string searchText = scanTextBox.Text;
+            //    foreach (DataGridViewRow row in dataGridView.Rows)
+            //    {
+            //        // Check if the ID in the DataGridView matches the scanned input
+            //        if (row.Cells["Id"].Value.ToString().Equals(searchText, StringComparison.OrdinalIgnoreCase))
+            //        {
+            //            dataGridView.ClearSelection();
+            //            row.Selected = true; // Select the matching row
+            //            dataGridView.CurrentCell = row.Cells[0]; // Set the current cell to the first column
+            //            break;
+            //        }
+            //    }
+            //};
+
+            // Handle the scanTextBox ENTER key event for scanning
+            scanTextBox.KeyDown += (sender, e) =>
+            {
+                if (e.KeyCode == Keys.Enter)
+                {
+                    e.Handled = true;
+                    e.SuppressKeyPress = true;
+
+                    // Get the scanned Id from the scanTextBox
+                    string scannedId = scanTextBox.Text;
+
+                    // Find the row that matches the scanned Id in the DataGridView
+                    foreach (DataGridViewRow row in dataGridView.Rows)
+                    {
+                        if (row.Cells["QRCode"].ToolTipText == scannedId) // Compare with the tooltip (Id)
+                        {
+                            row.Selected = true; // Select the row that matches
+
+                            // Simulate the same behavior as ENTER on the selected row
+                            int selectedIndex = row.Index;
+                            if (selectedIndex >= 0 && selectedIndex < matchingRows.Count)
+                            {
+                                DataGridViewRow selectedRow = matchingRows[selectedIndex];
+
+                                // Update the selected row
+                                string currentUser = Environment.UserName; // Get the current user
+                                UpdateRow(selectedRow, currentUser);
+
+                                // Close the form after selection
+                                selectionForm.DialogResult = DialogResult.OK;
+                                selectionForm.Close();
+                            }
+
+                            break; // Exit loop after finding the match
+                        }
+                    }
+                }
+            };
+                // Handle double-click event on DataGridView
+                dataGridView.CellDoubleClick += (sender, e) =>
             {
                 if (e.RowIndex >= 0 && e.RowIndex < matchingRows.Count)
                 {
@@ -1076,12 +1504,59 @@ namespace WH_Panel
                 }
             };
 
-            // Add DataGridView to the form
+
+            // Handle the form's 'Shown' event to focus the scanTextBox after the form has loaded
+            selectionForm.Shown += (sender, e) =>
+            {
+                scanTextBox.Focus(); // Set focus to the scanTextBox
+            };
+            // Add DataGridView and TextBox to the form
             selectionForm.Controls.Add(dataGridView);
+            selectionForm.Controls.Add(scanTextBox);
 
             // Show the form as a dialog
             selectionForm.ShowDialog();
+      
+
         }
+
+     
+
+
+        private byte[] GenerateQrCodeImage(string text)
+        {
+            using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
+            using (QRCodeData qrCodeData = qrGenerator.CreateQrCode(text, QRCodeGenerator.ECCLevel.Q))
+            using (PngByteQRCode qrCode = new PngByteQRCode(qrCodeData))
+            {
+                byte[] originalQrCode = qrCode.GetGraphic(20); // Get the QR code as a byte array
+
+                // Resize the QR code to 50x50 pixels
+                using (var ms = new MemoryStream(originalQrCode))
+                {
+                    using (Image originalImage = Image.FromStream(ms))
+                    {
+                        Bitmap resizedImage = new Bitmap(50, 50); // Create a new bitmap for resizing
+
+                        using (Graphics graphics = Graphics.FromImage(resizedImage))
+                        {
+                            graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                            graphics.DrawImage(originalImage, 0, 0, 50, 50); // Draw the original image on the resized bitmap
+                        }
+
+                        // Convert resized bitmap to byte array
+                        using (MemoryStream resizedStream = new MemoryStream())
+                        {
+                            resizedImage.Save(resizedStream, System.Drawing.Imaging.ImageFormat.Png); // Save the resized image
+                            return resizedStream.ToArray(); // Return the byte array of the resized image
+                        }
+                    }
+                }
+            }
+        }
+
+
+
 
         //private void ShowMatchSelectionForm(List<DataGridViewRow> matchingRows)
         //{
