@@ -477,7 +477,7 @@ namespace WH_Panel
             // Step to color the rows based on the "User" column
             ColorRowsBasedOnUserColumn();
 
-            lblCalc.Text = actualSum + "/" + stockSum.ToString();
+            lblCalc.Text = actualSum + "/" + stockSum + " ( "+  (stockSum-actualSum) +" )";
 
             if (actualSum == stockSum)
             {
