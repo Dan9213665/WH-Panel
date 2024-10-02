@@ -1166,6 +1166,12 @@ namespace WH_Panel
                 StartPosition = FormStartPosition.CenterParent
             };
 
+            // Create a Panel to enable scrolling
+            Panel panel = new Panel
+            {
+                Dock = DockStyle.Fill,
+                AutoScroll = true // Enable vertical scroll if content overflows
+            };
             // Create a DataGridView dynamically
             DataGridView dataGridView = new DataGridView
             {
@@ -1326,7 +1332,11 @@ namespace WH_Panel
                 scanTextBox.Focus(); // Set focus to the scanTextBox
             };
             // Add DataGridView and TextBox to the form
-            selectionForm.Controls.Add(dataGridView);
+            //selectionForm.Controls.Add(dataGridView);
+            // Add the Panel to the form
+            // Add the DataGridView to the Panel
+            panel.Controls.Add(dataGridView);
+            selectionForm.Controls.Add(panel);
             selectionForm.Controls.Add(scanTextBox);
 
             // Show the form as a dialog
