@@ -24,16 +24,28 @@ using GroupBox = System.Windows.Forms.GroupBox;
 using Label = System.Windows.Forms.Label;
 using TextBox = System.Windows.Forms.TextBox;
 using QRCoder;
-
+using Point = System.Drawing.Point;
 
 namespace WH_Panel
 {
     public partial class FrmStockCounter : Form
     {
+        // Declare the contextMenuStrip as a class-level variable
+        public ContextMenuStrip contextMenuStrip;
         public FrmStockCounter()
         {
             InitializeComponent();
             UpdateControlColors(this);
+            // Add this to your form's constructor or initialization method
+            //ContextMenuStrip contextMenuStrip = new ContextMenuStrip();
+            //ToolStripMenuItem uncountMenuItem = new ToolStripMenuItem("UNCOUNT");
+            //ToolStripMenuItem deleteMenuItem = new ToolStripMenuItem("DELETE from STOCK");
+            //contextMenuStrip.Items.AddRange(new ToolStripItem[] { uncountMenuItem, deleteMenuItem });
+
+            //// Subscribe to the click events for the menu items
+            //uncountMenuItem.Click += (sender, e) => UncountSelectedRow();
+            //deleteMenuItem.Click += (sender, e) => DeleteFromStockTableSelectedRow();
+
 
         }
         public class whItemStockCounter : WHitem
@@ -164,6 +176,8 @@ namespace WH_Panel
         }
         private void FrmStockCounter_Load(object sender, EventArgs e)
         {
+         
+
             // Create a SoundPlayer instance
             // Create a SoundPlayer instance and use the resource stream
             SoundPlayer player = new SoundPlayer(Properties.Resources.fromStockCounterLoad);
@@ -1115,44 +1129,44 @@ namespace WH_Panel
 
         }
 
-        private void uploadXMLdataIntoSQLdataBase()
-        {
-            // Step 1: Ensure the XML file path is valid
-            if (string.IsNullOrEmpty(selectedXmlFilePath) || !File.Exists(selectedXmlFilePath))
-            {
-                MessageBox.Show("No valid XML file selected to upload.");
-                return;
-            }
+        //private void uploadXMLdataIntoSQLdataBase()
+        //{
+        //    // Step 1: Ensure the XML file path is valid
+        //    if (string.IsNullOrEmpty(selectedXmlFilePath) || !File.Exists(selectedXmlFilePath))
+        //    {
+        //        MessageBox.Show("No valid XML file selected to upload.");
+        //        return;
+        //    }
 
-            // Step 2: Load the XML document
-            XDocument xdoc = XDocument.Load(selectedXmlFilePath);
+        //    // Step 2: Load the XML document
+        //    XDocument xdoc = XDocument.Load(selectedXmlFilePath);
 
-            // Step 3: Iterate through each item in the XML
-            foreach (var item in xdoc.Descendants("whItemStockCounter"))
-            {
-                // Extract the values from the XML elements
-                whItemStockCounter countedItem = new whItemStockCounter
-                {
-                    IPN = (string)item.Element("IPN"),
-                    MFPN = (string)item.Element("MFPN"),
-                    Stock = (int)item.Element("Stock"),
-                    Comments = (string)item.Element("Comments"),
-                    Id = (int)item.Element("Id"),
-                    Counted = (string)item.Element("Counted"),
-                    User = (string)item.Element("User"),
-                    Manufacturer = (string)item.Element("Manufacturer"),
-                    Description = (string)item.Element("Description"),
-                    Updated_on = (string)item.Element("Updated_on"),
-                    Source_Requester = (string)item.Element("Source_Requester")
-                };
+        //    // Step 3: Iterate through each item in the XML
+        //    foreach (var item in xdoc.Descendants("whItemStockCounter"))
+        //    {
+        //        // Extract the values from the XML elements
+        //        whItemStockCounter countedItem = new whItemStockCounter
+        //        {
+        //            IPN = (string)item.Element("IPN"),
+        //            MFPN = (string)item.Element("MFPN"),
+        //            Stock = (int)item.Element("Stock"),
+        //            Comments = (string)item.Element("Comments"),
+        //            Id = (int)item.Element("Id"),
+        //            Counted = (string)item.Element("Counted"),
+        //            User = (string)item.Element("User"),
+        //            Manufacturer = (string)item.Element("Manufacturer"),
+        //            Description = (string)item.Element("Description"),
+        //            Updated_on = (string)item.Element("Updated_on"),
+        //            Source_Requester = (string)item.Element("Source_Requester")
+        //        };
 
-                // Step 4: Save the counted item to the database
-                SaveCountedItemsToDatabase(countedItem);
-            }
+        //        // Step 4: Save the counted item to the database
+        //        SaveCountedItemsToDatabase(countedItem);
+        //    }
 
-            // Step 5: Provide feedback to the user
-            MessageBox.Show("Data has been successfully uploaded to the database.");
-        }
+        //    // Step 5: Provide feedback to the user
+        //    MessageBox.Show("Data has been successfully uploaded to the database.");
+        //}
 
 
         private void ShowMatchSelectionForm(List<DataGridViewRow> matchingRows)
@@ -1856,6 +1870,56 @@ namespace WH_Panel
             }
         }
 
+        //private void dataGridView1_MouseDown(object sender, MouseEventArgs e)
+        //{
+        //    // Check if it is a right-click
+        //    if (e.Button == MouseButtons.Right)
+        //    {
+        //        // Get the clicked row using HitTest
+        //        var hitTestInfo = dataGridView1.HitTest(e.X, e.Y);
+
+        //        if (hitTestInfo.RowIndex >= 0) // Ensure a row was clicked
+        //        {
+        //            // Select the clicked row
+        //            dataGridView1.ClearSelection();
+        //            dataGridView1.Rows[hitTestInfo.RowIndex].Selected = true;
+
+        //            // Retrieve the selected row
+        //            DataGridViewRow selectedRow = dataGridView1.Rows[hitTestInfo.RowIndex];
+
+        //            // Get the Id and other properties from the selected row
+        //            int id = Convert.ToInt32(selectedRow.Cells["Id"].Value);
+        //            string ipn = selectedRow.Cells["IPN"].Value?.ToString();
+        //            string manufacturer = selectedRow.Cells["Manufacturer"].Value?.ToString();
+        //            string description = selectedRow.Cells["Description"].Value?.ToString();
+        //            int stock = Convert.ToInt32(selectedRow.Cells["Stock"].Value);
+        //            string updatedOn = selectedRow.Cells["Updated_on"].Value?.ToString();
+        //            string comments = selectedRow.Cells["Comments"].Value?.ToString();
+        //            string user = selectedRow.Cells["User"].Value?.ToString();
+
+        //            // Prepare the confirmation message with item details
+        //            string message = $"Are you sure you want to UNCOUNT the item:\n\n" +
+        //                             $"Id: {id}\n" +
+        //                             $"IPN: {ipn}\n" +
+        //                             $"Manufacturer: {manufacturer}\n" +
+        //                             $"Description: {description}\n" +
+        //                             $"Stock: {stock}\n" +
+        //                             $"Updated On: {updatedOn}\n" +
+        //                             $"Comments: {comments}\n" +
+        //                             $"User: {user}";
+
+        //            // Ask for user confirmation
+        //            DialogResult dialogResult = MessageBox.Show(message, "Confirm UNCOUNT", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+        //            if (dialogResult == DialogResult.Yes)
+        //            {
+        //                // If user confirms, delete the row from the COUNT table
+        //                DeleteFromCountTable(id);
+        //            }
+        //        }
+        //    }
+        //}
+
         private void dataGridView1_MouseDown(object sender, MouseEventArgs e)
         {
             // Check if it is a right-click
@@ -1884,7 +1948,7 @@ namespace WH_Panel
                     string user = selectedRow.Cells["User"].Value?.ToString();
 
                     // Prepare the confirmation message with item details
-                    string message = $"Are you sure you want to UNCOUNT the item:\n\n" +
+                    string message = $"Select an action for the item:\n\n" +
                                      $"Id: {id}\n" +
                                      $"IPN: {ipn}\n" +
                                      $"Manufacturer: {manufacturer}\n" +
@@ -1894,19 +1958,132 @@ namespace WH_Panel
                                      $"Comments: {comments}\n" +
                                      $"User: {user}";
 
-                    // Ask for user confirmation
-                    DialogResult dialogResult = MessageBox.Show(message, "Confirm UNCOUNT", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-
-                    if (dialogResult == DialogResult.Yes)
+                    // Create and show the custom message box
+                    using (CustomMessageBox customMessageBox = new CustomMessageBox(message))
                     {
-                        // If user confirms, delete the row from the COUNT table
-                        DeleteFromCountTable(id);
+                        customMessageBox.ShowDialog(); // Show the custom message box
+
+                        // Check the result based on the button clicked
+                        if (customMessageBox.Result == DialogResult.Yes)
+                        {
+                            // If user confirms UNCOUNT, delete from the COUNT table
+                            DeleteFromCountTable(id);
+                        }
+                        else if (customMessageBox.Result == DialogResult.No)
+                        {
+                            // If user confirms DELETE, handle the delete operation here
+                            DeleteFromSqlDataBase(id); // Placeholder for the actual delete logic
+                            
+                        }
+                        // Cancel does nothing
                     }
                 }
             }
         }
 
-        private void DeleteFromCountTable(int id)
+        private void DeleteFromSqlDataBase(int id)
+        {
+            //MessageBox.Show($"DELETE operation fired for ID: {id}", "DELETE Action", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            // Retrieve the Id from the context menu's Tag
+         
+
+            // Prepare the confirmation message
+            string message = $"Are you sure you want to DELETE the item from STOCK:\n\n" +
+                             $"Id: {id}";
+
+            // Ask for user confirmation
+            DialogResult dialogResult = MessageBox.Show(message, "Confirm DELETE from STOCK", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+            if (dialogResult == DialogResult.Yes)
+            {
+                // If user confirms, delete the row from the STOCK table
+                DeleteFromStockTable(id);
+            }
+        }
+
+
+
+        // Method to handle the UNCOUNT operation
+        private void UncountSelectedRow()
+    {
+        // Retrieve the Id from the context menu's Tag
+        var menuData = (dynamic)contextMenuStrip.Tag;
+        int id = menuData.Id;
+        DataGridViewRow selectedRow = menuData.SelectedRow;
+
+        // Prepare the confirmation message with item details
+        string message = $"Are you sure you want to UNCOUNT the item:\n\n" +
+                         $"Id: {id}\n" +
+                         $"IPN: {selectedRow.Cells["IPN"].Value}\n" +
+                         $"Manufacturer: {selectedRow.Cells["Manufacturer"].Value}\n" +
+                         $"Description: {selectedRow.Cells["Description"].Value}\n" +
+                         $"Stock: {selectedRow.Cells["Stock"].Value}\n" +
+                         $"Updated On: {selectedRow.Cells["Updated_on"].Value}\n" +
+                         $"Comments: {selectedRow.Cells["Comments"].Value}\n" +
+                         $"User: {selectedRow.Cells["User"].Value}";
+
+        // Ask for user confirmation
+        DialogResult dialogResult = MessageBox.Show(message, "Confirm UNCOUNT", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+        if (dialogResult == DialogResult.Yes)
+        {
+            // If user confirms, delete the row from the COUNT table
+            DeleteFromCountTable(id);
+        }
+    }
+
+    // Method to handle the DELETE from STOCK operation
+    //private void DeleteFromStockTableSelectedRow()
+    //{
+     
+    //}
+
+
+    private void DeleteFromStockTable(int id)
+    {
+            //// Logic to delete from STOCK table
+            //MessageBox.Show($"TEST Deleted item with Id {id} from STOCK table.");
+
+            // Step 1: Define your SQL connection string
+            string connectionString = selectedWHconnstring; // Update with your actual connection string
+
+            string selectedTable = comboBox3.SelectedItem?.ToString();
+            // Step 2: Create a SQL DELETE statement
+            string deleteQuery = $"DELETE FROM [{selectedTable}].dbo.STOCK WHERE Id = @Id";
+
+            // Step 3: Use a using statement for the SQL connection and command
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                // Step 4: Create a command to execute the query
+                using (SqlCommand command = new SqlCommand(deleteQuery, connection))
+                {
+                    // Step 5: Add the Id parameter
+                    command.Parameters.AddWithValue("@Id", id);
+
+                    // Step 6: Open the connection and execute the command
+                    try
+                    {
+                        connection.Open();
+                        command.ExecuteNonQuery();
+
+                        // Optional: Notify the user of successful deletion
+                        MessageBox.Show($"Item with Id {id} has been successfully DELETEed from the database.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        textBox1.Focus();
+                        SendKeys.Send("{ENTER}"); // Simulate pressing Enter
+
+                    }
+                    catch (SqlException ex)
+                    {
+                        MessageBox.Show($"An error occurred while deleting from the database: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
+
+
+
+    private void DeleteFromCountTable(int id)
         {
             // Step 1: Define your SQL connection string
             string connectionString = selectedWHconnstring; // Update with your actual connection string

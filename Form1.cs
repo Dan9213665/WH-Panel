@@ -114,7 +114,8 @@ namespace WH_Panel
         }
         public bool IsDatabaseInSQLServer(string clName)
         {
-            string connectionString = "Data Source=RT12\\SQLEXPRESS;Integrated Security=True;";
+            //string connectionString = "Data Source=RT12\\SQLEXPRESS;Integrated Security=True;";
+            string connectionString = "Data Source=DBR3\\SQLEXPRESS;Integrated Security=True;";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -130,7 +131,8 @@ namespace WH_Panel
         private string GetSqlAvl(string clName)
         {
             // Connection string for SQL Server Express
-            return $"Data Source=RT12\\SQLEXPRESS;Initial Catalog={clName};Integrated Security=True;";
+            //return $"Data Source=RT12\\SQLEXPRESS;Initial Catalog={clName};Integrated Security=True;";
+            return $"Data Source=DBR3\\SQLEXPRESS;Initial Catalog={clName};Integrated Security=True;";
 
         }
 
@@ -138,7 +140,8 @@ namespace WH_Panel
         private string GetSqlStock(string clName)
         {
             // Connection string for SQL Server Express
-            return $"Data Source=RT12\\SQLEXPRESS;Initial Catalog={clName};Integrated Security=True;";
+            return $"Data Source=DBR3\\SQLEXPRESS;Initial Catalog={clName};Integrated Security=True;";
+            //return $"Data Source=RT12\\SQLEXPRESS;Initial Catalog={clName};Integrated Security=True;";
         }
 
 

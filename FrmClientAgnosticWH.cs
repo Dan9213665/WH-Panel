@@ -2783,7 +2783,7 @@ namespace WH_Panel
                     {
                         if (dtExcelData.Rows.Count > 0)
                         {
-                            string firstIPN = dtExcelData.Rows[0]["IPN"]?.ToString();
+                            string firstIPN = dtExcelData.Rows[1]["IPN"]?.ToString();
                             return !string.IsNullOrEmpty(firstIPN) && firstIPN.StartsWith(currentPrefix);
                         }
                         return false;
