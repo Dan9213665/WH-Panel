@@ -45,6 +45,7 @@ using Point = System.Drawing.Point;
 using System.Runtime.InteropServices;
 using Outlook = Microsoft.Office.Interop.Outlook;
 using System.Data.SqlClient;
+using static System.ComponentModel.Design.ObjectSelectorEditor;
 
 namespace WH_Panel
 {
@@ -824,15 +825,35 @@ namespace WH_Panel
 
                     string ipnToUpdate = itemToUpdate.IPN; // The IPN value to match
 
+                    //foreach (DataGridViewRow row in dataGridView1.Rows)
+                    //{
+                    //    // Check if the value in the IPN column matches the IPN to update
+                    //    if (row.Cells["IPN"].Value != null && row.Cells["IPN"].Value.ToString() == ipnToUpdate)
+                    //    {
+                    //        // Color the entire row orange
+                    //        row.DefaultCellStyle.BackColor = Color.Orange;
+
+                    //    }
+                    //}
+
                     foreach (DataGridViewRow row in dataGridView1.Rows)
                     {
-                        // Check if the value in the IPN column matches the IPN to update
-                        if (row.Cells["IPN"].Value != null && row.Cells["IPN"].Value.ToString() == ipnToUpdate)
+                        // Check if the value in the IPN column matches the IPN to update (case-insensitive)
+                        if (row.Cells["IPN"].Value != null && row.Cells["IPN"].Value.ToString().Equals(ipnToUpdate, StringComparison.OrdinalIgnoreCase))
                         {
                             // Color the entire row orange
                             row.DefaultCellStyle.BackColor = Color.Orange;
+
+                            // Set the focus to the current row by selecting the first cell in the row
+                            dataGridView1.CurrentCell = row.Cells[0]; // You can change the column index if needed
+
+                            // Optionally, select the entire row
+                            row.Cells["IPN"].Selected = true;
+
+                            break; // Exit the loop if you only want to focus on the first matching row
                         }
                     }
+
 
                     UpdateKitHistoryItem(fileName, itemToUpdate);
                 }
