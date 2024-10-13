@@ -821,6 +821,19 @@ namespace WH_Panel
                 else
                 {
                     PopulateMissingGridView();
+
+                    string ipnToUpdate = itemToUpdate.IPN; // The IPN value to match
+
+                    foreach (DataGridViewRow row in dataGridView1.Rows)
+                    {
+                        // Check if the value in the IPN column matches the IPN to update
+                        if (row.Cells["IPN"].Value != null && row.Cells["IPN"].Value.ToString() == ipnToUpdate)
+                        {
+                            // Color the entire row orange
+                            row.DefaultCellStyle.BackColor = Color.Orange;
+                        }
+                    }
+
                     UpdateKitHistoryItem(fileName, itemToUpdate);
                 }
             }
