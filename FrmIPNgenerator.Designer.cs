@@ -39,6 +39,7 @@
             groupBox1 = new GroupBox();
             comboBox1 = new ComboBox();
             button1 = new Button();
+            checkBox1 = new CheckBox();
             tableLayoutPanel1.SuspendLayout();
             groupBox5.SuspendLayout();
             groupBox4.SuspendLayout();
@@ -62,12 +63,14 @@
             tableLayoutPanel1.Controls.Add(groupBox2, 1, 0);
             tableLayoutPanel1.Controls.Add(groupBox1, 0, 0);
             tableLayoutPanel1.Controls.Add(button1, 4, 1);
+            tableLayoutPanel1.Controls.Add(checkBox1, 0, 2);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 2;
+            tableLayoutPanel1.RowCount = 3;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 40F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
             tableLayoutPanel1.Size = new Size(1183, 229);
             tableLayoutPanel1.TabIndex = 0;
             // 
@@ -200,10 +203,22 @@
             button1.Dock = DockStyle.Fill;
             button1.Location = new Point(947, 117);
             button1.Name = "button1";
+            tableLayoutPanel1.SetRowSpan(button1, 2);
             button1.Size = new Size(233, 109);
             button1.TabIndex = 6;
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
+            // 
+            // checkBox1
+            // 
+            checkBox1.AutoSize = true;
+            checkBox1.Location = new Point(3, 208);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new Size(95, 18);
+            checkBox1.TabIndex = 7;
+            checkBox1.Text = "CUSTOM IPN";
+            checkBox1.UseVisualStyleBackColor = true;
+            checkBox1.CheckedChanged += checkBox1_CheckedChanged;
             // 
             // FrmIPNgenerator
             // 
@@ -240,5 +255,6 @@
         private ComboBox comboBox1;
         private TextBox textBox3;
         private Button button1;
+        private CheckBox checkBox1;
     }
 }

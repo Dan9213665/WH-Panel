@@ -584,30 +584,6 @@ namespace WH_Panel
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            //WHitem itemToAddToAvl = new WHitem();
-            //itemToAddToAvl.IPN = textBox3.Text.ToString();
-            //itemToAddToAvl.Manufacturer = comboBox2.SelectedItem.ToString();
-            //itemToAddToAvl.MFPN = textBox2.Text.ToString();
-            //itemToAddToAvl.Description = richTextBox1.Text.ToString();
-            //DataInserter(avlROBOTRON, "AVL", itemToAddToAvl);
-            //        if (!string.IsNullOrEmpty(textBox3.Text) &&
-            //comboBox2.SelectedItem != null &&
-            //!string.IsNullOrEmpty(textBox2.Text) &&
-            //!string.IsNullOrEmpty(richTextBox1.Text))
-            //        {
-            //            WHitem itemToAddToAvl = new WHitem();
-            //            itemToAddToAvl.IPN = textBox3.Text.ToString();
-            //            itemToAddToAvl.Manufacturer = comboBox2.SelectedItem.ToString();
-            //            itemToAddToAvl.MFPN = textBox2.Text.ToString();
-            //            itemToAddToAvl.Description = richTextBox1.Text.ToString();
-            //            DataInserter(avlROBOTRON, "AVL", itemToAddToAvl);
-            //            this.Dispose();
-            //            this.Close();
-            //        }
-            //        else
-            //        {
-            //            MessageBox.Show("Please populate all the required fields before proceeding.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //        }
             if (!string.IsNullOrEmpty(textBox3.Text) &&
     comboBox2.SelectedItem != null &&
     !string.IsNullOrEmpty(textBox2.Text) &&
@@ -615,8 +591,8 @@ namespace WH_Panel
             {
                 WHitem itemToAddToAvl = new WHitem();
                 itemToAddToAvl.IPN = textBox3.Text.ToString();
-                itemToAddToAvl.Manufacturer = comboBox2.SelectedItem.ToString();
-                itemToAddToAvl.MFPN = textBox2.Text.ToString();
+                itemToAddToAvl.Manufacturer = comboBox2.SelectedItem.ToString().ToUpper();
+                itemToAddToAvl.MFPN = textBox2.Text.ToString().ToUpper();
                 itemToAddToAvl.Description = richTextBox1.Text.ToString();
                 DataInserter(itemToAddToAvl);
 
@@ -646,24 +622,6 @@ namespace WH_Panel
         }
         private void DataInserter(WHitem wHitem)
         {
-            //try
-            //{
-            //    string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
-            //    using (OleDbConnection conn = new OleDbConnection(constr))
-            //    {
-            //        conn.Open();
-            //        OleDbCommand command = new OleDbCommand("INSERT INTO [" + thesheetName + "$] (IPN,Manufacturer,MFPN,Description) values('" + wHitem.IPN + "','" + wHitem.Manufacturer + "','" + wHitem.MFPN + "','" + wHitem.Description + "')", conn);
-            //        command.ExecuteNonQuery();
-            //        conn.Close();
-            //    }
-            //    MessageBox.Show(wHitem.IPN.ToString() + " added to AVL");
-            //}
-            //catch (IOException)
-            //{
-            //    MessageBox.Show("Error");
-            //}
-
-
             try
             {
                 string constr = sqlAvlConnectionStringFromMainForm;
@@ -696,6 +654,18 @@ namespace WH_Panel
         private void textBox1_KeyUp(object sender, KeyEventArgs e)
         {
             IPNstringConstructor();
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox1.Checked)
+            {
+                textBox3.ReadOnly = false;
+            }
+            else
+            {
+                textBox3.ReadOnly = true;
+            }
         }
     }
 }
