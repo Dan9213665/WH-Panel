@@ -571,9 +571,12 @@ namespace WH_Panel
         }
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            label1.BackColor = Color.IndianRed;
-            FilterTheMissingDataGridView();
-            FilterTheFoundDataGridView();
+            if (!fullIPNonly)
+            {
+                label1.BackColor = Color.IndianRed;
+                FilterTheMissingDataGridView();
+                FilterTheFoundDataGridView();
+            }
         }
         public static string ExtractBetween(string inputString, string startString, string endString)
         {
@@ -656,6 +659,7 @@ namespace WH_Panel
         private void label1_Click(object sender, EventArgs e)
         {
             clearTextboxesOnSingleLabelClick(sender, textBox1);
+            FilterTheMissingDataGridView();
         }
         private void label1_DoubleClick(object sender, EventArgs e)
         {
@@ -667,6 +671,7 @@ namespace WH_Panel
             clearTextboxesOnSingleLabelClick(label2, textBox2);
             clearTextboxesOnSingleLabelClick(label3, textBox3);
             clearTextboxesOnSingleLabelClick(label9, textBox9);
+            FilterTheMissingDataGridView();
         }
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
@@ -681,6 +686,14 @@ namespace WH_Panel
         }
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
+            if (fullIPNonly && e.KeyCode == Keys.Enter)
+            {
+                label1.BackColor = Color.IndianRed;
+                FilterTheMissingDataGridView();
+                FilterTheFoundDataGridView();
+                e.Handled = true; // Prevent the default behavior if needed
+                e.SuppressKeyPress = true; // Suppress Enter key press to avoid any other actions
+            }
             JumpToQtyInput((TextBox)sender, e);
         }
         private void textBox2_KeyDown(object sender, KeyEventArgs e)
@@ -709,6 +722,7 @@ namespace WH_Panel
                     AutoClosingMessageBox.Show(lastTxtbInputFromUser.Text + " NOT FOUND !", "item not FOUND !", 1000);
                     lastTxtbInputFromUser.Text = string.Empty;
                     lastTxtbInputFromUser.Focus();
+                    FilterTheMissingDataGridView();
                 }
                 else
                 {
@@ -758,33 +772,33 @@ namespace WH_Panel
         }
         private void btnPrintSticker_Click(object sender, EventArgs e)
         {
-            KitHistoryItem w = MissingItemsList.FirstOrDefault(r => r.IPN == txtbSelIPN.Text);
-            string inputQty = txtbQtyToAdd.Text.ToString();
-            if (inputQty.StartsWith("Q"))
-            {
-                inputQty = txtbQtyToAdd.Text.Substring(1);
-            }
-            validQty = 0;
-            bool qtyOK = int.TryParse(inputQty, out validQty);
-            if (qtyOK)
-            {
+            //KitHistoryItem w = MissingItemsList.FirstOrDefault(r => r.IPN == txtbSelIPN.Text);
+            //string inputQty = txtbQtyToAdd.Text.ToString();
+            //if (inputQty.StartsWith("Q"))
+            //{
+            //    inputQty = txtbQtyToAdd.Text.Substring(1);
+            //}
+            //validQty = 0;
+            //bool qtyOK = int.TryParse(inputQty, out validQty);
+
+            //if (qtyOK)
+            //{
 
 
-                transferFromDatabaseToKit(w, validQty, theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));
+            //    transferFromDatabaseToKit(w, validQty, theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));
 
-                //updateQtyInBomFile(w, validQty);
 
-                if (checkBox1.Checked)
-                {
-                    WHitem itemToPrint = new WHitem();
-                    itemToPrint.IPN = w.IPN;
-                    itemToPrint.MFPN = w.MFPN;
-                    itemToPrint.Description = w.Description;
-                    itemToPrint.Stock = validQty;
-                    itemToPrint.Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
-                    printSticker(itemToPrint);
-                }
-            }
+            //    if (checkBox1.Checked)
+            //    {
+            //        WHitem itemToPrint = new WHitem();
+            //        itemToPrint.IPN = w.IPN;
+            //        itemToPrint.MFPN = w.MFPN;
+            //        itemToPrint.Description = w.Description;
+            //        itemToPrint.Stock = validQty;
+            //        itemToPrint.Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
+            //        printSticker(itemToPrint);
+            //    }
+            //}
         }
         private void updateQtyInBomFile(KitHistoryItem w, int qtyToAdd)
         {
@@ -864,14 +878,65 @@ namespace WH_Panel
         }
         private void txtbQtyToAdd_KeyDown(object sender, KeyEventArgs e)
         {
+            //if (e.KeyCode == Keys.Enter)
+            //{
+            //    btnPrintSticker_Click(sender, e);
+            //    txtbQtyToAdd.Clear();
+            //    clearAllTextBoxesOnDoubleClick();
+            //    lastTxtbInputFromUser.Clear();
+            //    lastTxtbInputFromUser.Focus();
+            //}
+
             if (e.KeyCode == Keys.Enter)
             {
-                btnPrintSticker_Click(sender, e);
-                txtbQtyToAdd.Clear();
-                clearAllTextBoxesOnDoubleClick();
-                lastTxtbInputFromUser.Clear();
-                lastTxtbInputFromUser.Focus();
+                KitHistoryItem w = MissingItemsList.FirstOrDefault(r => r.IPN == txtbSelIPN.Text);
+                string inputQty = txtbQtyToAdd.Text.ToString();
+                if (inputQty.StartsWith("Q"))
+                {
+                    inputQty = txtbQtyToAdd.Text.Substring(1);
+                }
+                validQty = 0;
+                bool qtyOK = int.TryParse(inputQty, out validQty);
+
+                if (qtyOK)
+                {
+
+
+                    transferFromDatabaseToKit(w, validQty, theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));
+
+
+                    if (checkBox1.Checked)
+                    {
+                        WHitem itemToPrint = new WHitem();
+                        itemToPrint.IPN = w.IPN;
+                        itemToPrint.MFPN = w.MFPN;
+                        itemToPrint.Description = w.Description;
+                        itemToPrint.Stock = validQty;
+                        itemToPrint.Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
+                        printSticker(itemToPrint);
+                    }
+
+                    txtbQtyToAdd.Clear();
+                    clearAllTextBoxesOnDoubleClick();
+                    lastTxtbInputFromUser.Clear();
+                    lastTxtbInputFromUser.Focus();
+
+                }
+                else
+                {
+                    MessageBox.Show("Input valid qty !");
+                    txtbQtyToAdd.Clear();
+                    txtbQtyToAdd.Focus();
+
+                }
             }
+
+                
+
+         
+
+
+
         }
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
@@ -935,6 +1000,7 @@ namespace WH_Panel
             txtb.Text = string.Empty;
             l.BackColor = Color.LightGreen;
             txtb.Focus();
+
         }
         private void label2_DoubleClick(object sender, EventArgs e)
         {
@@ -1174,45 +1240,7 @@ namespace WH_Panel
             }
         }
 
-        //private static bool checkBalance(string selectedWarehouseConStr, WHitem wHitem)
-        //{
-        //    int balance = 0;
 
-        //    try
-        //    {
-        //        using (SqlConnection conn = new SqlConnection(selectedWarehouseConStr))
-        //        {
-        //            conn.Open();
-
-        //            // Calculate the sum of Stock where IPN = wHitem.IPN
-        //            string sumQuery = "SELECT SUM(Stock) FROM STOCK WHERE IPN = @IPN";
-        //            int totalStock = 0;
-
-        //            using (SqlCommand sumCommand = new SqlCommand(sumQuery, conn))
-        //            {
-        //                sumCommand.Parameters.AddWithValue("@IPN", wHitem.IPN);
-
-        //                // If there are no matching records, the result could be null, so handle that case.
-        //                object result = sumCommand.ExecuteScalar();
-        //                balance = result != DBNull.Value ? Convert.ToInt32(result) : 0;
-        //            }
-
-
-        //            if (balance >= 0)
-        //            {
-        //                MessageBox.Show("balance:" + balance);
-        //                return true;
-        //            }
-
-        //            else return false;
-        //        }
-        //    }
-        //    catch (Exception ec)
-        //    {
-        //        MessageBox.Show(ec.Message);
-        //        return false;
-        //    }
-        //}
 
         private static bool checkBalance(string selectedWarehouseConStr, WHitem wHitem)
         {
@@ -1718,15 +1746,7 @@ namespace WH_Panel
         {
             textBox14.Clear();
         }
-        //private void btnPrintKitLabel_MouseDown(object sender, MouseEventArgs e)
-        //{
-        //    // Check if the right mouse button was clicked
-        //    if (e.Button == MouseButtons.Right && theExcelFilePath != string.Empty)
-        //    {
-        //        string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-        //        GenerateHTMLkitBoxLabel(3);
-        //    }
-        //}
+   
         private void btnPrintKitLabel_MouseDown(object sender, MouseEventArgs e)
         {
             // Check if the right mouse button was clicked
@@ -1939,6 +1959,25 @@ namespace WH_Panel
             Marshal.ReleaseComObject(mailItem);
             Marshal.ReleaseComObject(outlookApp);
             MessageBox.Show("Test");
+        }
+
+        public bool fullIPNonly = true;
+        private void label1_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                if (fullIPNonly == true)
+                {
+                    fullIPNonly = false;
+                    label1.Text = "partial IPN";
+                }
+                else if (fullIPNonly == false)
+                {
+                    fullIPNonly = true;
+                    label1.Text = "IPN (full)";
+                }
+
+            }
         }
     }
 }

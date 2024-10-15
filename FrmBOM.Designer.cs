@@ -704,10 +704,11 @@
             label1.Name = "label1";
             label1.Size = new Size(112, 34);
             label1.TabIndex = 0;
-            label1.Text = "IPN";
+            label1.Text = "IPN (full)";
             label1.TextAlign = ContentAlignment.MiddleCenter;
             label1.Click += label1_Click;
             label1.DoubleClick += label1_DoubleClick;
+            label1.MouseClick += label1_MouseClick;
             // 
             // textBox1
             // 
