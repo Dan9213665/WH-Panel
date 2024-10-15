@@ -71,6 +71,8 @@ namespace WH_Panel
         public TextBox lastTxtbInputFromUser = new TextBox();
         public string theExcelFilePath = string.Empty;
         public bool isSql = false;
+        public string ipnToUpdate { get; set; }
+
         public FrmBOM()
         {
             InitializeComponent();
@@ -318,7 +320,7 @@ namespace WH_Panel
                                 {
                                     DateOfCreation = cleanedUpSheetName,
                                     ProjectName = excelFIleName,
-                                    IPN = reader[indIPN].ToString(),
+                                    IPN = reader[indIPN].ToString().Trim(),
                                     MFPN = reader[indMFPN].ToString(),
                                     Description = reader[indDescription].ToString(),
                                     QtyInKit = qtk,
@@ -672,6 +674,7 @@ namespace WH_Panel
             clearTextboxesOnSingleLabelClick(label3, textBox3);
             clearTextboxesOnSingleLabelClick(label9, textBox9);
             FilterTheMissingDataGridView();
+            FilterTheFoundDataGridView();
         }
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
@@ -800,6 +803,8 @@ namespace WH_Panel
             //    }
             //}
         }
+
+
         private void updateQtyInBomFile(KitHistoryItem w, int qtyToAdd)
         {
             KitHistoryItem itemToUpdate = MissingItemsList.FirstOrDefault(r => r.IPN == w.IPN && r.QtyPerUnit == w.QtyPerUnit);
@@ -837,18 +842,8 @@ namespace WH_Panel
                 {
                     PopulateMissingGridView();
 
-                    string ipnToUpdate = itemToUpdate.IPN; // The IPN value to match
+                    ipnToUpdate = itemToUpdate.IPN; // The IPN value to match
 
-                    //foreach (DataGridViewRow row in dataGridView1.Rows)
-                    //{
-                    //    // Check if the value in the IPN column matches the IPN to update
-                    //    if (row.Cells["IPN"].Value != null && row.Cells["IPN"].Value.ToString() == ipnToUpdate)
-                    //    {
-                    //        // Color the entire row orange
-                    //        row.DefaultCellStyle.BackColor = Color.Orange;
-
-                    //    }
-                    //}
 
                     foreach (DataGridViewRow row in dataGridView1.Rows)
                     {
@@ -921,6 +916,30 @@ namespace WH_Panel
                     lastTxtbInputFromUser.Clear();
                     lastTxtbInputFromUser.Focus();
 
+
+                    ipnToUpdate = w.IPN; // The IPN value to match
+
+
+                    foreach (DataGridViewRow row in dataGridView1.Rows)
+                    {
+                        // Check if the value in the IPN column matches the IPN to update (case-insensitive)
+                        if (row.Cells["IPN"].Value != null && row.Cells["IPN"].Value.ToString().Equals(ipnToUpdate, StringComparison.OrdinalIgnoreCase))
+                        {
+                            // Color the entire row orange
+                            row.DefaultCellStyle.BackColor = Color.Orange;
+
+                            // Set the focus to the current row by selecting the first cell in the row
+                            dataGridView1.CurrentCell = row.Cells[0]; // You can change the column index if needed
+
+                            // Optionally, select the entire row
+                            row.Cells["IPN"].Selected = true;
+
+                            break; // Exit the loop if you only want to focus on the first matching row
+                        }
+                    }
+
+
+
                 }
                 else
                 {
@@ -931,9 +950,9 @@ namespace WH_Panel
                 }
             }
 
-                
 
-         
+
+
 
 
 
@@ -1746,11 +1765,11 @@ namespace WH_Panel
         {
             textBox14.Clear();
         }
-   
+
         private void btnPrintKitLabel_MouseDown(object sender, MouseEventArgs e)
         {
             // Check if the right mouse button was clicked
-            if (e.Button == MouseButtons.Right && theExcelFilePath != string.Empty)
+            if (e.Button == MouseButtons.Left && theExcelFilePath != string.Empty)
             {
                 string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
 
