@@ -1437,6 +1437,8 @@ namespace WH_Panel
                     Source_Requester = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Source_Requester"].Index].Value.ToString()
                 };
                 inWHstock.Add(wHitemABC);
+
+                inWHstock.OrderBy(x => x.Updated_on).ToList();
             }
             List<WHitem> negatiVEQTYs = new List<WHitem>();
             for (int i = 0; i < inWHstock.Count; i++)
