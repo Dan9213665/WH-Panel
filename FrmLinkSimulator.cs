@@ -5,6 +5,7 @@ using Seagull.Framework.Extensions;
 using Seagull.Framework.Utility;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -1324,14 +1325,10 @@ var myPieChart = new Chart(ctx, {
             };
             process.Start();
         }
-        private void button3_Click(object sender, EventArgs e)
+        private async void button3_Click(object sender, EventArgs e)
         {
             SetSelectedBoms();
-            OptimizeBOMOrder();
-        }
 
-        private void OptimizeBOMOrder()
-        {
             // Step 1: Load stock data based on the selected warehouse
             foreach (ClientWarehouse w in warehouses)
             {
@@ -1342,6 +1339,197 @@ var myPieChart = new Chart(ctx, {
                     break;
                 }
             }
+
+            //OptimizeBOMOrder();
+            await OptimizeBOMOrderAsync();
+        }
+
+        //private async Task OptimizeBOMOrderAsync()
+        //{
+        //    // Step 1: Load stock data (already handled, not multithreaded)
+
+        //    if (selectedBOMs.Count >= 2)
+        //    {
+        //        // Step 2: Create a new thread-safe list to store kits with their completion status
+        //        var kitCompletionStatus = new ConcurrentBag<Tuple<BOMList, int, int, int, int>>();
+
+        //        // Parallelize the calculation for each kit
+        //        await Task.WhenAll(selectedBOMs.Select(bom => Task.Run(() =>
+        //        {
+        //            int totalItems = bom.Items.Count;
+        //            int fullyStockedItemsBefore = 0;   // Fully stocked items before simulation
+        //            int fullyStockedItemsAfter = 0;    // Fully stocked items after simulation
+
+        //            // Count items already in the kit
+        //            foreach (var kitItem in bom.Items)
+        //            {
+        //                if (kitItem.Delta >= 0) // Count fully stocked items
+        //                {
+        //                    fullyStockedItemsBefore++;
+        //                }
+        //                else if (kitItem.Delta < 0)
+        //                {
+        //                    var stockItem = stockItems
+        //                        .Where(s => s.IPN == kitItem.IPN)
+        //                        .Sum(s => s.Stock);
+
+        //                    if (stockItem != null && stockItem >= Math.Abs((decimal)kitItem.Delta))
+        //                    {
+        //                        fullyStockedItemsAfter++;
+        //                    }
+        //                }
+        //            }
+
+        //            // Add the kit and its statuses to the list
+        //            kitCompletionStatus.Add(new Tuple<BOMList, int, int, int, int>(
+        //                bom, fullyStockedItemsBefore, totalItems, fullyStockedItemsAfter, 0));
+
+        //        })));
+
+        //        // Step 5: Create a sortable table to display the kits and their statuses
+        //        Form kitsForm = new Form
+        //        {
+        //            Text = "Kits Sorted by Completion",
+        //            Height = 600,
+        //            Width = 1500,
+        //            StartPosition = FormStartPosition.CenterScreen,
+        //        };
+
+        //        DataGridView dataGridView = new DataGridView
+        //        {
+        //            Dock = DockStyle.Fill,
+        //            AutoGenerateColumns = false
+        //        };
+
+        //        // Add columns to the DataGridView
+        //        dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Kit Name", DataPropertyName = "KitName" });
+        //        dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Total Items", DataPropertyName = "TotalItems" });
+        //        dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "In kit", DataPropertyName = "FullyStockedBefore" });
+        //        dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "In warehouse", DataPropertyName = "FullyStockedAfter" });
+        //        dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Simulated Completion %", DataPropertyName = "CompletionPercentage" });
+
+        //        var dataSource = kitCompletionStatus.Select(k =>
+        //           new
+        //           {
+        //               KitName = k.Item1.Name,
+        //               FullyStockedBefore = k.Item2,
+        //               TotalItems = k.Item3,
+        //               FullyStockedAfter = k.Item4,
+        //               CompletionPercentage = k.Item3 > 0 ? $"{((double)(k.Item2 + k.Item4) / k.Item3) * 100:F2}%" : "0.00%"
+        //           })
+        //           .OrderByDescending(x => x.CompletionPercentage)
+        //           .ToList();
+
+        //        dataGridView.DataSource = dataSource;
+
+        //        // Enable sorting and auto-sizing to fit contents
+        //        foreach (DataGridViewColumn column in dataGridView.Columns)
+        //        {
+        //            column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+        //        }
+
+        //        // Step 7: Display the DataGridView in the form
+        //        kitsForm.Controls.Add(dataGridView);
+        //        kitsForm.ShowDialog();
+        //    }
+        //}
+
+        private async Task OptimizeBOMOrderAsync()
+        {
+            // Step 1: Start the stopwatch to measure performance
+            var stopwatch = new System.Diagnostics.Stopwatch();
+            stopwatch.Start();
+
+            // Step 2: Initialize a thread-safe list to store kits with their completion status
+            var kitCompletionStatus = new ConcurrentBag<Tuple<BOMList, int, int, int, int>>();
+
+            // Parallelize the calculation for each kit
+            await Task.WhenAll(selectedBOMs.Select(bom => Task.Run(() =>
+            {
+                int totalItems = bom.Items.Count;
+                int fullyStockedItemsBefore = 0;
+                int fullyStockedItemsAfter = 0;
+
+                foreach (var kitItem in bom.Items)
+                {
+                    if (kitItem.Delta >= 0)
+                    {
+                        fullyStockedItemsBefore++;
+                    }
+                    else if (kitItem.Delta < 0)
+                    {
+                        var stockItem = stockItems
+                            .Where(s => s.IPN == kitItem.IPN)
+                            .Sum(s => s.Stock);
+
+                        if (stockItem != null && stockItem >= Math.Abs((decimal)kitItem.Delta))
+                        {
+                            fullyStockedItemsAfter++;
+                        }
+                    }
+                }
+
+                kitCompletionStatus.Add(new Tuple<BOMList, int, int, int, int>(
+                    bom, fullyStockedItemsBefore, totalItems, fullyStockedItemsAfter, 0));
+            })));
+
+            stopwatch.Stop(); // Stop the stopwatch once processing is done
+
+            // Step 3: Calculate time taken and threads used
+            var timeTaken = stopwatch.ElapsedMilliseconds;
+            var threadsUsed = Environment.ProcessorCount;
+
+            // Step 4: Create a form to display the kits sorted by completion
+            Form kitsForm = new Form
+            {
+                Text = $"Kits Sorted by Completion (Time: {timeTaken} ms, Threads: {threadsUsed})",
+                Height = 600,
+                Width = 1500,
+                StartPosition = FormStartPosition.CenterScreen,
+            };
+
+            DataGridView dataGridView = new DataGridView
+            {
+                Dock = DockStyle.Fill,
+                AutoGenerateColumns = false
+            };
+
+            // Add columns to the DataGridView
+            dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Kit Name", DataPropertyName = "KitName" });
+            dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Total Items", DataPropertyName = "TotalItems" });
+            dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "In kit", DataPropertyName = "FullyStockedBefore" });
+            dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "In warehouse", DataPropertyName = "FullyStockedAfter" });
+            dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Simulated Completion %", DataPropertyName = "CompletionPercentage" });
+
+            var dataSource = kitCompletionStatus.Select(k =>
+                new
+                {
+                    KitName = k.Item1.Name,
+                    FullyStockedBefore = k.Item2,
+                    TotalItems = k.Item3,
+                    FullyStockedAfter = k.Item4,
+                    CompletionPercentage = k.Item3 > 0 ? $"{((double)(k.Item2 + k.Item4) / k.Item3) * 100:F2}%" : "0.00%"
+                })
+                .OrderByDescending(x => x.CompletionPercentage)
+                .ToList();
+
+            dataGridView.DataSource = dataSource;
+
+            // Enable sorting and auto-sizing to fit contents
+            foreach (DataGridViewColumn column in dataGridView.Columns)
+            {
+                column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
+
+            // Step 7: Display the DataGridView in the form
+            kitsForm.Controls.Add(dataGridView);
+            kitsForm.ShowDialog();
+        }
+
+
+        private void OptimizeBOMOrder()
+        {
+       
 
             if (selectedBOMs.Count >= 2)
             {
