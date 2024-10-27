@@ -195,7 +195,7 @@ namespace WH_Panel
                         DataLoader(fileName, theExcelFilePath);
                         // Add the selected file path to the list
                         selectedFileNames.Add(theExcelFilePath);
-                      
+
 
 
                     }
@@ -1329,7 +1329,7 @@ var myPieChart = new Chart(ctx, {
             SetSelectedBoms();
             OptimizeBOMOrder();
         }
-   
+
         private void OptimizeBOMOrder()
         {
             // Step 1: Load stock data based on the selected warehouse
@@ -1377,7 +1377,7 @@ var myPieChart = new Chart(ctx, {
                         }
                     }
 
-                   
+
 
                     // Add the kit and its statuses to the list
                     kitCompletionStatus.Add(new Tuple<BOMList, int, int, int, int>(
@@ -1407,7 +1407,7 @@ var myPieChart = new Chart(ctx, {
                 dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Kit Name", DataPropertyName = "KitName" });
                 dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Total Items", DataPropertyName = "TotalItems" });
                 dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "In kit", DataPropertyName = "FullyStockedBefore" });
-              
+
                 dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "In warehouse", DataPropertyName = "FullyStockedAfter" });
                 dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Simulated Completion %", DataPropertyName = "CompletionPercentage" });
 
@@ -1436,7 +1436,7 @@ var myPieChart = new Chart(ctx, {
                 // Step 7: Display the DataGridView in the form
                 kitsForm.Controls.Add(dataGridView);
 
-                
+
                 kitsForm.ShowDialog();
 
                 // Sort by CompletionPercentage in descending order
@@ -2064,5 +2064,33 @@ var myPieChart = new Chart(ctx, {
             PopulateDataGridView();
             SetSelectedBoms();
         }
+
+        private void button7_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                // Assuming the checkbox column is at index 0 (change the index to match your setup)
+                int checkboxColumnIndex = 0;
+
+                bool allChecked = true;
+
+                // First, check if all checkboxes are already checked
+                foreach (DataGridViewRow row in dataGridView1.Rows)
+                {
+                    if (row.Cells[checkboxColumnIndex].Value != null && !(bool)row.Cells[checkboxColumnIndex].Value)
+                    {
+                        allChecked = false;
+                        break;
+                    }
+                }
+
+                // If all are checked, uncheck all; otherwise, check all
+                foreach (DataGridViewRow row in dataGridView1.Rows)
+                {
+                    row.Cells[checkboxColumnIndex].Value = !allChecked;
+                }
+            }
+        }
+
     }
 }

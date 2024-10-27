@@ -34,6 +34,7 @@
             label1 = new Label();
             button7 = new Button();
             groupBox5 = new GroupBox();
+            button11 = new Button();
             button10 = new Button();
             button9 = new Button();
             button8 = new Button();
@@ -45,7 +46,6 @@
             button4 = new Button();
             dataGridView1 = new DataGridView();
             openFileDialog1 = new OpenFileDialog();
-            button11 = new Button();
             tableLayoutPanel1.SuspendLayout();
             groupBox1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
@@ -151,6 +151,7 @@
             button7.Text = "Toggle 100%";
             button7.UseVisualStyleBackColor = true;
             button7.Click += button7_Click;
+            button7.MouseDown += button7_MouseDown;
             // 
             // groupBox5
             // 
@@ -166,6 +167,16 @@
             groupBox5.TabIndex = 4;
             groupBox5.TabStop = false;
             groupBox5.Text = "Warehouse";
+            // 
+            // button11
+            // 
+            button11.Location = new Point(185, 48);
+            button11.Name = "button11";
+            button11.Size = new Size(52, 46);
+            button11.TabIndex = 4;
+            button11.Text = "4 M";
+            button11.UseVisualStyleBackColor = true;
+            button11.Click += button11_Click;
             // 
             // button10
             // 
@@ -289,16 +300,6 @@
             // openFileDialog1
             // 
             openFileDialog1.FileName = "openFileDialog1";
-            // 
-            // button11
-            // 
-            button11.Location = new Point(185, 48);
-            button11.Name = "button11";
-            button11.Size = new Size(52, 46);
-            button11.TabIndex = 4;
-            button11.Text = "4 M";
-            button11.UseVisualStyleBackColor = true;
-            button11.Click += button11_Click;
             // 
             // FrmLinkSimulator
             // 
