@@ -25,6 +25,7 @@ using ComboBox = System.Windows.Forms.ComboBox;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolBar;
 using ToolTip = System.Windows.Forms.ToolTip;
 using System.Data.SqlClient;
+using Action = System.Action;
 
 namespace WH_Panel
 {
@@ -53,11 +54,12 @@ namespace WH_Panel
                 Add(new KeyValuePair<TKey, TValue>(key, value));
             }
         }
-        private void FrmUberSearch_Load(object sender, EventArgs e)
+        private async void FrmUberSearch_Load(object sender, EventArgs e)
         {
             //InitializeWarehouses();
             UpdateControlColors(this);
-            startUpLogic();
+            //startUpLogic();
+           await startUpLogicAsync();
         }
         List<ClientWarehouse> warehouses { get; set; }
         public void InitializeGlobalWarehouses(List<ClientWarehouse> warehousesFromTheMain)
@@ -66,6 +68,403 @@ namespace WH_Panel
             // Ordering the warehouses list by clName
             warehouses = warehouses.OrderBy(warehouse => warehouse.clName).ToList();
         }
+
+        //private async Task startUpLogicAsync()
+        //{
+        //    List<Label> _seachableFieldsLabels = new List<Label> { label2, label4, label5, label9 };
+        //    foreach (Label l in _seachableFieldsLabels)
+        //    {
+        //        l.BackColor = Color.LightGreen;
+        //    }
+
+        //    List<TextBox> _searchableFieldsTextBoxes = new List<TextBox> { textBox2, textBox4, textBox5, textBox9 };
+        //    foreach (TextBox textBox in _searchableFieldsTextBoxes)
+        //    {
+        //        textBox.Enter += TextBox_Enter;
+        //        textBox.Leave += TextBox_Leave;
+        //    }
+
+        //    label1.BackColor = Color.IndianRed;
+
+        //    // Parallelize data loading for warehouses
+        //    List<Task> dataLoadingTasks = new List<Task>();
+
+        //    foreach (ClientWarehouse warehouse in warehouses)
+        //    {
+        //        if (warehouse.sqlStock != null)
+        //        {
+        //            dataLoadingTasks.Add(Task.Run(() => DataLoaderSql(warehouse.sqlStock)));
+        //        }
+        //        else
+        //        {
+        //            // Handle file loading for non-SQL warehouses
+        //            dataLoadingTasks.Add(Task.Run(() => DataLoader(warehouse.clStockFile, "STOCK")));
+        //        }
+        //    }
+
+        //    await Task.WhenAll(dataLoadingTasks); // Wait for all data loading tasks to complete
+
+        //    PopulateGridView();
+
+        //    // Create and add buttons to the FlowLayoutPanel
+        //    List<Button> buttons = new List<Button>();
+        //    for (int i = 0; i < warehouses.Count; i++)
+        //    {
+        //        string warehousePath = warehouses[i].sqlStock;
+        //        string warehouseName = warehouses[i].clName;
+        //        Button button = new Button { Tag = warehouseName, AutoSize = false, Size = new Size(90, 40) };
+
+        //        ToolTip toolTip = new ToolTip();
+        //        toolTip.SetToolTip(button, warehouseName);
+        //        button.Click += Button_Click;
+
+        //        if (File.Exists(warehouses[i].clLogo))
+        //        {
+        //            try
+        //            {
+        //                string logoFilePath = Path.Combine("dbr1", "WareHouse", "STOCK_CUSTOMERS", warehouseName, warehouses[i].clLogo);
+        //                button.BackgroundImage = Image.FromFile(logoFilePath);
+        //                button.BackgroundImageLayout = ImageLayout.Stretch;
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                Console.WriteLine($"Error loading logo: {ex.Message}");
+        //            }
+        //        }
+        //        buttons.Add(button);
+        //    }
+
+        //    flowLayoutPanel1.Controls.Clear();
+        //    foreach (Button button in buttons)
+        //    {
+        //        flowLayoutPanel1.Controls.Add(button);
+        //    }
+        //}
+
+        //private async Task DataLoaderSql(string fp)
+        //{
+        //    string connectionString = fp;
+
+        //    try
+        //    {
+        //        using (SqlConnection connection = new SqlConnection(connectionString))
+        //        {
+        //            SqlDataAdapter adapterStock = new SqlDataAdapter("SELECT * FROM STOCK", connection);
+        //            DataTable stockTable = new DataTable();
+        //            await Task.Run(() => adapterStock.Fill(stockTable)); // Load data asynchronously
+
+        //            foreach (DataRow row in stockTable.Rows)
+        //            {
+        //                WHitem item = new WHitem
+        //                {
+        //                    IPN = row["IPN"].ToString(),
+        //                    Manufacturer = row["Manufacturer"].ToString(),
+        //                    MFPN = row["MFPN"].ToString(),
+        //                    Description = row["Description"].ToString(),
+        //                    Stock = Convert.ToInt32(row["Stock"]),
+        //                    Updated_on = row["Updated_on"].ToString(),
+        //                    Comments = row["Comments"].ToString(),
+        //                    Source_Requester = row["Source_Requester"].ToString()
+        //                };
+
+        //                if (i > 0)
+        //                {
+        //                    countItems = i;
+        //                    if (countItems % 5000 == 0)
+        //                    {
+        //                        label1.Invoke((Action)(() => label1.Text = "Rows:" + countItems.ToString()));
+        //                        label1.Invoke((Action)(() => label1.Update()));
+        //                    }
+        //                    wHitems.Add(item);
+        //                }
+        //                i++;
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Handle error
+        //        Console.WriteLine($"Error loading STOCK table: {ex.Message}");
+        //    }
+        //}
+
+        //private async Task startUpLogicAsync()
+        //{
+        //    Stopwatch stopwatch = new Stopwatch();
+        //    stopwatch.Start();
+
+        //    int initialThreadCount = 0;
+        //    int finalThreadCount = 0;
+
+        //    ThreadPool.GetAvailableThreads(out initialThreadCount, out _);
+
+        //    List<Label> _seachableFieldsLabels = new List<Label> { label2, label4, label5, label9 };
+        //    foreach (Label l in _seachableFieldsLabels)
+        //    {
+        //        l.BackColor = Color.LightGreen;
+        //    }
+
+        //    List<TextBox> _searchableFieldsTextBoxes = new List<TextBox> { textBox2, textBox4, textBox5, textBox9 };
+        //    foreach (TextBox textBox in _searchableFieldsTextBoxes)
+        //    {
+        //        textBox.Enter += TextBox_Enter;
+        //        textBox.Leave += TextBox_Leave;
+        //    }
+
+        //    label1.BackColor = Color.IndianRed;
+
+        //    // Parallelize data loading for warehouses
+        //    List<Task> dataLoadingTasks = new List<Task>();
+
+        //    foreach (ClientWarehouse warehouse in warehouses)
+        //    {
+        //        if (warehouse.sqlStock != null)
+        //        {
+        //            dataLoadingTasks.Add(Task.Run(() => DataLoaderSql(warehouse.sqlStock)));
+        //        }
+        //        else
+        //        {
+        //            // Handle file loading for non-SQL warehouses
+        //            dataLoadingTasks.Add(Task.Run(() => DataLoader(warehouse.clStockFile, "STOCK")));
+        //        }
+        //    }
+
+        //    await Task.WhenAll(dataLoadingTasks); // Wait for all data loading tasks to complete
+
+        //    PopulateGridView();
+
+        //    // Create and add buttons to the FlowLayoutPanel
+        //    List<Button> buttons = new List<Button>();
+        //    for (int i = 0; i < warehouses.Count; i++)
+        //    {
+        //        string warehousePath = warehouses[i].sqlStock;
+        //        string warehouseName = warehouses[i].clName;
+        //        Button button = new Button { Tag = warehouseName, AutoSize = false, Size = new Size(90, 40) };
+
+        //        ToolTip toolTip = new ToolTip();
+        //        toolTip.SetToolTip(button, warehouseName);
+        //        button.Click += Button_Click;
+
+        //        if (File.Exists(warehouses[i].clLogo))
+        //        {
+        //            try
+        //            {
+        //                string logoFilePath = Path.Combine("dbr1", "WareHouse", "STOCK_CUSTOMERS", warehouseName, warehouses[i].clLogo);
+        //                button.BackgroundImage = Image.FromFile(logoFilePath);
+        //                button.BackgroundImageLayout = ImageLayout.Stretch;
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                Console.WriteLine($"Error loading logo: {ex.Message}");
+        //            }
+        //        }
+        //        buttons.Add(button);
+        //    }
+
+        //    flowLayoutPanel1.Controls.Clear();
+        //    foreach (Button button in buttons)
+        //    {
+        //        flowLayoutPanel1.Controls.Add(button);
+        //    }
+
+        //    stopwatch.Stop();
+        //    ThreadPool.GetAvailableThreads(out finalThreadCount, out _);
+
+        //    // Update the form's title with time taken and threads used
+        //    TimeSpan ts = stopwatch.Elapsed;
+        //    this.Text = $"App Title (Time: {ts.Seconds}.{ts.Milliseconds:000} s, Threads used: {initialThreadCount - finalThreadCount})";
+        //}
+
+        //private async Task DataLoaderSql(string fp)
+        //{
+        //    string connectionString = fp;
+
+        //    try
+        //    {
+        //        using (SqlConnection connection = new SqlConnection(connectionString))
+        //        {
+        //            SqlDataAdapter adapterStock = new SqlDataAdapter("SELECT * FROM STOCK", connection);
+        //            DataTable stockTable = new DataTable();
+        //            await Task.Run(() => adapterStock.Fill(stockTable)); // Load data asynchronously
+
+        //            foreach (DataRow row in stockTable.Rows)
+        //            {
+        //                WHitem item = new WHitem
+        //                {
+        //                    IPN = row["IPN"].ToString(),
+        //                    Manufacturer = row["Manufacturer"].ToString(),
+        //                    MFPN = row["MFPN"].ToString(),
+        //                    Description = row["Description"].ToString(),
+        //                    Stock = Convert.ToInt32(row["Stock"]),
+        //                    Updated_on = row["Updated_on"].ToString(),
+        //                    Comments = row["Comments"].ToString(),
+        //                    Source_Requester = row["Source_Requester"].ToString()
+        //                };
+
+        //                if (i > 0)
+        //                {
+        //                    countItems = i;
+        //                    if (countItems % 5000 == 0)
+        //                    {
+        //                        label1.Invoke((Action)(() => label1.Text = "Rows:" + countItems.ToString()));
+        //                        label1.Invoke((Action)(() => label1.Update()));
+        //                    }
+        //                    wHitems.Add(item);
+        //                }
+        //                i++;
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Handle error
+        //        Console.WriteLine($"Error loading STOCK table: {ex.Message}");
+        //    }
+        //}
+
+
+        private async Task startUpLogicAsync()
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            int initialThreadCount, finalThreadCount;
+            ThreadPool.GetAvailableThreads(out initialThreadCount, out _);
+
+            // Track the number of tasks (threads) executed
+            int taskCount = 0;
+
+            List<Label> _seachableFieldsLabels = new List<Label> { label2, label4, label5, label9 };
+            foreach (Label l in _seachableFieldsLabels)
+            {
+                l.BackColor = Color.LightGreen;
+            }
+
+            List<TextBox> _searchableFieldsTextBoxes = new List<TextBox> { textBox2, textBox4, textBox5, textBox9 };
+            foreach (TextBox textBox in _searchableFieldsTextBoxes)
+            {
+                textBox.Enter += TextBox_Enter;
+                textBox.Leave += TextBox_Leave;
+            }
+
+            label1.BackColor = Color.IndianRed;
+
+            // Parallelize data loading for warehouses
+            List<Task> dataLoadingTasks = new List<Task>();
+
+            foreach (ClientWarehouse warehouse in warehouses)
+            {
+                if (warehouse.sqlStock != null)
+                {
+                    dataLoadingTasks.Add(Task.Run(() =>
+                    {
+                        taskCount++; // Increment task counter
+                        DataLoaderSql(warehouse.sqlStock);
+                    }));
+                }
+                else
+                {
+                    // Handle file loading for non-SQL warehouses
+                    dataLoadingTasks.Add(Task.Run(() =>
+                    {
+                        taskCount++; // Increment task counter
+                        DataLoader(warehouse.clStockFile, "STOCK");
+                    }));
+                }
+            }
+
+            await Task.WhenAll(dataLoadingTasks); // Wait for all data loading tasks to complete
+
+            PopulateGridView();
+
+            // Create and add buttons to the FlowLayoutPanel
+            List<Button> buttons = new List<Button>();
+            for (int i = 0; i < warehouses.Count; i++)
+            {
+                string warehousePath = warehouses[i].sqlStock;
+                string warehouseName = warehouses[i].clName;
+                Button button = new Button { Tag = warehouseName, AutoSize = false, Size = new Size(90, 40) };
+
+                ToolTip toolTip = new ToolTip();
+                toolTip.SetToolTip(button, warehouseName);
+                button.Click += Button_Click;
+
+                if (File.Exists(warehouses[i].clLogo))
+                {
+                    try
+                    {
+                        string logoFilePath = Path.Combine("dbr1", "WareHouse", "STOCK_CUSTOMERS", warehouseName, warehouses[i].clLogo);
+                        button.BackgroundImage = Image.FromFile(logoFilePath);
+                        button.BackgroundImageLayout = ImageLayout.Stretch;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error loading logo: {ex.Message}");
+                    }
+                }
+                buttons.Add(button);
+            }
+
+            flowLayoutPanel1.Controls.Clear();
+            foreach (Button button in buttons)
+            {
+                flowLayoutPanel1.Controls.Add(button);
+            }
+
+            stopwatch.Stop();
+            ThreadPool.GetAvailableThreads(out finalThreadCount, out _);
+
+            // Update the form's title with time taken and task count
+            TimeSpan ts = stopwatch.Elapsed;
+            this.Text = $"App Title (Time: {ts.Seconds}.{ts.Milliseconds:000} s, Tasks used: {taskCount})";
+        }
+
+        private async Task DataLoaderSql(string fp)
+        {
+            string connectionString = fp;
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    SqlDataAdapter adapterStock = new SqlDataAdapter("SELECT * FROM STOCK", connection);
+                    DataTable stockTable = new DataTable();
+                    await Task.Run(() => adapterStock.Fill(stockTable)); // Load data asynchronously
+
+                    foreach (DataRow row in stockTable.Rows)
+                    {
+                        WHitem item = new WHitem
+                        {
+                            IPN = row["IPN"].ToString(),
+                            Manufacturer = row["Manufacturer"].ToString(),
+                            MFPN = row["MFPN"].ToString(),
+                            Description = row["Description"].ToString(),
+                            Stock = Convert.ToInt32(row["Stock"]),
+                            Updated_on = row["Updated_on"].ToString(),
+                            Comments = row["Comments"].ToString(),
+                            Source_Requester = row["Source_Requester"].ToString()
+                        };
+
+                        if (i > 0)
+                        {
+                            countItems = i;
+                            if (countItems % 5000 == 0)
+                            {
+                                label1.Invoke((Action)(() => label1.Text = "Rows:" + countItems.ToString()));
+                                label1.Invoke((Action)(() => label1.Update()));
+                            }
+                            wHitems.Add(item);
+                        }
+                        i++;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading STOCK table: {ex.Message}");
+            }
+        }
+
         private void startUpLogic()
         {
             List<Label> _seachableFieldsLabels = new List<Label>();
@@ -136,27 +535,14 @@ namespace WH_Panel
                 }
                 buttons.Add(button); // Add the button to the list
             }
-            //// Sort the buttons alphabetically based on their text
-            //buttons.Sort((x, y) => string.Compare(x.Text, y.Text, StringComparison.Ordinal));
-            // Sort the buttons alphabetically based on their tooltip text
-            //buttons.Sort((x, y) => string.Compare(x.ToolTipText, y.ToolTipText, StringComparison.Ordinal));
-            // Set the first row's SizeType to AutoSize and a minimum height
-            //tableLayoutPanel1.RowStyles[0] = new RowStyle(SizeType.AutoSize, 80);
-            //tableLayoutPanel1.RowStyles[1] = new RowStyle(SizeType.AutoSize, 80);
-            //tableLayoutPanel2.RowStyles[0] = new RowStyle(SizeType.AutoSize, 80);
-            //tableLayoutPanel3.RowStyles[0] = new RowStyle(SizeType.AutoSize, 80);
+         
             flowLayoutPanel1.Controls.Clear();
             // Add the sorted buttons to the flowLayoutPanel1 control
             foreach (Button button in buttons)
             {
                 flowLayoutPanel1.Controls.Add(button); // Add the button to the FlowLayoutPanel
             }
-            // Refresh the layout to trigger the automatic adjustment of the first row's height
-            // Refresh the layout to trigger the automatic adjustment of the first row's height
-            //flowLayoutPanel1.PerformLayout();
-            //tableLayoutPanel1.PerformLayout();
-            //tableLayoutPanel2.PerformLayout();
-            //tableLayoutPanel3.PerformLayout();
+       
         }
         private void Button_Click(object sender, EventArgs e)
         {
@@ -171,52 +557,52 @@ namespace WH_Panel
             // Call the public method to set the ComboBox text
             w.SetComboBoxText(warehousePath);
         }
-        private void DataLoaderSql (string fp)
-        {
-            string connectionString = fp;
+        //private void DataLoaderSql (string fp)
+        //{
+        //    string connectionString = fp;
 
-            try
-            {
-                // Load STOCK table into dataGridView1
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
+        //    try
+        //    {
+        //        // Load STOCK table into dataGridView1
+        //        using (SqlConnection connection = new SqlConnection(connectionString))
+        //        {
 
 
-                    SqlDataAdapter adapterStock = new SqlDataAdapter("SELECT * FROM STOCK", connection);
+        //            SqlDataAdapter adapterStock = new SqlDataAdapter("SELECT * FROM STOCK", connection);
 
-                    DataTable stockTable = new DataTable();
-                    adapterStock.Fill(stockTable);
+        //            DataTable stockTable = new DataTable();
+        //            adapterStock.Fill(stockTable);
 
-                    foreach (DataRow row in stockTable.Rows)
-                    {
-                        WHitem item = new WHitem
-                        {
-                            IPN = row["IPN"].ToString(),
-                            Manufacturer = row["Manufacturer"].ToString(),
-                            MFPN = row["MFPN"].ToString(),
-                            Description = row["Description"].ToString(),
-                            Stock = Convert.ToInt32(row["Stock"]), // Assuming Stock is an integer field
-                            Updated_on = row["Updated_on"].ToString(),
-                            Comments = row["Comments"].ToString(),
-                            Source_Requester = row["Source_Requester"].ToString()
-                        };
-                        if (i > 0)
-                        {
-                            countItems = i;
-                            label1.Text = "Rows:" + (countItems).ToString();
-                            if (countItems % 5000 == 0)
-                            { label1.Update(); }
-                            wHitems.Add(item);
-                        }
-                        i++;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                // MessageBox.Show($"Error loading STOCK table: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
+        //            foreach (DataRow row in stockTable.Rows)
+        //            {
+        //                WHitem item = new WHitem
+        //                {
+        //                    IPN = row["IPN"].ToString(),
+        //                    Manufacturer = row["Manufacturer"].ToString(),
+        //                    MFPN = row["MFPN"].ToString(),
+        //                    Description = row["Description"].ToString(),
+        //                    Stock = Convert.ToInt32(row["Stock"]), // Assuming Stock is an integer field
+        //                    Updated_on = row["Updated_on"].ToString(),
+        //                    Comments = row["Comments"].ToString(),
+        //                    Source_Requester = row["Source_Requester"].ToString()
+        //                };
+        //                if (i > 0)
+        //                {
+        //                    countItems = i;
+        //                    label1.Text = "Rows:" + (countItems).ToString();
+        //                    if (countItems % 5000 == 0)
+        //                    { label1.Update(); }
+        //                    wHitems.Add(item);
+        //                }
+        //                i++;
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // MessageBox.Show($"Error loading STOCK table: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //    }
+        //}
         private void DataLoader(string fp, string thesheetName)
         {
             try

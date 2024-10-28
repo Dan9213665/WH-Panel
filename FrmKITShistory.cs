@@ -298,7 +298,6 @@ namespace WH_Panel
                         string copyFilePath = CreateCopyOfFile(file);
                         DataLoader(copyFilePath, fileName);
                         DeleteFile(copyFilePath);
-                        //DataLoader(file, Litem);
                     }
                     else
                     {
