@@ -217,7 +217,7 @@ namespace WH_Panel
                 groupBox.Width = 140;
                 groupBox.Height = 130;
             }
-            comboBox3.SelectedItem = "LEADER-TECH";
+            comboBox3.SelectedItem = "VALENS";
 
         }
 
