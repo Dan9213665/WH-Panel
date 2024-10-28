@@ -808,7 +808,7 @@ namespace WH_Panel
             Form messageForm = new Form()
             {
                 StartPosition = FormStartPosition.CenterScreen,
-                Size = new Size(600, 200),
+                Size = new Size(900, 200),
                 FormBorderStyle = FormBorderStyle.FixedDialog,
                 MaximizeBox = false,
                 MinimizeBox = false,
