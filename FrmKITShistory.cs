@@ -244,6 +244,16 @@ namespace WH_Panel
             SetColumsOrder();
             textBox1.Focus();
         }
+
+        //private async void button1_Click(object sender, EventArgs e)
+        //{
+        //    stopWatch.Reset();
+        //    ResetViews();
+        //    await StartUpLogicAsync(2);
+        //    SetColumsOrder();
+        //    textBox1.Focus();
+        //}
+
         private void ResetViews()
         {
             listBox1.Items.Clear();
@@ -312,6 +322,58 @@ namespace WH_Panel
             stopWatch.Stop();
             SaveToCachedXML(KitHistoryItemsList);
         }
+
+
+        //private async Task StartUpLogicAsync(int timeSpan)
+        //{
+        //    stopWatch.Start();
+        //    label12.BackColor = Color.IndianRed;
+
+        //    // Aggregate list of paths based on timeSpan
+        //    listOfPaths = timeSpan switch
+        //    {
+        //        2 => listOfPathsAggregator(1),
+        //        6 => listOfPathsAggregator(5),
+        //        12 => listOfPathsAggregator(11),
+        //        _ => listOfPathsAggregator(timeSpan)
+        //    };
+
+        //    // Enumerate and process files asynchronously
+        //    foreach (string path in listOfPaths)
+        //    {
+        //        var files = Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories);
+
+        //        foreach (string file in files)
+        //        {
+        //            countLoadedFIles++;
+        //            string Litem = Path.GetFileName(file);
+        //            string fileName = Path.GetFileName(file);
+
+        //            // Check if file is locked and process accordingly
+        //            if (FileIsLocked(Litem))
+        //            {
+        //                string copyFilePath = await Task.Run(() => CreateCopyOfFile(file));
+        //                await Task.Run(() => DataLoader(copyFilePath, fileName));
+        //                await Task.Run(() => DeleteFile(copyFilePath));
+        //            }
+        //            else
+        //            {
+        //                AddErrorousFilesToListOfErrors(Litem);
+        //            }
+        //        }
+        //    }
+
+        //    cachedDataLoaded = false;
+        //    PopulateGridView();
+        //    SetColumsOrder();
+        //    stopWatch.Stop();
+
+        //    // Save to cached XML asynchronously
+        //    await Task.Run(() => SaveToCachedXML(KitHistoryItemsList));
+        //}
+
+
+
         private List<string> listOfPathsAggregator(int numMonths)
         {
             List<string> list = new List<string>();
@@ -898,6 +960,26 @@ namespace WH_Panel
             SetColumsOrder();
             textBox1.Focus();
         }
+        //private async void button2_Click(object sender, EventArgs e)
+        //{
+        //    stopWatch.Reset();
+        //    ResetViews();
+        //    await StartUpLogicAsync(6);
+        //    SetColumsOrder();
+        //    textBox1.Focus();
+        //}
+
+        //private async void button3_Click(object sender, EventArgs e)
+        //{
+        //    stopWatch.Reset();
+        //    ResetViews();
+        //    await StartUpLogicAsync(12);
+        //    SetColumsOrder();
+        //    textBox1.Focus();
+        //}
+
+
+
         private void textBox11_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
@@ -1220,6 +1302,41 @@ namespace WH_Panel
                 //MessageBox.Show("Operation canceled by user.");
             }
         }
+
+        //private async void button5_Click(object sender, EventArgs e)
+        //{
+        //    stopWatch.Reset();
+        //    ResetViews();
+
+        //    // Get the current date
+        //    DateTime currentDate = DateTime.Now;
+        //    // Set the reference date to September 2022
+        //    DateTime referenceDate = new DateTime(2022, 9, 1);
+        //    // Calculate the difference in months
+        //    int numMonths = CalculateMonthsDifference(referenceDate, currentDate);
+
+        //    // Display a YES/NO question to the user
+        //    DialogResult result = MessageBox.Show(
+        //        $"Are you sure you want to load the last {numMonths} months passed since 2022.09?",
+        //        "EXTREMELY LONG LOADING TIMES WARNING !!!",
+        //        MessageBoxButtons.YesNo,
+        //        MessageBoxIcon.Warning
+        //    );
+
+        //    // Check the user's response
+        //    if (result == DialogResult.Yes)
+        //    {
+        //        // User clicked YES, proceed with loading numMonths
+        //        await StartUpLogicAsync(numMonths);
+        //        SetColumsOrder();
+        //        textBox1.Focus();
+        //    }
+        //    else
+        //    {
+        //        // User clicked NO, handle accordingly if needed
+        //    }
+        //}
+
         static int CalculateMonthsDifference(DateTime startDate, DateTime endDate)
         {
             int monthsApart = (endDate.Year - startDate.Year) * 12 + endDate.Month - startDate.Month;

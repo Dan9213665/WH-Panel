@@ -808,7 +808,7 @@ namespace WH_Panel
             Form messageForm = new Form()
             {
                 StartPosition = FormStartPosition.CenterScreen,
-                Size = new Size(900, 200),
+                Size = new Size(600, 200),
                 FormBorderStyle = FormBorderStyle.FixedDialog,
                 MaximizeBox = false,
                 MinimizeBox = false,
@@ -1129,44 +1129,7 @@ namespace WH_Panel
 
         }
 
-        //private void uploadXMLdataIntoSQLdataBase()
-        //{
-        //    // Step 1: Ensure the XML file path is valid
-        //    if (string.IsNullOrEmpty(selectedXmlFilePath) || !File.Exists(selectedXmlFilePath))
-        //    {
-        //        MessageBox.Show("No valid XML file selected to upload.");
-        //        return;
-        //    }
 
-        //    // Step 2: Load the XML document
-        //    XDocument xdoc = XDocument.Load(selectedXmlFilePath);
-
-        //    // Step 3: Iterate through each item in the XML
-        //    foreach (var item in xdoc.Descendants("whItemStockCounter"))
-        //    {
-        //        // Extract the values from the XML elements
-        //        whItemStockCounter countedItem = new whItemStockCounter
-        //        {
-        //            IPN = (string)item.Element("IPN"),
-        //            MFPN = (string)item.Element("MFPN"),
-        //            Stock = (int)item.Element("Stock"),
-        //            Comments = (string)item.Element("Comments"),
-        //            Id = (int)item.Element("Id"),
-        //            Counted = (string)item.Element("Counted"),
-        //            User = (string)item.Element("User"),
-        //            Manufacturer = (string)item.Element("Manufacturer"),
-        //            Description = (string)item.Element("Description"),
-        //            Updated_on = (string)item.Element("Updated_on"),
-        //            Source_Requester = (string)item.Element("Source_Requester")
-        //        };
-
-        //        // Step 4: Save the counted item to the database
-        //        SaveCountedItemsToDatabase(countedItem);
-        //    }
-
-        //    // Step 5: Provide feedback to the user
-        //    MessageBox.Show("Data has been successfully uploaded to the database.");
-        //}
 
 
         private void ShowMatchSelectionForm(List<DataGridViewRow> matchingRows)
@@ -1176,7 +1139,7 @@ namespace WH_Panel
             Form selectionForm = new Form
             {
                 Text = "Select a Matching Item",
-                Size = new Size(800, matchingRows.Count * heightMultiplier),
+                Size = new Size(1200, matchingRows.Count * heightMultiplier),
                 StartPosition = FormStartPosition.CenterParent
             };
 
@@ -1973,13 +1936,130 @@ namespace WH_Panel
                         {
                             // If user confirms DELETE, handle the delete operation here
                             DeleteFromSqlDataBase(id); // Placeholder for the actual delete logic
-                            
+
+                        }
+                        else if (customMessageBox.Result == DialogResult.OK)
+                        {
+                            // If user confirms DELETE, handle the delete operation here
+                            UpdatePackage(id, @"7""");
+                        }
+                        else if (customMessageBox.Result == DialogResult.Abort)
+                        {
+                            // If user confirms DELETE, handle the delete operation here
+                            UpdatePackage(id, @"Bag");
+                        }
+                        else if (customMessageBox.Result == DialogResult.Continue)
+                        {
+                            // If user confirms DELETE, handle the delete operation here
+                            UpdatePackage(id, @"13""");
+                        }
+                        else if (customMessageBox.Result == DialogResult.Ignore)
+                        {
+                            // If user confirms DELETE, handle the delete operation here
+                            UpdatePackage(id, @"Stick");
+                        }
+                        else if (customMessageBox.Result == DialogResult.Retry)
+                        {
+                            // If user confirms DELETE, handle the delete operation here
+                            UpdatePackage(id, @"Tray");
                         }
                         // Cancel does nothing
                     }
                 }
             }
         }
+
+
+        //private void dataGridView1_MouseDown(object sender, MouseEventArgs e)
+        //{
+        //    if (e.Button == MouseButtons.Right)
+        //    {
+        //        var hitTestInfo = dataGridView1.HitTest(e.X, e.Y);
+        //        if (hitTestInfo.RowIndex >= 0)
+        //        {
+        //            dataGridView1.ClearSelection();
+        //            dataGridView1.Rows[hitTestInfo.RowIndex].Selected = true;
+
+        //            DataGridViewRow selectedRow = dataGridView1.Rows[hitTestInfo.RowIndex];
+        //            int id = Convert.ToInt32(selectedRow.Cells["Id"].Value);
+
+        //            // Define comment options (modify as needed to pull options dynamically)
+        //            List<string> commentOptions = new List<string> { "Comment 1", "Comment 2", "Comment 3" };
+
+        //            // Prepare and show the custom message box
+        //            string message = $"Select an action for the item:\n\n" +
+        //                             $"Id: {id}\n";
+        //            using (CustomMessageBox customMessageBox = new CustomMessageBox(message, commentOptions))
+        //            {
+        //                customMessageBox.ShowDialog();
+
+        //                if (customMessageBox.Result == DialogResult.Yes)
+        //                {
+        //                    DeleteFromCountTable(id);
+        //                }
+        //                else if (customMessageBox.Result == DialogResult.No)
+        //                {
+        //                    DeleteFromSqlDataBase(id);
+        //                }
+        //                else if (customMessageBox.Result == DialogResult.OK)
+        //                {
+        //                    UpdatePackage(id, customMessageBox.SelectedComment); // Update comments in the database
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+
+        private void UpdatePackage(int id, string newComment)
+        {
+            // Prepare the confirmation message
+            string message = $"Are you sure you want to UPDATE the item in STOCK:\n\n" +
+                             $"Id: {id}\n" +
+                             $"New Comments: {newComment}";
+
+            // Ask for user confirmation
+            DialogResult dialogResult = MessageBox.Show(message, "Confirm UPDATE in STOCK", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+            if (dialogResult == DialogResult.Yes)
+            {
+                // If user confirms, perform the update operation
+                string connectionString = selectedWHconnstring; // Update with your actual connection string
+
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string selectedTable = comboBox3.SelectedItem?.ToString();
+                    string query = $"UPDATE [{selectedTable}].dbo.STOCK SET comments = @comments WHERE Id = @id";
+
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@comments", newComment);
+                        command.Parameters.AddWithValue("@id", id);
+
+                        // Execute the update command
+                        int rowsAffected = command.ExecuteNonQuery();
+
+                        // Optionally, check if the update was successful
+                        if (rowsAffected > 0)
+                        {
+                            MessageBox.Show("Comments updated successfully.", "Update Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            textBox1.Focus();
+                            SendKeys.Send("{ENTER}"); // Simulate pressing Enter
+                        }
+                        else
+                        {
+                            MessageBox.Show("No records were updated. Please check the ID.", "Update Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // Optionally, handle the case where the user cancels the operation
+                MessageBox.Show("Update operation was canceled.", "Update Canceled", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
 
         private void DeleteFromSqlDataBase(int id)
         {

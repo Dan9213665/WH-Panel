@@ -27,7 +27,7 @@
         {
             DateTimePicker dateTimePicker1;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmClientAgnosticWH));
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             groupBox1 = new GroupBox();
             checkBox1 = new CheckBox();
             pictureBox1 = new PictureBox();
@@ -147,7 +147,7 @@
             groupBox1.Dock = DockStyle.Fill;
             groupBox1.Location = new Point(0, 0);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(1880, 874);
+            groupBox1.Size = new Size(1880, 906);
             groupBox1.TabIndex = 5;
             groupBox1.TabStop = false;
             groupBox1.Text = "AGNOSTIC WAREHOUSE";
@@ -195,7 +195,7 @@
             tabControl1.Location = new Point(3, 19);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(1874, 852);
+            tabControl1.Size = new Size(1874, 884);
             tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -205,7 +205,7 @@
             tabPage1.Location = new Point(4, 24);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(1866, 824);
+            tabPage1.Size = new Size(1866, 856);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Agnostic";
             tabPage1.UseVisualStyleBackColor = true;
@@ -230,7 +230,7 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
-            tableLayoutPanel1.Size = new Size(1860, 818);
+            tableLayoutPanel1.Size = new Size(1860, 850);
             tableLayoutPanel1.TabIndex = 1;
             // 
             // groupBox2
@@ -837,7 +837,7 @@
             groupBox4.Dock = DockStyle.Fill;
             groupBox4.Location = new Point(3, 642);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(1854, 173);
+            groupBox4.Size = new Size(1854, 205);
             groupBox4.TabIndex = 2;
             groupBox4.TabStop = false;
             groupBox4.Text = "Stock VIEW filtered by selected item";
@@ -858,7 +858,7 @@
             tableLayoutPanel6.RowCount = 2;
             tableLayoutPanel6.RowStyles.Add(new RowStyle());
             tableLayoutPanel6.RowStyles.Add(new RowStyle());
-            tableLayoutPanel6.Size = new Size(1848, 151);
+            tableLayoutPanel6.Size = new Size(1848, 183);
             tableLayoutPanel6.TabIndex = 1;
             // 
             // tableLayoutPanel7
@@ -1119,14 +1119,14 @@
             // 
             dataGridView2.AllowUserToAddRows = false;
             dataGridView2.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = SystemColors.ControlDark;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            dataGridView2.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = SystemColors.ControlDark;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle2.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dataGridView2.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView2.Dock = DockStyle.Fill;
             dataGridView2.Location = new Point(3, 19);
@@ -1147,7 +1147,7 @@
             tabPage2.Controls.Add(flowLayoutPanel1);
             tabPage2.Location = new Point(4, 24);
             tabPage2.Name = "tabPage2";
-            tabPage2.Size = new Size(1866, 824);
+            tabPage2.Size = new Size(1866, 856);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "DBM";
             tabPage2.UseVisualStyleBackColor = true;
@@ -1158,7 +1158,7 @@
             flowLayoutPanel1.Dock = DockStyle.Fill;
             flowLayoutPanel1.Location = new Point(0, 0);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(1866, 824);
+            flowLayoutPanel1.Size = new Size(1866, 856);
             flowLayoutPanel1.TabIndex = 0;
             // 
             // openFileDialog1
@@ -1169,7 +1169,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1880, 874);
+            ClientSize = new Size(1880, 906);
             Controls.Add(groupBox1);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FrmClientAgnosticWH";
