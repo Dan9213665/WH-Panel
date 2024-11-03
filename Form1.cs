@@ -22,7 +22,7 @@ namespace WH_Panel
             DateTime fileModifiedDate = File.GetLastWriteTime(@"ImperiumTabulaPrincipalis.exe");
             this.Text = "Imperium Tabula Principalis UPDATED " + fileModifiedDate.ToString();
             // Check if the machine name is "lgt"
-            if (Environment.MachineName == "RT12")
+            if (Environment.MachineName == "RT12"|| Environment.MachineName == "RT19")
             {
                 // Set the starting position for the form
                 SetFormStartPosition();

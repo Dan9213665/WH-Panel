@@ -229,6 +229,7 @@
             button2.TabIndex = 8;
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
+            button2.MouseDown += button2_MouseDown;
             // 
             // button3
             // 

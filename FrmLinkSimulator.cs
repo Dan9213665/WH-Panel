@@ -27,6 +27,7 @@ using Button = System.Windows.Forms.Button;
 using CheckBox = System.Windows.Forms.CheckBox;
 using ComboBox = System.Windows.Forms.ComboBox;
 using DataTable = System.Data.DataTable;
+using Font = System.Drawing.Font;
 using GroupBox = System.Windows.Forms.GroupBox;
 using Label = System.Windows.Forms.Label;
 using ListBox = System.Windows.Forms.ListBox;
@@ -657,10 +658,248 @@ namespace WH_Panel
         {
             //
         }
-        private void button2_Click(object sender, EventArgs e)
+        //private void button2_Click(object sender, EventArgs e)
+        //{
+        //    // Right-click logic can be added later
+        //}
+        private async void button2_Click(object sender, EventArgs e)
         {
-            // Right-click logic can be added later
+            // Create a new form for the popup window
+            Form popupForm = new Form
+            {
+                Width = 800,
+                Height = 600,
+                StartPosition = FormStartPosition.CenterScreen,
+                Text = "IPN Kit Usage Overview"
+            };
+
+            // Create and configure the DataGridView
+            DataGridView dataGridView = new DataGridView
+            {
+                Dock = DockStyle.Fill,
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                ReadOnly = true,
+                AllowUserToAddRows = false
+            };
+
+            // Add the DataGridView to the popup form
+            popupForm.Controls.Add(dataGridView);
+
+            // Populate the DataGridView asynchronously
+            await PopulateDataGridViewAsync(dataGridView);
+
+            // Show the popup form
+            popupForm.ShowDialog();
         }
+
+        //private async Task PopulateDataGridViewAsync(DataGridView dataGridView)
+        //{
+        //    dataGridView.Columns.Clear();
+        //    dataGridView.Columns.Add("IPN", "IPN");
+
+        //    //// Step 1: Add columns for each kit in selectedBOMs
+        //    //foreach (var bom in selectedBOMs)
+        //    //{
+        //    //    dataGridView.Columns.Add(bom.Name, bom.Name);
+        //    //}
+        //    // Step 1: Add columns for each kit, displaying only the relevant part of bom.Name
+        //    foreach (var bom in selectedBOMs)
+        //    {
+        //        string[] nameParts = bom.Name.Split('_');
+        //        string displayName = nameParts.Length >= 3 ? $"{nameParts[1]}_{nameParts[2].Replace(".xlsm", "")}" : bom.Name;
+        //        dataGridView.Columns.Add(displayName, displayName);
+        //    }
+
+        //    // Step 2: Prepare a dictionary to track IPNs and their DELTA values across kits
+        //    var ipnData = new Dictionary<string, Dictionary<string, int?>>(); // Nullable int for DELTA
+
+        //    foreach (var bom in selectedBOMs)
+        //    {
+        //        foreach (var item in bom.Items)
+        //        {
+        //            if (!ipnData.ContainsKey(item.IPN))
+        //            {
+        //                ipnData[item.IPN] = new Dictionary<string, int?>();
+        //            }
+
+        //            ipnData[item.IPN][bom.Name] = item.Delta; // Add DELTA for IPN in this kit
+        //        }
+        //    }
+
+        //    // Step 3: Populate DataGridView rows with IPN data
+        //    foreach (var ipn in ipnData.OrderByDescending(entry => entry.Value.Count(v => v.Value.HasValue)))
+        //    {
+        //        var row = new DataGridViewRow();
+        //        row.CreateCells(dataGridView);
+
+        //        row.Cells[0].Value = ipn.Key; // IPN
+
+        //        foreach (var bom in selectedBOMs)
+        //        {
+        //            // Extract the relevant part of bom.Name for the column header
+        //            string[] nameParts = bom.Name.Split('_');
+        //            string displayName = nameParts.Length >= 3 ? $"{nameParts[1]}_{nameParts[2].Replace(".xlsm", "")}" : bom.Name;
+
+        //            // Use the extracted displayName to access the correct column index
+        //            if (dataGridView.Columns.Contains(displayName))
+        //            {
+        //                if (ipn.Value.TryGetValue(bom.Name, out var delta))
+        //                {
+        //                    row.Cells[dataGridView.Columns[displayName].Index].Value = delta;
+
+        //                    // Apply color based on delta value
+        //                    if (delta >= 0)
+        //                    {
+        //                        row.Cells[dataGridView.Columns[displayName].Index].Style.BackColor = Color.LightGreen;
+        //                    }
+        //                    else if (delta < 0)
+        //                    {
+        //                        row.Cells[dataGridView.Columns[displayName].Index].Style.BackColor = Color.IndianRed;
+        //                    }
+        //                    // No color for delta == 0 or null
+        //                }
+        //                else
+        //                {
+        //                    row.Cells[dataGridView.Columns[displayName].Index].Value = string.Empty;
+        //                }
+        //            }
+        //        }
+
+        //        dataGridView.Rows.Add(row);
+        //    }
+
+
+        //}
+
+
+        private async Task PopulateDataGridViewAsync(DataGridView dataGridView)
+        {
+            dataGridView.Columns.Clear();
+
+            // Set default styles for DataGridView
+            dataGridView.BackgroundColor = Color.LightGray; // Set background color to light gray
+            dataGridView.DefaultCellStyle.BackColor = Color.LightGray; // Default cell background color
+            dataGridView.DefaultCellStyle.Font = new Font(dataGridView.DefaultCellStyle.Font, FontStyle.Regular); // Default font style
+
+
+            // Step 1: Add Total Appearances column and IPN column
+            dataGridView.Columns.Add("Count", "Count"); // New count column
+            var ipnColumn = new DataGridViewTextBoxColumn
+            {
+                Name = "IPN",
+                HeaderText = "IPN",
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells // Automatically adjusts the width to fit content
+            };
+            dataGridView.Columns.Add(ipnColumn);
+
+            // Step 2: Add columns for each kit, displaying only the relevant part of bom.Name
+            foreach (var bom in selectedBOMs)
+            {
+                string[] nameParts = bom.Name.Split('_');
+                string displayName = nameParts.Length >= 3 ? $"{nameParts[1]}_{nameParts[2].Replace(".xlsm", "")}" : bom.Name;
+                dataGridView.Columns.Add(displayName, displayName);
+            }
+
+            // Step 3: Prepare a dictionary to track IPNs and their DELTA values across kits
+            var ipnData = new Dictionary<string, Dictionary<string, int?>>(); // Nullable int for DELTA
+
+            foreach (var bom in selectedBOMs)
+            {
+                foreach (var item in bom.Items)
+                {
+                    if (!ipnData.ContainsKey(item.IPN))
+                    {
+                        ipnData[item.IPN] = new Dictionary<string, int?>();
+                    }
+
+                    ipnData[item.IPN][bom.Name] = item.Delta; // Add DELTA for IPN in this kit
+                }
+            }
+
+            // Step 4: Populate DataGridView rows with IPN data
+            foreach (var ipn in ipnData.OrderByDescending(entry => entry.Value.Count(v => v.Value.HasValue)))
+            {
+                var row = new DataGridViewRow();
+                row.CreateCells(dataGridView);
+
+                // Calculate the total appearances of the IPN across all kits
+                int appearanceCount = ipn.Value.Values.Count(delta => delta.HasValue);
+
+                row.Cells[0].Value = appearanceCount; // Total Appearances
+                row.Cells[1].Value = ipn.Key; // IPN
+
+                foreach (var bom in selectedBOMs)
+                {
+                    // Extract the relevant part of bom.Name for the column header
+                    string[] nameParts = bom.Name.Split('_');
+                    string displayName = nameParts.Length >= 3 ? $"{nameParts[1]}_{nameParts[2].Replace(".xlsm", "")}" : bom.Name;
+
+                    // Use the extracted displayName to access the correct column index
+                    if (dataGridView.Columns.Contains(displayName))
+                    {
+                        if (ipn.Value.TryGetValue(bom.Name, out var delta))
+                        {
+                            row.Cells[dataGridView.Columns[displayName].Index].Value = delta;
+                            row.Cells[dataGridView.Columns[displayName].Index].Style.Font = new Font(dataGridView.DefaultCellStyle.Font, FontStyle.Bold); // Bold font for delta values
+
+                            // Apply color based on delta value
+                            if (delta >= 0)
+                            {
+                                row.Cells[dataGridView.Columns[displayName].Index].Style.BackColor = Color.LightGreen;
+                                row.Cells[dataGridView.Columns[displayName].Index].Style.ForeColor = Color.Black;
+                            }
+                            else if (delta < 0)
+                            {
+                                row.Cells[dataGridView.Columns[displayName].Index].Style.BackColor = Color.IndianRed;
+                                row.Cells[dataGridView.Columns[displayName].Index].Style.ForeColor = Color.White; // White text for IndianRed background
+                            }
+                            // No color for delta == 0 or null
+                        }
+                        else
+                        {
+                            row.Cells[dataGridView.Columns[displayName].Index].Value = string.Empty;
+                        }
+                    }
+                }
+
+                dataGridView.Rows.Add(row);
+            }
+        }
+
+
+
+        //public class Int32Comparer : IComparer
+        //{
+        //    public int Compare(object x, object y)
+        //    {
+        //        if (x == null && y == null) return 0;
+        //        if (x == null) return -1;
+        //        if (y == null) return 1;
+
+        //        if (int.TryParse(x.ToString(), out int intX) && int.TryParse(y.ToString(), out int intY))
+        //            return intX.CompareTo(intY);
+
+        //        return string.Compare(x.ToString(), y.ToString(), StringComparison.Ordinal);
+        //    }
+        //}
+
+        //private void dataGridView_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        //{
+        //    var column = dataGridView.Columns[e.ColumnIndex];
+        //    if (column.HeaderText != "IPN") // Apply only to kit columns
+        //    {
+        //        dataGridView.Sort(new Int32Comparer());
+        //    }
+        //    else
+        //    {
+        //        dataGridView.Sort(column, ListSortDirection.Ascending); // Default sorting for IPN
+        //    }
+        //}
+
+
+
+
+
         private void GenerateHtmlReportWithKitSeparation()
         {
             var stockDataDetailed = selectedBOMs
@@ -1441,7 +1680,7 @@ var myPieChart = new Chart(ctx, {
 
         private void OptimizeBOMOrder()
         {
-       
+
 
             if (selectedBOMs.Count >= 2)
             {
@@ -2191,6 +2430,405 @@ var myPieChart = new Chart(ctx, {
                 }
             }
         }
+
+        private async void button2_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                //// Left-click: Open DataGridView in a popup
+                //Form popupForm = new Form
+                //{
+                //    Width = 800,
+                //    Height = 600,
+                //    StartPosition = FormStartPosition.CenterScreen,
+                //    Text = "IPN Kit Usage Overview"
+                //};
+
+                //DataGridView dataGridView = new DataGridView
+                //{
+                //    Dock = DockStyle.Fill,
+                //    AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                //    ReadOnly = true,
+                //    AllowUserToAddRows = false,
+                //    BackgroundColor = Color.LightGray // Set default background color
+                //};
+
+                //popupForm.Controls.Add(dataGridView);
+                //await PopulateDataGridViewAsync(dataGridView);
+
+                //popupForm.ShowDialog();
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                // Right-click: Generate HTML report
+                string timestamp = DateTime.Now.ToString("yyyyMMddHHmm");
+                string filePath = $@"\\dbr1\Data\WareHouse\2024\WHsearcher\qSim_{timestamp}.html";
+
+                await GenerateHtmlReportAsync(filePath);
+               // MessageBox.Show($"Report saved at: {filePath}", "Report Generated", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                // Open the HTML file in the default web browser
+                try
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = filePath,
+                        UseShellExecute = true // This is required to open with the default associated app
+                    });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to open the report: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+
+        //private async Task GenerateHtmlReportAsync(string filePath)
+        //{
+        //    // Prepare the dictionary to track IPNs and their DELTA values across kits
+        //    var ipnData = new Dictionary<string, Dictionary<string, int?>>(); // Nullable int for DELTA
+
+        //    foreach (var bom in selectedBOMs)
+        //    {
+        //        foreach (var item in bom.Items)
+        //        {
+        //            if (!ipnData.ContainsKey(item.IPN))
+        //            {
+        //                ipnData[item.IPN] = new Dictionary<string, int?>();
+        //            }
+
+        //            ipnData[item.IPN][bom.Name] = item.Delta; // Add DELTA for IPN in this kit
+        //        }
+        //    }
+
+        //    var htmlContent = new StringBuilder();
+
+        //    // HTML header and CSS styles
+        //    htmlContent.AppendLine("<html>");
+        //    htmlContent.AppendLine("<head>");
+        //    htmlContent.AppendLine("<style>");
+        //    //htmlContent.AppendLine("table { width: 100%; border-collapse: collapse; table-layout: fixed; }"); // Fixed table layout
+        //    htmlContent.AppendLine("table { width: 100%; border-collapse: collapse; }"); // Table style without fixed layout
+        //    htmlContent.AppendLine("th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }");
+        //    htmlContent.AppendLine("th { background-color: #f2f2f2; color: black; font-weight: bold; white-space: wrap;position: sticky; top: 0; z-index: 1; }");
+        //    htmlContent.AppendLine(".rotated-header { transform: rotate(0deg); transform-origin: center center; white-space: wrap; width:20px; vertical-align: center; text-align: center; }");
+        //    htmlContent.AppendLine(".positive { background-color: LightGreen; }");
+        //    htmlContent.AppendLine(".negative { background-color: IndianRed; color: white; }");
+        //    htmlContent.AppendLine(".nowrap { white-space: nowrap; margin:1px;padding:1px;font-weight:bold;}"); // Add nowrap class
+        //    htmlContent.AppendLine(".bold { font-weight: bold; }");
+        //    htmlContent.AppendLine("</style>");
+        //    htmlContent.AppendLine("</head>");
+        //    htmlContent.AppendLine("<body style='background-color: grey;'>");
+
+        //    //htmlContent.AppendLine("<h1>IPN Kit Usage Overview</h1>");
+        //    htmlContent.AppendLine("<table>");
+
+        //    // Table headers
+        //    htmlContent.AppendLine("<thead>");
+        //    htmlContent.AppendLine("<tr>");
+        //    htmlContent.AppendLine("<th class='nowrap'>Count</th>");
+        //    htmlContent.AppendLine("<th class='nowrap'>IPN</th>");
+
+
+        //    // Kit names with rotated header styling
+        //    foreach (var bom in selectedBOMs)
+        //    {
+        //        string[] nameParts = bom.Name.Split('_');
+        //        string displayName = nameParts.Length >= 3 ? $"{nameParts[1]}_{nameParts[2].Replace(".xlsm", "")}" : bom.Name;
+        //        htmlContent.AppendLine($"<th class='rotated-header'>{displayName}</th>");
+        //       // htmlContent.AppendLine($"<th>{displayName}</th>");
+        //    }
+
+        //    htmlContent.AppendLine("</tr>");
+        //    htmlContent.AppendLine("</thead>");
+        //    htmlContent.AppendLine("<tbody>");
+
+        //    // Data rows with IPN and delta values
+        //    foreach (var ipnEntry in ipnData.OrderByDescending(entry => entry.Value.Count(v => v.Value.HasValue)))
+        //    {
+        //        string ipn = ipnEntry.Key;
+        //        int totalAppearances = ipnEntry.Value.Count(v => v.Value.HasValue);
+
+        //        htmlContent.AppendLine("<tr>");
+        //        htmlContent.AppendLine($"<td style='color:white;'>{totalAppearances}</td>");
+        //        htmlContent.AppendLine($"<td style='color:white;'>{ipn}</td>");
+
+        //        foreach (var bom in selectedBOMs)
+        //        {
+        //            if (ipnEntry.Value.TryGetValue(bom.Name, out var delta))
+        //            {
+        //                string cellClass = delta >= 0 ? "positive bold" : "negative bold";
+        //                htmlContent.AppendLine($"<td class='{cellClass}'>{delta}</td>");
+        //            }
+        //            else
+        //            {
+        //                htmlContent.AppendLine("<td></td>");
+        //            }
+        //        }
+
+        //        htmlContent.AppendLine("</tr>");
+        //    }
+
+        //    htmlContent.AppendLine("</tbody>");
+        //    htmlContent.AppendLine("</table>");
+        //    htmlContent.AppendLine("</body>");
+        //    htmlContent.AppendLine("</html>");
+
+        //    // Write HTML content to file
+        //    await File.WriteAllTextAsync(filePath, htmlContent.ToString());
+
+        //    // Open the report in the default HTML viewer
+        //    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+        //    {
+        //        FileName = filePath,
+        //        UseShellExecute = true
+        //    });
+        //}
+
+        //private async Task GenerateHtmlReportAsync(string filePath)
+        //{
+        //    // Prepare the dictionary to track IPNs and their DELTA values across kits
+        //    var ipnData = new Dictionary<string, Dictionary<string, int?>>(); // Nullable int for DELTA
+
+        //    foreach (var bom in selectedBOMs)
+        //    {
+        //        foreach (var item in bom.Items)
+        //        {
+        //            if (!ipnData.ContainsKey(item.IPN))
+        //            {
+        //                ipnData[item.IPN] = new Dictionary<string, int?>();
+        //            }
+
+        //            ipnData[item.IPN][bom.Name] = item.Delta; // Add DELTA for IPN in this kit
+        //        }
+        //    }
+
+        //    var htmlContent = new StringBuilder();
+
+        //    // HTML header and CSS styles
+        //    htmlContent.AppendLine("<html>");
+        //    htmlContent.AppendLine("<head>");
+        //    htmlContent.AppendLine("<style>");
+        //    htmlContent.AppendLine("table { width: 100%; border-collapse: collapse; }"); // Table style without fixed layout
+        //    htmlContent.AppendLine("th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }");
+        //    htmlContent.AppendLine("th { background-color: #f2f2f2; color: black; font-weight: bold; white-space: wrap;position: sticky; top: 0; z-index: 1; }");
+        //    htmlContent.AppendLine(".rotated-header { transform: rotate(0deg); transform-origin: center center; white-space: wrap; width:20px; vertical-align: center; text-align: center; }");
+        //    htmlContent.AppendLine(".positive { background-color: LightGreen; }");
+        //    htmlContent.AppendLine(".negative { background-color: IndianRed; color: white; }");
+        //    htmlContent.AppendLine(".nowrap { white-space: nowrap; margin:1px;padding:1px;font-weight:bold;}"); // Add nowrap class
+        //    htmlContent.AppendLine(".bold { font-weight: bold; }");
+        //    htmlContent.AppendLine("</style>");
+        //    htmlContent.AppendLine("</head>");
+        //    htmlContent.AppendLine("<body style='background-color: grey;'>");
+
+        //    htmlContent.AppendLine("<table>");
+
+        //    // Table headers
+        //    htmlContent.AppendLine("<thead>");
+        //    htmlContent.AppendLine("<tr>");
+        //    htmlContent.AppendLine("<th class='nowrap'>Balance</th>");
+        //    htmlContent.AppendLine("<th class='nowrap'>Count</th>");
+        //    htmlContent.AppendLine("<th class='nowrap'>IPN</th>");
+
+        //    // Kit names with rotated header styling
+        //    foreach (var bom in selectedBOMs)
+        //    {
+        //        string[] nameParts = bom.Name.Split('_');
+        //        string displayName = nameParts.Length >= 3 ? $"{nameParts[1]}_{nameParts[2].Replace(".xlsm", "")}" : bom.Name;
+        //        htmlContent.AppendLine($"<th class='rotated-header'>{displayName}</th>");
+        //    }
+
+        //    htmlContent.AppendLine("</tr>");
+        //    htmlContent.AppendLine("</thead>");
+        //    htmlContent.AppendLine("<tbody>");
+
+        //    // Data rows with IPN, balance, count, and delta values
+        //    foreach (var ipnEntry in ipnData.OrderByDescending(entry => entry.Value.Count(v => v.Value.HasValue)))
+        //    {
+        //        string ipn = ipnEntry.Key;
+        //        int totalAppearances = ipnEntry.Value.Count(v => v.Value.HasValue);
+        //        int balance = ipnEntry.Value.Values.Where(v => v.HasValue).Sum(v => v ?? 0);
+
+        //        string balanceClass = balance >= 0 ? "positive" : "negative";
+
+        //        htmlContent.AppendLine("<tr>");
+        //        htmlContent.AppendLine($"<td class='{balanceClass} bold'>{balance}</td>");
+        //        htmlContent.AppendLine($"<td style='color:white;'>{totalAppearances}</td>");
+        //        htmlContent.AppendLine($"<td style='color:white;'>{ipn}</td>");
+
+        //        foreach (var bom in selectedBOMs)
+        //        {
+        //            if (ipnEntry.Value.TryGetValue(bom.Name, out var delta))
+        //            {
+        //                string cellClass = delta >= 0 ? "positive bold" : "negative bold";
+        //                htmlContent.AppendLine($"<td class='{cellClass}'>{delta}</td>");
+        //            }
+        //            else
+        //            {
+        //                htmlContent.AppendLine("<td></td>");
+        //            }
+        //        }
+
+        //        htmlContent.AppendLine("</tr>");
+        //    }
+
+        //    htmlContent.AppendLine("</tbody>");
+        //    htmlContent.AppendLine("</table>");
+        //    htmlContent.AppendLine("</body>");
+        //    htmlContent.AppendLine("</html>");
+
+        //    // Write HTML content to file
+        //    await File.WriteAllTextAsync(filePath, htmlContent.ToString());
+
+        //    // Open the report in the default HTML viewer
+        //    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+        //    {
+        //        FileName = filePath,
+        //        UseShellExecute = true
+        //    });
+        //}
+
+        private async Task GenerateHtmlReportAsync(string filePath)
+        {
+            // Prepare the dictionary to track IPNs and their DELTA values across kits
+            var ipnData = new Dictionary<string, Dictionary<string, int?>>(); // Nullable int for DELTA
+
+            foreach (var bom in selectedBOMs)
+            {
+                foreach (var item in bom.Items)
+                {
+                    if (!ipnData.ContainsKey(item.IPN))
+                    {
+                        ipnData[item.IPN] = new Dictionary<string, int?>();
+                    }
+
+                    ipnData[item.IPN][bom.Name] = item.Delta; // Add DELTA for IPN in this kit
+                }
+            }
+
+
+            string connectionString=string.Empty;
+
+            foreach (ClientWarehouse w in warehouses)
+            {
+                if (comboBox6.SelectedItem == w.clName)
+                {
+                    if (w.sqlStock != null)
+                    {
+                        connectionString = w.sqlStock;
+                    }
+                }
+            }
+
+
+            // Pull relevant stock data for IPNs from SQL
+            var whStockData = new Dictionary<string, int>(); // Store summed stock for each IPN
+            
+            var ipnList = string.Join("','", ipnData.Keys.Select(ipn => ipn.Replace("'", "''"))); // Sanitize for SQL query
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string query = $"SELECT IPN, SUM(Stock) AS TotalStock FROM STOCK WHERE IPN IN ('{ipnList}') GROUP BY IPN";
+                SqlCommand command = new SqlCommand(query, connection);
+                connection.Open();
+                using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                {
+                    while (reader.Read())
+                    {
+                        string ipn = reader["IPN"].ToString().Trim();
+                        int totalStock = Convert.ToInt32(reader["TotalStock"]);
+                        whStockData[ipn] = totalStock;
+                    }
+                }
+            }
+
+            var htmlContent = new StringBuilder();
+
+            // HTML header and CSS styles
+            htmlContent.AppendLine("<html>");
+            htmlContent.AppendLine("<head>");
+            htmlContent.AppendLine("<style>");
+            htmlContent.AppendLine("table { width: 100%; border-collapse: collapse; }");
+            htmlContent.AppendLine("th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }");
+            htmlContent.AppendLine("th { background-color: #f2f2f2; color: black; font-weight: bold; white-space: wrap; position: sticky; top: 0; z-index: 1; }");
+            htmlContent.AppendLine(".rotated-header { transform: rotate(0deg); transform-origin: center center; white-space: wrap; width:20px; vertical-align: center; text-align: center; }");
+            htmlContent.AppendLine(".positive { background-color: LightGreen; }");
+            htmlContent.AppendLine(".negative { background-color: IndianRed; color: white; }");
+            htmlContent.AppendLine(".nowrap { white-space: nowrap; margin:1px;padding:1px;font-weight:bold; }");
+            htmlContent.AppendLine(".bold { font-weight: bold; }");
+            htmlContent.AppendLine("</style>");
+            htmlContent.AppendLine("</head>");
+            htmlContent.AppendLine("<body style='background-color: grey;'>");
+
+            htmlContent.AppendLine("<table>");
+            htmlContent.AppendLine("<thead>");
+            htmlContent.AppendLine("<tr>");
+            htmlContent.AppendLine("<th class='nowrap'>WH</th>"); // Add WH column
+            htmlContent.AppendLine("<th class='nowrap'>Balance</th>");
+            htmlContent.AppendLine("<th class='nowrap'>Count</th>");
+            htmlContent.AppendLine("<th class='nowrap'>IPN</th>");
+
+            foreach (var bom in selectedBOMs)
+            {
+                string[] nameParts = bom.Name.Split('_');
+                string displayName = nameParts.Length >= 3 ? $"{nameParts[1]}_{nameParts[2].Replace(".xlsm", "")}" : bom.Name;
+                htmlContent.AppendLine($"<th class='rotated-header'>{displayName}</th>");
+            }
+
+            htmlContent.AppendLine("</tr>");
+            htmlContent.AppendLine("</thead>");
+            htmlContent.AppendLine("<tbody>");
+
+            // Data rows with IPN, WH, balance, count, and delta values
+            foreach (var ipnEntry in ipnData.OrderByDescending(entry => entry.Value.Count(v => v.Value.HasValue)))
+            {
+                string ipn = ipnEntry.Key;
+                int totalAppearances = ipnEntry.Value.Count(v => v.Value.HasValue);
+                int balance = ipnEntry.Value.Values.Where(v => v.HasValue).Sum(v => v ?? 0);
+                int whStock = whStockData.ContainsKey(ipn) ? whStockData[ipn] : 0;
+
+                string balanceClass = balance >= 0 ? "positive" : "negative";
+                string whClass = whStock >= balance ? "positive" : "negative";
+
+                htmlContent.AppendLine("<tr>");
+                htmlContent.AppendLine($"<td class='{whClass} bold'>{whStock}</td>"); // WH column with coloring
+                htmlContent.AppendLine($"<td class='{balanceClass} bold'>{balance}</td>");
+                htmlContent.AppendLine($"<td style='color:white;'>{totalAppearances}</td>");
+                htmlContent.AppendLine($"<td style='color:white;'>{ipn}</td>");
+
+                foreach (var bom in selectedBOMs)
+                {
+                    if (ipnEntry.Value.TryGetValue(bom.Name, out var delta))
+                    {
+                        string cellClass = delta >= 0 ? "positive bold" : "negative bold";
+                        htmlContent.AppendLine($"<td class='{cellClass}'>{delta}</td>");
+                    }
+                    else
+                    {
+                        htmlContent.AppendLine("<td></td>");
+                    }
+                }
+
+                htmlContent.AppendLine("</tr>");
+            }
+
+            htmlContent.AppendLine("</tbody>");
+            htmlContent.AppendLine("</table>");
+            htmlContent.AppendLine("</body>");
+            htmlContent.AppendLine("</html>");
+
+            await File.WriteAllTextAsync(filePath, htmlContent.ToString());
+
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = filePath,
+                UseShellExecute = true
+            });
+        }
+
+
+
 
     }
 }

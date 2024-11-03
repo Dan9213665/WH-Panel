@@ -1035,7 +1035,7 @@ namespace WH_Panel
         }
         private void AuthorizedExcelFileOpening(string fp)
         {
-            if (Environment.UserName == "lgt" || Environment.UserName == "rbtwh" || Environment.UserName == "rbtwh2")
+            if (Environment.UserName == "lgt" || Environment.UserName == "rbtwh" || Environment.UserName == "rbtwh2" || Environment.UserName == "lgt01")
             {
                 openWHexcelDB(fp);
             }

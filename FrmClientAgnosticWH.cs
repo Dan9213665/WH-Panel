@@ -594,7 +594,7 @@ namespace WH_Panel
         }
         private void btnMove_Click(object sender, EventArgs e)
         {
-            if (Environment.MachineName == "RT13" || Environment.MachineName == "RT12" || Environment.MachineName == "RT1")
+            if (Environment.MachineName == "RT13" || Environment.MachineName == "RT12" || Environment.MachineName == "RT1" || Environment.MachineName == "RT19")
             {
 
                 int qty = 0;
@@ -1711,7 +1711,7 @@ namespace WH_Panel
         }
         private void AuthorizedExcelFileOpening(string fp)
         {
-            if (Environment.UserName == "lgt" || Environment.UserName == "rbtwh" || Environment.UserName == "rbtwh2")
+            if (Environment.UserName == "lgt" || Environment.UserName == "rbtwh" || Environment.UserName == "rbtwh2" || Environment.UserName == "lgt01")
             {
                 openWHexcelDB(fp);
             }
