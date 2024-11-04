@@ -812,6 +812,7 @@
             dataGridView1.Size = new Size(1299, 287);
             dataGridView1.TabIndex = 0;
             dataGridView1.CellClick += dataGridView1_CellClick;
+            dataGridView1.CellMouseClick += dataGridView1_CellMouseClick;
             dataGridView1.SelectionChanged += dataGridView1_SelectionChanged;
             // 
             // groupBox4
