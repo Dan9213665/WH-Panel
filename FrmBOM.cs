@@ -2016,6 +2016,37 @@ namespace WH_Panel
         //    }
         //}
 
+        //private void dataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        //{
+        //    if (e.Button == MouseButtons.Right && e.ColumnIndex == dataGridView1.Columns["ALTs"].Index && e.RowIndex >= 0)
+        //    {
+        //        var row = dataGridView1.Rows[e.RowIndex];
+        //        var ipnCell = row.Cells["IPN"];
+        //        var altsCell = row.Cells["ALTs"];
+
+        //        // Get the IPN and ALT values and trim spaces
+        //        string ipnValue = (ipnCell.Value?.ToString() ?? "").Replace(" ", "");
+        //        string altValue = (altsCell.Value?.ToString() ?? "").Replace(" ", "");
+
+        //        // Extract the prefix from the IPN
+        //        string[] ipnParts = ipnValue.Split('_');
+
+        //        if (ipnParts.Length >= 2)
+        //        {
+        //            string prefix = ipnParts[0];
+
+        //            // Check if ALTs already contains the prefix
+        //            if (!altValue.StartsWith(prefix + "_"))
+        //            {
+        //                altValue = prefix + "_" + altValue; // Add prefix if missing
+        //            }
+
+        //            // Swap the values
+        //            altsCell.Value = ipnValue;
+        //            ipnCell.Value = altValue;
+        //        }
+        //    }
+        //}
         private void dataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right && e.ColumnIndex == dataGridView1.Columns["ALTs"].Index && e.RowIndex >= 0)
@@ -2023,6 +2054,12 @@ namespace WH_Panel
                 var row = dataGridView1.Rows[e.RowIndex];
                 var ipnCell = row.Cells["IPN"];
                 var altsCell = row.Cells["ALTs"];
+
+                // Check if ALTs cell has a non-empty value
+                if (altsCell.Value == null || string.IsNullOrWhiteSpace(altsCell.Value.ToString()))
+                {
+                    return; // Exit if ALTs cell is empty
+                }
 
                 // Get the IPN and ALT values and trim spaces
                 string ipnValue = (ipnCell.Value?.ToString() ?? "").Replace(" ", "");
