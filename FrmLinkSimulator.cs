@@ -2465,7 +2465,7 @@ var myPieChart = new Chart(ctx, {
                 string filePath = $@"\\dbr1\Data\WareHouse\2024\WHsearcher\qSim_{timestamp}.html";
 
                 await GenerateHtmlReportAsync(filePath);
-               // MessageBox.Show($"Report saved at: {filePath}", "Report Generated", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                // MessageBox.Show($"Report saved at: {filePath}", "Report Generated", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 // Open the HTML file in the default web browser
                 try
@@ -2708,7 +2708,7 @@ var myPieChart = new Chart(ctx, {
             }
 
 
-            string connectionString=string.Empty;
+            string connectionString = string.Empty;
 
             foreach (ClientWarehouse w in warehouses)
             {
@@ -2724,7 +2724,7 @@ var myPieChart = new Chart(ctx, {
 
             // Pull relevant stock data for IPNs from SQL
             var whStockData = new Dictionary<string, int>(); // Store summed stock for each IPN
-            
+
             var ipnList = string.Join("','", ipnData.Keys.Select(ipn => ipn.Replace("'", "''"))); // Sanitize for SQL query
 
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -2788,8 +2788,12 @@ var myPieChart = new Chart(ctx, {
                 int balance = ipnEntry.Value.Values.Where(v => v.HasValue).Sum(v => v ?? 0);
                 int whStock = whStockData.ContainsKey(ipn) ? whStockData[ipn] : 0;
 
-                string balanceClass = balance >= 0 ? "positive" : "negative";
-                string whClass = whStock >= balance ? "positive" : "negative";
+                //string balanceClass = balance >= 0 ? "positive" : "negative";
+                //string whClass = whStock >= balance ? "positive" : "negative";
+
+                string balanceClass = balance > 0 ? "positive" : (balance < 0 ? "negative" : "positive");
+                string whClass = whStock >= balance ? "positive" : (whStock < balance ? "negative" : "positive");
+
 
                 htmlContent.AppendLine("<tr>");
                 htmlContent.AppendLine($"<td class='{whClass} bold'>{whStock}</td>"); // WH column with coloring
@@ -2827,8 +2831,67 @@ var myPieChart = new Chart(ctx, {
             });
         }
 
+        private void button12_Click(object sender, EventArgs e)
+        {
 
+            // Check if a warehouse has been selected
+            if (comboBox6.SelectedItem == null)
+            {
+                // If no selection has been made, open the drop-down list
+                MessageBox.Show("Please select a warehouse before proceeding.");
+                comboBox6.DroppedDown = true; // Opens the drop-down list
+                return; // Exit the method until a selection is made
+            }
 
+            // Get the warehouse name from comboBox6
+            string selectedWarehouseName = comboBox6.SelectedItem.ToString();
 
+            // Construct the directory paths for the current and previous three months
+            string currentMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.ToString("MM.yyyy");
+            string previousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.AddMonths(-1).ToString("MM.yyyy");
+            string prepreviousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.AddMonths(-2).ToString("MM.yyyy");
+            string preprepreviousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.AddMonths(-3).ToString("MM.yyyy");
+            string prepreprepreviousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.AddMonths(-4).ToString("MM.yyyy");
+
+            // Get all files in the directories that start with the selected warehouse name and have the .xlsm extension
+            string[] currentMonthFiles = Directory.GetFiles(currentMonthPath, $"{selectedWarehouseName}*.xlsm");
+            string[] previousMonthFiles = Directory.GetFiles(previousMonthPath, $"{selectedWarehouseName}*.xlsm");
+            string[] prepreviousMonthFiles = Directory.GetFiles(prepreviousMonthPath, $"{selectedWarehouseName}*.xlsm");
+            string[] preprepreviousMonthFiles = Directory.GetFiles(preprepreviousMonthPath, $"{selectedWarehouseName}*.xlsm");
+            string[] prepreprepreviousMonthFiles = Directory.GetFiles(prepreprepreviousMonthPath, $"{selectedWarehouseName}*.xlsm");
+
+            // Combine the files from all three months
+            string[] allFiles = currentMonthFiles
+                .Concat(previousMonthFiles)
+                .Concat(prepreviousMonthFiles)
+                .Concat(preprepreviousMonthFiles)
+                .Concat(prepreprepreviousMonthFiles)
+                .ToArray();
+
+            if (allFiles.Length == 0)
+            {
+                MessageBox.Show("No files found for the selected warehouse.");
+                return;
+            }
+
+            foreach (string fileName in allFiles)
+            {
+                string theExcelFilePath = Path.GetFileName(fileName);
+                if (IsFileLoaded(theExcelFilePath))
+                {
+                    MessageBox.Show($"File {theExcelFilePath} is already loaded!");
+                }
+                else
+                {
+                    DataLoader(fileName, theExcelFilePath);
+                    // Add the selected file path to the list
+                    selectedFileNames.Add(theExcelFilePath);
+                }
+            }
+
+            // Update the DataGridView and selected BOMs
+            PopulateDataGridView();
+            SetSelectedBoms();
+        }
     }
 }

@@ -783,7 +783,7 @@ namespace WH_Panel
 
         private void ShowErrorMessage(string message)
         {
-            MessageBox.Show(message);
+            //////////////MessageBox.Show(message);
             ResetTextBoxAndFocus(textBox6);
         }
 

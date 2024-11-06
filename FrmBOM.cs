@@ -46,6 +46,7 @@ using System.Runtime.InteropServices;
 using Outlook = Microsoft.Office.Interop.Outlook;
 using System.Data.SqlClient;
 using static System.ComponentModel.Design.ObjectSelectorEditor;
+using Font = System.Drawing.Font;
 
 namespace WH_Panel
 {
@@ -808,6 +809,13 @@ namespace WH_Panel
         private void updateQtyInBomFile(KitHistoryItem w, int qtyToAdd)
         {
             KitHistoryItem itemToUpdate = MissingItemsList.FirstOrDefault(r => r.IPN == w.IPN && r.QtyPerUnit == w.QtyPerUnit);
+
+            //        KitHistoryItem itemToUpdate = MissingItemsList.FirstOrDefault(r =>
+            //(r.IPN.Equals(w.IPN, StringComparison.OrdinalIgnoreCase) ||
+            // r.Alts.Equals(w.IPN, StringComparison.OrdinalIgnoreCase)) &&
+            //r.QtyPerUnit == w.QtyPerUnit);
+
+
             if (itemToUpdate != null)
             {
                 if (itemToUpdate.QtyInKit > 0 && itemToUpdate.Calc == string.Empty)
@@ -871,92 +879,162 @@ namespace WH_Panel
             {
             }
         }
+        //private void txtbQtyToAdd_KeyDown(object sender, KeyEventArgs e)
+        //{
+
+
+        //    if (e.KeyCode == Keys.Enter)
+        //    {
+
+
+        //        KitHistoryItem w = MissingItemsList.FirstOrDefault(r => r.IPN == txtbSelIPN.Text);
+        //        string inputQty = txtbQtyToAdd.Text.ToString();
+        //        if (inputQty.StartsWith("Q"))
+        //        {
+        //            inputQty = txtbQtyToAdd.Text.Substring(1);
+        //        }
+        //        validQty = 0;
+        //        bool qtyOK = int.TryParse(inputQty, out validQty);
+
+        //        if (qtyOK)
+        //        {
+
+
+        //            transferFromDatabaseToKit(w, validQty, theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));
+
+
+        //            if (checkBox1.Checked)
+        //            {
+        //                WHitem itemToPrint = new WHitem();
+        //                itemToPrint.IPN = w.IPN;
+        //                itemToPrint.MFPN = w.MFPN;
+        //                itemToPrint.Description = w.Description;
+        //                itemToPrint.Stock = validQty;
+        //                itemToPrint.Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
+        //                printSticker(itemToPrint);
+        //            }
+
+        //            txtbQtyToAdd.Clear();
+        //            clearAllTextBoxesOnDoubleClick();
+        //            lastTxtbInputFromUser.Clear();
+        //            lastTxtbInputFromUser.Focus();
+
+
+        //            ipnToUpdate = w.IPN; // The IPN value to match
+
+
+        //            foreach (DataGridViewRow row in dataGridView1.Rows)
+        //            {
+        //                // Check if the value in the IPN column matches the IPN to update (case-insensitive)
+        //                if (row.Cells["IPN"].Value != null && row.Cells["IPN"].Value.ToString().Equals(ipnToUpdate, StringComparison.OrdinalIgnoreCase))
+        //                {
+        //                    // Color the entire row orange
+        //                    row.DefaultCellStyle.BackColor = Color.Orange;
+
+        //                    // Set the focus to the current row by selecting the first cell in the row
+        //                    dataGridView1.CurrentCell = row.Cells[0]; // You can change the column index if needed
+
+        //                    // Optionally, select the entire row
+        //                    row.Cells["IPN"].Selected = true;
+
+        //                    break; // Exit the loop if you only want to focus on the first matching row
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            MessageBox.Show("Input valid qty !");
+        //            txtbQtyToAdd.Clear();
+        //            txtbQtyToAdd.Focus();
+
+        //        }
+        //    }
+        //}
+        bool AltTransaction = false;
         private void txtbQtyToAdd_KeyDown(object sender, KeyEventArgs e)
         {
-            //if (e.KeyCode == Keys.Enter)
-            //{
-            //    btnPrintSticker_Click(sender, e);
-            //    txtbQtyToAdd.Clear();
-            //    clearAllTextBoxesOnDoubleClick();
-            //    lastTxtbInputFromUser.Clear();
-            //    lastTxtbInputFromUser.Focus();
-            //}
-
             if (e.KeyCode == Keys.Enter)
             {
-                KitHistoryItem w = MissingItemsList.FirstOrDefault(r => r.IPN == txtbSelIPN.Text);
-                string inputQty = txtbQtyToAdd.Text.ToString();
+                // Check if the entered IPN or Alt exists in the MissingItemsList
+                KitHistoryItem w = MissingItemsList.FirstOrDefault(r => r.IPN == txtbSelIPN.Text || r.Alts == (textBox9.Text));
+
+                if (w == null)
+                {
+                    MessageBox.Show("Item not found in MissingItemsList.");
+                    return;
+                }
+
+
+
+                // Validate the quantity input
+                string inputQty = txtbQtyToAdd.Text;
                 if (inputQty.StartsWith("Q"))
                 {
                     inputQty = txtbQtyToAdd.Text.Substring(1);
                 }
+
                 validQty = 0;
                 bool qtyOK = int.TryParse(inputQty, out validQty);
 
                 if (qtyOK)
                 {
+                    // Execute the transfer based on the Alt, highlighting the associated IPN
 
+                    if (textBox9.Text != null)
+                    {
+                        AltTransaction = true;
+                        transferFromDatabaseToKit(w, validQty, theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));
+                    }
+                    else
+                    {
+                        AltTransaction = false;
+                        transferFromDatabaseToKit(w, validQty, theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));
+                    }
+                    //transferFromDatabaseToKit(w, validQty, theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));
 
-                    transferFromDatabaseToKit(w, validQty, theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));
-
-
+                    // Optionally, print the sticker
                     if (checkBox1.Checked)
                     {
-                        WHitem itemToPrint = new WHitem();
-                        itemToPrint.IPN = w.IPN;
-                        itemToPrint.MFPN = w.MFPN;
-                        itemToPrint.Description = w.Description;
-                        itemToPrint.Stock = validQty;
-                        itemToPrint.Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
+                        WHitem itemToPrint = new WHitem
+                        {
+                            IPN = w.IPN,
+                            MFPN = w.MFPN,
+                            Description = w.Description,
+                            Stock = validQty,
+                            Updated_on = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                        };
                         printSticker(itemToPrint);
                     }
 
+                    // Clear and refocus textboxes
                     txtbQtyToAdd.Clear();
                     clearAllTextBoxesOnDoubleClick();
                     lastTxtbInputFromUser.Clear();
                     lastTxtbInputFromUser.Focus();
 
-
-                    ipnToUpdate = w.IPN; // The IPN value to match
-
+                    // Highlight the IPN row in dataGridView1
+                    ipnToUpdate = w.IPN;
 
                     foreach (DataGridViewRow row in dataGridView1.Rows)
                     {
-                        // Check if the value in the IPN column matches the IPN to update (case-insensitive)
                         if (row.Cells["IPN"].Value != null && row.Cells["IPN"].Value.ToString().Equals(ipnToUpdate, StringComparison.OrdinalIgnoreCase))
                         {
-                            // Color the entire row orange
                             row.DefaultCellStyle.BackColor = Color.Orange;
-
-                            // Set the focus to the current row by selecting the first cell in the row
-                            dataGridView1.CurrentCell = row.Cells[0]; // You can change the column index if needed
-
-                            // Optionally, select the entire row
+                            dataGridView1.CurrentCell = row.Cells[0];
                             row.Cells["IPN"].Selected = true;
-
-                            break; // Exit the loop if you only want to focus on the first matching row
+                            break;
                         }
                     }
-
-
-
                 }
                 else
                 {
-                    MessageBox.Show("Input valid qty !");
+                    MessageBox.Show("Input a valid quantity!");
                     txtbQtyToAdd.Clear();
                     txtbQtyToAdd.Focus();
-
                 }
             }
-
-
-
-
-
-
-
         }
+
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox1.Checked)
@@ -1224,7 +1302,10 @@ namespace WH_Panel
             {
                 WHitem itemToTransfer = new WHitem()
                 {
-                    IPN = w.IPN,
+
+
+                    //IPN = w.IPN,
+                    IPN = AltTransaction ? w.Alts : w.IPN,
                     Manufacturer = "",
                     MFPN = w.MFPN,
                     Description = w.Description,
@@ -1248,7 +1329,8 @@ namespace WH_Panel
                 }
                 else
                 {
-                    MessageBox.Show("Overdraft ! Check WH balance !");
+                    MessageBox.Show("No actions take due to Overdraft ! Check WH balance !");
+
                 }
                 //}
             }
@@ -1292,7 +1374,10 @@ namespace WH_Panel
                     }
                     else
                     {
-                        MessageBox.Show("Calculated overdraft :" + balance);
+                        // MessageBox.Show("Calculated overdraft for " + wHitem.IPN + " : " + balance);
+                        ShowCustomMessage(wHitem.IPN + "\n Calculated overdraft : \n" + balance, "Red", "White");
+
+
                         return false;
                     }
 
@@ -1304,6 +1389,62 @@ namespace WH_Panel
                 return false;
             }
         }
+
+
+        public static void ShowCustomMessage(string message, string ctype, string ftype)
+        {
+            // Create a new form
+            Form customForm = new Form();
+            customForm.StartPosition = FormStartPosition.CenterScreen;
+            customForm.FormBorderStyle = FormBorderStyle.None;
+
+            // Set background color dynamically
+            try
+            {
+                customForm.BackColor = Color.FromName(ctype);
+            }
+            catch
+            {
+                customForm.BackColor = Color.Red; // Default to Red if color name is invalid
+            }
+
+            customForm.Width = 700;
+            customForm.Height = 300;
+
+            // Create and style the message label
+            Label messageLabel = new Label();
+            messageLabel.Text = message;
+
+            // Set font color dynamically
+            try
+            {
+                messageLabel.ForeColor = Color.FromName(ftype);
+            }
+            catch
+            {
+                messageLabel.ForeColor = Color.White; // Default to White if color name is invalid
+            }
+
+            messageLabel.Font = new Font("Arial", 40, FontStyle.Bold);
+            messageLabel.Dock = DockStyle.Fill;
+            messageLabel.TextAlign = ContentAlignment.MiddleCenter;
+            customForm.Controls.Add(messageLabel);
+
+            // Create and style the OK button
+            Button okButton = new Button();
+            okButton.Text = "OK";
+            okButton.Font = new Font("Arial", 20);
+            okButton.BackColor = Color.White;
+            okButton.ForeColor = Color.Black;
+            okButton.Height = 60;
+            okButton.Dock = DockStyle.Bottom;
+            okButton.Click += (sender, e) => customForm.Close();
+            customForm.Controls.Add(okButton);
+
+            // Display the form as a dialog
+            customForm.ShowDialog();
+        }
+
 
 
         private string getTheManufacturerFromTheStock(string fp, WHitem itemTolookby)
@@ -1581,6 +1722,7 @@ namespace WH_Panel
                     null, timeout, System.Threading.Timeout.Infinite);
                 using (_timeoutTimer)
                     MessageBox.Show(text, caption, MessageBoxButtons.OK, MessageBoxIcon.Information);
+
             }
             public static void Show(string text, string caption, int timeout)
             {
@@ -1999,54 +2141,7 @@ namespace WH_Panel
             }
         }
 
-        //private void dataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
-        //{
-        //    // Check if right-click and if clicked cell is in the ALTs column
-        //    if (e.Button == MouseButtons.Right && e.ColumnIndex == dataGridView1.Columns["ALTs"].Index && e.RowIndex >= 0)
-        //    {
-        //        // Retrieve the row and switch IPN with ALTs content
-        //        var row = dataGridView1.Rows[e.RowIndex];
-        //        var ipnCell = row.Cells["IPN"];
-        //        var altsCell = row.Cells["ALTs"];
 
-        //        // Swap values
-        //        var temp = ipnCell.Value;
-        //        ipnCell.Value = altsCell.Value;
-        //        altsCell.Value = temp;
-        //    }
-        //}
-
-        //private void dataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
-        //{
-        //    if (e.Button == MouseButtons.Right && e.ColumnIndex == dataGridView1.Columns["ALTs"].Index && e.RowIndex >= 0)
-        //    {
-        //        var row = dataGridView1.Rows[e.RowIndex];
-        //        var ipnCell = row.Cells["IPN"];
-        //        var altsCell = row.Cells["ALTs"];
-
-        //        // Get the IPN and ALT values and trim spaces
-        //        string ipnValue = (ipnCell.Value?.ToString() ?? "").Replace(" ", "");
-        //        string altValue = (altsCell.Value?.ToString() ?? "").Replace(" ", "");
-
-        //        // Extract the prefix from the IPN
-        //        string[] ipnParts = ipnValue.Split('_');
-
-        //        if (ipnParts.Length >= 2)
-        //        {
-        //            string prefix = ipnParts[0];
-
-        //            // Check if ALTs already contains the prefix
-        //            if (!altValue.StartsWith(prefix + "_"))
-        //            {
-        //                altValue = prefix + "_" + altValue; // Add prefix if missing
-        //            }
-
-        //            // Swap the values
-        //            altsCell.Value = ipnValue;
-        //            ipnCell.Value = altValue;
-        //        }
-        //    }
-        //}
         private void dataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right && e.ColumnIndex == dataGridView1.Columns["ALTs"].Index && e.RowIndex >= 0)

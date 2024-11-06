@@ -46,6 +46,7 @@
             button4 = new Button();
             dataGridView1 = new DataGridView();
             openFileDialog1 = new OpenFileDialog();
+            button12 = new Button();
             tableLayoutPanel1.SuspendLayout();
             groupBox1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
@@ -155,6 +156,7 @@
             // 
             // groupBox5
             // 
+            groupBox5.Controls.Add(button12);
             groupBox5.Controls.Add(button11);
             groupBox5.Controls.Add(button10);
             groupBox5.Controls.Add(button9);
@@ -170,9 +172,9 @@
             // 
             // button11
             // 
-            button11.Location = new Point(185, 48);
+            button11.Location = new Point(163, 48);
             button11.Name = "button11";
-            button11.Size = new Size(52, 46);
+            button11.Size = new Size(43, 46);
             button11.TabIndex = 4;
             button11.Text = "4 M";
             button11.UseVisualStyleBackColor = true;
@@ -180,9 +182,9 @@
             // 
             // button10
             // 
-            button10.Location = new Point(126, 48);
+            button10.Location = new Point(109, 48);
             button10.Name = "button10";
-            button10.Size = new Size(53, 46);
+            button10.Size = new Size(48, 46);
             button10.TabIndex = 3;
             button10.Text = "3 M";
             button10.UseVisualStyleBackColor = true;
@@ -190,9 +192,9 @@
             // 
             // button9
             // 
-            button9.Location = new Point(68, 48);
+            button9.Location = new Point(56, 48);
             button9.Name = "button9";
-            button9.Size = new Size(52, 46);
+            button9.Size = new Size(47, 46);
             button9.TabIndex = 2;
             button9.Text = "2 M";
             button9.UseVisualStyleBackColor = true;
@@ -202,7 +204,7 @@
             // 
             button8.Location = new Point(6, 48);
             button8.Name = "button8";
-            button8.Size = new Size(56, 46);
+            button8.Size = new Size(44, 46);
             button8.TabIndex = 1;
             button8.Text = "1 M";
             button8.UseVisualStyleBackColor = true;
@@ -302,6 +304,16 @@
             // 
             openFileDialog1.FileName = "openFileDialog1";
             // 
+            // button12
+            // 
+            button12.Location = new Point(212, 48);
+            button12.Name = "button12";
+            button12.Size = new Size(40, 46);
+            button12.TabIndex = 5;
+            button12.Text = "5 M";
+            button12.UseVisualStyleBackColor = true;
+            button12.Click += button12_Click;
+            // 
             // FrmLinkSimulator
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -343,5 +355,6 @@
         private Button button9;
         private Button button8;
         private Button button11;
+        private Button button12;
     }
 }
