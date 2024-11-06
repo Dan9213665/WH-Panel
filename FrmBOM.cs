@@ -956,7 +956,21 @@ namespace WH_Panel
             if (e.KeyCode == Keys.Enter)
             {
                 // Check if the entered IPN or Alt exists in the MissingItemsList
-                KitHistoryItem w = MissingItemsList.FirstOrDefault(r => r.IPN == txtbSelIPN.Text || r.Alts == (textBox9.Text));
+                //KitHistoryItem w = MissingItemsList.FirstOrDefault(r => r.IPN == (textBox1.Text) || r.Alts == (textBox9.Text));
+
+
+                // Retrieve textBox values and trim any excess whitespace
+                string ipnText = textBox1.Text.Trim();
+                string altText = textBox9.Text.Trim();
+
+                // Check if MissingItemsList contains an item with either IPN or Alt matching the respective textBox input
+                KitHistoryItem w = MissingItemsList.FirstOrDefault(r =>
+                    (!string.IsNullOrEmpty(ipnText) && r.IPN.Equals(ipnText, StringComparison.OrdinalIgnoreCase)) ||
+                    (!string.IsNullOrEmpty(altText) && r.Alts.Equals(altText, StringComparison.OrdinalIgnoreCase))
+                );
+
+
+                MessageBox.Show(w.IPN);
 
                 if (w == null)
                 {
@@ -980,7 +994,7 @@ namespace WH_Panel
                 {
                     // Execute the transfer based on the Alt, highlighting the associated IPN
 
-                    if (textBox9.Text != null)
+                    if (textBox9.Text != string.Empty)
                     {
                         AltTransaction = true;
                         transferFromDatabaseToKit(w, validQty, theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));

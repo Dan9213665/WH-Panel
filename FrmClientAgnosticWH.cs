@@ -1003,6 +1003,9 @@ namespace WH_Panel
                 cmd.ExecuteNonQuery();
                 conn.Close();
 
+                // Switch to English keyboard layout (you can adjust the culture code as needed)
+                InputLanguage.CurrentInputLanguage = InputLanguage.FromCulture(new System.Globalization.CultureInfo("en-US"));
+
                 Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
                 SendKeys.SendWait("^p");
                 SendKeys.SendWait("{Enter}");
