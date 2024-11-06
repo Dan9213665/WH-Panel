@@ -281,6 +281,10 @@ namespace WH_Panel
         }
         private void DataLoader(string fp, string excelFIleName)
         {
+            SufficientItemsList.Clear();
+            MissingItemsList.Clear();
+            dataGridView1.Update();
+
             TimeSpan ts = stopWatch.Elapsed;
             try
             {
@@ -808,12 +812,12 @@ namespace WH_Panel
 
         private void updateQtyInBomFile(KitHistoryItem w, int qtyToAdd)
         {
-            KitHistoryItem itemToUpdate = MissingItemsList.FirstOrDefault(r => r.IPN == w.IPN && r.QtyPerUnit == w.QtyPerUnit);
+            //KitHistoryItem itemToUpdate = MissingItemsList.FirstOrDefault(r => r.IPN == w.IPN && r.QtyPerUnit == w.QtyPerUnit);
 
-            //        KitHistoryItem itemToUpdate = MissingItemsList.FirstOrDefault(r =>
-            //(r.IPN.Equals(w.IPN, StringComparison.OrdinalIgnoreCase) ||
-            // r.Alts.Equals(w.IPN, StringComparison.OrdinalIgnoreCase)) &&
-            //r.QtyPerUnit == w.QtyPerUnit);
+            KitHistoryItem itemToUpdate = MissingItemsList.FirstOrDefault(r =>
+    (r.IPN.Equals(w.IPN, StringComparison.OrdinalIgnoreCase) ||
+     r.Alts.Equals(w.IPN, StringComparison.OrdinalIgnoreCase)) &&
+    r.QtyPerUnit == w.QtyPerUnit);
 
 
             if (itemToUpdate != null)
@@ -970,11 +974,12 @@ namespace WH_Panel
                 );
 
 
-                MessageBox.Show(w.IPN);
+                //MessageBox.Show(w.IPN);
 
                 if (w == null)
                 {
                     MessageBox.Show("Item not found in MissingItemsList.");
+                    textBox1.Focus();
                     return;
                 }
 

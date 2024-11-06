@@ -249,6 +249,7 @@ namespace WH_Panel
             }
             label1.Text = $"Loaded: {dataGridView1.RowCount.ToString()}   Selected: {selectedBOMscount}";
             label1.Parent?.Invalidate();
+            label1.Update();
         }
         private void PopulateDataGridView()
         {
