@@ -2624,7 +2624,7 @@ namespace WH_Panel
             string clientDomain = projectName.Split('_')[0].ToLower();
 
             // Get emails from the client's domain
-            List<string> clientEmails = GetUniqueClientEmails( clientDomain);//GetEmailsFromDomain(outlookApp, clientDomain); 
+            List<string> clientEmails = GetUniqueClientEmails(clientDomain);//GetEmailsFromDomain(outlookApp, clientDomain); 
 
             // Display a form with checkboxes for all recipients
             RecipientSelectionForm selectionForm = new RecipientSelectionForm(inhouseEmails, clientEmails);
@@ -2839,81 +2839,81 @@ namespace WH_Panel
 
 
         public class RecipientSelectionForm : Form
-    {
-        private CheckedListBox checkedListBox;
-        private Button sendButton;
-        private Button cancelButton;
-        public List<string> SelectedEmails { get; private set; }
-
-        public RecipientSelectionForm(List<string> inhouseEmails, List<string> clientEmails)
         {
-            SelectedEmails = new List<string>();
+            private CheckedListBox checkedListBox;
+            private Button sendButton;
+            private Button cancelButton;
+            public List<string> SelectedEmails { get; private set; }
 
-            checkedListBox = new CheckedListBox
+            public RecipientSelectionForm(List<string> inhouseEmails, List<string> clientEmails)
             {
-                Dock = DockStyle.Top,
-                Height = 200,
-                CheckOnClick = true
-            };
+                SelectedEmails = new List<string>();
 
-            // Add in-house emails to the list with a label for clarity
-            checkedListBox.Items.Add("In-House Emails:", false);
-            foreach (var email in inhouseEmails)
-            {
-                checkedListBox.Items.Add(email, false);
-            }
-
-            // Add client emails to the list with a label for clarity
-            checkedListBox.Items.Add("Client Emails:", false);
-            foreach (var email in clientEmails)
-            {
-                checkedListBox.Items.Add(email, false);
-            }
-
-            sendButton = new Button
-            {
-                Text = "Send",
-                Dock = DockStyle.Bottom
-            };
-            sendButton.Click += SendButton_Click;
-
-            cancelButton = new Button
-            {
-                Text = "Cancel",
-                Dock = DockStyle.Bottom
-            };
-            cancelButton.Click += (s, e) => DialogResult = DialogResult.Cancel;
-
-            Controls.Add(checkedListBox);
-            Controls.Add(sendButton);
-            Controls.Add(cancelButton);
-
-            Text = "Select Recipients";
-            Height = 300;
-            Width = 300;
-            StartPosition = FormStartPosition.CenterScreen;
-            }
-
-        private void SendButton_Click(object sender, EventArgs e)
-        {
-            // Collect selected emails from the CheckedListBox
-            foreach (var item in checkedListBox.CheckedItems)
-            {
-                if (!item.ToString().EndsWith(":")) // Skip the section labels
+                checkedListBox = new CheckedListBox
                 {
-                    SelectedEmails.Add(item.ToString());
+                    Dock = DockStyle.Top,
+                    Height = 200,
+                    CheckOnClick = true
+                };
+
+                // Add in-house emails to the list with a label for clarity
+                checkedListBox.Items.Add("In-House Emails:", false);
+                foreach (var email in inhouseEmails)
+                {
+                    checkedListBox.Items.Add(email, false);
                 }
+
+                // Add client emails to the list with a label for clarity
+                checkedListBox.Items.Add("Client Emails:", false);
+                foreach (var email in clientEmails)
+                {
+                    checkedListBox.Items.Add(email, false);
+                }
+
+                sendButton = new Button
+                {
+                    Text = "Send",
+                    Dock = DockStyle.Bottom
+                };
+                sendButton.Click += SendButton_Click;
+
+                cancelButton = new Button
+                {
+                    Text = "Cancel",
+                    Dock = DockStyle.Bottom
+                };
+                cancelButton.Click += (s, e) => DialogResult = DialogResult.Cancel;
+
+                Controls.Add(checkedListBox);
+                Controls.Add(sendButton);
+                Controls.Add(cancelButton);
+
+                Text = "Select Recipients";
+                Height = 300;
+                Width = 300;
+                StartPosition = FormStartPosition.CenterScreen;
             }
 
-            //if (SelectedEmails.Count == 0)
-            //{
-            //    MessageBox.Show("Please select at least one recipient.");
-            //    return;
-            //}
+            private void SendButton_Click(object sender, EventArgs e)
+            {
+                // Collect selected emails from the CheckedListBox
+                foreach (var item in checkedListBox.CheckedItems)
+                {
+                    if (!item.ToString().EndsWith(":")) // Skip the section labels
+                    {
+                        SelectedEmails.Add(item.ToString());
+                    }
+                }
 
-            DialogResult = DialogResult.OK;
+                //if (SelectedEmails.Count == 0)
+                //{
+                //    MessageBox.Show("Please select at least one recipient.");
+                //    return;
+                //}
+
+                DialogResult = DialogResult.OK;
+            }
         }
-    }
 
 
 
@@ -2921,7 +2921,7 @@ namespace WH_Panel
 
 
 
-    public bool fullIPNonly = true;
+        public bool fullIPNonly = true;
         private void label1_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
