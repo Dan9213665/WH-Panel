@@ -47,6 +47,7 @@ using Outlook = Microsoft.Office.Interop.Outlook;
 using System.Data.SqlClient;
 using static System.ComponentModel.Design.ObjectSelectorEditor;
 using Font = System.Drawing.Font;
+using Action = System.Action;
 
 namespace WH_Panel
 {
@@ -810,7 +811,7 @@ namespace WH_Panel
         }
 
 
-        private void updateQtyInBomFile(KitHistoryItem w, int qtyToAdd)
+        private void updateQtyInBomFile(KitHistoryItem w, int? qtyToAdd)
         {
             //KitHistoryItem itemToUpdate = MissingItemsList.FirstOrDefault(r => r.IPN == w.IPN && r.QtyPerUnit == w.QtyPerUnit);
 
@@ -1983,8 +1984,13 @@ namespace WH_Panel
 
 
                             break;
+                        case DialogResult.Cancel:
+
+                            SendEmail();
+
+                            break;
                     }
-                    if (result != DialogResult.Ignore && result != DialogResult.Abort)
+                    if (result != DialogResult.Ignore && result != DialogResult.Abort && result != DialogResult.Cancel)
                     {
                         GenerateHTMLkitBoxLabel(copiesToPrint);
                     }
@@ -2124,24 +2130,798 @@ namespace WH_Panel
                 //SendEmail();
             }
         }
+        //private void SendEmail()
+        //{
+        //    Outlook.Application outlookApp = new Outlook.Application();
+        //    // Create a new mail item
+        //    Outlook.MailItem mailItem = (Outlook.MailItem)outlookApp.CreateItem(Outlook.OlItemType.olMailItem);
+        //    // Set email properties
+        //    //mailItem.Subject = "Test Email";
+        //    mailItem.Subject = projectName.Substring(0, projectName.Length - 5).ToString();
+
+        //    mailItem.Body = "This is a test email from my WinForms app.";
+
+
+
+        //mailItem.To = "lgt@robotron.co.il";
+        //    // Send the email
+        //    mailItem.Send();
+        //    // Release COM objects
+        //    Marshal.ReleaseComObject(mailItem);
+        //    Marshal.ReleaseComObject(outlookApp);
+        //    MessageBox.Show("Test");
+        //}
+
+        //private void SendEmail()
+        //{
+        //    // Create Outlook application and mail item
+        //    Outlook.Application outlookApp = new Outlook.Application();
+        //    Outlook.MailItem mailItem = (Outlook.MailItem)outlookApp.CreateItem(Outlook.OlItemType.olMailItem);
+
+        //    // Set email subject based on project name
+        //    mailItem.Subject = projectName.Substring(0, projectName.Length - 5);
+
+        //    // Build HTML table from dataGridView2 items
+        //    StringBuilder htmlTable = new StringBuilder();
+        //    htmlTable.Append("<table border='1' style='border-collapse:collapse;'>");
+
+        //    // Add header row
+        //    htmlTable.Append("<tr>");
+        //    foreach (DataGridViewColumn column in dataGridView2.Columns)
+        //    {
+        //        htmlTable.AppendFormat("<th>{0}</th>", column.HeaderText);
+        //    }
+        //    htmlTable.Append("</tr>");
+
+        //    // Add data rows
+        //    foreach (DataGridViewRow row in dataGridView2.Rows)
+        //    {
+        //        if (!row.IsNewRow) // Skip the new row placeholder
+        //        {
+        //            htmlTable.Append("<tr>");
+        //            foreach (DataGridViewCell cell in row.Cells)
+        //            {
+        //                htmlTable.AppendFormat("<td>{0}</td>", cell.Value?.ToString() ?? string.Empty);
+        //            }
+        //            htmlTable.Append("</tr>");
+        //        }
+        //    }
+        //    htmlTable.Append("</table>");
+
+        //    // Set the email body as HTML
+        //    mailItem.HTMLBody = "<html><body><p>Here is the data:</p>" + htmlTable.ToString() + "</body></html>";
+
+        //    // Set recipient and send email
+        //    mailItem.To = "lgt@robotron.co.il";
+        //    mailItem.Send();
+
+        //    // Release COM objects
+        //    Marshal.ReleaseComObject(mailItem);
+        //    Marshal.ReleaseComObject(outlookApp);
+
+        //    // Notify user
+        //    MessageBox.Show("Email sent successfully!");
+        //}
+
+
+        //private void SendEmail()
+        //{
+        //    // Load the Excel file
+        //    var excelApp = new Microsoft.Office.Interop.Excel.Application();
+        //    Microsoft.Office.Interop.Excel.Workbook workbook = excelApp.Workbooks.Open(fileName);
+        //    Microsoft.Office.Interop.Excel.Worksheet worksheet = (Microsoft.Office.Interop.Excel.Worksheet)workbook.Sheets[1]; // First sheet (index 1 in Interop)
+
+        //    // Find the "Alts" column index
+        //    int altsColumnIndex = -1;
+        //    Microsoft.Office.Interop.Excel.Range headerRow = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[1]; // Cast headerRow to Range
+        //    for (int i = 1; i <= headerRow.Columns.Count; i++)
+        //    {
+        //        var cell = (Microsoft.Office.Interop.Excel.Range)headerRow.Cells[1, i]; // Explicitly cast each cell to Range
+        //        if (cell.Value?.ToString() == "Alts")
+        //        {
+        //            altsColumnIndex = i;
+        //            break;
+        //        }
+        //    }
+
+
+        //    if (altsColumnIndex == -1)
+        //    {
+        //        MessageBox.Show("Could not find the 'Alts' column.");
+        //        workbook.Close(false);
+        //        Marshal.ReleaseComObject(workbook);
+        //        Marshal.ReleaseComObject(excelApp);
+        //        return;
+        //    }
+
+        //    // Build HTML table from Excel data
+        //    StringBuilder htmlTable = new StringBuilder();
+        //    htmlTable.Append("<table border='1' style='border-collapse:collapse;'>");
+
+        //    // Add header row
+        //    htmlTable.Append("<tr>");
+        //    for (int col = 1; col <= altsColumnIndex; col++)
+        //    {
+        //        string header = (headerRow.Cells[1, col] as Microsoft.Office.Interop.Excel.Range).Value?.ToString();
+        //        htmlTable.AppendFormat("<th>{0}</th>", header ?? string.Empty);
+        //    }
+        //    htmlTable.Append("</tr>");
+
+        //    // Add data rows
+        //    int row = 2; // Start from the second row
+        //    while ((worksheet.Cells[row, 1] as Microsoft.Office.Interop.Excel.Range).Value != null)
+        //    {
+        //        htmlTable.Append("<tr>");
+        //        for (int col = 1; col <= altsColumnIndex; col++)
+        //        {
+        //            string cellValue = (worksheet.Cells[row, col] as Microsoft.Office.Interop.Excel.Range).Value?.ToString();
+        //            htmlTable.AppendFormat("<td>{0}</td>", cellValue ?? string.Empty);
+        //        }
+        //        htmlTable.Append("</tr>");
+        //        row++;
+        //    }
+        //    htmlTable.Append("</table>");
+
+        //    // Clean up Excel objects
+        //    workbook.Close(false);
+        //    Marshal.ReleaseComObject(workbook);
+        //    Marshal.ReleaseComObject(excelApp);
+
+        //    // Create Outlook application and mail item
+        //    Outlook.Application outlookApp = new Outlook.Application();
+        //    Outlook.MailItem mailItem = (Outlook.MailItem)outlookApp.CreateItem(Outlook.OlItemType.olMailItem);
+
+        //    // Set email subject and body
+        //    mailItem.Subject = projectName.Substring(0, projectName.Length - 5);
+        //    mailItem.HTMLBody = "<html><body><p>Here is the data from the Excel file:</p>" + htmlTable.ToString() + "</body></html>";
+
+        //    // Set recipient and send email
+        //    mailItem.To = "lgt@robotron.co.il";
+        //    mailItem.Send();
+
+        //    // Release Outlook COM objects
+        //    Marshal.ReleaseComObject(mailItem);
+        //    Marshal.ReleaseComObject(outlookApp);
+
+        //    // Notify user
+        //    MessageBox.Show("Email sent successfully!");
+        //}
+
+        //private void SendEmail()
+        //{
+        //    string fileName = openFileDialog1.FileName;
+        //    var excelApp = new Microsoft.Office.Interop.Excel.Application();
+        //    Microsoft.Office.Interop.Excel.Workbook workbook = excelApp.Workbooks.Open(fileName);
+        //    Microsoft.Office.Interop.Excel.Worksheet worksheet = (Microsoft.Office.Interop.Excel.Worksheet)workbook.Sheets[1]; // First sheet (index 1 in Interop)
+
+        //    // Find the "Alts" and "DELTA" column indices
+        //    int altsColumnIndex = -1;
+        //    int deltaColumnIndex = -1;
+        //    Microsoft.Office.Interop.Excel.Range headerRow = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[1];
+
+        //    for (int i = 1; i <= headerRow.Columns.Count; i++)
+        //    {
+        //        var cell = (Microsoft.Office.Interop.Excel.Range)headerRow.Cells[1, i];
+        //        string columnHeader = cell.Value?.ToString();
+
+        //        if (columnHeader == "Alts")
+        //        {
+        //            altsColumnIndex = i;
+        //        }
+        //        else if (columnHeader == "DELTA")
+        //        {
+        //            deltaColumnIndex = i;
+        //        }
+
+        //        // Stop searching if both indices are found
+        //        if (altsColumnIndex != -1 && deltaColumnIndex != -1)
+        //        {
+        //            break;
+        //        }
+        //    }
+
+        //    // Check if the "DELTA" column was found
+        //    if (deltaColumnIndex == -1)
+        //    {
+        //        MessageBox.Show("Could not find the 'DELTA' column.");
+        //        workbook.Close(false);
+        //        Marshal.ReleaseComObject(workbook);
+        //        Marshal.ReleaseComObject(excelApp);
+        //        return;
+        //    }
+
+        //    // Build HTML table from Excel data
+        //    StringBuilder htmlTable = new StringBuilder();
+        //    htmlTable.Append("<table border='1' style='border-collapse:collapse;'>");
+
+        //    // Add header row
+        //    htmlTable.Append("<tr>");
+        //    for (int col = 1; col <= altsColumnIndex; col++)
+        //    {
+        //        string header = ((Microsoft.Office.Interop.Excel.Range)headerRow.Cells[1, col]).Value?.ToString();
+        //        htmlTable.AppendFormat("<th>{0}</th>", header ?? string.Empty);
+        //    }
+        //    htmlTable.Append("</tr>");
+
+        //    // Add data rows with conditional formatting for "DELTA" values
+        //    int row = 2; // Start from the second row
+        //    while (((Microsoft.Office.Interop.Excel.Range)worksheet.Cells[row, 1]).Value != null)
+        //    {
+        //        htmlTable.Append("<tr>");
+        //        for (int col = 1; col <= altsColumnIndex; col++)
+        //        {
+        //            var cell = (Microsoft.Office.Interop.Excel.Range)worksheet.Cells[row, col];
+        //            string cellValue = cell.Value?.ToString() ?? string.Empty;
+
+        //            // Apply color formatting for "DELTA" column
+        //            if (col == deltaColumnIndex && double.TryParse(cellValue, out double deltaValue))
+        //            {
+        //                string color = deltaValue < 0 ? "IndianRed" : "LightGreen";
+        //                htmlTable.AppendFormat("<td style='background-color:{0};'>{1}</td>", color, cellValue);
+        //            }
+        //            else
+        //            {
+        //                htmlTable.AppendFormat("<td>{0}</td>", cellValue);
+        //            }
+        //        }
+        //        htmlTable.Append("</tr>");
+        //        row++;
+        //    }
+        //    htmlTable.Append("</table>");
+
+        //    // Clean up Excel objects
+        //    workbook.Close(false);
+        //    Marshal.ReleaseComObject(workbook);
+        //    Marshal.ReleaseComObject(excelApp);
+
+        //    // Initialize Outlook application and create a new mail item
+        //    var outlookApp = new Outlook.Application();
+        //    Outlook.MailItem mailItem = (Outlook.MailItem)outlookApp.CreateItem(Outlook.OlItemType.olMailItem);
+
+        //    // Set email properties
+        //    mailItem.Subject = projectName.Substring(0, projectName.Length - 5).ToString() + "_UPDATED_" + DateAndTime.Now.ToString("yyyyMMddHHmm");
+
+        //    mailItem.To = "lgt@robotron.co.il";
+
+        //    // Embed the HTML table in the email body
+        //    mailItem.HTMLBody = "<html><body>" + htmlTable.ToString() + "</body></html>";
+
+        //    // Send the email
+        //    mailItem.Send();
+
+        //    // Release COM objects
+        //    Marshal.ReleaseComObject(mailItem);
+        //    Marshal.ReleaseComObject(outlookApp);
+
+        //    MessageBox.Show("Email sent successfully.");
+        //}
+
+
+
+        //private void SendEmail()
+        //    {
+        //        string fileName = openFileDialog1.FileName;
+        //        var excelApp = new Application();
+        //        Workbook workbook = excelApp.Workbooks.Open(fileName);
+        //        Worksheet worksheet = (Worksheet)workbook.Sheets[1];
+
+        //        // Extract client domain from projectName
+        //        string clientDomain = projectName.Split('_')[0];
+
+        //        // Find the "Alts" and "DELTA" column indices
+        //        int altsColumnIndex = -1;
+        //        int deltaColumnIndex = -1;
+        //        Range headerRow = (Range)worksheet.Rows[1];
+
+        //        for (int i = 1; i <= headerRow.Columns.Count; i++)
+        //        {
+        //            var cell = (Range)headerRow.Cells[1, i];
+        //            string columnHeader = cell.Value?.ToString();
+
+        //            if (columnHeader == "Alts") altsColumnIndex = i;
+        //            else if (columnHeader == "DELTA") deltaColumnIndex = i;
+
+        //            if (altsColumnIndex != -1 && deltaColumnIndex != -1) break;
+        //        }
+
+        //        if (deltaColumnIndex == -1)
+        //        {
+        //            MessageBox.Show("Could not find the 'DELTA' column.");
+        //            workbook.Close(false);
+        //            Marshal.ReleaseComObject(workbook);
+        //            Marshal.ReleaseComObject(excelApp);
+        //            return;
+        //        }
+
+        //        // Build HTML table from Excel data
+        //        StringBuilder htmlTable = new StringBuilder();
+        //        htmlTable.Append("<table border='1' style='border-collapse:collapse;'><tr>");
+        //        for (int col = 1; col <= altsColumnIndex; col++)
+        //        {
+        //            string header = ((Range)headerRow.Cells[1, col]).Value?.ToString();
+        //            htmlTable.AppendFormat("<th>{0}</th>", header ?? string.Empty);
+        //        }
+        //        htmlTable.Append("</tr>");
+
+        //        int row = 2;
+        //        while (((Range)worksheet.Cells[row, 1]).Value != null)
+        //        {
+        //            htmlTable.Append("<tr>");
+        //            for (int col = 1; col <= altsColumnIndex; col++)
+        //            {
+        //                var cell = (Range)worksheet.Cells[row, col];
+        //                string cellValue = cell.Value?.ToString() ?? string.Empty;
+
+        //                if (col == deltaColumnIndex && double.TryParse(cellValue, out double deltaValue))
+        //                {
+        //                    string color = deltaValue < 0 ? "IndianRed" : "LightGreen";
+        //                    htmlTable.AppendFormat("<td style='background-color:{0};'>{1}</td>", color, cellValue);
+        //                }
+        //                else
+        //                {
+        //                    htmlTable.AppendFormat("<td>{0}</td>", cellValue);
+        //                }
+        //            }
+        //            htmlTable.Append("</tr>");
+        //            row++;
+        //        }
+        //        htmlTable.Append("</table>");
+
+        //        workbook.Close(false);
+        //        Marshal.ReleaseComObject(workbook);
+        //        Marshal.ReleaseComObject(excelApp);
+
+        //        // Get email recipients from the user's Outlook based on client domain
+        //        var outlookApp = new Outlook.Application();
+        //        List<string> availableEmails = GetEmailsFromDomain(outlookApp, clientDomain);
+
+        //        // Show selection form to user
+        //        using (RecipientSelectionForm selectionForm = new RecipientSelectionForm(availableEmails))
+        //        {
+        //            if (selectionForm.ShowDialog() == DialogResult.OK)
+        //            {
+        //                var selectedRecipients = selectionForm.SelectedRecipients;
+
+        //                // Initialize email
+        //                Outlook.MailItem mailItem = (Outlook.MailItem)outlookApp.CreateItem(Outlook.OlItemType.olMailItem);
+        //                mailItem.Subject = projectName.Substring(0, projectName.Length - 5) + "_UPDATED_" + DateTime.Now.ToString("yyyyMMddHHmm");
+        //                mailItem.CC = "lgt@robotron.co.il";
+        //                mailItem.To = string.Join(";", selectedRecipients);
+        //                mailItem.HTMLBody = "<html><body>" + htmlTable.ToString() + "</body></html>";
+        //                mailItem.Send();
+
+        //                MessageBox.Show("Email sent successfully.");
+        //                Marshal.ReleaseComObject(mailItem);
+        //            }
+        //        }
+
+        //        Marshal.ReleaseComObject(outlookApp);
+        //    }
+
+        //        // Helper method to get emails based on the client domain
+        //        private List<string> GetEmailsFromDomain(Outlook.Application outlookApp, string clientDomain)
+        //        {
+        //            List<string> emails = new List<string>();
+        //            Outlook.Folder inboxFolder = (Outlook.Folder)outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox);
+
+        //            foreach (Outlook.MailItem mail in inboxFolder.Items)
+        //            {
+        //                // Convert both the email address and clientDomain to lowercase for case-insensitive comparison
+        //                string senderEmailLower = mail.SenderEmailAddress.ToLower();
+        //                string clientDomainLower = clientDomain.ToLower();
+
+        //                if (senderEmailLower.Contains(clientDomainLower))
+        //                {
+        //                    string contactInfo = $"{mail.SenderName} ({mail.SenderEmailAddress})";
+        //                    if (!emails.Contains(contactInfo))
+        //                        emails.Add(contactInfo);
+        //                }
+        //            }
+        //            return emails;
+        //        }
+
         private void SendEmail()
         {
-            Outlook.Application outlookApp = new Outlook.Application();
-            // Create a new mail item
+            string fileName = openFileDialog1.FileName;
+            var excelApp = new Microsoft.Office.Interop.Excel.Application();
+            Microsoft.Office.Interop.Excel.Workbook workbook = excelApp.Workbooks.Open(fileName);
+            Microsoft.Office.Interop.Excel.Worksheet worksheet = (Microsoft.Office.Interop.Excel.Worksheet)workbook.Sheets[1]; // First sheet (index 1 in Interop)
+
+            // Find the "Alts" and "DELTA" column indices
+            int altsColumnIndex = -1;
+            int deltaColumnIndex = -1;
+            Microsoft.Office.Interop.Excel.Range headerRow = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[1];
+
+            for (int i = 1; i <= headerRow.Columns.Count; i++)
+            {
+                var cell = (Microsoft.Office.Interop.Excel.Range)headerRow.Cells[1, i];
+                string columnHeader = cell.Value?.ToString();
+
+                if (columnHeader == "Alts")
+                {
+                    altsColumnIndex = i;
+                }
+                else if (columnHeader == "DELTA")
+                {
+                    deltaColumnIndex = i;
+                }
+
+                if (altsColumnIndex != -1 && deltaColumnIndex != -1)
+                {
+                    break;
+                }
+            }
+
+            if (deltaColumnIndex == -1)
+            {
+                MessageBox.Show("Could not find the 'DELTA' column.");
+                workbook.Close(false);
+                Marshal.ReleaseComObject(workbook);
+                Marshal.ReleaseComObject(excelApp);
+                return;
+            }
+
+            // Build HTML table from Excel data
+            StringBuilder htmlTable = new StringBuilder();
+            htmlTable.Append("<table border='1' style='border-collapse:collapse;'>");
+
+            // Add header row
+            htmlTable.Append("<tr>");
+            for (int col = 1; col <= altsColumnIndex; col++)
+            {
+                string header = ((Microsoft.Office.Interop.Excel.Range)headerRow.Cells[1, col]).Value?.ToString();
+                htmlTable.AppendFormat("<th>{0}</th>", header ?? string.Empty);
+            }
+            htmlTable.Append("</tr>");
+
+            // Add data rows with conditional formatting for "DELTA" values
+            int row = 2;
+            while (((Microsoft.Office.Interop.Excel.Range)worksheet.Cells[row, 1]).Value != null)
+            {
+                htmlTable.Append("<tr>");
+                for (int col = 1; col <= altsColumnIndex; col++)
+                {
+                    var cell = (Microsoft.Office.Interop.Excel.Range)worksheet.Cells[row, col];
+                    string cellValue = cell.Value?.ToString() ?? string.Empty;
+
+                    if (col == deltaColumnIndex && double.TryParse(cellValue, out double deltaValue))
+                    {
+                        string color = deltaValue < 0 ? "IndianRed" : "LightGreen";
+                        htmlTable.AppendFormat("<td style='background-color:{0};'>{1}</td>", color, cellValue);
+                    }
+                    else
+                    {
+                        htmlTable.AppendFormat("<td>{0}</td>", cellValue);
+                    }
+                }
+                htmlTable.Append("</tr>");
+                row++;
+            }
+            htmlTable.Append("</table>");
+
+            workbook.Close(false);
+            Marshal.ReleaseComObject(workbook);
+            Marshal.ReleaseComObject(excelApp);
+
+            var outlookApp = new Outlook.Application();
             Outlook.MailItem mailItem = (Outlook.MailItem)outlookApp.CreateItem(Outlook.OlItemType.olMailItem);
-            // Set email properties
-            mailItem.Subject = "Test Email";
-            mailItem.Body = "This is a test email from my WinForms app.";
-            mailItem.To = "lgt@robotron.co.il";
-            // Send the email
-            mailItem.Send();
-            // Release COM objects
+
+            mailItem.Subject = projectName.Substring(0, projectName.Length - 5).ToString() + "_UPDATED_" + DateAndTime.Now.ToString("yyyyMMddHHmm");
+
+            // Set CC field
+            mailItem.CC = "lgt@robotron.co.il";
+
+            // Hardcoded in-house email addresses
+            List<string> inhouseEmails = new List<string>
+    {
+        "production@robotron.co.il",
+        "avishay@robotron.co.il",
+        "rehesh@robotron.co.il",
+        "vlad@robotron.co.il"
+    };
+
+            // Extract client domain from project name
+            string clientDomain = projectName.Split('_')[0].ToLower();
+
+            // Get emails from the client's domain
+            List<string> clientEmails = GetUniqueClientEmails( clientDomain);//GetEmailsFromDomain(outlookApp, clientDomain); 
+
+            // Display a form with checkboxes for all recipients
+            RecipientSelectionForm selectionForm = new RecipientSelectionForm(inhouseEmails, clientEmails);
+            if (selectionForm.ShowDialog() == DialogResult.OK)
+            {
+                // Combine selected emails into the "To" field
+                mailItem.To = string.Join(";", selectionForm.SelectedEmails);
+
+                // Embed the HTML table in the email body
+                mailItem.HTMLBody = "<html><body>" + htmlTable.ToString() + "</body></html>";
+
+                // Send the email
+                mailItem.Send();
+                MessageBox.Show("Email sent successfully.");
+            }
+
             Marshal.ReleaseComObject(mailItem);
             Marshal.ReleaseComObject(outlookApp);
-            MessageBox.Show("Test");
         }
 
-        public bool fullIPNonly = true;
+        //// Helper method to retrieve emails from the client's domain
+        //private List<string> GetEmailsFromDomain(Outlook.Application outlookApp, string clientDomain)
+        //{
+        //    List<string> emails = new List<string>();
+        //    Outlook.Folder inboxFolder = (Outlook.Folder)outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox);
+
+        //    foreach (Outlook.MailItem mail in inboxFolder.Items)
+        //    {
+        //        string senderEmailLower = mail.SenderEmailAddress.ToLower();
+        //        string clientDomainLower = clientDomain.ToLower();
+
+        //        if (senderEmailLower.Contains(clientDomainLower))
+        //        {
+        //            string contactInfo = $"{mail.SenderName} ({mail.SenderEmailAddress})";
+        //            if (!emails.Contains(contactInfo))
+        //                emails.Add(contactInfo);
+        //        }
+        //    }
+        //    return emails;
+        //}
+
+        //public partial class LoadingForm : Form
+        //{
+        //    public LoadingForm()
+        //    {
+        //       // InitializeComponent();
+        //        // Set any additional properties here, like positioning, sizing, or appearance if desired.
+        //        this.StartPosition = FormStartPosition.CenterScreen;
+        //        this.ControlBox = false; // Disable close button
+        //    }
+        //}
+
+        public partial class LoadingForm : Form
+        {
+            private Label lblLoading;
+
+            public LoadingForm()
+            {
+                //InitializeComponent();
+
+                // Set form properties
+                this.StartPosition = FormStartPosition.CenterScreen;
+                this.ControlBox = false; // Disable close button
+                this.Size = new Size(300, 150); // Set form size (adjust as needed)
+
+                // Create and configure the label to display loading text
+                lblLoading = new Label();
+                lblLoading.Text = "Loading email contacts...";  // The text you want to display
+                lblLoading.AutoSize = true;  // Automatically adjust size based on text
+                lblLoading.Location = new Point(50, 50);  // Adjust the location as needed
+                lblLoading.Font = new Font("Arial", 12, FontStyle.Bold);  // Adjust font size and style
+
+                // Add the label to the form's controls
+                this.Controls.Add(lblLoading);
+            }
+        }
+
+
+        //public List<string> GetUniqueClientEmails(string clientDomain)
+        //{
+        //    var emails = new HashSet<string>(); // Using HashSet to ensure uniqueness
+        //    var outlookApp = new Outlook.Application();
+
+        //    Outlook.Folder inboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox) as Outlook.Folder;
+        //    Outlook.Folder outboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderSentMail) as Outlook.Folder;
+
+        //    // Helper function to add unique emails from a folder
+        //    void AddEmailsFromFolder(Outlook.Folder folder)
+        //    {
+        //        foreach (Outlook.MailItem mail in folder.Items)
+        //        {
+        //            // Ensure the mail item is valid and has a sender email
+        //            if (mail is Outlook.MailItem && mail.SenderEmailAddress != null)
+        //            {
+        //                string senderEmailLower = mail.SenderEmailAddress.ToLower();
+        //                string clientDomainLower = clientDomain.ToLower();
+
+        //                // Check if the sender's email contains the client domain
+        //                if (senderEmailLower.Contains(clientDomainLower))
+        //                {
+        //                    // Format as "Name (Email)"
+        //                    string contactInfo = $"{mail.SenderName} ({mail.SenderEmailAddress})";
+        //                    emails.Add(contactInfo); // HashSet prevents duplicate entries
+        //                }
+        //            }
+        //        }
+        //    }
+
+        //    // Add emails from both Inbox and Outbox folders
+        //    AddEmailsFromFolder(inboxFolder);
+        //    AddEmailsFromFolder(outboxFolder);
+
+        //    return emails.ToList(); // Convert HashSet to List for use in selection form
+        //}
+
+        //public List<string> GetUniqueClientEmails(string clientDomain)
+        //{
+        //    var emails = new HashSet<string>();
+        //    var outlookApp = new Outlook.Application();
+
+        //    // Display the loading form in a new thread
+        //    LoadingForm loadingForm = new LoadingForm();
+        //    Task.Run(() => loadingForm.ShowDialog());
+
+        //    Outlook.Folder inboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox) as Outlook.Folder;
+        //    Outlook.Folder outboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderSentMail) as Outlook.Folder;
+
+        //    // Helper function to add unique emails from a folder
+        //    void AddEmailsFromFolder(Outlook.Folder folder)
+        //    {
+        //        foreach (Outlook.MailItem mail in folder.Items)
+        //        {
+        //            if (mail is Outlook.MailItem && mail.SenderEmailAddress != null)
+        //            {
+        //                string senderEmailLower = mail.SenderEmailAddress.ToLower();
+        //                string clientDomainLower = clientDomain.ToLower();
+
+        //                if (senderEmailLower.Contains(clientDomainLower))
+        //                {
+        //                    string contactInfo = $"{mail.SenderName} ({mail.SenderEmailAddress})";
+        //                    emails.Add(contactInfo); // HashSet prevents duplicate entries
+        //                }
+        //            }
+        //        }
+        //    }
+
+        //    // Add emails from both Inbox and Outbox folders
+        //    AddEmailsFromFolder(inboxFolder);
+        //    AddEmailsFromFolder(outboxFolder);
+
+        //    // Close the loading form after the job is done
+        //    loadingForm.Invoke(new Action(() => loadingForm.Close()));
+
+        //    return emails.ToList();
+        //}
+
+        public List<string> GetUniqueClientEmails(string clientDomain)
+        {
+            var emails = new HashSet<string>();
+            var outlookApp = new Outlook.Application();
+
+            // Initialize and show the loading form
+            LoadingForm loadingForm = new LoadingForm();
+
+            // Display the loading form on a new thread to avoid blocking
+            var loadingThread = new Thread(() =>
+            {
+                loadingForm.ShowDialog();
+            });
+            loadingThread.Start();
+
+            Outlook.Folder inboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox) as Outlook.Folder;
+            Outlook.Folder outboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderSentMail) as Outlook.Folder;
+
+            // Helper function to add unique emails from a folder
+            void AddEmailsFromFolder(Outlook.Folder folder)
+            {
+                foreach (Outlook.MailItem mail in folder.Items)
+                {
+                    if (mail is Outlook.MailItem && mail.SenderEmailAddress != null)
+                    {
+                        string senderEmailLower = mail.SenderEmailAddress.ToLower();
+                        string clientDomainLower = clientDomain.ToLower();
+
+                        if (senderEmailLower.Contains(clientDomainLower))
+                        {
+                            string contactInfo = $"{mail.SenderName} ({mail.SenderEmailAddress})";
+                            emails.Add(contactInfo); // HashSet prevents duplicate entries
+                        }
+                    }
+                }
+            }
+
+            // Add emails from both Inbox and Outbox folders
+            AddEmailsFromFolder(inboxFolder);
+            AddEmailsFromFolder(outboxFolder);
+
+            // Close the loading form once processing is complete
+            if (loadingForm.InvokeRequired)
+            {
+                loadingForm.Invoke(new Action(() => loadingForm.Close()));
+            }
+            else
+            {
+                loadingForm.Close();
+            }
+
+            return emails.ToList();
+        }
+
+
+
+
+        public class RecipientSelectionForm : Form
+    {
+        private CheckedListBox checkedListBox;
+        private Button sendButton;
+        private Button cancelButton;
+        public List<string> SelectedEmails { get; private set; }
+
+        public RecipientSelectionForm(List<string> inhouseEmails, List<string> clientEmails)
+        {
+            SelectedEmails = new List<string>();
+
+            checkedListBox = new CheckedListBox
+            {
+                Dock = DockStyle.Top,
+                Height = 200,
+                CheckOnClick = true
+            };
+
+            // Add in-house emails to the list with a label for clarity
+            checkedListBox.Items.Add("In-House Emails:", false);
+            foreach (var email in inhouseEmails)
+            {
+                checkedListBox.Items.Add(email, false);
+            }
+
+            // Add client emails to the list with a label for clarity
+            checkedListBox.Items.Add("Client Emails:", false);
+            foreach (var email in clientEmails)
+            {
+                checkedListBox.Items.Add(email, false);
+            }
+
+            sendButton = new Button
+            {
+                Text = "Send",
+                Dock = DockStyle.Bottom
+            };
+            sendButton.Click += SendButton_Click;
+
+            cancelButton = new Button
+            {
+                Text = "Cancel",
+                Dock = DockStyle.Bottom
+            };
+            cancelButton.Click += (s, e) => DialogResult = DialogResult.Cancel;
+
+            Controls.Add(checkedListBox);
+            Controls.Add(sendButton);
+            Controls.Add(cancelButton);
+
+            Text = "Select Recipients";
+            Height = 300;
+            Width = 300;
+            StartPosition = FormStartPosition.CenterScreen;
+            }
+
+        private void SendButton_Click(object sender, EventArgs e)
+        {
+            // Collect selected emails from the CheckedListBox
+            foreach (var item in checkedListBox.CheckedItems)
+            {
+                if (!item.ToString().EndsWith(":")) // Skip the section labels
+                {
+                    SelectedEmails.Add(item.ToString());
+                }
+            }
+
+            //if (SelectedEmails.Count == 0)
+            //{
+            //    MessageBox.Show("Please select at least one recipient.");
+            //    return;
+            //}
+
+            DialogResult = DialogResult.OK;
+        }
+    }
+
+
+
+
+
+
+
+    public bool fullIPNonly = true;
         private void label1_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
@@ -2199,7 +2979,9 @@ namespace WH_Panel
             }
         }
 
+        private void label10_MouseDown(object sender, MouseEventArgs e)
+        {
 
-
+        }
     }
 }

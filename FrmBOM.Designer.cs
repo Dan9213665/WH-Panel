@@ -137,6 +137,7 @@
             label10.TabIndex = 18;
             label10.Text = "DATE";
             label10.TextAlign = ContentAlignment.MiddleCenter;
+            label10.MouseDown += label10_MouseDown;
             // 
             // textBox9
             // 

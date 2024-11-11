@@ -46,5 +46,11 @@ namespace WH_Panel
             this.DialogResult = DialogResult.Abort;
             this.Close();
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
+        }
     }
 }
