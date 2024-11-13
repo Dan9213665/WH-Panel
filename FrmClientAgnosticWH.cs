@@ -3357,5 +3357,21 @@ namespace WH_Panel
 
             }
         }
+
+        private void label15_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            try
+            {
+
+                txtbFiltAVLbyDESCR.Text = textBox5.Text;
+                textBox1.Clear();
+
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Incorrect search pattern, remove invalid character and try again!");
+            }
+        }
+
     }
 }

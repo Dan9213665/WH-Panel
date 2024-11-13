@@ -892,6 +892,7 @@
             label15.TabIndex = 5;
             label15.Text = "BALANCE : ";
             label15.TextAlign = ContentAlignment.MiddleCenter;
+            label15.MouseDoubleClick += label15_MouseDoubleClick;
             // 
             // textBox10
             // 

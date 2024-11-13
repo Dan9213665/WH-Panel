@@ -23,7 +23,7 @@ namespace WH_Panel
 
         }
 
-        public static string connectionString = "Data Source=RT12\\SQLEXPRESS;Integrated Security=True;";
+        public static string connectionString = "Data Source=DBR3\\SQLEXPRESS;Integrated Security=True;";
 
         public List<string> databases = GetUserDatabases(connectionString);
 

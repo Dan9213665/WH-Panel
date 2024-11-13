@@ -2485,211 +2485,6 @@ var myPieChart = new Chart(ctx, {
         }
 
 
-        //private async Task GenerateHtmlReportAsync(string filePath)
-        //{
-        //    // Prepare the dictionary to track IPNs and their DELTA values across kits
-        //    var ipnData = new Dictionary<string, Dictionary<string, int?>>(); // Nullable int for DELTA
-
-        //    foreach (var bom in selectedBOMs)
-        //    {
-        //        foreach (var item in bom.Items)
-        //        {
-        //            if (!ipnData.ContainsKey(item.IPN))
-        //            {
-        //                ipnData[item.IPN] = new Dictionary<string, int?>();
-        //            }
-
-        //            ipnData[item.IPN][bom.Name] = item.Delta; // Add DELTA for IPN in this kit
-        //        }
-        //    }
-
-        //    var htmlContent = new StringBuilder();
-
-        //    // HTML header and CSS styles
-        //    htmlContent.AppendLine("<html>");
-        //    htmlContent.AppendLine("<head>");
-        //    htmlContent.AppendLine("<style>");
-        //    //htmlContent.AppendLine("table { width: 100%; border-collapse: collapse; table-layout: fixed; }"); // Fixed table layout
-        //    htmlContent.AppendLine("table { width: 100%; border-collapse: collapse; }"); // Table style without fixed layout
-        //    htmlContent.AppendLine("th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }");
-        //    htmlContent.AppendLine("th { background-color: #f2f2f2; color: black; font-weight: bold; white-space: wrap;position: sticky; top: 0; z-index: 1; }");
-        //    htmlContent.AppendLine(".rotated-header { transform: rotate(0deg); transform-origin: center center; white-space: wrap; width:20px; vertical-align: center; text-align: center; }");
-        //    htmlContent.AppendLine(".positive { background-color: LightGreen; }");
-        //    htmlContent.AppendLine(".negative { background-color: IndianRed; color: white; }");
-        //    htmlContent.AppendLine(".nowrap { white-space: nowrap; margin:1px;padding:1px;font-weight:bold;}"); // Add nowrap class
-        //    htmlContent.AppendLine(".bold { font-weight: bold; }");
-        //    htmlContent.AppendLine("</style>");
-        //    htmlContent.AppendLine("</head>");
-        //    htmlContent.AppendLine("<body style='background-color: grey;'>");
-
-        //    //htmlContent.AppendLine("<h1>IPN Kit Usage Overview</h1>");
-        //    htmlContent.AppendLine("<table>");
-
-        //    // Table headers
-        //    htmlContent.AppendLine("<thead>");
-        //    htmlContent.AppendLine("<tr>");
-        //    htmlContent.AppendLine("<th class='nowrap'>Count</th>");
-        //    htmlContent.AppendLine("<th class='nowrap'>IPN</th>");
-
-
-        //    // Kit names with rotated header styling
-        //    foreach (var bom in selectedBOMs)
-        //    {
-        //        string[] nameParts = bom.Name.Split('_');
-        //        string displayName = nameParts.Length >= 3 ? $"{nameParts[1]}_{nameParts[2].Replace(".xlsm", "")}" : bom.Name;
-        //        htmlContent.AppendLine($"<th class='rotated-header'>{displayName}</th>");
-        //       // htmlContent.AppendLine($"<th>{displayName}</th>");
-        //    }
-
-        //    htmlContent.AppendLine("</tr>");
-        //    htmlContent.AppendLine("</thead>");
-        //    htmlContent.AppendLine("<tbody>");
-
-        //    // Data rows with IPN and delta values
-        //    foreach (var ipnEntry in ipnData.OrderByDescending(entry => entry.Value.Count(v => v.Value.HasValue)))
-        //    {
-        //        string ipn = ipnEntry.Key;
-        //        int totalAppearances = ipnEntry.Value.Count(v => v.Value.HasValue);
-
-        //        htmlContent.AppendLine("<tr>");
-        //        htmlContent.AppendLine($"<td style='color:white;'>{totalAppearances}</td>");
-        //        htmlContent.AppendLine($"<td style='color:white;'>{ipn}</td>");
-
-        //        foreach (var bom in selectedBOMs)
-        //        {
-        //            if (ipnEntry.Value.TryGetValue(bom.Name, out var delta))
-        //            {
-        //                string cellClass = delta >= 0 ? "positive bold" : "negative bold";
-        //                htmlContent.AppendLine($"<td class='{cellClass}'>{delta}</td>");
-        //            }
-        //            else
-        //            {
-        //                htmlContent.AppendLine("<td></td>");
-        //            }
-        //        }
-
-        //        htmlContent.AppendLine("</tr>");
-        //    }
-
-        //    htmlContent.AppendLine("</tbody>");
-        //    htmlContent.AppendLine("</table>");
-        //    htmlContent.AppendLine("</body>");
-        //    htmlContent.AppendLine("</html>");
-
-        //    // Write HTML content to file
-        //    await File.WriteAllTextAsync(filePath, htmlContent.ToString());
-
-        //    // Open the report in the default HTML viewer
-        //    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
-        //    {
-        //        FileName = filePath,
-        //        UseShellExecute = true
-        //    });
-        //}
-
-        //private async Task GenerateHtmlReportAsync(string filePath)
-        //{
-        //    // Prepare the dictionary to track IPNs and their DELTA values across kits
-        //    var ipnData = new Dictionary<string, Dictionary<string, int?>>(); // Nullable int for DELTA
-
-        //    foreach (var bom in selectedBOMs)
-        //    {
-        //        foreach (var item in bom.Items)
-        //        {
-        //            if (!ipnData.ContainsKey(item.IPN))
-        //            {
-        //                ipnData[item.IPN] = new Dictionary<string, int?>();
-        //            }
-
-        //            ipnData[item.IPN][bom.Name] = item.Delta; // Add DELTA for IPN in this kit
-        //        }
-        //    }
-
-        //    var htmlContent = new StringBuilder();
-
-        //    // HTML header and CSS styles
-        //    htmlContent.AppendLine("<html>");
-        //    htmlContent.AppendLine("<head>");
-        //    htmlContent.AppendLine("<style>");
-        //    htmlContent.AppendLine("table { width: 100%; border-collapse: collapse; }"); // Table style without fixed layout
-        //    htmlContent.AppendLine("th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }");
-        //    htmlContent.AppendLine("th { background-color: #f2f2f2; color: black; font-weight: bold; white-space: wrap;position: sticky; top: 0; z-index: 1; }");
-        //    htmlContent.AppendLine(".rotated-header { transform: rotate(0deg); transform-origin: center center; white-space: wrap; width:20px; vertical-align: center; text-align: center; }");
-        //    htmlContent.AppendLine(".positive { background-color: LightGreen; }");
-        //    htmlContent.AppendLine(".negative { background-color: IndianRed; color: white; }");
-        //    htmlContent.AppendLine(".nowrap { white-space: nowrap; margin:1px;padding:1px;font-weight:bold;}"); // Add nowrap class
-        //    htmlContent.AppendLine(".bold { font-weight: bold; }");
-        //    htmlContent.AppendLine("</style>");
-        //    htmlContent.AppendLine("</head>");
-        //    htmlContent.AppendLine("<body style='background-color: grey;'>");
-
-        //    htmlContent.AppendLine("<table>");
-
-        //    // Table headers
-        //    htmlContent.AppendLine("<thead>");
-        //    htmlContent.AppendLine("<tr>");
-        //    htmlContent.AppendLine("<th class='nowrap'>Balance</th>");
-        //    htmlContent.AppendLine("<th class='nowrap'>Count</th>");
-        //    htmlContent.AppendLine("<th class='nowrap'>IPN</th>");
-
-        //    // Kit names with rotated header styling
-        //    foreach (var bom in selectedBOMs)
-        //    {
-        //        string[] nameParts = bom.Name.Split('_');
-        //        string displayName = nameParts.Length >= 3 ? $"{nameParts[1]}_{nameParts[2].Replace(".xlsm", "")}" : bom.Name;
-        //        htmlContent.AppendLine($"<th class='rotated-header'>{displayName}</th>");
-        //    }
-
-        //    htmlContent.AppendLine("</tr>");
-        //    htmlContent.AppendLine("</thead>");
-        //    htmlContent.AppendLine("<tbody>");
-
-        //    // Data rows with IPN, balance, count, and delta values
-        //    foreach (var ipnEntry in ipnData.OrderByDescending(entry => entry.Value.Count(v => v.Value.HasValue)))
-        //    {
-        //        string ipn = ipnEntry.Key;
-        //        int totalAppearances = ipnEntry.Value.Count(v => v.Value.HasValue);
-        //        int balance = ipnEntry.Value.Values.Where(v => v.HasValue).Sum(v => v ?? 0);
-
-        //        string balanceClass = balance >= 0 ? "positive" : "negative";
-
-        //        htmlContent.AppendLine("<tr>");
-        //        htmlContent.AppendLine($"<td class='{balanceClass} bold'>{balance}</td>");
-        //        htmlContent.AppendLine($"<td style='color:white;'>{totalAppearances}</td>");
-        //        htmlContent.AppendLine($"<td style='color:white;'>{ipn}</td>");
-
-        //        foreach (var bom in selectedBOMs)
-        //        {
-        //            if (ipnEntry.Value.TryGetValue(bom.Name, out var delta))
-        //            {
-        //                string cellClass = delta >= 0 ? "positive bold" : "negative bold";
-        //                htmlContent.AppendLine($"<td class='{cellClass}'>{delta}</td>");
-        //            }
-        //            else
-        //            {
-        //                htmlContent.AppendLine("<td></td>");
-        //            }
-        //        }
-
-        //        htmlContent.AppendLine("</tr>");
-        //    }
-
-        //    htmlContent.AppendLine("</tbody>");
-        //    htmlContent.AppendLine("</table>");
-        //    htmlContent.AppendLine("</body>");
-        //    htmlContent.AppendLine("</html>");
-
-        //    // Write HTML content to file
-        //    await File.WriteAllTextAsync(filePath, htmlContent.ToString());
-
-        //    // Open the report in the default HTML viewer
-        //    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
-        //    {
-        //        FileName = filePath,
-        //        UseShellExecute = true
-        //    });
-        //}
-
         private async Task GenerateHtmlReportAsync(string filePath)
         {
             // Prepare the dictionary to track IPNs and their DELTA values across kits
@@ -2798,35 +2593,7 @@ var myPieChart = new Chart(ctx, {
             htmlContent.AppendLine("    }");
             htmlContent.AppendLine("});");
 
-            //htmlContent.AppendLine("    function sortTable(columnIndex) {");
-            //htmlContent.AppendLine("        let table = document.querySelector('table tbody');");
-            //htmlContent.AppendLine("        let rows = Array.from(table.rows);");
-
-            //htmlContent.AppendLine("        // Toggle sort direction");
-            //htmlContent.AppendLine("        sortDirection = -sortDirection;");
-
-            //htmlContent.AppendLine("        rows.sort((rowA, rowB) => {");
-            //htmlContent.AppendLine("            let cellA = rowA.cells[columnIndex]?.textContent.trim() || '';"); // Default to empty string if no cell
-            //htmlContent.AppendLine("            let cellB = rowB.cells[columnIndex]?.textContent.trim() || '';");
-
-            //htmlContent.AppendLine("            // If both cells are empty, they are equal");
-            //htmlContent.AppendLine("            if (!cellA && !cellB) return 0;");
-            //htmlContent.AppendLine("            // Sort rows with empty cells in the selected column to the bottom");
-            //htmlContent.AppendLine("            if (!cellA) return 1;");
-            //htmlContent.AppendLine("            if (!cellB) return -1;");
-
-            //htmlContent.AppendLine("            // Parse as integers if possible, else as strings");
-            //htmlContent.AppendLine("            let a = isNaN(cellA) ? cellA : parseInt(cellA);");
-            //htmlContent.AppendLine("            let b = isNaN(cellB) ? cellB : parseInt(cellB);");
-
-            //htmlContent.AppendLine("            if (a < b) return -sortDirection;");
-            //htmlContent.AppendLine("            if (a > b) return sortDirection;");
-            //htmlContent.AppendLine("            return 0;");
-            //htmlContent.AppendLine("        });");
-
-            //htmlContent.AppendLine("        // Append sorted rows back to the table");
-            //htmlContent.AppendLine("        rows.forEach(row => table.appendChild(row));");
-            //htmlContent.AppendLine("    }");
+           
 
             htmlContent.AppendLine("</script>");
 
@@ -2866,7 +2633,11 @@ var myPieChart = new Chart(ctx, {
                 //string whClass = whStock >= balance ? "positive" : "negative";
 
                 string balanceClass = balance > 0 ? "positive" : (balance < 0 ? "negative" : "positive");
-                string whClass = whStock >= balance ? "positive" : (whStock < balance ? "negative" : "positive");
+               string whClass = ((whStock >= Math.Abs(balance) && whStock > 0) || (whStock>0 && balance >= 0))  ? "positive" : "negative";
+               
+
+
+
 
 
                 htmlContent.AppendLine("<tr>");
