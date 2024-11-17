@@ -2558,6 +2558,7 @@ var myPieChart = new Chart(ctx, {
 
             // Insert this section after your CSS in the HTML content generation
             htmlContent.AppendLine("<script>");
+
             htmlContent.AppendLine("document.addEventListener('DOMContentLoaded', function() {");
             htmlContent.AppendLine("    let headers = document.querySelectorAll('th');");
             htmlContent.AppendLine("    headers.forEach((header, index) => {");
@@ -2575,18 +2576,56 @@ var myPieChart = new Chart(ctx, {
             htmlContent.AppendLine("        // Toggle sort direction");
             htmlContent.AppendLine("        sortDirection = -sortDirection;");
 
-            htmlContent.AppendLine("        rows.sort((rowA, rowB) => {");
-            htmlContent.AppendLine("            let cellA = rowA.cells[columnIndex].textContent.trim();");
-            htmlContent.AppendLine("            let cellB = rowB.cells[columnIndex].textContent.trim();");
+            //htmlContent.AppendLine("        rows.sort((rowA, rowB) => {");
+            //htmlContent.AppendLine("            let cellA = rowA.cells[columnIndex].textContent.trim();");
+            //htmlContent.AppendLine("            let cellB = rowB.cells[columnIndex].textContent.trim();");
 
-            htmlContent.AppendLine("            // Parse as integers if possible, else as strings");
-            htmlContent.AppendLine("            let a = isNaN(cellA) ? cellA : parseInt(cellA);");
-            htmlContent.AppendLine("            let b = isNaN(cellB) ? cellB : parseInt(cellB);");
+            //htmlContent.AppendLine("            // Parse as integers if possible, else as strings");
+            //htmlContent.AppendLine("            let a = isNaN(cellA) ? cellA : parseInt(cellA);");
+            //htmlContent.AppendLine("            let b = isNaN(cellB) ? cellB : parseInt(cellB);");
+
+            //htmlContent.AppendLine("            if (a < b) return -sortDirection;");
+            //htmlContent.AppendLine("            if (a > b) return sortDirection;");
+            //htmlContent.AppendLine("            return 0;");
+            //htmlContent.AppendLine("        });");
+
+            //htmlContent.AppendLine("        rows.sort((rowA, rowB) => {");
+            //htmlContent.AppendLine("            let cellA = rowA.cells[columnIndex]?.textContent.trim() || '';");
+            //htmlContent.AppendLine("            let cellB = rowB.cells[columnIndex]?.textContent.trim() || '';");
+
+            //// Handle empty cells explicitly
+            //htmlContent.AppendLine("            if (cellA === '' && cellB !== '') return sortDirection;");
+            //htmlContent.AppendLine("            if (cellA !== '' && cellB === '') return -sortDirection;");
+
+            //// Parse as integers if possible, else as strings
+            //htmlContent.AppendLine("            let a = isNaN(cellA) || cellA === '' ? cellA : parseInt(cellA);");
+            //htmlContent.AppendLine("            let b = isNaN(cellB) || cellB === '' ? cellB : parseInt(cellB);");
+
+            //htmlContent.AppendLine("            if (a < b) return -sortDirection;");
+            //htmlContent.AppendLine("            if (a > b) return sortDirection;");
+            //htmlContent.AppendLine("            return 0;");
+            //htmlContent.AppendLine("        });");
+
+            htmlContent.AppendLine("        rows.sort((rowA, rowB) => {");
+            htmlContent.AppendLine("            let cellA = rowA.cells[columnIndex]?.textContent.trim() || '';");
+            htmlContent.AppendLine("            let cellB = rowB.cells[columnIndex]?.textContent.trim() || '';");
+
+            // Always place empty cells below non-empty cells
+            htmlContent.AppendLine("            if (cellA === '' && cellB !== '') return 1;"); // Empty cell comes last
+            htmlContent.AppendLine("            if (cellA !== '' && cellB === '') return -1;"); // Non-empty cell comes first
+
+            // Parse as integers if possible, else as strings
+            htmlContent.AppendLine("            let a = isNaN(cellA) || cellA === '' ? cellA : parseInt(cellA);");
+            htmlContent.AppendLine("            let b = isNaN(cellB) || cellB === '' ? cellB : parseInt(cellB);");
 
             htmlContent.AppendLine("            if (a < b) return -sortDirection;");
             htmlContent.AppendLine("            if (a > b) return sortDirection;");
             htmlContent.AppendLine("            return 0;");
             htmlContent.AppendLine("        });");
+
+
+
+
 
             htmlContent.AppendLine("        // Append sorted rows back to the table");
             htmlContent.AppendLine("        rows.forEach(row => table.appendChild(row));");
