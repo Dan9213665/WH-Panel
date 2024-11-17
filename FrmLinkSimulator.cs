@@ -426,7 +426,10 @@ namespace WH_Panel
                     DataGridViewCheckBoxCell checkBoxCell = dataGridView1.Rows[rowIndex].Cells[column.Index] as DataGridViewCheckBoxCell;
                     if (checkBoxCell != null)
                     {
-                        bool isChecked = (bool)checkBoxCell.EditedFormattedValue;
+                        //bool isChecked = (bool)checkBoxCell.EditedFormattedValue;
+
+                        bool isChecked = (checkBoxCell.Value != null && (bool)checkBoxCell.Value);
+
                         if (isChecked)
                         {
                             // Checkbox is checked
@@ -450,6 +453,32 @@ namespace WH_Panel
             }
             return false;
         }
+
+
+        private void dataGridView1_CurrentCellDirtyStateChanged_1(object sender, EventArgs e)
+        {
+            // Check if the current cell is a checkbox cell
+            if (dataGridView1.CurrentCell is DataGridViewCheckBoxCell)
+            {
+                // Commit the edit to trigger CellValueChanged event
+                dataGridView1.CommitEdit(DataGridViewDataErrorContexts.Commit);
+            }
+        }
+
+        private void DataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            // Check if the changed cell is in the "Calculate" column
+            if (e.RowIndex >= 0 && e.ColumnIndex >= 0 && dataGridView1.Columns[e.ColumnIndex].HeaderText == "Calculate")
+            {
+                DataGridViewCheckBoxCell checkBoxCell = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex] as DataGridViewCheckBoxCell;
+                if (checkBoxCell != null)
+                {
+                    bool isChecked = (bool)(checkBoxCell.Value ?? false);
+                    SetSelectedBoms(); // Call regardless of the checkbox state
+                }
+            }
+        }
+
 
         //private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         //{
@@ -510,6 +539,7 @@ namespace WH_Panel
 
                                     // Handle checkbox click event
                                     HandleCheckboxClick(row.Index);
+                                    SetSelectedBoms();
                                     break; // Break the inner loop once we've found the "Calculate" column
                                 }
                             }
@@ -2463,7 +2493,7 @@ var myPieChart = new Chart(ctx, {
             {
                 // Right-click: Generate HTML report
                 string timestamp = DateTime.Now.ToString("yyyyMMddHHmm");
-                string filePath = $@"\\dbr1\Data\WareHouse\2024\WHsearcher\qSim_{timestamp}.html";
+                string filePath = $@"\\dbr1\Data\WareHouse\2024\WHsearcher\qSim_{timestamp}_{comboBox6.SelectedItem.ToString()}.html";
 
                 await GenerateHtmlReportAsync(filePath);
                 // MessageBox.Show($"Report saved at: {filePath}", "Report Generated", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -2632,7 +2662,7 @@ var myPieChart = new Chart(ctx, {
             htmlContent.AppendLine("    }");
             htmlContent.AppendLine("});");
 
-           
+
 
             htmlContent.AppendLine("</script>");
 
@@ -2672,8 +2702,8 @@ var myPieChart = new Chart(ctx, {
                 //string whClass = whStock >= balance ? "positive" : "negative";
 
                 string balanceClass = balance > 0 ? "positive" : (balance < 0 ? "negative" : "positive");
-               string whClass = ((whStock >= Math.Abs(balance) && whStock > 0) || (whStock>0 && balance >= 0))  ? "positive" : "negative";
-               
+                string whClass = ((whStock >= Math.Abs(balance) && whStock > 0) || (whStock > 0 && balance >= 0)) ? "positive" : "negative";
+
 
 
 
@@ -2777,5 +2807,7 @@ var myPieChart = new Chart(ctx, {
             PopulateDataGridView();
             SetSelectedBoms();
         }
+
+       
     }
 }

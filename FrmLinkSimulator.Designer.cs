@@ -34,6 +34,7 @@
             label1 = new Label();
             button7 = new Button();
             groupBox5 = new GroupBox();
+            button12 = new Button();
             button11 = new Button();
             button10 = new Button();
             button9 = new Button();
@@ -46,7 +47,6 @@
             button4 = new Button();
             dataGridView1 = new DataGridView();
             openFileDialog1 = new OpenFileDialog();
-            button12 = new Button();
             tableLayoutPanel1.SuspendLayout();
             groupBox1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
@@ -169,6 +169,16 @@
             groupBox5.TabIndex = 4;
             groupBox5.TabStop = false;
             groupBox5.Text = "Warehouse";
+            // 
+            // button12
+            // 
+            button12.Location = new Point(212, 48);
+            button12.Name = "button12";
+            button12.Size = new Size(40, 46);
+            button12.TabIndex = 5;
+            button12.Text = "5 M";
+            button12.UseVisualStyleBackColor = true;
+            button12.Click += button12_Click;
             // 
             // button11
             // 
@@ -299,20 +309,11 @@
             dataGridView1.Size = new Size(786, 336);
             dataGridView1.TabIndex = 16;
             dataGridView1.CellClick += dataGridView1_CellClick;
+            dataGridView1.CurrentCellDirtyStateChanged += dataGridView1_CurrentCellDirtyStateChanged_1;
             // 
             // openFileDialog1
             // 
             openFileDialog1.FileName = "openFileDialog1";
-            // 
-            // button12
-            // 
-            button12.Location = new Point(212, 48);
-            button12.Name = "button12";
-            button12.Size = new Size(40, 46);
-            button12.TabIndex = 5;
-            button12.Text = "5 M";
-            button12.UseVisualStyleBackColor = true;
-            button12.Click += button12_Click;
             // 
             // FrmLinkSimulator
             // 
