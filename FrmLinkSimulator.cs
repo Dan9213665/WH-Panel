@@ -1891,8 +1891,8 @@ var myPieChart = new Chart(ctx, {
                 Quantity = item.Delta
             }),
             TotalRequired = group.Sum(item => item.Delta)
-        })
-                .OrderBy(item => item.BOMs.FirstOrDefault().Title);
+        });
+               // .OrderBy(item => item.BOMs.FirstOrDefault().Title);
             string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
             // Generating the HTML content
             // <link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'>
