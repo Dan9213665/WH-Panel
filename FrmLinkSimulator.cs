@@ -2555,7 +2555,7 @@ var myPieChart = new Chart(ctx, {
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string query = $"SELECT IPN, SUM(Stock) AS TotalStock FROM STOCK WHERE IPN IN ('{ipnList}') GROUP BY IPN";
+                string query = $"SELECT IPN, SUM(CAST(Stock AS INT)) AS TotalStock FROM STOCK WHERE IPN IN ('{ipnList}') GROUP BY IPN";
                 SqlCommand command = new SqlCommand(query, connection);
                 connection.Open();
                 using (SqlDataReader reader = await command.ExecuteReaderAsync())
