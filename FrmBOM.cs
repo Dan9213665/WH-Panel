@@ -634,6 +634,36 @@ namespace WH_Panel
                 throw;
             }
         }
+
+        private void FilterTheMissingDataGridViewFullIpnOnly()
+        {
+            try
+            {
+                //string searchbyMFPN = textBox2.Text;
+                //if (textBox2.Text.StartsWith("1P"))
+                //{
+                //    searchbyMFPN = textBox2.Text.Substring(2);
+                //}
+                ////LCLS QR decoder
+                //else if (textBox2.Text.StartsWith("{pbn:"))
+                //{
+                //    searchbyMFPN = ExtractBetween((textBox2.Text), "pm:", ",qty");
+                //}
+                //else if (textBox2.Text.StartsWith("P") == true)
+                //{
+                //    searchbyMFPN = textBox2.Text.Substring(1);
+                //}
+                DataView dv = missingUDtable.DefaultView;
+                dv.RowFilter = "[IPN] ='" + textBox1.Text.ToString() + "'";
+                dataGridView1.DataSource = dv;
+                SetColumsOrder(dataGridView1);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Incorrect search pattern, remove invalid character and try again !", "Search pattern error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                throw;
+            }
+        }
         private void FilterTheFoundDataGridView()
         {
             try
@@ -698,7 +728,8 @@ namespace WH_Panel
             if (fullIPNonly && e.KeyCode == Keys.Enter)
             {
                 label1.BackColor = Color.IndianRed;
-                FilterTheMissingDataGridView();
+                //FilterTheMissingDataGridView();
+                FilterTheMissingDataGridViewFullIpnOnly();
                 FilterTheFoundDataGridView();
                 e.Handled = true; // Prevent the default behavior if needed
                 e.SuppressKeyPress = true; // Suppress Enter key press to avoid any other actions
