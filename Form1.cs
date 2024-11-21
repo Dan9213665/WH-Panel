@@ -20,7 +20,7 @@ namespace WH_Panel
         {
             InitializeComponent();
             DateTime fileModifiedDate = File.GetLastWriteTime(@"ImperiumTabulaPrincipalis.exe");
-            this.Text = "Imperium Tabula Principalis UPDATED " + fileModifiedDate.ToString();
+            this.Text = "Imperium Tabula Principalis UPDATED " + fileModifiedDate.ToString("yyyyMMddHHmm");
             // Check if the machine name is "lgt"
             if (Environment.MachineName == "RT12"|| Environment.MachineName == "RT19")
             {
@@ -39,36 +39,6 @@ namespace WH_Panel
             this.Location = new Point(x, y);
         }
         public List<ClientWarehouse> warehouses { get; set; }
-        //public List<ClientWarehouse> PopulateWarehouses()
-        //{
-        //    string directoryPath = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS";
-        //    List<ClientWarehouse> warehouses = new List<ClientWarehouse>();
-        //    // Get all subdirectories under the specified directory
-        //    string[] subDirectories = Directory.GetDirectories(directoryPath);
-        //    foreach (string subDir in subDirectories)
-        //    {
-        //        string clName = new DirectoryInfo(subDir).Name;
-        //        string clPrefix = GetPrefixFromFile(Path.Combine(subDir, "prefix.txt"));
-        //        string clAvlFile = Directory.GetFiles(subDir, "*_AVL.XLSM").FirstOrDefault();
-        //        string clStockFile = Directory.GetFiles(subDir, "*_STOCK.XLSM").FirstOrDefault();
-        //        string clLogoFile = Directory.GetFiles(subDir, "logo.png").FirstOrDefault();
-        //        string accDBfile = Directory.GetFiles(subDir, ".accdb").FirstOrDefault();
-        //        if (!string.IsNullOrEmpty(clAvlFile) && !string.IsNullOrEmpty(clStockFile))
-        //        {
-        //            ClientWarehouse warehouse = new ClientWarehouse
-        //            {
-        //                clName = clName,
-        //                clPrefix = clPrefix,
-        //                clAvlFile = clAvlFile,
-        //                clStockFile = clStockFile,
-        //                clLogo = clLogoFile,
-        //                claccDBfile = accDBfile
-        //            };
-        //            warehouses.Add(warehouse);
-        //        }
-        //    }
-        //    return warehouses;
-        //}
 
 
 

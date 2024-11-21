@@ -2086,7 +2086,7 @@ namespace WH_Panel
         public string projectName = string.Empty;
         private void GenerateHTMLkitBoxLabel(int qtyToPrint)
         {
-          
+
 
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
 
