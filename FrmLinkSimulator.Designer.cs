@@ -309,6 +309,7 @@
             dataGridView1.Size = new Size(786, 336);
             dataGridView1.TabIndex = 16;
             dataGridView1.CellClick += dataGridView1_CellClick;
+            dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
             dataGridView1.CurrentCellDirtyStateChanged += dataGridView1_CurrentCellDirtyStateChanged_1;
             // 
             // openFileDialog1

@@ -23,6 +23,7 @@ using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Menu;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolBar;
+using Application = System.Windows.Forms.Application;
 using Button = System.Windows.Forms.Button;
 using CheckBox = System.Windows.Forms.CheckBox;
 using ComboBox = System.Windows.Forms.ComboBox;
@@ -42,6 +43,8 @@ namespace WH_Panel
         List<string> selectedFileNames = new List<string>();
         public bool isSql = false;
         List<BOMList> loadedBOMs { get; set; }
+        string[] loadedfiles { get; set; }
+        string[] allFiles { get; set; }
         List<BOMList> selectedBOMs { get; set; }
         public int selectedBOMscount = 0;
         public string fileName = string.Empty;
@@ -280,6 +283,7 @@ namespace WH_Panel
 
             DataGridViewTextBoxColumn folderColumn = new DataGridViewTextBoxColumn();
             folderColumn.HeaderText = "Folder";
+            folderColumn.Name = "Folder";
             folderColumn.ReadOnly = true;
             dataGridView1.Columns.Add(folderColumn);
 
@@ -335,12 +339,10 @@ namespace WH_Panel
                 // Add the row to the DataGridView
 
 
-
-
                 // Check if loadedfiles is null or empty
-                if (loadedfiles != null && loadedfiles.Any())
+                if (allFiles != null && allFiles.Any())
                 {
-                    string folderText = loadedfiles
+                    string folderText = allFiles
                         .Where(x => x.Contains(projectName))
                         .FirstOrDefault() ?? "DefaultFolderText"; // Provide a fallback value if no match is found
 
@@ -352,6 +354,7 @@ namespace WH_Panel
                     // Handle the case where loadedfiles is null or empty
                     row.Cells.Add(new DataGridViewTextBoxCell { Value = "No files loaded" });
                 }
+
 
 
 
@@ -1892,7 +1895,7 @@ var myPieChart = new Chart(ctx, {
             }),
             TotalRequired = group.Sum(item => item.Delta)
         });
-               // .OrderBy(item => item.BOMs.FirstOrDefault().Title);
+            // .OrderBy(item => item.BOMs.FirstOrDefault().Title);
             string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
             // Generating the HTML content
             // <link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'>
@@ -2229,7 +2232,7 @@ var myPieChart = new Chart(ctx, {
             SetSelectedBoms();
         }
 
-        string[] loadedfiles { get; set; }
+
 
         private void button8_Click(object sender, EventArgs e)
         {
@@ -2240,15 +2243,15 @@ var myPieChart = new Chart(ctx, {
             string directoryPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.ToString("MM.yyyy");
 
             // Get all files in the directory that start with the selected warehouse name and have the .xlsm extension
-            loadedfiles = Directory.GetFiles(directoryPath, $"{selectedWarehouseName}*.xlsm");
+            allFiles = Directory.GetFiles(directoryPath, $"{selectedWarehouseName}*.xlsm");
 
-            if (loadedfiles.Length == 0)
+            if (allFiles.Length == 0)
             {
                 MessageBox.Show("No files found for the selected warehouse.");
                 return;
             }
 
-            foreach (string fileName in loadedfiles)
+            foreach (string fileName in allFiles)
             {
                 string theExcelFilePath = Path.GetFileName(fileName);
                 if (IsFileLoaded(theExcelFilePath))
@@ -2290,8 +2293,9 @@ var myPieChart = new Chart(ctx, {
             string[] currentMonthFiles = Directory.GetFiles(currentMonthPath, $"{selectedWarehouseName}*.xlsm");
             string[] previousMonthFiles = Directory.GetFiles(previousMonthPath, $"{selectedWarehouseName}*.xlsm");
 
+
             // Combine the files from both months
-            string[] allFiles = currentMonthFiles.Concat(previousMonthFiles).ToArray();
+            allFiles = currentMonthFiles.Concat(previousMonthFiles).ToArray();
 
             if (allFiles.Length == 0)
             {
@@ -2344,10 +2348,10 @@ var myPieChart = new Chart(ctx, {
             string[] prepreviousMonthFiles = Directory.GetFiles(prepreviousMonthPath, $"{selectedWarehouseName}*.xlsm");
 
             // Combine the files from all three months
-            string[] allFiles = currentMonthFiles
-                .Concat(previousMonthFiles)
-                .Concat(prepreviousMonthFiles)
-                .ToArray();
+            allFiles = currentMonthFiles
+               .Concat(previousMonthFiles)
+               .Concat(prepreviousMonthFiles)
+               .ToArray();
 
             if (allFiles.Length == 0)
             {
@@ -2403,7 +2407,7 @@ var myPieChart = new Chart(ctx, {
             string[] preprepreviousMonthFiles = Directory.GetFiles(preprepreviousMonthPath, $"{selectedWarehouseName}*.xlsm");
 
             // Combine the files from all three months
-            string[] allFiles = currentMonthFiles
+            allFiles = currentMonthFiles
                 .Concat(previousMonthFiles)
                 .Concat(prepreviousMonthFiles)
                 .Concat(preprepreviousMonthFiles)
@@ -2775,12 +2779,12 @@ var myPieChart = new Chart(ctx, {
             string[] prepreprepreviousMonthFiles = Directory.GetFiles(prepreprepreviousMonthPath, $"{selectedWarehouseName}*.xlsm");
 
             // Combine the files from all three months
-            string[] allFiles = currentMonthFiles
-                .Concat(previousMonthFiles)
-                .Concat(prepreviousMonthFiles)
-                .Concat(preprepreviousMonthFiles)
-                .Concat(prepreprepreviousMonthFiles)
-                .ToArray();
+            allFiles = currentMonthFiles
+               .Concat(previousMonthFiles)
+               .Concat(prepreviousMonthFiles)
+               .Concat(preprepreviousMonthFiles)
+               .Concat(prepreprepreviousMonthFiles)
+               .ToArray();
 
             if (allFiles.Length == 0)
             {
@@ -2808,6 +2812,52 @@ var myPieChart = new Chart(ctx, {
             SetSelectedBoms();
         }
 
-       
+    
+        private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // Ensure the clicked cell is valid
+            if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
+            {
+                // Get the column name of the clicked cell
+                DataGridViewColumn column = dataGridView1.Columns[e.ColumnIndex];
+                //MessageBox.Show($"Clicked Column: {column.Name}, Row: {e.RowIndex}");
+                // Check if the column name is "Folder"
+                if (column.Name == "Folder")
+                {
+                    // Get the file path from the clicked cell
+                    string filePath = dataGridView1.Rows[e.RowIndex].Cells["Folder"].Value?.ToString();
+                    //MessageBox.Show($"FilePath: {filePath}");
+
+                    if (!string.IsNullOrEmpty(filePath))
+                    {
+                        // Confirm with the user
+                        DialogResult result = MessageBox.Show(
+                            "Load the BOM : " + filePath + "?",
+                            "Load BOM",
+                            MessageBoxButtons.OKCancel);
+
+                        if (result == DialogResult.OK)
+                        {
+                            // Check if Form1 is open
+                            Form1 form1 = Application.OpenForms.OfType<Form1>().FirstOrDefault();
+                            if (form1 != null)
+                            {
+                                // Initialize FrmBOM and open the file
+                                FrmBOM frmBOM = new FrmBOM();
+                                frmBOM.InitializeGlobalWarehouses(form1.PopulateWarehouses());
+                                frmBOM.ExternalLinktoFile(filePath);
+                                frmBOM.Show();
+                                frmBOM.ReloadLogic();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("No valid file path found in the selected cell.", "Error");
+                    }
+                }
+            }
+        }
+
     }
 }
