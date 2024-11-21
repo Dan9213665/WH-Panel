@@ -1966,6 +1966,20 @@ namespace WH_Panel
             {
                 string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
 
+
+                string windowTitle = this.Text; // 'this' refers to the current Form
+
+                // Find the index of ".xlsm" in the window title
+                int index = windowTitle.IndexOf(".xlsm");
+
+                // Extract the project name, including ".xlsm"
+                string fullProjectName = index >= 0 ? windowTitle.Substring(0, index + 5) : windowTitle;
+
+                // Extract only the last part of the project name
+                string projectName = fullProjectName.Split('\\').Last();
+
+
+
                 using (CustomPrintDialog customDialog = new CustomPrintDialog())
                 {
                     // Show the custom dialog
@@ -2072,28 +2086,12 @@ namespace WH_Panel
         public string projectName = string.Empty;
         private void GenerateHTMLkitBoxLabel(int qtyToPrint)
         {
-            //string fileName = "output.html";
-            //string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-            ////string filename = "\\\\dbr1\\Data\\WareHouse\\2024\\WHsearcher\\" + _fileTimeStamp + "_box label for_" + projectName.Substring(0, projectName.Length - 5).ToString() + ".html";
-
-            //string windowTitle = this.Text; // 'this' refers to the current Form
-
-            //// Find the index of ".xlsm" in the window title
-            //int index = windowTitle.IndexOf(".xlsm");
-
-            //// Extract the project name, including ".xlsm"
-            //string projectName = index >= 0 ? windowTitle.Substring(0, index + 5) : windowTitle;
-
-            //MessageBox.Show(projectName);
-
-            //// Construct the filename
-            //string filename = "\\\\dbr1\\Data\\WareHouse\\2024\\WHsearcher\\" +
-            //    _fileTimeStamp + "_box label for_" + projectName.Substring(0, projectName.Length - 5).ToString() + ".html";
-
+          
 
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
 
             // Get the title of the current window (Form)
+
             string windowTitle = this.Text; // 'this' refers to the current Form
 
             // Find the index of ".xlsm" in the window title
@@ -2104,6 +2102,7 @@ namespace WH_Panel
 
             // Extract only the last part of the project name
             string projectName = fullProjectName.Split('\\').Last();
+
 
             // Display the extracted project name for debugging
             //MessageBox.Show(projectName);
