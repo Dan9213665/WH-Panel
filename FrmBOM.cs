@@ -48,6 +48,7 @@ using System.Data.SqlClient;
 using static System.ComponentModel.Design.ObjectSelectorEditor;
 using Font = System.Drawing.Font;
 using Action = System.Action;
+using OfficeOpenXml.Drawing.Slicer.Style;
 
 namespace WH_Panel
 {
@@ -1209,6 +1210,8 @@ namespace WH_Panel
         {
             txtbQtyToAdd.Focus();
         }
+
+        public bool excelUpdated { get; set; }
         private void UpdateKitHistoryItem(string fp, KitHistoryItem itemToUpdate)
         {
             try
@@ -1236,10 +1239,13 @@ namespace WH_Panel
                     if (rowsAffected > 0)
                     {
                         //MessageBox.Show("BOM item was updated successfully.");
+                        excelUpdated = true;
                     }
                     else
                     {
+                        excelUpdated=false;
                         MessageBox.Show("No rows were updated.");
+
                     }
                 }
             }
@@ -1374,9 +1380,17 @@ namespace WH_Panel
 
                 if (checkBalance(warehouseSelectorBasedOnItem(w), itemToTransfer))
                 {
-
-                    DataInserter(warehouseSelectorBasedOnItem(w), "STOCK", itemToTransfer);
                     updateQtyInBomFile(w, validQty);
+                    if(excelUpdated)
+                    {
+                        DataInserter(warehouseSelectorBasedOnItem(w), "STOCK", itemToTransfer);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Excel file update failed ! no Database transactions made . Check the excel file !");
+                    }
+                   
+                    
                 }
                 else
                 {
@@ -2203,399 +2217,31 @@ namespace WH_Panel
                 //SendEmail();
             }
         }
-        //private void SendEmail()
-        //{
-        //    Outlook.Application outlookApp = new Outlook.Application();
-        //    // Create a new mail item
-        //    Outlook.MailItem mailItem = (Outlook.MailItem)outlookApp.CreateItem(Outlook.OlItemType.olMailItem);
-        //    // Set email properties
-        //    //mailItem.Subject = "Test Email";
-        //    mailItem.Subject = projectName.Substring(0, projectName.Length - 5).ToString();
 
-        //    mailItem.Body = "This is a test email from my WinForms app.";
 
 
 
-        //mailItem.To = "lgt@robotron.co.il";
-        //    // Send the email
-        //    mailItem.Send();
-        //    // Release COM objects
-        //    Marshal.ReleaseComObject(mailItem);
-        //    Marshal.ReleaseComObject(outlookApp);
-        //    MessageBox.Show("Test");
-        //}
 
-        //private void SendEmail()
-        //{
-        //    // Create Outlook application and mail item
-        //    Outlook.Application outlookApp = new Outlook.Application();
-        //    Outlook.MailItem mailItem = (Outlook.MailItem)outlookApp.CreateItem(Outlook.OlItemType.olMailItem);
 
-        //    // Set email subject based on project name
-        //    mailItem.Subject = projectName.Substring(0, projectName.Length - 5);
-
-        //    // Build HTML table from dataGridView2 items
-        //    StringBuilder htmlTable = new StringBuilder();
-        //    htmlTable.Append("<table border='1' style='border-collapse:collapse;'>");
-
-        //    // Add header row
-        //    htmlTable.Append("<tr>");
-        //    foreach (DataGridViewColumn column in dataGridView2.Columns)
-        //    {
-        //        htmlTable.AppendFormat("<th>{0}</th>", column.HeaderText);
-        //    }
-        //    htmlTable.Append("</tr>");
-
-        //    // Add data rows
-        //    foreach (DataGridViewRow row in dataGridView2.Rows)
-        //    {
-        //        if (!row.IsNewRow) // Skip the new row placeholder
-        //        {
-        //            htmlTable.Append("<tr>");
-        //            foreach (DataGridViewCell cell in row.Cells)
-        //            {
-        //                htmlTable.AppendFormat("<td>{0}</td>", cell.Value?.ToString() ?? string.Empty);
-        //            }
-        //            htmlTable.Append("</tr>");
-        //        }
-        //    }
-        //    htmlTable.Append("</table>");
-
-        //    // Set the email body as HTML
-        //    mailItem.HTMLBody = "<html><body><p>Here is the data:</p>" + htmlTable.ToString() + "</body></html>";
-
-        //    // Set recipient and send email
-        //    mailItem.To = "lgt@robotron.co.il";
-        //    mailItem.Send();
-
-        //    // Release COM objects
-        //    Marshal.ReleaseComObject(mailItem);
-        //    Marshal.ReleaseComObject(outlookApp);
-
-        //    // Notify user
-        //    MessageBox.Show("Email sent successfully!");
-        //}
-
-
-        //private void SendEmail()
-        //{
-        //    // Load the Excel file
-        //    var excelApp = new Microsoft.Office.Interop.Excel.Application();
-        //    Microsoft.Office.Interop.Excel.Workbook workbook = excelApp.Workbooks.Open(fileName);
-        //    Microsoft.Office.Interop.Excel.Worksheet worksheet = (Microsoft.Office.Interop.Excel.Worksheet)workbook.Sheets[1]; // First sheet (index 1 in Interop)
-
-        //    // Find the "Alts" column index
-        //    int altsColumnIndex = -1;
-        //    Microsoft.Office.Interop.Excel.Range headerRow = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[1]; // Cast headerRow to Range
-        //    for (int i = 1; i <= headerRow.Columns.Count; i++)
-        //    {
-        //        var cell = (Microsoft.Office.Interop.Excel.Range)headerRow.Cells[1, i]; // Explicitly cast each cell to Range
-        //        if (cell.Value?.ToString() == "Alts")
-        //        {
-        //            altsColumnIndex = i;
-        //            break;
-        //        }
-        //    }
-
-
-        //    if (altsColumnIndex == -1)
-        //    {
-        //        MessageBox.Show("Could not find the 'Alts' column.");
-        //        workbook.Close(false);
-        //        Marshal.ReleaseComObject(workbook);
-        //        Marshal.ReleaseComObject(excelApp);
-        //        return;
-        //    }
-
-        //    // Build HTML table from Excel data
-        //    StringBuilder htmlTable = new StringBuilder();
-        //    htmlTable.Append("<table border='1' style='border-collapse:collapse;'>");
-
-        //    // Add header row
-        //    htmlTable.Append("<tr>");
-        //    for (int col = 1; col <= altsColumnIndex; col++)
-        //    {
-        //        string header = (headerRow.Cells[1, col] as Microsoft.Office.Interop.Excel.Range).Value?.ToString();
-        //        htmlTable.AppendFormat("<th>{0}</th>", header ?? string.Empty);
-        //    }
-        //    htmlTable.Append("</tr>");
-
-        //    // Add data rows
-        //    int row = 2; // Start from the second row
-        //    while ((worksheet.Cells[row, 1] as Microsoft.Office.Interop.Excel.Range).Value != null)
-        //    {
-        //        htmlTable.Append("<tr>");
-        //        for (int col = 1; col <= altsColumnIndex; col++)
-        //        {
-        //            string cellValue = (worksheet.Cells[row, col] as Microsoft.Office.Interop.Excel.Range).Value?.ToString();
-        //            htmlTable.AppendFormat("<td>{0}</td>", cellValue ?? string.Empty);
-        //        }
-        //        htmlTable.Append("</tr>");
-        //        row++;
-        //    }
-        //    htmlTable.Append("</table>");
-
-        //    // Clean up Excel objects
-        //    workbook.Close(false);
-        //    Marshal.ReleaseComObject(workbook);
-        //    Marshal.ReleaseComObject(excelApp);
-
-        //    // Create Outlook application and mail item
-        //    Outlook.Application outlookApp = new Outlook.Application();
-        //    Outlook.MailItem mailItem = (Outlook.MailItem)outlookApp.CreateItem(Outlook.OlItemType.olMailItem);
-
-        //    // Set email subject and body
-        //    mailItem.Subject = projectName.Substring(0, projectName.Length - 5);
-        //    mailItem.HTMLBody = "<html><body><p>Here is the data from the Excel file:</p>" + htmlTable.ToString() + "</body></html>";
-
-        //    // Set recipient and send email
-        //    mailItem.To = "lgt@robotron.co.il";
-        //    mailItem.Send();
-
-        //    // Release Outlook COM objects
-        //    Marshal.ReleaseComObject(mailItem);
-        //    Marshal.ReleaseComObject(outlookApp);
-
-        //    // Notify user
-        //    MessageBox.Show("Email sent successfully!");
-        //}
-
-        //private void SendEmail()
-        //{
-        //    string fileName = openFileDialog1.FileName;
-        //    var excelApp = new Microsoft.Office.Interop.Excel.Application();
-        //    Microsoft.Office.Interop.Excel.Workbook workbook = excelApp.Workbooks.Open(fileName);
-        //    Microsoft.Office.Interop.Excel.Worksheet worksheet = (Microsoft.Office.Interop.Excel.Worksheet)workbook.Sheets[1]; // First sheet (index 1 in Interop)
-
-        //    // Find the "Alts" and "DELTA" column indices
-        //    int altsColumnIndex = -1;
-        //    int deltaColumnIndex = -1;
-        //    Microsoft.Office.Interop.Excel.Range headerRow = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[1];
-
-        //    for (int i = 1; i <= headerRow.Columns.Count; i++)
-        //    {
-        //        var cell = (Microsoft.Office.Interop.Excel.Range)headerRow.Cells[1, i];
-        //        string columnHeader = cell.Value?.ToString();
-
-        //        if (columnHeader == "Alts")
-        //        {
-        //            altsColumnIndex = i;
-        //        }
-        //        else if (columnHeader == "DELTA")
-        //        {
-        //            deltaColumnIndex = i;
-        //        }
-
-        //        // Stop searching if both indices are found
-        //        if (altsColumnIndex != -1 && deltaColumnIndex != -1)
-        //        {
-        //            break;
-        //        }
-        //    }
-
-        //    // Check if the "DELTA" column was found
-        //    if (deltaColumnIndex == -1)
-        //    {
-        //        MessageBox.Show("Could not find the 'DELTA' column.");
-        //        workbook.Close(false);
-        //        Marshal.ReleaseComObject(workbook);
-        //        Marshal.ReleaseComObject(excelApp);
-        //        return;
-        //    }
-
-        //    // Build HTML table from Excel data
-        //    StringBuilder htmlTable = new StringBuilder();
-        //    htmlTable.Append("<table border='1' style='border-collapse:collapse;'>");
-
-        //    // Add header row
-        //    htmlTable.Append("<tr>");
-        //    for (int col = 1; col <= altsColumnIndex; col++)
-        //    {
-        //        string header = ((Microsoft.Office.Interop.Excel.Range)headerRow.Cells[1, col]).Value?.ToString();
-        //        htmlTable.AppendFormat("<th>{0}</th>", header ?? string.Empty);
-        //    }
-        //    htmlTable.Append("</tr>");
-
-        //    // Add data rows with conditional formatting for "DELTA" values
-        //    int row = 2; // Start from the second row
-        //    while (((Microsoft.Office.Interop.Excel.Range)worksheet.Cells[row, 1]).Value != null)
-        //    {
-        //        htmlTable.Append("<tr>");
-        //        for (int col = 1; col <= altsColumnIndex; col++)
-        //        {
-        //            var cell = (Microsoft.Office.Interop.Excel.Range)worksheet.Cells[row, col];
-        //            string cellValue = cell.Value?.ToString() ?? string.Empty;
-
-        //            // Apply color formatting for "DELTA" column
-        //            if (col == deltaColumnIndex && double.TryParse(cellValue, out double deltaValue))
-        //            {
-        //                string color = deltaValue < 0 ? "IndianRed" : "LightGreen";
-        //                htmlTable.AppendFormat("<td style='background-color:{0};'>{1}</td>", color, cellValue);
-        //            }
-        //            else
-        //            {
-        //                htmlTable.AppendFormat("<td>{0}</td>", cellValue);
-        //            }
-        //        }
-        //        htmlTable.Append("</tr>");
-        //        row++;
-        //    }
-        //    htmlTable.Append("</table>");
-
-        //    // Clean up Excel objects
-        //    workbook.Close(false);
-        //    Marshal.ReleaseComObject(workbook);
-        //    Marshal.ReleaseComObject(excelApp);
-
-        //    // Initialize Outlook application and create a new mail item
-        //    var outlookApp = new Outlook.Application();
-        //    Outlook.MailItem mailItem = (Outlook.MailItem)outlookApp.CreateItem(Outlook.OlItemType.olMailItem);
-
-        //    // Set email properties
-        //    mailItem.Subject = projectName.Substring(0, projectName.Length - 5).ToString() + "_UPDATED_" + DateAndTime.Now.ToString("yyyyMMddHHmm");
-
-        //    mailItem.To = "lgt@robotron.co.il";
-
-        //    // Embed the HTML table in the email body
-        //    mailItem.HTMLBody = "<html><body>" + htmlTable.ToString() + "</body></html>";
-
-        //    // Send the email
-        //    mailItem.Send();
-
-        //    // Release COM objects
-        //    Marshal.ReleaseComObject(mailItem);
-        //    Marshal.ReleaseComObject(outlookApp);
-
-        //    MessageBox.Show("Email sent successfully.");
-        //}
-
-
-
-        //private void SendEmail()
-        //    {
-        //        string fileName = openFileDialog1.FileName;
-        //        var excelApp = new Application();
-        //        Workbook workbook = excelApp.Workbooks.Open(fileName);
-        //        Worksheet worksheet = (Worksheet)workbook.Sheets[1];
-
-        //        // Extract client domain from projectName
-        //        string clientDomain = projectName.Split('_')[0];
-
-        //        // Find the "Alts" and "DELTA" column indices
-        //        int altsColumnIndex = -1;
-        //        int deltaColumnIndex = -1;
-        //        Range headerRow = (Range)worksheet.Rows[1];
-
-        //        for (int i = 1; i <= headerRow.Columns.Count; i++)
-        //        {
-        //            var cell = (Range)headerRow.Cells[1, i];
-        //            string columnHeader = cell.Value?.ToString();
-
-        //            if (columnHeader == "Alts") altsColumnIndex = i;
-        //            else if (columnHeader == "DELTA") deltaColumnIndex = i;
-
-        //            if (altsColumnIndex != -1 && deltaColumnIndex != -1) break;
-        //        }
-
-        //        if (deltaColumnIndex == -1)
-        //        {
-        //            MessageBox.Show("Could not find the 'DELTA' column.");
-        //            workbook.Close(false);
-        //            Marshal.ReleaseComObject(workbook);
-        //            Marshal.ReleaseComObject(excelApp);
-        //            return;
-        //        }
-
-        //        // Build HTML table from Excel data
-        //        StringBuilder htmlTable = new StringBuilder();
-        //        htmlTable.Append("<table border='1' style='border-collapse:collapse;'><tr>");
-        //        for (int col = 1; col <= altsColumnIndex; col++)
-        //        {
-        //            string header = ((Range)headerRow.Cells[1, col]).Value?.ToString();
-        //            htmlTable.AppendFormat("<th>{0}</th>", header ?? string.Empty);
-        //        }
-        //        htmlTable.Append("</tr>");
-
-        //        int row = 2;
-        //        while (((Range)worksheet.Cells[row, 1]).Value != null)
-        //        {
-        //            htmlTable.Append("<tr>");
-        //            for (int col = 1; col <= altsColumnIndex; col++)
-        //            {
-        //                var cell = (Range)worksheet.Cells[row, col];
-        //                string cellValue = cell.Value?.ToString() ?? string.Empty;
-
-        //                if (col == deltaColumnIndex && double.TryParse(cellValue, out double deltaValue))
-        //                {
-        //                    string color = deltaValue < 0 ? "IndianRed" : "LightGreen";
-        //                    htmlTable.AppendFormat("<td style='background-color:{0};'>{1}</td>", color, cellValue);
-        //                }
-        //                else
-        //                {
-        //                    htmlTable.AppendFormat("<td>{0}</td>", cellValue);
-        //                }
-        //            }
-        //            htmlTable.Append("</tr>");
-        //            row++;
-        //        }
-        //        htmlTable.Append("</table>");
-
-        //        workbook.Close(false);
-        //        Marshal.ReleaseComObject(workbook);
-        //        Marshal.ReleaseComObject(excelApp);
-
-        //        // Get email recipients from the user's Outlook based on client domain
-        //        var outlookApp = new Outlook.Application();
-        //        List<string> availableEmails = GetEmailsFromDomain(outlookApp, clientDomain);
-
-        //        // Show selection form to user
-        //        using (RecipientSelectionForm selectionForm = new RecipientSelectionForm(availableEmails))
-        //        {
-        //            if (selectionForm.ShowDialog() == DialogResult.OK)
-        //            {
-        //                var selectedRecipients = selectionForm.SelectedRecipients;
-
-        //                // Initialize email
-        //                Outlook.MailItem mailItem = (Outlook.MailItem)outlookApp.CreateItem(Outlook.OlItemType.olMailItem);
-        //                mailItem.Subject = projectName.Substring(0, projectName.Length - 5) + "_UPDATED_" + DateTime.Now.ToString("yyyyMMddHHmm");
-        //                mailItem.CC = "lgt@robotron.co.il";
-        //                mailItem.To = string.Join(";", selectedRecipients);
-        //                mailItem.HTMLBody = "<html><body>" + htmlTable.ToString() + "</body></html>";
-        //                mailItem.Send();
-
-        //                MessageBox.Show("Email sent successfully.");
-        //                Marshal.ReleaseComObject(mailItem);
-        //            }
-        //        }
-
-        //        Marshal.ReleaseComObject(outlookApp);
-        //    }
-
-        //        // Helper method to get emails based on the client domain
-        //        private List<string> GetEmailsFromDomain(Outlook.Application outlookApp, string clientDomain)
-        //        {
-        //            List<string> emails = new List<string>();
-        //            Outlook.Folder inboxFolder = (Outlook.Folder)outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox);
-
-        //            foreach (Outlook.MailItem mail in inboxFolder.Items)
-        //            {
-        //                // Convert both the email address and clientDomain to lowercase for case-insensitive comparison
-        //                string senderEmailLower = mail.SenderEmailAddress.ToLower();
-        //                string clientDomainLower = clientDomain.ToLower();
-
-        //                if (senderEmailLower.Contains(clientDomainLower))
-        //                {
-        //                    string contactInfo = $"{mail.SenderName} ({mail.SenderEmailAddress})";
-        //                    if (!emails.Contains(contactInfo))
-        //                        emails.Add(contactInfo);
-        //                }
-        //            }
-        //            return emails;
-        //        }
 
         private void SendEmail()
         {
-            string fileName = openFileDialog1.FileName;
+            string windowTitle = this.Text; // 'this' refers to the current Form
+
+            // Find the index of ".xlsm" in the window title
+            int index = windowTitle.IndexOf(".xlsm");
+
+            // Extract the project name, including ".xlsm"
+            string fullProjectName = index >= 0 ? windowTitle.Substring(0, index + 5) : windowTitle;
+
+            // Extract only the last part of the project name
+            string projectName = fullProjectName.Split('\\').Last();
+
+            //string fileName = openFileDialog1.FileName;
+            string fileName = fullProjectName;
+            //MessageBox.Show(fileName);
+
+
             var excelApp = new Microsoft.Office.Interop.Excel.Application();
             Microsoft.Office.Interop.Excel.Workbook workbook = excelApp.Workbooks.Open(fileName);
             Microsoft.Office.Interop.Excel.Worksheet worksheet = (Microsoft.Office.Interop.Excel.Worksheet)workbook.Sheets[1]; // First sheet (index 1 in Interop)
