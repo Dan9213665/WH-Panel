@@ -916,77 +916,7 @@ namespace WH_Panel
             {
             }
         }
-        //private void txtbQtyToAdd_KeyDown(object sender, KeyEventArgs e)
-        //{
 
-
-        //    if (e.KeyCode == Keys.Enter)
-        //    {
-
-
-        //        KitHistoryItem w = MissingItemsList.FirstOrDefault(r => r.IPN == txtbSelIPN.Text);
-        //        string inputQty = txtbQtyToAdd.Text.ToString();
-        //        if (inputQty.StartsWith("Q"))
-        //        {
-        //            inputQty = txtbQtyToAdd.Text.Substring(1);
-        //        }
-        //        validQty = 0;
-        //        bool qtyOK = int.TryParse(inputQty, out validQty);
-
-        //        if (qtyOK)
-        //        {
-
-
-        //            transferFromDatabaseToKit(w, validQty, theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));
-
-
-        //            if (checkBox1.Checked)
-        //            {
-        //                WHitem itemToPrint = new WHitem();
-        //                itemToPrint.IPN = w.IPN;
-        //                itemToPrint.MFPN = w.MFPN;
-        //                itemToPrint.Description = w.Description;
-        //                itemToPrint.Stock = validQty;
-        //                itemToPrint.Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
-        //                printSticker(itemToPrint);
-        //            }
-
-        //            txtbQtyToAdd.Clear();
-        //            clearAllTextBoxesOnDoubleClick();
-        //            lastTxtbInputFromUser.Clear();
-        //            lastTxtbInputFromUser.Focus();
-
-
-        //            ipnToUpdate = w.IPN; // The IPN value to match
-
-
-        //            foreach (DataGridViewRow row in dataGridView1.Rows)
-        //            {
-        //                // Check if the value in the IPN column matches the IPN to update (case-insensitive)
-        //                if (row.Cells["IPN"].Value != null && row.Cells["IPN"].Value.ToString().Equals(ipnToUpdate, StringComparison.OrdinalIgnoreCase))
-        //                {
-        //                    // Color the entire row orange
-        //                    row.DefaultCellStyle.BackColor = Color.Orange;
-
-        //                    // Set the focus to the current row by selecting the first cell in the row
-        //                    dataGridView1.CurrentCell = row.Cells[0]; // You can change the column index if needed
-
-        //                    // Optionally, select the entire row
-        //                    row.Cells["IPN"].Selected = true;
-
-        //                    break; // Exit the loop if you only want to focus on the first matching row
-        //                }
-        //            }
-        //        }
-        //        else
-        //        {
-        //            MessageBox.Show("Input valid qty !");
-        //            txtbQtyToAdd.Clear();
-        //            txtbQtyToAdd.Focus();
-
-        //        }
-        //    }
-        //}
         bool AltTransaction = false;
         private void txtbQtyToAdd_KeyDown(object sender, KeyEventArgs e)
         {
@@ -1243,7 +1173,7 @@ namespace WH_Panel
                     }
                     else
                     {
-                        excelUpdated=false;
+                        excelUpdated = false;
                         MessageBox.Show("No rows were updated.");
 
                     }
@@ -1381,7 +1311,7 @@ namespace WH_Panel
                 if (checkBalance(warehouseSelectorBasedOnItem(w), itemToTransfer))
                 {
                     updateQtyInBomFile(w, validQty);
-                    if(excelUpdated)
+                    if (excelUpdated)
                     {
                         DataInserter(warehouseSelectorBasedOnItem(w), "STOCK", itemToTransfer);
                     }
@@ -1389,8 +1319,8 @@ namespace WH_Panel
                     {
                         MessageBox.Show("Excel file update failed ! no Database transactions made . Check the excel file !");
                     }
-                   
-                    
+
+
                 }
                 else
                 {

@@ -15,10 +15,12 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using System.Windows.Forms;
 using System.Xml;
 using static System.Net.WebRequestMethods;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Action = System.Action;
 using DataTable = System.Data.DataTable;
 using Label = System.Windows.Forms.Label;
 namespace WH_Panel
@@ -88,6 +90,31 @@ namespace WH_Panel
             SetColumsOrderPS();
             stopWatch.Stop();
         }
+
+        //private async Task startUpLogicAsync()
+        //{
+        //    stopWatch.Start();
+        //    label12.BackColor = Color.IndianRed;
+
+        //    var tasks = new List<Task>(); // List to hold all async tasks
+
+        //    foreach (string path in listOfPaths)
+        //    {
+        //        foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
+        //        {
+        //            countLoadedFIles++;
+        //            string Litem = Path.GetFileName(file);
+        //            tasks.Add(DataLoaderAsync(file, Litem));  // Add each async call to the task list
+        //        }
+        //    }
+
+        //    await Task.WhenAll(tasks);  // Await all DataLoaderAsync tasks to complete
+
+        //    PopulateGridView();
+        //    SetColumsOrderPS();
+        //    stopWatch.Stop();
+        //}
+
         private void SetColumsOrderPS()
         {
             dataGridView1.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -193,6 +220,334 @@ namespace WH_Panel
         //        throw;
         //    }
         //}
+
+        //private async Task DataLoaderAsync(string fp, string excelFIleName)
+        //{
+        //    TimeSpan ts = stopWatch.Elapsed;
+        //    try
+        //    {
+        //        string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+        //        using (OleDbConnection conn = new OleDbConnection(constr))
+        //        {
+        //            try
+        //            {
+        //                await Task.Run(() => conn.Open()); // Async opening the connection
+
+        //                DataTable dbSchema = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+        //                if (dbSchema == null || dbSchema.Rows.Count < 1)
+        //                {
+        //                    throw new Exception("Error: Could not determine the name of the first worksheet.");
+        //                }
+
+        //                string cleanedUpSheetNameWithSpace = "PACKING SLIP";
+        //                string cleanedUpSheetNameWithUnderscore = "PACKING_SLIP";
+        //                string selectedSheetName = string.Empty;
+
+        //                if (SheetExists(conn, cleanedUpSheetNameWithSpace))
+        //                {
+        //                    selectedSheetName = cleanedUpSheetNameWithSpace;
+        //                }
+        //                else if (SheetExists(conn, cleanedUpSheetNameWithUnderscore))
+        //                {
+        //                    selectedSheetName = cleanedUpSheetNameWithUnderscore;
+        //                }
+        //                else
+        //                {
+        //                    return;
+        //                }
+
+        //                OleDbCommand command = new OleDbCommand("SELECT * FROM [" + selectedSheetName + "$]", conn);
+        //                OleDbDataReader reader = await Task.Run(() => command.ExecuteReader()); // Async data reader
+
+        //                if (reader.HasRows)
+        //                {
+        //                    int j = 0;
+        //                    while (await Task.Run(() => reader.Read()))  // Async row read
+        //                    {
+        //                        if (j >= 11)
+        //                        {
+        //                            int qty = 0;
+        //                            bool parseOk = int.TryParse(reader[3].ToString(), out qty);
+        //                            if (!parseOk)
+        //                            {
+        //                                // Handle parsing failure
+        //                            }
+        //                            string _ClientName = excelFIleName.Substring(13);
+        //                            string thName = _ClientName.Substring(0, _ClientName.Length - 5);
+        //                            PackingSlipItem abc = new PackingSlipItem
+        //                            {
+        //                                ShipmentDate = excelFIleName.Substring(0, 12),
+        //                                ClientName = thName,
+        //                                IPN = reader[0].ToString(),
+        //                                MFPN = reader[1].ToString(),
+        //                                Description = reader[2].ToString(),
+        //                                QtySent = qty, // Assign the parsed quantity value
+        //                            };
+
+        //                            countItems = i;
+        //                            label12.Text = "Loaded " + (countItems).ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{0:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
+        //                            if (countItems % 5000 == 0)
+        //                            { label12.Update(); }
+
+        //                            if (abc.IPN != string.Empty && !abc.IPN.StartsWith("Comments") && abc.IPN != "Thank You" && !abc.IPN.StartsWith("Signature") && !abc.IPN.StartsWith("if you"))
+        //                            {
+        //                                PSItems.Add(abc);
+        //                                i++;
+        //                            }
+        //                        }
+        //                        j++;  // Always increment j after processing the row
+        //                    }
+        //                }
+        //            }
+        //            catch (Exception e)
+        //            {
+        //                loadingErrors++;
+        //                label13.Text = loadingErrors.ToString() + " Loading Errors detected: ";
+        //                MessageBox.Show(e.Message);
+        //                label13.BackColor = Color.IndianRed;
+        //                label13.Update();
+        //                string er = fp;
+        //                listBox1.Items.Add(er);
+        //                listBox1.Update();
+        //                conn.Close();
+        //            }
+        //        }
+        //    }
+        //    catch (IOException)
+        //    {
+        //        throw;
+        //    }
+        //}
+
+        //private async Task DataLoaderAsync(string fp, string excelFileName)
+        //{
+        //    TimeSpan ts = stopWatch.Elapsed;
+        //    try
+        //    {
+        //        string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+        //        using (OleDbConnection conn = new OleDbConnection(constr))
+        //        {
+        //            try
+        //            {
+        //                // Asynchronously opening the connection
+        //                await Task.Run(() => conn.Open());
+
+        //                DataTable dbSchema = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+        //                if (dbSchema == null || dbSchema.Rows.Count < 1)
+        //                {
+        //                    throw new Exception("Error: Could not determine the name of the first worksheet.");
+        //                }
+
+        //                string cleanedUpSheetNameWithSpace = "PACKING SLIP";
+        //                string cleanedUpSheetNameWithUnderscore = "PACKING_SLIP";
+        //                string selectedSheetName = string.Empty;
+
+        //                if (SheetExists(conn, cleanedUpSheetNameWithSpace))
+        //                {
+        //                    selectedSheetName = cleanedUpSheetNameWithSpace;
+        //                }
+        //                else if (SheetExists(conn, cleanedUpSheetNameWithUnderscore))
+        //                {
+        //                    selectedSheetName = cleanedUpSheetNameWithUnderscore;
+        //                }
+        //                else
+        //                {
+        //                    return;  // Exit if sheet does not exist
+        //                }
+
+        //                OleDbCommand command = new OleDbCommand("SELECT * FROM [" + selectedSheetName + "$]", conn);
+
+        //                // Use async to execute the command
+        //                OleDbDataReader reader = await Task.Run(() => command.ExecuteReader());  // Async data reader
+
+        //                if (reader.HasRows)
+        //                {
+        //                    int j = 0;
+        //                    while (await Task.Run(() => reader.Read()))  // Async row read
+        //                    {
+        //                        if (j >= 11)
+        //                        {
+        //                            int qty = 0;
+        //                            bool parseOk = int.TryParse(reader[3].ToString(), out qty);
+        //                            if (!parseOk)
+        //                            {
+        //                                // Handle parsing failure
+        //                            }
+
+        //                            string _ClientName = excelFileName.Substring(13);
+        //                            string thName = _ClientName.Substring(0, _ClientName.Length - 5);
+        //                            PackingSlipItem abc = new PackingSlipItem
+        //                            {
+        //                                ShipmentDate = excelFileName.Substring(0, 12),
+        //                                ClientName = thName,
+        //                                IPN = reader[0].ToString(),
+        //                                MFPN = reader[1].ToString(),
+        //                                Description = reader[2].ToString(),
+        //                                QtySent = qty, // Assign the parsed quantity value
+        //                            };
+
+        //                            countItems = j;
+        //                            label12.Text = "Loaded " + countItems.ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{0:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
+
+        //                            if (countItems % 5000 == 0)
+        //                            {
+        //                                label12.Invoke(new Action(() => label12.Update()));  // Ensure UI update on the UI thread
+        //                            }
+
+        //                            // Validating the IPN and adding it to PSItems list
+        //                            if (abc.IPN != string.Empty && !abc.IPN.StartsWith("Comments") && abc.IPN != "Thank You" && !abc.IPN.StartsWith("Signature") && !abc.IPN.StartsWith("if you"))
+        //                            {
+        //                                PSItems.Add(abc);
+        //                                i++;
+        //                            }
+        //                        }
+        //                        j++;  // Always increment j after processing the row
+        //                    }
+        //                }
+        //            }
+        //            catch (Exception e)
+        //            {
+        //                loadingErrors++;
+        //                label13.Invoke(new Action(() => label13.Text = loadingErrors.ToString() + " Loading Errors detected: "));
+        //                label13.Invoke(new Action(() => label13.BackColor = Color.IndianRed));
+        //                label13.Invoke(new Action(() => label13.Update()));
+
+        //                MessageBox.Show(e.Message);
+        //                string er = fp;
+        //                listBox1.Invoke(new Action(() => listBox1.Items.Add(er)));
+        //                listBox1.Invoke(new Action(() => listBox1.Update()));
+        //            }
+        //            finally
+        //            {
+        //                conn.Close();  // Ensure the connection is closed even if an error occurs
+        //            }
+        //        }
+        //    }
+        //    catch (IOException ex)
+        //    {
+        //        MessageBox.Show($"IOException occurred: {ex.Message}");
+        //        throw;  // Re-throw the exception after logging it
+        //    }
+        //}
+
+        private async Task DataLoaderAsync(string fp, string excelFileName)
+        {
+            TimeSpan ts = stopWatch.Elapsed;
+            try
+            {
+                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+                using (OleDbConnection conn = new OleDbConnection(constr))
+                {
+                    try
+                    {
+                        // Asynchronously open the connection
+                        await Task.Run(() => conn.Open());
+
+                        DataTable dbSchema = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+                        if (dbSchema == null || dbSchema.Rows.Count < 1)
+                        {
+                            throw new Exception("Error: Could not determine the name of the first worksheet.");
+                        }
+
+                        string cleanedUpSheetNameWithSpace = "PACKING SLIP";
+                        string cleanedUpSheetNameWithUnderscore = "PACKING_SLIP";
+                        string selectedSheetName = string.Empty;
+
+                        if (SheetExists(conn, cleanedUpSheetNameWithSpace))
+                        {
+                            selectedSheetName = cleanedUpSheetNameWithSpace;
+                        }
+                        else if (SheetExists(conn, cleanedUpSheetNameWithUnderscore))
+                        {
+                            selectedSheetName = cleanedUpSheetNameWithUnderscore;
+                        }
+                        else
+                        {
+                            return;  // Exit if sheet does not exist
+                        }
+
+                        OleDbCommand command = new OleDbCommand("SELECT * FROM [" + selectedSheetName + "$]", conn);
+
+                        // Use async to execute the command
+                        OleDbDataReader reader = await Task.Run(() => command.ExecuteReader());  // Async data reader
+
+                        if (reader.HasRows)
+                        {
+                            int j = 0;
+                            while (await Task.Run(() => reader.Read()))  // Async row read
+                            {
+                                if (j >= 10)
+                                {
+                                    int qty = 0;
+                                    bool parseOk = int.TryParse(reader[3].ToString(), out qty);
+                                    if (!parseOk)
+                                    {
+                                        // Handle parsing failure (log or ignore)
+                                    }
+
+                                    string _ClientName = excelFileName.Substring(13);
+                                    string thName = _ClientName.Substring(0, _ClientName.Length - 5);
+                                    PackingSlipItem abc = new PackingSlipItem
+                                    {
+                                        ShipmentDate = excelFileName.Substring(0, 12),
+                                        ClientName = thName,
+                                        IPN = reader[0].ToString(),
+                                        MFPN = reader[1].ToString(),
+                                        Description = reader[2].ToString(),
+                                        QtySent = qty, // Assign the parsed quantity value
+                                    };
+
+                                    countItems = j;
+                                    label12.Invoke(new Action(() => label12.Text = "Loaded " + countItems.ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{0:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds)));
+
+                                    if (countItems % 5000 == 0)
+                                    {
+                                        label12.Invoke(new Action(() => label12.Update()));  // Ensure UI update on the UI thread
+                                    }
+
+                                    // Validating the IPN and adding it to PSItems list
+                                    if (abc.IPN != string.Empty && !abc.IPN.StartsWith("Comments") && abc.IPN != "Thank You" && !abc.IPN.StartsWith("Signature") && !abc.IPN.StartsWith("if you"))
+                                    {
+                                        PSItems.Add(abc);
+                                        i++;
+                                    }
+                                }
+                                j++;  // Always increment j after processing the row
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        // Log error and update UI with the issue
+                        loadingErrors++;
+                        label13.Invoke(new Action(() => label13.Text = loadingErrors.ToString() + " Loading Errors detected: "));
+                        label13.Invoke(new Action(() => label13.BackColor = Color.IndianRed));
+                        label13.Invoke(new Action(() => label13.Update()));
+
+                        MessageBox.Show(e.Message);
+                        string er = fp;
+                        listBox1.Invoke(new Action(() => listBox1.Items.Add(er)));
+                        listBox1.Invoke(new Action(() => listBox1.Update()));
+                    }
+                    finally
+                    {
+                        conn.Close();  // Ensure the connection is closed even if an error occurs
+                    }
+                }
+            }
+            catch (IOException ex)
+            {
+                MessageBox.Show($"IOException occurred: {ex.Message}");
+                throw;  // Re-throw the exception after logging it
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Unexpected error occurred: {ex.Message}");
+                throw;
+            }
+        }
+
+
         private void DataLoader(string fp, string excelFIleName)
         {
             TimeSpan ts = stopWatch.Elapsed;
@@ -211,7 +566,7 @@ namespace WH_Panel
                         }
                         string cleanedUpSheetNameWithSpace = "PACKING SLIP";
                         string cleanedUpSheetNameWithUnderscore = "PACKING_SLIP";
-                        string selectedSheetName = null;
+                        string selectedSheetName = string.Empty;
                         if (SheetExists(conn, cleanedUpSheetNameWithSpace))
                         {
                             selectedSheetName = cleanedUpSheetNameWithSpace;
@@ -234,26 +589,9 @@ namespace WH_Panel
                             int j = 0;
                             while (reader.Read())
                             {
-                                if (j > 11)
+                                if (j >= 10)
                                 {
-                                    //int qtyS = 0;
-                                    //int qty = 0;
-                                    //bool parseOk = int.TryParse(reader[3].ToString(), out qtyS);
-                                    //if (parseOk)
-                                    //{
-                                    //    qty = qtyS;
-                                    //}
-                                    //string _ClientName = excelFIleName.Substring(13);
-                                    //string thName = _ClientName.Substring(0, _ClientName.Length - 5);
-                                    //PackingSlipItem abc = new PackingSlipItem
-                                    //{
-                                    //    ShipmentDate = excelFIleName.Substring(0, 12),
-                                    //    ClientName = thName,
-                                    //    IPN = reader[0].ToString(),
-                                    //    MFPN = reader[1].ToString(),
-                                    //    Description = reader[2].ToString(),
-                                    //    QtySent = qty,
-                                    //};
+
                                     int qty = 0;
                                     bool parseOk = int.TryParse(reader[3].ToString(), out qty);
                                     if (!parseOk)
@@ -276,7 +614,7 @@ namespace WH_Panel
                                     label12.Text = "Loaded " + (countItems).ToString() + " Rows from " + countLoadedFIles + " files. In " + string.Format("{0:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
                                     if (countItems % 5000 == 0)
                                     { label12.Update(); }
-                                    if (abc.IPN != string.Empty && !abc.IPN.StartsWith("Comments") && abc.IPN != "Thank You" && !abc.IPN.StartsWith("Signature") && !abc.IPN.StartsWith("if you") && j > 11)
+                                    if (abc.IPN != string.Empty && !abc.IPN.StartsWith("Comments") && abc.IPN != "Thank You" && !abc.IPN.StartsWith("Signature") && !abc.IPN.StartsWith("if you"))
                                     {
                                         PSItems.Add(abc);
                                         i++;
@@ -388,5 +726,141 @@ namespace WH_Panel
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            listOfPaths.Clear();
+            string thisYear = DateTime.Now.Year.ToString();
+            string thisMonth = DateTime.Now.Month.ToString();
+            string PrevMonth = (DateTime.Now.Month - 1).ToString();
+            listOfPaths.Add("\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\2024\\" + thisYear + "." + thisMonth);
+            listOfPaths.Add("\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\2024\\" + thisYear + "." + PrevMonth);
+
+            stopWatch.Start();
+            label12.BackColor = Color.IndianRed;
+            foreach (string path in listOfPaths)
+            {
+                foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
+                {
+                    countLoadedFIles++;
+                    string Litem = Path.GetFileName(file);
+                    DataLoader(file, Litem);
+                }
+            }
+            PopulateGridView();
+            SetColumsOrderPS();
+            stopWatch.Stop();
+        }
+
+        //private async void button2_Click(object sender, EventArgs e)
+        //{
+        //    listOfPaths.Clear();
+        //    string thisYear = DateTime.Now.Year.ToString();
+        //    string thisMonth = DateTime.Now.Month.ToString();
+        //    string PrevMonth = (DateTime.Now.Month - 1).ToString();
+        //    listOfPaths.Add("\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\2024\\" + thisYear + "." + thisMonth);
+        //    listOfPaths.Add("\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\2024\\" + thisYear + "." + PrevMonth);
+
+        //    stopWatch.Start();
+        //    label12.BackColor = Color.IndianRed;
+
+        //    var tasks = new List<Task>(); // List to collect all async tasks
+
+        //    foreach (string path in listOfPaths)
+        //    {
+        //        foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
+        //        {
+        //            countLoadedFIles++;
+        //            string Litem = Path.GetFileName(file);
+        //            tasks.Add(DataLoaderAsync(file, Litem));  // Add DataLoaderAsync to the task list
+        //        }
+        //    }
+
+        //    // Await all tasks to finish
+        //    await Task.WhenAll(tasks);
+
+        //    PopulateGridView(); // Populate the grid after all files are loaded
+        //    SetColumsOrderPS();  // Set column order if necessary
+        //    stopWatch.Stop();
+        //}
+
+        //private async void button2_Click(object sender, EventArgs e)
+        //{
+        //    listOfPaths.Clear();
+        //    string thisYear = DateTime.Now.Year.ToString();
+        //    string thisMonth = DateTime.Now.Month.ToString();
+        //    string PrevMonth = (DateTime.Now.Month - 1).ToString();
+        //    listOfPaths.Add("\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\2024\\" + thisYear + "." + thisMonth);
+        //    listOfPaths.Add("\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\2024\\" + thisYear + "." + PrevMonth);
+
+        //    stopWatch.Start();
+        //    label12.BackColor = Color.IndianRed;
+
+        //    var tasks = new List<Task>(); // List to collect all async tasks
+
+        //    foreach (string path in listOfPaths)
+        //    {
+        //        foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
+        //        {
+        //            countLoadedFIles++;
+        //            string Litem = Path.GetFileName(file);
+        //            tasks.Add(DataLoaderAsync(file, Litem));  // Add DataLoaderAsync to the task list
+        //        }
+        //    }
+
+        //    // Await all tasks to finish
+        //    await Task.WhenAll(tasks);
+
+        //    // Ensure UI updates happen on the UI thread
+        //    if (InvokeRequired)
+        //    {
+        //        Invoke(new Action(() =>
+        //        {
+        //            PopulateGridView();
+        //            SetColumsOrderPS();
+        //            stopWatch.Stop();
+        //        }));
+        //    }
+        //    else
+        //    {
+        //        PopulateGridView();
+        //        SetColumsOrderPS();
+        //        stopWatch.Stop();
+        //    }
+        //}
+
+        //private async void button2_Click(object sender, EventArgs e)
+        //{
+        //    listOfPaths.Clear();
+        //    string thisYear = DateTime.Now.Year.ToString();
+        //    string thisMonth = DateTime.Now.Month.ToString();
+        //    string PrevMonth = (DateTime.Now.Month - 1).ToString();
+        //    listOfPaths.Add("\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\2024\\" + thisYear + "." + thisMonth);
+        //    listOfPaths.Add("\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\2024\\" + thisYear + "." + PrevMonth);
+
+        //    stopWatch.Start();
+        //    label12.BackColor = Color.IndianRed;
+
+        //    List<Task> tasks = new List<Task>();
+
+        //    foreach (string path in listOfPaths)
+        //    {
+        //        foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
+        //        {
+        //            countLoadedFIles++;
+        //            string Litem = Path.GetFileName(file);
+        //            // Start asynchronous DataLoader task for each file and store it in tasks list
+        //            tasks.Add(DataLoaderAsync(file, Litem));
+        //        }
+        //    }
+
+        //    // Wait for all tasks to complete before moving on
+        //    await Task.WhenAll(tasks);
+
+        //    PopulateGridView();
+        //    SetColumsOrderPS();
+        //    stopWatch.Stop();
+        //}
+
     }
 }
