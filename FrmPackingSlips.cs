@@ -36,7 +36,7 @@ namespace WH_Panel
         public static Stopwatch stopWatch = new Stopwatch();
         public int colIpnFoundIndex;
         public int colMFPNFoundIndex;
-        public List<string> listOfPaths { get; set; }
+        public List<string> listOfPaths = new List<string>();
         public FrmPackingSlips()
         {
             InitializeComponent();
