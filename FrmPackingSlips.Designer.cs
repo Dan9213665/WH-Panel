@@ -114,12 +114,12 @@
             // textBox10
             // 
             textBox10.Dock = DockStyle.Fill;
-            textBox10.Enabled = false;
             textBox10.Location = new Point(3, 18);
             textBox10.Name = "textBox10";
             textBox10.Size = new Size(146, 23);
             textBox10.TabIndex = 20;
             textBox10.TextAlign = HorizontalAlignment.Center;
+            textBox10.TextChanged += textBox10_TextChanged;
             // 
             // label11
             // 
@@ -143,6 +143,7 @@
             label10.TabIndex = 18;
             label10.Text = "Shipment Date";
             label10.TextAlign = ContentAlignment.MiddleCenter;
+            label10.Click += label10_Click;
             // 
             // tableLayoutPanel2
             // 
