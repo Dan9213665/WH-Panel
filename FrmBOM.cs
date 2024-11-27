@@ -49,6 +49,9 @@ using static System.ComponentModel.Design.ObjectSelectorEditor;
 using Font = System.Drawing.Font;
 using Action = System.Action;
 using OfficeOpenXml.Drawing.Slicer.Style;
+using System.Security.Cryptography.Pkcs;
+using static QRCoder.PayloadGenerator;
+using OfficeOpenXml.Style;
 
 namespace WH_Panel
 {
@@ -2430,6 +2433,129 @@ namespace WH_Panel
         //    return emails.ToList();
         //}
 
+        //public List<string> GetUniqueClientEmails(string clientDomain)
+        //{
+        //    var emails = new HashSet<string>();
+        //    var outlookApp = new Outlook.Application();
+
+        //    // Initialize and show the loading form
+        //    LoadingForm loadingForm = new LoadingForm();
+
+        //    // Display the loading form on a new thread to avoid blocking
+        //    var loadingThread = new Thread(() =>
+        //    {
+        //        loadingForm.ShowDialog();
+        //    });
+        //    loadingThread.Start();
+
+        //    Outlook.Folder inboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox) as Outlook.Folder;
+        //    Outlook.Folder outboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderSentMail) as Outlook.Folder;
+
+        //    // Helper function to add unique emails from a folder
+        //    void AddEmailsFromFolder(Outlook.Folder folder)
+        //    {
+        //        foreach (Outlook.MailItem mail in folder.Items)
+        //        {
+        //            if (mail is Outlook.MailItem && mail.SenderEmailAddress != null)
+        //            {
+        //                string senderEmailLower = mail.SenderEmailAddress.ToLower();
+        //                string clientDomainLower = clientDomain.ToLower();
+
+        //                if (senderEmailLower.Contains(clientDomainLower))
+        //                {
+        //                    string contactInfo = $"{mail.SenderName} ({mail.SenderEmailAddress})";
+        //                    emails.Add(contactInfo); // HashSet prevents duplicate entries
+        //                }
+
+
+        //            }
+        //        }
+        //    }
+
+        //    if (emails.Count==0)
+        //    {
+        //        string clientDomainLower = "Robotron";
+
+        //    }
+
+        //    // Add emails from both Inbox and Outbox folders
+        //    AddEmailsFromFolder(inboxFolder);
+        //    AddEmailsFromFolder(outboxFolder);
+
+        //    // Close the loading form once processing is complete
+        //    if (loadingForm.InvokeRequired)
+        //    {
+        //        loadingForm.Invoke(new Action(() => loadingForm.Close()));
+        //    }
+        //    else
+        //    {
+        //        loadingForm.Close();
+        //    }
+
+        //    return emails.ToList();
+        //}
+
+        //public List<string> GetUniqueClientEmails(string clientDomain)
+        //{
+        //    var emails = new HashSet<string>();
+        //    var outlookApp = new Outlook.Application();
+
+        //    // Initialize and show the loading form
+        //    LoadingForm loadingForm = new LoadingForm();
+
+        //    // Display the loading form on a new thread to avoid blocking
+        //    var loadingThread = new Thread(() =>
+        //    {
+        //        loadingForm.ShowDialog();
+        //    });
+        //    loadingThread.Start();
+
+        //    Outlook.Folder inboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox) as Outlook.Folder;
+        //    Outlook.Folder outboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderSentMail) as Outlook.Folder;
+
+        //    // Helper function to add unique emails from a folder
+        //    void AddEmailsFromFolder(Outlook.Folder folder, string domain)
+        //    {
+        //        foreach (Outlook.MailItem mail in folder.Items)
+        //        {
+        //            if (mail is Outlook.MailItem && mail.SenderEmailAddress != null)
+        //            {
+        //                string senderEmailLower = mail.SenderEmailAddress.ToLower();
+        //                string domainLower = domain.ToLower();
+
+        //                if (senderEmailLower.Contains(domainLower))
+        //                {
+        //                    string contactInfo = $"{mail.SenderName} ({mail.SenderEmailAddress})";
+        //                    emails.Add(contactInfo); // HashSet prevents duplicate entries
+        //                }
+        //            }
+        //        }
+        //    }
+
+        //    // Add emails for the given client domain from both Inbox and Outbox folders
+        //    AddEmailsFromFolder(inboxFolder, clientDomain);
+        //    AddEmailsFromFolder(outboxFolder, clientDomain);
+
+        //    // If no emails found for the client domain, fallback to local domain
+        //    if (emails.Count == 0)
+        //    {
+        //        string localDomain = "robotron";
+        //        AddEmailsFromFolder(inboxFolder, localDomain);
+        //        AddEmailsFromFolder(outboxFolder, localDomain);
+        //    }
+
+        //    // Close the loading form once processing is complete
+        //    if (loadingForm.InvokeRequired)
+        //    {
+        //        loadingForm.Invoke(new Action(() => loadingForm.Close()));
+        //    }
+        //    else
+        //    {
+        //        loadingForm.Close();
+        //    }
+
+        //    return emails.ToList();
+        //}
         public List<string> GetUniqueClientEmails(string clientDomain)
         {
             var emails = new HashSet<string>();
@@ -2445,45 +2571,62 @@ namespace WH_Panel
             });
             loadingThread.Start();
 
-            Outlook.Folder inboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox) as Outlook.Folder;
-            Outlook.Folder outboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderSentMail) as Outlook.Folder;
-
-            // Helper function to add unique emails from a folder
-            void AddEmailsFromFolder(Outlook.Folder folder)
+            try
             {
-                foreach (Outlook.MailItem mail in folder.Items)
-                {
-                    if (mail is Outlook.MailItem && mail.SenderEmailAddress != null)
-                    {
-                        string senderEmailLower = mail.SenderEmailAddress.ToLower();
-                        string clientDomainLower = clientDomain.ToLower();
+                Outlook.Folder inboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox) as Outlook.Folder;
+                Outlook.Folder outboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderSentMail) as Outlook.Folder;
 
-                        if (senderEmailLower.Contains(clientDomainLower))
+                // Helper function to add unique emails from a folder
+                void AddEmailsFromFolder(Outlook.Folder folder, string domain)
+                {
+                    foreach (var item in folder.Items)
+                    {
+                        if (item is Outlook.MailItem mail && !string.IsNullOrEmpty(mail.SenderEmailAddress))
                         {
-                            string contactInfo = $"{mail.SenderName} ({mail.SenderEmailAddress})";
-                            emails.Add(contactInfo); // HashSet prevents duplicate entries
+                            string senderEmailLower = mail.SenderEmailAddress.ToLower();
+                            string domainLower = domain.ToLower();
+
+                            if (senderEmailLower.Contains(domainLower))
+                            {
+                                string contactInfo = $"{mail.SenderName} ({mail.SenderEmailAddress})";
+                                emails.Add(contactInfo); // HashSet prevents duplicate entries
+                            }
                         }
                     }
                 }
-            }
 
-            // Add emails from both Inbox and Outbox folders
-            AddEmailsFromFolder(inboxFolder);
-            AddEmailsFromFolder(outboxFolder);
+                // Add emails for the given client domain from both Inbox and Outbox folders
+                AddEmailsFromFolder(inboxFolder, clientDomain);
+                AddEmailsFromFolder(outboxFolder, clientDomain);
 
-            // Close the loading form once processing is complete
-            if (loadingForm.InvokeRequired)
-            {
-                loadingForm.Invoke(new Action(() => loadingForm.Close()));
+                // If no emails found for the client domain, fallback to local domain
+                if (emails.Count == 0)
+                {
+                    string localDomain = "robotron";
+                    AddEmailsFromFolder(inboxFolder, localDomain);
+                    AddEmailsFromFolder(outboxFolder, localDomain);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                loadingForm.Close();
+                // Log the exception or handle it as necessary
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+            finally
+            {
+                // Close the loading form once processing is complete
+                if (loadingForm.InvokeRequired)
+                {
+                    loadingForm.Invoke(new Action(() => loadingForm.Close()));
+                }
+                else
+                {
+                    loadingForm.Close();
+                }
             }
 
             return emails.ToList();
         }
-
 
 
 
