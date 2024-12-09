@@ -59,7 +59,7 @@ namespace WH_Panel
             //InitializeWarehouses();
             UpdateControlColors(this);
             //startUpLogic();
-           await startUpLogicAsync();
+            await startUpLogicAsync();
         }
         List<ClientWarehouse> warehouses { get; set; }
         public void InitializeGlobalWarehouses(List<ClientWarehouse> warehousesFromTheMain)
@@ -489,7 +489,7 @@ namespace WH_Panel
             label1.BackColor = Color.IndianRed;
             foreach (ClientWarehouse warehouse in warehouses)
             {
-                if(warehouse.sqlStock!=null)
+                if (warehouse.sqlStock != null)
                 {
                     DataLoaderSql(warehouse.sqlStock);
                 }
@@ -497,10 +497,10 @@ namespace WH_Panel
                 {
                     DataLoader(warehouse.clStockFile, "STOCK");
                 }
-                
+
             }
             PopulateGridView();
-          
+
             // Create a list to hold the buttons
             List<Button> buttons = new List<Button>();
             for (int i = 0; i < warehouses.Count; i++)
@@ -514,7 +514,7 @@ namespace WH_Panel
                 //button.AutoSize = true; // Adjust the button size based on the text length
                 button.AutoSize = false; // Disable auto-sizing
                 button.Size = new Size(90, 40); // Set the button size
-                                                 // Add a tooltip to display warehouseName when hovering over the button
+                                                // Add a tooltip to display warehouseName when hovering over the button
                 ToolTip toolTip = new ToolTip();
                 toolTip.SetToolTip(button, warehouseName);
                 button.Click += Button_Click; // Assign a common event handler for button click event
@@ -535,14 +535,14 @@ namespace WH_Panel
                 }
                 buttons.Add(button); // Add the button to the list
             }
-         
+
             flowLayoutPanel1.Controls.Clear();
             // Add the sorted buttons to the flowLayoutPanel1 control
             foreach (Button button in buttons)
             {
                 flowLayoutPanel1.Controls.Add(button); // Add the button to the FlowLayoutPanel
             }
-       
+
         }
         private void Button_Click(object sender, EventArgs e)
         {
@@ -729,6 +729,8 @@ namespace WH_Panel
                         filterQuery.Append("[Description] LIKE '%" + term + "%' AND ");
                     }
                 }
+                if (!string.IsNullOrEmpty(textBox7.Text))
+                    filterQuery.Append("[Updated_On] LIKE '%" + textBox7.Text + "%' AND ");
                 if (!string.IsNullOrEmpty(textBox9.Text))
                     filterQuery.Append("[Source_Requester] LIKE '%" + textBox9.Text + "%' AND ");
                 if (filterQuery.Length > 0)
@@ -768,6 +770,11 @@ namespace WH_Panel
         private void textBox9_TextChanged(object sender, EventArgs e)
         {
             label9.BackColor = Color.IndianRed;
+            FilterTheDataGridView();
+        }
+        private void textBox7_TextChanged(object sender, EventArgs e)
+        {
+            label7.BackColor = Color.IndianRed;
             FilterTheDataGridView();
         }
         private void label2_Click(object sender, EventArgs e)
@@ -943,6 +950,19 @@ namespace WH_Panel
         {
             txtbColorWhiteOnLeave(sender);
         }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+            textBox7.Text = "";
+            label7.BackColor = Color.LightGreen;
+        }
+
+        private void label7_DoubleClick(object sender, EventArgs e)
+        {
+            clearAllsearchTextboxes();
+        }
+
+
         //private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         //{
         //    MessageBox.Show(e.ColumnIndex.ToString());

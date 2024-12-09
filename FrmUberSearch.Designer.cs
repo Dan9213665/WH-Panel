@@ -73,8 +73,8 @@
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 3;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 17F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 8F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 75F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 10.4454689F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 72.65745F));
             tableLayoutPanel1.Size = new Size(1152, 651);
             tableLayoutPanel1.TabIndex = 0;
             // 
@@ -112,7 +112,7 @@
             label1.Dock = DockStyle.Fill;
             label1.Location = new Point(117, 0);
             label1.Name = "label1";
-            label1.Size = new Size(89, 69);
+            label1.Size = new Size(89, 82);
             label1.TabIndex = 1;
             label1.Text = "Onusta Ordines";
             label1.TextAlign = ContentAlignment.MiddleCenter;
@@ -124,7 +124,7 @@
             button1.Dock = DockStyle.Fill;
             button1.Location = new Point(3, 3);
             button1.Name = "button1";
-            button1.Size = new Size(108, 63);
+            button1.Size = new Size(108, 76);
             button1.TabIndex = 2;
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
@@ -135,16 +135,16 @@
             flowLayoutPanel1.Dock = DockStyle.Fill;
             flowLayoutPanel1.Location = new Point(212, 3);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(925, 63);
+            flowLayoutPanel1.Size = new Size(925, 76);
             flowLayoutPanel1.TabIndex = 4;
             // 
             // groupBox2
             // 
             groupBox2.Controls.Add(dataGridView1);
             groupBox2.Dock = DockStyle.Fill;
-            groupBox2.Location = new Point(3, 165);
+            groupBox2.Location = new Point(3, 180);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(1146, 483);
+            groupBox2.Size = new Size(1146, 468);
             groupBox2.TabIndex = 1;
             groupBox2.TabStop = false;
             groupBox2.Text = "Vestri eventus";
@@ -159,7 +159,7 @@
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
             dataGridView1.RowTemplate.Height = 25;
-            dataGridView1.Size = new Size(1140, 461);
+            dataGridView1.Size = new Size(1140, 446);
             dataGridView1.TabIndex = 0;
             // 
             // groupBox3
@@ -168,7 +168,7 @@
             groupBox3.Dock = DockStyle.Fill;
             groupBox3.Location = new Point(3, 113);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(1146, 46);
+            groupBox3.Size = new Size(1146, 61);
             groupBox3.TabIndex = 2;
             groupBox3.TabStop = false;
             groupBox3.Text = "Search by type";
@@ -207,7 +207,7 @@
             tableLayoutPanel3.RowCount = 2;
             tableLayoutPanel3.RowStyles.Add(new RowStyle());
             tableLayoutPanel3.RowStyles.Add(new RowStyle());
-            tableLayoutPanel3.Size = new Size(1140, 24);
+            tableLayoutPanel3.Size = new Size(1140, 39);
             tableLayoutPanel3.TabIndex = 0;
             // 
             // label2
@@ -281,6 +281,8 @@
             label7.TabIndex = 5;
             label7.Text = "Updated On";
             label7.TextAlign = ContentAlignment.MiddleCenter;
+            label7.Click += label7_Click;
+            label7.DoubleClick += label7_DoubleClick;
             // 
             // label8
             // 
@@ -363,12 +365,12 @@
             // textBox7
             // 
             textBox7.Dock = DockStyle.Fill;
-            textBox7.Enabled = false;
             textBox7.Location = new Point(713, 18);
             textBox7.Name = "textBox7";
             textBox7.Size = new Size(136, 23);
             textBox7.TabIndex = 9;
             textBox7.TextAlign = HorizontalAlignment.Center;
+            textBox7.TextChanged += textBox7_TextChanged;
             // 
             // textBox8
             // 

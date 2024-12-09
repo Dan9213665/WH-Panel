@@ -161,6 +161,11 @@ namespace WH_Panel
                 foreach (var group in groupedByIPN)
                 {
                     group.OrderBy(item => item.Updated_on);
+
+                    var orderedGroup = group.OrderByDescending(item => DateTime.Parse(item.Updated_on)).ToList();
+
+
+
                     //writer.WriteLine("<h2>IPN: " + group.Key + "</h2>");
                     writer.WriteLine("<table border='1'>");
                     // Table headers
@@ -175,8 +180,9 @@ namespace WH_Panel
                     writer.WriteLine("<th>Source_Requester</th>");
                     writer.WriteLine("</tr>");
                     writer.WriteLine("<h2>" + group.Key + " - Warehouse Balance: " + group.Sum(item => item.Stock) + "</h2>");
-                    foreach (var item in group)
+                    foreach (var item in orderedGroup)
                     {
+
                         writer.WriteLine("<tr>");
                         writer.WriteLine("<td style='text-align: center;'>" + item.IPN + "</td>");
                         writer.WriteLine("<td style='text-align: center;'>" + item.Manufacturer + "</td>");
