@@ -757,6 +757,8 @@ namespace WH_Panel
             lastTxtbInputFromUser = t;
             if (e.KeyCode == Keys.Enter)
             {
+                e.SuppressKeyPress = true;
+
                 if (dataGridView1.Rows.Count == 1)
                 {
                     txtbQtyToAdd.Focus();
@@ -925,6 +927,7 @@ namespace WH_Panel
         {
             if (e.KeyCode == Keys.Enter)
             {
+                e.SuppressKeyPress = true;
                 // Check if the entered IPN or Alt exists in the MissingItemsList
                 //KitHistoryItem w = MissingItemsList.FirstOrDefault(r => r.IPN == (textBox1.Text) || r.Alts == (textBox9.Text));
 
@@ -1780,6 +1783,8 @@ namespace WH_Panel
         {
             if (e.KeyCode == Keys.Enter)
             {
+                e.SuppressKeyPress = true;
+
                 string inputStr = textBox12.Text;
                 string startStr = comboBox4.Text.ToString();
                 string endStr = comboBox5.Text.ToString();
@@ -1814,6 +1819,7 @@ namespace WH_Panel
         {
             if (e.KeyCode == Keys.Enter)
             {
+                e.SuppressKeyPress = true;
                 string searchbyMFPN = string.Empty;
                 if (textBox13.Text.Contains("-") == true && textBox13.Text.Length > 6)
                 {
@@ -1857,6 +1863,7 @@ namespace WH_Panel
         {
             if (e.KeyCode == Keys.Enter)
             {
+                e.SuppressKeyPress = true;
                 string searchbyMFPN = textBox14.Text.Trim(); // Get the text from textBox14
                 // Remove [)> characters from the search string
                 searchbyMFPN = searchbyMFPN.Replace("[)>", "");
