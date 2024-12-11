@@ -647,17 +647,58 @@ namespace WH_Panel
                 MessageBox.Show(e.Message);
             }
         }
+        //private void CheckAndSetWarehouse(string firstIPN)
+        //{
+        //    foreach (ClientWarehouse warehouse in warehouses)
+        //    {
+        //        if (firstIPN.StartsWith(warehouse.clPrefix))
+        //        {
+        //            if(warehouse.clPrefix=="LDT")
+        //            {
+
+        //            }
+        //            else
+        //            {
+        //                comboBox6.SelectedItem = warehouse.clName;
+        //                break;
+        //            }            
+        //        }
+        //    }
+        //}
+        private bool warehouseSelected = false; // Tracks if the warehouse is already selected
+
         private void CheckAndSetWarehouse(string firstIPN)
         {
             foreach (ClientWarehouse warehouse in warehouses)
             {
                 if (firstIPN.StartsWith(warehouse.clPrefix))
                 {
-                    comboBox6.SelectedItem = warehouse.clName;
-                    break;
+                    if (warehouse.clPrefix == "LDT" && !warehouseSelected)
+                    {
+                        // Ask user to select between AYS or STXI
+                        var result = MessageBox.Show("Select warehouse:\nYes - AYS\nNo - STXI",
+                                                     "Choose Warehouse",
+                                                     MessageBoxButtons.YesNo,
+                                                     MessageBoxIcon.Question);
+
+                        // Set warehouse.clName based on user selection
+                        warehouse.clName = result == DialogResult.Yes ? "AYS" : "STXI";
+                        comboBox6.SelectedItem = warehouse.clName;
+
+                        warehouseSelected = true; // Mark as selected to avoid re-prompting
+                        break;
+                    }
+                    else if (!warehouse.clPrefix.Equals("LDT"))
+                    {
+                        comboBox6.SelectedItem = warehouse.clName;
+                        warehouseSelected = true; // Mark as selected to break after the first match
+                        break;
+                    }
                 }
             }
         }
+
+
         private void button4_MouseDown(object sender, MouseEventArgs e)
         {
             foreach (ClientWarehouse w in warehouses)
@@ -2048,9 +2089,9 @@ var myPieChart = new Chart(ctx, {
                 {
                     int whQty = stockItems.Where(si => si.IPN == currentBomItem.IPN).Sum(si => si.Stock);
                     int? totalReqPerIPN = stockData
-     .Where(si => si.IPN == currentBomItem.IPN)
-     .Select(w => w.TotalRequired)
-     .FirstOrDefault();
+                        .Where(si => si.IPN == currentBomItem.IPN)
+                        .Select(w => w.TotalRequired)
+                        .FirstOrDefault();
                     int totalStockPerIpn = stockItemsOriginal.Where(si => si.IPN == currentBomItem.IPN).Sum(si => si.Stock);
                     int totalDeltaforIPN = totalStockPerIpn + int.Parse(totalReqPerIPN.ToString());
                     if (currentBomItem.QtyInKit < 0 && (currentBomItem.QtyInKit + whQty) < 0 && totalDeltaforIPN < 0)
