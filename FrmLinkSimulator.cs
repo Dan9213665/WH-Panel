@@ -32,6 +32,7 @@ using Font = System.Drawing.Font;
 using GroupBox = System.Windows.Forms.GroupBox;
 using Label = System.Windows.Forms.Label;
 using ListBox = System.Windows.Forms.ListBox;
+using Point = System.Drawing.Point;
 using TextBox = System.Windows.Forms.TextBox;
 namespace WH_Panel
 {
@@ -647,26 +648,9 @@ namespace WH_Panel
                 MessageBox.Show(e.Message);
             }
         }
-        //private void CheckAndSetWarehouse(string firstIPN)
-        //{
-        //    foreach (ClientWarehouse warehouse in warehouses)
-        //    {
-        //        if (firstIPN.StartsWith(warehouse.clPrefix))
-        //        {
-        //            if(warehouse.clPrefix=="LDT")
-        //            {
 
-        //            }
-        //            else
-        //            {
-        //                comboBox6.SelectedItem = warehouse.clName;
-        //                break;
-        //            }            
-        //        }
-        //    }
-        //}
         private bool warehouseSelected = false; // Tracks if the warehouse is already selected
-
+         
         private void CheckAndSetWarehouse(string firstIPN)
         {
             foreach (ClientWarehouse warehouse in warehouses)
@@ -675,17 +659,93 @@ namespace WH_Panel
                 {
                     if (warehouse.clPrefix == "LDT" && !warehouseSelected)
                     {
-                        // Ask user to select between AYS or STXI
-                        var result = MessageBox.Show("Select warehouse:\nYes - AYS\nNo - STXI",
-                                                     "Choose Warehouse",
-                                                     MessageBoxButtons.YesNo,
-                                                     MessageBoxIcon.Question);
+                        // Create a dynamic form for warehouse selection
+                        Form warehouseSelectionForm = new Form
+                        {
+                            Text = "Select Warehouse",
+                            Size = new Size(610, 225),
+                            StartPosition = FormStartPosition.CenterScreen
+                        };
 
-                        // Set warehouse.clName based on user selection
-                        warehouse.clName = result == DialogResult.Yes ? "AYS" : "STXI";
-                        comboBox6.SelectedItem = warehouse.clName;
+                        // Ensure that warehouse.clLogo contains a valid path or resource identifier
+                        string logoPathAYS = warehouses
+                            .Where(x => x.clName == "AYS")
+                            .Select(x => x.clLogo)
+                            .FirstOrDefault();
 
-                        warehouseSelected = true; // Mark as selected to avoid re-prompting
+                        string logoPathSTXI = warehouses
+                            .Where(x => x.clName == "STXI")
+                            .Select(x => x.clLogo)
+                            .FirstOrDefault();
+
+                        try
+                        {
+                            // Load the logos dynamically from warehouse.clLogo
+                            Image imageAYS = Image.FromFile(logoPathAYS);  // Assuming clLogo is a valid path
+                            Image imageSTXI = Image.FromFile(logoPathSTXI); // Assuming clLogo is a valid path
+
+                            // Create AYS button with logo
+                            Button buttonAYS = new Button
+                            {
+                                Text = "AYS",
+                                Image = imageAYS,
+                                TextAlign = ContentAlignment.TopLeft,
+                                Font = new Font("Microsoft Sans Serif", 40),  // Set the font size here
+                                ImageAlign = ContentAlignment.MiddleCenter,
+                                BackgroundImageLayout = ImageLayout.Zoom,
+                                Width = 275,
+                                Height = 150,
+                                Location = new Point(15, 25),
+                                AutoSize = false  // Disable AutoSize
+                            };
+
+
+                            // Set the background image layout to Stretch to fill the button
+                            buttonAYS.Click += (sender, e) =>
+                            {
+                                warehouse.clName = "AYS";
+                                comboBox6.SelectedItem = warehouse.clName;
+                                warehouseSelected = true; // Mark as selected to avoid re-prompting
+                                warehouseSelectionForm.DialogResult = DialogResult.OK;
+                                warehouseSelectionForm.Close();
+                            };
+
+                            // Create STXI button with logo
+                            Button buttonSTXI = new Button
+                            {
+                                // Text = "STXI",
+                                Image = imageSTXI,
+                                TextAlign = ContentAlignment.BottomCenter,
+                                ImageAlign = ContentAlignment.MiddleCenter,
+                                BackgroundImageLayout = ImageLayout.Zoom,
+                                Width = 275,
+                                Height = 150,
+                                Location = new Point(310, 25),
+                                AutoSize = false  // Disable AutoSize
+                            };
+
+                            // Set the background image layout to Stretch to fill the button
+                            buttonSTXI.Click += (sender, e) =>
+                            {
+                                warehouse.clName = "STXI";
+                                comboBox6.SelectedItem = warehouse.clName;
+                                warehouseSelected = true; // Mark as selected to avoid re-prompting
+                                warehouseSelectionForm.DialogResult = DialogResult.OK;
+                                warehouseSelectionForm.Close();
+                            };
+
+                            // Add the buttons to the form
+                            warehouseSelectionForm.Controls.Add(buttonAYS);
+                            warehouseSelectionForm.Controls.Add(buttonSTXI);
+
+                            // Show the form as a dialog
+                            warehouseSelectionForm.ShowDialog();
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Error loading warehouse logos: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+
                         break;
                     }
                     else if (!warehouse.clPrefix.Equals("LDT"))
