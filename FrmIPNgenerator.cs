@@ -427,6 +427,7 @@ namespace WH_Panel
 "CEL",
 "NEC Electronics America",
 "AMPENOL",
+"ARAN"
 };
         public string _clientPrefix = string.Empty;
         //public List<WHitem> avlItems = new List<WHitem>();

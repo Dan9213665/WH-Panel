@@ -25,6 +25,7 @@ using Label = System.Windows.Forms.Label;
 using TextBox = System.Windows.Forms.TextBox;
 using QRCoder;
 using Point = System.Drawing.Point;
+using Font = System.Drawing.Font;
 
 namespace WH_Panel
 {
@@ -202,24 +203,91 @@ namespace WH_Panel
         }
         List<ClientWarehouse> warehouses { get; set; }
         string selectedWHconnstring { get; set; }
-        public void InitializeGlobalWarehouses(List<ClientWarehouse> warehousesFromTheMain)
-        {
-            warehouses = warehousesFromTheMain;
-            // Ordering the warehouses list by clName
-            warehouses = warehouses.OrderBy(warehouse => warehouse.clName).ToList();
-            // Adding clNames to comboBox4
-            foreach (ClientWarehouse warehouse in warehouses)
-            {
-                comboBox3.Items.Add(warehouse.clName);
-                GroupBox groupBox = new GroupBox();
-                groupBox.Name = warehouse.clName;
-                groupBox.Text = warehouse.clName;
-                groupBox.Width = 140;
-                groupBox.Height = 130;
-            }
-            comboBox3.SelectedItem = "MS-TECH";
 
+        public async void InitializeGlobalWarehouses(List<ClientWarehouse> warehousesFromTheMain)
+        {
+            // Create and show the loading panel
+            Panel loadingPanel = new Panel
+            {
+                Size = new Size(700, 200),
+                BackColor = Color.Yellow,
+                BorderStyle = BorderStyle.FixedSingle,
+                Location = new Point(
+                (Screen.PrimaryScreen.WorkingArea.Width - 700) / 2,
+                (Screen.PrimaryScreen.WorkingArea.Height - 200) / 2)
+            };
+
+            Label loadingLabel = new Label
+            {
+                Text = "Loading data, please wait......טוען בסיסי נתונים , נא להמתין",
+                AutoSize = false,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Dock = DockStyle.Fill,
+                Font = new Font("Arial", 16, FontStyle.Bold)
+            };
+
+            loadingPanel.Controls.Add(loadingLabel);
+            this.Controls.Add(loadingPanel);
+            loadingPanel.BringToFront();
+            loadingPanel.Show();
+            loadingPanel.Refresh();
+
+            try
+            {
+                await Task.Run(() =>
+                {
+                    warehouses = new List<ClientWarehouse>();
+
+                    foreach (ClientWarehouse warehouse in warehousesFromTheMain)
+                    {
+                        if (HasCountTable(warehouse.clName))
+                        {
+                            warehouses.Add(warehouse);
+                        }
+                    }
+
+                    // Ordering the warehouses list by clName
+                    warehouses = warehouses.OrderBy(warehouse => warehouse.clName).ToList();
+                });
+
+                // Adding clNames to comboBox4
+                foreach (ClientWarehouse warehouse in warehouses)
+                {
+                    comboBox3.Items.Add(warehouse.clName);
+                    GroupBox groupBox = new GroupBox
+                    {
+                        Name = warehouse.clName,
+                        Text = warehouse.clName,
+                        Width = 140,
+                        Height = 130
+                    };
+                }
+
+                comboBox3.SelectedItem = "ARAN";
+            }
+            finally
+            {
+                // Hide the loading panel
+                loadingPanel.Hide();
+                this.Controls.Remove(loadingPanel);
+            }
         }
+
+        private bool HasCountTable(string databaseName)
+        {
+            string connectionString = "Data Source=DBR3\\SQLEXPRESS;Integrated Security=True;";
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = $"SELECT COUNT(*) FROM [{databaseName}].INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'COUNT'";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    int count = (int)command.ExecuteScalar();
+                    return count > 0;
+                }
+            }
+        }
+
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
