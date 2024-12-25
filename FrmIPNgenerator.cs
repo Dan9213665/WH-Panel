@@ -18,6 +18,15 @@ using ComboBox = System.Windows.Forms.ComboBox;
 using GroupBox = System.Windows.Forms.GroupBox;
 using Label = System.Windows.Forms.Label;
 using TextBox = System.Windows.Forms.TextBox;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text.Json;
+using System.Text;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
+using Exception = System.Exception;
+
 namespace WH_Panel
 {
     public partial class FrmIPNgenerator : Form
@@ -592,7 +601,7 @@ namespace WH_Panel
             {
                 WHitem itemToAddToAvl = new WHitem();
                 itemToAddToAvl.IPN = textBox3.Text.ToString();
-                itemToAddToAvl.Manufacturer = comboBox2.SelectedItem.ToString().ToUpper();
+                itemToAddToAvl.Manufacturer = comboBox2.Text.ToUpper();
                 itemToAddToAvl.MFPN = textBox2.Text.ToString().ToUpper();
                 itemToAddToAvl.Description = richTextBox1.Text.ToString();
                 DataInserter(itemToAddToAvl);
@@ -667,6 +676,214 @@ namespace WH_Panel
             {
                 textBox3.ReadOnly = true;
             }
+        }
+
+        private void richTextBox5_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                string inputStr = rtb_DKAPIinput.Text;
+                string startStr = comboBox3.Text.ToString();
+                string endStr = comboBox4.Text.ToString();
+                int startIndex = inputStr.IndexOf(startStr);
+                if (startIndex != -1)
+                {
+                    startIndex += startStr.Length;
+                    int endIndex = inputStr.IndexOf(endStr, startIndex);
+                    if (endIndex != -1)
+                    {
+                        string extractedStr = inputStr.Substring(startIndex, endIndex - startIndex);
+                        rtb_out.Text = extractedStr;
+                        CenterTextInRichTextBox(rtb_out); // Center the text in rtb_out
+                        rtb_out.Focus();
+                    }
+                }
+                CenterTextInRichTextBox(rtb_DKAPIinput); // Center the text in rtb_DKAPIinput
+            }
+        }
+        private void CenterTextInRichTextBox(RichTextBox richTextBox)
+        {
+            richTextBox.SelectAll();
+            richTextBox.SelectionAlignment = HorizontalAlignment.Center;
+            richTextBox.DeselectAll();
+            richTextBox.ForeColor = Color.Black;
+            richTextBox.Select(richTextBox.Text.Length, 0); // Move the cursor to the end
+        }
+
+        private async void button2_Click(object sender, EventArgs e)
+        {
+            string apiUrl = "https://api.digikey.com/products/v4/search/keyword";
+            string clientId = "1V0C9rxhmIcEf28EC6ADmF9avL74IDF0"; // Replace with your actual client ID
+            string clientSecret = "bbNRuLqxaxjN87AQ"; // Replace with your actual client secret
+            string keyword = rtb_out.Text; // Get the keyword from the RichTextBox
+
+            rtb_log.Text = "Getting access token...\n";
+
+            string accessTokenReceived = string.Empty;
+            try
+            {
+                accessTokenReceived = await GetAccessTokenAsync(clientId, clientSecret);
+                rtb_log.Text += $"Access token obtained successfully: {accessTokenReceived}\n";
+            }
+            catch (Exception ex)
+            {
+                rtb_log.Text += $"Error obtaining access token: {ex.Message}\n";
+                return;
+            }
+
+            var requestData = new
+            {
+                Keywords = keyword,
+                Limit = 10,
+                Offset = 0,
+                FilterOptionsRequest = new
+                {
+                    ManufacturerFilter = new List<object>(),
+                    CategoryFilter = new List<object>(),
+                    StatusFilter = new List<object>(),
+                    PackagingFilter = new List<object>(),
+                    MarketPlaceFilter = "NoFilter",
+                    SeriesFilter = new List<object>(),
+                    MinimumQuantityAvailable = 0,
+                    ParameterFilterRequest = new
+                    {
+                        CategoryFilter = new { Id = "string" },
+                        ParameterFilters = new List<object>()
+                    },
+                    SearchOptions = new List<string> { }
+                },
+                SortOptions = new
+                {
+                    Field = "None",
+                    SortOrder = "Ascending"
+                }
+            };
+
+            var jsonRequest = JsonSerializer.Serialize(requestData);
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessTokenReceived);
+                client.DefaultRequestHeaders.Add("X-DIGIKEY-Client-Id", clientId);
+
+                rtb_log.Text += "Sending search request...\n";
+                rtb_log.Text += $"Request URL: {apiUrl}\n";
+                rtb_log.Text += $"Request Data: {jsonRequest}\n";
+
+                HttpResponseMessage response = null;
+                try
+                {
+                    response = await client.PostAsync(apiUrl, content);
+                    response.EnsureSuccessStatusCode();
+                    rtb_log.Text += "Search request successful.\n";
+                }
+                catch (HttpRequestException ex)
+                {
+                    string errorContent = response != null ? await response.Content.ReadAsStringAsync() : "No response content";
+                    rtb_log.Text += $"Error sending search request: {ex.Message}\n";
+                    rtb_log.Text += $"Response Content: {errorContent}\n";
+                    return;
+                }
+
+                string jsonResponse;
+                try
+                {
+                    jsonResponse = await response.Content.ReadAsStringAsync();
+                    rtb_log.Text += "Response received successfully.\n";
+                    rtb_log.Text += $"JSON Response: {jsonResponse}\n"; // Log the JSON response contents
+                }
+                catch (Exception ex)
+                {
+                    rtb_log.Text += $"Error reading response: {ex.Message}\n";
+                    return;
+                }
+
+                KeywordResponse keywordResponse;
+                try
+                {
+                    keywordResponse = JsonSerializer.Deserialize<KeywordResponse>(jsonResponse);
+                    rtb_log.Text += "Response deserialized successfully.\n";
+                }
+                catch (Exception ex)
+                {
+                    rtb_log.Text += $"Error deserializing response: {ex.Message}\n";
+                    return;
+                }
+
+                // Map to simplified products
+                var simplifiedProducts = keywordResponse.ExactMatches.Select(p => new SimplifiedProduct
+                {
+                    Description = p.Description.ProductDescription,
+                    Manufacturer = p.Manufacturer.Name
+                }).ToList();
+
+                // Log the contents of the simplified products list
+                rtb_log.Text += $"Products Count: {simplifiedProducts.Count}\n";
+                foreach (var product in simplifiedProducts)
+                {
+                    rtb_log.Text += $"Manufacturer: {product.Manufacturer}, Description: {product.Description}\n";
+                    textBox2.Text= rtb_out.Text;
+                    richTextBox1.Text = product.Description;
+                    comboBox2.Text = product.Manufacturer.ToUpper();
+
+                }
+            }
+        }
+
+        private async Task<string> GetAccessTokenAsync(string clientId, string clientSecret)
+        {
+            string tokenUrl = "https://api.digikey.com/v1/oauth2/token";
+            var requestBody = new Dictionary<string, string>
+            {
+                { "client_id", clientId },
+                { "client_secret", clientSecret },
+                { "grant_type", "client_credentials" }
+            };
+
+            using (HttpClient client = new HttpClient())
+            {
+                var requestContent = new FormUrlEncodedContent(requestBody);
+                HttpResponseMessage response = await client.PostAsync(tokenUrl, requestContent);
+                response.EnsureSuccessStatusCode();
+
+                string responseBody = await response.Content.ReadAsStringAsync();
+                var tokenResponse = JsonSerializer.Deserialize<TokenResponse>(responseBody);
+                return tokenResponse.access_token;
+            }
+        }
+
+        public class KeywordResponse
+        {
+            public List<Product> ExactMatches { get; set; }
+        }
+
+        public class Product
+        {
+            public Description Description { get; set; }
+            public Manufacturer Manufacturer { get; set; }
+        }
+
+        public class Description
+        {
+            public string ProductDescription { get; set; }
+        }
+
+        public class Manufacturer
+        {
+            public string Name { get; set; }
+        }
+
+        public class SimplifiedProduct
+        {
+            public string Description { get; set; }
+            public string Manufacturer { get; set; }
+        }
+        public class TokenResponse
+        {
+            public string access_token { get; set; }
+            public int expires_in { get; set; }
+            public string token_type { get; set; }
         }
     }
 }

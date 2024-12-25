@@ -2392,7 +2392,7 @@ namespace WH_Panel
         private void button30_Click(object sender, EventArgs e)
         {
             //if (comboBox3.SelectedItem.ToString() == "ROBOTRON" || comboBox3.SelectedItem.ToString() == "STXI" || comboBox3.SelectedItem.ToString() == "AYS")
-            if (Environment.UserName == "lgt")
+            if (Environment.UserName == "lgt" || Environment.UserName=="rbtwh2")
             {
                 string prefix = warehouses.FirstOrDefault(x => x.clName == comboBox3.SelectedItem.ToString()).clPrefix;
                 try
