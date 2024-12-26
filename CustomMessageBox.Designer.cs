@@ -38,6 +38,7 @@
             btn13 = new Button();
             btnStick = new Button();
             btnTray = new Button();
+            button1 = new Button();
             SuspendLayout();
             // 
             // messageLabel
@@ -60,7 +61,7 @@
             // 
             // btnDelete
             // 
-            btnDelete.Location = new Point(189, 53);
+            btnDelete.Location = new Point(212, 53);
             btnDelete.Name = "btnDelete";
             btnDelete.Size = new Size(102, 28);
             btnDelete.TabIndex = 2;
@@ -70,7 +71,7 @@
             // 
             // btnCancel
             // 
-            btnCancel.Location = new Point(117, 53);
+            btnCancel.Location = new Point(129, 53);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(66, 29);
             btnCancel.TabIndex = 3;
@@ -90,9 +91,9 @@
             // 
             // btnBag
             // 
-            btnBag.Location = new Point(68, 4);
+            btnBag.Location = new Point(61, 4);
             btnBag.Name = "btnBag";
-            btnBag.Size = new Size(43, 43);
+            btnBag.Size = new Size(50, 43);
             btnBag.TabIndex = 4;
             btnBag.Text = "Bag";
             btnBag.UseVisualStyleBackColor = true;
@@ -100,7 +101,7 @@
             // 
             // btn13
             // 
-            btn13.Location = new Point(126, 4);
+            btn13.Location = new Point(173, 4);
             btn13.Name = "btn13";
             btn13.Size = new Size(43, 43);
             btn13.TabIndex = 4;
@@ -110,7 +111,7 @@
             // 
             // btnStick
             // 
-            btnStick.Location = new Point(189, 4);
+            btnStick.Location = new Point(222, 4);
             btnStick.Name = "btnStick";
             btnStick.Size = new Size(43, 43);
             btnStick.TabIndex = 4;
@@ -120,7 +121,7 @@
             // 
             // btnTray
             // 
-            btnTray.Location = new Point(246, 4);
+            btnTray.Location = new Point(271, 4);
             btnTray.Name = "btnTray";
             btnTray.Size = new Size(43, 43);
             btnTray.TabIndex = 4;
@@ -128,12 +129,23 @@
             btnTray.UseVisualStyleBackColor = true;
             btnTray.Click += btnTray_Click;
             // 
+            // button1
+            // 
+            button1.Location = new Point(117, 4);
+            button1.Name = "button1";
+            button1.Size = new Size(50, 43);
+            button1.TabIndex = 5;
+            button1.Text = "10\"";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
             // CustomMessageBox
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(303, 267);
+            ClientSize = new Size(324, 269);
             ControlBox = false;
+            Controls.Add(button1);
             Controls.Add(btnTray);
             Controls.Add(btnStick);
             Controls.Add(btn13);
@@ -184,7 +196,11 @@
             Result = DialogResult.Abort; // Action for CANCEL
             this.Close();
         }
-
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Result = DialogResult.TryAgain; // Action for CANCEL
+            this.Close();
+        }
         private void btn13_Click(object sender, EventArgs e)
         {
             Result = DialogResult.Continue; // Action for CANCEL
@@ -208,5 +224,6 @@
         private Button btn13;
         private Button btnStick;
         private Button btnTray;
+        private Button button1;
     }
 }

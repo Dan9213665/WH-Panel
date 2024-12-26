@@ -2031,6 +2031,12 @@ namespace WH_Panel
                             // If user confirms DELETE, handle the delete operation here
                             UpdatePackage(id, @"Tray");
                         }
+                        else if (customMessageBox.Result == DialogResult.TryAgain)
+                        {
+                            // If user confirms DELETE, handle the delete operation here
+                            UpdatePackage(id, @"10""");
+                        }
+
                         // Cancel does nothing
                     }
                 }
