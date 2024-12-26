@@ -2397,16 +2397,6 @@ namespace WH_Panel
                 string prefix = warehouses.FirstOrDefault(x => x.clName == comboBox3.SelectedItem.ToString()).clPrefix;
                 try
                 {
-                    //if (avlItems[0].IPN.Contains("_"))
-                    //{
-                    //    List<string> sp = avlItems[0].IPN.Split('_').ToList();
-                    //    prefix = sp[0];
-                    //}
-                    //else if (avlItems[0].IPN.Contains("-"))
-                    //{
-                    //    List<string> sp = avlItems[0].IPN.Split('-').ToList();
-                    //    prefix = sp[0];
-                    //}
                     FrmIPNgenerator gen = new FrmIPNgenerator(avlItems, prefix, warehouses.FirstOrDefault(x => x.clName == comboBox3.SelectedItem.ToString()).sqlAvl);
                     gen.FormClosed += (s, args) =>
                     {
@@ -2416,6 +2406,7 @@ namespace WH_Panel
                 }
                 catch
                 {
+                    //
                 }
             }
         }
