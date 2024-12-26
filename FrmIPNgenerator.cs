@@ -562,25 +562,34 @@ namespace WH_Panel
             List<string> orderedmanList = manufacturersList.OrderBy(manufacturer => manufacturer).ToList();
 
             string constr = sqlAvlConnectionStringFromMainForm;
-            using (SqlConnection conn = new SqlConnection(constr))
+            try
             {
-                conn.Open();
-                SqlCommand command = new SqlCommand("SELECT DISTINCT Manufacturer FROM AVL", conn);
-                using (SqlDataReader reader = command.ExecuteReader())
+                using (SqlConnection conn = new SqlConnection(constr))
                 {
-                    HashSet<string> existingManufacturers = new HashSet<string>(orderedmanList);
-
-                    while (reader.Read())
+                    conn.Open();
+                    SqlCommand command = new SqlCommand("SELECT DISTINCT Manufacturer FROM AVL", conn);
+                    using (SqlDataReader reader = command.ExecuteReader())
                     {
-                        string manufacturer = reader["Manufacturer"].ToString();
-                        if (!existingManufacturers.Contains(manufacturer))
+                        HashSet<string> existingManufacturers = new HashSet<string>(orderedmanList);
+
+                        while (reader.Read())
                         {
-                            orderedmanList.Add(manufacturer);
+                            string manufacturer = reader["Manufacturer"].ToString();
+                            if (!existingManufacturers.Contains(manufacturer))
+                            {
+                                orderedmanList.Add(manufacturer.ToUpper());
+                            }
                         }
                     }
+                    conn.Close();
                 }
-                conn.Close();
             }
+            catch (Exception)
+            {
+                //
+                throw;
+            }
+         
 
             // Reorder the list after adding the new unique items
             orderedmanList = orderedmanList.OrderBy(manufacturer => manufacturer).ToList();
