@@ -439,8 +439,6 @@ namespace WH_Panel
 "ARAN"
 };
         public string _clientPrefix = string.Empty;
-        //public List<WHitem> avlItems = new List<WHitem>();
-        //public string avlROBOTRON = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS\\ROBOTRON\\ROBOTRON_AVL.xlsm";
         public FrmIPNgenerator(List<WHitem> avlItems, string clientPrefix, string sqlAvl)
         {
             this._clientPrefix = clientPrefix;
@@ -451,7 +449,6 @@ namespace WH_Panel
             InitializeComponent();
             StartUpLogic();
             UpdateControlColors(this);
-            //DataLoaderAVL(avlROBOTRON, "AVL");
         }
         private void UpdateControlColors(Control parentControl)
         {
@@ -459,7 +456,7 @@ namespace WH_Panel
             {
                 // Update control colors based on your criteria
                 control.BackColor = Color.LightGray;
-                control.ForeColor = Color.White;
+                control.ForeColor = Color.Black;
                 // Handle Button controls separately
                 if (control is Button button)
                 {
@@ -551,7 +548,43 @@ namespace WH_Panel
             typesNamesList = typesNamesList.OrderBy(typeName => typeName).ToList();
             comboBox1.Items.Clear();
             comboBox1.Items.AddRange(typesNamesList.ToArray());
+            //List<string> orderedmanList = manufacturersList.OrderBy(manufacturer => manufacturer).ToList();
+
+            //string constr = sqlAvlConnectionStringFromMainForm;
+            //using (SqlConnection conn = new SqlConnection(constr))
+            //{
+            //    conn.Open();
+            //    SqlCommand command = new SqlCommand("SELECT Manufacturer FROM AVL", conn);
+            //    command.ExecuteNonQuery();
+            //    conn.Close();
+            //    orderedmanList.Add(constr);
+            //}
             List<string> orderedmanList = manufacturersList.OrderBy(manufacturer => manufacturer).ToList();
+
+            string constr = sqlAvlConnectionStringFromMainForm;
+            using (SqlConnection conn = new SqlConnection(constr))
+            {
+                conn.Open();
+                SqlCommand command = new SqlCommand("SELECT DISTINCT Manufacturer FROM AVL", conn);
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    HashSet<string> existingManufacturers = new HashSet<string>(orderedmanList);
+
+                    while (reader.Read())
+                    {
+                        string manufacturer = reader["Manufacturer"].ToString();
+                        if (!existingManufacturers.Contains(manufacturer))
+                        {
+                            orderedmanList.Add(manufacturer);
+                        }
+                    }
+                }
+                conn.Close();
+            }
+
+            // Reorder the list after adding the new unique items
+            orderedmanList = orderedmanList.OrderBy(manufacturer => manufacturer).ToList();
+
             comboBox2.Items.Clear();
             comboBox2.Items.AddRange(orderedmanList.ToArray());
         }
