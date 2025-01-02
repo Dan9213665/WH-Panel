@@ -117,7 +117,7 @@ namespace WH_Panel
         private void GenerateHTMLReport(List<IGrouping<string?, WHitem>> groupedByIPN)
         {
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmmss");
-            string filename = "\\\\dbr1\\Data\\WareHouse\\2024\\WHsearcher\\" + _fileTimeStamp + ".html";
+            string filename = "\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\" + _fileTimeStamp + ".html";
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.WriteLine("<html>");

@@ -829,7 +829,7 @@ namespace WH_Panel
             int id = 0;
             //string fileName = "output.html";
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-            string filename = "\\\\dbr1\\Data\\WareHouse\\2024\\WHsearcher\\" + _fileTimeStamp + "_" + projectName.Substring(0, projectName.Length - 5) + ".html";
+            string filename = "\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\" + _fileTimeStamp + "_" + projectName.Substring(0, projectName.Length - 5) + ".html";
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.WriteLine("<html style='text-align:center'>");
@@ -1276,7 +1276,7 @@ namespace WH_Panel
         private void GenerateHTMLsim()
         {
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-            string filename = "\\\\dbr1\\Data\\WareHouse\\2024\\WHsim\\" + _fileTimeStamp + "_" + projectName.Substring(0, projectName.Length - 5) + ".html";
+            string filename = "\\\\dbr1\\Data\\WareHouse\\2025\\WHsim\\" + _fileTimeStamp + "_" + projectName.Substring(0, projectName.Length - 5) + ".html";
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 StringBuilder htmlContent = new StringBuilder();

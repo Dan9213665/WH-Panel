@@ -27,6 +27,10 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 using System.Data.SqlClient;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Header;
 using Excel = Microsoft.Office.Interop.Excel;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium;
+using Keys = System.Windows.Forms.Keys;
+using OpenQA.Selenium.Support.UI;
 
 namespace WH_Panel
 {
@@ -1793,7 +1797,7 @@ namespace WH_Panel
         private void GenerateHTMLwareHouseBalance()
         {
             string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-            string filename = @"\\dbr1\Data\WareHouse\2024\WHsearcher\" + fileTimeStamp + "_" + comboBox3.SelectedItem.ToString() + "_wh_Balance" + ".html";
+            string filename = @"\\dbr1\Data\WareHouse\2025\WHsearcher\" + fileTimeStamp + "_" + comboBox3.SelectedItem.ToString() + "_wh_Balance" + ".html";
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.WriteLine("<html style='background-color: gray;'>");
@@ -2081,7 +2085,7 @@ namespace WH_Panel
         {
             SetSTOCKiewColumsOrder();
             string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-            string filename = @"\\dbr1\Data\WareHouse\2024\WHsearcher\" + fileTimeStamp + "_" + ".html";
+            string filename = @"\\dbr1\Data\WareHouse\2025\WHsearcher\" + fileTimeStamp + "_" + ".html";
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.WriteLine("<html style='text-align:center'>");
@@ -2392,7 +2396,7 @@ namespace WH_Panel
         private void button30_Click(object sender, EventArgs e)
         {
             //if (comboBox3.SelectedItem.ToString() == "ROBOTRON" || comboBox3.SelectedItem.ToString() == "STXI" || comboBox3.SelectedItem.ToString() == "AYS")
-            if (Environment.UserName == "lgt" || Environment.UserName=="rbtwh2")
+            if (Environment.UserName == "lgt" || Environment.UserName == "rbtwh2")
             {
                 string prefix = warehouses.FirstOrDefault(x => x.clName == comboBox3.SelectedItem.ToString()).clPrefix;
                 try
@@ -2682,7 +2686,7 @@ namespace WH_Panel
             if (e.Button == MouseButtons.Right)
             {
                 openFileDialog1.Title = "Select BOM File";
-                openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.ToString("MM") + ".2024";
+                openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\2025\\" + DateTime.Now.ToString("MM") + ".2025";
                 openFileDialog1.Filter = "BOM files(*.xlsm) | *.xlsm";
                 openFileDialog1.Multiselect = false;
                 string currentPrefix = string.Empty;
@@ -2981,7 +2985,7 @@ namespace WH_Panel
         void GenerateHTMLwareHouseBalanceListByIPN()
         {
             string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-            string filename = @"\\dbr1\Data\WareHouse\2024\WHsearcher\" + fileTimeStamp + "_" + comboBox3.SelectedItem.ToString() + "_wh_Balance" + ".html";
+            string filename = @"\\dbr1\Data\WareHouse\2025\WHsearcher\" + fileTimeStamp + "_" + comboBox3.SelectedItem.ToString() + "_wh_Balance" + ".html";
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.WriteLine("<html style='background-color: gray;'>");
@@ -3269,7 +3273,7 @@ namespace WH_Panel
 
 
                 string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-                string filename = @"\\dbr1\Data\WareHouse\2024\WHsearcher\" + fileTimeStamp + "_AVL" + ".html";
+                string filename = @"\\dbr1\Data\WareHouse\2025\WHsearcher\" + fileTimeStamp + "_AVL" + ".html";
                 using (StreamWriter writer = new StreamWriter(filename))
                 {
                     writer.WriteLine("<html style='text-align:center'>");
@@ -3363,6 +3367,56 @@ namespace WH_Panel
                 MessageBox.Show("Incorrect search pattern, remove invalid character and try again!");
             }
         }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            string MFPNtosearchInApi = textBox4.Text;
+
+            // Configure ChromeDriver options
+            ChromeOptions options = new ChromeOptions();
+           options.AddArgument("--start-maximized"); // Start the browser maximized
+
+            // Configure ChromeDriver service
+            ChromeDriverService service = ChromeDriverService.CreateDefaultService();
+            service.HideCommandPromptWindow = true; // Hide the command prompt window
+
+            // Initialize the ChromeDriver with options and service
+            IWebDriver driver = new ChromeDriver(service,options);
+
+            try
+            {
+                // Navigate to the web app
+                driver.Navigate().GoToUrl("http://192.168.69.37/");
+
+                // Wait for the page to load completely
+                WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+                wait.Until(d => d.FindElement(By.Id("searchText")));
+
+                // Find the search field element by its ID
+                IWebElement searchField = driver.FindElement(By.Id("searchText"));
+
+                // Enter the MFPNtosearchInApi value into the search field
+                searchField.SendKeys(MFPNtosearchInApi);
+
+                // Press ENTER
+                searchField.SendKeys(OpenQA.Selenium.Keys.Enter);
+            }
+            catch (NoSuchElementException ex)
+            {
+                MessageBox.Show($"Element not found: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                // Optionally, close the browser after a delay
+                //Task.Delay(5000).ContinueWith(_ => driver.Quit());
+            }
+        }
+
+
 
     }
 }

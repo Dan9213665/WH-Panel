@@ -225,7 +225,7 @@ namespace WH_Panel
         {
             ResetViews();
             var result = openFileDialog1.Title;
-            openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.ToString("MM") + ".2024";
+            openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\2025\\" + DateTime.Now.ToString("MM") + ".2025";
             openFileDialog1.Filter = "BOM files(*.xlsm) | *.xlsm";
             openFileDialog1.Multiselect = false;
             List<KitHistoryItem> BomItemS = new List<KitHistoryItem>();
@@ -2062,7 +2062,7 @@ namespace WH_Panel
             //MessageBox.Show(projectName);
 
             // Construct the filename
-            string filename = "\\\\dbr1\\Data\\WareHouse\\2024\\WHsearcher\\" +
+            string filename = "\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\" +
                 _fileTimeStamp + "_box label for_" + projectName + ".html";
 
             //MessageBox.Show(filename); // Display the constructed filename for debugging

@@ -58,7 +58,6 @@
             tableLayoutPanel2 = new TableLayoutPanel();
             textBox7 = new TextBox();
             textBox3 = new TextBox();
-            textBox4 = new TextBox();
             comboBox1 = new ComboBox();
             textBox5 = new TextBox();
             textBox6 = new TextBox();
@@ -77,6 +76,9 @@
             radioButton4 = new RadioButton();
             button23 = new Button();
             label13 = new Label();
+            tableLayoutPanel10 = new TableLayoutPanel();
+            textBox4 = new TextBox();
+            button5 = new Button();
             groupBox4 = new GroupBox();
             tableLayoutPanel6 = new TableLayoutPanel();
             tableLayoutPanel7 = new TableLayoutPanel();
@@ -116,6 +118,7 @@
             groupBox3.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
             tableLayoutPanel5.SuspendLayout();
+            tableLayoutPanel10.SuspendLayout();
             groupBox4.SuspendLayout();
             tableLayoutPanel6.SuspendLayout();
             tableLayoutPanel7.SuspendLayout();
@@ -541,7 +544,6 @@
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
             tableLayoutPanel2.Controls.Add(textBox7, 0, 1);
             tableLayoutPanel2.Controls.Add(textBox3, 0, 1);
-            tableLayoutPanel2.Controls.Add(textBox4, 1, 1);
             tableLayoutPanel2.Controls.Add(comboBox1, 6, 1);
             tableLayoutPanel2.Controls.Add(dateTimePicker1, 5, 1);
             tableLayoutPanel2.Controls.Add(textBox5, 3, 1);
@@ -556,6 +558,7 @@
             tableLayoutPanel2.Controls.Add(label11, 2, 0);
             tableLayoutPanel2.Controls.Add(tableLayoutPanel5, 7, 1);
             tableLayoutPanel2.Controls.Add(label13, 9, 0);
+            tableLayoutPanel2.Controls.Add(tableLayoutPanel10, 2, 1);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.Location = new Point(3, 19);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -584,16 +587,6 @@
             textBox3.Size = new Size(178, 23);
             textBox3.TabIndex = 0;
             textBox3.TextAlign = HorizontalAlignment.Center;
-            // 
-            // textBox4
-            // 
-            textBox4.Dock = DockStyle.Fill;
-            textBox4.Location = new Point(371, 18);
-            textBox4.Name = "textBox4";
-            textBox4.ReadOnly = true;
-            textBox4.Size = new Size(178, 23);
-            textBox4.TabIndex = 2;
-            textBox4.TextAlign = HorizontalAlignment.Center;
             // 
             // comboBox1
             // 
@@ -829,6 +822,43 @@
             label13.Text = "Requester (OUT)";
             label13.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // tableLayoutPanel10
+            // 
+            tableLayoutPanel10.ColumnCount = 1;
+            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel10.Controls.Add(textBox4, 0, 0);
+            tableLayoutPanel10.Controls.Add(button5, 0, 1);
+            tableLayoutPanel10.Dock = DockStyle.Fill;
+            tableLayoutPanel10.Location = new Point(371, 18);
+            tableLayoutPanel10.Name = "tableLayoutPanel10";
+            tableLayoutPanel10.RowCount = 2;
+            tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel10.Size = new Size(178, 114);
+            tableLayoutPanel10.TabIndex = 13;
+            // 
+            // textBox4
+            // 
+            textBox4.Dock = DockStyle.Fill;
+            textBox4.Location = new Point(3, 3);
+            textBox4.Name = "textBox4";
+            textBox4.ReadOnly = true;
+            textBox4.Size = new Size(172, 23);
+            textBox4.TabIndex = 3;
+            textBox4.TextAlign = HorizontalAlignment.Center;
+            // 
+            // button5
+            // 
+            button5.BackgroundImage = (Image)resources.GetObject("button5.BackgroundImage");
+            button5.BackgroundImageLayout = ImageLayout.Stretch;
+            button5.Dock = DockStyle.Fill;
+            button5.Location = new Point(3, 60);
+            button5.Name = "button5";
+            button5.Size = new Size(172, 51);
+            button5.TabIndex = 4;
+            button5.UseVisualStyleBackColor = true;
+            button5.Click += button5_Click;
+            // 
             // groupBox4
             // 
             groupBox4.AutoSize = true;
@@ -1041,7 +1071,7 @@
             comboBox2.Dock = DockStyle.Fill;
             comboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBox2.FormattingEnabled = true;
-            comboBox2.Items.AddRange(new object[] { "", "GILT_", "WS2400", "SB2400", "WR2400", "SH2400", "IF", "FTK2400", "LS2400", "TR100" });
+            comboBox2.Items.AddRange(new object[] { "", "GILT_", "WS2500", "SB2500", "WR2500", "SH2500", "IF", "FTK2500", "LS2500", "TR100" });
             comboBox2.Location = new Point(3, 32);
             comboBox2.Name = "comboBox2";
             comboBox2.RightToLeft = RightToLeft.No;
@@ -1200,6 +1230,8 @@
             tableLayoutPanel2.PerformLayout();
             tableLayoutPanel5.ResumeLayout(false);
             tableLayoutPanel5.PerformLayout();
+            tableLayoutPanel10.ResumeLayout(false);
+            tableLayoutPanel10.PerformLayout();
             groupBox4.ResumeLayout(false);
             tableLayoutPanel6.ResumeLayout(false);
             tableLayoutPanel6.PerformLayout();
@@ -1232,7 +1264,6 @@
         private TableLayoutPanel tableLayoutPanel2;
         private TextBox textBox7;
         private TextBox textBox3;
-        private TextBox textBox4;
         private ComboBox comboBox1;
         private TextBox textBox5;
         private TextBox textBox6;
@@ -1292,5 +1323,8 @@
         private CheckBox checkBox1;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private Button button1;
+        private TableLayoutPanel tableLayoutPanel10;
+        private TextBox textBox4;
+        private Button button5;
     }
 }

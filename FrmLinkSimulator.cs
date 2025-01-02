@@ -182,7 +182,7 @@ namespace WH_Panel
         private void button1_Click(object sender, EventArgs e)
         {
             openFileDialog1.Title = "Select BOM File";
-            openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.ToString("MM.yyyy");
+            openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\2025\\" + DateTime.Now.ToString("MM.yyyy");
             openFileDialog1.Filter = "BOM files(*.xlsm) | *.xlsm";
             openFileDialog1.Multiselect = true;
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
@@ -1336,7 +1336,7 @@ var myPieChart = new Chart(ctx, {
   });
 </script>";
             htmlContent += "</body></html>";
-            string filename = @"\\dbr1\Data\WareHouse\2024\WHsearcher\" + fileTimeStamp + "_BOMs_sim" + ".html";
+            string filename = @"\\dbr1\Data\WareHouse\2025\WHsearcher\" + fileTimeStamp + "_BOMs_sim" + ".html";
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.Write(htmlContent);
@@ -1686,7 +1686,7 @@ var myPieChart = new Chart(ctx, {
   });
 </script>";
             htmlContent += "</body></html>";
-            string filename = @"\\dbr1\Data\WareHouse\2024\WHsearcher\" + fileTimeStamp + "_BOMs_sim" + ".html";
+            string filename = @"\\dbr1\Data\WareHouse\2025\WHsearcher\" + fileTimeStamp + "_BOMs_sim" + ".html";
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.Write(htmlContent);
@@ -2301,7 +2301,7 @@ var myPieChart = new Chart(ctx, {
   });
 </script>";
             htmlContent += "</body></html>";
-            string filename = @"\\dbr1\Data\WareHouse\2024\WHsearcher\" + fileTimeStamp + "_BOMs_sim" + ".html";
+            string filename = @"\\dbr1\Data\WareHouse\2025\WHsearcher\" + fileTimeStamp + "_BOMs_sim" + ".html";
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.Write(htmlContent);
@@ -2341,7 +2341,7 @@ var myPieChart = new Chart(ctx, {
             string selectedWarehouseName = comboBox6.SelectedItem.ToString();
 
             // Construct the directory path for the current month
-            string directoryPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.ToString("MM.yyyy");
+            string directoryPath = "\\\\dbr1\\Data\\WareHouse\\2025\\" + DateTime.Now.ToString("MM.yyyy");
 
             // Get all files in the directory that start with the selected warehouse name and have the .xlsm extension
             allFiles = Directory.GetFiles(directoryPath, $"{selectedWarehouseName}*.xlsm");
@@ -2387,7 +2387,7 @@ var myPieChart = new Chart(ctx, {
             string selectedWarehouseName = comboBox6.SelectedItem.ToString();
 
             // Construct the directory paths for the current and previous months
-            string currentMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.ToString("MM.yyyy");
+            string currentMonthPath = "\\\\dbr1\\Data\\WareHouse\\2025\\" + DateTime.Now.ToString("MM.yyyy");
             string previousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.AddMonths(-1).ToString("MM.yyyy");
 
             // Get all files in the directories that start with the selected warehouse name and have the .xlsm extension
@@ -2439,7 +2439,7 @@ var myPieChart = new Chart(ctx, {
             string selectedWarehouseName = comboBox6.SelectedItem.ToString();
 
             // Construct the directory paths for the current and previous three months
-            string currentMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.ToString("MM.yyyy");
+            string currentMonthPath = "\\\\dbr1\\Data\\WareHouse\\2025\\" + DateTime.Now.ToString("MM.yyyy");
             string previousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.AddMonths(-1).ToString("MM.yyyy");
             string prepreviousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.AddMonths(-2).ToString("MM.yyyy");
 
@@ -2496,7 +2496,7 @@ var myPieChart = new Chart(ctx, {
             string selectedWarehouseName = comboBox6.SelectedItem.ToString();
 
             // Construct the directory paths for the current and previous three months
-            string currentMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.ToString("MM.yyyy");
+            string currentMonthPath = "\\\\dbr1\\Data\\WareHouse\\2025\\" + DateTime.Now.ToString("MM.yyyy");
             string previousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.AddMonths(-1).ToString("MM.yyyy");
             string prepreviousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.AddMonths(-2).ToString("MM.yyyy");
             string preprepreviousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.AddMonths(-3).ToString("MM.yyyy");
@@ -2598,7 +2598,7 @@ var myPieChart = new Chart(ctx, {
             {
                 // Right-click: Generate HTML report
                 string timestamp = DateTime.Now.ToString("yyyyMMddHHmm");
-                string filePath = $@"\\dbr1\Data\WareHouse\2024\WHsearcher\qSim_{timestamp}_{comboBox6.SelectedItem.ToString()}.html";
+                string filePath = $@"\\dbr1\Data\WareHouse\2025\WHsearcher\qSim_{timestamp}_{comboBox6.SelectedItem.ToString()}.html";
 
                 await GenerateHtmlReportAsync(filePath);
                 // MessageBox.Show($"Report saved at: {filePath}", "Report Generated", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -2618,210 +2618,6 @@ var myPieChart = new Chart(ctx, {
                 }
             }
         }
-
-
-        //private async Task GenerateHtmlReportAsync(string filePath)
-        //{
-        //    // Prepare the dictionary to track IPNs and their DELTA values across kits
-        //    var ipnData = new Dictionary<string, Dictionary<string, int?>>(); // Nullable int for DELTA
-
-        //    foreach (var bom in selectedBOMs)
-        //    {
-        //        foreach (var item in bom.Items)
-        //        {
-        //            if (!ipnData.ContainsKey(item.IPN))
-        //            {
-        //                ipnData[item.IPN] = new Dictionary<string, int?>();
-        //            }
-
-        //            ipnData[item.IPN][bom.Name] = item.Delta; // Add DELTA for IPN in this kit
-        //        }
-        //    }
-
-
-        //    string connectionString = string.Empty;
-
-        //    foreach (ClientWarehouse w in warehouses)
-        //    {
-        //        if (comboBox6.SelectedItem == w.clName)
-        //        {
-        //            if (w.sqlStock != null)
-        //            {
-        //                connectionString = w.sqlStock;
-        //            }
-        //        }
-        //    }
-
-
-        //    // Pull relevant stock data for IPNs from SQL
-        //    var whStockData = new Dictionary<string, int>(); // Store summed stock for each IPN
-
-        //    var ipnList = string.Join("','", ipnData.Keys.Select(ipn => ipn.Replace("'", "''"))); // Sanitize for SQL query
-
-        //    using (SqlConnection connection = new SqlConnection(connectionString))
-        //    {
-        //        string query = $"SELECT IPN, SUM(CAST(Stock AS INT)) AS TotalStock FROM STOCK WHERE IPN IN ('{ipnList}') GROUP BY IPN";
-        //        SqlCommand command = new SqlCommand(query, connection);
-        //        connection.Open();
-        //        using (SqlDataReader reader = await command.ExecuteReaderAsync())
-        //        {
-        //            while (reader.Read())
-        //            {
-        //                string ipn = reader["IPN"].ToString().Trim();
-        //                int totalStock = Convert.ToInt32(reader["TotalStock"]);
-        //                whStockData[ipn] = totalStock;
-        //            }
-        //        }
-        //    }
-
-        //    var htmlContent = new StringBuilder();
-
-        //    // HTML header and CSS styles
-        //    htmlContent.AppendLine("<html>");
-        //    htmlContent.AppendLine("<head>");
-        //    htmlContent.AppendLine("<style>");
-        //    htmlContent.AppendLine("table { width: 100%; border-collapse: collapse; }");
-        //    htmlContent.AppendLine("th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }");
-        //    htmlContent.AppendLine("th { background-color: #f2f2f2; color: black; font-weight: bold; white-space: wrap; position: sticky; top: 0; z-index: 1; }");
-        //    htmlContent.AppendLine(".rotated-header { transform: rotate(0deg); transform-origin: center center; white-space: wrap; width:20px; vertical-align: center; text-align: center; }");
-        //    htmlContent.AppendLine(".positive { background-color: LightGreen; }");
-        //    htmlContent.AppendLine(".negative { background-color: IndianRed; color: white; }");
-        //    htmlContent.AppendLine(".nowrap { white-space: nowrap; margin:1px;padding:1px;font-weight:bold; }");
-        //    htmlContent.AppendLine(".bold { font-weight: bold; }");
-        //    htmlContent.AppendLine("</style>");
-
-
-        //    // Insert this section after your CSS in the HTML content generation
-        //    htmlContent.AppendLine("<script>");
-
-        //    htmlContent.AppendLine("document.addEventListener('DOMContentLoaded', function() {");
-        //    htmlContent.AppendLine("    let headers = document.querySelectorAll('th');");
-        //    htmlContent.AppendLine("    headers.forEach((header, index) => {");
-        //    htmlContent.AppendLine("        header.addEventListener('click', () => {");
-        //    htmlContent.AppendLine("            sortTable(index);");
-        //    htmlContent.AppendLine("        });");
-        //    htmlContent.AppendLine("    });");
-
-        //    htmlContent.AppendLine("    let sortDirection = 1;"); // 1 for ascending, -1 for descending
-
-        //    htmlContent.AppendLine("    function sortTable(columnIndex) {");
-        //    htmlContent.AppendLine("        let table = document.querySelector('table tbody');");
-        //    htmlContent.AppendLine("        let rows = Array.from(table.rows);");
-
-        //    htmlContent.AppendLine("        // Toggle sort direction");
-        //    htmlContent.AppendLine("        sortDirection = -sortDirection;");
-
-
-
-        //    htmlContent.AppendLine("        rows.sort((rowA, rowB) => {");
-        //    htmlContent.AppendLine("            let cellA = rowA.cells[columnIndex]?.textContent.trim() || '';");
-        //    htmlContent.AppendLine("            let cellB = rowB.cells[columnIndex]?.textContent.trim() || '';");
-
-        //    // Always place empty cells below non-empty cells
-        //    htmlContent.AppendLine("            if (cellA === '' && cellB !== '') return 1;"); // Empty cell comes last
-        //    htmlContent.AppendLine("            if (cellA !== '' && cellB === '') return -1;"); // Non-empty cell comes first
-
-        //    // Parse as integers if possible, else as strings
-        //    htmlContent.AppendLine("            let a = isNaN(cellA) || cellA === '' ? cellA : parseInt(cellA);");
-        //    htmlContent.AppendLine("            let b = isNaN(cellB) || cellB === '' ? cellB : parseInt(cellB);");
-
-        //    htmlContent.AppendLine("            if (a < b) return -sortDirection;");
-        //    htmlContent.AppendLine("            if (a > b) return sortDirection;");
-        //    htmlContent.AppendLine("            return 0;");
-        //    htmlContent.AppendLine("        });");
-
-
-
-
-
-        //    htmlContent.AppendLine("        // Append sorted rows back to the table");
-        //    htmlContent.AppendLine("        rows.forEach(row => table.appendChild(row));");
-        //    htmlContent.AppendLine("    }");
-        //    htmlContent.AppendLine("});");
-
-
-
-        //    htmlContent.AppendLine("</script>");
-
-
-
-        //    htmlContent.AppendLine("</head>");
-        //    htmlContent.AppendLine("<body style='background-color: grey;'>");
-
-        //    htmlContent.AppendLine("<table>");
-        //    htmlContent.AppendLine("<thead>");
-        //    htmlContent.AppendLine("<tr>");
-        //    htmlContent.AppendLine("<th class='nowrap'>WH</th>"); // Add WH column
-        //    htmlContent.AppendLine("<th class='nowrap'>Balance</th>");
-        //    htmlContent.AppendLine("<th class='nowrap'>Count</th>");
-        //    htmlContent.AppendLine("<th class='nowrap'>IPN</th>");
-
-        //    foreach (var bom in selectedBOMs)
-        //    {
-        //        string[] nameParts = bom.Name.Split('_');
-        //        string displayName = nameParts.Length >= 3 ? $"{nameParts[1]}_{nameParts[2].Replace(".xlsm", "")}" : bom.Name;
-        //        htmlContent.AppendLine($"<th class='rotated-header'>{displayName}</th>");
-        //    }
-
-        //    htmlContent.AppendLine("</tr>");
-        //    htmlContent.AppendLine("</thead>");
-        //    htmlContent.AppendLine("<tbody>");
-
-        //    // Data rows with IPN, WH, balance, count, and delta values
-        //    foreach (var ipnEntry in ipnData.OrderByDescending(entry => entry.Value.Count(v => v.Value.HasValue)))
-        //    {
-        //        string ipn = ipnEntry.Key;
-        //        int totalAppearances = ipnEntry.Value.Count(v => v.Value.HasValue);
-        //        int balance = ipnEntry.Value.Values.Where(v => v.HasValue).Sum(v => v ?? 0);
-        //        int whStock = whStockData.ContainsKey(ipn) ? whStockData[ipn] : 0;
-
-        //        //string balanceClass = balance >= 0 ? "positive" : "negative";
-        //        //string whClass = whStock >= balance ? "positive" : "negative";
-
-        //        string balanceClass = balance > 0 ? "positive" : (balance < 0 ? "negative" : "positive");
-        //        string whClass = ((whStock >= Math.Abs(balance) && whStock > 0) || (whStock > 0 && balance >= 0)) ? "positive" : "negative";
-
-
-
-
-
-
-        //        htmlContent.AppendLine("<tr>");
-        //        htmlContent.AppendLine($"<td class='{whClass} bold'>{whStock}</td>"); // WH column with coloring
-        //        htmlContent.AppendLine($"<td class='{balanceClass} bold'>{balance}</td>");
-        //        htmlContent.AppendLine($"<td style='color:white;'>{totalAppearances}</td>");
-        //        htmlContent.AppendLine($"<td style='color:white;'>{ipn}</td>");
-
-        //        foreach (var bom in selectedBOMs)
-        //        {
-        //            if (ipnEntry.Value.TryGetValue(bom.Name, out var delta))
-        //            {
-        //                string cellClass = delta >= 0 ? "positive bold" : "negative bold";
-        //                htmlContent.AppendLine($"<td class='{cellClass}'>{delta}</td>");
-        //            }
-        //            else
-        //            {
-        //                htmlContent.AppendLine("<td></td>");
-        //            }
-        //        }
-
-        //        htmlContent.AppendLine("</tr>");
-        //    }
-
-        //    htmlContent.AppendLine("</tbody>");
-        //    htmlContent.AppendLine("</table>");
-        //    htmlContent.AppendLine("</body>");
-        //    htmlContent.AppendLine("</html>");
-
-        //    await File.WriteAllTextAsync(filePath, htmlContent.ToString());
-
-        //    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
-        //    {
-        //        FileName = filePath,
-        //        UseShellExecute = true
-        //    });
-        //}
-
 
         private async Task GenerateHtmlReportAsync(string filePath)
         {
@@ -3024,7 +2820,7 @@ var myPieChart = new Chart(ctx, {
             string selectedWarehouseName = comboBox6.SelectedItem.ToString();
 
             // Construct the directory paths for the current and previous three months
-            string currentMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.ToString("MM.yyyy");
+            string currentMonthPath = "\\\\dbr1\\Data\\WareHouse\\2025\\" + DateTime.Now.ToString("MM.yyyy");
             string previousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.AddMonths(-1).ToString("MM.yyyy");
             string prepreviousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.AddMonths(-2).ToString("MM.yyyy");
             string preprepreviousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.AddMonths(-3).ToString("MM.yyyy");
