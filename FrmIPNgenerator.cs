@@ -33,7 +33,12 @@ namespace WH_Panel
     {
         public List<WHitem> avlItemsFromTheMainForm = new List<WHitem>();
         public string sqlAvlConnectionStringFromMainForm = string.Empty;
-        List<string> typesNamesList = new List<string> { "ANT","FIL","CAP","BUZ", "RES", "IND","FER","FUS","LED","MOS","MAG","SWT", "OSC","OPT","TER", "TRN", "DID", "PWR","RLY", "CON", "ICT", "PCB" };
+        List<string> typesNamesList = new List<string>
+{
+    "ANT", "BUZ", "CAP", "CON", "DID", "FER", "FIL", "FUS", "ICT","ICA", "IND",
+    "LED", "MAG", "MOS", "OPT", "OSC", "PCB", "PWR", "RES", "RLY", "SWT",
+    "TER", "TRN"
+};
         List<string> manufacturersList = new List<string> { "SAMTEC","Texas Instruments",
 "FINISAR",
 "JDSU",
@@ -605,16 +610,31 @@ namespace WH_Panel
             {
                 //Sample selected type
                 string selectedType = comboBox1.SelectedItem.ToString(); // Replace with your actual ComboBox logic
-                // Filter WHitems by the selected type
-                
+                                                                         // Filter WHitems by the selected type
 
-                var filteredItems = avlItemsFromTheMainForm
-                    .Where(item => item.IPN.StartsWith($"{_clientPrefix}_{selectedType}-"))
-                    .ToList();
+
+                var filteredItems = avlItemsFromTheMainForm.Where(item => item.IPN.StartsWith($"{_clientPrefix}_{selectedType}-")).ToList();
                 // Extract numbers from the filtered WHitems
-                var numbers = filteredItems
-                    .Select(item => int.Parse(item.IPN.Split('-')[1]))
-                    .ToList();
+                 var numbers = filteredItems .Select(item => int.Parse(item.IPN.Split('-')[1])) .ToList();
+
+                //var filteredItems = avlItemsFromTheMainForm
+                //    .Where(item => item.IPN.StartsWith($"{_clientPrefix}_{selectedType}-"))
+                //    .ToList();
+                //var numbers=new List<int>();
+                //// Extract numbers from the filtered WHitems
+                //if (filteredItems[0].IPN.StartsWith($"{_clientPrefix}_"))               
+                //{
+                //     numbers = filteredItems
+                //    .Select(item => int.Parse(item.IPN.Split('-')[1]))
+                //    .ToList();
+                //}
+                //else
+                //{
+                //    numbers = filteredItems
+                //    .Select(item => int.Parse(item.IPN.Split('_')[1]))
+                //    .ToList();
+                //}
+                    
                 // Find the lowest available number
                 int lowestAvailableNumber = Enumerable.Range(1, 9999)
                     .Except(numbers)

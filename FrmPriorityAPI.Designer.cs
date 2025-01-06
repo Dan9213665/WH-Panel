@@ -42,9 +42,14 @@
             label4 = new Label();
             label5 = new Label();
             button1 = new Button();
+            button2 = new Button();
+            groupBox2 = new GroupBox();
+            button3 = new Button();
+            comboBox1 = new ComboBox();
             tableLayoutPanel1.SuspendLayout();
             groupBox1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
+            groupBox2.SuspendLayout();
             SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -53,6 +58,7 @@
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel1.Controls.Add(groupBox1, 0, 0);
+            tableLayoutPanel1.Controls.Add(groupBox2, 1, 0);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -89,6 +95,7 @@
             tableLayoutPanel2.Controls.Add(label4, 0, 6);
             tableLayoutPanel2.Controls.Add(label5, 0, 8);
             tableLayoutPanel2.Controls.Add(button1, 1, 8);
+            tableLayoutPanel2.Controls.Add(button2, 1, 0);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.Location = new Point(3, 19);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -223,6 +230,49 @@
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
+            // button2
+            // 
+            button2.Dock = DockStyle.Fill;
+            button2.Location = new Point(254, 3);
+            button2.Name = "button2";
+            tableLayoutPanel2.SetRowSpan(button2, 2);
+            button2.Size = new Size(246, 46);
+            button2.TabIndex = 11;
+            button2.Text = "CLEAR";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
+            // 
+            // groupBox2
+            // 
+            groupBox2.Controls.Add(button3);
+            groupBox2.Controls.Add(comboBox1);
+            groupBox2.Dock = DockStyle.Fill;
+            groupBox2.Location = new Point(518, 3);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new Size(509, 289);
+            groupBox2.TabIndex = 1;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "Warehouses";
+            // 
+            // button3
+            // 
+            button3.Location = new Point(6, 21);
+            button3.Name = "button3";
+            button3.Size = new Size(205, 23);
+            button3.TabIndex = 1;
+            button3.Text = "GET warehouses";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
+            // 
+            // comboBox1
+            // 
+            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Location = new Point(9, 45);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new Size(202, 23);
+            comboBox1.TabIndex = 0;
+            // 
             // FrmPriorityAPI
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -232,10 +282,12 @@
             Name = "FrmPriorityAPI";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "FrmPriorityAPI";
+            WindowState = FormWindowState.Maximized;
             tableLayoutPanel1.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
             tableLayoutPanel2.ResumeLayout(false);
             tableLayoutPanel2.PerformLayout();
+            groupBox2.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -255,5 +307,9 @@
         private Label label4;
         private Label label5;
         private Button button1;
+        private Button button2;
+        private GroupBox groupBox2;
+        private ComboBox comboBox1;
+        private Button button3;
     }
 }
