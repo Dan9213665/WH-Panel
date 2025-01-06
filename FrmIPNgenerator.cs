@@ -33,7 +33,7 @@ namespace WH_Panel
     {
         public List<WHitem> avlItemsFromTheMainForm = new List<WHitem>();
         public string sqlAvlConnectionStringFromMainForm = string.Empty;
-        List<string> typesNamesList = new List<string> { "ANT","CAP", "RES", "IND","FER","FUS","MOS","SWT", "OSC", "TRN", "DID", "PWR", "CON", "ICT", "PCB" };
+        List<string> typesNamesList = new List<string> { "ANT","FIL","CAP","BUZ", "RES", "IND","FER","FUS","LED","MOS","MAG","SWT", "OSC","OPT","TER", "TRN", "DID", "PWR","RLY", "CON", "ICT", "PCB" };
         List<string> manufacturersList = new List<string> { "SAMTEC","Texas Instruments",
 "FINISAR",
 "JDSU",
@@ -606,8 +606,10 @@ namespace WH_Panel
                 //Sample selected type
                 string selectedType = comboBox1.SelectedItem.ToString(); // Replace with your actual ComboBox logic
                 // Filter WHitems by the selected type
+                
+
                 var filteredItems = avlItemsFromTheMainForm
-                    .Where(item => item.IPN.StartsWith($"ROB_{selectedType}-"))
+                    .Where(item => item.IPN.StartsWith($"{_clientPrefix}_{selectedType}-"))
                     .ToList();
                 // Extract numbers from the filtered WHitems
                 var numbers = filteredItems

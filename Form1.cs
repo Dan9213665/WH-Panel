@@ -198,8 +198,8 @@ namespace WH_Panel
         }
         private void button1_Click_2(object sender, EventArgs e)
         {
-            frmkitLabelPrint frmkit = new frmkitLabelPrint();
-            frmkit.Show();
+            FrmPriorityAPI frm = new FrmPriorityAPI();
+            frm.Show();
         }
         private void button2_Click(object sender, EventArgs e)
         {

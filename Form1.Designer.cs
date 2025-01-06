@@ -145,15 +145,14 @@ namespace WH_Panel
             groupBox6.Size = new Size(132, 125);
             groupBox6.TabIndex = 18;
             groupBox6.TabStop = false;
-            groupBox6.Text = "KIT box label";
+            groupBox6.Text = "Priority API";
             // 
             // button1
             // 
-            button1.BackColor = Color.White;
-            button1.BackgroundImage = Properties.Resources.kitLabelPrint;
-            button1.BackgroundImageLayout = ImageLayout.Stretch;
+            button1.BackColor = Color.Black;
+            button1.BackgroundImage = (Image)resources.GetObject("button1.BackgroundImage");
+            button1.BackgroundImageLayout = ImageLayout.Zoom;
             button1.Dock = DockStyle.Fill;
-            button1.Enabled = false;
             button1.Location = new Point(3, 19);
             button1.Name = "button1";
             button1.Size = new Size(126, 103);

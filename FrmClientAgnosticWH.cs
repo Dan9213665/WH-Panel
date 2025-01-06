@@ -1654,7 +1654,7 @@ namespace WH_Panel
         }
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBox2.SelectedItem.ToString() == "FTK2400")
+            if (comboBox2.SelectedItem.ToString() == "FTK2500")
             {
                 string todayMonth = DateTime.Now.ToString("MM");
                 string todayDay = DateTime.Now.ToString("dd");
