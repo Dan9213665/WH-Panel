@@ -27,6 +27,9 @@ namespace WH_Panel
             InitializeComponent();
             SetDarkModeColors(this);
             AttachTextBoxEvents(this);
+            // Attach event handlers
+            textBox6.KeyUp += textBox6_KeyUp_1;
+            //textBox6.KeyDown += textBox6_KeyDown;
         }
         public class PR_PART
         {
@@ -54,11 +57,46 @@ namespace WH_Panel
         {
             public string WARHSNAME { get; set; }
             public string WARHSDES { get; set; }
+            public List<WarehouseBalance> WARHSBAL_SUBFORM { get; set; }
         }
 
         public class WarehouseApiResponse
         {
             public List<Warehouse> value { get; set; }
+        }
+
+        public class WarehouseBalance
+        {
+            public string LOCNAME { get; set; }
+            public string PARTNAME { get; set; }
+            public string PARTDES { get; set; }
+            public string SERIALNAME { get; set; }
+            public string SERIALDES { get; set; }
+            public string EXPIRYDATE { get; set; }
+            public string DOCNO { get; set; }
+            public string PROJDES { get; set; }
+            public string ACTNAME { get; set; }
+            public string CUSTNAME { get; set; }
+            public int TBALANCE { get; set; }
+            public string TUNITNAME { get; set; }
+            public string SUPNAME { get; set; }
+            public string SUPDES { get; set; }
+            public int BALANCE { get; set; }
+            public string UNITNAME { get; set; }
+            public string CDATE { get; set; }
+            public int NUMPACK { get; set; }
+            public int WARHS { get; set; }
+            public int PART { get; set; }
+            public int CUST { get; set; }
+            public int ACT { get; set; }
+            public int SERIAL { get; set; }
+
+            public string MNFPARTNAME { get; set; } // Add this property
+        }
+
+        public class WarehouseBalanceApiResponse
+        {
+            public List<WarehouseBalance> value { get; set; }
         }
 
         private void SetDarkModeColors(Control parentControl)
@@ -253,7 +291,7 @@ namespace WH_Panel
                     cmd.Parameters.AddWithValue("@PN", wHitem.PARTNAME);
                     cmd.Parameters.AddWithValue("@MFPN", wHitem.MNFPARTNAME);
                     cmd.Parameters.AddWithValue("@ItemDesc", wHitem.PARTDES);
-                    cmd.Parameters.AddWithValue("@QTY", int.Parse(textBox5.Text));
+                    cmd.Parameters.AddWithValue("@QTY", wHitem.QTY);
                     cmd.Parameters.AddWithValue("@Updated_on", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
 
                     conn.Open();
@@ -426,6 +464,250 @@ namespace WH_Panel
                 {
                     MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
+            }
+
+            comboBox1.DroppedDown = true; // Open the dropdown list
+        }
+
+
+        private async void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox1.SelectedItem != null)
+            {
+                string selectedWarehouse = comboBox1.SelectedItem.ToString().Split(' ')[0];
+                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouse}'&$expand=WARHSBAL_SUBFORM";
+
+                using (HttpClient client = new HttpClient())
+                {
+                    try
+                    {
+                        // Set the request headers if needed
+                        client.DefaultRequestHeaders.Accept.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        // Set the Authorization header
+                        string username = "api"; // Replace with your actual username
+                        string password = "Ddd@123456"; // Replace with your actual password
+                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                        // Make the HTTP GET request
+                        HttpResponseMessage response = await client.GetAsync(url);
+                        response.EnsureSuccessStatusCode();
+
+                        // Read the response content
+                        string responseBody = await response.Content.ReadAsStringAsync();
+
+                        // Parse the JSON response
+                        var apiResponse = JsonConvert.DeserializeObject<WarehouseApiResponse>(responseBody);
+
+                        // Check if the response contains any data
+                        if (apiResponse.value != null && apiResponse.value.Count > 0)
+                        {
+                            // Extract the WARHSBAL_SUBFORM data
+                            var warehouseBalances = apiResponse.value.SelectMany(w => w.WARHSBAL_SUBFORM).ToList();
+
+                            // Set AutoGenerateColumns to false
+                            dataGridView1.AutoGenerateColumns = false;
+
+                            // Clear existing columns
+                            dataGridView1.Columns.Clear();
+
+                            // Define the columns you want to display
+                            var locNameColumn = new DataGridViewTextBoxColumn
+                            {
+                                DataPropertyName = "LOCNAME",
+                                HeaderText = "Location Name",
+                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                                Name = "LOCNAME"
+                            };
+                            var partNameColumn = new DataGridViewTextBoxColumn
+                            {
+                                DataPropertyName = "PARTNAME",
+                                HeaderText = "IPN",
+                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                                Name = "PARTNAME"
+                            };
+                            var partDesColumn = new DataGridViewTextBoxColumn
+                            {
+                                DataPropertyName = "PARTDES",
+                                HeaderText = "Description",
+                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                                Name = "PARTDES"
+                            };
+                            var balanceColumn = new DataGridViewTextBoxColumn
+                            {
+                                DataPropertyName = "BALANCE",
+                                HeaderText = "Balance",
+                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                                Name = "BALANCE"
+                            };
+                            var tBalanceColumn = new DataGridViewTextBoxColumn
+                            {
+                                DataPropertyName = "TBALANCE",
+                                HeaderText = "Total Balance",
+                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                                Name = "TBALANCE"
+                            };
+                            var cDateColumn = new DataGridViewTextBoxColumn
+                            {
+                                DataPropertyName = "CDATE",
+                                HeaderText = "DATE",
+                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                                Name = "CDATE"
+                            };
+                            var partIdColumn = new DataGridViewTextBoxColumn
+                            {
+                                DataPropertyName = "PART",
+                                HeaderText = "PART",
+                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                                Name = "PART"
+                            };
+                            var mfpnColumn = new DataGridViewTextBoxColumn
+                            {
+                                DataPropertyName = "MNFPARTNAME",
+                                HeaderText = "MFPN",
+                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                                Name = "MNFPARTNAME"
+                            };
+
+                            // Add columns to the DataGridView
+                            dataGridView1.Columns.AddRange(new DataGridViewColumn[]
+                            {
+                        locNameColumn,
+                        partNameColumn,
+                        mfpnColumn,
+                        partDesColumn,
+                        balanceColumn,
+                        tBalanceColumn,
+                        cDateColumn,
+                        partIdColumn
+                            });
+
+                            // Populate the DataGridView with the data
+                            foreach (var balance in warehouseBalances)
+                            {
+                                dataGridView1.Rows.Add(balance.LOCNAME, balance.PARTNAME, balance.MNFPARTNAME, balance.PARTDES, balance.BALANCE, balance.TBALANCE, balance.CDATE, balance.PART);
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("No data found for the selected warehouse balance.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                    }
+                    catch (HttpRequestException ex)
+                    {
+                        MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
+
+        private async void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0) // Ensure the row index is valid
+            {
+                var selectedRow = dataGridView1.Rows[e.RowIndex];
+                var partId = (int)selectedRow.Cells["PART"].Value;
+
+                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PART eq {partId}";
+
+                using (HttpClient client = new HttpClient())
+                {
+                    try
+                    {
+                        // Set the request headers if needed
+                        client.DefaultRequestHeaders.Accept.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        // Set the Authorization header
+                        string username = "api"; // Replace with your actual username
+                        string password = "Ddd@123456"; // Replace with your actual password
+                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                        // Make the HTTP GET request
+                        HttpResponseMessage response = await client.GetAsync(url);
+                        response.EnsureSuccessStatusCode();
+
+                        // Read the response content
+                        string responseBody = await response.Content.ReadAsStringAsync();
+
+                        // Parse the JSON response
+                        var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseBody);
+
+                        // Check if the response contains any data
+                        if (apiResponse.value != null && apiResponse.value.Count > 0)
+                        {
+                            var part = apiResponse.value[0];
+
+                            // Directly update the DataGridView cell
+                            selectedRow.Cells["MNFPARTNAME"].Value = part.MNFPARTNAME;
+                            dataGridView1.Refresh();
+                        }
+                        else
+                        {
+                            MessageBox.Show("No data found for the selected part.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                    }
+                    catch (HttpRequestException ex)
+                    {
+                        MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
+  
+        private void textBox6_KeyUp_1(object sender, KeyEventArgs e)
+        {
+            string filterText = textBox6.Text.Trim().ToLower();
+
+            if (e.KeyCode == Keys.Escape)
+            {
+                textBox6.Clear();
+                filterText = string.Empty;
+            }
+
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                if (row.Cells["PARTNAME"].Value != null)
+                {
+                    row.Visible = row.Cells["PARTNAME"].Value.ToString().ToLower().Contains(filterText);
+                }
+            }
+        }
+
+        private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0) // Ensure the row index is valid
+            {
+                var selectedRow = dataGridView1.Rows[e.RowIndex];
+
+                // Extract values from the selected row's cells
+                string partName = selectedRow.Cells["PARTNAME"].Value.ToString();
+                string mfpn = selectedRow.Cells["MNFPARTNAME"].Value.ToString();
+                string partDes = selectedRow.Cells["PARTDES"].Value.ToString();
+                int balance = int.Parse(selectedRow.Cells["BALANCE"].Value.ToString());
+
+                // Create a PR_PART object with the extracted data
+                PR_PART part = new PR_PART
+                {
+                    PARTNAME = partName,
+                    MNFPARTNAME = mfpn,
+                    PARTDES = partDes,
+                    QTY = balance
+                };
+
+                // Call the printSticker method
+                printSticker(part);
             }
         }
     }
