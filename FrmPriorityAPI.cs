@@ -30,6 +30,8 @@ namespace WH_Panel
             // Attach event handlers
             textBox6.KeyUp += textBox6_KeyUp_1;
             //textBox6.KeyDown += textBox6_KeyDown;
+            // Simulate button3 click on form load
+            button3_Click(this, EventArgs.Empty);
         }
         public class PR_PART
         {
@@ -93,7 +95,26 @@ namespace WH_Panel
 
             public string MNFPARTNAME { get; set; } // Add this property
         }
+        // Define the LogPartApiResponse class
+        public class LogPartApiResponse
+        {
+            public List<LogPart> value { get; set; }
+        }
 
+        public class LogPart
+        {
+            public string PARTNAME { get; set; }
+            public List<PartTransLast2> PARTTRANSLAST2_SUBFORM { get; set; }
+        }
+
+        public class PartTransLast2
+        {
+            public string CURDATE { get; set; }
+            public string LOGDOCNO { get; set; }
+            public int TQUANT { get; set; }
+
+            public string DOCDES { get; set; }
+        }
         public class WarehouseBalanceApiResponse
         {
             public List<WarehouseBalance> value { get; set; }
@@ -475,6 +496,8 @@ namespace WH_Panel
             if (comboBox1.SelectedItem != null)
             {
                 string selectedWarehouse = comboBox1.SelectedItem.ToString().Split(' ')[0];
+                string selectedWarehouseDesc = comboBox1.SelectedItem.ToString().Substring(selectedWarehouse.Length).Trim();
+
                 string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouse}'&$expand=WARHSBAL_SUBFORM";
 
                 using (HttpClient client = new HttpClient())
@@ -589,6 +612,8 @@ namespace WH_Panel
                             {
                                 dataGridView1.Rows.Add(balance.LOCNAME, balance.PARTNAME, balance.MNFPARTNAME, balance.PARTDES, balance.BALANCE, balance.TBALANCE, balance.CDATE, balance.PART);
                             }
+                            groupBox3.Text = $"Warehouse  {selectedWarehouse} {selectedWarehouseDesc}";
+                            ColorTheRows(dataGridView1);
                         }
                         else
                         {
@@ -607,14 +632,76 @@ namespace WH_Panel
             }
         }
 
+        //private async void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        //{
+        //    if (e.RowIndex >= 0) // Ensure the row index is valid
+        //    {
+        //        var selectedRow = dataGridView1.Rows[e.RowIndex];
+        //        var partId = (int)selectedRow.Cells["PART"].Value;
+
+        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PART eq {partId}";
+
+        //        using (HttpClient client = new HttpClient())
+        //        {
+        //            try
+        //            {
+        //                // Set the request headers if needed
+        //                client.DefaultRequestHeaders.Accept.Clear();
+        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        //                // Set the Authorization header
+        //                string username = "api"; // Replace with your actual username
+        //                string password = "Ddd@123456"; // Replace with your actual password
+        //                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+        //                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+        //                // Make the HTTP GET request
+        //                HttpResponseMessage response = await client.GetAsync(url);
+        //                response.EnsureSuccessStatusCode();
+
+        //                // Read the response content
+        //                string responseBody = await response.Content.ReadAsStringAsync();
+
+        //                // Parse the JSON response
+        //                var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseBody);
+
+        //                // Check if the response contains any data
+        //                if (apiResponse.value != null && apiResponse.value.Count > 0)
+        //                {
+        //                    var part = apiResponse.value[0];
+
+        //                    // Directly update the DataGridView cell
+        //                    selectedRow.Cells["MNFPARTNAME"].Value = part.MNFPARTNAME;
+        //                    dataGridView1.Refresh();
+        //                }
+        //                else
+        //                {
+        //                    MessageBox.Show("No data found for the selected part.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //                }
+        //            }
+        //            catch (HttpRequestException ex)
+        //            {
+        //                MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            }
+        //        }
+        //    }
+        //}
+
+
         private async void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0) // Ensure the row index is valid
             {
                 var selectedRow = dataGridView1.Rows[e.RowIndex];
                 var partId = (int)selectedRow.Cells["PART"].Value;
+                var partName = selectedRow.Cells["PARTNAME"].Value.ToString();
 
-                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PART eq {partId}";
+                string partUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PART eq {partId}";
+                string logPartUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART?$filter=PARTNAME eq '{partName}'&$expand=PARTTRANSLAST2_SUBFORM";
 
                 using (HttpClient client = new HttpClient())
                 {
@@ -630,20 +717,20 @@ namespace WH_Panel
                         string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
 
-                        // Make the HTTP GET request
-                        HttpResponseMessage response = await client.GetAsync(url);
-                        response.EnsureSuccessStatusCode();
+                        // Make the HTTP GET request for part details
+                        HttpResponseMessage partResponse = await client.GetAsync(partUrl);
+                        partResponse.EnsureSuccessStatusCode();
 
                         // Read the response content
-                        string responseBody = await response.Content.ReadAsStringAsync();
+                        string partResponseBody = await partResponse.Content.ReadAsStringAsync();
 
                         // Parse the JSON response
-                        var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseBody);
+                        var partApiResponse = JsonConvert.DeserializeObject<ApiResponse>(partResponseBody);
 
                         // Check if the response contains any data
-                        if (apiResponse.value != null && apiResponse.value.Count > 0)
+                        if (partApiResponse.value != null && partApiResponse.value.Count > 0)
                         {
-                            var part = apiResponse.value[0];
+                            var part = partApiResponse.value[0];
 
                             // Directly update the DataGridView cell
                             selectedRow.Cells["MNFPARTNAME"].Value = part.MNFPARTNAME;
@@ -652,6 +739,81 @@ namespace WH_Panel
                         else
                         {
                             MessageBox.Show("No data found for the selected part.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+
+                        // Make the HTTP GET request for stock movements
+                        HttpResponseMessage logPartResponse = await client.GetAsync(logPartUrl);
+                        logPartResponse.EnsureSuccessStatusCode();
+
+                        // Read the response content
+                        string logPartResponseBody = await logPartResponse.Content.ReadAsStringAsync();
+
+                        // Parse the JSON response
+                        var logPartApiResponse = JsonConvert.DeserializeObject<LogPartApiResponse>(logPartResponseBody);
+
+                        // Check if the response contains any data
+                        if (logPartApiResponse.value != null && logPartApiResponse.value.Count > 0)
+                        {
+                            // Set AutoGenerateColumns to false
+                            dataGridView2.AutoGenerateColumns = false;
+
+                            // Clear existing columns
+                            dataGridView2.Columns.Clear();
+
+                            // Define the columns you want to display
+                            var curDateColumn = new DataGridViewTextBoxColumn
+                            {
+                                DataPropertyName = "CURDATE",
+                                HeaderText = "Transaction Date",
+                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                                Name = "CURDATE"
+                            };
+                            var logDocNoColumn = new DataGridViewTextBoxColumn
+                            {
+                                DataPropertyName = "LOGDOCNO",
+                                HeaderText = "Document Number",
+                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                                Name = "LOGDOCNO"
+                            };
+                            var logDOCDESColumn = new DataGridViewTextBoxColumn
+                            {
+                                DataPropertyName = "DOCDES",
+                                HeaderText = "Source_requester",
+                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                                Name = "DOCDES"
+                            };
+                            var tQuantColumn = new DataGridViewTextBoxColumn
+                            {
+                                DataPropertyName = "TQUANT",
+                                HeaderText = "Quantity",
+                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                                Name = "TQUANT"
+                            };
+
+                            // Add columns to the DataGridView
+                            dataGridView2.Columns.AddRange(new DataGridViewColumn[]
+                            {
+                        curDateColumn,
+                        logDocNoColumn,
+                        logDOCDESColumn,
+                        tQuantColumn
+                            });
+
+                            // Populate the DataGridView with the data
+                            dataGridView2.Rows.Clear();
+                            foreach (var logPart in logPartApiResponse.value)
+                            {
+                                foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
+                                {
+                                    dataGridView2.Rows.Add(trans.CURDATE, trans.LOGDOCNO,trans.DOCDES, trans.TQUANT);
+                                }
+                            }
+                            groupBox4.Text = $"Stock Movements for {partName}";
+                            ColorTheRows(dataGridView2);
+                        }
+                        else
+                        {
+                            MessageBox.Show("No stock movements found for the selected part.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
                     }
                     catch (HttpRequestException ex)
@@ -665,7 +827,9 @@ namespace WH_Panel
                 }
             }
         }
-  
+
+
+
         private void textBox6_KeyUp_1(object sender, KeyEventArgs e)
         {
             string filterText = textBox6.Text.Trim().ToLower();
@@ -710,5 +874,71 @@ namespace WH_Panel
                 printSticker(part);
             }
         }
+        //private void ColorTheRows(DataGridView dataGridView)
+        //{
+        //    foreach (DataGridViewRow row in dataGridView.Rows)
+        //    {
+        //        foreach (DataGridViewCell cell in row.Cells)
+        //        {
+        //            if (cell.OwningColumn.Name == "BALANCE" || cell.OwningColumn.Name == "TQUANT")
+        //            {
+        //                if (int.TryParse(cell.Value?.ToString(), out int value))
+        //                {
+        //                    if (value > 0)
+        //                    {
+        //                        cell.Style.BackColor = Color.LightGreen;
+        //                        cell.Style.ForeColor = Color.Black;
+        //                    }
+        //                    else
+        //                    {
+        //                        cell.Style.BackColor = Color.IndianRed;
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+        private void ColorTheRows(DataGridView dataGridView)
+        {
+            foreach (DataGridViewRow row in dataGridView.Rows)
+            {
+                foreach (DataGridViewCell cell in row.Cells)
+                {
+                    if (cell.OwningColumn.Name == "BALANCE")
+                    {
+                        if (int.TryParse(cell.Value?.ToString(), out int balanceValue))
+                        {
+                            if (balanceValue > 0)
+                            {
+                                cell.Style.BackColor = Color.LightGreen;
+                                cell.Style.ForeColor = Color.Black;
+                            }
+                            else
+                            {
+                                cell.Style.BackColor = Color.IndianRed;
+                            }
+                        }
+                    }
+                    else if (cell.OwningColumn.Name == "TQUANT")
+                    {
+                        var docDesCell = row.Cells["DOCDES"];
+                        if (docDesCell != null && docDesCell.Value != null)
+                        {
+                            string docDesValue = docDesCell.Value.ToString();
+                            if (docDesValue.Contains("קבלות"))
+                            {
+                                cell.Style.BackColor = Color.LightGreen;
+                                cell.Style.ForeColor = Color.Black;
+                            }
+                            else if (docDesValue.Contains("נפוק"))
+                            {
+                                cell.Style.BackColor = Color.IndianRed;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }
