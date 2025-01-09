@@ -52,6 +52,22 @@
             textBox6 = new TextBox();
             groupBox4 = new GroupBox();
             dataGridView2 = new DataGridView();
+            tableLayoutPanel4 = new TableLayoutPanel();
+            gbxINSERT = new GroupBox();
+            tableLayoutPanel5 = new TableLayoutPanel();
+            lblIPN = new Label();
+            lblDESC = new Label();
+            lblMANUF = new Label();
+            btnINSERTlogpart = new Button();
+            txtbIPN = new TextBox();
+            txtbDESC = new TextBox();
+            txtbMNF = new TextBox();
+            lblMFPN = new Label();
+            txtbMFPN = new TextBox();
+            txtbBuffer = new TextBox();
+            btnClear = new Button();
+            groupBox5 = new GroupBox();
+            txtbPing = new TextBox();
             tableLayoutPanel1.SuspendLayout();
             groupBox1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
@@ -61,6 +77,10 @@
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
+            tableLayoutPanel4.SuspendLayout();
+            gbxINSERT.SuspendLayout();
+            tableLayoutPanel5.SuspendLayout();
+            groupBox5.SuspendLayout();
             SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -71,6 +91,7 @@
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333359F));
             tableLayoutPanel1.Controls.Add(groupBox1, 0, 0);
             tableLayoutPanel1.Controls.Add(groupBox2, 0, 1);
+            tableLayoutPanel1.Controls.Add(tableLayoutPanel4, 2, 0);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -78,7 +99,7 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel1.Size = new Size(1105, 672);
+            tableLayoutPanel1.Size = new Size(1332, 672);
             tableLayoutPanel1.TabIndex = 0;
             // 
             // groupBox1
@@ -88,7 +109,7 @@
             groupBox1.Dock = DockStyle.Fill;
             groupBox1.Location = new Point(3, 3);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(730, 218);
+            groupBox1.Size = new Size(881, 218);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "Print Sticker";
@@ -124,7 +145,7 @@
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
-            tableLayoutPanel2.Size = new Size(724, 196);
+            tableLayoutPanel2.Size = new Size(875, 196);
             tableLayoutPanel2.TabIndex = 0;
             // 
             // textBox1
@@ -132,7 +153,7 @@
             textBox1.Dock = DockStyle.Fill;
             textBox1.Location = new Point(3, 22);
             textBox1.Name = "textBox1";
-            textBox1.Size = new Size(356, 23);
+            textBox1.Size = new Size(431, 23);
             textBox1.TabIndex = 0;
             textBox1.TextAlign = HorizontalAlignment.Center;
             textBox1.KeyDown += textBox1_KeyDown;
@@ -142,7 +163,7 @@
             textBox2.Dock = DockStyle.Fill;
             textBox2.Location = new Point(3, 60);
             textBox2.Name = "textBox2";
-            textBox2.Size = new Size(356, 23);
+            textBox2.Size = new Size(431, 23);
             textBox2.TabIndex = 1;
             textBox2.TextAlign = HorizontalAlignment.Center;
             textBox2.KeyDown += textBox2_KeyDown;
@@ -152,7 +173,7 @@
             textBox3.Dock = DockStyle.Fill;
             textBox3.Location = new Point(3, 98);
             textBox3.Name = "textBox3";
-            textBox3.Size = new Size(356, 23);
+            textBox3.Size = new Size(431, 23);
             textBox3.TabIndex = 2;
             textBox3.TextAlign = HorizontalAlignment.Center;
             // 
@@ -161,7 +182,7 @@
             textBox4.Dock = DockStyle.Fill;
             textBox4.Location = new Point(3, 136);
             textBox4.Name = "textBox4";
-            textBox4.Size = new Size(356, 23);
+            textBox4.Size = new Size(431, 23);
             textBox4.TabIndex = 3;
             textBox4.TextAlign = HorizontalAlignment.Center;
             // 
@@ -170,7 +191,7 @@
             textBox5.Dock = DockStyle.Fill;
             textBox5.Location = new Point(3, 174);
             textBox5.Name = "textBox5";
-            textBox5.Size = new Size(356, 23);
+            textBox5.Size = new Size(431, 23);
             textBox5.TabIndex = 4;
             textBox5.TextAlign = HorizontalAlignment.Center;
             textBox5.KeyDown += textBox5_KeyDown;
@@ -181,7 +202,7 @@
             label1.Dock = DockStyle.Fill;
             label1.Location = new Point(3, 0);
             label1.Name = "label1";
-            label1.Size = new Size(356, 19);
+            label1.Size = new Size(431, 19);
             label1.TabIndex = 5;
             label1.Text = "IPN";
             label1.TextAlign = ContentAlignment.MiddleCenter;
@@ -192,7 +213,7 @@
             label2.Dock = DockStyle.Fill;
             label2.Location = new Point(3, 38);
             label2.Name = "label2";
-            label2.Size = new Size(356, 19);
+            label2.Size = new Size(431, 19);
             label2.TabIndex = 6;
             label2.Text = "MFPN";
             label2.TextAlign = ContentAlignment.MiddleCenter;
@@ -203,7 +224,7 @@
             label3.Dock = DockStyle.Fill;
             label3.Location = new Point(3, 76);
             label3.Name = "label3";
-            label3.Size = new Size(356, 19);
+            label3.Size = new Size(431, 19);
             label3.TabIndex = 7;
             label3.Text = "DESCRIPTION";
             label3.TextAlign = ContentAlignment.MiddleCenter;
@@ -214,7 +235,7 @@
             label4.Dock = DockStyle.Fill;
             label4.Location = new Point(3, 114);
             label4.Name = "label4";
-            label4.Size = new Size(356, 19);
+            label4.Size = new Size(431, 19);
             label4.TabIndex = 8;
             label4.Text = "MANUFACTURER";
             label4.TextAlign = ContentAlignment.MiddleCenter;
@@ -225,7 +246,7 @@
             label5.Dock = DockStyle.Fill;
             label5.Location = new Point(3, 152);
             label5.Name = "label5";
-            label5.Size = new Size(356, 19);
+            label5.Size = new Size(431, 19);
             label5.TabIndex = 9;
             label5.Text = "QTY";
             label5.TextAlign = ContentAlignment.MiddleCenter;
@@ -233,10 +254,10 @@
             // button1
             // 
             button1.Dock = DockStyle.Fill;
-            button1.Location = new Point(365, 155);
+            button1.Location = new Point(440, 155);
             button1.Name = "button1";
             tableLayoutPanel2.SetRowSpan(button1, 2);
-            button1.Size = new Size(356, 38);
+            button1.Size = new Size(432, 38);
             button1.TabIndex = 10;
             button1.Text = "Print Sticker";
             button1.UseVisualStyleBackColor = true;
@@ -245,10 +266,10 @@
             // button2
             // 
             button2.Dock = DockStyle.Fill;
-            button2.Location = new Point(365, 3);
+            button2.Location = new Point(440, 3);
             button2.Name = "button2";
             tableLayoutPanel2.SetRowSpan(button2, 2);
-            button2.Size = new Size(356, 32);
+            button2.Size = new Size(432, 32);
             button2.TabIndex = 11;
             button2.Text = "CLEAR";
             button2.UseVisualStyleBackColor = true;
@@ -262,7 +283,7 @@
             groupBox2.Location = new Point(3, 227);
             groupBox2.Name = "groupBox2";
             tableLayoutPanel1.SetRowSpan(groupBox2, 2);
-            groupBox2.Size = new Size(1099, 442);
+            groupBox2.Size = new Size(1326, 442);
             groupBox2.TabIndex = 1;
             groupBox2.TabStop = false;
             groupBox2.Text = "Warehouses";
@@ -285,15 +306,15 @@
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 80F));
-            tableLayoutPanel3.Size = new Size(1093, 420);
+            tableLayoutPanel3.Size = new Size(1320, 420);
             tableLayoutPanel3.TabIndex = 2;
             // 
             // button3
             // 
             button3.Dock = DockStyle.Fill;
-            button3.Location = new Point(367, 3);
+            button3.Location = new Point(443, 3);
             button3.Name = "button3";
-            button3.Size = new Size(358, 36);
+            button3.Size = new Size(434, 36);
             button3.TabIndex = 1;
             button3.Text = "GET warehouses";
             button3.UseVisualStyleBackColor = true;
@@ -306,7 +327,7 @@
             comboBox1.FormattingEnabled = true;
             comboBox1.Location = new Point(3, 3);
             comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(358, 23);
+            comboBox1.Size = new Size(434, 23);
             comboBox1.TabIndex = 0;
             comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
             // 
@@ -317,7 +338,7 @@
             groupBox3.Dock = DockStyle.Fill;
             groupBox3.Location = new Point(3, 87);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(722, 330);
+            groupBox3.Size = new Size(874, 330);
             groupBox3.TabIndex = 2;
             groupBox3.TabStop = false;
             groupBox3.Text = "WH";
@@ -334,7 +355,7 @@
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
             dataGridView1.RowTemplate.Height = 25;
-            dataGridView1.Size = new Size(716, 308);
+            dataGridView1.Size = new Size(868, 308);
             dataGridView1.TabIndex = 0;
             dataGridView1.CellClick += dataGridView1_CellClick;
             dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
@@ -352,9 +373,9 @@
             // 
             groupBox4.Controls.Add(dataGridView2);
             groupBox4.Dock = DockStyle.Fill;
-            groupBox4.Location = new Point(731, 87);
+            groupBox4.Location = new Point(883, 87);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(359, 330);
+            groupBox4.Size = new Size(434, 330);
             groupBox4.TabIndex = 4;
             groupBox4.TabStop = false;
             groupBox4.Text = "Movements for IPN";
@@ -371,14 +392,211 @@
             dataGridView2.Name = "dataGridView2";
             dataGridView2.ReadOnly = true;
             dataGridView2.RowTemplate.Height = 25;
-            dataGridView2.Size = new Size(353, 308);
+            dataGridView2.Size = new Size(428, 308);
             dataGridView2.TabIndex = 0;
+            dataGridView2.CellDoubleClick += dataGridView2_CellDoubleClick;
+            dataGridView2.CellMouseDown += dataGridView2_CellMouseDown;
+            // 
+            // tableLayoutPanel4
+            // 
+            tableLayoutPanel4.ColumnCount = 2;
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 83.3713F));
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6287022F));
+            tableLayoutPanel4.Controls.Add(gbxINSERT, 0, 0);
+            tableLayoutPanel4.Controls.Add(groupBox5, 1, 0);
+            tableLayoutPanel4.Dock = DockStyle.Fill;
+            tableLayoutPanel4.Location = new Point(890, 3);
+            tableLayoutPanel4.Name = "tableLayoutPanel4";
+            tableLayoutPanel4.RowCount = 2;
+            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 19.7247715F));
+            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 80.27523F));
+            tableLayoutPanel4.Size = new Size(439, 218);
+            tableLayoutPanel4.TabIndex = 5;
+            // 
+            // gbxINSERT
+            // 
+            gbxINSERT.Controls.Add(tableLayoutPanel5);
+            gbxINSERT.Dock = DockStyle.Fill;
+            gbxINSERT.Location = new Point(3, 3);
+            gbxINSERT.Name = "gbxINSERT";
+            tableLayoutPanel4.SetRowSpan(gbxINSERT, 2);
+            gbxINSERT.Size = new Size(360, 212);
+            gbxINSERT.TabIndex = 2;
+            gbxINSERT.TabStop = false;
+            gbxINSERT.Text = "INSERT";
+            // 
+            // tableLayoutPanel5
+            // 
+            tableLayoutPanel5.ColumnCount = 3;
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 72F));
+            tableLayoutPanel5.Controls.Add(lblIPN, 0, 1);
+            tableLayoutPanel5.Controls.Add(lblDESC, 0, 3);
+            tableLayoutPanel5.Controls.Add(lblMANUF, 0, 4);
+            tableLayoutPanel5.Controls.Add(btnINSERTlogpart, 2, 4);
+            tableLayoutPanel5.Controls.Add(txtbIPN, 1, 1);
+            tableLayoutPanel5.Controls.Add(txtbDESC, 1, 3);
+            tableLayoutPanel5.Controls.Add(txtbMNF, 1, 4);
+            tableLayoutPanel5.Controls.Add(lblMFPN, 0, 2);
+            tableLayoutPanel5.Controls.Add(txtbMFPN, 1, 2);
+            tableLayoutPanel5.Controls.Add(txtbBuffer, 1, 0);
+            tableLayoutPanel5.Controls.Add(btnClear, 2, 0);
+            tableLayoutPanel5.Dock = DockStyle.Fill;
+            tableLayoutPanel5.Location = new Point(3, 19);
+            tableLayoutPanel5.Name = "tableLayoutPanel5";
+            tableLayoutPanel5.RowCount = 5;
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            tableLayoutPanel5.Size = new Size(354, 190);
+            tableLayoutPanel5.TabIndex = 4;
+            // 
+            // lblIPN
+            // 
+            lblIPN.AutoSize = true;
+            lblIPN.Dock = DockStyle.Fill;
+            lblIPN.Location = new Point(3, 38);
+            lblIPN.Name = "lblIPN";
+            lblIPN.Size = new Size(135, 38);
+            lblIPN.TabIndex = 2;
+            lblIPN.Text = "IPN";
+            lblIPN.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblDESC
+            // 
+            lblDESC.AutoSize = true;
+            lblDESC.Dock = DockStyle.Fill;
+            lblDESC.Location = new Point(3, 114);
+            lblDESC.Name = "lblDESC";
+            lblDESC.Size = new Size(135, 38);
+            lblDESC.TabIndex = 2;
+            lblDESC.Text = "DESC";
+            lblDESC.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblMANUF
+            // 
+            lblMANUF.AutoSize = true;
+            lblMANUF.Dock = DockStyle.Fill;
+            lblMANUF.Location = new Point(3, 152);
+            lblMANUF.Name = "lblMANUF";
+            lblMANUF.Size = new Size(135, 38);
+            lblMANUF.TabIndex = 2;
+            lblMANUF.Text = "MANUF";
+            lblMANUF.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // btnINSERTlogpart
+            // 
+            btnINSERTlogpart.Dock = DockStyle.Fill;
+            btnINSERTlogpart.Location = new Point(285, 155);
+            btnINSERTlogpart.Name = "btnINSERTlogpart";
+            btnINSERTlogpart.Size = new Size(66, 32);
+            btnINSERTlogpart.TabIndex = 3;
+            btnINSERTlogpart.Text = "INSERT";
+            btnINSERTlogpart.UseVisualStyleBackColor = true;
+            btnINSERTlogpart.Click += btnINSERTlogpart_Click;
+            // 
+            // txtbIPN
+            // 
+            txtbIPN.Dock = DockStyle.Fill;
+            txtbIPN.Location = new Point(144, 41);
+            txtbIPN.Multiline = true;
+            txtbIPN.Name = "txtbIPN";
+            txtbIPN.Size = new Size(135, 32);
+            txtbIPN.TabIndex = 0;
+            txtbIPN.TextAlign = HorizontalAlignment.Center;
+            // 
+            // txtbDESC
+            // 
+            txtbDESC.Dock = DockStyle.Fill;
+            txtbDESC.Location = new Point(144, 117);
+            txtbDESC.Multiline = true;
+            txtbDESC.Name = "txtbDESC";
+            txtbDESC.Size = new Size(135, 32);
+            txtbDESC.TabIndex = 1;
+            txtbDESC.TextAlign = HorizontalAlignment.Center;
+            // 
+            // txtbMNF
+            // 
+            txtbMNF.Dock = DockStyle.Fill;
+            txtbMNF.Location = new Point(144, 155);
+            txtbMNF.Multiline = true;
+            txtbMNF.Name = "txtbMNF";
+            txtbMNF.Size = new Size(135, 32);
+            txtbMNF.TabIndex = 1;
+            txtbMNF.TextAlign = HorizontalAlignment.Center;
+            // 
+            // lblMFPN
+            // 
+            lblMFPN.AutoSize = true;
+            lblMFPN.Dock = DockStyle.Fill;
+            lblMFPN.Location = new Point(3, 76);
+            lblMFPN.Name = "lblMFPN";
+            lblMFPN.Size = new Size(135, 38);
+            lblMFPN.TabIndex = 2;
+            lblMFPN.Text = "MFPN";
+            lblMFPN.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // txtbMFPN
+            // 
+            txtbMFPN.Dock = DockStyle.Fill;
+            txtbMFPN.Location = new Point(144, 79);
+            txtbMFPN.Multiline = true;
+            txtbMFPN.Name = "txtbMFPN";
+            txtbMFPN.Size = new Size(135, 32);
+            txtbMFPN.TabIndex = 0;
+            txtbMFPN.TextAlign = HorizontalAlignment.Center;
+            // 
+            // txtbBuffer
+            // 
+            txtbBuffer.Dock = DockStyle.Fill;
+            txtbBuffer.Location = new Point(144, 3);
+            txtbBuffer.Multiline = true;
+            txtbBuffer.Name = "txtbBuffer";
+            txtbBuffer.Size = new Size(135, 32);
+            txtbBuffer.TabIndex = 4;
+            txtbBuffer.TextAlign = HorizontalAlignment.Center;
+            txtbBuffer.KeyDown += txtbBuffer_KeyDown;
+            // 
+            // btnClear
+            // 
+            btnClear.Dock = DockStyle.Fill;
+            btnClear.Location = new Point(285, 3);
+            btnClear.Name = "btnClear";
+            btnClear.Size = new Size(66, 32);
+            btnClear.TabIndex = 5;
+            btnClear.Text = "Clear";
+            btnClear.UseVisualStyleBackColor = true;
+            btnClear.Click += btnClear_Click;
+            // 
+            // groupBox5
+            // 
+            groupBox5.Controls.Add(txtbPing);
+            groupBox5.Dock = DockStyle.Fill;
+            groupBox5.Location = new Point(369, 3);
+            groupBox5.Name = "groupBox5";
+            groupBox5.Size = new Size(67, 37);
+            groupBox5.TabIndex = 3;
+            groupBox5.TabStop = false;
+            groupBox5.Text = "tProc";
+            // 
+            // txtbPing
+            // 
+            txtbPing.Dock = DockStyle.Fill;
+            txtbPing.Location = new Point(3, 19);
+            txtbPing.Name = "txtbPing";
+            txtbPing.ReadOnly = true;
+            txtbPing.Size = new Size(61, 23);
+            txtbPing.TabIndex = 0;
+            txtbPing.TextAlign = HorizontalAlignment.Center;
             // 
             // FrmPriorityAPI
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1105, 672);
+            ClientSize = new Size(1332, 672);
             Controls.Add(tableLayoutPanel1);
             Name = "FrmPriorityAPI";
             StartPosition = FormStartPosition.CenterScreen;
@@ -395,6 +613,12 @@
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             groupBox4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
+            tableLayoutPanel4.ResumeLayout(false);
+            gbxINSERT.ResumeLayout(false);
+            tableLayoutPanel5.ResumeLayout(false);
+            tableLayoutPanel5.PerformLayout();
+            groupBox5.ResumeLayout(false);
+            groupBox5.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -424,5 +648,21 @@
         private TextBox textBox6;
         private GroupBox groupBox4;
         private DataGridView dataGridView2;
+        private GroupBox gbxINSERT;
+        private Button btnINSERTlogpart;
+        private Label lblDESC;
+        private Label lblIPN;
+        private TextBox txtbDESC;
+        private TextBox txtbIPN;
+        private Label lblMFPN;
+        private TextBox txtbMFPN;
+        private Label lblMANUF;
+        private TextBox txtbMNF;
+        private TableLayoutPanel tableLayoutPanel4;
+        private GroupBox groupBox5;
+        private TableLayoutPanel tableLayoutPanel5;
+        private TextBox txtbPing;
+        private TextBox txtbBuffer;
+        private Button btnClear;
     }
 }

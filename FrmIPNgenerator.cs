@@ -454,6 +454,9 @@ namespace WH_Panel
             InitializeComponent();
             StartUpLogic();
             UpdateControlColors(this);
+
+            // Set ComboBox to allow manual text entry
+            comboBox2.DropDownStyle = ComboBoxStyle.DropDown;
         }
         private void UpdateControlColors(Control parentControl)
         {
@@ -659,7 +662,7 @@ namespace WH_Panel
         private void button1_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(textBox3.Text) &&
-    comboBox2.SelectedItem != null &&
+    !string.IsNullOrEmpty(comboBox2.Text) &&
     !string.IsNullOrEmpty(textBox2.Text) &&
     !string.IsNullOrEmpty(richTextBox1.Text))
             {
@@ -679,7 +682,11 @@ namespace WH_Panel
                 {
                     textBox3.Focus();
                 }
-                else if (comboBox2.SelectedItem == null)
+                //else if (comboBox2.SelectedItem == null)
+                //{
+                //    comboBox2.Focus();
+                //}
+                else if (string.IsNullOrEmpty(comboBox2.Text))
                 {
                     comboBox2.Focus();
                 }
@@ -878,7 +885,7 @@ namespace WH_Panel
                 // Map to simplified products
                 var simplifiedProducts = keywordResponse.ExactMatches.Select(p => new SimplifiedProduct
                 {
-                    Description = p.Description.ProductDescription,
+                    Description = p.Description.DetailedDescription,
                     Manufacturer = p.Manufacturer.Name
                 }).ToList();
 
@@ -925,12 +932,16 @@ namespace WH_Panel
         public class Product
         {
             public Description Description { get; set; }
+
+
+            
             public Manufacturer Manufacturer { get; set; }
         }
 
         public class Description
         {
             public string ProductDescription { get; set; }
+            public string DetailedDescription { get; set; }
         }
 
         public class Manufacturer
