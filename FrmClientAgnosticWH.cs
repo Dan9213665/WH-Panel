@@ -31,6 +31,23 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium;
 using Keys = System.Windows.Forms.Keys;
 using OpenQA.Selenium.Support.UI;
+using System.Net.Http.Headers;
+using Microsoft.Office.Interop.Outlook;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Reflection.Emit;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
+using System.Net.Http;
+using System.Text.Json;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
+using Exception = System.Exception;
+using static WH_Panel.FrmPriorityAPI;
 
 namespace WH_Panel
 {
@@ -3088,43 +3105,6 @@ namespace WH_Panel
                 checkBox1.BackColor = Color.LightGray;
             }
         }
-
-        //private void dataGridView2_MouseClick(object sender, MouseEventArgs e)
-        //{
-        //   WHitem avlItem = new WHitem();
-        //    {
-
-        //    }
-
-
-        //    if (e.Button == MouseButtons.Right)
-        //    {
-        //        string selectedWarehouseName = comboBox3.SelectedItem.ToString(); // Get the selected name from ComboBox1
-
-        //        // Assuming warehouses is a collection of Warehouse objects
-        //        string fp = warehouses
-        //            .Where(w => w.clName == selectedWarehouseName) // Filter warehouses by selected name
-        //            .Select(w => w.sqlAvl)
-        //            .FirstOrDefault(); // Use FirstOrDefault() instead of First() to handle the case where no warehouse matches the selected name
-
-        //        string constr = fp;
-        //        using (SqlConnection conn = new SqlConnection(constr))
-        //        {
-        //            conn.Open();
-        //            SqlCommand command = new SqlCommand($"DELETE FROM [AVL] WHERE IPN = @IPN AND MFPN = @MFPN AND Description = @Description AND Manufacturer = @Manufacturer", conn);
-        //            command.Parameters.AddWithValue("@IPN", avlItem.IPN);
-        //            command.Parameters.AddWithValue("@MFPN", avlItem.MFPN); // Use wHitemABCD.IPN instead of wHitem.IPN
-        //            command.Parameters.AddWithValue("@Description", avlItem.Description); // Use wHitemABCD.MFPN instead of wHitem.MFPN
-        //            command.Parameters.AddWithValue("@Manufacturer", avlItem.Manufacturer); // Use wHitemABCD.Description instead of wHitem.Descriptio
-
-        //            command.ExecuteNonQuery();
-        //            conn.Close();
-        //        }
-        //        MessageBox.Show($"{avlItem.IPN} {avlItem.MFPN} {avlItem.Description} {avlItem.Manufacturer} deleted");
-        //        button2_Click(button3, EventArgs.Empty);
-        //    }
-        //}
-
         private void dataGridView2_MouseClick(object sender, MouseEventArgs e)
         {
             if (Environment.MachineName == "RT12" || Environment.MachineName == "RT13" || Environment.MachineName == "RT1")
@@ -3164,19 +3144,6 @@ namespace WH_Panel
                                     // Add cases for other columns as needed
                             }
                         }
-
-                        //// Confirmation message
-                        //DialogResult result = MessageBox.Show(
-                        //    $"Are you sure you want to delete the following item?\n\n" +
-                        //    $"IPN: {avlItem.IPN}\n" +
-                        //    $"MFPN: {avlItem.MFPN}\n" +
-                        //    $"Description: {avlItem.Description}\n" +
-                        //    $"Manufacturer: {avlItem.Manufacturer}\n",
-                        //    "Confirmation",
-                        //    MessageBoxButtons.YesNo,
-                        //    MessageBoxIcon.Warning
-                        //);
-
                         // Display custom confirmation dialog
                         WarningAvlDialogForm customDialog = new WarningAvlDialogForm(
                             $"Are you sure you want to delete the following item?\n\n" +
@@ -3220,9 +3187,6 @@ namespace WH_Panel
                 }
             }
         }
-
-
-
         private void button1_Click(object sender, EventArgs e)
         {
             // Create SaveFileDialog
@@ -3368,55 +3332,464 @@ namespace WH_Panel
             }
         }
 
+        //private void button5_Click(object sender, EventArgs e)
+        //{
+        //    string MFPNtosearchInApi = textBox4.Text;
+
+        //    // Configure ChromeDriver options
+        //    ChromeOptions options = new ChromeOptions();
+        //   options.AddArgument("--start-maximized"); // Start the browser maximized
+
+        //    // Configure ChromeDriver service
+        //    ChromeDriverService service = ChromeDriverService.CreateDefaultService();
+        //    service.HideCommandPromptWindow = true; // Hide the command prompt window
+
+        //    // Initialize the ChromeDriver with options and service
+        //    IWebDriver driver = new ChromeDriver(service,options);
+
+        //    try
+        //    {
+        //        // Navigate to the web app
+        //        driver.Navigate().GoToUrl("http://192.168.69.37/");
+
+        //        // Wait for the page to load completely
+        //        WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+        //        wait.Until(d => d.FindElement(By.Id("searchText")));
+
+        //        // Find the search field element by its ID
+        //        IWebElement searchField = driver.FindElement(By.Id("searchText"));
+
+        //        // Enter the MFPNtosearchInApi value into the search field
+        //        searchField.SendKeys(MFPNtosearchInApi);
+
+        //        // Press ENTER
+        //        searchField.SendKeys(OpenQA.Selenium.Keys.Enter);
+        //    }
+        //    catch (NoSuchElementException ex)
+        //    {
+        //        MessageBox.Show($"Element not found: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //    }
+        //    finally
+        //    {
+        //        // Optionally, close the browser after a delay
+        //        //Task.Delay(5000).ContinueWith(_ => driver.Quit());
+        //    }
+        //}
         private void button5_Click(object sender, EventArgs e)
         {
-            string MFPNtosearchInApi = textBox4.Text;
+            if (e is MouseEventArgs mouseEventArgs)
+            {
+                if (mouseEventArgs.Button == MouseButtons.Left)
+                {
+                    // Left-click functionality
+                    string MFPNtosearchInApi = textBox4.Text;
 
-            // Configure ChromeDriver options
-            ChromeOptions options = new ChromeOptions();
-           options.AddArgument("--start-maximized"); // Start the browser maximized
+                    // Configure ChromeDriver options
+                    ChromeOptions options = new ChromeOptions();
+                    options.AddArgument("--start-maximized"); // Start the browser maximized
 
-            // Configure ChromeDriver service
-            ChromeDriverService service = ChromeDriverService.CreateDefaultService();
-            service.HideCommandPromptWindow = true; // Hide the command prompt window
+                    // Configure ChromeDriver service
+                    ChromeDriverService service = ChromeDriverService.CreateDefaultService();
+                    service.HideCommandPromptWindow = true; // Hide the command prompt window
 
-            // Initialize the ChromeDriver with options and service
-            IWebDriver driver = new ChromeDriver(service,options);
+                    // Initialize the ChromeDriver with options and service
+                    IWebDriver driver = new ChromeDriver(service, options);
 
+                    try
+                    {
+                        // Navigate to the web app
+                        driver.Navigate().GoToUrl("http://192.168.69.37/");
+
+                        // Wait for the page to load completely
+                        WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+                        wait.Until(d => d.FindElement(By.Id("searchText")));
+
+                        // Find the search field element by its ID
+                        IWebElement searchField = driver.FindElement(By.Id("searchText"));
+
+                        // Enter the MFPNtosearchInApi value into the search field
+                        searchField.SendKeys(MFPNtosearchInApi);
+
+                        // Press ENTER
+                        searchField.SendKeys(OpenQA.Selenium.Keys.Enter);
+                    }
+                    catch (NoSuchElementException ex)
+                    {
+                        MessageBox.Show($"Element not found: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    finally
+                    {
+                        // Optionally, close the browser after a delay
+                        //Task.Delay(5000).ContinueWith(_ => driver.Quit());
+                    }
+                }
+                else if (mouseEventArgs.Button == MouseButtons.Right)
+                {
+                    MessageBox.Show("fire");
+                    // Right-click functionality
+                    UpdateManufacturerByMFPN(textBox4.Text);
+                }
+            }
+        }
+
+        //private async void UpdateManufacturerByMFPN(string mfpn)
+        //{
+        //    try
+        //    {
+        //        // Call Digikey API to get the manufacturer
+        //        string manufacturer = await GetManufacturerFromDigikeyAPI(mfpn);
+
+        //        if (!string.IsNullOrEmpty(manufacturer))
+        //        {
+        //            // Ask user to update the Manufacturer property if it is missing in the AVL
+        //            DialogResult result = MessageBox.Show($"Manufacturer found: {manufacturer}\nDo you want to update the Manufacturer property?", "Update Manufacturer", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+        //            if (result == DialogResult.Yes)
+        //            {
+        //                // Update the Manufacturer property in the AVL
+        //                UpdateManufacturerInAVL(mfpn, manufacturer, avlFile);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            MessageBox.Show("Manufacturer not found for the given MFPN.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show($"An error occurred while updating the manufacturer: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //    }
+        //}
+
+        private async Task<string> GetManufacturerFromDigikeyAPI(string mfpn)
+        {
+            string apiUrl = "https://api.digikey.com/products/v4/search/keyword";
+            string clientId = "1V0C9rxhmIcEf28EC6ADmF9avL74IDF0"; // Replace with your actual client ID
+            string clientSecret = "bbNRuLqxaxjN87AQ"; // Replace with your actual client secret
+            string keyword = mfpn; // Use the MFPN as the keyword
+
+            string accessTokenReceived = string.Empty;
             try
             {
-                // Navigate to the web app
-                driver.Navigate().GoToUrl("http://192.168.69.37/");
-
-                // Wait for the page to load completely
-                WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
-                wait.Until(d => d.FindElement(By.Id("searchText")));
-
-                // Find the search field element by its ID
-                IWebElement searchField = driver.FindElement(By.Id("searchText"));
-
-                // Enter the MFPNtosearchInApi value into the search field
-                searchField.SendKeys(MFPNtosearchInApi);
-
-                // Press ENTER
-                searchField.SendKeys(OpenQA.Selenium.Keys.Enter);
-            }
-            catch (NoSuchElementException ex)
-            {
-                MessageBox.Show($"Element not found: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                accessTokenReceived = await GetAccessTokenAsync(clientId, clientSecret);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error obtaining access token: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return string.Empty;
             }
-            finally
+
+            var requestData = new
             {
-                // Optionally, close the browser after a delay
-                //Task.Delay(5000).ContinueWith(_ => driver.Quit());
+                Keywords = keyword,
+                Limit = 10,
+                Offset = 0,
+                FilterOptionsRequest = new
+                {
+                    ManufacturerFilter = new List<object>(),
+                    CategoryFilter = new List<object>(),
+                    StatusFilter = new List<object>(),
+                    PackagingFilter = new List<object>(),
+                    MarketPlaceFilter = "NoFilter",
+                    SeriesFilter = new List<object>(),
+                    MinimumQuantityAvailable = 0,
+                    ParameterFilterRequest = new
+                    {
+                        CategoryFilter = new { Id = "string" },
+                        ParameterFilters = new List<object>()
+                    },
+                    SearchOptions = new List<string> { }
+                },
+                SortOptions = new
+                {
+                    Field = "None",
+                    SortOrder = "Ascending"
+                }
+            };
+
+            var jsonRequest = System.Text.Json.JsonSerializer.Serialize(requestData);
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessTokenReceived);
+                client.DefaultRequestHeaders.Add("X-DIGIKEY-Client-Id", clientId);
+
+                HttpResponseMessage response = null;
+                try
+                {
+                    response = await client.PostAsync(apiUrl, content);
+                    response.EnsureSuccessStatusCode();
+                }
+                catch (HttpRequestException ex)
+                {
+                    string errorContent = response != null ? await response.Content.ReadAsStringAsync() : "No response content";
+                    MessageBox.Show($"Error sending search request: {ex.Message}\nResponse Content: {errorContent}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return string.Empty;
+                }
+
+                string jsonResponse;
+                try
+                {
+                    jsonResponse = await response.Content.ReadAsStringAsync();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error reading response: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return string.Empty;
+                }
+
+                KeywordResponse keywordResponse;
+                try
+                {
+                    keywordResponse = System.Text.Json.JsonSerializer.Deserialize<KeywordResponse>(jsonResponse);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error deserializing response: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return string.Empty;
+                }
+
+                // Map to simplified products
+                var simplifiedProducts = keywordResponse.ExactMatches.Select(p => new SimplifiedProduct
+                {
+                    Description = p.Description.DetailedDescription,
+                    Manufacturer = p.Manufacturer.Name
+                }).ToList();
+                if(simplifiedProducts.Count > 0)
+                {
+                    //MessageBox.Show(simplifiedProducts[0].Manufacturer);
+                }
+                else
+                {
+                    //MessageBox.Show("MFPN not found on Digikey");                   
+                }
+               
+                // Return the manufacturer of the first product if available
+                return simplifiedProducts.FirstOrDefault()?.Manufacturer ?? string.Empty;
+            }
+        }
+
+        private async Task<string> GetAccessTokenAsync(string clientId, string clientSecret)
+        {
+            string tokenUrl = "https://api.digikey.com/v1/oauth2/token";
+            var requestBody = new Dictionary<string, string>
+    {
+        { "client_id", clientId },
+        { "client_secret", clientSecret },
+        { "grant_type", "client_credentials" }
+    };
+
+            using (HttpClient client = new HttpClient())
+            {
+                var requestContent = new FormUrlEncodedContent(requestBody);
+                HttpResponseMessage response = await client.PostAsync(tokenUrl, requestContent);
+                response.EnsureSuccessStatusCode();
+
+                string responseBody = await response.Content.ReadAsStringAsync();
+                var tokenResponse = System.Text.Json.JsonSerializer.Deserialize<TokenResponse>(responseBody);
+                return tokenResponse.access_token;
+            }
+        }
+
+        public class KeywordResponse
+        {
+            public List<Product> ExactMatches { get; set; }
+        }
+
+        public class Product
+        {
+            public Description Description { get; set; }
+            public Manufacturer Manufacturer { get; set; }
+        }
+
+        public class Description
+        {
+            public string ProductDescription { get; set; }
+            public string DetailedDescription { get; set; }
+        }
+
+        public class Manufacturer
+        {
+            public string Name { get; set; }
+        }
+
+        public class SimplifiedProduct
+        {
+            public string Description { get; set; }
+            public string Manufacturer { get; set; }
+        }
+
+        public class TokenResponse
+        {
+            public string access_token { get; set; }
+            public int expires_in { get; set; }
+            public string token_type { get; set; }
+        }
+
+
+        private async void UpdateManufacturerByMFPN(string mfpn)
+        {
+            try
+            {
+                // Call Digikey API to get the manufacturer
+                string manufacturer = await GetManufacturerFromDigikeyAPI(mfpn);
+
+                if (!string.IsNullOrEmpty(manufacturer))
+                {
+                    // Ask user to update the Manufacturer property if it is missing in the AVL
+                    DialogResult result = MessageBox.Show($"Manufacturer found: {manufacturer}\nDo you want to update the Manufacturer property?", "Update Manufacturer", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                    if (result == DialogResult.Yes)
+                    {
+                        // First, perform a select query to test the connection and ensure the record exists
+                        //SelectManufacturerInAVL(mfpn, manufacturer, avlFile);
+
+                        // If the record exists, update the Manufacturer property in the AVL
+                        UpdateManufacturerInAVL(mfpn, manufacturer, avlFile);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Manufacturer not found for the given MFPN.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while updating the manufacturer: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        private void UpdateManufacturerInAVL(string mfpn, string manufacturer, string _avlFile)
+        {
+            string connectionString = _avlFile;
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "UPDATE AVL SET Manufacturer = @Manufacturer WHERE IPN = @IPN AND MFPN = @MFPN AND Description = @Description";
+                    SqlCommand command = new SqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@Manufacturer", manufacturer.ToUpper());
+                    command.Parameters.AddWithValue("@IPN", textBox3.Text);
+                    command.Parameters.AddWithValue("@MFPN", textBox4.Text);
+                    command.Parameters.AddWithValue("@Description", textBox5.Text);
+
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+                        MessageBox.Show($"Manufacturer for IPN {textBox3.Text} , MFPN {mfpn} updated to {manufacturer.ToUpper()} in the AVL.", "Update Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        button2.PerformClick();
+
+                    }
+                    else
+                    {
+                        MessageBox.Show("No records were updated.", "Update Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error updating record: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void SelectManufacturerInAVL(string mfpn, string manufacturer, string _avlFile)
+        {
+            string connectionString = _avlFile;
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "SELECT * FROM AVL WHERE IPN = @IPN AND MFPN = @MFPN AND Description = @Description";
+                    SqlCommand command = new SqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@IPN", textBox3.Text);
+                    command.Parameters.AddWithValue("@MFPN", textBox4.Text);
+                    command.Parameters.AddWithValue("@Description", textBox5.Text);
+
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        MessageBox.Show("Record found. Ready to update.", "Select Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Record not found.", "Select Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                    reader.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error selecting record: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
 
 
+        private void button5_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                // Left-click functionality
+                string MFPNtosearchInApi = textBox4.Text;
+
+                // Configure ChromeDriver options
+                ChromeOptions options = new ChromeOptions();
+                options.AddArgument("--start-maximized"); // Start the browser maximized
+
+                // Configure ChromeDriver service
+                ChromeDriverService service = ChromeDriverService.CreateDefaultService();
+                service.HideCommandPromptWindow = true; // Hide the command prompt window
+
+                // Initialize the ChromeDriver with options and service
+                IWebDriver driver = new ChromeDriver(service, options);
+
+                try
+                {
+                    // Navigate to the web app
+                    driver.Navigate().GoToUrl("http://192.168.69.37/");
+
+                    // Wait for the page to load completely
+                    WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+                    wait.Until(d => d.FindElement(By.Id("searchText")));
+
+                    // Find the search field element by its ID
+                    IWebElement searchField = driver.FindElement(By.Id("searchText"));
+
+                    // Enter the MFPNtosearchInApi value into the search field
+                    searchField.SendKeys(MFPNtosearchInApi);
+
+                    // Press ENTER
+                    searchField.SendKeys(OpenQA.Selenium.Keys.Enter);
+                }
+                catch (NoSuchElementException ex)
+                {
+                    MessageBox.Show($"Element not found: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    // Optionally, close the browser after a delay
+                    //Task.Delay(5000).ContinueWith(_ => driver.Quit());
+                }
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                // Right-click functionality
+                UpdateManufacturerByMFPN(textBox4.Text);
+            }
+        }
     }
 }

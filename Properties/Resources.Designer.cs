@@ -192,6 +192,16 @@ namespace WH_Panel.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap P {
+            get {
+                object obj = ResourceManager.GetObject("P", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap packingSlip {
             get {
                 object obj = ResourceManager.GetObject("packingSlip", resourceCulture);
@@ -205,6 +215,16 @@ namespace WH_Panel.Properties {
         internal static System.Drawing.Bitmap reloadDB {
             get {
                 object obj = ResourceManager.GetObject("reloadDB", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Screenshot_2025_01_12_071621 {
+            get {
+                object obj = ResourceManager.GetObject("Screenshot 2025-01-12 071621", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

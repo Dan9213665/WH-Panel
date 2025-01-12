@@ -36,7 +36,7 @@ namespace WH_Panel
         List<string> typesNamesList = new List<string>
 {
     "ANT", "BUZ", "CAP", "CON", "DID", "FER", "FIL", "FUS", "ICT","ICA", "IND",
-    "LED", "MAG", "MOS", "OPT", "OSC", "PCB", "PWR", "RES", "RLY", "SWT",
+    "LED", "MAG", "MOS","MEC", "OPT", "OSC", "PCB", "PWR", "RES", "RLY", "SWT",
     "TER", "TRN"
 };
         List<string> manufacturersList = new List<string> { "SAMTEC","Texas Instruments",
@@ -885,7 +885,7 @@ namespace WH_Panel
                 // Map to simplified products
                 var simplifiedProducts = keywordResponse.ExactMatches.Select(p => new SimplifiedProduct
                 {
-                    Description = p.Description.DetailedDescription,
+                    Description = p.Description.ProductDescription,
                     Manufacturer = p.Manufacturer.Name
                 }).ToList();
 

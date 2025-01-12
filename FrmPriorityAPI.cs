@@ -18,6 +18,8 @@ using Button = System.Windows.Forms.Button;
 using TextBox = System.Windows.Forms.TextBox;
 using ComboBox = System.Windows.Forms.ComboBox;
 using System.Diagnostics;
+using System.Reflection; // Add this using directive if not already present
+using System.Drawing; // Add this using directive if not already present
 namespace WH_Panel
 {
     public partial class FrmPriorityAPI : Form
@@ -43,7 +45,7 @@ namespace WH_Panel
             }
         }
         public string username = "api"; // Replace with your actual username
-        public string password = "Ddd@123456"; // Replace with your actual password
+        public string password = "DdD@12345"; // Replace with your actual password
         public class PR_PART
         {
             public string PARTNAME { get; set; }
@@ -519,13 +521,13 @@ namespace WH_Panel
                                 AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
                                 Name = "BALANCE"
                             };
-                            //var tBalanceColumn = new DataGridViewTextBoxColumn
-                            //{
-                            //    DataPropertyName = "TBALANCE",
-                            //    HeaderText = "Total Balance",
-                            //    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                            //    Name = "TBALANCE"
-                            //};
+                            var tBalanceColumn = new DataGridViewTextBoxColumn
+                            {
+                                DataPropertyName = "TBALANCE",
+                                HeaderText = "Total Balance",
+                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                                Name = "TBALANCE"
+                            };
                             var cDateColumn = new DataGridViewTextBoxColumn
                             {
                                 DataPropertyName = "CDATE",
@@ -555,14 +557,14 @@ namespace WH_Panel
                         mfpnColumn,
                         partDesColumn,
                         balanceColumn,
-                        //tBalanceColumn,
+                        tBalanceColumn,
                         cDateColumn,
                         partIdColumn
                             });
                             // Populate the DataGridView with the data
                             foreach (var balance in warehouseBalances)
                             {
-                                dataGridView1.Rows.Add(balance.LOCNAME, balance.PARTNAME, balance.MNFPARTNAME, balance.PARTDES, balance.BALANCE, balance.CDATE, balance.PART); //balance.TBALANCE
+                                dataGridView1.Rows.Add(balance.LOCNAME, balance.PARTNAME, balance.MNFPARTNAME, balance.PARTDES, balance.BALANCE, balance.TBALANCE,balance.CDATE, balance.PART); //balance.TBALANCE
                             }
                             groupBox3.Text = $"Warehouse  {selectedWarehouse} {selectedWarehouseDesc}";
                             ColorTheRows(dataGridView1);
@@ -583,56 +585,7 @@ namespace WH_Panel
                 }
             }
         }
-        //private async void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
-        //{
-        //    if (e.RowIndex >= 0) // Ensure the row index is valid
-        //    {
-        //        var selectedRow = dataGridView1.Rows[e.RowIndex];
-        //        var partId = (int)selectedRow.Cells["PART"].Value;
-        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PART eq {partId}";
-        //        using (HttpClient client = new HttpClient())
-        //        {
-        //            try
-        //            {
-        //                // Set the request headers if needed
-        //                client.DefaultRequestHeaders.Accept.Clear();
-        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //                // Set the Authorization header
-        //                
-        //                
-        //                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
-        //                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //                // Make the HTTP GET request
-        //                HttpResponseMessage response = await client.GetAsync(url);
-        //                response.EnsureSuccessStatusCode();
-        //                // Read the response content
-        //                string responseBody = await response.Content.ReadAsStringAsync();
-        //                // Parse the JSON response
-        //                var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseBody);
-        //                // Check if the response contains any data
-        //                if (apiResponse.value != null && apiResponse.value.Count > 0)
-        //                {
-        //                    var part = apiResponse.value[0];
-        //                    // Directly update the DataGridView cell
-        //                    selectedRow.Cells["MNFPARTNAME"].Value = part.MNFPARTNAME;
-        //                    dataGridView1.Refresh();
-        //                }
-        //                else
-        //                {
-        //                    MessageBox.Show("No data found for the selected part.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        //                }
-        //            }
-        //            catch (HttpRequestException ex)
-        //            {
-        //                MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //            }
-        //        }
-        //    }
-        //}
+     
         private async void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0) // Ensure the row index is valid
@@ -986,7 +939,8 @@ namespace WH_Panel
                     var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
                     var serialDetails = apiResponse["value"].FirstOrDefault();
                     if (serialDetails != null)
-                    {
+                    {                       
+                      
                         // Create a new form to display the data
                         Form popupForm = new Form
                         {

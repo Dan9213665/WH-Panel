@@ -37,6 +37,8 @@ namespace WH_Panel
             button1 = new Button();
             groupBox9 = new GroupBox();
             button14 = new Button();
+            groupBox5 = new GroupBox();
+            button16 = new Button();
             groupBox10 = new GroupBox();
             button10 = new Button();
             button6 = new Button();
@@ -61,6 +63,7 @@ namespace WH_Panel
             groupBox4.SuspendLayout();
             groupBox6.SuspendLayout();
             groupBox9.SuspendLayout();
+            groupBox5.SuspendLayout();
             groupBox10.SuspendLayout();
             groupBox7.SuspendLayout();
             groupBox3.SuspendLayout();
@@ -76,7 +79,7 @@ namespace WH_Panel
             groupBox1.ForeColor = SystemColors.ControlLightLight;
             groupBox1.Location = new Point(0, 0);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(571, 286);
+            groupBox1.Size = new Size(574, 285);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Elige scopum";
@@ -87,16 +90,16 @@ namespace WH_Panel
             flowLayoutPanel1.Controls.Add(groupBox4);
             flowLayoutPanel1.Controls.Add(groupBox6);
             flowLayoutPanel1.Controls.Add(groupBox9);
+            flowLayoutPanel1.Controls.Add(groupBox5);
             flowLayoutPanel1.Controls.Add(groupBox10);
             flowLayoutPanel1.Controls.Add(groupBox7);
             flowLayoutPanel1.Controls.Add(groupBox3);
             flowLayoutPanel1.Controls.Add(groupBox2);
-            flowLayoutPanel1.Controls.Add(groupBox11);
             flowLayoutPanel1.Dock = DockStyle.Fill;
             flowLayoutPanel1.FlowDirection = FlowDirection.TopDown;
             flowLayoutPanel1.Location = new Point(3, 19);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(565, 264);
+            flowLayoutPanel1.Size = new Size(568, 263);
             flowLayoutPanel1.TabIndex = 2;
             // 
             // groupBox4
@@ -142,10 +145,10 @@ namespace WH_Panel
             groupBox6.ForeColor = Color.White;
             groupBox6.Location = new Point(3, 136);
             groupBox6.Name = "groupBox6";
-            groupBox6.Size = new Size(132, 125);
+            groupBox6.Size = new Size(132, 123);
             groupBox6.TabIndex = 18;
             groupBox6.TabStop = false;
-            groupBox6.Text = "Priority API";
+            groupBox6.Text = "Priority WH";
             // 
             // button1
             // 
@@ -155,7 +158,7 @@ namespace WH_Panel
             button1.Dock = DockStyle.Fill;
             button1.Location = new Point(3, 19);
             button1.Name = "button1";
-            button1.Size = new Size(126, 103);
+            button1.Size = new Size(126, 101);
             button1.TabIndex = 7;
             button1.UseVisualStyleBackColor = false;
             button1.Click += button1_Click_2;
@@ -184,6 +187,29 @@ namespace WH_Panel
             button14.Click += button14_Click_1;
             button14.MouseDown += button14_MouseClick;
             // 
+            // groupBox5
+            // 
+            groupBox5.Controls.Add(button16);
+            groupBox5.ForeColor = Color.White;
+            groupBox5.Location = new Point(141, 134);
+            groupBox5.Name = "groupBox5";
+            groupBox5.Size = new Size(134, 125);
+            groupBox5.TabIndex = 26;
+            groupBox5.TabStop = false;
+            groupBox5.Text = "Priority BOM";
+            // 
+            // button16
+            // 
+            button16.BackgroundImage = Properties.Resources.Screenshot_2025_01_12_071621;
+            button16.BackgroundImageLayout = ImageLayout.Stretch;
+            button16.Dock = DockStyle.Fill;
+            button16.Location = new Point(3, 19);
+            button16.Name = "button16";
+            button16.Size = new Size(128, 103);
+            button16.TabIndex = 8;
+            button16.UseVisualStyleBackColor = true;
+            button16.Click += button16_Click;
+            // 
             // groupBox10
             // 
             groupBox10.BackColor = Color.Black;
@@ -191,7 +217,7 @@ namespace WH_Panel
             groupBox10.Controls.Add(button6);
             groupBox10.Controls.Add(button11);
             groupBox10.ForeColor = Color.White;
-            groupBox10.Location = new Point(141, 134);
+            groupBox10.Location = new Point(281, 3);
             groupBox10.Name = "groupBox10";
             groupBox10.Size = new Size(132, 125);
             groupBox10.TabIndex = 22;
@@ -240,7 +266,7 @@ namespace WH_Panel
             groupBox7.Controls.Add(btnMFPN);
             groupBox7.Controls.Add(button3);
             groupBox7.ForeColor = Color.White;
-            groupBox7.Location = new Point(281, 3);
+            groupBox7.Location = new Point(281, 134);
             groupBox7.Name = "groupBox7";
             groupBox7.Size = new Size(134, 125);
             groupBox7.TabIndex = 19;
@@ -287,7 +313,7 @@ namespace WH_Panel
             groupBox3.Controls.Add(button8);
             groupBox3.Controls.Add(button2);
             groupBox3.ForeColor = Color.White;
-            groupBox3.Location = new Point(281, 134);
+            groupBox3.Location = new Point(421, 3);
             groupBox3.Name = "groupBox3";
             groupBox3.Size = new Size(134, 125);
             groupBox3.TabIndex = 15;
@@ -332,8 +358,9 @@ namespace WH_Panel
             groupBox2.Controls.Add(button15);
             groupBox2.Controls.Add(button5);
             groupBox2.Controls.Add(button9);
+            groupBox2.Controls.Add(groupBox11);
             groupBox2.ForeColor = Color.White;
-            groupBox2.Location = new Point(421, 3);
+            groupBox2.Location = new Point(421, 134);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(135, 125);
             groupBox2.TabIndex = 24;
@@ -379,24 +406,28 @@ namespace WH_Panel
             // 
             groupBox11.BackColor = Color.Black;
             groupBox11.Controls.Add(button7);
+            groupBox11.Enabled = false;
             groupBox11.ForeColor = Color.White;
-            groupBox11.Location = new Point(421, 134);
+            groupBox11.Location = new Point(82, 22);
             groupBox11.Name = "groupBox11";
-            groupBox11.Size = new Size(135, 125);
+            groupBox11.Size = new Size(46, 50);
             groupBox11.TabIndex = 23;
             groupBox11.TabStop = false;
             groupBox11.Text = "Finished Goods LOG";
+            groupBox11.Visible = false;
             // 
             // button7
             // 
             button7.BackgroundImage = (Image)resources.GetObject("button7.BackgroundImage");
             button7.BackgroundImageLayout = ImageLayout.Zoom;
             button7.Dock = DockStyle.Fill;
+            button7.Enabled = false;
             button7.Location = new Point(3, 19);
             button7.Name = "button7";
-            button7.Size = new Size(129, 103);
+            button7.Size = new Size(40, 28);
             button7.TabIndex = 0;
             button7.UseVisualStyleBackColor = true;
+            button7.Visible = false;
             button7.Click += button7_Click_1;
             // 
             // notifyIcon1
@@ -414,7 +445,7 @@ namespace WH_Panel
             AutoScroll = true;
             AutoSize = true;
             BackColor = Color.Black;
-            ClientSize = new Size(571, 286);
+            ClientSize = new Size(574, 285);
             Controls.Add(groupBox1);
             ForeColor = SystemColors.ControlText;
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -428,6 +459,7 @@ namespace WH_Panel
             groupBox4.ResumeLayout(false);
             groupBox6.ResumeLayout(false);
             groupBox9.ResumeLayout(false);
+            groupBox5.ResumeLayout(false);
             groupBox10.ResumeLayout(false);
             groupBox7.ResumeLayout(false);
             groupBox3.ResumeLayout(false);
@@ -464,5 +496,7 @@ namespace WH_Panel
         private Button button12;
         private Button button15;
         private Button btnMFPN;
+        private Button button16;
+        private GroupBox groupBox5;
     }
 }

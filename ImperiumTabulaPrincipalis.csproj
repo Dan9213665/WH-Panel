@@ -10,6 +10,9 @@
     <ApplicationIcon>dbsearch.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Resources\P.ico" />
+  </ItemGroup>
+  <ItemGroup>
     <COMReference Include="Microsoft.Office.Core">
       <WrapperTool>tlbimp</WrapperTool>
       <VersionMinor>5</VersionMinor>
@@ -105,6 +108,11 @@
     <Reference Include="Seagull.Services.PrintScheduler.Contracts">
       <HintPath>Binaries\Seagull\Seagull.Services.PrintScheduler.Contracts.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\P.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">

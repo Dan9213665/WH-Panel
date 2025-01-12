@@ -337,5 +337,11 @@ namespace WH_Panel
         {
 
         }
+
+        private void button16_Click(object sender, EventArgs e)
+        {
+            FrmPriorityBom frm = new FrmPriorityBom();
+            frm.Show();
+        }
     }
 }

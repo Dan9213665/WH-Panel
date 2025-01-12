@@ -142,8 +142,14 @@
   <data name="reloadDB" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\reloadDB.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="vayyar" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\vayyar.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="documents_files_history_64" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\documents_files_history_64.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="P" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\P1.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="STM" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\STM.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -154,8 +160,8 @@
   <data name="Sticker" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Sticker.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="search" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\search.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="fromStockCounterLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fromStockCounterLoad.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="box_214671" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\box_214671.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -163,11 +169,14 @@
   <data name="CIS" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\CIS.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="search" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\search.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="6-2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\6-2.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="vayyar" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\vayyar.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Monogramme-MFPN" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Monogramme-MFPN1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="kitLabelPrint" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\kitLabelPrint.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -178,10 +187,7 @@
   <data name="valens" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\valens.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Monogramme-MFPN" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Monogramme-MFPN1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="fromStockCounterLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\fromStockCounterLoad.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="Screenshot 2025-01-12 071621" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Screenshot 2025-01-12 071621.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
