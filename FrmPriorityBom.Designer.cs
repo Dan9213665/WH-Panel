@@ -314,6 +314,7 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "FrmPriorityBom";
             WindowState = FormWindowState.Maximized;
+            Load += FrmPriorityBom_Load;
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
             groupBox1.ResumeLayout(false);

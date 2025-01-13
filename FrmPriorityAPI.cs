@@ -564,7 +564,7 @@ namespace WH_Panel
                             // Populate the DataGridView with the data
                             foreach (var balance in warehouseBalances)
                             {
-                                dataGridView1.Rows.Add(balance.LOCNAME, balance.PARTNAME, balance.MNFPARTNAME, balance.PARTDES, balance.BALANCE, balance.TBALANCE,balance.CDATE, balance.PART); //balance.TBALANCE
+                                dataGridView1.Rows.Add(balance.LOCNAME, balance.PARTNAME, balance.MNFPARTNAME, balance.PARTDES, balance.BALANCE, balance.TBALANCE, balance.CDATE, balance.PART); //balance.TBALANCE
                             }
                             groupBox3.Text = $"Warehouse  {selectedWarehouse} {selectedWarehouseDesc}";
                             ColorTheRows(dataGridView1);
@@ -585,7 +585,7 @@ namespace WH_Panel
                 }
             }
         }
-     
+
         private async void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0) // Ensure the row index is valid
@@ -939,8 +939,8 @@ namespace WH_Panel
                     var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
                     var serialDetails = apiResponse["value"].FirstOrDefault();
                     if (serialDetails != null)
-                    {                       
-                      
+                    {
+
                         // Create a new form to display the data
                         Form popupForm = new Form
                         {
@@ -1303,6 +1303,11 @@ namespace WH_Panel
             txtbMFPN.Clear();
             txtbDESC.Clear();
             txtbBuffer.Clear();
+        }
+
+        private void btnMFG_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

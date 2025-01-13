@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -16,17 +17,24 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 using static WH_Panel.FrmPriorityAPI;
 using static WH_Panel.FrmPriorityBom;
+using Microsoft.Extensions.Configuration;
 
 namespace WH_Panel
 {
+
     public partial class FrmPriorityBom : Form
     {
+        private AppSettings settings;
+
         private List<WarehouseBalance> warehouseBalances;
         public FrmPriorityBom()
         {
             InitializeComponent();
+
+            this.Load += FrmPriorityBom_Load;
+
             this.KeyPreview = true; // Set KeyPreview to true
-            GetGetRobWosList();
+            
             SetDarkModeColors(this);
             // Set the DrawMode property and handle the DrawItem event
             cmbROBxList.DrawMode = DrawMode.OwnerDrawFixed;
@@ -38,6 +46,24 @@ namespace WH_Panel
             dgwBom.CellFormatting += dgwBom_CellFormatting;
             AttachTextBoxEvents(this);
 
+
+
+        }
+
+        private void FrmPriorityBom_Load(object sender, EventArgs e)
+        {
+            settings = SettingsManager.LoadSettings();
+
+            if (settings == null)
+            {
+                MessageBox.Show("Failed to load settings.");
+                return;
+            }
+            GetGetRobWosList();
+            // Debug output to verify settings are loaded correctly
+
+            // MessageBox.Show("pass:"+settings.ApiPassword);
+            // MessageBox.Show($"ApiU: {settings.ApiUsername} -  ApiP: {settings.ApiPassword}");
 
 
         }
@@ -99,8 +125,8 @@ namespace WH_Panel
             public string MNFPARTNAME { get; set; }
         }
 
-        private string username = "api"; // Replace with your actual username
-        private string password = "DdD@12345"; // Replace with your actual password
+        //private string username = "api"; // Replace with your actual username
+       // private string password = "DdD@12345"; // Replace with your actual password
         private async void GetGetRobWosList()
         {
             string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL";
@@ -112,7 +138,15 @@ namespace WH_Panel
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     // Set the Authorization header
-                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+                    string un = settings.ApiUsername;
+
+                    //MessageBox.Show(un);
+                    string pw = settings.ApiPassword;
+
+                    //MessageBox.Show(pw);
+                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{un}:{pw}"));
+
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                     // Make the HTTP GET request
                     HttpResponseMessage response = await client.GetAsync(url);
@@ -300,7 +334,8 @@ namespace WH_Panel
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     // Set the Authorization header
-                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+                   // string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                     // Make the HTTP GET request
                     HttpResponseMessage response = await client.GetAsync(url);
@@ -365,7 +400,8 @@ namespace WH_Panel
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     // Set the Authorization header
-                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+                    // string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                     // Make the HTTP GET request for warehouse balances
                     HttpResponseMessage response = await client.GetAsync(warehouseUrl);
@@ -425,7 +461,8 @@ namespace WH_Panel
                             client.DefaultRequestHeaders.Accept.Clear();
                             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                             // Set the Authorization header
-                            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+                            //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+                            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                             // Make the HTTP GET request for part details
                             HttpResponseMessage partResponse = await client.GetAsync(partUrl);
@@ -557,7 +594,7 @@ namespace WH_Panel
             textBox2.Clear();
             textBox3.Clear();
             textBox4.Clear();
-      
+
 
             foreach (DataGridViewRow row in dgwBom.Rows)
             {
@@ -641,7 +678,8 @@ namespace WH_Panel
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                         // Set the Authorization header
-                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+                        // string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
 
                         // Measure the time taken for the HTTP GET request
@@ -780,5 +818,7 @@ namespace WH_Panel
                 }
             }
         }
+
+      
     }
 }
