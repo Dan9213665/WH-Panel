@@ -72,6 +72,7 @@
     <PackageReference Include="EPPlus" Version="6.2.8" />
     <PackageReference Include="FastMember.Signed" Version="1.5.0" />
     <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
+    <PackageReference Include="Microsoft.Office.Interop.Outlook" Version="15.0.4797.1004" />
     <PackageReference Include="OfficeOpenXml.Core.ExcelPackage" Version="1.0.0" />
     <PackageReference Include="QRCoder" Version="1.6.0" />
     <PackageReference Include="Seagull" Version="2.3.5" />
