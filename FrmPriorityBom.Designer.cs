@@ -121,7 +121,7 @@
             // 
             cmbROBxList.Dock = DockStyle.Fill;
             cmbROBxList.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbROBxList.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            cmbROBxList.Font = new Font("Segoe UI", 12F);
             cmbROBxList.FormattingEnabled = true;
             cmbROBxList.Location = new Point(3, 3);
             cmbROBxList.Name = "cmbROBxList";
@@ -300,9 +300,10 @@
             lblPing.AutoSize = true;
             lblPing.Location = new Point(791, 0);
             lblPing.Name = "lblPing";
-            lblPing.Size = new Size(38, 15);
+            lblPing.Size = new Size(35, 15);
             lblPing.TabIndex = 5;
-            lblPing.Text = "label1";
+            lblPing.Text = "tProc";
+            lblPing.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // FrmPriorityBom
             // 

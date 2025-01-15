@@ -1170,7 +1170,7 @@
             dataGridView2.Size = new Size(1848, 214);
             dataGridView2.TabIndex = 0;
             dataGridView2.CellClick += dataGridView2_CellClick;
-            dataGridView2.CellDoubleClick += dataGridView2_CellDoubleClick;
+            dataGridView2.CellDoubleClick += dataGridView2_CellClick;
             dataGridView2.SelectionChanged += dataGridView2_SelectionChanged;
             dataGridView2.MouseClick += dataGridView2_MouseClick;
             // 

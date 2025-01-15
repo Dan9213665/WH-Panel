@@ -3107,7 +3107,7 @@ namespace WH_Panel
         }
         private void dataGridView2_MouseClick(object sender, MouseEventArgs e)
         {
-            if (Environment.MachineName == "RT12" || Environment.MachineName == "RT13" || Environment.MachineName == "RT1")
+            if (Environment.MachineName == "RT12" || Environment.MachineName == "RT13" || Environment.MachineName == "RT1" || Environment.MachineName == "RT19")
             {
                 if (e.Button == MouseButtons.Right)
                 {

@@ -233,14 +233,14 @@ namespace WH_Panel
             {
                 if (Environment.UserName != "lgt")
                 {
-                    Application excel = new Application();
-                    Workbook workbook = excel.Workbooks.Open(openFileDialog1.FileName);
-                    Worksheet firstSheet = (Worksheet)workbook.Worksheets[1]; // Cast the object to a Worksheet type
-                    firstSheet.Calculate(); // Calculate only the first sheet
-                                            // Save the changes
-                    workbook.Save();
-                    workbook.Close();
-                    excel.Quit();
+                    //Application excel = new Application();
+                    //Workbook workbook = excel.Workbooks.Open(openFileDialog1.FileName);
+                    //Worksheet firstSheet = (Worksheet)workbook.Worksheets[1]; // Cast the object to a Worksheet type
+                    //firstSheet.Calculate(); // Calculate only the first sheet
+                    //                        // Save the changes
+                    //workbook.Save();
+                    //workbook.Close();
+                    //excel.Quit();
                 }
                 else
                 {

@@ -60,10 +60,8 @@ namespace WH_Panel
                 return;
             }
             GetGetRobWosList();
-            // Debug output to verify settings are loaded correctly
+      
 
-            // MessageBox.Show("pass:"+settings.ApiPassword);
-            // MessageBox.Show($"ApiU: {settings.ApiUsername} -  ApiP: {settings.ApiPassword}");
 
 
         }
@@ -125,8 +123,8 @@ namespace WH_Panel
             public string MNFPARTNAME { get; set; }
         }
 
-        //private string username = "api"; // Replace with your actual username
-       // private string password = "DdD@12345"; // Replace with your actual password
+        private string username = "api"; // Replace with your actual username
+       private string password = "DdD@12345"; // Replace with your actual password
         private async void GetGetRobWosList()
         {
             string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL";
@@ -139,10 +137,12 @@ namespace WH_Panel
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     // Set the Authorization header
                     //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
-                    string un = settings.ApiUsername;
+                    //string un = settings.ApiUsername;
+                    string un = username;
 
                     //MessageBox.Show(un);
-                    string pw = settings.ApiPassword;
+                    //string pw = settings.ApiPassword;
+                    string pw = password;
 
                     //MessageBox.Show(pw);
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{un}:{pw}"));
@@ -723,6 +723,13 @@ namespace WH_Panel
                                 AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
                                 Name = "DOCDES"
                             };
+                            var SUPCUSTNAMEColumn = new DataGridViewTextBoxColumn
+                            {
+                                DataPropertyName = "SUPCUSTNAME",
+                                HeaderText = "Source_Req",
+                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                                Name = "SUPCUSTNAME"
+                            };
                             var tQuantColumn = new DataGridViewTextBoxColumn
                             {
                                 DataPropertyName = "TQUANT",
@@ -736,6 +743,7 @@ namespace WH_Panel
                         curDateColumn,
                         logDocNoColumn,
                         logDOCDESColumn,
+                        SUPCUSTNAMEColumn,
                         tQuantColumn
                             });
                             // Populate the DataGridView with the data
@@ -744,7 +752,7 @@ namespace WH_Panel
                             {
                                 foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
                                 {
-                                    dgwIPNmoves.Rows.Add(trans.CURDATE, trans.LOGDOCNO, trans.DOCDES, trans.TQUANT);
+                                    dgwIPNmoves.Rows.Add(trans.CURDATE, trans.LOGDOCNO, trans.DOCDES,trans.SUPCUSTNAME, trans.TQUANT);
                                 }
                             }
                             gbxIPNstockMovements.Text = $"Stock Movements for {partName}";
