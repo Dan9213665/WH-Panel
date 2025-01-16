@@ -35,6 +35,8 @@ namespace WH_Panel
             AttachTextBoxEvents(this);
             // Attach event handlers
             textBox6.KeyUp += textBox6_KeyUp_1;
+            textBox5.KeyPress += textBox5_KeyPress;
+            textBox5.TextChanged += textBox5_TextChanged;
             //textBox6.KeyDown += textBox6_KeyDown;
             // Simulate button3 click on form load
             button3_Click(this, EventArgs.Empty);
@@ -55,6 +57,14 @@ namespace WH_Panel
             //this.RightToLeft = RightToLeft.Yes;
             //this.RightToLeftLayout = true;
             //SetRightToLeftForControls(this);
+
+
+
+        }
+
+        private async void FrmPriorityAPI_Load(object sender, EventArgs e)
+        {
+            await PopulatePackCombobox();
         }
 
         private void SetRightToLeftForControls(Control parentControl)
@@ -144,6 +154,7 @@ namespace WH_Panel
         {
             public string CURDATE { get; set; }
             public string LOGDOCNO { get; set; }
+
 
             public DateTimeOffset UDATE { get; set; }
             public string SUPCUSTNAME { get; set; }
@@ -245,6 +256,7 @@ namespace WH_Panel
             public string PARTNAME { get; set; }
             public int TQUANT { get; set; }
 
+            public string PACKCODE { get; set; }
             public string UNITNAME { get; set; }
             //public DateTime CURDATE { get; set; } // Add UDATE property
             public string SERIALNAME { get; set; }
@@ -265,69 +277,50 @@ namespace WH_Panel
                 }
             }
         }
-        //public class WarehouseService
-        //{
-        //    private static readonly string baseUrl = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522";
-        //    private static readonly string username = "api"; // Replace with your actual username
-        //    private static readonly string password = "DdD@12345"; // Replace with your actual password
 
-        //    public static async Task InsertDocumentAsync(Document document, FrmPriorityAPI formInstance)
-        //    {
-        //        using (HttpClient client = new HttpClient())
-        //        {
-        //            try
-        //            {
-        //                // Set the request headers
-        //                client.DefaultRequestHeaders.Accept.Clear();
-        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
-        //                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
 
-        //                // Construct the API URL
-        //                string apiUrl = $"{baseUrl}/DOCUMENTS_P";
 
-        //                // Serialize the document to JSON
-        //                string jsonPayload = JsonConvert.SerializeObject(document);
-        //                var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-        //                // Make the HTTP POST request
-        //                HttpResponseMessage response = await client.PostAsync(apiUrl, content);
+        public async Task PopulatePackCombobox()
+        {
+            string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PACK";
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    // Set the request headers if needed
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    // Set the Authorization header
+                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    // Make the HTTP GET request
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
+                    // Read the response content
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    // Parse the JSON response
+                    var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+                    var packCodes = apiResponse["value"].Select(p => p["PACKCODE"].ToString()).ToList();
+                    // Populate the ComboBox with the PACKCODE values
+                    cmbPackCode.Items.Clear();
+                    foreach (var packCode in packCodes)
+                    {
+                        cmbPackCode.Items.Add(packCode);
+                    }
+                }
+                catch (HttpRequestException ex)
+                {
+                    MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            cmbPackCode.SelectedIndex = 0; // Select the first item by default
 
-        //                // Check if the response indicates success
-        //                if (response.IsSuccessStatusCode)
-        //                {
-        //                    // Read the response content
-        //                    string responseBody = await response.Content.ReadAsStringAsync();
-        //                    MessageBox.Show("Document successfully inserted.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        //                    formInstance.comboBox1_SelectedIndexChanged(formInstance.comboBox1, EventArgs.Empty);
-        //                    //MessageBox.Show(responseBody, "Response", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        //                    formInstance.textBox1.Clear();
-        //                    formInstance.textBox2.Clear();
-        //                    formInstance.textBox3.Clear();
-        //                    formInstance.textBox4.Clear();
-        //                    formInstance.textBox5.Clear();
-        //                    formInstance.txtbPART.Clear();
-        //                    formInstance.textBox1.Focus();
-
-        //                }
-        //                else
-        //                {
-        //                    // Read the error content
-        //                    string errorContent = await response.Content.ReadAsStringAsync();
-        //                    Clipboard.SetText($"Error: {response.StatusCode}\n{errorContent}");
-        //                    MessageBox.Show($"Error: {response.StatusCode}\n{errorContent}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //                }
-        //            }
-        //            catch (HttpRequestException ex)
-        //            {
-        //                MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //            }
-        //        }
-        //    }
+        }
 
         public class WarehouseService
         {
@@ -335,66 +328,8 @@ namespace WH_Panel
             private static readonly string username = "api"; // Replace with your actual username
             private static readonly string password = "DdD@12345"; // Replace with your actual password
 
-            //public static async Task InsertDocumentAsync(Document document, FrmPriorityAPI formInstance)
-            //{
-            //    using (HttpClient client = new HttpClient())
-            //    {
-            //        try
-            //        {
-            //            // Set the request headers
-            //            client.DefaultRequestHeaders.Accept.Clear();
-            //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            //            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
-            //            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-            //            // Construct the API URL
-            //            string apiUrl = $"{baseUrl}/DOCUMENTS_P";
-
-            //            // Serialize the document to JSON
-            //            string jsonPayload = JsonConvert.SerializeObject(document);
-            //            var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-
-            //            // Make the HTTP POST request
-            //            HttpResponseMessage response = await client.PostAsync(apiUrl, content);
-
-            //            // Check if the response indicates success
-            //            if (response.IsSuccessStatusCode)
-            //            {
-            //                // Read the response content
-            //                string responseBody = await response.Content.ReadAsStringAsync();
-            //                MessageBox.Show("Document successfully inserted.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            //                formInstance.comboBox1_SelectedIndexChanged(formInstance.comboBox1, EventArgs.Empty);
-            //                //MessageBox.Show(responseBody, "Response", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            //                formInstance.textBox1.Clear();
-            //                formInstance.textBox2.Clear();
-            //                formInstance.textBox3.Clear();
-            //                formInstance.textBox4.Clear();
-            //                formInstance.textBox5.Clear();
-            //                formInstance.txtbPART.Clear();
-            //                formInstance.textBox1.Focus();
 
 
-            //            await WarehouseService.UpdateDocumentStatusAsync(responseBody.DOCNO, "סופית", "Y", this);
-
-            //        }
-            //            else
-            //            {
-            //                // Read the error content
-            //                string errorContent = await response.Content.ReadAsStringAsync();
-            //                Clipboard.SetText($"Error: {response.StatusCode}\n{errorContent}");
-            //                MessageBox.Show($"Error: {response.StatusCode}\n{errorContent}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //            }
-            //        }
-            //        catch (HttpRequestException ex)
-            //        {
-            //            MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //        }
-            //        catch (Exception ex)
-            //        {
-            //            MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //        }
-            //    }
-            //}
 
             public static async Task InsertDocumentAsync(Document document, FrmPriorityAPI formInstance)
             {
@@ -428,7 +363,7 @@ namespace WH_Panel
                             string docNo = responseJson["DOCNO"]?.ToString();
 
                             //MessageBox.Show(docNo);
-
+                            string insertedIpn = formInstance.textBox1.Text;
 
                             formInstance.comboBox1_SelectedIndexChanged(formInstance.comboBox1, EventArgs.Empty);
                             formInstance.textBox1.Clear();
@@ -440,26 +375,34 @@ namespace WH_Panel
                             formInstance.textBox1.Focus();
 
                             // Update the document status
-                            await WarehouseService.UpdateDocumentStatusAsync(docNo, "סופית", "Y", formInstance);
+                            //await WarehouseService.UpdateDocumentStatusAsync(docNo, "סופית", "Y", formInstance);
 
 
-                            MessageBox.Show("Item successfully inserted.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            //MessageBox.Show("Item successfully inserted.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            formInstance.txtLog.AppendText($"{insertedIpn} successfully inserted. Document number: {docNo}\n");
+                            formInstance.txtLog.ScrollToCaret();
                         }
                         else
                         {
                             // Read the error content
                             string errorContent = await response.Content.ReadAsStringAsync();
                             Clipboard.SetText($"Error: {response.StatusCode}\n{errorContent}");
-                            MessageBox.Show($"Error: {response.StatusCode}\n{errorContent}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            //MessageBox.Show($"Error: {response.StatusCode}\n{errorContent}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            formInstance.txtLog.AppendText($"Error: {response.StatusCode}\n{errorContent}\n");
+                            formInstance.txtLog.ScrollToCaret();
                         }
                     }
                     catch (HttpRequestException ex)
                     {
-                        MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        formInstance.txtLog.AppendText($"Request error: {ex.Message}\n");
+                        formInstance.txtLog.ScrollToCaret();
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                       //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        formInstance.txtLog.AppendText($"An error occurred: {ex.Message}\n");
+                        formInstance.txtLog.ScrollToCaret();
                     }
                 }
             }
@@ -680,6 +623,11 @@ namespace WH_Panel
                     }
                 }
             }
+            else if (e.KeyCode == Keys.Escape)
+            {
+               textBox1.Clear();
+                
+            }
         }
         private void printSticker(PR_PART wHitem)
         {
@@ -735,17 +683,38 @@ namespace WH_Panel
             if (e.KeyCode == Keys.Enter)
             {
                 // Call the button1_Click method programmatically
-                button1_Click(sender, e);
+                btnPrintSticker_Click(sender, e);
+                btnMFG_Click(sender, e);
             }
         }
-        private void button1_Click(object sender, EventArgs e)
+
+        private void textBox5_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Allow only digits and control keys (like backspace)
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void textBox5_TextChanged(object sender, EventArgs e)
+        {
+            //
+        }
+        private void btnPrintSticker_Click(object sender, EventArgs e)
         {
             // Validate the required fields
-            if (string.IsNullOrEmpty(textBox2.Text) || string.IsNullOrEmpty(textBox3.Text) || string.IsNullOrEmpty(textBox4.Text) || string.IsNullOrEmpty(textBox5.Text))
+            if (string.IsNullOrEmpty(textBox2.Text) ||
+                string.IsNullOrEmpty(textBox3.Text) ||
+                string.IsNullOrEmpty(textBox4.Text) ||
+                string.IsNullOrEmpty(textBox5.Text) ||
+                !int.TryParse(textBox5.Text, out int qty) ||
+                qty <= 0)
             {
-                MessageBox.Show("Please ensure all fields are filled in before printing.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Please ensure all fields are filled in correctly before printing.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+
             // Create a PR_PART object with the data from the textboxes
             PR_PART part = new PR_PART
             {
@@ -753,11 +722,13 @@ namespace WH_Panel
                 MNFPARTNAME = textBox2.Text,
                 PARTDES = textBox3.Text,
                 MNFNAME = textBox4.Text,
-                QTY = int.Parse(textBox5.Text) // Set the QTY from textBox5
+                QTY = qty // Set the QTY from textBox5
             };
+
             // Call the printSticker method
             printSticker(part);
         }
+
         private async void textBox2_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -902,13 +873,13 @@ namespace WH_Panel
                             // Clear existing columns
                             dataGridView1.Columns.Clear();
                             // Define the columns you want to display
-                            var locNameColumn = new DataGridViewTextBoxColumn
-                            {
-                                DataPropertyName = "LOCNAME",
-                                HeaderText = "Location Name",
-                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                                Name = "LOCNAME"
-                            };
+                            //var locNameColumn = new DataGridViewTextBoxColumn
+                            //{
+                            //    DataPropertyName = "LOCNAME",
+                            //    HeaderText = "Location Name",
+                            //    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                            //    Name = "LOCNAME"
+                            //};
                             var partNameColumn = new DataGridViewTextBoxColumn
                             {
                                 DataPropertyName = "PARTNAME",
@@ -961,7 +932,7 @@ namespace WH_Panel
                             // Add columns to the DataGridView
                             dataGridView1.Columns.AddRange(new DataGridViewColumn[]
                             {
-                        locNameColumn,
+                        //locNameColumn,
                         partNameColumn,
                         mfpnColumn,
                         partDesColumn,
@@ -973,7 +944,7 @@ namespace WH_Panel
                             // Populate the DataGridView with the data
                             foreach (var balance in warehouseBalances)
                             {
-                                dataGridView1.Rows.Add(balance.LOCNAME, balance.PARTNAME, balance.MNFPARTNAME, balance.PARTDES, balance.BALANCE, balance.CDATE, balance.PART); //balance.TBALANCE
+                                dataGridView1.Rows.Add(balance.PARTNAME, balance.MNFPARTNAME, balance.PARTDES, balance.BALANCE, balance.CDATE, balance.PART); //balance.TBALANCE  //balance.LOCNAME
                             }
                             groupBox3.Text = $"Warehouse  {selectedWarehouse} {selectedWarehouseDesc}";
                             ColorTheRows(dataGridView1);
@@ -994,6 +965,8 @@ namespace WH_Panel
                 }
             }
         }
+
+    
 
         private async void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -1060,13 +1033,6 @@ namespace WH_Panel
                                 AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
                                 Name = "CURDATE"
                             };
-                            //var uDateColumn = new DataGridViewTextBoxColumn
-                            //{
-                            //    DataPropertyName = "UDATE",
-                            //    HeaderText = "Transaction Date",
-                            //    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                            //    Name = "UDATE"
-                            //};
                             var logDocNoColumn = new DataGridViewTextBoxColumn
                             {
                                 DataPropertyName = "LOGDOCNO",
@@ -1081,20 +1047,12 @@ namespace WH_Panel
                                 AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
                                 Name = "DOCDES"
                             };
-                            //var SUPCUSTNAMEColumn = new DataGridViewTextBoxColumn
-                            //{
-                            //    DataPropertyName = "SUPCUSTNAME",
-                            //    HeaderText = "Source_Req",
-                            //    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                            //    Name = "SUPCUSTNAME"
-                            //};
-
-                            var BOOKNAMEColumn = new DataGridViewTextBoxColumn
+                            var SUPCUSTNAMEColumn = new DataGridViewTextBoxColumn
                             {
-                                DataPropertyName = "BOOKNUM",
+                                DataPropertyName = "SUPCUSTNAME",
                                 HeaderText = "Source_Req",
                                 AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                                Name = "BOOKNUM"
+                                Name = "SUPCUSTNAME"
                             };
                             var tQuantColumn = new DataGridViewTextBoxColumn
                             {
@@ -1103,16 +1061,22 @@ namespace WH_Panel
                                 AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
                                 Name = "TQUANT"
                             };
+                            var tPACKNAMEColumn = new DataGridViewTextBoxColumn
+                            {
+                                DataPropertyName = "PACKNAME",
+                                HeaderText = "PACK",
+                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                                Name = "PACKNAME"
+                            };
                             // Add columns to the DataGridView
                             dataGridView2.Columns.AddRange(new DataGridViewColumn[]
                             {
                         curDateColumn,
-                        //uDateColumn,
                         logDocNoColumn,
                         logDOCDESColumn,
-                        BOOKNAMEColumn,
-                        //SUPCUSTNAMEColumn,
-                        tQuantColumn
+                        SUPCUSTNAMEColumn,
+                        tQuantColumn,
+                        tPACKNAMEColumn
                             });
                             // Populate the DataGridView with the data
                             dataGridView2.Rows.Clear();
@@ -1120,28 +1084,102 @@ namespace WH_Panel
                             {
                                 foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
                                 {
-                                    dataGridView2.Rows.Add(trans.CURDATE, trans.LOGDOCNO, trans.DOCDES, trans.BOOKNUM, trans.TQUANT); //trans.SUPCUSTNAME
+                                    dataGridView2.Rows.Add(trans.CURDATE, trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, trans.TQUANT, ""); //trans.BOOKNUM
                                 }
                             }
                             groupBox4.Text = $"Stock Movements for {partName}";
                             ColorTheRows(dataGridView2);
+
+                            // Fetch PACKCODE data and update the PACK column
+                            foreach (DataGridViewRow row in dataGridView2.Rows)
+                            {
+                                var logDocNo = row.Cells["LOGDOCNO"].Value?.ToString();
+                                var partNameCell = partName;
+                                var quant = int.Parse(row.Cells["TQUANT"].Value?.ToString());
+                                if (logDocNo != null && partNameCell != null)
+                                {
+                                    var packCode = await FetchPackCodeAsync(logDocNo, partNameCell, quant);
+                                    if (packCode != null)
+                                    {
+                                        row.Cells["PACKNAME"].Value = packCode;
+                                    }
+                                }
+                            }
                         }
                         else
                         {
                             MessageBox.Show("No stock movements found for the selected part.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
                         }
                     }
                     catch (HttpRequestException ex)
                     {
-                        MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        txtLog.SelectionColor = Color.Red; // Set the color to acid green
+                        txtLog.AppendText($"Request error: {ex.Message}");
+                        txtLog.ScrollToCaret();
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        txtLog.SelectionColor = Color.Red; // Set the color to acid green
+                        txtLog.AppendText($"Request error: {ex.Message}");
+                        txtLog.ScrollToCaret();
                     }
                 }
             }
         }
+
+        public async Task<string> FetchPackCodeAsync(string logDocNo, string partName, int quant)
+        {
+            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM";
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    // Set the request headers if needed
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    // Set the Authorization header
+                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    // Make the HTTP GET request
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
+                    // Read the response content
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    // Parse the JSON response
+                    var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+                    var transOrders = apiResponse["value"].SelectMany(d => d["TRANSORDER_P_SUBFORM"]).ToList();
+                    // Find the matching PARTNAME and QUANT
+                    var matchingOrder = transOrders.FirstOrDefault(t => t["PARTNAME"].ToString() == partName && int.Parse(t["TQUANT"].ToString()) == quant);
+                    if (matchingOrder != null)
+                    {
+                        return matchingOrder["PACKCODE"].ToString();
+                    }
+                    return null;
+                }
+                catch (HttpRequestException ex)
+                {
+                    // MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    txtLog.SelectionColor = Color.Red; // Set the color to acid green
+                    txtLog.AppendText($"Request error: {ex.Message}");
+                   txtLog.ScrollToCaret();
+                    return null;
+                }
+                catch (Exception ex)
+                {
+                    //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    txtLog.SelectionColor = Color.Red; // Set the color to acid green
+                    txtLog.AppendText($"Request error: {ex.Message}");
+                    txtLog.ScrollToCaret();
+                    return null;
+                }
+            }
+        }
+
+
+
         private void textBox6_KeyUp_1(object sender, KeyEventArgs e)
         {
             string filterText = textBox6.Text.Trim().ToLower();
@@ -1273,84 +1311,7 @@ namespace WH_Panel
                 }
             }
         }
-        //private async void ShowSerialDetails(string serialName)
-        //{
-        //    string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{serialName}'";
-        //    using (HttpClient client = new HttpClient())
-        //    {
-        //        try
-        //        {
-        //            // Set the request headers if needed
-        //            client.DefaultRequestHeaders.Accept.Clear();
-        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //            // Set the Authorization header
-        //            
-        //            
-        //            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
-        //            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //            // Make the HTTP GET request
-        //            HttpResponseMessage response = await client.GetAsync(url);
-        //            response.EnsureSuccessStatusCode();
-        //            // Read the response content
-        //            string responseBody = await response.Content.ReadAsStringAsync();
-        //            // Parse the JSON response
-        //            var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-        //            var serialDetails = apiResponse["value"].FirstOrDefault();
-        //            if (serialDetails != null)
-        //            {
-        //                // Create a new form to display the data
-        //                Form popupForm = new Form
-        //                {
-        //                    Text = "Serial Details",
-        //                    Size = new Size(600, 300),
-        //                    StartPosition = FormStartPosition.CenterScreen,
-        //                    BackColor = Color.FromArgb(50, 50, 50),
-        //                    ForeColor = Color.FromArgb(220, 220, 220)
-        //                };
-        //                TableLayoutPanel tableLayoutPanel = new TableLayoutPanel
-        //                {
-        //                    Dock = DockStyle.Fill,
-        //                    ColumnCount = 2,
-        //                    RowCount = 8,
-        //                    AutoSize = true,
-        //                    BackColor = Color.FromArgb(50, 50, 50),
-        //                    ForeColor = Color.FromArgb(220, 220, 220)
-        //                };
-        //                tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-        //                tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-        //                //tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-        //                //tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-        //                // Add labels and values to the table
-        //                tableLayoutPanel.Controls.Add(new Label { Text = "PARTNAME:", TextAlign = ContentAlignment.MiddleCenter }, 0, 0);
-        //                tableLayoutPanel.Controls.Add(new Label { Text = serialDetails["PARTNAME"].ToString(), TextAlign = ContentAlignment.MiddleCenter }, 1, 0);
-        //                tableLayoutPanel.Controls.Add(new Label { Text = "PARTDES:", TextAlign = ContentAlignment.MiddleCenter }, 0, 1);
-        //                tableLayoutPanel.Controls.Add(new Label { Text = serialDetails["PARTDES"].ToString(), TextAlign = ContentAlignment.MiddleCenter }, 1, 1);
-        //                tableLayoutPanel.Controls.Add(new Label { Text = "SERIALNAME:", TextAlign = ContentAlignment.MiddleCenter }, 0, 2);
-        //                tableLayoutPanel.Controls.Add(new Label { Text = serialDetails["SERIALNAME"].ToString(), TextAlign = ContentAlignment.MiddleCenter }, 1, 2);
-        //                tableLayoutPanel.Controls.Add(new Label { Text = "REVNAME:", TextAlign = ContentAlignment.MiddleCenter }, 0, 3);
-        //                tableLayoutPanel.Controls.Add(new Label { Text = serialDetails["REVNAME"]?.ToString(), TextAlign = ContentAlignment.MiddleCenter }, 1, 3);
-        //                tableLayoutPanel.Controls.Add(new Label { Text = "REVNUM:", TextAlign = ContentAlignment.MiddleCenter }, 0, 4);
-        //                tableLayoutPanel.Controls.Add(new Label { Text = serialDetails["REVNUM"].ToString(), TextAlign = ContentAlignment.MiddleCenter }, 1, 4);
-        //                tableLayoutPanel.Controls.Add(new Label { Text = "SERIALSTATUSDES:", TextAlign = ContentAlignment.MiddleCenter }, 0, 5);
-        //                tableLayoutPanel.Controls.Add(new Label { Text = serialDetails["SERIALSTATUSDES"].ToString(), TextAlign = ContentAlignment.MiddleCenter }, 1, 5);
-        //                tableLayoutPanel.Controls.Add(new Label { Text = "OWNERLOGIN:", TextAlign = ContentAlignment.MiddleCenter }, 0, 6);
-        //                tableLayoutPanel.Controls.Add(new Label { Text = serialDetails["OWNERLOGIN"].ToString(), TextAlign = ContentAlignment.MiddleCenter }, 1, 6);
-        //                tableLayoutPanel.Controls.Add(new Label { Text = "QUANT:", TextAlign = ContentAlignment.MiddleCenter }, 0, 7);
-        //                tableLayoutPanel.Controls.Add(new Label { Text = serialDetails["QUANT"].ToString(), TextAlign = ContentAlignment.MiddleCenter }, 1, 7);
-        //                popupForm.Controls.Add(tableLayoutPanel);
-        //                popupForm.ShowDialog();
-        //            }
-        //        }
-        //        catch (HttpRequestException ex)
-        //        {
-        //            MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //        }
-        //    }
-        //}
+
         private async void ShowSerialDetails(string serialName)
         {
             string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{serialName}'";
@@ -1433,55 +1394,7 @@ namespace WH_Panel
                 }
             }
         }
-        //private async void btnINSERTlogpart_Click(object sender, EventArgs e)
-        //{
-        //    string partName = txtbIPN.Text;
-        //    string partDes = txtbDESC.Text;
-        //    string partMFPN = txtbMFPN.Text;
-        //    string partMNF = txtbMNF.Text;
-        //    // Validate the required fields
-        //    if (string.IsNullOrEmpty(partName) || string.IsNullOrEmpty(partDes))
-        //    {
-        //        MessageBox.Show("Please ensure all fields are filled in before inserting.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //        return;
-        //    }
-        //    var logPartData = new
-        //    {
-        //        PARTNAME = partName,
-        //        PARTDES = partDes,
-        //        TYPE = "R"
-        //    };
-        //    string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART";
-        //    using (HttpClient client = new HttpClient())
-        //    {
-        //        try
-        //        {
-        //            // Set the request headers
-        //            client.DefaultRequestHeaders.Accept.Clear();
-        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //            // Set the Authorization header
-        //            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
-        //            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //            // Serialize the logPartData to JSON
-        //            string jsonLogPartData = JsonConvert.SerializeObject(logPartData);
-        //            var content = new StringContent(jsonLogPartData, Encoding.UTF8, "application/json");
-        //            // Make the HTTP POST request
-        //            HttpResponseMessage response = await client.PostAsync(url, content);
-        //            response.EnsureSuccessStatusCode();
-        //            // Read the response content
-        //            string responseBody = await response.Content.ReadAsStringAsync();
-        //            MessageBox.Show("Item successfully inserted into LOGPART.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        //        }
-        //        catch (HttpRequestException ex)
-        //        {
-        //            MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //        }
-        //    }
-        //}
+
         private async void btnINSERTlogpart_Click(object sender, EventArgs e)
         {
             string partName = txtbIPN.Text.Trim();
@@ -1744,7 +1657,7 @@ namespace WH_Panel
 
         private async void btnMFG_Click(object sender, EventArgs e)
         {
-            if (comboBox1.SelectedItem != null && textBox1.Text != string.Empty && textBox2.Text != string.Empty && textBox3.Text != string.Empty && textBox4.Text != string.Empty && int.Parse(textBox5.Text) > 0)
+            if (comboBox1.SelectedItem != null && textBox1.Text != string.Empty && textBox2.Text != string.Empty && textBox3.Text != string.Empty && textBox4.Text != string.Empty && int.Parse(textBox5.Text) > 0 && int.Parse(textBox5.Text) <= 50000)
             {
                 string selectedWarehouseName = comboBox1.SelectedItem.ToString().Split(' ')[0];
 
@@ -1802,7 +1715,7 @@ namespace WH_Panel
                     // Create a new Document object
                     Document document = new Document
                     {
-                        DOCNO = "GR25000123", // Set the document number
+                        //DOCNO = "GR25000123", // Set the document number
                         //STATDES= "סופית",
                         USERLOGIN = _OWNERLOGIN,
                         //FLAG= "Y",
@@ -1817,6 +1730,7 @@ namespace WH_Panel
                     {
                         PARTNAME = textBox1.Text,
                         TQUANT = int.Parse(textBox5.Text),
+                        PACKCODE = cmbPackCode.SelectedItem != null ? cmbPackCode.SelectedItem.ToString() : "Bag",
                         UNITNAME = "יח'",
                         //SERIALNAME = "0",
                         //CURDATE = DateTime.Now // Set UDATE to the current date and time
@@ -1906,7 +1820,7 @@ namespace WH_Panel
             }
         }
 
-       
+
 
 
         private async void btnBULKinsert_Click(object sender, EventArgs e)
@@ -1959,7 +1873,7 @@ namespace WH_Panel
                         string partMFPN = worksheet.Cells[row, partMFPNCol].Text.Trim().ToUpper();
                         string partMNFDes = worksheet.Cells[row, partMNFDesCol].Text.Trim().ToUpper();
 
-                     
+
                         // Validate the required fields
                         if (string.IsNullOrEmpty(partName) || string.IsNullOrEmpty(partDes) || string.IsNullOrEmpty(partMFPN) || string.IsNullOrEmpty(partMNFDes))
                         {
@@ -1998,7 +1912,7 @@ namespace WH_Panel
                             // Log the extracted values
                             txtLog.SelectionColor = Color.LimeGreen; // Set the color to acid green
                             txtLog.AppendText($"Row {row}: Part Name = {partName}, Part Description = {partDes}, Manufacturer Part Number = {partMFPN}, Manufacturer Description = {partMNFDes}\n");
-                           txtLog.ScrollToCaret();
+                            txtLog.ScrollToCaret();
 
                             //await DisplayInsertedData(partId);
                         }
@@ -2036,6 +1950,6 @@ namespace WH_Panel
             }
         }
 
-
+     
     }
 }

@@ -16,8 +16,9 @@ using Microsoft.Office.Interop.Excel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 using static WH_Panel.FrmPriorityAPI;
-using static WH_Panel.FrmPriorityBom;
 using Microsoft.Extensions.Configuration;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
+
 
 namespace WH_Panel
 {
@@ -25,6 +26,7 @@ namespace WH_Panel
     public partial class FrmPriorityBom : Form
     {
         private AppSettings settings;
+
 
         private List<WarehouseBalance> warehouseBalances;
         public FrmPriorityBom()
@@ -34,7 +36,7 @@ namespace WH_Panel
             this.Load += FrmPriorityBom_Load;
 
             this.KeyPreview = true; // Set KeyPreview to true
-            
+
             SetDarkModeColors(this);
             // Set the DrawMode property and handle the DrawItem event
             cmbROBxList.DrawMode = DrawMode.OwnerDrawFixed;
@@ -60,7 +62,7 @@ namespace WH_Panel
                 return;
             }
             GetGetRobWosList();
-      
+
 
 
 
@@ -82,10 +84,11 @@ namespace WH_Panel
         {
             public string PARTNAME { get; set; }
             public string PARTDES { get; set; }
-            public int WH { get; set; }
             public int PQUANT { get; set; }
             public int CQUANT { get; set; }
-            public int DELTA => PQUANT - CQUANT;
+
+            public int QUANT { get; set; }
+            public int DELTA => QUANT - CQUANT;
             public string CALC { get; set; }
         }
 
@@ -124,7 +127,7 @@ namespace WH_Panel
         }
 
         private string username = "api"; // Replace with your actual username
-       private string password = "DdD@12345"; // Replace with your actual password
+        private string password = "DdD@12345"; // Replace with your actual password
         private async void GetGetRobWosList()
         {
             string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL";
@@ -301,9 +304,10 @@ namespace WH_Panel
                 txtbRev.Text = $"REV ( {selectedSerial.REVNUM} )";
                 txtbQty.Text = selectedSerial.QUANT.ToString();
                 txtbStatus.Text = selectedSerial.SERIALSTATUSDES;
-
+                textBox1.Focus();
                 // Load BOM details
                 await LoadBomDetails(selectedSerial.SERIALNAME);
+
             }
         }
 
@@ -314,14 +318,16 @@ namespace WH_Panel
             dgwBom.Columns.Add("PARTNAME", "IPN");
             dgwBom.Columns.Add("MFPN", "MFPN");
             dgwBom.Columns.Add("PARTDES", "Description");
-            dgwBom.Columns.Add("WH", "WH"); // Add WH column before KIT
-            dgwBom.Columns.Add("PQUANT", "KIT");
+            dgwBom.Columns.Add("PQUANT", "WH"); // Add WH column before KIT
+            dgwBom.Columns.Add("QUANT", "KIT");
             dgwBom.Columns.Add("CQUANT", "Required");
             dgwBom.Columns.Add("DELTA", "Delta");
             dgwBom.Columns.Add("CALC", "CALC");
             dgwBom.Columns.Add("ALT", "ALT"); // Add ALT column after CALC
             dgwBom.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
         }
+
+
 
         private async Task LoadBomDetails(string serialName)
         {
@@ -334,7 +340,6 @@ namespace WH_Panel
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     // Set the Authorization header
-                   // string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                     // Make the HTTP GET request
@@ -344,40 +349,47 @@ namespace WH_Panel
                     string responseBody = await response.Content.ReadAsStringAsync();
                     // Parse the JSON response
                     var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-                    var bomDetails = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
 
-                    // Aggregate the PQUANT values for each unique PARTNAME
-                    var aggregatedDetails = bomDetails
-                        .GroupBy(detail => detail.PARTNAME)
-                        .Select(group => new TransOrderKSubform
-                        {
-                            PARTNAME = group.Key,
-                            PARTDES = group.First().PARTDES,
-                            PQUANT = group.Sum(detail => detail.PQUANT),
-                            CQUANT = group.First().CQUANT,
-                            CALC = group.Count() > 1 ? string.Join(" + ", group.Select(detail => detail.PQUANT)) : null
-                        })
-                        .ToList();
-
-
-                    // Populate the DataGridView with the aggregated data
-                    dgwBom.Rows.Clear();
-                    foreach (var detail in aggregatedDetails)
+                    // Check if the response contains the expected data
+                    if (apiResponse["value"] != null && apiResponse["value"].Any())
                     {
-                        if (!detail.CALC.Contains("+ 0"))
+                        var bomDetails = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
+
+                        // Aggregate the PQUANT values for each unique PARTNAME
+                        var aggregatedDetails = bomDetails
+                            .GroupBy(detail => detail.PARTNAME)
+                            .Select(group => new TransOrderKSubform
+                            {
+                                PARTNAME = group.Key,
+                                PARTDES = group.First().PARTDES,
+                                PQUANT = group.First().PQUANT,
+                                QUANT = group.Sum(detail => detail.QUANT),
+                                CQUANT = group.First().CQUANT,
+                                CALC = group.Count() > 1 ? string.Join(" + ", group.Select(detail => detail.QUANT)) : null
+                            })
+                            .ToList();
+
+                        // Populate the DataGridView with the aggregated data
+                        dgwBom.Rows.Clear();
+                        foreach (var detail in aggregatedDetails)
                         {
-                            dgwBom.Rows.Add(detail.PARTNAME, "", detail.PARTDES, detail.WH, detail.PQUANT, detail.CQUANT, detail.DELTA, detail.CALC);
+                            if (!string.IsNullOrEmpty(detail.CALC) && !detail.CALC.Contains("+ 0"))
+                            {
+                                dgwBom.Rows.Add(detail.PARTNAME, "", detail.PARTDES, detail.PQUANT, detail.QUANT, detail.CQUANT, detail.DELTA, detail.CALC);
+                            }
+                            else
+                            {
+                                dgwBom.Rows.Add(detail.PARTNAME, "", detail.PARTDES, detail.PQUANT, detail.QUANT, detail.CQUANT, detail.DELTA);
+                            }
                         }
-                        else
-                        {
-                            dgwBom.Rows.Add(detail.PARTNAME, "", detail.PARTDES, detail.WH, detail.PQUANT, detail.CQUANT, detail.DELTA);
-                        }
+
+                        // Fetch MFPNs for each row with a delay
+                        await FetchMFPNsWithDelay();
                     }
-
-
-                    // Fetch MFPNs for each row with a delay
-                    await FetchMFPNsWithDelay();
-                    await FetchBalancesWithDelay();
+                    else
+                    {
+                        MessageBox.Show("No BOM details found for the selected serial.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
                 }
                 catch (HttpRequestException ex)
                 {
@@ -389,66 +401,16 @@ namespace WH_Panel
                 }
             }
         }
-        private async Task FetchBalancesWithDelay()
-        {
-            string warehouseUrl = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$expand=WARHSBAL_SUBFORM";
-            using (HttpClient client = new HttpClient())
-            {
-                try
-                {
-                    // Set the request headers if needed
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    // Set the Authorization header
-                    // string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
-                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-                    // Make the HTTP GET request for warehouse balances
-                    HttpResponseMessage response = await client.GetAsync(warehouseUrl);
-                    response.EnsureSuccessStatusCode();
-                    // Read the response content
-                    string responseBody = await response.Content.ReadAsStringAsync();
-                    // Parse the JSON response
-                    var apiResponse = JsonConvert.DeserializeObject<WarehouseApiResponse>(responseBody);
-                    // Store the warehouse balances in a local list
-                    warehouseBalances = apiResponse.value.SelectMany(w => w.WARHSBAL_SUBFORM).ToList();
-                }
-                catch (HttpRequestException ex)
-                {
-                    MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
 
-            foreach (DataGridViewRow row in dgwBom.Rows)
-            {
-                if (row.Cells["PARTNAME"].Value != null)
-                {
-                    string partName = row.Cells["PARTNAME"].Value.ToString();
-                    string warehousePrefix = partName.Split('_')[0];
-                    var balance = warehouseBalances.FirstOrDefault(b => b.PARTNAME == partName && b.LOCNAME.StartsWith(warehousePrefix));
-                    if (balance != null)
-                    {
-                        // Update the WH column with the BALANCE value
-                        row.Cells["WH"].Value = balance.BALANCE;
-                    }
 
-                    // Introduce an artificial delay between each row update
-                    await Task.Delay(100); // 100 milliseconds delay
-                }
-            }
 
-            dgwBom.Refresh();
-        }
 
         private async Task FetchMFPNsWithDelay()
         {
             foreach (DataGridViewRow row in dgwBom.Rows)
             {
-                if (row.Cells["PARTNAME"].Value != null)
+                if (row.Cells["PARTNAME"].Value != null && (row.Cells["MFPN"].Value != string.Empty) || ((row.Cells["MFPN"].Value != null)))
+
                 {
                     string partName = row.Cells["PARTNAME"].Value.ToString();
                     string partUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PARTNAME eq '{partName}'";
@@ -509,7 +471,7 @@ namespace WH_Panel
                     textBox.KeyDown += TextBox_KeyDown;
 
                     // Set the Tag property based on the placeholder text
-                    if (textBox.PlaceholderText.Contains("Filter by"))
+                    if (textBox.PlaceholderText.Contains("Filter by") || textBox.PlaceholderText.Contains("Input Qty"))
                     {
                         string displayName = textBox.PlaceholderText.Replace("Filter by ", "").Trim();
                         string columnName = GetColumnNameFromDisplayName(displayName);
@@ -594,6 +556,7 @@ namespace WH_Panel
             textBox2.Clear();
             textBox3.Clear();
             textBox4.Clear();
+            txtbINPUTqty.Clear();
 
 
             foreach (DataGridViewRow row in dgwBom.Rows)
@@ -602,6 +565,8 @@ namespace WH_Panel
             }
 
             dgwBom.Update();
+            // Fetch MFPNs for each row with a delay
+
         }
 
         private void ApplyFilter(System.Windows.Forms.TextBox textBox, string columnName)
@@ -651,6 +616,24 @@ namespace WH_Panel
                 if (e.Value != null && int.TryParse(e.Value.ToString(), out int deltaValue))
                 {
                     if (deltaValue >= 0)
+                    {
+                        e.CellStyle.BackColor = Color.Green;
+                    }
+                    else
+                    {
+                        e.CellStyle.BackColor = Color.IndianRed;
+                    }
+                }
+            }
+            else if (dgwBom.Columns[e.ColumnIndex].Name == "PQUANT")
+            {
+                int DELTA = Convert.ToInt32(dgwBom.Rows[e.RowIndex].Cells["DELTA"].Value);
+
+                int whValue = 0;
+
+                if (e.Value != null && int.TryParse(e.Value.ToString(), out  whValue))
+                {
+                    if (whValue >= Math.Abs(DELTA) && whValue!=0)
                     {
                         e.CellStyle.BackColor = Color.Green;
                     }
@@ -752,11 +735,13 @@ namespace WH_Panel
                             {
                                 foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
                                 {
-                                    dgwIPNmoves.Rows.Add(trans.CURDATE, trans.LOGDOCNO, trans.DOCDES,trans.SUPCUSTNAME, trans.TQUANT);
+                                    dgwIPNmoves.Rows.Add(trans.CURDATE, trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, trans.TQUANT);
                                 }
                             }
                             gbxIPNstockMovements.Text = $"Stock Movements for {partName}";
                             ColorTheRows(dgwIPNmoves);
+
+
                         }
                         else
                         {
@@ -827,6 +812,151 @@ namespace WH_Panel
             }
         }
 
-      
+        private async void textBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                string filterText = textBox1.Text.Trim().ToLower();
+                bool found = false;
+                int visibleRowCount = 0;
+
+                foreach (DataGridViewRow row in dgwBom.Rows)
+                {
+                    if (row.Cells["PARTNAME"].Value != null && row.Cells["PARTNAME"].Value.ToString().ToLower() == filterText)
+                    {
+                        row.Visible = true;
+                        found = true;
+                        visibleRowCount++;
+                    }
+                    else
+                    {
+                        row.Visible = false;
+                    }
+                }
+
+                dgwBom.Update();
+
+                if (visibleRowCount == 1)
+                {
+                    txtbINPUTqty.Focus();
+                    await FetchMFPNsWithDelay();
+                }
+
+                if (!found)
+                {
+                    AutoClosingMessageBox.Show($"{textBox1.Text} NOT FOUND !", 2000); // Show message for 2 seconds
+                    textBox1.Clear();
+                    ClearFilters();
+                }
+            }
+        }
+
+        private void ClearFilters()
+        {
+            foreach (DataGridViewRow row in dgwBom.Rows)
+            {
+                row.Visible = true;
+            }
+
+            dgwBom.Update();
+        }
+
+
+
+        public class AutoClosingMessageBox : Form
+        {
+            private System.Windows.Forms.Label messageLabel;
+            private System.Windows.Forms.Timer closeTimer;
+
+            public AutoClosingMessageBox(string message, int timeout)
+            {
+                messageLabel = new System.Windows.Forms.Label
+                {
+                    Text = message,
+                    Dock = DockStyle.Fill,
+                    TextAlign = ContentAlignment.MiddleCenter,
+                    Font = new System.Drawing.Font("Arial", 12, FontStyle.Bold),
+                    BackColor = Color.Red,
+                    ForeColor = Color.White
+                };
+
+                closeTimer = new System.Windows.Forms.Timer
+                {
+                    Interval = timeout
+                };
+                closeTimer.Tick += CloseTimer_Tick;
+
+                Controls.Add(messageLabel);
+                StartPosition = FormStartPosition.CenterScreen;
+                Size = new Size(400, 100);
+                FormBorderStyle = FormBorderStyle.FixedDialog;
+                MaximizeBox = false;
+                MinimizeBox = false;
+                ShowInTaskbar = false;
+                TopMost = true;
+
+                closeTimer.Start();
+            }
+
+            private void CloseTimer_Tick(object sender, EventArgs e)
+            {
+                closeTimer.Stop();
+                Close();
+            }
+
+            public static void Show(string message, int timeout)
+            {
+                using (var form = new AutoClosingMessageBox(message, timeout))
+                {
+                    form.ShowDialog();
+                }
+            }
+        }
+
+        private void txtbINPUTqty_KeyUp(object sender, KeyEventArgs e)
+        {
+
+            if (e.KeyCode == Keys.Escape)
+            {
+                textBox1.Clear();
+                textBox2.Clear();
+                textBox3.Clear();
+                textBox4.Clear();
+                txtbINPUTqty.Clear();
+
+
+                foreach (DataGridViewRow row in dgwBom.Rows)
+                {
+                    row.Visible = true;
+                }
+
+                dgwBom.Update();
+            }
+        }
+
+        private void txtbINPUTqty_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (dgwBom.Rows.Count == 1)
+            {
+                if (e.KeyCode == Keys.Enter)
+                {
+                    if (txtbINPUTqty.Text != string.Empty)
+                    {
+                        //
+                    }
+                    else
+                    {
+                        MessageBox.Show("Please enter a quantity", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        txtbINPUTqty.Focus();
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please enter a valid IPN", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                textBox1.Focus();
+            }
+
+        }
     }
 }

@@ -42,7 +42,7 @@
             label3 = new Label();
             label4 = new Label();
             label5 = new Label();
-            button1 = new Button();
+            btnPrinSticker = new Button();
             button2 = new Button();
             btnMFG = new Button();
             txtbPART = new TextBox();
@@ -54,7 +54,7 @@
             rbtFTK = new RadioButton();
             txtbIN = new TextBox();
             txtbOUT = new TextBox();
-            comboBox2 = new ComboBox();
+            cmbPackCode = new ComboBox();
             groupBox2 = new GroupBox();
             tableLayoutPanel3 = new TableLayoutPanel();
             comboBox1 = new ComboBox();
@@ -147,7 +147,7 @@
             tableLayoutPanel2.Controls.Add(label3, 0, 4);
             tableLayoutPanel2.Controls.Add(label4, 0, 6);
             tableLayoutPanel2.Controls.Add(label5, 0, 8);
-            tableLayoutPanel2.Controls.Add(button1, 2, 2);
+            tableLayoutPanel2.Controls.Add(btnPrinSticker, 2, 2);
             tableLayoutPanel2.Controls.Add(button2, 2, 0);
             tableLayoutPanel2.Controls.Add(btnMFG, 2, 8);
             tableLayoutPanel2.Controls.Add(txtbPART, 1, 1);
@@ -155,7 +155,7 @@
             tableLayoutPanel2.Controls.Add(tableLayoutPanel6, 1, 9);
             tableLayoutPanel2.Controls.Add(txtbIN, 1, 7);
             tableLayoutPanel2.Controls.Add(txtbOUT, 2, 7);
-            tableLayoutPanel2.Controls.Add(comboBox2, 1, 6);
+            tableLayoutPanel2.Controls.Add(cmbPackCode, 1, 5);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.Location = new Point(3, 19);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -283,17 +283,17 @@
             label5.Text = "QTY";
             label5.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // button1
+            // btnPrinSticker
             // 
-            button1.Dock = DockStyle.Fill;
-            button1.Location = new Point(403, 45);
-            button1.Name = "button1";
-            tableLayoutPanel2.SetRowSpan(button1, 2);
-            button1.Size = new Size(196, 36);
-            button1.TabIndex = 10;
-            button1.Text = "Print Sticker";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            btnPrinSticker.Dock = DockStyle.Fill;
+            btnPrinSticker.Location = new Point(403, 45);
+            btnPrinSticker.Name = "btnPrinSticker";
+            tableLayoutPanel2.SetRowSpan(btnPrinSticker, 2);
+            btnPrinSticker.Size = new Size(196, 36);
+            btnPrinSticker.TabIndex = 10;
+            btnPrinSticker.Text = "Print Sticker";
+            btnPrinSticker.UseVisualStyleBackColor = true;
+            btnPrinSticker.Click += btnPrintSticker_Click;
             // 
             // button2
             // 
@@ -429,14 +429,18 @@
             txtbOUT.TabIndex = 18;
             txtbOUT.TextAlign = HorizontalAlignment.Center;
             // 
-            // comboBox2
+            // cmbPackCode
             // 
-            comboBox2.Dock = DockStyle.Fill;
-            comboBox2.FormattingEnabled = true;
-            comboBox2.Location = new Point(203, 129);
-            comboBox2.Name = "comboBox2";
-            comboBox2.Size = new Size(194, 23);
-            comboBox2.TabIndex = 19;
+            cmbPackCode.Dock = DockStyle.Fill;
+            cmbPackCode.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbPackCode.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            cmbPackCode.FormattingEnabled = true;
+            cmbPackCode.Location = new Point(203, 108);
+            cmbPackCode.Name = "cmbPackCode";
+            tableLayoutPanel2.SetRowSpan(cmbPackCode, 2);
+            cmbPackCode.Size = new Size(194, 40);
+            cmbPackCode.Sorted = true;
+            cmbPackCode.TabIndex = 19;
             // 
             // groupBox2
             // 
@@ -792,6 +796,7 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "PriorityAPI";
             WindowState = FormWindowState.Maximized;
+            Load += FrmPriorityAPI_Load;
             tableLayoutPanel1.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
             tableLayoutPanel2.ResumeLayout(false);
@@ -829,7 +834,7 @@
         private Label label3;
         private Label label4;
         private Label label5;
-        private Button button1;
+        private Button btnPrinSticker;
         private Button button2;
         private GroupBox groupBox2;
         private ComboBox comboBox1;
@@ -866,7 +871,7 @@
         private RadioButton tbtOUT;
         private TextBox txtbIN;
         private TextBox txtbOUT;
-        private ComboBox comboBox2;
+        private ComboBox cmbPackCode;
         private RadioButton rbtFTK;
         private Button btnBULKinsert;
     }
