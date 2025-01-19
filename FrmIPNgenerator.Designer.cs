@@ -90,7 +90,7 @@
             // 
             tableLayoutPanel1.SetColumnSpan(textBox3, 4);
             textBox3.Dock = DockStyle.Fill;
-            textBox3.Font = new Font("Segoe UI", 36F, FontStyle.Regular, GraphicsUnit.Point);
+            textBox3.Font = new Font("Segoe UI", 36F);
             textBox3.Location = new Point(3, 136);
             textBox3.Name = "textBox3";
             textBox3.ReadOnly = true;
@@ -112,7 +112,7 @@
             // richTextBox1
             // 
             richTextBox1.Dock = DockStyle.Fill;
-            richTextBox1.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            richTextBox1.Font = new Font("Segoe UI", 18F);
             richTextBox1.Location = new Point(3, 19);
             richTextBox1.Name = "richTextBox1";
             richTextBox1.Size = new Size(234, 105);
@@ -133,7 +133,7 @@
             // textBox2
             // 
             textBox2.Dock = DockStyle.Fill;
-            textBox2.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            textBox2.Font = new Font("Segoe UI", 18F);
             textBox2.Location = new Point(3, 19);
             textBox2.Name = "textBox2";
             textBox2.Size = new Size(234, 39);
@@ -156,7 +156,7 @@
             comboBox2.AutoCompleteMode = AutoCompleteMode.Suggest;
             comboBox2.AutoCompleteSource = AutoCompleteSource.ListItems;
             comboBox2.Dock = DockStyle.Fill;
-            comboBox2.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            comboBox2.Font = new Font("Segoe UI", 18F);
             comboBox2.FormattingEnabled = true;
             comboBox2.Location = new Point(3, 19);
             comboBox2.Name = "comboBox2";
@@ -177,7 +177,7 @@
             // textBox1
             // 
             textBox1.Dock = DockStyle.Fill;
-            textBox1.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            textBox1.Font = new Font("Segoe UI", 18F);
             textBox1.Location = new Point(3, 19);
             textBox1.Name = "textBox1";
             textBox1.ReadOnly = true;
@@ -200,7 +200,7 @@
             // comboBox1
             // 
             comboBox1.Dock = DockStyle.Fill;
-            comboBox1.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            comboBox1.Font = new Font("Segoe UI", 18F);
             comboBox1.FormattingEnabled = true;
             comboBox1.Location = new Point(3, 19);
             comboBox1.Name = "comboBox1";

@@ -87,6 +87,9 @@ namespace WH_Panel
             public int PQUANT { get; set; }
             public int CQUANT { get; set; }
 
+            public int KLINE { get; set; }
+
+            public int TRANS { get; set; }
             public int QUANT { get; set; }
             public int DELTA => QUANT - CQUANT;
             public string CALC { get; set; }
@@ -318,12 +321,16 @@ namespace WH_Panel
             dgwBom.Columns.Add("PARTNAME", "IPN");
             dgwBom.Columns.Add("MFPN", "MFPN");
             dgwBom.Columns.Add("PARTDES", "Description");
-            dgwBom.Columns.Add("PQUANT", "WH"); // Add WH column before KIT
+            dgwBom.Columns.Add("TBALANCE", "WH"); // Add WH column before KIT
             dgwBom.Columns.Add("QUANT", "KIT");
             dgwBom.Columns.Add("CQUANT", "Required");
             dgwBom.Columns.Add("DELTA", "Delta");
             dgwBom.Columns.Add("CALC", "CALC");
-            dgwBom.Columns.Add("ALT", "ALT"); // Add ALT column after CALC
+            dgwBom.Columns.Add("ALT", "ALT");
+            dgwBom.Columns.Add("TRANS","TRANS");
+            dgwBom.Columns.Add("KLINE", "KLINE");
+
+
             dgwBom.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
         }
 
@@ -362,10 +369,12 @@ namespace WH_Panel
                             {
                                 PARTNAME = group.Key,
                                 PARTDES = group.First().PARTDES,
-                                PQUANT = group.First().PQUANT,
                                 QUANT = group.Sum(detail => detail.QUANT),
                                 CQUANT = group.First().CQUANT,
-                                CALC = group.Count() > 1 ? string.Join(" + ", group.Select(detail => detail.QUANT)) : null
+                                CALC = group.Count() > 1 ? string.Join(" + ", group.Select(detail => detail.QUANT)) : null,
+                                KLINE = group.First().KLINE,
+                                TRANS = group.First().TRANS
+
                             })
                             .ToList();
 
@@ -375,16 +384,18 @@ namespace WH_Panel
                         {
                             if (!string.IsNullOrEmpty(detail.CALC) && !detail.CALC.Contains("+ 0"))
                             {
-                                dgwBom.Rows.Add(detail.PARTNAME, "", detail.PARTDES, detail.PQUANT, detail.QUANT, detail.CQUANT, detail.DELTA, detail.CALC);
+                                dgwBom.Rows.Add(detail.PARTNAME, "", detail.PARTDES, "", detail.QUANT, detail.CQUANT, detail.DELTA, detail.CALC,"",detail.TRANS,detail.KLINE);
                             }
                             else
                             {
-                                dgwBom.Rows.Add(detail.PARTNAME, "", detail.PARTDES, detail.PQUANT, detail.QUANT, detail.CQUANT, detail.DELTA);
+                                dgwBom.Rows.Add(detail.PARTNAME, "", detail.PARTDES,"", detail.QUANT, detail.CQUANT, detail.DELTA,"" ,"",detail.TRANS, detail.KLINE);
                             }
                         }
 
                         // Fetch MFPNs for each row with a delay
+                        await FetchWarehouseBalances();
                         await FetchMFPNsWithDelay();
+                        
                     }
                     else
                     {
@@ -402,6 +413,61 @@ namespace WH_Panel
             }
         }
 
+        private async Task FetchWarehouseBalances()
+        {
+            foreach (DataGridViewRow row in dgwBom.Rows)
+            {
+                if (row.Cells["PARTNAME"].Value != null)
+                {
+                    string partName = row.Cells["PARTNAME"].Value.ToString();
+                    string warehouseName = partName.Substring(0, 3); // Get the first 3 characters of the PARTNAME
+
+                    string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{warehouseName}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{partName}')";
+
+                    using (HttpClient client = new HttpClient())
+                    {
+                        try
+                        {
+                            // Set the request headers
+                            client.DefaultRequestHeaders.Accept.Clear();
+                            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                            // Make the HTTP GET request
+                            HttpResponseMessage response = await client.GetAsync(url);
+                            response.EnsureSuccessStatusCode();
+                            // Read the response content
+                            string responseBody = await response.Content.ReadAsStringAsync();
+                            // Parse the JSON response
+                            var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+                            var warehouse = apiResponse["value"].FirstOrDefault();
+                            if (warehouse != null)
+                            {
+                                var balance = warehouse["WARHSBAL_SUBFORM"].FirstOrDefault();
+                                if (balance != null)
+                                {
+                                    int tBalance = balance["TBALANCE"].Value<int>();
+                                    // Update the WH column in the DataGridView
+                                    row.Cells["TBALANCE"].Value = tBalance;
+                                }
+                            }
+                        }
+                        catch (HttpRequestException ex)
+                        {
+                            MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+
+                    // Introduce an artificial delay between each API call
+                    await Task.Delay(100); // 100 milliseconds delay
+                }
+            }
+        }
 
 
 
@@ -499,6 +565,8 @@ namespace WH_Panel
                     return "PARTDES";
                 case "ALT":
                     return "ALT";
+                case "WH":
+                    return "TBALANCE";
                 default:
                     return displayName;
             }
@@ -625,7 +693,7 @@ namespace WH_Panel
                     }
                 }
             }
-            else if (dgwBom.Columns[e.ColumnIndex].Name == "PQUANT")
+            else if (dgwBom.Columns[e.ColumnIndex].Name == "TBALANCE")
             {
                 int DELTA = Convert.ToInt32(dgwBom.Rows[e.RowIndex].Cells["DELTA"].Value);
 
@@ -638,6 +706,31 @@ namespace WH_Panel
                         e.CellStyle.BackColor = Color.Green;
                     }
                     else
+                    {
+                        e.CellStyle.BackColor = Color.IndianRed;
+                    }
+                }
+            }
+
+            else if (dgwBom.Columns[e.ColumnIndex].Name == "QUANT")
+            {
+                int req = Convert.ToInt32(dgwBom.Rows[e.RowIndex].Cells["CQUANT"].Value);
+
+                int kitValue = Convert.ToInt32(dgwBom.Rows[e.RowIndex].Cells["QUANT"].Value);
+
+                //if (kitValue > 0)
+                //{
+                //   // MessageBox.Show(kitValue.ToString());
+                //}
+               
+
+                if (e.Value != null && int.TryParse(e.Value.ToString(), out kitValue))
+                {
+                    if (kitValue >= req && kitValue != 0 )
+                    {
+                        e.CellStyle.BackColor = Color.Green;
+                    }
+                    else if (kitValue != 0)
                     {
                         e.CellStyle.BackColor = Color.IndianRed;
                     }
@@ -933,20 +1026,29 @@ namespace WH_Panel
                 dgwBom.Update();
             }
         }
-
-        private void txtbINPUTqty_KeyDown(object sender, KeyEventArgs e)
+        private async void txtbINPUTqty_KeyDown(object sender, KeyEventArgs e)
         {
-            if (dgwBom.Rows.Count == 1)
+            // Count only the visible rows
+            int visibleRowCount = dgwBom.Rows.Cast<DataGridViewRow>().Count(row => row.Visible);
+            if (visibleRowCount == 1)
             {
                 if (e.KeyCode == Keys.Enter)
                 {
-                    if (txtbINPUTqty.Text != string.Empty)
+                    if (int.TryParse(txtbINPUTqty.Text, out int qty) && qty > 0)
                     {
-                        //
+                        var filteredRow = dgwBom.Rows.Cast<DataGridViewRow>().FirstOrDefault(row => row.Visible);
+                        if (filteredRow != null)
+                        {
+                            string partName = filteredRow.Cells["PARTNAME"].Value.ToString();
+                            string serialName = txtbRob.Text; // Assuming txtbRob contains the SERIALNAME
+                            int cQuant = int.Parse(filteredRow.Cells["CQUANT"].Value.ToString()); // Get the CQUANT value
+
+                            await AddItemToKit(partName, serialName, cQuant, qty, filteredRow);
+                        }
                     }
                     else
                     {
-                        MessageBox.Show("Please enter a quantity", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Please enter a valid quantity", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         txtbINPUTqty.Focus();
                     }
                 }
@@ -956,7 +1058,114 @@ namespace WH_Panel
                 MessageBox.Show("Please enter a valid IPN", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 textBox1.Focus();
             }
-
         }
+
+        private async Task AddItemToKit(string partName, string serialName, int cQuant, int qty, DataGridViewRow filteredRow)
+        {
+            // Check quantity availability in the warehouse
+            string checkUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq 'ENE'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{partName}')";
+            int availableQty = 0;
+
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    // Set the request headers
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                    // Make the HTTP GET request to check quantity availability
+                    HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
+                    string checkResponseBody = await checkResponse.Content.ReadAsStringAsync();
+                    checkResponse.EnsureSuccessStatusCode();
+                    var checkApiResponse = JsonConvert.DeserializeObject<JObject>(checkResponseBody);
+                    var warehouse = checkApiResponse["value"].FirstOrDefault();
+                    if (warehouse != null)
+                    {
+                        var balance = warehouse["WARHSBAL_SUBFORM"].FirstOrDefault();
+                        if (balance != null)
+                        {
+                            availableQty = balance["TBALANCE"].Value<int>();
+                        }
+                    }
+                }
+                catch (HttpRequestException ex)
+                {
+                    MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+
+            if (availableQty < qty)
+            {
+                MessageBox.Show("Insufficient quantity available in the warehouse.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Construct the POST request URL
+            string postUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART";
+
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    // Set the request headers
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                    // Create the JSON payload for the POST request
+                    var payload = new
+                    {
+                        PARTNAME = partName,
+                        SERIALNAME = serialName,
+                        CQUANT = cQuant,
+                        QUANT = qty,
+                        WARHSNAME = "ENE",
+                        LOCNAME = "0",
+                        TOWARHSNAME = "Flr",
+                        LOGDOCNO = "ROB00000004",
+                        TYPE = "K"
+                    };
+                    var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+
+                    // Make the POST request
+                    HttpResponseMessage postResponse = await client.PostAsync(postUrl, content);
+                    string postResponseBody = await postResponse.Content.ReadAsStringAsync();
+                    MessageBox.Show($"POST Response: {postResponseBody}", "POST Response", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    postResponse.EnsureSuccessStatusCode();
+
+                    // Refresh the kit to display the new addition
+                    await LoadBomDetails(serialName);
+
+                    // Update the DataGridView
+                    //filteredRow.Cells["QUANT"].Value = qty;
+                    //filteredRow.Cells["DELTA"].Value = qty - int.Parse(filteredRow.Cells["CQUANT"].Value.ToString());
+                    txtbINPUTqty.Clear();
+                    txtbINPUTqty.Focus();
+                }
+                catch (HttpRequestException ex)
+                {
+                    MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+
+
+
+
     }
 }

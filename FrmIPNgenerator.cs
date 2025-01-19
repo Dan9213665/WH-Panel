@@ -37,7 +37,7 @@ namespace WH_Panel
 {
     "ANT", "BUZ", "CAP", "CON", "DID", "FER", "FIL", "FUS", "ICT","ICA", "IND",
     "LED", "MAG", "MOS","MEC", "OPT", "OSC", "PCB", "PWR", "RES", "RLY", "SWT",
-    "TER", "TRN"
+    "TER", "TRN" ,"VAR"
 };
         List<string> manufacturersList = new List<string> { "SAMTEC","Texas Instruments",
 "FINISAR",
