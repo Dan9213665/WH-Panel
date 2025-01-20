@@ -771,13 +771,13 @@
             dataGridView1.AllowUserToAddRows = false;
             dataGridView1.AllowUserToDeleteRows = false;
             dataGridViewCellStyle2.BackColor = Color.Gray;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             dataGridViewCellStyle2.ForeColor = Color.FromArgb(128, 255, 128);
             dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
             dataGridView1.BackgroundColor = Color.Gray;
             dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle3.BackColor = SystemColors.Control;
-            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F);
             dataGridViewCellStyle3.ForeColor = Color.White;
             dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
             dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
@@ -786,7 +786,7 @@
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle4.BackColor = Color.DarkGray;
-            dataGridViewCellStyle4.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            dataGridViewCellStyle4.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             dataGridViewCellStyle4.ForeColor = Color.Black;
             dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
             dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
@@ -800,7 +800,7 @@
             dataGridView1.ReadOnly = true;
             dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle5.BackColor = SystemColors.Control;
-            dataGridViewCellStyle5.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle5.Font = new Font("Segoe UI", 9F);
             dataGridViewCellStyle5.ForeColor = Color.White;
             dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
             dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
@@ -855,7 +855,7 @@
             // txtbSelIPN
             // 
             txtbSelIPN.Dock = DockStyle.Fill;
-            txtbSelIPN.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point);
+            txtbSelIPN.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold);
             txtbSelIPN.Location = new Point(3, 3);
             txtbSelIPN.Name = "txtbSelIPN";
             txtbSelIPN.ReadOnly = true;
@@ -866,7 +866,7 @@
             // txtbSelMFPN
             // 
             txtbSelMFPN.Dock = DockStyle.Fill;
-            txtbSelMFPN.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point);
+            txtbSelMFPN.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold);
             txtbSelMFPN.Location = new Point(188, 3);
             txtbSelMFPN.Name = "txtbSelMFPN";
             txtbSelMFPN.ReadOnly = true;
@@ -877,7 +877,7 @@
             // txtbSelDes
             // 
             txtbSelDes.Dock = DockStyle.Fill;
-            txtbSelDes.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            txtbSelDes.Font = new Font("Segoe UI", 9F);
             txtbSelDes.Location = new Point(373, 3);
             txtbSelDes.Multiline = true;
             txtbSelDes.Name = "txtbSelDes";
@@ -889,7 +889,7 @@
             // txtbQtyToAdd
             // 
             txtbQtyToAdd.Dock = DockStyle.Fill;
-            txtbQtyToAdd.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point);
+            txtbQtyToAdd.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold);
             txtbQtyToAdd.Location = new Point(558, 3);
             txtbQtyToAdd.Name = "txtbQtyToAdd";
             txtbQtyToAdd.Size = new Size(179, 35);
@@ -915,7 +915,7 @@
             // 
             checkBox1.AutoSize = true;
             checkBox1.Dock = DockStyle.Fill;
-            checkBox1.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
+            checkBox1.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             checkBox1.Location = new Point(928, 3);
             checkBox1.Name = "checkBox1";
             checkBox1.Size = new Size(179, 72);

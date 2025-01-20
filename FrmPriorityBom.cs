@@ -20,6 +20,56 @@ using Microsoft.Extensions.Configuration;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 using Microsoft.Office.Interop.Outlook;
 using Exception = System.Exception;
+using System.Data.OleDb;
+using Microsoft.VisualBasic;
+using static WH_Panel.FrmBOM;
+using System.Runtime.InteropServices;
+using FastMember;
+using System;
+using System.Collections.Generic;
+using System.Data.Common;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Reflection.Emit;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Xml;
+using System.IO;
+using static System.Net.WebRequestMethods;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using DataTable = System.Data.DataTable;
+using TextBox = System.Windows.Forms.TextBox;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Menu;
+using System.Xml.Serialization;
+using Label = System.Windows.Forms.Label;
+using System.Web;
+using Seagull.BarTender.Print;
+using Range = Microsoft.Office.Interop.Excel.Range;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
+using Application = Microsoft.Office.Interop.Excel.Application;
+using static Seagull.Framework.OS.ServiceControlManager;
+using System;
+using System.Windows.Forms;
+using _Application = Microsoft.Office.Interop.Excel._Application;
+using OfficeOpenXml;
+using System.Drawing.Printing;
+using Button = System.Windows.Forms.Button;
+using GroupBox = System.Windows.Forms.GroupBox;
+using WH_Panel;
+using File = System.IO.File;
+using Point = System.Drawing.Point;
+using Outlook = Microsoft.Office.Interop.Outlook;
+using System.Data.SqlClient;
+using static System.ComponentModel.Design.ObjectSelectorEditor;
+using Font = System.Drawing.Font;
+using Action = System.Action;
+using OfficeOpenXml.Drawing.Slicer.Style;
+using System.Security.Cryptography.Pkcs;
+using static QRCoder.PayloadGenerator;
+using OfficeOpenXml.Style;
+using static WH_Panel.FrmPriorityBom;
 
 
 namespace WH_Panel
@@ -40,12 +90,13 @@ namespace WH_Panel
             this.KeyPreview = true; // Set KeyPreview to true
 
             SetDarkModeColors(this);
+            InitializeDataGridView();
             // Set the DrawMode property and handle the DrawItem event
             cmbROBxList.DrawMode = DrawMode.OwnerDrawFixed;
             cmbROBxList.DrawItem += cmbROBxList_DrawItem;
             cmbROBxList.SelectedIndexChanged += cmbROBxList_SelectedIndexChanged;
             // Initialize DataGridView columns
-            InitializeDataGridView();
+            
             // Handle the CellFormatting event
             dgwBom.CellFormatting += dgwBom_CellFormatting;
             AttachTextBoxEvents(this);
@@ -309,7 +360,7 @@ namespace WH_Panel
                 txtbRev.Text = $"REV ( {selectedSerial.REVNUM} )";
                 txtbQty.Text = selectedSerial.QUANT.ToString();
                 txtbStatus.Text = selectedSerial.SERIALSTATUSDES;
-                textBox1.Focus();
+                txtbInputIPN.Focus();
                 // Load BOM details
                 await LoadBomDetails(selectedSerial.SERIALNAME);
 
@@ -332,9 +383,10 @@ namespace WH_Panel
             dgwBom.Columns.Add("TRANS", "TRANS");
             dgwBom.Columns.Add("KLINE", "KLINE");
 
-
             dgwBom.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
         }
+
+
 
 
 
@@ -371,33 +423,32 @@ namespace WH_Panel
                             {
                                 PARTNAME = group.Key,
                                 PARTDES = group.First().PARTDES,
-                                QUANT = group.Sum(detail => detail.QUANT),
                                 CQUANT = group.First().CQUANT,
-                                CALC = group.Count() > 1 ? string.Join(" + ", group.Select(detail => detail.QUANT)) : null,
+                                CALC = string.Join("+", group.Select(detail => detail.QUANT)),
+                                QUANT = group.Sum(detail => detail.QUANT),
                                 KLINE = group.First().KLINE,
                                 TRANS = group.First().TRANS
-
                             })
                             .ToList();
+
+
+                        // Log the CALC values
+                        //foreach (var detail in aggregatedDetails)
+                        //{
+                        //    MessageBox.Show($"PARTNAME: {detail.PARTNAME}, CALC: {detail.CALC}");
+                        //}
 
                         // Populate the DataGridView with the aggregated data
                         dgwBom.Rows.Clear();
                         foreach (var detail in aggregatedDetails)
                         {
-                            if (!string.IsNullOrEmpty(detail.CALC) && !detail.CALC.Contains("+ 0"))
-                            {
-                                dgwBom.Rows.Add(detail.PARTNAME, "", detail.PARTDES, "", detail.QUANT, detail.CQUANT, detail.DELTA, detail.CALC, "", detail.TRANS, detail.KLINE);
-                            }
-                            else
-                            {
-                                dgwBom.Rows.Add(detail.PARTNAME, "", detail.PARTDES, "", detail.QUANT, detail.CQUANT, detail.DELTA, "", "", detail.TRANS, detail.KLINE);
-                            }
+                            string calcValue = !string.IsNullOrEmpty(detail.CALC) && !detail.CALC.Contains("+0") ? detail.CALC : "";
+                            dgwBom.Rows.Add(detail.PARTNAME, "", detail.PARTDES, "", detail.QUANT, detail.CQUANT, detail.DELTA, calcValue, "", detail.TRANS, detail.KLINE);
                         }
 
                         // Fetch MFPNs for each row with a delay
                         await FetchWarehouseBalances();
                         // await FetchMFPNsWithDelay();
-
                     }
                     else
                     {
@@ -414,6 +465,7 @@ namespace WH_Panel
                 }
             }
         }
+
 
         private async Task FetchWarehouseBalances()
         {
@@ -665,7 +717,7 @@ namespace WH_Panel
 
             textBox.Clear();
             textBox.Text = string.Empty;
-            textBox1.Clear();
+            txtbInputIPN.Clear();
             textBox2.Clear();
             textBox3.Clear();
             textBox4.Clear();
@@ -958,7 +1010,7 @@ namespace WH_Panel
         {
             if (e.KeyCode == Keys.Enter)
             {
-                string filterText = textBox1.Text.Trim();
+                string filterText = txtbInputIPN.Text.Trim();
                 bool found = false;
                 int visibleRowCount = 0;
                 bool dontneedeMoreItems = false;
@@ -990,8 +1042,8 @@ namespace WH_Panel
 
                 if (dontneedeMoreItems)
                 {
-                    textBox1.Clear();
-                    textBox1.Focus();
+                    txtbInputIPN.Clear();
+                    txtbInputIPN.Focus();
                     ClearFilters();
                     AutoClosingMessageBox.Show($"{filterText} NOT needed anymore!", 2000, Color.Orange);
 
@@ -1007,7 +1059,7 @@ namespace WH_Panel
                 if (!found)
                 {
 
-                    textBox1.Clear();
+                    txtbInputIPN.Clear();
                     ClearFilters();
                     AutoClosingMessageBox.Show($"{filterText} NOT FOUND!", 2000, Color.Red); // Show message for 2 seconds
 
@@ -1033,12 +1085,12 @@ namespace WH_Panel
 
             if (e.KeyCode == Keys.Escape)
             {
-                textBox1.Clear();
+                txtbInputIPN.Clear();
                 textBox2.Clear();
                 textBox3.Clear();
                 textBox4.Clear();
                 txtbINPUTqty.Clear();
-                textBox1.Focus();
+                txtbInputIPN.Focus();
 
 
                 foreach (DataGridViewRow row in dgwBom.Rows)
@@ -1071,6 +1123,9 @@ namespace WH_Panel
                             int neededQty = cQuant - inKit;
 
                             await AddItemToKit(partName, serialName, neededQty, qty, filteredRow);
+                            txtbINPUTqty.Clear();
+                            txtbInputIPN.Clear();
+                            txtbInputIPN.Focus();
                         }
                     }
                     else
@@ -1084,8 +1139,8 @@ namespace WH_Panel
             else
             {
                 MessageBox.Show("Please enter a valid IPN", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                textBox1.Clear();
-                textBox1.Focus();
+                txtbInputIPN.Clear();
+                txtbInputIPN.Focus();
             }
         }
 
@@ -1219,7 +1274,7 @@ namespace WH_Panel
                     patchResponse.EnsureSuccessStatusCode();
 
                     AutoClosingMessageBox.Show($"{partName} - {qty} PCS moved to {serialName}", 1000, Color.Green); // Show message for 2 seconds
-
+                
 
                     // Make another GET request to update the WH cell
                     HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
@@ -1240,9 +1295,9 @@ namespace WH_Panel
                     // Update the DataGridView row
                     filteredRow.Cells["QUANT"].Value = qty;
                     filteredRow.Cells["DELTA"].Value = qty - cQuant;
-
                     txtbINPUTqty.Clear();
                     txtbINPUTqty.Focus();
+
 
 
                 }
@@ -1261,5 +1316,601 @@ namespace WH_Panel
         {
 
         }
+
+        private void btnKitLabel_MouseDown(object sender, MouseEventArgs e)
+        {
+            // Check if the right mouse button was clicked
+            if (e.Button == MouseButtons.Left && txtbName.Text != string.Empty)
+            {
+                string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+
+                // Extract only the last part of the project name
+                string projectName = txtbName.Text;
+
+
+
+                using (CustomPrintDialog customDialog = new CustomPrintDialog())
+                {
+                    // Show the custom dialog
+                    DialogResult result = customDialog.ShowDialog();
+
+                    int copiesToPrint = 0;
+
+                    // Determine the number of copies based on the user's selection
+                    switch (result)
+                    {
+                        case DialogResult.OK:
+                            copiesToPrint = 1;
+                            break;
+                        case DialogResult.Yes:
+                            copiesToPrint = 2;
+                            break;
+                        case DialogResult.No:
+                            copiesToPrint = 3;
+                            break;
+                        case DialogResult.Ignore:
+
+                            string[] splitParts = projectName.Split('_');
+
+                            WHitem itemToPrint = new WHitem();
+                            itemToPrint.IPN = "קיט מלא";
+                            itemToPrint.MFPN = splitParts[1];
+                            itemToPrint.Description = splitParts[0];
+                            itemToPrint.Stock = int.Parse(txtbQty.Text.ToString());
+                            itemToPrint.Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
+                            printStickerFullKit(itemToPrint);
+
+                            break;
+
+                        case DialogResult.Abort:
+
+                            string modifiedProjectName2 = projectName.Substring(0, projectName.Length - 5);
+                            string[] splitParts2 = modifiedProjectName2.Split('_');
+
+                            WHitem itemToPrint2 = new WHitem();
+                            itemToPrint2.IPN = "רכיבים בגלילה";
+                            itemToPrint2.MFPN = splitParts2[1];
+                            itemToPrint2.Description = splitParts2[0];
+                            itemToPrint2.Stock = int.Parse(txtbQty.Text.ToString());
+                            itemToPrint2.Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
+                            printStickerFullKit(itemToPrint2);
+
+
+                            break;
+                        case DialogResult.Cancel:
+
+                            SendEmail();
+
+                            break;
+                    }
+                    if (result != DialogResult.Ignore && result != DialogResult.Abort && result != DialogResult.Cancel)
+                    {
+                        GenerateHTMLkitBoxLabel(copiesToPrint);
+                    }
+                    // Call the method with the chosen number of copies
+
+                }
+            }
+        }
+
+        //private void GenerateHTMLkitBoxLabel(int qtyToPrint)
+        //{
+
+
+        //    string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+
+        //             // Extract only the last part of the project name
+        //    string projectName = txtbName.Text;
+
+
+        //    // Display the extracted project name for debugging
+        //    //MessageBox.Show(projectName);
+
+        //    // Construct the filename
+        //    string filename = "\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\" +
+        //        _fileTimeStamp + "_box label for_" + projectName + ".html";
+
+        //    //MessageBox.Show(filename); // Display the constructed filename for debugging
+
+
+
+
+
+        //    using (StreamWriter writer = new StreamWriter(filename))
+        //    {
+        //        writer.WriteLine("<html style='text-align:center'>");
+        //        writer.WriteLine("<head>");
+        //        writer.WriteLine("<title>" + txtbName.Text.ToString()+"</title>");
+        //        writer.WriteLine("</head>");
+        //        writer.WriteLine("<body>");
+        //        string[] parts = { txtbName.Text,txtbRob.Text, txtbQty.Text+" PCS" };
+        //        string ConvertImageToBase64(string imagePath)
+        //        {
+        //            byte[] imageBytes = File.ReadAllBytes(imagePath);
+        //            return Convert.ToBase64String(imageBytes);
+        //        }
+        //        string imageUrl = string.Empty;
+        //        string base64Image = string.Empty;
+        //        //foreach (ClientWarehouse w in warehouses)
+        //        //{
+        //        //    //if (currentIPN.StartsWith(w.clPrefix))
+        //        //    if (comboBox1.SelectedItem == w.clName)
+        //        //    {
+        //        //        //MessageBox.Show(w.clName);
+        //        //        if (File.Exists(w.clLogo))
+        //        //        {
+        //        //            // Convert the local file path to a relative URL
+        //        //            string logoFilePath = Path.Combine("dbr1", "WareHouse", "STOCK_CUSTOMERS", w.clName, w.clLogo);
+        //        //            string relativeUrl = logoFilePath.Replace("\\", "/");
+        //        //            // Use the relative URL as the image source
+        //        //            imageUrl = relativeUrl;
+        //        //        }
+        //        //    }
+        //        //}
+        //        string backgroundImageUrl = "eleBackGND.png";
+        //        //Console.WriteLine("Background Image Path: " + backgroundImageUrl);
+        //        string altText = "WH image";
+        //        for (int i = 0; i < qtyToPrint; i++)
+        //        {
+        //            writer.WriteLine("<table border='1' style='width: 600px; margin: auto; display: table;'>");  //background-size: cover;
+        //            //writer.WriteLine("<col style='width: 25%; background: url(" + backgroundImageUrl + ") no-repeat center center; background-size: contain;'>"); // 25% width for the image column
+        //            writer.WriteLine("<col style='width: 25%; background: url(" + backgroundImageUrl + ") no-repeat center center; background-size: 100% 100%;'>");
+        //            writer.WriteLine("<col style='width: 75%;'>"); // 75% width for the text column
+        //            writer.WriteLine("<tr>");
+
+        //            //writer.WriteLine("<td  style='vertical-align: middle;'><img id='logoImage' src='" + imageUrl + "' alt='" + altText + "' style='height: 100%; width: 100%;'></td>"); // Image column
+
+        //            writer.WriteLine("<td style='position: relative; vertical-align: middle;'>");
+        //            writer.WriteLine("    <img id='logoImage' src='" + imageUrl + "' alt='" + altText + "' style='height: 100%; width: 100%;'>");
+        //            writer.WriteLine("    <div style='position: absolute; top: 1%; left: 5%; transform: translate(-1%, -1%); color: white; font-size: 15px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);'>");
+        //            // Get the current date and time
+        //            string currentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+        //            // Write the current date and time to the output
+        //            writer.WriteLine(currentDateTime);
+        //            writer.WriteLine("    </div>");
+        //            writer.WriteLine("</td>");
+
+
+
+        //            writer.WriteLine("<td style='text-align: center; background: rgba(255, 255, 255, 0.1) url(" + backgroundImageUrl + ") no-repeat center center; background-size: 111% 111%; vertical-align: middle; transform: scaleX(-1);'>");
+        //            foreach (string part in parts)
+        //            {
+        //                writer.WriteLine("<div style='text-align: center;  border: 1px solid black; margin: 0px; padding: 5px; vertical-align: middle; font-size: 50px; font-weight: bold;text-shadow: -4px -4px 2px #fff, 4px -4px 2px #fff, -4px 4px 2px #fff, 4px 4px 2px #fff;transform: scaleX(-1);'>" + part + "</div>");
+        //            }
+        //            writer.WriteLine("</td>");
+        //            writer.WriteLine("</tr>");
+        //            writer.WriteLine("</table>");
+        //        }
+        //        writer.WriteLine("</body>");
+        //        writer.WriteLine("</html>");
+        //    }
+        //    // Open the file in default browser
+        //    var p = new Process();
+        //    p.StartInfo = new ProcessStartInfo(filename)
+        //    {
+        //        UseShellExecute = true
+        //    };
+        //    p.Start();
+        //}
+
+
+        private void GenerateHTMLkitBoxLabel(int qtyToPrint)
+        {
+            string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+
+            // Extract only the last part of the project name
+            string projectName = txtbName.Text;
+
+            // Construct the filename
+            string filename = "\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\" +
+                _fileTimeStamp + "_box label for_" + projectName + ".html";
+
+            using (StreamWriter writer = new StreamWriter(filename))
+            {
+                writer.WriteLine("<html style='text-align:center'>");
+                writer.WriteLine("<head>");
+                writer.WriteLine("<title>" + txtbName.Text.ToString() + "</title>");
+                writer.WriteLine("</head>");
+                writer.WriteLine("<body>");
+                string[] parts = { txtbName.Text, txtbRob.Text, txtbQty.Text + " PCS" };
+
+                string imageUrl = string.Empty;
+                string base64Image = string.Empty;
+
+                // Search for the prefix in the customer folders
+                string prefix = txtbName.Text.Substring(0, 3);
+                string customersPath = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS";
+                foreach (string customerDir in Directory.GetDirectories(customersPath))
+                {
+                    string prefixFilePath = Path.Combine(customerDir, "prefix.txt");
+                    if (File.Exists(prefixFilePath))
+                    {
+                        string filePrefix = File.ReadAllText(prefixFilePath).Trim();
+                        if (filePrefix == prefix)
+                        {
+                            string logoFilePath = Path.Combine(customerDir, "logo.png");
+                            if (File.Exists(logoFilePath))
+                            {
+                                imageUrl = logoFilePath.Replace("\\", "/");
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                string backgroundImageUrl = "eleBackGND.png";
+                string altText = "WH image";
+                for (int i = 0; i < qtyToPrint; i++)
+                {
+                    writer.WriteLine("<table border='1' style='width: 600px; margin: auto; display: table;'>");
+                    writer.WriteLine("<col style='width: 25%; background: url(" + backgroundImageUrl + ") no-repeat center center; background-size: 100% 100%;'>");
+                    writer.WriteLine("<col style='width: 75%;'>");
+                    writer.WriteLine("<tr>");
+
+                    writer.WriteLine("<td style='position: relative; vertical-align: middle;'>");
+                    writer.WriteLine("    <img id='logoImage' src='" + imageUrl + "' alt='" + altText + "' style='height: 100%; width: 100%;'>");
+                    writer.WriteLine("    <div style='position: absolute; top: 1%; left: 5%; transform: translate(-1%, -1%); color: white; font-size: 15px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);'>");
+                    string currentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                    writer.WriteLine(currentDateTime);
+                    writer.WriteLine("    </div>");
+                    writer.WriteLine("</td>");
+
+                    writer.WriteLine("<td style='text-align: center; background: rgba(255, 255, 255, 0.1) url(" + backgroundImageUrl + ") no-repeat center center; background-size: 111% 111%; vertical-align: middle; transform: scaleX(-1);'>");
+                    foreach (string part in parts)
+                    {
+                        writer.WriteLine("<div style='text-align: center;  border: 1px solid black; margin: 0px; padding: 5px; vertical-align: middle; font-size: 50px; font-weight: bold;text-shadow: -4px -4px 2px #fff, 4px -4px 2px #fff, -4px 4px 2px #fff, 4px 4px 2px #fff;transform: scaleX(-1);'>" + part + "</div>");
+                    }
+                    writer.WriteLine("</td>");
+                    writer.WriteLine("</tr>");
+                    writer.WriteLine("</table>");
+                }
+                writer.WriteLine("</body>");
+                writer.WriteLine("</html>");
+            }
+
+            // Open the file in default browser
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(filename)
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+        }
+
+        private void printStickerFullKit(WHitem wHitem)
+        {
+            try
+            {
+                string userName = Environment.UserName;
+                string fpst = @"C:\\Users\\" + userName + "\\Desktop\\Print_Stickers.xlsx";
+
+                string thesheetName = "Sheet1";
+                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fpst + "; Extended Properties=\"Excel 12.0;HDR=YES;IMEX=0\"";
+                OleDbConnection conn = new OleDbConnection(constr);
+                OleDbCommand cmd = new OleDbCommand();
+                cmd.Connection = conn;
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @Updated_on";
+
+                cmd.Parameters.AddWithValue("@PN", wHitem.IPN);
+                cmd.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
+                cmd.Parameters.AddWithValue("@ItemDesc", wHitem.Description);
+                cmd.Parameters.AddWithValue("@QTY", wHitem.Stock);
+                cmd.Parameters.AddWithValue("@Updated_on", wHitem.Updated_on);
+
+                conn.Open();
+                cmd.ExecuteNonQuery();
+                conn.Close();
+
+                Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
+                SendKeys.SendWait("^p");
+                SendKeys.SendWait("{Enter}");
+                //ComeBackFromPrint();
+                Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
+
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Sticker printing failed : " + e.Message);
+            }
+        }
+
+
+        private void SendEmail()
+        {
+            string windowTitle = this.Text; // 'this' refers to the current Form
+
+            // Find the index of ".xlsm" in the window title
+            int index = windowTitle.IndexOf(".xlsm");
+
+            // Extract the project name, including ".xlsm"
+            string fullProjectName = index >= 0 ? windowTitle.Substring(0, index + 5) : windowTitle;
+
+            // Extract only the last part of the project name
+            string projectName = fullProjectName.Split('\\').Last();
+
+            //string fileName = openFileDialog1.FileName;
+            string fileName = fullProjectName;
+            //MessageBox.Show(fileName);
+
+
+            var excelApp = new Microsoft.Office.Interop.Excel.Application();
+            Microsoft.Office.Interop.Excel.Workbook workbook = excelApp.Workbooks.Open(fileName);
+            Microsoft.Office.Interop.Excel.Worksheet worksheet = (Microsoft.Office.Interop.Excel.Worksheet)workbook.Sheets[1]; // First sheet (index 1 in Interop)
+
+            // Find the "Alts" and "DELTA" column indices
+            int altsColumnIndex = -1;
+            int deltaColumnIndex = -1;
+            Microsoft.Office.Interop.Excel.Range headerRow = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[1];
+
+            for (int i = 1; i <= headerRow.Columns.Count; i++)
+            {
+                var cell = (Microsoft.Office.Interop.Excel.Range)headerRow.Cells[1, i];
+                string columnHeader = cell.Value?.ToString();
+
+                if (columnHeader == "Alts")
+                {
+                    altsColumnIndex = i;
+                }
+                else if (columnHeader == "DELTA")
+                {
+                    deltaColumnIndex = i;
+                }
+
+                if (altsColumnIndex != -1 && deltaColumnIndex != -1)
+                {
+                    break;
+                }
+            }
+
+            if (deltaColumnIndex == -1)
+            {
+                MessageBox.Show("Could not find the 'DELTA' column.");
+                workbook.Close(false);
+                Marshal.ReleaseComObject(workbook);
+                Marshal.ReleaseComObject(excelApp);
+                return;
+            }
+
+            // Build HTML table from Excel data
+            StringBuilder htmlTable = new StringBuilder();
+            htmlTable.Append("<table border='1' style='border-collapse:collapse;'>");
+
+            // Add header row
+            htmlTable.Append("<tr>");
+            for (int col = 1; col <= altsColumnIndex; col++)
+            {
+                string header = ((Microsoft.Office.Interop.Excel.Range)headerRow.Cells[1, col]).Value?.ToString();
+                htmlTable.AppendFormat("<th>{0}</th>", header ?? string.Empty);
+            }
+            htmlTable.Append("</tr>");
+
+            // Add data rows with conditional formatting for "DELTA" values
+            int row = 2;
+            while (((Microsoft.Office.Interop.Excel.Range)worksheet.Cells[row, 1]).Value != null)
+            {
+                htmlTable.Append("<tr>");
+                for (int col = 1; col <= altsColumnIndex; col++)
+                {
+                    var cell = (Microsoft.Office.Interop.Excel.Range)worksheet.Cells[row, col];
+                    string cellValue = cell.Value?.ToString() ?? string.Empty;
+
+                    if (col == deltaColumnIndex && double.TryParse(cellValue, out double deltaValue))
+                    {
+                        string color = deltaValue < 0 ? "IndianRed" : "LightGreen";
+                        htmlTable.AppendFormat("<td style='background-color:{0};'>{1}</td>", color, cellValue);
+                    }
+                    else
+                    {
+                        htmlTable.AppendFormat("<td>{0}</td>", cellValue);
+                    }
+                }
+                htmlTable.Append("</tr>");
+                row++;
+            }
+            htmlTable.Append("</table>");
+
+            workbook.Close(false);
+            Marshal.ReleaseComObject(workbook);
+            Marshal.ReleaseComObject(excelApp);
+
+            var outlookApp = new Outlook.Application();
+            Outlook.MailItem mailItem = (Outlook.MailItem)outlookApp.CreateItem(Outlook.OlItemType.olMailItem);
+
+            mailItem.Subject = projectName.Substring(0, projectName.Length - 5).ToString() + "_UPDATED_" + DateAndTime.Now.ToString("yyyyMMddHHmm");
+
+            // Set CC field
+            mailItem.CC = "lgt@robotron.co.il";
+
+            // Hardcoded in-house email addresses
+            List<string> inhouseEmails = new List<string>
+    {
+        "production@robotron.co.il",
+        "avishay@robotron.co.il",
+        "rehesh@robotron.co.il",
+        "vlad@robotron.co.il"
+    };
+
+            // Extract client domain from project name
+            string clientDomain = projectName.Split('_')[0].ToLower();
+
+            // Get emails from the client's domain
+            List<string> clientEmails = GetUniqueClientEmails(clientDomain);//GetEmailsFromDomain(outlookApp, clientDomain); 
+
+            // Display a form with checkboxes for all recipients
+            RecipientSelectionForm selectionForm = new RecipientSelectionForm(inhouseEmails, clientEmails);
+            if (selectionForm.ShowDialog() == DialogResult.OK)
+            {
+                // Combine selected emails into the "To" field
+                mailItem.To = string.Join(";", selectionForm.SelectedEmails);
+
+                // Embed the HTML table in the email body
+                mailItem.HTMLBody = "<html><body>" + htmlTable.ToString() + "</body></html>";
+
+                // Send the email
+                mailItem.Send();
+                MessageBox.Show("Email sent successfully.");
+            }
+
+            Marshal.ReleaseComObject(mailItem);
+            Marshal.ReleaseComObject(outlookApp);
+        }
+
+
+
+
+        public List<string> GetUniqueClientEmails(string clientDomain)
+        {
+            var emails = new HashSet<string>();
+            var outlookApp = new Outlook.Application();
+
+            // Initialize and show the loading form
+            LoadingForm loadingForm = new LoadingForm();
+
+            // Display the loading form on a new thread to avoid blocking
+            var loadingThread = new Thread(() =>
+            {
+                loadingForm.ShowDialog();
+            });
+            loadingThread.Start();
+
+            try
+            {
+                Outlook.Folder inboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox) as Outlook.Folder;
+                Outlook.Folder outboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderSentMail) as Outlook.Folder;
+
+                // Helper function to add unique emails from a folder
+                void AddEmailsFromFolder(Outlook.Folder folder, string domain)
+                {
+                    foreach (var item in folder.Items)
+                    {
+                        if (item is Outlook.MailItem mail && !string.IsNullOrEmpty(mail.SenderEmailAddress))
+                        {
+                            string senderEmailLower = mail.SenderEmailAddress.ToLower();
+                            string domainLower = domain.ToLower();
+
+                            if (senderEmailLower.Contains(domainLower))
+                            {
+                                string contactInfo = $"{mail.SenderName} ({mail.SenderEmailAddress})";
+                                emails.Add(contactInfo); // HashSet prevents duplicate entries
+                            }
+                        }
+                    }
+                }
+
+                // Add emails for the given client domain from both Inbox and Outbox folders
+                AddEmailsFromFolder(inboxFolder, clientDomain);
+                AddEmailsFromFolder(outboxFolder, clientDomain);
+
+                // If no emails found for the client domain, fallback to local domain
+                if (emails.Count == 0)
+                {
+                    string localDomain = "robotron";
+                    AddEmailsFromFolder(inboxFolder, localDomain);
+                    AddEmailsFromFolder(outboxFolder, localDomain);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it as necessary
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+            finally
+            {
+                // Close the loading form once processing is complete
+                if (loadingForm.InvokeRequired)
+                {
+                    loadingForm.Invoke(new Action(() => loadingForm.Close()));
+                }
+                else
+                {
+                    loadingForm.Close();
+                }
+            }
+
+            return emails.ToList();
+        }
+
+
+
+        public class RecipientSelectionForm : Form
+        {
+            private CheckedListBox checkedListBox;
+            private Button sendButton;
+            private Button cancelButton;
+            public List<string> SelectedEmails { get; private set; }
+
+            public RecipientSelectionForm(List<string> inhouseEmails, List<string> clientEmails)
+            {
+                SelectedEmails = new List<string>();
+
+                checkedListBox = new CheckedListBox
+                {
+                    Dock = DockStyle.Top,
+                    Height = 200,
+                    CheckOnClick = true
+                };
+
+                // Add in-house emails to the list with a label for clarity
+                checkedListBox.Items.Add("In-House Emails:", false);
+                foreach (var email in inhouseEmails)
+                {
+                    checkedListBox.Items.Add(email, false);
+                }
+
+                // Add client emails to the list with a label for clarity
+                checkedListBox.Items.Add("Client Emails:", false);
+                foreach (var email in clientEmails)
+                {
+                    checkedListBox.Items.Add(email, false);
+                }
+
+                sendButton = new Button
+                {
+                    Text = "Send",
+                    Dock = DockStyle.Bottom
+                };
+                sendButton.Click += SendButton_Click;
+
+                cancelButton = new Button
+                {
+                    Text = "Cancel",
+                    Dock = DockStyle.Bottom
+                };
+                cancelButton.Click += (s, e) => DialogResult = DialogResult.Cancel;
+
+                Controls.Add(checkedListBox);
+                Controls.Add(sendButton);
+                Controls.Add(cancelButton);
+
+                Text = "Select Recipients";
+                Height = 300;
+                Width = 300;
+                StartPosition = FormStartPosition.CenterScreen;
+            }
+
+            private void SendButton_Click(object sender, EventArgs e)
+            {
+                // Collect selected emails from the CheckedListBox
+                foreach (var item in checkedListBox.CheckedItems)
+                {
+                    if (!item.ToString().EndsWith(":")) // Skip the section labels
+                    {
+                        SelectedEmails.Add(item.ToString());
+                    }
+                }
+
+                //if (SelectedEmails.Count == 0)
+                //{
+                //    MessageBox.Show("Please select at least one recipient.");
+                //    return;
+                //}
+
+                DialogResult = DialogResult.OK;
+            }
+        }
     }
 }
+
+

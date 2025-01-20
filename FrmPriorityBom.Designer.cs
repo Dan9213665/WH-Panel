@@ -41,7 +41,7 @@
             txtbName = new TextBox();
             txtbQty = new TextBox();
             txtbStatus = new TextBox();
-            textBox1 = new TextBox();
+            txtbInputIPN = new TextBox();
             textBox2 = new TextBox();
             textBox3 = new TextBox();
             textBox4 = new TextBox();
@@ -148,6 +148,7 @@
             btnKitLabel.TabIndex = 2;
             btnKitLabel.UseVisualStyleBackColor = true;
             btnKitLabel.Click += btnKitLabel_Click;
+            btnKitLabel.MouseDown += btnKitLabel_MouseDown;
             // 
             // btnReport
             // 
@@ -184,7 +185,7 @@
             tableLayoutPanel3.Controls.Add(txtbName, 1, 0);
             tableLayoutPanel3.Controls.Add(txtbQty, 3, 0);
             tableLayoutPanel3.Controls.Add(txtbStatus, 4, 0);
-            tableLayoutPanel3.Controls.Add(textBox1, 0, 1);
+            tableLayoutPanel3.Controls.Add(txtbInputIPN, 0, 1);
             tableLayoutPanel3.Controls.Add(textBox2, 1, 1);
             tableLayoutPanel3.Controls.Add(textBox3, 2, 1);
             tableLayoutPanel3.Controls.Add(textBox4, 3, 1);
@@ -240,17 +241,17 @@
             txtbStatus.TabIndex = 3;
             txtbStatus.TextAlign = HorizontalAlignment.Center;
             // 
-            // textBox1
+            // txtbInputIPN
             // 
-            textBox1.AcceptsTab = true;
-            textBox1.Dock = DockStyle.Fill;
-            textBox1.Location = new Point(3, 27);
-            textBox1.Name = "textBox1";
-            textBox1.PlaceholderText = "Filter by IPN";
-            textBox1.Size = new Size(130, 23);
-            textBox1.TabIndex = 4;
-            textBox1.TextAlign = HorizontalAlignment.Center;
-            textBox1.KeyDown += textBox1_KeyDown;
+            txtbInputIPN.AcceptsTab = true;
+            txtbInputIPN.Dock = DockStyle.Fill;
+            txtbInputIPN.Location = new Point(3, 27);
+            txtbInputIPN.Name = "txtbInputIPN";
+            txtbInputIPN.PlaceholderText = "Filter by IPN";
+            txtbInputIPN.Size = new Size(130, 23);
+            txtbInputIPN.TabIndex = 4;
+            txtbInputIPN.TextAlign = HorizontalAlignment.Center;
+            txtbInputIPN.KeyDown += textBox1_KeyDown;
             // 
             // textBox2
             // 
@@ -392,7 +393,7 @@
         private TextBox txtbQty;
         private TextBox txtbStatus;
         private DataGridView dgwBom;
-        private TextBox textBox1;
+        private TextBox txtbInputIPN;
         private TextBox textBox2;
         private TextBox textBox3;
         private TextBox textBox4;

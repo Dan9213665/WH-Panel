@@ -34,7 +34,7 @@ namespace WH_Panel
             SetDarkModeColors(this);
             AttachTextBoxEvents(this);
             // Attach event handlers
-            textBox6.KeyUp += textBox6_KeyUp_1;
+            txtbFilterIPN.KeyUp += textBox6_KeyUp_1;
             textBox5.KeyPress += textBox5_KeyPress;
             textBox5.TextChanged += textBox5_TextChanged;
             //textBox6.KeyDown += textBox6_KeyDown;
@@ -363,16 +363,17 @@ namespace WH_Panel
                             string docNo = responseJson["DOCNO"]?.ToString();
 
                             //MessageBox.Show(docNo);
-                            string insertedIpn = formInstance.textBox1.Text;
+                            string insertedIpn = formInstance.txtbInputIPN.Text;
 
                             formInstance.comboBox1_SelectedIndexChanged(formInstance.comboBox1, EventArgs.Empty);
-                            formInstance.textBox1.Clear();
+                            formInstance.txtbInputIPN.Clear();
                             formInstance.textBox2.Clear();
                             formInstance.textBox3.Clear();
                             formInstance.textBox4.Clear();
                             formInstance.textBox5.Clear();
                             formInstance.txtbPART.Clear();
-                            formInstance.textBox1.Focus();
+
+
 
                             // Update the document status
                             //await WarehouseService.UpdateDocumentStatusAsync(docNo, "סופית", "Y", formInstance);
@@ -400,7 +401,7 @@ namespace WH_Panel
                     }
                     catch (Exception ex)
                     {
-                       //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         formInstance.txtLog.AppendText($"An error occurred: {ex.Message}\n");
                         formInstance.txtLog.ScrollToCaret();
                     }
@@ -578,7 +579,7 @@ namespace WH_Panel
         {
             if (e.KeyCode == Keys.Enter)
             {
-                string partName = textBox1.Text;
+                string partName = txtbInputIPN.Text;
                 string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PARTNAME eq '{partName}'";
                 using (HttpClient client = new HttpClient())
                 {
@@ -610,8 +611,11 @@ namespace WH_Panel
                         }
                         else
                         {
+                            txtbInputIPN.Clear();
+                            txtbInputIPN.Focus();
                             //MessageBox.Show("No data found for the specified part name.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            AutoClosingMessageBox.Show("No data found for the specified part name.", 1000,Color.Red);
+                            AutoClosingMessageBox.Show("No data found for the specified part name.", 1000, Color.Red);
+
 
                         }
                     }
@@ -629,7 +633,7 @@ namespace WH_Panel
             }
             else if (e.KeyCode == Keys.Escape)
             {
-               textBox1.Clear();textBox2.Clear(); textBox3.Clear(); textBox4.Clear(); txtbPART.Clear();
+                txtbInputIPN.Clear(); textBox2.Clear(); textBox3.Clear(); textBox4.Clear(); txtbPART.Clear();
 
             }
         }
@@ -674,7 +678,7 @@ namespace WH_Panel
                     SendKeys.SendWait("{Enter}");
                     //ComeBackFromPrint();
                     Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
-                    textBox1.Focus();
+                    txtbInputIPN.Focus();
                 }
             }
             catch (Exception e)
@@ -722,7 +726,7 @@ namespace WH_Panel
             // Create a PR_PART object with the data from the textboxes
             PR_PART part = new PR_PART
             {
-                PARTNAME = textBox1.Text, // Assuming PART is an integer and is in textBox1
+                PARTNAME = txtbInputIPN.Text, // Assuming PART is an integer and is in textBox1
                 MNFPARTNAME = textBox2.Text,
                 PARTDES = textBox3.Text,
                 MNFNAME = textBox4.Text,
@@ -761,7 +765,7 @@ namespace WH_Panel
                         {
                             PR_PART part = apiResponse.value[0];
                             // Populate the textboxes with the data
-                            textBox1.Text = part.PARTNAME;
+                            txtbInputIPN.Text = part.PARTNAME;
                             textBox3.Text = part.PARTDES;
                             textBox4.Text = part.MNFNAME;
                         }
@@ -783,7 +787,7 @@ namespace WH_Panel
         }
         private void button2_Click(object sender, EventArgs e)
         {
-            textBox1.Clear();
+            txtbInputIPN.Clear();
             textBox2.Clear();
             textBox3.Clear();
             textBox4.Clear();
@@ -952,6 +956,7 @@ namespace WH_Panel
                             }
                             groupBox3.Text = $"Warehouse  {selectedWarehouse} {selectedWarehouseDesc}";
                             ColorTheRows(dataGridView1);
+                            txtbInputIPN.Focus();
                         }
                         else
                         {
@@ -970,7 +975,7 @@ namespace WH_Panel
             }
         }
 
-    
+
 
         private async void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -1168,7 +1173,7 @@ namespace WH_Panel
                     // MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     txtLog.SelectionColor = Color.Red; // Set the color to acid green
                     txtLog.AppendText($"Request error: {ex.Message}");
-                   txtLog.ScrollToCaret();
+                    txtLog.ScrollToCaret();
                     return null;
                 }
                 catch (Exception ex)
@@ -1186,10 +1191,10 @@ namespace WH_Panel
 
         private void textBox6_KeyUp_1(object sender, KeyEventArgs e)
         {
-            string filterText = textBox6.Text.Trim().ToLower();
+            string filterText = txtbFilterIPN.Text.Trim().ToLower();
             if (e.KeyCode == Keys.Escape)
             {
-                textBox6.Clear();
+                txtbFilterIPN.Clear();
                 filterText = string.Empty;
             }
             foreach (DataGridViewRow row in dataGridView1.Rows)
@@ -1661,7 +1666,7 @@ namespace WH_Panel
 
         private async void btnMFG_Click(object sender, EventArgs e)
         {
-            if (comboBox1.SelectedItem != null && textBox1.Text != string.Empty && textBox2.Text != string.Empty && textBox3.Text != string.Empty && textBox4.Text != string.Empty && int.Parse(textBox5.Text) > 0 && int.Parse(textBox5.Text) <= 50000)
+            if (comboBox1.SelectedItem != null && txtbInputIPN.Text != string.Empty && textBox2.Text != string.Empty && textBox3.Text != string.Empty && textBox4.Text != string.Empty && int.Parse(textBox5.Text) > 0 && int.Parse(textBox5.Text) <= 50000)
             {
                 string selectedWarehouseName = comboBox1.SelectedItem.ToString().Split(' ')[0];
 
@@ -1732,7 +1737,7 @@ namespace WH_Panel
                 {
                     new TransOrder
                     {
-                        PARTNAME = textBox1.Text,
+                        PARTNAME = txtbInputIPN.Text,
                         TQUANT = int.Parse(textBox5.Text),
                         PACKCODE = cmbPackCode.SelectedItem != null ? cmbPackCode.SelectedItem.ToString() : "Bag",
                         UNITNAME = "יח'",
@@ -1954,6 +1959,10 @@ namespace WH_Panel
             }
         }
 
-     
+        private void btnClearIpnFilter_Click(object sender, EventArgs e)
+        {
+            txtbFilterIPN.Clear();
+            txtbFilterIPN.Focus();
+        }
     }
 }

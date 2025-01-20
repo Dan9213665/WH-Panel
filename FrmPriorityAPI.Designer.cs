@@ -32,7 +32,7 @@
             tableLayoutPanel1 = new TableLayoutPanel();
             groupBox1 = new GroupBox();
             tableLayoutPanel2 = new TableLayoutPanel();
-            textBox1 = new TextBox();
+            txtbInputIPN = new TextBox();
             textBox2 = new TextBox();
             textBox3 = new TextBox();
             textBox4 = new TextBox();
@@ -60,10 +60,11 @@
             comboBox1 = new ComboBox();
             groupBox3 = new GroupBox();
             dataGridView1 = new DataGridView();
-            textBox6 = new TextBox();
+            txtbFilterIPN = new TextBox();
             groupBox4 = new GroupBox();
             dataGridView2 = new DataGridView();
             txtbWHSID = new TextBox();
+            btnClearIpnFilter = new Button();
             tableLayoutPanel4 = new TableLayoutPanel();
             gbxINSERT = new GroupBox();
             tableLayoutPanel5 = new TableLayoutPanel();
@@ -137,7 +138,7 @@
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel2.Controls.Add(textBox1, 0, 1);
+            tableLayoutPanel2.Controls.Add(txtbInputIPN, 0, 1);
             tableLayoutPanel2.Controls.Add(textBox2, 0, 3);
             tableLayoutPanel2.Controls.Add(textBox3, 0, 5);
             tableLayoutPanel2.Controls.Add(textBox4, 0, 7);
@@ -173,16 +174,16 @@
             tableLayoutPanel2.Size = new Size(602, 214);
             tableLayoutPanel2.TabIndex = 0;
             // 
-            // textBox1
+            // txtbInputIPN
             // 
-            textBox1.Dock = DockStyle.Fill;
-            textBox1.Location = new Point(3, 24);
-            textBox1.Name = "textBox1";
-            textBox1.PlaceholderText = "input IPN";
-            textBox1.Size = new Size(194, 23);
-            textBox1.TabIndex = 0;
-            textBox1.TextAlign = HorizontalAlignment.Center;
-            textBox1.KeyDown += textBox1_KeyDown;
+            txtbInputIPN.Dock = DockStyle.Fill;
+            txtbInputIPN.Location = new Point(3, 24);
+            txtbInputIPN.Name = "txtbInputIPN";
+            txtbInputIPN.PlaceholderText = "input IPN";
+            txtbInputIPN.Size = new Size(194, 23);
+            txtbInputIPN.TabIndex = 0;
+            txtbInputIPN.TextAlign = HorizontalAlignment.Center;
+            txtbInputIPN.KeyDown += textBox1_KeyDown;
             // 
             // textBox2
             // 
@@ -463,9 +464,10 @@
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel3.Controls.Add(comboBox1, 0, 0);
             tableLayoutPanel3.Controls.Add(groupBox3, 0, 2);
-            tableLayoutPanel3.Controls.Add(textBox6, 0, 1);
+            tableLayoutPanel3.Controls.Add(txtbFilterIPN, 0, 1);
             tableLayoutPanel3.Controls.Add(groupBox4, 2, 2);
             tableLayoutPanel3.Controls.Add(txtbWHSID, 1, 0);
+            tableLayoutPanel3.Controls.Add(btnClearIpnFilter, 1, 1);
             tableLayoutPanel3.Dock = DockStyle.Fill;
             tableLayoutPanel3.Location = new Point(3, 19);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -517,15 +519,16 @@
             dataGridView1.CellClick += dataGridView1_CellClick;
             dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
             // 
-            // textBox6
+            // txtbFilterIPN
             // 
-            textBox6.Location = new Point(3, 41);
-            textBox6.Name = "textBox6";
-            textBox6.PlaceholderText = "filter IPN";
-            textBox6.Size = new Size(225, 23);
-            textBox6.TabIndex = 3;
-            textBox6.TextAlign = HorizontalAlignment.Center;
-            textBox6.KeyUp += textBox6_KeyUp_1;
+            txtbFilterIPN.Dock = DockStyle.Fill;
+            txtbFilterIPN.Location = new Point(3, 41);
+            txtbFilterIPN.Name = "txtbFilterIPN";
+            txtbFilterIPN.PlaceholderText = "filter IPN";
+            txtbFilterIPN.Size = new Size(399, 23);
+            txtbFilterIPN.TabIndex = 3;
+            txtbFilterIPN.TextAlign = HorizontalAlignment.Center;
+            txtbFilterIPN.KeyUp += textBox6_KeyUp_1;
             // 
             // groupBox4
             // 
@@ -563,6 +566,17 @@
             txtbWHSID.ReadOnly = true;
             txtbWHSID.Size = new Size(399, 23);
             txtbWHSID.TabIndex = 5;
+            // 
+            // btnClearIpnFilter
+            // 
+            btnClearIpnFilter.Dock = DockStyle.Fill;
+            btnClearIpnFilter.Location = new Point(408, 41);
+            btnClearIpnFilter.Name = "btnClearIpnFilter";
+            btnClearIpnFilter.Size = new Size(399, 32);
+            btnClearIpnFilter.TabIndex = 6;
+            btnClearIpnFilter.Text = "Clear IPN filter";
+            btnClearIpnFilter.UseVisualStyleBackColor = true;
+            btnClearIpnFilter.Click += btnClearIpnFilter_Click;
             // 
             // tableLayoutPanel4
             // 
@@ -824,7 +838,7 @@
         private TableLayoutPanel tableLayoutPanel1;
         private GroupBox groupBox1;
         private TableLayoutPanel tableLayoutPanel2;
-        private TextBox textBox1;
+        private TextBox txtbInputIPN;
         private TextBox textBox2;
         private TextBox textBox3;
         private TextBox textBox4;
@@ -841,7 +855,7 @@
         private TableLayoutPanel tableLayoutPanel3;
         private GroupBox groupBox3;
         private DataGridView dataGridView1;
-        private TextBox textBox6;
+        private TextBox txtbFilterIPN;
         private GroupBox groupBox4;
         private DataGridView dataGridView2;
         private GroupBox gbxINSERT;
@@ -874,5 +888,6 @@
         private ComboBox cmbPackCode;
         private RadioButton rbtFTK;
         private Button btnBULKinsert;
+        private Button btnClearIpnFilter;
     }
 }
