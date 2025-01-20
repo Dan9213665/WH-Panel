@@ -610,23 +610,27 @@ namespace WH_Panel
                         }
                         else
                         {
-                            MessageBox.Show("No data found for the specified part name.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            //MessageBox.Show("No data found for the specified part name.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            AutoClosingMessageBox.Show("No data found for the specified part name.", 1000,Color.Red);
+
                         }
                     }
                     catch (HttpRequestException ex)
                     {
-                        MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        AutoClosingMessageBox.Show($"Request error: {ex.Message}", 1000, Color.Red);
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        AutoClosingMessageBox.Show($"Request error: {ex.Message}", 1000, Color.Red);
                     }
                 }
             }
             else if (e.KeyCode == Keys.Escape)
             {
-               textBox1.Clear();
-                
+               textBox1.Clear();textBox2.Clear(); textBox3.Clear(); textBox4.Clear(); txtbPART.Clear();
+
             }
         }
         private void printSticker(PR_PART wHitem)

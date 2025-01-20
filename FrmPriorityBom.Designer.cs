@@ -33,6 +33,8 @@
             tableLayoutPanel2 = new TableLayoutPanel();
             lblLoading = new Label();
             cmbROBxList = new ComboBox();
+            btnKitLabel = new Button();
+            btnReport = new Button();
             gbxLoadedWo = new GroupBox();
             tableLayoutPanel3 = new TableLayoutPanel();
             txtbRob = new TextBox();
@@ -93,11 +95,15 @@
             // 
             // tableLayoutPanel2
             // 
-            tableLayoutPanel2.ColumnCount = 2;
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel2.ColumnCount = 4;
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 51.02041F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.32653F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.32653F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.32653F));
             tableLayoutPanel2.Controls.Add(lblLoading, 1, 0);
             tableLayoutPanel2.Controls.Add(cmbROBxList, 0, 0);
+            tableLayoutPanel2.Controls.Add(btnKitLabel, 2, 0);
+            tableLayoutPanel2.Controls.Add(btnReport, 3, 0);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.Location = new Point(3, 19);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -112,9 +118,9 @@
             lblLoading.BackColor = Color.IndianRed;
             lblLoading.Dock = DockStyle.Fill;
             lblLoading.ForeColor = Color.White;
-            lblLoading.Location = new Point(344, 0);
+            lblLoading.Location = new Point(350, 0);
             lblLoading.Name = "lblLoading";
-            lblLoading.Size = new Size(335, 42);
+            lblLoading.Size = new Size(105, 42);
             lblLoading.TabIndex = 1;
             lblLoading.Text = "Loading";
             lblLoading.TextAlign = ContentAlignment.MiddleCenter;
@@ -127,9 +133,32 @@
             cmbROBxList.FormattingEnabled = true;
             cmbROBxList.Location = new Point(3, 3);
             cmbROBxList.Name = "cmbROBxList";
-            cmbROBxList.Size = new Size(335, 29);
+            cmbROBxList.Size = new Size(341, 29);
             cmbROBxList.TabIndex = 0;
             cmbROBxList.SelectedIndexChanged += cmbROBxList_SelectedIndexChanged;
+            // 
+            // btnKitLabel
+            // 
+            btnKitLabel.BackgroundImage = Properties.Resources.kitLabelPrint;
+            btnKitLabel.BackgroundImageLayout = ImageLayout.Stretch;
+            btnKitLabel.Dock = DockStyle.Fill;
+            btnKitLabel.Location = new Point(461, 3);
+            btnKitLabel.Name = "btnKitLabel";
+            btnKitLabel.Size = new Size(105, 36);
+            btnKitLabel.TabIndex = 2;
+            btnKitLabel.UseVisualStyleBackColor = true;
+            btnKitLabel.Click += btnKitLabel_Click;
+            // 
+            // btnReport
+            // 
+            btnReport.BackgroundImage = Properties.Resources.sendtoprinter;
+            btnReport.BackgroundImageLayout = ImageLayout.Center;
+            btnReport.Dock = DockStyle.Fill;
+            btnReport.Location = new Point(572, 3);
+            btnReport.Name = "btnReport";
+            btnReport.Size = new Size(107, 36);
+            btnReport.TabIndex = 3;
+            btnReport.UseVisualStyleBackColor = true;
             // 
             // gbxLoadedWo
             // 
@@ -372,5 +401,7 @@
         private Label lblPing;
         private TextBox txtbRev;
         private TextBox txtbINPUTqty;
+        private Button btnKitLabel;
+        private Button btnReport;
     }
 }
