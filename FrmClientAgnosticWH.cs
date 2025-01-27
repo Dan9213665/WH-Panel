@@ -618,7 +618,7 @@ namespace WH_Panel
             if (Environment.MachineName == "RT13" || Environment.MachineName == "RT12" || Environment.MachineName == "RT1" || Environment.MachineName == "RT19")
             {
 
-                int qty = 0;
+                //int qty = 0;
                 string sorce_req = string.Empty;
                 if (radioButton1.Checked == true)
                 {
@@ -1219,7 +1219,7 @@ namespace WH_Panel
             }
             catch (Exception ex)
             {
-                // MessageBox.Show($"Error loading STOCK table: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                 MessageBox.Show($"Error loading STOCK table: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             // Update UI elements

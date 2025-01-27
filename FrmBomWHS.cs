@@ -206,6 +206,7 @@ namespace WH_Panel
             catch (Exception ex)
             {
                 // Handle the exception
+                MessageBox.Show(ex.Message);
             }
             return balance;
         }
@@ -613,7 +614,7 @@ namespace WH_Panel
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Incorrect search pattern, remove invalid character and try again!");
+                MessageBox.Show($"Incorrect search pattern, remove invalid character and try again! {ex.Message}");
                 throw;
             }
         }

@@ -489,7 +489,7 @@ namespace WH_Panel
                 WrapContents = true // Set WrapContents to false
             };
             dynamicForm.Controls.Add(panel);
-            int maxWidth = 0;
+            ///int maxWidth = 0;
             foreach (var warehouse in warehouses)
             {
                 var button = new Button
@@ -1356,7 +1356,7 @@ namespace WH_Panel
 
                     // Calculate the sum of Stock where IPN = wHitem.IPN, converting Stock to int
                     string sumQuery = "SELECT SUM(CAST(Stock AS INT)) FROM STOCK WHERE IPN = @IPN";
-                    int totalStock = 0;
+                    //int totalStock = 0;
 
                     using (SqlCommand sumCommand = new SqlCommand(sumQuery, conn))
                     {
@@ -1480,7 +1480,7 @@ namespace WH_Panel
                 }
                 catch (Exception e)
                 {
-                    //MessageBox.Show(e.Message);
+                    MessageBox.Show(e.Message);
                 }
             }
 
@@ -1510,7 +1510,7 @@ namespace WH_Panel
                 }
                 catch (Exception e)
                 {
-                    //MessageBox.Show(e.Message);
+                    MessageBox.Show(e.Message);
                 }
             }
 
@@ -1552,7 +1552,7 @@ namespace WH_Panel
                 }
                 catch (Exception e)
                 {
-                    //MessageBox.Show(e.Message);
+                    MessageBox.Show(e.Message);
                 }
             }
 

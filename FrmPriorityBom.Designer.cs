@@ -47,6 +47,7 @@
             textBox4 = new TextBox();
             txtbRev = new TextBox();
             txtbINPUTqty = new TextBox();
+            btnGetMFNs = new Button();
             dgwBom = new DataGridView();
             gbxIPNstockMovements = new GroupBox();
             dgwIPNmoves = new DataGridView();
@@ -77,7 +78,7 @@
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 3;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 70F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 100F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 110F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.Size = new Size(1158, 613);
             tableLayoutPanel1.TabIndex = 0;
@@ -160,6 +161,7 @@
             btnReport.Size = new Size(107, 36);
             btnReport.TabIndex = 3;
             btnReport.UseVisualStyleBackColor = true;
+            btnReport.Click += btnReport_Click;
             // 
             // gbxLoadedWo
             // 
@@ -168,7 +170,7 @@
             gbxLoadedWo.Dock = DockStyle.Fill;
             gbxLoadedWo.Location = new Point(3, 73);
             gbxLoadedWo.Name = "gbxLoadedWo";
-            gbxLoadedWo.Size = new Size(688, 94);
+            gbxLoadedWo.Size = new Size(688, 104);
             gbxLoadedWo.TabIndex = 2;
             gbxLoadedWo.TabStop = false;
             gbxLoadedWo.Text = "Loaded WO";
@@ -191,14 +193,15 @@
             tableLayoutPanel3.Controls.Add(textBox4, 3, 1);
             tableLayoutPanel3.Controls.Add(txtbRev, 2, 0);
             tableLayoutPanel3.Controls.Add(txtbINPUTqty, 0, 2);
+            tableLayoutPanel3.Controls.Add(btnGetMFNs, 1, 2);
             tableLayoutPanel3.Dock = DockStyle.Fill;
             tableLayoutPanel3.Location = new Point(3, 19);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
             tableLayoutPanel3.RowCount = 3;
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel3.Size = new Size(682, 72);
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333359F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333359F));
+            tableLayoutPanel3.Size = new Size(682, 82);
             tableLayoutPanel3.TabIndex = 0;
             // 
             // txtbRob
@@ -245,7 +248,7 @@
             // 
             txtbInputIPN.AcceptsTab = true;
             txtbInputIPN.Dock = DockStyle.Fill;
-            txtbInputIPN.Location = new Point(3, 27);
+            txtbInputIPN.Location = new Point(3, 30);
             txtbInputIPN.Name = "txtbInputIPN";
             txtbInputIPN.PlaceholderText = "Filter by IPN";
             txtbInputIPN.Size = new Size(130, 23);
@@ -256,7 +259,7 @@
             // textBox2
             // 
             textBox2.Dock = DockStyle.Fill;
-            textBox2.Location = new Point(139, 27);
+            textBox2.Location = new Point(139, 30);
             textBox2.Name = "textBox2";
             textBox2.PlaceholderText = "Filter by MFPN";
             textBox2.Size = new Size(130, 23);
@@ -266,7 +269,7 @@
             // textBox3
             // 
             textBox3.Dock = DockStyle.Fill;
-            textBox3.Location = new Point(275, 27);
+            textBox3.Location = new Point(275, 30);
             textBox3.Name = "textBox3";
             textBox3.PlaceholderText = "Filter by Description";
             textBox3.Size = new Size(130, 23);
@@ -276,7 +279,7 @@
             // textBox4
             // 
             textBox4.Dock = DockStyle.Fill;
-            textBox4.Location = new Point(411, 27);
+            textBox4.Location = new Point(411, 30);
             textBox4.Name = "textBox4";
             textBox4.PlaceholderText = "Filter by ALT";
             textBox4.Size = new Size(130, 23);
@@ -296,7 +299,7 @@
             // txtbINPUTqty
             // 
             txtbINPUTqty.Dock = DockStyle.Fill;
-            txtbINPUTqty.Location = new Point(3, 51);
+            txtbINPUTqty.Location = new Point(3, 57);
             txtbINPUTqty.Name = "txtbINPUTqty";
             txtbINPUTqty.PlaceholderText = "Input Qty";
             txtbINPUTqty.Size = new Size(130, 23);
@@ -305,13 +308,25 @@
             txtbINPUTqty.KeyDown += txtbINPUTqty_KeyDown;
             txtbINPUTqty.KeyUp += txtbINPUTqty_KeyUp;
             // 
+            // btnGetMFNs
+            // 
+            btnGetMFNs.Dock = DockStyle.Fill;
+            btnGetMFNs.Font = new Font("Segoe UI", 7F);
+            btnGetMFNs.Location = new Point(139, 57);
+            btnGetMFNs.Name = "btnGetMFNs";
+            btnGetMFNs.Size = new Size(130, 22);
+            btnGetMFNs.TabIndex = 7;
+            btnGetMFNs.Text = "GET MFPNs";
+            btnGetMFNs.UseVisualStyleBackColor = true;
+            btnGetMFNs.Click += btnGetMFNs_Click;
+            // 
             // dgwBom
             // 
             dgwBom.AllowUserToAddRows = false;
             dgwBom.AllowUserToDeleteRows = false;
             dgwBom.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgwBom.Dock = DockStyle.Fill;
-            dgwBom.Location = new Point(3, 173);
+            dgwBom.Location = new Point(3, 183);
             dgwBom.Name = "dgwBom";
             dgwBom.ReadOnly = true;
             dgwBom.RowTemplate.Height = 25;
@@ -324,7 +339,7 @@
             tableLayoutPanel1.SetColumnSpan(gbxIPNstockMovements, 2);
             gbxIPNstockMovements.Controls.Add(dgwIPNmoves);
             gbxIPNstockMovements.Dock = DockStyle.Fill;
-            gbxIPNstockMovements.Location = new Point(697, 173);
+            gbxIPNstockMovements.Location = new Point(697, 183);
             gbxIPNstockMovements.Name = "gbxIPNstockMovements";
             gbxIPNstockMovements.Size = new Size(458, 519);
             gbxIPNstockMovements.TabIndex = 4;
@@ -404,5 +419,6 @@
         private TextBox txtbINPUTqty;
         private Button btnKitLabel;
         private Button btnReport;
+        private Button btnGetMFNs;
     }
 }

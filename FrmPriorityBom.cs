@@ -47,7 +47,6 @@ using Label = System.Windows.Forms.Label;
 using System.Web;
 using Seagull.BarTender.Print;
 using Range = Microsoft.Office.Interop.Excel.Range;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 using Application = Microsoft.Office.Interop.Excel.Application;
 using static Seagull.Framework.OS.ServiceControlManager;
 using System;
@@ -96,7 +95,7 @@ namespace WH_Panel
             cmbROBxList.DrawItem += cmbROBxList_DrawItem;
             cmbROBxList.SelectedIndexChanged += cmbROBxList_SelectedIndexChanged;
             // Initialize DataGridView columns
-            
+
             // Handle the CellFormatting event
             dgwBom.CellFormatting += dgwBom_CellFormatting;
             AttachTextBoxEvents(this);
@@ -161,7 +160,7 @@ namespace WH_Panel
 
         public class WarehouseApiResponse
         {
-            public List<Warehouse> value { get; set; }
+            public List<Warehouse> WarehouseList { get; set; }
         }
 
         public class Warehouse
@@ -442,13 +441,24 @@ namespace WH_Panel
                         dgwBom.Rows.Clear();
                         foreach (var detail in aggregatedDetails)
                         {
-                            string calcValue = !string.IsNullOrEmpty(detail.CALC) && !detail.CALC.Contains("+0") ? detail.CALC : "";
-                            dgwBom.Rows.Add(detail.PARTNAME, "", detail.PARTDES, "", detail.QUANT, detail.CQUANT, detail.DELTA, calcValue, "", detail.TRANS, detail.KLINE);
+                            //string calcValue = !string.IsNullOrEmpty(detail.CALC) && !detail.CALC.Contains("+0") ? detail.CALC : "";
+
+                            if (detail.CALC.Contains("+0"))
+                            {
+                                detail.CALC = detail.CALC.Replace("+0", "");
+                            }
+                            else if (detail.CALC == "0")
+                            {
+                                detail.CALC = "";
+                            }
+                            dgwBom.Rows.Add(detail.PARTNAME,"", detail.PARTDES,"", detail.QUANT, detail.CQUANT, detail.DELTA, detail.CALC,"", detail.TRANS, detail.KLINE);
                         }
 
                         // Fetch MFPNs for each row with a delay
                         await FetchWarehouseBalances();
-                        // await FetchMFPNsWithDelay();
+                        //await FetchMFPNsWithDelay();
+
+                        //await FetchMFPNsForAllRows();
                     }
                     else
                     {
@@ -525,9 +535,14 @@ namespace WH_Panel
 
         private async Task FetchMFPNForRow(DataGridViewRow row)
         {
+
+            //MessageBox.Show("Test");
             if (row.Cells["PARTNAME"].Value != null && (row.Cells["MFPN"].Value == string.Empty || row.Cells["MFPN"].Value == null))
+            //if (row.Cells["PARTNAME"].Value != null) //&& (string.IsNullOrEmpty(row.Cells["MFPN"].Value?.ToString())|| row.Cells["MFPN"].Value=="")
             {
                 string partName = row.Cells["PARTNAME"].Value.ToString();
+                //MessageBox.Show("partName:"+partName);
+
                 string partUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PARTNAME eq '{partName}'";
 
                 using (HttpClient client = new HttpClient())
@@ -547,13 +562,19 @@ namespace WH_Panel
                         string partResponseBody = await partResponse.Content.ReadAsStringAsync();
                         // Parse the JSON response
                         var partApiResponse = JsonConvert.DeserializeObject<ApiResponse>(partResponseBody);
+
+                        //MessageBox.Show(partApiResponse.ToString());
                         // Check if the response contains any data
                         if (partApiResponse.value != null && partApiResponse.value.Count > 0)
                         {
                             var part = partApiResponse.value[0];
+
+                            //MessageBox.Show(partApiResponse.value[0].ToString());
                             // Directly update the DataGridView cell
                             row.Cells["MFPN"].Value = part.MNFPARTNAME;
                             dgwBom.Refresh();
+
+                            //MessageBox.Show($"Updated MFPN for {partName} to {part.MNFPARTNAME}");
                         }
                     }
                     catch (HttpRequestException ex)
@@ -566,13 +587,22 @@ namespace WH_Panel
                     }
                 }
             }
+            await Task.Delay(200); // 100 milliseconds delay
+        }
+
+        private async Task FetchMFPNsForAllRows()
+        {
+            foreach (DataGridViewRow row in dgwBom.Rows)
+            {
+                await FetchMFPNForRow(row);
+            }
         }
 
         private async Task FetchMFPNsWithDelay()
         {
             foreach (DataGridViewRow row in dgwBom.Rows)
             {
-                if (row.Cells["PARTNAME"].Value != null && (row.Cells["MFPN"].Value != string.Empty) || ((row.Cells["MFPN"].Value != null)))
+                if (row.Cells["PARTNAME"].Value != null)  //&& ((row.Cells["MFPN"].Value == string.Empty) || (row.Cells["MFPN"].Value == null))
 
                 {
                     string partName = row.Cells["PARTNAME"].Value.ToString();
@@ -607,11 +637,12 @@ namespace WH_Panel
                         }
                         catch (HttpRequestException ex)
                         {
-                            // MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            
+                           MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                         catch (Exception ex)
                         {
-                            // MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
 
@@ -910,6 +941,13 @@ namespace WH_Panel
                                 AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
                                 Name = "TQUANT"
                             };
+                            var PackColumn = new DataGridViewTextBoxColumn
+                            {
+                                DataPropertyName = "PACK",
+                                HeaderText = "PACK",
+                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                                Name = "PACK"
+                            };
                             // Add columns to the DataGridView
                             dgwIPNmoves.Columns.AddRange(new DataGridViewColumn[]
                             {
@@ -917,15 +955,31 @@ namespace WH_Panel
                         logDocNoColumn,
                         logDOCDESColumn,
                         SUPCUSTNAMEColumn,
-                        tQuantColumn
+                        tQuantColumn,
+                        PackColumn
                             });
+                            //// Populate the DataGridView with the data
+                            //dgwIPNmoves.Rows.Clear();
+                            //foreach (var logPart in logPartApiResponse.value)
+                            //{
+                            //    foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
+                            //    {
+                            //        dgwIPNmoves.Rows.Add(trans.CURDATE, trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, trans.TQUANT, "");
+                            //    }
+                            //}
+                            //gbxIPNstockMovements.Text = $"Stock Movements for {partName}";
+                            //ColorTheRows(dgwIPNmoves);
+
                             // Populate the DataGridView with the data
                             dgwIPNmoves.Rows.Clear();
                             foreach (var logPart in logPartApiResponse.value)
                             {
                                 foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
                                 {
-                                    dgwIPNmoves.Rows.Add(trans.CURDATE, trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, trans.TQUANT);
+                                    var rowIndex = dgwIPNmoves.Rows.Add(trans.CURDATE, trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, trans.TQUANT, "");
+                                    var row = dgwIPNmoves.Rows[rowIndex];
+                                    // Fetch the PACK code asynchronously
+                                    _ = FetchAndSetPackCodeAsync(row, trans.LOGDOCNO, partName, trans.TQUANT);
                                 }
                             }
                             gbxIPNstockMovements.Text = $"Stock Movements for {partName}";
@@ -933,6 +987,7 @@ namespace WH_Panel
 
                             // Fetch MFPN for the selected row
                             await FetchMFPNForRow(selectedRow);
+                           
                             //await FetchMFPNsWithDelay();
                         }
                         else
@@ -952,6 +1007,57 @@ namespace WH_Panel
             }
         }
 
+        private async Task FetchAndSetPackCodeAsync(DataGridViewRow row, string logDocNo, string partName, int quant)
+        {
+            string packCode = await FetchPackCodeAsync(logDocNo, partName, quant);
+            if (packCode != null)
+            {
+                row.Cells["PACK"].Value = packCode;
+            }
+        }
+        public async Task<string> FetchPackCodeAsync(string logDocNo, string partName, int quant)
+        {
+            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM";
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    // Set the request headers if needed
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    // Set the Authorization header
+                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    // Make the HTTP GET request
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
+                    // Read the response content
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    // Parse the JSON response
+                    var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+                    var transOrders = apiResponse["value"].SelectMany(d => d["TRANSORDER_P_SUBFORM"]).ToList();
+                    // Find the matching PARTNAME and QUANT
+                    var matchingOrder = transOrders.FirstOrDefault(t => t["PARTNAME"].ToString() == partName && int.Parse(t["TQUANT"].ToString()) == quant);
+                    if (matchingOrder != null)
+                    {
+                        return matchingOrder["PACKCODE"].ToString();
+                    }
+                    return null;
+                }
+                catch (HttpRequestException ex)
+                {
+                    MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                 
+                    return null;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+             
+                    return null;
+                }
+            }
+        }
         private void UpdatePing(long milliseconds)
         {
             // Update the ping label with the elapsed time
@@ -1199,6 +1305,8 @@ namespace WH_Panel
             string getUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM?$filter=PARTNAME eq '{partName}'";
             int kline = 0;
 
+            string package = string.Empty;
+
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -1226,6 +1334,10 @@ namespace WH_Panel
                         if (matchingRow != null)
                         {
                             kline = matchingRow["KLINE"].Value<int>();
+                            if (matchingRow["PACKCODE"] != null)
+                            {
+                                package = matchingRow["PACKCODE"].Value<string>();
+                            }
                         }
                         else
                         {
@@ -1264,7 +1376,8 @@ namespace WH_Panel
                     {
                         QUANT = qty,
                         WARHSNAME = "ENE",
-                        TOWARHSNAME = "Flr"
+                        TOWARHSNAME = "Flr",
+                        PACKCODE = package
                     };
                     var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
 
@@ -1274,7 +1387,7 @@ namespace WH_Panel
                     patchResponse.EnsureSuccessStatusCode();
 
                     AutoClosingMessageBox.Show($"{partName} - {qty} PCS moved to {serialName}", 1000, Color.Green); // Show message for 2 seconds
-                
+
 
                     // Make another GET request to update the WH cell
                     HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
@@ -1392,108 +1505,6 @@ namespace WH_Panel
                 }
             }
         }
-
-        //private void GenerateHTMLkitBoxLabel(int qtyToPrint)
-        //{
-
-
-        //    string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-
-        //             // Extract only the last part of the project name
-        //    string projectName = txtbName.Text;
-
-
-        //    // Display the extracted project name for debugging
-        //    //MessageBox.Show(projectName);
-
-        //    // Construct the filename
-        //    string filename = "\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\" +
-        //        _fileTimeStamp + "_box label for_" + projectName + ".html";
-
-        //    //MessageBox.Show(filename); // Display the constructed filename for debugging
-
-
-
-
-
-        //    using (StreamWriter writer = new StreamWriter(filename))
-        //    {
-        //        writer.WriteLine("<html style='text-align:center'>");
-        //        writer.WriteLine("<head>");
-        //        writer.WriteLine("<title>" + txtbName.Text.ToString()+"</title>");
-        //        writer.WriteLine("</head>");
-        //        writer.WriteLine("<body>");
-        //        string[] parts = { txtbName.Text,txtbRob.Text, txtbQty.Text+" PCS" };
-        //        string ConvertImageToBase64(string imagePath)
-        //        {
-        //            byte[] imageBytes = File.ReadAllBytes(imagePath);
-        //            return Convert.ToBase64String(imageBytes);
-        //        }
-        //        string imageUrl = string.Empty;
-        //        string base64Image = string.Empty;
-        //        //foreach (ClientWarehouse w in warehouses)
-        //        //{
-        //        //    //if (currentIPN.StartsWith(w.clPrefix))
-        //        //    if (comboBox1.SelectedItem == w.clName)
-        //        //    {
-        //        //        //MessageBox.Show(w.clName);
-        //        //        if (File.Exists(w.clLogo))
-        //        //        {
-        //        //            // Convert the local file path to a relative URL
-        //        //            string logoFilePath = Path.Combine("dbr1", "WareHouse", "STOCK_CUSTOMERS", w.clName, w.clLogo);
-        //        //            string relativeUrl = logoFilePath.Replace("\\", "/");
-        //        //            // Use the relative URL as the image source
-        //        //            imageUrl = relativeUrl;
-        //        //        }
-        //        //    }
-        //        //}
-        //        string backgroundImageUrl = "eleBackGND.png";
-        //        //Console.WriteLine("Background Image Path: " + backgroundImageUrl);
-        //        string altText = "WH image";
-        //        for (int i = 0; i < qtyToPrint; i++)
-        //        {
-        //            writer.WriteLine("<table border='1' style='width: 600px; margin: auto; display: table;'>");  //background-size: cover;
-        //            //writer.WriteLine("<col style='width: 25%; background: url(" + backgroundImageUrl + ") no-repeat center center; background-size: contain;'>"); // 25% width for the image column
-        //            writer.WriteLine("<col style='width: 25%; background: url(" + backgroundImageUrl + ") no-repeat center center; background-size: 100% 100%;'>");
-        //            writer.WriteLine("<col style='width: 75%;'>"); // 75% width for the text column
-        //            writer.WriteLine("<tr>");
-
-        //            //writer.WriteLine("<td  style='vertical-align: middle;'><img id='logoImage' src='" + imageUrl + "' alt='" + altText + "' style='height: 100%; width: 100%;'></td>"); // Image column
-
-        //            writer.WriteLine("<td style='position: relative; vertical-align: middle;'>");
-        //            writer.WriteLine("    <img id='logoImage' src='" + imageUrl + "' alt='" + altText + "' style='height: 100%; width: 100%;'>");
-        //            writer.WriteLine("    <div style='position: absolute; top: 1%; left: 5%; transform: translate(-1%, -1%); color: white; font-size: 15px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);'>");
-        //            // Get the current date and time
-        //            string currentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-
-        //            // Write the current date and time to the output
-        //            writer.WriteLine(currentDateTime);
-        //            writer.WriteLine("    </div>");
-        //            writer.WriteLine("</td>");
-
-
-
-        //            writer.WriteLine("<td style='text-align: center; background: rgba(255, 255, 255, 0.1) url(" + backgroundImageUrl + ") no-repeat center center; background-size: 111% 111%; vertical-align: middle; transform: scaleX(-1);'>");
-        //            foreach (string part in parts)
-        //            {
-        //                writer.WriteLine("<div style='text-align: center;  border: 1px solid black; margin: 0px; padding: 5px; vertical-align: middle; font-size: 50px; font-weight: bold;text-shadow: -4px -4px 2px #fff, 4px -4px 2px #fff, -4px 4px 2px #fff, 4px 4px 2px #fff;transform: scaleX(-1);'>" + part + "</div>");
-        //            }
-        //            writer.WriteLine("</td>");
-        //            writer.WriteLine("</tr>");
-        //            writer.WriteLine("</table>");
-        //        }
-        //        writer.WriteLine("</body>");
-        //        writer.WriteLine("</html>");
-        //    }
-        //    // Open the file in default browser
-        //    var p = new Process();
-        //    p.StartInfo = new ProcessStartInfo(filename)
-        //    {
-        //        UseShellExecute = true
-        //    };
-        //    p.Start();
-        //}
-
 
         private void GenerateHTMLkitBoxLabel(int qtyToPrint)
         {
@@ -1909,6 +1920,193 @@ namespace WH_Panel
 
                 DialogResult = DialogResult.OK;
             }
+        }
+
+        private void btnReport_Click(object sender, EventArgs e)
+        {
+            // Sort the DataGridView by the DELTA column in descending order
+            dgwBom.Sort(dgwBom.Columns["DELTA"], ListSortDirection.Ascending);
+
+            string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+            string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\KitsStatusReport_{_fileTimeStamp}.html";
+
+            using (StreamWriter writer = new StreamWriter(filename))
+            {
+                writer.WriteLine("<html style='text-align:center;background-color:gray;color:white;'>");
+                writer.WriteLine("<head>");
+                writer.WriteLine("<title>Kit Status Report</title>");
+                writer.WriteLine("<style>");
+                writer.WriteLine("table { border-collapse: collapse; width: 100%; }");
+                writer.WriteLine("th, td { border: 1px solid black; padding: 8px; text-align: center;}");
+                writer.WriteLine("th { cursor: pointer; position: sticky; top: 0; background: black; z-index: 1; }");
+                writer.WriteLine(".green { background-color: green; color: white; }");
+                writer.WriteLine(".red { background-color: indianred; color: white; }");
+                writer.WriteLine(".header-table td { font-size: 2em; font-weight: bold; }");
+                writer.WriteLine("</style>");
+                writer.WriteLine("<script>");
+                writer.WriteLine("function sortTable(n) {");
+                writer.WriteLine("  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;");
+                writer.WriteLine("  table = document.getElementById('kitsTable');");
+                writer.WriteLine("  switching = true;");
+                writer.WriteLine("  dir = 'asc';");
+                writer.WriteLine("  while (switching) {");
+                writer.WriteLine("    switching = false;");
+                writer.WriteLine("    rows = table.rows;");
+                writer.WriteLine("    for (i = 1; i < (rows.length - 1); i++) {");
+                writer.WriteLine("      shouldSwitch = false;");
+                writer.WriteLine("      x = rows[i].getElementsByTagName('TD')[n];");
+                writer.WriteLine("      y = rows[i + 1].getElementsByTagName('TD')[n];");
+                writer.WriteLine("      if (dir == 'asc') {");
+                writer.WriteLine("        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {");
+                writer.WriteLine("          shouldSwitch = true;");
+                writer.WriteLine("          break;");
+                writer.WriteLine("        }");
+                writer.WriteLine("      } else if (dir == 'desc') {");
+                writer.WriteLine("        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {");
+                writer.WriteLine("          shouldSwitch = true;");
+                writer.WriteLine("          break;");
+                writer.WriteLine("        }");
+                writer.WriteLine("      }");
+                writer.WriteLine("    }");
+                writer.WriteLine("    if (shouldSwitch) {");
+                writer.WriteLine("      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);");
+                writer.WriteLine("      switching = true;");
+                writer.WriteLine("      switchcount ++;");
+                writer.WriteLine("    } else {");
+                writer.WriteLine("      if (switchcount == 0 && dir == 'asc') {");
+                writer.WriteLine("        dir = 'desc';");
+                writer.WriteLine("        switching = true;");
+                writer.WriteLine("      }");
+                writer.WriteLine("    }");
+                writer.WriteLine("  }");
+                writer.WriteLine("}");
+                writer.WriteLine("function filterTable() {");
+                writer.WriteLine("  var input, filter, table, tr, td, i, j, txtValue;");
+                writer.WriteLine("  input = document.getElementById('filterInput');");
+                writer.WriteLine("  filter = input.value.toLowerCase();");
+                writer.WriteLine("  table = document.getElementById('kitsTable');");
+                writer.WriteLine("  tr = table.getElementsByTagName('tr');");
+                writer.WriteLine("  for (i = 1; i < tr.length; i++) {");
+                writer.WriteLine("    tr[i].style.display = 'none';");
+                writer.WriteLine("    td = tr[i].getElementsByTagName('td');");
+                writer.WriteLine("    for (j = 0; j < td.length; j++) {");
+                writer.WriteLine("      if (td[j]) {");
+                writer.WriteLine("        txtValue = td[j].textContent || td[j].innerText;");
+                writer.WriteLine("        if (txtValue.toLowerCase().indexOf(filter) > -1) {");
+                writer.WriteLine("          tr[i].style.display = '';");
+                writer.WriteLine("          break;");
+                writer.WriteLine("        }");
+                writer.WriteLine("      }");
+                writer.WriteLine("    }");
+                writer.WriteLine("  }");
+                writer.WriteLine("}");
+                writer.WriteLine("function clearFilter() {");
+                writer.WriteLine("  document.getElementById('filterInput').value = '';");
+                writer.WriteLine("  filterTable();");
+                writer.WriteLine("}");
+                writer.WriteLine("function printReport() {");
+                writer.WriteLine("  window.print();");
+                writer.WriteLine("}");
+                writer.WriteLine("function changeFontColor(color) {");
+                writer.WriteLine("  var elements = document.querySelectorAll('body, body *');");
+                writer.WriteLine("  for (var i = 0; i < elements.length; i++) {");
+                writer.WriteLine("    elements[i].style.color = color;");
+                writer.WriteLine("  }");
+                writer.WriteLine("}");
+                writer.WriteLine("window.addEventListener('beforeprint', function() { changeFontColor('black'); });");
+                writer.WriteLine("window.addEventListener('afterprint', function() { changeFontColor(''); });");
+                writer.WriteLine("</script>");
+                writer.WriteLine("</head>");
+                writer.WriteLine("<body>");
+                writer.WriteLine($"<h1>Kit Status Report {_fileTimeStamp}</h1>");
+
+                // Add the single row table with text from txtbRob, txtbName, txtbRev, and txtbQty
+                writer.WriteLine("<table class='header-table' style='margin-bottom: 20px;'>");
+                writer.WriteLine("<tr>");
+                writer.WriteLine($"<td>{txtbRob.Text}</td>");
+                writer.WriteLine($"<td>{txtbName.Text}</td>");
+                writer.WriteLine($"<td>{txtbRev.Text}</td>");
+                writer.WriteLine($"<td>{txtbQty.Text}</td>");
+                writer.WriteLine("</tr>");
+                writer.WriteLine("</table>");
+
+                // Add the filter input box, clear button, and print button
+                writer.WriteLine("<div style='margin-bottom: 20px; text-align: center;'>");
+                writer.WriteLine("<input type='text' id='filterInput' onkeyup='filterTable()' placeholder='Filter table...' style='padding: 10px; width: 50%;text-align:center;background:orange;'>");
+                writer.WriteLine("<button onclick='clearFilter()' style='padding: 10px;'>Clear</button>");
+                writer.WriteLine("<button onclick='printReport()' style='padding: 10px;'>Print</button>");
+                writer.WriteLine("</div>");
+
+                writer.WriteLine("<table id='kitsTable'>");
+
+                // Write table headers
+                writer.WriteLine("<tr>");
+                foreach (DataGridViewColumn column in dgwBom.Columns)
+                {
+                    if (column.Name != "TRANS" && column.Name != "KLINE")
+                    {
+                        writer.WriteLine($"<th onclick='sortTable({column.Index})'>{column.HeaderText}</th>");
+                    }
+                }
+                writer.WriteLine("</tr>");
+
+                // Write table rows
+                foreach (DataGridViewRow row in dgwBom.Rows)
+                {
+                    writer.WriteLine("<tr>");
+                    foreach (DataGridViewCell cell in row.Cells)
+                    {
+                        if (dgwBom.Columns[cell.ColumnIndex].Name != "TRANS" && dgwBom.Columns[cell.ColumnIndex].Name != "KLINE")
+                        {
+                            string cellValue = cell.Value?.ToString() ?? string.Empty;
+                            string cellClass = string.Empty;
+
+                            if (dgwBom.Columns[cell.ColumnIndex].Name == "DELTA")
+                            {
+                                if (int.TryParse(cellValue, out int deltaValue))
+                                {
+                                    cellClass = deltaValue >= 0 ? "green" : "red";
+                                }
+                            }
+                            else if (dgwBom.Columns[cell.ColumnIndex].Name == "TBALANCE")
+                            {
+                                int DELTA = Convert.ToInt32(row.Cells["DELTA"].Value);
+                                if (int.TryParse(cellValue, out int whValue))
+                                {
+                                    cellClass = (whValue >= Math.Abs(DELTA) && whValue != 0) ? "green" : "red";
+                                }
+                            }
+                            else if (dgwBom.Columns[cell.ColumnIndex].Name == "QUANT")
+                            {
+                                int req = Convert.ToInt32(row.Cells["CQUANT"].Value);
+                                if (int.TryParse(cellValue, out int kitValue))
+                                {
+                                    cellClass = (kitValue >= req && kitValue != 0) ? "green" : "red";
+                                }
+                            }
+
+                            writer.WriteLine($"<td class='{cellClass}'>{cellValue}</td>");
+                        }
+                    }
+                    writer.WriteLine("</tr>");
+                }
+                writer.WriteLine("</table>");
+                writer.WriteLine("</body>");
+                writer.WriteLine("</html>");
+            }
+
+            // Open the file in default browser
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(filename)
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+        }
+
+        private async void btnGetMFNs_Click(object sender, EventArgs e)
+        {
+            await FetchMFPNsWithDelay();
         }
     }
 }
