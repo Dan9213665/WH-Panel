@@ -33,7 +33,7 @@
             groupBox1 = new GroupBox();
             tableLayoutPanel2 = new TableLayoutPanel();
             txtbInputIPN = new TextBox();
-            textBox2 = new TextBox();
+            txtbInputMFPN = new TextBox();
             textBox3 = new TextBox();
             textBox4 = new TextBox();
             textBox5 = new TextBox();
@@ -55,6 +55,10 @@
             txtbIN = new TextBox();
             txtbOUT = new TextBox();
             cmbPackCode = new ComboBox();
+            tableLayoutPanel7 = new TableLayoutPanel();
+            cmbPreCode = new ComboBox();
+            cmbPostCode = new ComboBox();
+            txtbDecoder = new TextBox();
             groupBox2 = new GroupBox();
             tableLayoutPanel3 = new TableLayoutPanel();
             comboBox1 = new ComboBox();
@@ -65,6 +69,7 @@
             dataGridView2 = new DataGridView();
             txtbWHSID = new TextBox();
             btnClearIpnFilter = new Button();
+            btnGetMFPNs = new Button();
             tableLayoutPanel4 = new TableLayoutPanel();
             gbxINSERT = new GroupBox();
             tableLayoutPanel5 = new TableLayoutPanel();
@@ -87,6 +92,7 @@
             groupBox1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
             tableLayoutPanel6.SuspendLayout();
+            tableLayoutPanel7.SuspendLayout();
             groupBox2.SuspendLayout();
             tableLayoutPanel3.SuspendLayout();
             groupBox3.SuspendLayout();
@@ -139,7 +145,7 @@
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel2.Controls.Add(txtbInputIPN, 0, 1);
-            tableLayoutPanel2.Controls.Add(textBox2, 0, 3);
+            tableLayoutPanel2.Controls.Add(txtbInputMFPN, 0, 3);
             tableLayoutPanel2.Controls.Add(textBox3, 0, 5);
             tableLayoutPanel2.Controls.Add(textBox4, 0, 7);
             tableLayoutPanel2.Controls.Add(textBox5, 0, 9);
@@ -157,6 +163,7 @@
             tableLayoutPanel2.Controls.Add(txtbIN, 1, 7);
             tableLayoutPanel2.Controls.Add(txtbOUT, 2, 7);
             tableLayoutPanel2.Controls.Add(cmbPackCode, 1, 5);
+            tableLayoutPanel2.Controls.Add(tableLayoutPanel7, 1, 3);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.Location = new Point(3, 19);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -185,16 +192,16 @@
             txtbInputIPN.TextAlign = HorizontalAlignment.Center;
             txtbInputIPN.KeyDown += textBox1_KeyDown;
             // 
-            // textBox2
+            // txtbInputMFPN
             // 
-            textBox2.Dock = DockStyle.Fill;
-            textBox2.Location = new Point(3, 66);
-            textBox2.Name = "textBox2";
-            textBox2.PlaceholderText = "input MFPN";
-            textBox2.Size = new Size(194, 23);
-            textBox2.TabIndex = 1;
-            textBox2.TextAlign = HorizontalAlignment.Center;
-            textBox2.KeyDown += textBox2_KeyDown;
+            txtbInputMFPN.Dock = DockStyle.Fill;
+            txtbInputMFPN.Location = new Point(3, 66);
+            txtbInputMFPN.Name = "txtbInputMFPN";
+            txtbInputMFPN.PlaceholderText = "input MFPN";
+            txtbInputMFPN.Size = new Size(194, 23);
+            txtbInputMFPN.TabIndex = 1;
+            txtbInputMFPN.TextAlign = HorizontalAlignment.Center;
+            txtbInputMFPN.KeyDown += txtbInputMFPN_KeyDown;
             // 
             // textBox3
             // 
@@ -436,12 +443,61 @@
             cmbPackCode.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbPackCode.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
             cmbPackCode.FormattingEnabled = true;
-            cmbPackCode.Location = new Point(203, 108);
+            cmbPackCode.Location = new Point(403, 108);
             cmbPackCode.Name = "cmbPackCode";
             tableLayoutPanel2.SetRowSpan(cmbPackCode, 2);
-            cmbPackCode.Size = new Size(194, 40);
+            cmbPackCode.Size = new Size(196, 40);
             cmbPackCode.Sorted = true;
             cmbPackCode.TabIndex = 19;
+            // 
+            // tableLayoutPanel7
+            // 
+            tableLayoutPanel7.ColumnCount = 3;
+            tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel7.Controls.Add(cmbPreCode, 0, 0);
+            tableLayoutPanel7.Controls.Add(cmbPostCode, 2, 0);
+            tableLayoutPanel7.Controls.Add(txtbDecoder, 1, 0);
+            tableLayoutPanel7.Dock = DockStyle.Fill;
+            tableLayoutPanel7.Location = new Point(203, 66);
+            tableLayoutPanel7.Name = "tableLayoutPanel7";
+            tableLayoutPanel7.RowCount = 1;
+            tableLayoutPanel2.SetRowSpan(tableLayoutPanel7, 3);
+            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel7.Size = new Size(194, 57);
+            tableLayoutPanel7.TabIndex = 20;
+            // 
+            // cmbPreCode
+            // 
+            cmbPreCode.Dock = DockStyle.Fill;
+            cmbPreCode.FormattingEnabled = true;
+            cmbPreCode.Items.AddRange(new object[] { "1P", "6P1P", "pm:" });
+            cmbPreCode.Location = new Point(3, 3);
+            cmbPreCode.Name = "cmbPreCode";
+            cmbPreCode.Size = new Size(58, 23);
+            cmbPreCode.TabIndex = 0;
+            // 
+            // cmbPostCode
+            // 
+            cmbPostCode.Dock = DockStyle.Fill;
+            cmbPostCode.FormattingEnabled = true;
+            cmbPostCode.Items.AddRange(new object[] { "30P", "K1K", "6P2", ",qty:" });
+            cmbPostCode.Location = new Point(131, 3);
+            cmbPostCode.Name = "cmbPostCode";
+            cmbPostCode.Size = new Size(60, 23);
+            cmbPostCode.TabIndex = 1;
+            // 
+            // txtbDecoder
+            // 
+            txtbDecoder.Dock = DockStyle.Fill;
+            txtbDecoder.Location = new Point(67, 3);
+            txtbDecoder.Name = "txtbDecoder";
+            txtbDecoder.Size = new Size(58, 23);
+            txtbDecoder.TabIndex = 2;
+            txtbDecoder.TextAlign = HorizontalAlignment.Center;
+            txtbDecoder.KeyDown += txtbDecoder_KeyDown;
             // 
             // groupBox2
             // 
@@ -466,8 +522,9 @@
             tableLayoutPanel3.Controls.Add(groupBox3, 0, 2);
             tableLayoutPanel3.Controls.Add(txtbFilterIPN, 0, 1);
             tableLayoutPanel3.Controls.Add(groupBox4, 2, 2);
-            tableLayoutPanel3.Controls.Add(txtbWHSID, 1, 0);
+            tableLayoutPanel3.Controls.Add(txtbWHSID, 2, 0);
             tableLayoutPanel3.Controls.Add(btnClearIpnFilter, 1, 1);
+            tableLayoutPanel3.Controls.Add(btnGetMFPNs, 1, 0);
             tableLayoutPanel3.Dock = DockStyle.Fill;
             tableLayoutPanel3.Location = new Point(3, 19);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -561,10 +618,10 @@
             // txtbWHSID
             // 
             txtbWHSID.Dock = DockStyle.Fill;
-            txtbWHSID.Location = new Point(408, 3);
+            txtbWHSID.Location = new Point(813, 3);
             txtbWHSID.Name = "txtbWHSID";
             txtbWHSID.ReadOnly = true;
-            txtbWHSID.Size = new Size(399, 23);
+            txtbWHSID.Size = new Size(401, 23);
             txtbWHSID.TabIndex = 5;
             // 
             // btnClearIpnFilter
@@ -577,6 +634,17 @@
             btnClearIpnFilter.Text = "Clear IPN filter";
             btnClearIpnFilter.UseVisualStyleBackColor = true;
             btnClearIpnFilter.Click += btnClearIpnFilter_Click;
+            // 
+            // btnGetMFPNs
+            // 
+            btnGetMFPNs.Dock = DockStyle.Fill;
+            btnGetMFPNs.Location = new Point(408, 3);
+            btnGetMFPNs.Name = "btnGetMFPNs";
+            btnGetMFPNs.Size = new Size(399, 32);
+            btnGetMFPNs.TabIndex = 7;
+            btnGetMFPNs.Text = "GET MFPNs";
+            btnGetMFPNs.UseVisualStyleBackColor = true;
+            btnGetMFPNs.Click += btnGetMFPNs_Click;
             // 
             // tableLayoutPanel4
             // 
@@ -817,6 +885,8 @@
             tableLayoutPanel2.PerformLayout();
             tableLayoutPanel6.ResumeLayout(false);
             tableLayoutPanel6.PerformLayout();
+            tableLayoutPanel7.ResumeLayout(false);
+            tableLayoutPanel7.PerformLayout();
             groupBox2.ResumeLayout(false);
             tableLayoutPanel3.ResumeLayout(false);
             tableLayoutPanel3.PerformLayout();
@@ -839,7 +909,7 @@
         private GroupBox groupBox1;
         private TableLayoutPanel tableLayoutPanel2;
         private TextBox txtbInputIPN;
-        private TextBox textBox2;
+        private TextBox txtbInputMFPN;
         private TextBox textBox3;
         private TextBox textBox4;
         private TextBox textBox5;
@@ -889,5 +959,10 @@
         private RadioButton rbtFTK;
         private Button btnBULKinsert;
         private Button btnClearIpnFilter;
+        private Button btnGetMFPNs;
+        private TableLayoutPanel tableLayoutPanel7;
+        private ComboBox cmbPreCode;
+        private ComboBox cmbPostCode;
+        private TextBox txtbDecoder;
     }
 }

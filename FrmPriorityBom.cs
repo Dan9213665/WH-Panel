@@ -2106,7 +2106,9 @@ namespace WH_Panel
 
         private async void btnGetMFNs_Click(object sender, EventArgs e)
         {
-            await FetchMFPNsWithDelay();
+            //await FetchMFPNsWithDelay();
+
+            await FetchMFPNsForAllRows();
         }
     }
 }

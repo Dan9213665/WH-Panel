@@ -367,7 +367,7 @@ namespace WH_Panel
 
                             formInstance.comboBox1_SelectedIndexChanged(formInstance.comboBox1, EventArgs.Empty);
                             formInstance.txtbInputIPN.Clear();
-                            formInstance.textBox2.Clear();
+                            formInstance.txtbInputMFPN.Clear();
                             formInstance.textBox3.Clear();
                             formInstance.textBox4.Clear();
                             formInstance.textBox5.Clear();
@@ -603,7 +603,7 @@ namespace WH_Panel
                         {
                             PR_PART part = apiResponse.value[0];
                             // Populate the textboxes with the data
-                            textBox2.Text = part.MNFPARTNAME;
+                            txtbInputMFPN.Text = part.MNFPARTNAME;
                             textBox3.Text = part.PARTDES;
                             textBox4.Text = part.MNFNAME;
                             txtbPART.Text = part.PART.ToString();
@@ -633,7 +633,7 @@ namespace WH_Panel
             }
             else if (e.KeyCode == Keys.Escape)
             {
-                txtbInputIPN.Clear(); textBox2.Clear(); textBox3.Clear(); textBox4.Clear(); txtbPART.Clear();
+                txtbInputIPN.Clear(); txtbInputMFPN.Clear(); textBox3.Clear(); textBox4.Clear(); txtbPART.Clear();
 
             }
         }
@@ -712,7 +712,7 @@ namespace WH_Panel
         private void btnPrintSticker_Click(object sender, EventArgs e)
         {
             // Validate the required fields
-            if (string.IsNullOrEmpty(textBox2.Text) ||
+            if (string.IsNullOrEmpty(txtbInputMFPN.Text) ||
                 string.IsNullOrEmpty(textBox3.Text) ||
                 string.IsNullOrEmpty(textBox4.Text) ||
                 string.IsNullOrEmpty(textBox5.Text) ||
@@ -727,7 +727,7 @@ namespace WH_Panel
             PR_PART part = new PR_PART
             {
                 PARTNAME = txtbInputIPN.Text, // Assuming PART is an integer and is in textBox1
-                MNFPARTNAME = textBox2.Text,
+                MNFPARTNAME = txtbInputMFPN.Text,
                 PARTDES = textBox3.Text,
                 MNFNAME = textBox4.Text,
                 QTY = qty // Set the QTY from textBox5
@@ -737,12 +737,63 @@ namespace WH_Panel
             printSticker(part);
         }
 
-        private async void textBox2_KeyDown(object sender, KeyEventArgs e)
+        //private async void textBox2_KeyDown(object sender, KeyEventArgs e)
+        //{
+        //    if (e.KeyCode == Keys.Enter)
+        //    {
+        //        string mnfPartName = textBox2.Text;
+        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=MNFPARTNAME eq '{mnfPartName}'";
+        //        using (HttpClient client = new HttpClient())
+        //        {
+        //            try
+        //            {
+        //                // Set the request headers if needed
+        //                client.DefaultRequestHeaders.Accept.Clear();
+        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //                // Set the Authorization header
+        //                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+        //                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+        //                // Make the HTTP GET request
+        //                HttpResponseMessage response = await client.GetAsync(url);
+        //                response.EnsureSuccessStatusCode();
+        //                // Read the response content
+        //                string responseBody = await response.Content.ReadAsStringAsync();
+        //                // Parse the JSON response
+        //                ApiResponse apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseBody);
+        //                // Check if the response contains any data
+        //                if (apiResponse.value != null && apiResponse.value.Count > 0)
+        //                {
+        //                    PR_PART part = apiResponse.value[0];
+        //                    // Populate the textboxes with the data
+        //                    txtbInputIPN.Text = part.PARTNAME;
+        //                    textBox3.Text = part.PARTDES;
+        //                    textBox4.Text = part.MNFNAME;
+        //                }
+        //                else
+        //                {
+        //                    MessageBox.Show("No data found for the specified manufacturer part name.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //                }
+        //            }
+        //            catch (HttpRequestException ex)
+        //            {
+        //                MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            }
+        //        }
+        //    }
+        //}
+
+        private async void txtbInputMFPN_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
-                string mnfPartName = textBox2.Text;
-                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=MNFPARTNAME eq '{mnfPartName}'";
+                string mnfPartName = txtbInputMFPN.Text;
+                string encodedMnfPartName = Uri.EscapeDataString(mnfPartName); // URL-encode the MNFPARTNAME
+                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=MNFPARTNAME eq '{encodedMnfPartName}'";
+
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -785,10 +836,11 @@ namespace WH_Panel
                 }
             }
         }
+
         private void button2_Click(object sender, EventArgs e)
         {
             txtbInputIPN.Clear();
-            textBox2.Clear();
+            txtbInputMFPN.Clear();
             textBox3.Clear();
             textBox4.Clear();
             txtbPART.Clear();
@@ -975,17 +1027,226 @@ namespace WH_Panel
             }
         }
 
+        private async Task ExtractMFPNForRow(DataGridViewRow row)
+        {
+            var partId = (int)row.Cells["PART"].Value;
+            var partName = row.Cells["PARTNAME"].Value.ToString();
+            string partUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PART eq {partId}";
 
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    // Set the request headers if needed
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    // Set the Authorization header
+                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    // Make the HTTP GET request for part details
+                    HttpResponseMessage partResponse = await client.GetAsync(partUrl);
+                    partResponse.EnsureSuccessStatusCode();
+                    // Read the response content
+                    string partResponseBody = await partResponse.Content.ReadAsStringAsync();
+                    // Parse the JSON response
+                    var partApiResponse = JsonConvert.DeserializeObject<ApiResponse>(partResponseBody);
+                    // Check if the response contains any data
+                    if (partApiResponse.value != null && partApiResponse.value.Count > 0)
+                    {
+                        var part = partApiResponse.value[0];
+                        // Directly update the DataGridView cell
+                        row.Cells["MNFPARTNAME"].Value = part.MNFPARTNAME;
+                        dataGridView1.Refresh();
+                    }
+                    else
+                    {
+                        MessageBox.Show("No data found for the selected part.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+                catch (HttpRequestException ex)
+                {
+                    MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            await Task.Delay(100); // Delay for 1 second
+        }
+
+        //private async void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        //{
+        //    if (e.RowIndex >= 0) // Ensure the row index is valid
+        //    {
+        //        var selectedRow = dataGridView1.Rows[e.RowIndex];
+        //        var partId = (int)selectedRow.Cells["PART"].Value;
+        //        var partName = selectedRow.Cells["PARTNAME"].Value.ToString();
+        //        string partUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PART eq {partId}";
+        //        string logPartUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART?$filter=PARTNAME eq '{partName}'&$expand=PARTTRANSLAST2_SUBFORM";
+        //        using (HttpClient client = new HttpClient())
+        //        {
+        //            try
+        //            {
+        //                // Set the request headers if needed
+        //                client.DefaultRequestHeaders.Accept.Clear();
+        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //                // Set the Authorization header
+        //                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+        //                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+        //                // Make the HTTP GET request for part details
+        //                HttpResponseMessage partResponse = await client.GetAsync(partUrl);
+        //                partResponse.EnsureSuccessStatusCode();
+        //                // Read the response content
+        //                string partResponseBody = await partResponse.Content.ReadAsStringAsync();
+        //                // Parse the JSON response
+        //                var partApiResponse = JsonConvert.DeserializeObject<ApiResponse>(partResponseBody);
+        //                // Check if the response contains any data
+        //                if (partApiResponse.value != null && partApiResponse.value.Count > 0)
+        //                {
+        //                    var part = partApiResponse.value[0];
+        //                    // Directly update the DataGridView cell
+        //                    selectedRow.Cells["MNFPARTNAME"].Value = part.MNFPARTNAME;
+        //                    dataGridView1.Refresh();
+        //                }
+        //                else
+        //                {
+        //                    MessageBox.Show("No data found for the selected part.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //                }
+        //                // Measure the time taken for the HTTP POST request
+        //                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        //                // Make the HTTP GET request for stock movements
+        //                HttpResponseMessage logPartResponse = await client.GetAsync(logPartUrl);
+        //                logPartResponse.EnsureSuccessStatusCode();
+        //                stopwatch.Stop();
+        //                // Update the ping label
+        //                UpdatePing(stopwatch.ElapsedMilliseconds);
+        //                // Read the response content
+        //                string logPartResponseBody = await logPartResponse.Content.ReadAsStringAsync();
+        //                // Parse the JSON response
+        //                var logPartApiResponse = JsonConvert.DeserializeObject<LogPartApiResponse>(logPartResponseBody);
+        //                // Check if the response contains any data
+        //                if (logPartApiResponse.value != null && logPartApiResponse.value.Count > 0)
+        //                {
+        //                    // Set AutoGenerateColumns to false
+        //                    dataGridView2.AutoGenerateColumns = false;
+        //                    // Clear existing columns
+        //                    dataGridView2.Columns.Clear();
+        //                    // Define the columns you want to display
+        //                    var curDateColumn = new DataGridViewTextBoxColumn
+        //                    {
+        //                        DataPropertyName = "CURDATE",
+        //                        HeaderText = "Transaction Date",
+        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+        //                        Name = "CURDATE"
+        //                    };
+        //                    var logDocNoColumn = new DataGridViewTextBoxColumn
+        //                    {
+        //                        DataPropertyName = "LOGDOCNO",
+        //                        HeaderText = "Document Number",
+        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+        //                        Name = "LOGDOCNO"
+        //                    };
+        //                    var logDOCDESColumn = new DataGridViewTextBoxColumn
+        //                    {
+        //                        DataPropertyName = "DOCDES",
+        //                        HeaderText = "DOCDES",
+        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+        //                        Name = "DOCDES"
+        //                    };
+        //                    var SUPCUSTNAMEColumn = new DataGridViewTextBoxColumn
+        //                    {
+        //                        DataPropertyName = "SUPCUSTNAME",
+        //                        HeaderText = "Source_Req",
+        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+        //                        Name = "SUPCUSTNAME"
+        //                    };
+        //                    var tQuantColumn = new DataGridViewTextBoxColumn
+        //                    {
+        //                        DataPropertyName = "TQUANT",
+        //                        HeaderText = "Quantity",
+        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+        //                        Name = "TQUANT"
+        //                    };
+        //                    var tPACKNAMEColumn = new DataGridViewTextBoxColumn
+        //                    {
+        //                        DataPropertyName = "PACKNAME",
+        //                        HeaderText = "PACK",
+        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+        //                        Name = "PACKNAME"
+        //                    };
+        //                    // Add columns to the DataGridView
+        //                    dataGridView2.Columns.AddRange(new DataGridViewColumn[]
+        //                    {
+        //                curDateColumn,
+        //                logDocNoColumn,
+        //                logDOCDESColumn,
+        //                SUPCUSTNAMEColumn,
+        //                tQuantColumn,
+        //                tPACKNAMEColumn
+        //                    });
+        //                    // Populate the DataGridView with the data
+        //                    dataGridView2.Rows.Clear();
+        //                    foreach (var logPart in logPartApiResponse.value)
+        //                    {
+        //                        foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
+        //                        {
+        //                            dataGridView2.Rows.Add(trans.CURDATE, trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, trans.TQUANT, ""); //trans.BOOKNUM
+        //                        }
+        //                    }
+        //                    groupBox4.Text = $"Stock Movements for {partName}";
+        //                    ColorTheRows(dataGridView2);
+
+        //                    // Fetch PACKCODE data and update the PACK column
+        //                    foreach (DataGridViewRow row in dataGridView2.Rows)
+        //                    {
+        //                        var logDocNo = row.Cells["LOGDOCNO"].Value?.ToString();
+        //                        var partNameCell = partName;
+        //                        var quant = int.Parse(row.Cells["TQUANT"].Value?.ToString());
+        //                        if (logDocNo != null && partNameCell != null)
+        //                        {
+        //                            var packCode = await FetchPackCodeAsync(logDocNo, partNameCell, quant);
+        //                            if (packCode != null)
+        //                            {
+        //                                row.Cells["PACKNAME"].Value = packCode;
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    MessageBox.Show("No stock movements found for the selected part.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+        //                }
+        //            }
+        //            catch (HttpRequestException ex)
+        //            {
+        //                //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                txtLog.SelectionColor = Color.Red; // Set the color to acid green
+        //                txtLog.AppendText($"Request error: {ex.Message}");
+        //                txtLog.ScrollToCaret();
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                txtLog.SelectionColor = Color.Red; // Set the color to acid green
+        //                txtLog.AppendText($"Request error: {ex.Message}");
+        //                txtLog.ScrollToCaret();
+        //            }
+        //        }
+        //    }
+        //}
 
         private async void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0) // Ensure the row index is valid
             {
                 var selectedRow = dataGridView1.Rows[e.RowIndex];
-                var partId = (int)selectedRow.Cells["PART"].Value;
+                await ExtractMFPNForRow(selectedRow);
+
                 var partName = selectedRow.Cells["PARTNAME"].Value.ToString();
-                string partUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PART eq {partId}";
                 string logPartUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART?$filter=PARTNAME eq '{partName}'&$expand=PARTTRANSLAST2_SUBFORM";
+
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -996,25 +1257,6 @@ namespace WH_Panel
                         // Set the Authorization header
                         string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-                        // Make the HTTP GET request for part details
-                        HttpResponseMessage partResponse = await client.GetAsync(partUrl);
-                        partResponse.EnsureSuccessStatusCode();
-                        // Read the response content
-                        string partResponseBody = await partResponse.Content.ReadAsStringAsync();
-                        // Parse the JSON response
-                        var partApiResponse = JsonConvert.DeserializeObject<ApiResponse>(partResponseBody);
-                        // Check if the response contains any data
-                        if (partApiResponse.value != null && partApiResponse.value.Count > 0)
-                        {
-                            var part = partApiResponse.value[0];
-                            // Directly update the DataGridView cell
-                            selectedRow.Cells["MNFPARTNAME"].Value = part.MNFPARTNAME;
-                            dataGridView1.Refresh();
-                        }
-                        else
-                        {
-                            MessageBox.Show("No data found for the selected part.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        }
                         // Measure the time taken for the HTTP POST request
                         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
                         // Make the HTTP GET request for stock movements
@@ -1118,19 +1360,16 @@ namespace WH_Panel
                         else
                         {
                             MessageBox.Show("No stock movements found for the selected part.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
                         }
                     }
                     catch (HttpRequestException ex)
                     {
-                        //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         txtLog.SelectionColor = Color.Red; // Set the color to acid green
                         txtLog.AppendText($"Request error: {ex.Message}");
                         txtLog.ScrollToCaret();
                     }
                     catch (Exception ex)
                     {
-                        //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         txtLog.SelectionColor = Color.Red; // Set the color to acid green
                         txtLog.AppendText($"Request error: {ex.Message}");
                         txtLog.ScrollToCaret();
@@ -1666,7 +1905,7 @@ namespace WH_Panel
 
         private async void btnMFG_Click(object sender, EventArgs e)
         {
-            if (comboBox1.SelectedItem != null && txtbInputIPN.Text != string.Empty && textBox2.Text != string.Empty && textBox3.Text != string.Empty && textBox4.Text != string.Empty && int.Parse(textBox5.Text) > 0 && int.Parse(textBox5.Text) <= 50000)
+            if (comboBox1.SelectedItem != null && txtbInputIPN.Text != string.Empty && txtbInputMFPN.Text != string.Empty && textBox3.Text != string.Empty && textBox4.Text != string.Empty && int.Parse(textBox5.Text) > 0 && int.Parse(textBox5.Text) <= 50000)
             {
                 string selectedWarehouseName = comboBox1.SelectedItem.ToString().Split(' ')[0];
 
@@ -1963,6 +2202,50 @@ namespace WH_Panel
         {
             txtbFilterIPN.Clear();
             txtbFilterIPN.Focus();
+        }
+
+        private async void btnGetMFPNs_Click(object sender, EventArgs e)
+        {
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                await ExtractMFPNForRow(row);
+            }
+        }
+
+        private void txtbDecoder_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                string decoderText = txtbDecoder.Text;
+                string preCode = cmbPreCode.Text;
+                string postCode = cmbPostCode.Text;
+
+                if (!string.IsNullOrEmpty(preCode) && !string.IsNullOrEmpty(postCode))
+                {
+                    int startIndex = decoderText.IndexOf(preCode) + preCode.Length;
+                    int endIndex = decoderText.IndexOf(postCode, startIndex);
+
+                    if (startIndex >= preCode.Length && endIndex > startIndex)
+                    {
+                        string extractedText = decoderText.Substring(startIndex, endIndex - startIndex);
+                        txtbInputMFPN.Text = extractedText;
+                        txtbInputMFPN.Focus();
+
+                        // Simulate ENTER key press on txtbInputMFPN
+                        txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter));
+
+                        txtbDecoder.Clear();
+                    }
+                    else
+                    {
+                        MessageBox.Show("PreCode or PostCode not found in the input text.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Please select both PreCode and PostCode.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
     }
 }
