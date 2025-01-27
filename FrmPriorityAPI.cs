@@ -2241,9 +2241,49 @@ namespace WH_Panel
                         MessageBox.Show("PreCode or PostCode not found in the input text.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
+                else if (!string.IsNullOrEmpty(preCode))
+                {
+                    int startIndex = decoderText.IndexOf(preCode) + preCode.Length;
+
+                    if (startIndex >= preCode.Length)
+                    {
+                        string extractedText = decoderText.Substring(startIndex);
+                        txtbInputMFPN.Text = extractedText;
+                        txtbInputMFPN.Focus();
+
+                        // Simulate ENTER key press on txtbInputMFPN
+                        txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter));
+
+                        txtbDecoder.Clear();
+                    }
+                    else
+                    {
+                        MessageBox.Show("PreCode not found in the input text.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                else if (!string.IsNullOrEmpty(postCode))
+                {
+                    int endIndex = decoderText.IndexOf(postCode);
+
+                    if (endIndex > 0)
+                    {
+                        string extractedText = decoderText.Substring(0, endIndex);
+                        txtbInputMFPN.Text = extractedText;
+                        txtbInputMFPN.Focus();
+
+                        // Simulate ENTER key press on txtbInputMFPN
+                        txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter));
+
+                        txtbDecoder.Clear();
+                    }
+                    else
+                    {
+                        MessageBox.Show("PostCode not found in the input text.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
                 else
                 {
-                    MessageBox.Show("Please select both PreCode and PostCode.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Please select at least one of PreCode or PostCode.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }

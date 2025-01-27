@@ -59,6 +59,7 @@
             cmbPreCode = new ComboBox();
             cmbPostCode = new ComboBox();
             txtbDecoder = new TextBox();
+            lblMFPNdecoder = new Label();
             groupBox2 = new GroupBox();
             tableLayoutPanel3 = new TableLayoutPanel();
             comboBox1 = new ComboBox();
@@ -164,6 +165,7 @@
             tableLayoutPanel2.Controls.Add(txtbOUT, 2, 7);
             tableLayoutPanel2.Controls.Add(cmbPackCode, 1, 5);
             tableLayoutPanel2.Controls.Add(tableLayoutPanel7, 1, 3);
+            tableLayoutPanel2.Controls.Add(lblMFPNdecoder, 1, 2);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.Location = new Point(3, 19);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -498,6 +500,17 @@
             txtbDecoder.TabIndex = 2;
             txtbDecoder.TextAlign = HorizontalAlignment.Center;
             txtbDecoder.KeyDown += txtbDecoder_KeyDown;
+            // 
+            // lblMFPNdecoder
+            // 
+            lblMFPNdecoder.AutoSize = true;
+            lblMFPNdecoder.Dock = DockStyle.Fill;
+            lblMFPNdecoder.Location = new Point(203, 42);
+            lblMFPNdecoder.Name = "lblMFPNdecoder";
+            lblMFPNdecoder.Size = new Size(194, 21);
+            lblMFPNdecoder.TabIndex = 21;
+            lblMFPNdecoder.Text = "MFPN Decoder";
+            lblMFPNdecoder.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // groupBox2
             // 
@@ -964,5 +977,6 @@
         private ComboBox cmbPreCode;
         private ComboBox cmbPostCode;
         private TextBox txtbDecoder;
+        private Label lblMFPNdecoder;
     }
 }
