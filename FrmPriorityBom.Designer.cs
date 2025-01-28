@@ -48,6 +48,8 @@
             txtbRev = new TextBox();
             txtbINPUTqty = new TextBox();
             btnGetMFNs = new Button();
+            progressBar1 = new ProgressBar();
+            lblProgress = new Label();
             dgwBom = new DataGridView();
             gbxIPNstockMovements = new GroupBox();
             dgwIPNmoves = new DataGridView();
@@ -194,6 +196,8 @@
             tableLayoutPanel3.Controls.Add(txtbRev, 2, 0);
             tableLayoutPanel3.Controls.Add(txtbINPUTqty, 0, 2);
             tableLayoutPanel3.Controls.Add(btnGetMFNs, 1, 2);
+            tableLayoutPanel3.Controls.Add(progressBar1, 4, 1);
+            tableLayoutPanel3.Controls.Add(lblProgress, 4, 2);
             tableLayoutPanel3.Dock = DockStyle.Fill;
             tableLayoutPanel3.Location = new Point(3, 19);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -320,6 +324,24 @@
             btnGetMFNs.UseVisualStyleBackColor = true;
             btnGetMFNs.Click += btnGetMFNs_Click;
             // 
+            // progressBar1
+            // 
+            progressBar1.Dock = DockStyle.Fill;
+            progressBar1.Location = new Point(547, 30);
+            progressBar1.Name = "progressBar1";
+            progressBar1.Size = new Size(132, 21);
+            progressBar1.TabIndex = 8;
+            // 
+            // lblProgress
+            // 
+            lblProgress.AutoSize = true;
+            lblProgress.Dock = DockStyle.Fill;
+            lblProgress.Location = new Point(547, 54);
+            lblProgress.Name = "lblProgress";
+            lblProgress.Size = new Size(132, 28);
+            lblProgress.TabIndex = 9;
+            lblProgress.TextAlign = ContentAlignment.MiddleCenter;
+            // 
             // dgwBom
             // 
             dgwBom.AllowUserToAddRows = false;
@@ -420,5 +442,7 @@
         private Button btnKitLabel;
         private Button btnReport;
         private Button btnGetMFNs;
+        private ProgressBar progressBar1;
+        private Label lblProgress;
     }
 }

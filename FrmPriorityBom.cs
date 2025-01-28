@@ -391,6 +391,11 @@ namespace WH_Panel
 
         private async Task LoadBomDetails(string serialName)
         {
+            progressBar1.Value = 0;
+            progressBar1.Update();
+            
+            int completedItems = 0;
+
             string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{serialName}'&$expand=TRANSORDER_K_SUBFORM";
             using (HttpClient client = new HttpClient())
             {
@@ -429,14 +434,13 @@ namespace WH_Panel
                                 TRANS = group.First().TRANS
                             })
                             .ToList();
-
-
                         // Log the CALC values
                         //foreach (var detail in aggregatedDetails)
                         //{
                         //    MessageBox.Show($"PARTNAME: {detail.PARTNAME}, CALC: {detail.CALC}");
                         //}
-
+                        
+                       
                         // Populate the DataGridView with the aggregated data
                         dgwBom.Rows.Clear();
                         foreach (var detail in aggregatedDetails)
@@ -452,12 +456,26 @@ namespace WH_Panel
                                 detail.CALC = "";
                             }
                             dgwBom.Rows.Add(detail.PARTNAME,"", detail.PARTDES,"", detail.QUANT, detail.CQUANT, detail.DELTA, detail.CALC,"", detail.TRANS, detail.KLINE);
+
+                            int pbTotal = aggregatedDetails.Count;
+
+                            if (detail.DELTA>=0)
+                            {
+                                completedItems++;
+                            }
+                            progressBar1.Value = (completedItems / pbTotal) * 100;
+                            
                         }
+
+                        // Update the progress label
+                        UpdateProgressLabel();
+
+                        progressBar1.Update();
+                        txtbInputIPN.PlaceholderText = $"Filter by IPN ({aggregatedDetails.Count.ToString()})";
 
                         // Fetch MFPNs for each row with a delay
                         await FetchWarehouseBalances();
                         //await FetchMFPNsWithDelay();
-
                         //await FetchMFPNsForAllRows();
                     }
                     else
@@ -476,6 +494,21 @@ namespace WH_Panel
             }
         }
 
+        private void UpdateProgressLabel()
+        {
+            int totalItems = dgwBom.Rows.Count;
+            int completedItems = dgwBom.Rows.Cast<DataGridViewRow>().Count(row => Convert.ToInt32(row.Cells["DELTA"].Value) >= 0);
+
+            if (totalItems > 0)
+            {
+                int percentage = (completedItems * 100) / totalItems;
+                lblProgress.Text = $"{completedItems} of {totalItems} IPNs in KIT ({percentage}%)";
+            }
+            else
+            {
+                lblProgress.Text = "0 / 0 items (0%)";
+            }
+        }
 
         private async Task FetchWarehouseBalances()
         {
@@ -1232,6 +1265,10 @@ namespace WH_Panel
                             txtbINPUTqty.Clear();
                             txtbInputIPN.Clear();
                             txtbInputIPN.Focus();
+
+
+                            // Update the progress label
+                            UpdateProgressLabel();
                         }
                     }
                     else
