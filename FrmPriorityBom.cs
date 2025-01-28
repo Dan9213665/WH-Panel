@@ -373,7 +373,7 @@ namespace WH_Panel
             dgwBom.Columns.Add("PARTNAME", "IPN");
             dgwBom.Columns.Add("MFPN", "MFPN");
             dgwBom.Columns.Add("PARTDES", "Description");
-            dgwBom.Columns.Add("TBALANCE", "TBALANCE"); // Add WH column before KIT
+            dgwBom.Columns.Add("TBALANCE", "WH"); // Add WH column before KIT
             dgwBom.Columns.Add("QUANT", "KIT");
             dgwBom.Columns.Add("CQUANT", "Required");
             dgwBom.Columns.Add("DELTA", "Delta");
@@ -693,7 +693,7 @@ namespace WH_Panel
                     return "PARTDES";
                 case "ALT":
                     return "ALT";
-                case "TBALANCE":
+                case "WH":
                     return "TBALANCE";
                 default:
                     return displayName;

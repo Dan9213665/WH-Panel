@@ -36,7 +36,7 @@
             txtbInputMFPN = new TextBox();
             textBox3 = new TextBox();
             textBox4 = new TextBox();
-            textBox5 = new TextBox();
+            txtbInputQty = new TextBox();
             label1 = new Label();
             label2 = new Label();
             label3 = new Label();
@@ -45,14 +45,12 @@
             btnPrinSticker = new Button();
             button2 = new Button();
             btnMFG = new Button();
-            txtbPART = new TextBox();
-            label6 = new Label();
             tableLayoutPanel6 = new TableLayoutPanel();
             rbtMFG = new RadioButton();
             rbtIN = new RadioButton();
             tbtOUT = new RadioButton();
             rbtFTK = new RadioButton();
-            txtbIN = new TextBox();
+            txtbINdoc = new TextBox();
             txtbOUT = new TextBox();
             cmbPackCode = new ComboBox();
             tableLayoutPanel7 = new TableLayoutPanel();
@@ -60,6 +58,11 @@
             cmbPostCode = new ComboBox();
             txtbDecoder = new TextBox();
             lblMFPNdecoder = new Label();
+            tableLayoutPanel8 = new TableLayoutPanel();
+            txtbPrefix = new TextBox();
+            txtbDecodeIPN = new TextBox();
+            txtbPART = new TextBox();
+            lblIPNdecoder = new Label();
             groupBox2 = new GroupBox();
             tableLayoutPanel3 = new TableLayoutPanel();
             comboBox1 = new ComboBox();
@@ -94,6 +97,7 @@
             tableLayoutPanel2.SuspendLayout();
             tableLayoutPanel6.SuspendLayout();
             tableLayoutPanel7.SuspendLayout();
+            tableLayoutPanel8.SuspendLayout();
             groupBox2.SuspendLayout();
             tableLayoutPanel3.SuspendLayout();
             groupBox3.SuspendLayout();
@@ -137,7 +141,7 @@
             groupBox1.Size = new Size(608, 236);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
-            groupBox1.Text = "Print Sticker";
+            groupBox1.Text = "Stock Movements Managment";
             // 
             // tableLayoutPanel2
             // 
@@ -149,7 +153,7 @@
             tableLayoutPanel2.Controls.Add(txtbInputMFPN, 0, 3);
             tableLayoutPanel2.Controls.Add(textBox3, 0, 5);
             tableLayoutPanel2.Controls.Add(textBox4, 0, 7);
-            tableLayoutPanel2.Controls.Add(textBox5, 0, 9);
+            tableLayoutPanel2.Controls.Add(txtbInputQty, 0, 9);
             tableLayoutPanel2.Controls.Add(label1, 0, 0);
             tableLayoutPanel2.Controls.Add(label2, 0, 2);
             tableLayoutPanel2.Controls.Add(label3, 0, 4);
@@ -158,14 +162,15 @@
             tableLayoutPanel2.Controls.Add(btnPrinSticker, 2, 2);
             tableLayoutPanel2.Controls.Add(button2, 2, 0);
             tableLayoutPanel2.Controls.Add(btnMFG, 2, 8);
-            tableLayoutPanel2.Controls.Add(txtbPART, 1, 1);
-            tableLayoutPanel2.Controls.Add(label6, 1, 0);
             tableLayoutPanel2.Controls.Add(tableLayoutPanel6, 1, 9);
-            tableLayoutPanel2.Controls.Add(txtbIN, 1, 7);
+            tableLayoutPanel2.Controls.Add(txtbINdoc, 1, 7);
             tableLayoutPanel2.Controls.Add(txtbOUT, 2, 7);
             tableLayoutPanel2.Controls.Add(cmbPackCode, 1, 5);
             tableLayoutPanel2.Controls.Add(tableLayoutPanel7, 1, 3);
             tableLayoutPanel2.Controls.Add(lblMFPNdecoder, 1, 2);
+            tableLayoutPanel2.Controls.Add(tableLayoutPanel8, 1, 1);
+            tableLayoutPanel2.Controls.Add(txtbPART, 2, 4);
+            tableLayoutPanel2.Controls.Add(lblIPNdecoder, 1, 0);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.Location = new Point(3, 19);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -192,7 +197,7 @@
             txtbInputIPN.Size = new Size(194, 23);
             txtbInputIPN.TabIndex = 0;
             txtbInputIPN.TextAlign = HorizontalAlignment.Center;
-            txtbInputIPN.KeyDown += textBox1_KeyDown;
+            txtbInputIPN.KeyDown += txtbInputIPN_KeyDown;
             // 
             // txtbInputMFPN
             // 
@@ -227,16 +232,16 @@
             textBox4.TabIndex = 3;
             textBox4.TextAlign = HorizontalAlignment.Center;
             // 
-            // textBox5
+            // txtbInputQty
             // 
-            textBox5.Dock = DockStyle.Fill;
-            textBox5.Location = new Point(3, 192);
-            textBox5.Name = "textBox5";
-            textBox5.PlaceholderText = "input QTY";
-            textBox5.Size = new Size(194, 23);
-            textBox5.TabIndex = 4;
-            textBox5.TextAlign = HorizontalAlignment.Center;
-            textBox5.KeyDown += textBox5_KeyDown;
+            txtbInputQty.Dock = DockStyle.Fill;
+            txtbInputQty.Location = new Point(3, 192);
+            txtbInputQty.Name = "txtbInputQty";
+            txtbInputQty.PlaceholderText = "input QTY";
+            txtbInputQty.Size = new Size(194, 23);
+            txtbInputQty.TabIndex = 4;
+            txtbInputQty.TextAlign = HorizontalAlignment.Center;
+            txtbInputQty.KeyDown += txtbInputQty_KeyDown;
             // 
             // label1
             // 
@@ -329,27 +334,6 @@
             btnMFG.UseVisualStyleBackColor = true;
             btnMFG.Click += btnMFG_Click;
             // 
-            // txtbPART
-            // 
-            txtbPART.Dock = DockStyle.Fill;
-            txtbPART.Location = new Point(203, 24);
-            txtbPART.Name = "txtbPART";
-            txtbPART.ReadOnly = true;
-            txtbPART.Size = new Size(194, 23);
-            txtbPART.TabIndex = 13;
-            txtbPART.TextAlign = HorizontalAlignment.Center;
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Dock = DockStyle.Fill;
-            label6.Location = new Point(203, 0);
-            label6.Name = "label6";
-            label6.Size = new Size(194, 21);
-            label6.TabIndex = 14;
-            label6.Text = "PARTid";
-            label6.TextAlign = ContentAlignment.MiddleCenter;
-            // 
             // tableLayoutPanel6
             // 
             tableLayoutPanel6.ColumnCount = 4;
@@ -417,16 +401,17 @@
             rbtFTK.UseVisualStyleBackColor = true;
             rbtFTK.CheckedChanged += rbtFTK_CheckedChanged;
             // 
-            // txtbIN
+            // txtbINdoc
             // 
-            txtbIN.Dock = DockStyle.Fill;
-            txtbIN.Location = new Point(203, 150);
-            txtbIN.Name = "txtbIN";
-            txtbIN.PlaceholderText = "Supplier`s Transfer Document";
-            txtbIN.ReadOnly = true;
-            txtbIN.Size = new Size(194, 23);
-            txtbIN.TabIndex = 17;
-            txtbIN.TextAlign = HorizontalAlignment.Center;
+            txtbINdoc.Dock = DockStyle.Fill;
+            txtbINdoc.Location = new Point(203, 150);
+            txtbINdoc.Name = "txtbINdoc";
+            txtbINdoc.PlaceholderText = "WR......";
+            txtbINdoc.ReadOnly = true;
+            txtbINdoc.Size = new Size(194, 23);
+            txtbINdoc.TabIndex = 17;
+            txtbINdoc.TextAlign = HorizontalAlignment.Center;
+            txtbINdoc.KeyDown += txtbINdoc_KeyDown;
             // 
             // txtbOUT
             // 
@@ -496,6 +481,7 @@
             txtbDecoder.Dock = DockStyle.Fill;
             txtbDecoder.Location = new Point(67, 3);
             txtbDecoder.Name = "txtbDecoder";
+            txtbDecoder.PlaceholderText = "Decode MFPN";
             txtbDecoder.Size = new Size(58, 23);
             txtbDecoder.TabIndex = 2;
             txtbDecoder.TextAlign = HorizontalAlignment.Center;
@@ -511,6 +497,65 @@
             lblMFPNdecoder.TabIndex = 21;
             lblMFPNdecoder.Text = "MFPN Decoder";
             lblMFPNdecoder.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // tableLayoutPanel8
+            // 
+            tableLayoutPanel8.ColumnCount = 2;
+            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 75F));
+            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel8.Controls.Add(txtbPrefix, 0, 0);
+            tableLayoutPanel8.Controls.Add(txtbDecodeIPN, 1, 0);
+            tableLayoutPanel8.Dock = DockStyle.Fill;
+            tableLayoutPanel8.Location = new Point(203, 24);
+            tableLayoutPanel8.Name = "tableLayoutPanel8";
+            tableLayoutPanel8.RowCount = 1;
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel8.Size = new Size(194, 15);
+            tableLayoutPanel8.TabIndex = 22;
+            // 
+            // txtbPrefix
+            // 
+            txtbPrefix.Dock = DockStyle.Fill;
+            txtbPrefix.Location = new Point(3, 3);
+            txtbPrefix.Name = "txtbPrefix";
+            txtbPrefix.PlaceholderText = "Prefix";
+            txtbPrefix.ReadOnly = true;
+            txtbPrefix.Size = new Size(42, 23);
+            txtbPrefix.TabIndex = 1;
+            txtbPrefix.TextAlign = HorizontalAlignment.Center;
+            // 
+            // txtbDecodeIPN
+            // 
+            txtbDecodeIPN.Dock = DockStyle.Fill;
+            txtbDecodeIPN.Location = new Point(51, 3);
+            txtbDecodeIPN.Name = "txtbDecodeIPN";
+            txtbDecodeIPN.PlaceholderText = "Decode IPN";
+            txtbDecodeIPN.Size = new Size(140, 23);
+            txtbDecodeIPN.TabIndex = 3;
+            txtbDecodeIPN.TextAlign = HorizontalAlignment.Center;
+            txtbDecodeIPN.KeyDown += txtbDecodeIPN_KeyDown;
+            // 
+            // txtbPART
+            // 
+            txtbPART.Dock = DockStyle.Fill;
+            txtbPART.Location = new Point(403, 87);
+            txtbPART.Name = "txtbPART";
+            txtbPART.ReadOnly = true;
+            txtbPART.Size = new Size(196, 23);
+            txtbPART.TabIndex = 13;
+            txtbPART.TextAlign = HorizontalAlignment.Center;
+            // 
+            // lblIPNdecoder
+            // 
+            lblIPNdecoder.AutoSize = true;
+            lblIPNdecoder.Dock = DockStyle.Fill;
+            lblIPNdecoder.Location = new Point(203, 0);
+            lblIPNdecoder.Name = "lblIPNdecoder";
+            lblIPNdecoder.Size = new Size(194, 21);
+            lblIPNdecoder.TabIndex = 23;
+            lblIPNdecoder.Text = "IPN Decoder";
+            lblIPNdecoder.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // groupBox2
             // 
@@ -900,6 +945,8 @@
             tableLayoutPanel6.PerformLayout();
             tableLayoutPanel7.ResumeLayout(false);
             tableLayoutPanel7.PerformLayout();
+            tableLayoutPanel8.ResumeLayout(false);
+            tableLayoutPanel8.PerformLayout();
             groupBox2.ResumeLayout(false);
             tableLayoutPanel3.ResumeLayout(false);
             tableLayoutPanel3.PerformLayout();
@@ -925,7 +972,7 @@
         private TextBox txtbInputMFPN;
         private TextBox textBox3;
         private TextBox textBox4;
-        private TextBox textBox5;
+        private TextBox txtbInputQty;
         private Label label1;
         private Label label2;
         private Label label3;
@@ -959,14 +1006,13 @@
         private Button btnClear;
         private Button btnMFG;
         private TextBox txtbPART;
-        private Label label6;
         private TextBox txtbWHSID;
         private RichTextBox txtLog;
         private RadioButton rbtMFG;
         private TableLayoutPanel tableLayoutPanel6;
         private RadioButton rbtIN;
         private RadioButton tbtOUT;
-        private TextBox txtbIN;
+        private TextBox txtbINdoc;
         private TextBox txtbOUT;
         private ComboBox cmbPackCode;
         private RadioButton rbtFTK;
@@ -978,5 +1024,9 @@
         private ComboBox cmbPostCode;
         private TextBox txtbDecoder;
         private Label lblMFPNdecoder;
+        private TableLayoutPanel tableLayoutPanel8;
+        private TextBox txtbPrefix;
+        private TextBox txtbDecodeIPN;
+        private Label lblIPNdecoder;
     }
 }

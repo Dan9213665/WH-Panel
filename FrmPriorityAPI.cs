@@ -35,8 +35,8 @@ namespace WH_Panel
             AttachTextBoxEvents(this);
             // Attach event handlers
             txtbFilterIPN.KeyUp += textBox6_KeyUp_1;
-            textBox5.KeyPress += textBox5_KeyPress;
-            textBox5.TextChanged += textBox5_TextChanged;
+            txtbInputQty.KeyPress += textBox5_KeyPress;
+            txtbInputQty.TextChanged += textBox5_TextChanged;
             //textBox6.KeyDown += textBox6_KeyDown;
             // Simulate button3 click on form load
             button3_Click(this, EventArgs.Empty);
@@ -370,7 +370,7 @@ namespace WH_Panel
                             formInstance.txtbInputMFPN.Clear();
                             formInstance.textBox3.Clear();
                             formInstance.textBox4.Clear();
-                            formInstance.textBox5.Clear();
+                            formInstance.txtbInputQty.Clear();
                             formInstance.txtbPART.Clear();
 
 
@@ -575,7 +575,7 @@ namespace WH_Panel
                 textBox.ForeColor = Color.FromArgb(220, 220, 220); // Light foreground color
             }
         }
-        private async void textBox1_KeyDown(object sender, KeyEventArgs e)
+        private async void txtbInputIPN_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
@@ -607,7 +607,7 @@ namespace WH_Panel
                             textBox3.Text = part.PARTDES;
                             textBox4.Text = part.MNFNAME;
                             txtbPART.Text = part.PART.ToString();
-                            textBox5.Focus();
+                            txtbInputQty.Focus();
                         }
                         else
                         {
@@ -637,6 +637,9 @@ namespace WH_Panel
 
             }
         }
+
+
+
         private void printSticker(PR_PART wHitem)
         {
             try
@@ -686,13 +689,14 @@ namespace WH_Panel
                 MessageBox.Show("Sticker printing failed: " + e.Message);
             }
         }
-        private void textBox5_KeyDown(object sender, KeyEventArgs e)
+        private void txtbInputQty_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
                 // Call the button1_Click method programmatically
-                btnPrintSticker_Click(sender, e);
+                
                 btnMFG_Click(sender, e);
+                btnPrintSticker_Click(sender, e);
             }
         }
 
@@ -715,8 +719,8 @@ namespace WH_Panel
             if (string.IsNullOrEmpty(txtbInputMFPN.Text) ||
                 string.IsNullOrEmpty(textBox3.Text) ||
                 string.IsNullOrEmpty(textBox4.Text) ||
-                string.IsNullOrEmpty(textBox5.Text) ||
-                !int.TryParse(textBox5.Text, out int qty) ||
+                string.IsNullOrEmpty(txtbInputQty.Text) ||
+                !int.TryParse(txtbInputQty.Text, out int qty) ||
                 qty <= 0)
             {
                 MessageBox.Show("Please ensure all fields are filled in correctly before printing.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1025,6 +1029,8 @@ namespace WH_Panel
                     }
                 }
             }
+
+            txtbPrefix.Text = comboBox1.SelectedItem.ToString().Split(' ')[0];
         }
 
         private async Task ExtractMFPNForRow(DataGridViewRow row)
@@ -1905,7 +1911,7 @@ namespace WH_Panel
 
         private async void btnMFG_Click(object sender, EventArgs e)
         {
-            if (comboBox1.SelectedItem != null && txtbInputIPN.Text != string.Empty && txtbInputMFPN.Text != string.Empty && textBox3.Text != string.Empty && textBox4.Text != string.Empty && int.Parse(textBox5.Text) > 0 && int.Parse(textBox5.Text) <= 50000)
+            if (comboBox1.SelectedItem != null && txtbInputIPN.Text != string.Empty && txtbInputMFPN.Text != string.Empty && textBox3.Text != string.Empty && textBox4.Text != string.Empty && int.Parse(txtbInputQty.Text) > 0 && int.Parse(txtbInputQty.Text) <= 50000)
             {
                 string selectedWarehouseName = comboBox1.SelectedItem.ToString().Split(' ')[0];
 
@@ -1920,16 +1926,16 @@ namespace WH_Panel
 
                     if (rbtIN.Checked)
                     {
-                        if (txtbIN.Text == string.Empty)
+                        if (txtbINdoc.Text == string.Empty)
                         {
                             MessageBox.Show("Please enter the supplier document description", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            txtbIN.Focus();
+                            txtbINdoc.Focus();
 
                             return;
                         }
                         else
                         {
-                            _BOOKNUM = txtbIN.Text;
+                            _BOOKNUM = txtbINdoc.Text;
                             _SUPNAME = "CLIENT";
                         }
                     }
@@ -1977,7 +1983,7 @@ namespace WH_Panel
                     new TransOrder
                     {
                         PARTNAME = txtbInputIPN.Text,
-                        TQUANT = int.Parse(textBox5.Text),
+                        TQUANT = int.Parse(txtbInputQty.Text),
                         PACKCODE = cmbPackCode.SelectedItem != null ? cmbPackCode.SelectedItem.ToString() : "Bag",
                         UNITNAME = "יח'",
                         //SERIALNAME = "0",
@@ -2008,12 +2014,12 @@ namespace WH_Panel
             {
                 btnMFG.Text = "INCOMING";
                 btnMFG.Update();
-                txtbIN.ReadOnly = false;
-                txtbIN.Focus();
+                txtbINdoc.ReadOnly = false;
+                txtbINdoc.Focus();
             }
             else
             {
-                txtbIN.ReadOnly = true;
+                txtbINdoc.ReadOnly = true;
                 // btnMFG.Text = "";
             }
         }
@@ -2041,7 +2047,7 @@ namespace WH_Panel
                 btnMFG.Text = "MFG";
                 btnMFG.Update();
                 txtbOUT.ReadOnly = true;
-                txtbIN.ReadOnly = true;
+                txtbINdoc.ReadOnly = true;
 
             }
             else
@@ -2058,7 +2064,7 @@ namespace WH_Panel
                 btnMFG.Text = "FTK";
                 btnMFG.Update();
                 txtbOUT.ReadOnly = true;
-                txtbIN.ReadOnly = true;
+                txtbINdoc.ReadOnly = true;
 
             }
             else
@@ -2285,6 +2291,50 @@ namespace WH_Panel
                 {
                     MessageBox.Show("Please select at least one of PreCode or PostCode.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
+            }
+        }
+
+        private void txtbDecodeIPN_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                string unprefixedIPN = txtbDecodeIPN.Text;
+                string prefix = txtbPrefix.Text;
+
+                // Determine the appropriate separator based on the first row of dataGridView1
+                string separator = "_"; // Default separator
+                if (dataGridView1.Rows.Count > 0)
+                {
+                    var firstRow = dataGridView1.Rows[0];
+                    if (firstRow.Cells["PARTNAME"].Value != null)
+                    {
+                        string firstRowPartName = firstRow.Cells["PARTNAME"].Value.ToString();
+                        if (firstRowPartName.Length > 3 && firstRowPartName[3] == '-')
+                        {
+                            separator = "-";
+                        }
+                    }
+                }
+
+                // Construct the valid IPN using the prefix and the unprefixed IPN
+                string validIPN = $"{prefix}{separator}{unprefixedIPN}";
+
+                // Copy the constructed IPN into the txtbInputIPN textbox
+                txtbInputIPN.Text = validIPN;
+
+                // Simulate ENTER key press on txtbInputIPN to trigger the original logic
+                txtbInputIPN_KeyDown(txtbInputIPN, new KeyEventArgs(Keys.Enter));
+
+                // Clear the txtbDecodeIPN textbox
+                txtbDecodeIPN.Clear();
+            }
+        }
+
+        private void txtbINdoc_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.Enter && txtbINdoc.Text!=string.Empty)
+            {
+                txtbInputQty.Focus();
             }
         }
     }
