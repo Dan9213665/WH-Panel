@@ -69,25 +69,17 @@ using System.Security.Cryptography.Pkcs;
 using static QRCoder.PayloadGenerator;
 using OfficeOpenXml.Style;
 using static WH_Panel.FrmPriorityBom;
-
-
 namespace WH_Panel
 {
-
     public partial class FrmPriorityBom : Form
     {
         private AppSettings settings;
-
-
         private List<WarehouseBalance> warehouseBalances;
         public FrmPriorityBom()
         {
             InitializeComponent();
-
             this.Load += FrmPriorityBom_Load;
-
             this.KeyPreview = true; // Set KeyPreview to true
-
             SetDarkModeColors(this);
             InitializeDataGridView();
             // Set the DrawMode property and handle the DrawItem event
@@ -95,29 +87,19 @@ namespace WH_Panel
             cmbROBxList.DrawItem += cmbROBxList_DrawItem;
             cmbROBxList.SelectedIndexChanged += cmbROBxList_SelectedIndexChanged;
             // Initialize DataGridView columns
-
             // Handle the CellFormatting event
             dgwBom.CellFormatting += dgwBom_CellFormatting;
             AttachTextBoxEvents(this);
-
-
-
         }
-
         private void FrmPriorityBom_Load(object sender, EventArgs e)
         {
             settings = SettingsManager.LoadSettings();
-
             if (settings == null)
             {
                 MessageBox.Show("Failed to load settings.");
                 return;
             }
             GetGetRobWosList();
-
-
-
-
         }
         public class Serial
         {
@@ -125,7 +107,6 @@ namespace WH_Panel
             public string SERIALNAME { get; set; }
             public int QUANT { get; set; }
             public string SERIALSTATUSDES { get; set; }
-
             public string REVNUM { get; set; }
             public override string ToString()
             {
@@ -138,37 +119,29 @@ namespace WH_Panel
             public string PARTDES { get; set; }
             public int PQUANT { get; set; }
             public int CQUANT { get; set; }
-
             public int KLINE { get; set; }
-
             public int TRANS { get; set; }
             public int QUANT { get; set; }
             public int DELTA => QUANT - CQUANT;
             public string CALC { get; set; }
         }
-
-
         public class ApiResponse
         {
             public List<Part> value { get; set; }
         }
-
         public class Part
         {
             public string MNFPARTNAME { get; set; }
         }
-
         public class WarehouseApiResponse
         {
             public List<Warehouse> WarehouseList { get; set; }
         }
-
         public class Warehouse
         {
             public string WARHSNAME { get; set; }
             public List<WarehouseBalance> WARHSBAL_SUBFORM { get; set; }
         }
-
         public class WarehouseBalance
         {
             public string PARTNAME { get; set; }
@@ -180,7 +153,6 @@ namespace WH_Panel
             public int PART { get; set; }
             public string MNFPARTNAME { get; set; }
         }
-
         private string username = "api"; // Replace with your actual username
         private string password = "DdD@12345"; // Replace with your actual password
         private async void GetGetRobWosList()
@@ -197,14 +169,11 @@ namespace WH_Panel
                     //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                     //string un = settings.ApiUsername;
                     string un = username;
-
                     //MessageBox.Show(un);
                     //string pw = settings.ApiPassword;
                     string pw = password;
-
                     //MessageBox.Show(pw);
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{un}:{pw}"));
-
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                     // Make the HTTP GET request
                     HttpResponseMessage response = await client.GetAsync(url);
@@ -221,7 +190,6 @@ namespace WH_Panel
                         //cmbROBxList.Items.Add($"{serial.SERIALNAME} - {serial.PARTNAME} - {serial.QUANT}PCS - {serial.SERIALSTATUSDES}");
                         cmbROBxList.Items.Add(serial);
                     }
-
                     lblLoading.BackColor = Color.Green;
                     lblLoading.Text = "Data Loaded";
                     cmbROBxList.DroppedDown = true;
@@ -239,10 +207,8 @@ namespace WH_Panel
         private void cmbROBxList_DrawItem(object sender, DrawItemEventArgs e)
         {
             if (e.Index < 0) return;
-
             var comboBox = sender as System.Windows.Forms.ComboBox;
             var serial = comboBox.Items[e.Index] as Serial;
-
             // Set the background color based on the SERIALSTATUSDES
             if (serial.SERIALSTATUSDES == "קיט מלא")
             {
@@ -256,26 +222,21 @@ namespace WH_Panel
             {
                 e.Graphics.FillRectangle(new SolidBrush(comboBox.BackColor), e.Bounds);
             }
-
             // Draw the text
             e.Graphics.DrawString(serial.ToString(), e.Font, Brushes.White, e.Bounds);
-
             // Draw the focus rectangle if the item has focus
             e.DrawFocusRectangle();
         }
-
         private void SetDarkModeColors(Control parentControl)
         {
             Color backgroundColor = Color.FromArgb(37, 37, 38); // Dark background color
             Color foregroundColor = Color.FromArgb(241, 241, 241); // Light foreground color
             Color borderColor = Color.FromArgb(45, 45, 48); // Border color for controls
-
             foreach (Control control in parentControl.Controls)
             {
                 // Set the background and foreground colors
                 control.BackColor = backgroundColor;
                 control.ForeColor = foregroundColor;
-
                 // Handle specific control types separately
                 if (control is System.Windows.Forms.Button button)
                 {
@@ -300,7 +261,6 @@ namespace WH_Panel
                         label.BackColor = backgroundColor;
                         label.ForeColor = foregroundColor;
                     }
-
                 }
                 else if (control is TabControl tabControl)
                 {
@@ -340,7 +300,6 @@ namespace WH_Panel
                     dateTimePicker.BackColor = backgroundColor;
                     dateTimePicker.ForeColor = foregroundColor;
                 }
-
                 // Recursively update controls within containers
                 if (control.Controls.Count > 0)
                 {
@@ -348,7 +307,6 @@ namespace WH_Panel
                 }
             }
         }
-
         private async void cmbROBxList_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cmbROBxList.SelectedItem is Serial selectedSerial)
@@ -362,11 +320,8 @@ namespace WH_Panel
                 txtbInputIPN.Focus();
                 // Load BOM details
                 await LoadBomDetails(selectedSerial.SERIALNAME);
-
             }
         }
-
-
         private void InitializeDataGridView()
         {
             dgwBom.Columns.Clear();
@@ -381,21 +336,13 @@ namespace WH_Panel
             dgwBom.Columns.Add("ALT", "ALT");
             dgwBom.Columns.Add("TRANS", "TRANS");
             dgwBom.Columns.Add("KLINE", "KLINE");
-
             dgwBom.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
         }
-
-
-
-
-
         private async Task LoadBomDetails(string serialName)
         {
             progressBar1.Value = 0;
             progressBar1.Update();
-            
             int completedItems = 0;
-
             string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{serialName}'&$expand=TRANSORDER_K_SUBFORM";
             using (HttpClient client = new HttpClient())
             {
@@ -414,12 +361,10 @@ namespace WH_Panel
                     string responseBody = await response.Content.ReadAsStringAsync();
                     // Parse the JSON response
                     var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-
                     // Check if the response contains the expected data
                     if (apiResponse["value"] != null && apiResponse["value"].Any())
                     {
                         var bomDetails = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
-
                         // Aggregate the PQUANT values for each unique PARTNAME
                         var aggregatedDetails = bomDetails
                             .GroupBy(detail => detail.PARTNAME)
@@ -439,14 +384,11 @@ namespace WH_Panel
                         //{
                         //    MessageBox.Show($"PARTNAME: {detail.PARTNAME}, CALC: {detail.CALC}");
                         //}
-                        
-                       
                         // Populate the DataGridView with the aggregated data
                         dgwBom.Rows.Clear();
                         foreach (var detail in aggregatedDetails)
                         {
                             //string calcValue = !string.IsNullOrEmpty(detail.CALC) && !detail.CALC.Contains("+0") ? detail.CALC : "";
-
                             if (detail.CALC.Contains("+0"))
                             {
                                 detail.CALC = detail.CALC.Replace("+0", "");
@@ -456,23 +398,17 @@ namespace WH_Panel
                                 detail.CALC = "";
                             }
                             dgwBom.Rows.Add(detail.PARTNAME,"", detail.PARTDES,"", detail.QUANT, detail.CQUANT, detail.DELTA, detail.CALC,"", detail.TRANS, detail.KLINE);
-
                             int pbTotal = aggregatedDetails.Count;
-
                             if (detail.DELTA>=0)
                             {
                                 completedItems++;
                             }
                             progressBar1.Value = (completedItems / pbTotal) * 100;
-                            
                         }
-
                         // Update the progress label
                         UpdateProgressLabel();
-
                         progressBar1.Update();
                         txtbInputIPN.PlaceholderText = $"Filter by IPN ({aggregatedDetails.Count.ToString()})";
-
                         // Fetch MFPNs for each row with a delay
                         await FetchWarehouseBalances();
                         //await FetchMFPNsWithDelay();
@@ -493,12 +429,10 @@ namespace WH_Panel
                 }
             }
         }
-
         private void UpdateProgressLabel()
         {
             int totalItems = dgwBom.Rows.Count;
             int completedItems = dgwBom.Rows.Cast<DataGridViewRow>().Count(row => Convert.ToInt32(row.Cells["DELTA"].Value) >= 0);
-
             if (totalItems > 0)
             {
                 int percentage = (completedItems * 100) / totalItems;
@@ -509,7 +443,6 @@ namespace WH_Panel
                 lblProgress.Text = "0 / 0 items (0%)";
             }
         }
-
         private async Task FetchWarehouseBalances()
         {
             foreach (DataGridViewRow row in dgwBom.Rows)
@@ -518,9 +451,7 @@ namespace WH_Panel
                 {
                     string partName = row.Cells["PARTNAME"].Value.ToString();
                     string warehouseName = partName.Substring(0, 3); // Get the first 3 characters of the PARTNAME
-
                     string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{warehouseName}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{partName}')";
-
                     using (HttpClient client = new HttpClient())
                     {
                         try
@@ -530,7 +461,6 @@ namespace WH_Panel
                             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                             string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                             // Make the HTTP GET request
                             HttpResponseMessage response = await client.GetAsync(url);
                             response.EnsureSuccessStatusCode();
@@ -559,25 +489,20 @@ namespace WH_Panel
                             MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
-
                     // Introduce an artificial delay between each API call
                     await Task.Delay(200); // 100 milliseconds delay
                 }
             }
         }
-
         private async Task FetchMFPNForRow(DataGridViewRow row)
         {
-
             //MessageBox.Show("Test");
             if (row.Cells["PARTNAME"].Value != null && (row.Cells["MFPN"].Value == string.Empty || row.Cells["MFPN"].Value == null))
             //if (row.Cells["PARTNAME"].Value != null) //&& (string.IsNullOrEmpty(row.Cells["MFPN"].Value?.ToString())|| row.Cells["MFPN"].Value=="")
             {
                 string partName = row.Cells["PARTNAME"].Value.ToString();
                 //MessageBox.Show("partName:"+partName);
-
                 string partUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PARTNAME eq '{partName}'";
-
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -595,18 +520,15 @@ namespace WH_Panel
                         string partResponseBody = await partResponse.Content.ReadAsStringAsync();
                         // Parse the JSON response
                         var partApiResponse = JsonConvert.DeserializeObject<ApiResponse>(partResponseBody);
-
                         //MessageBox.Show(partApiResponse.ToString());
                         // Check if the response contains any data
                         if (partApiResponse.value != null && partApiResponse.value.Count > 0)
                         {
                             var part = partApiResponse.value[0];
-
                             //MessageBox.Show(partApiResponse.value[0].ToString());
                             // Directly update the DataGridView cell
                             row.Cells["MFPN"].Value = part.MNFPARTNAME;
                             dgwBom.Refresh();
-
                             //MessageBox.Show($"Updated MFPN for {partName} to {part.MNFPARTNAME}");
                         }
                     }
@@ -622,7 +544,6 @@ namespace WH_Panel
             }
             await Task.Delay(200); // 100 milliseconds delay
         }
-
         private async Task FetchMFPNsForAllRows()
         {
             foreach (DataGridViewRow row in dgwBom.Rows)
@@ -630,17 +551,14 @@ namespace WH_Panel
                 await FetchMFPNForRow(row);
             }
         }
-
         private async Task FetchMFPNsWithDelay()
         {
             foreach (DataGridViewRow row in dgwBom.Rows)
             {
                 if (row.Cells["PARTNAME"].Value != null)  //&& ((row.Cells["MFPN"].Value == string.Empty) || (row.Cells["MFPN"].Value == null))
-
                 {
                     string partName = row.Cells["PARTNAME"].Value.ToString();
                     string partUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PARTNAME eq '{partName}'";
-
                     using (HttpClient client = new HttpClient())
                     {
                         try
@@ -670,7 +588,6 @@ namespace WH_Panel
                         }
                         catch (HttpRequestException ex)
                         {
-                            
                            MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                         catch (Exception ex)
@@ -678,14 +595,11 @@ namespace WH_Panel
                             MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
-
                     // Introduce an artificial delay between each API call
                     await Task.Delay(100); // 1 second delay
                 }
             }
         }
-
-
         private void AttachTextBoxEvents(Control parentControl)
         {
             foreach (Control control in parentControl.Controls)
@@ -696,7 +610,6 @@ namespace WH_Panel
                     textBox.Leave += TextBox_Leave;
                     textBox.KeyUp += TextBox_KeyUP;
                     textBox.KeyDown += TextBox_KeyDown;
-
                     // Set the Tag property based on the placeholder text
                     if (textBox.PlaceholderText.Contains("Filter by") || textBox.PlaceholderText.Contains("Input Qty"))
                     {
@@ -712,7 +625,6 @@ namespace WH_Panel
                 }
             }
         }
-
         // Helper method to map display names to actual column names
         private string GetColumnNameFromDisplayName(string displayName)
         {
@@ -732,34 +644,25 @@ namespace WH_Panel
                     return displayName;
             }
         }
-
-
         private void TextBox_KeyDown(object sender, KeyEventArgs e)
         {
             //
         }
-
-
-
-
         private void TextBox_KeyUP(object sender, KeyEventArgs e)
         {
             if (sender is System.Windows.Forms.TextBox textBox)
             {
                 string columnName = textBox.Tag?.ToString();
-
                 if (string.IsNullOrEmpty(columnName))
                 {
                     // MessageBox.Show("Column name is null or empty", "Debug");
                     return;
                 }
-
                 if (!dgwBom.Columns.Contains(columnName))
                 {
                     // MessageBox.Show($"Column named {columnName} cannot be found", "Debug");
                     return;
                 }
-
                 if (e.KeyCode == Keys.Escape)
                 {
                     ClearFilter(textBox, columnName);
@@ -774,11 +677,8 @@ namespace WH_Panel
                 }
             }
         }
-
         private void ClearFilter(System.Windows.Forms.TextBox textBox, string columnName)
         {
-
-
             textBox.Clear();
             textBox.Text = string.Empty;
             txtbInputIPN.Clear();
@@ -786,41 +686,24 @@ namespace WH_Panel
             textBox3.Clear();
             textBox4.Clear();
             txtbINPUTqty.Clear();
-
-
             foreach (DataGridViewRow row in dgwBom.Rows)
             {
                 row.Visible = true;
             }
-
             dgwBom.Update();
             // Fetch MFPNs for each row with a delay
-
         }
-
         private void ApplyFilter(System.Windows.Forms.TextBox textBox, string columnName)
         {
             string filterText = textBox.Text.ToLower();
-
             foreach (DataGridViewRow row in dgwBom.Rows)
             {
                 bool isVisible = row.Cells[columnName].Value != null &&
                                  row.Cells[columnName].Value.ToString().ToLower().Contains(filterText);
-
                 row.Visible = isVisible;
             }
-
             dgwBom.Update();
         }
-
-
-
-
-
-
-
-
-
         private void TextBox_Enter(object sender, EventArgs e)
         {
             if (sender is System.Windows.Forms.TextBox textBox)
@@ -837,7 +720,6 @@ namespace WH_Panel
                 textBox.ForeColor = Color.FromArgb(220, 220, 220); // Light foreground color
             }
         }
-
         private void dgwBom_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             if (dgwBom.Columns[e.ColumnIndex].Name == "DELTA")
@@ -857,9 +739,7 @@ namespace WH_Panel
             else if (dgwBom.Columns[e.ColumnIndex].Name == "TBALANCE")
             {
                 int DELTA = Convert.ToInt32(dgwBom.Rows[e.RowIndex].Cells["DELTA"].Value);
-
                 int whValue = 0;
-
                 if (e.Value != null && int.TryParse(e.Value.ToString(), out whValue))
                 {
                     if (whValue >= Math.Abs(DELTA) && whValue != 0)
@@ -872,19 +752,14 @@ namespace WH_Panel
                     }
                 }
             }
-
             else if (dgwBom.Columns[e.ColumnIndex].Name == "QUANT")
             {
                 int req = Convert.ToInt32(dgwBom.Rows[e.RowIndex].Cells["CQUANT"].Value);
-
                 int kitValue = Convert.ToInt32(dgwBom.Rows[e.RowIndex].Cells["QUANT"].Value);
-
                 //if (kitValue > 0)
                 //{
                 //   // MessageBox.Show(kitValue.ToString());
                 //}
-
-
                 if (e.Value != null && int.TryParse(e.Value.ToString(), out kitValue))
                 {
                     if (kitValue >= req && kitValue != 0)
@@ -898,7 +773,6 @@ namespace WH_Panel
                 }
             }
         }
-
         private async void dgwBom_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0) // Ensure the row index is valid
@@ -906,7 +780,6 @@ namespace WH_Panel
                 var selectedRow = dgwBom.Rows[e.RowIndex];
                 var partName = selectedRow.Cells["PARTNAME"].Value.ToString();
                 string logPartUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART?$filter=PARTNAME eq '{partName}'&$expand=PARTTRANSLAST2_SUBFORM";
-
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -918,7 +791,6 @@ namespace WH_Panel
                         // string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                         string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                         // Measure the time taken for the HTTP GET request
                         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
                         // Make the HTTP GET request for stock movements
@@ -1002,7 +874,6 @@ namespace WH_Panel
                             //}
                             //gbxIPNstockMovements.Text = $"Stock Movements for {partName}";
                             //ColorTheRows(dgwIPNmoves);
-
                             // Populate the DataGridView with the data
                             dgwIPNmoves.Rows.Clear();
                             foreach (var logPart in logPartApiResponse.value)
@@ -1017,10 +888,8 @@ namespace WH_Panel
                             }
                             gbxIPNstockMovements.Text = $"Stock Movements for {partName}";
                             ColorTheRows(dgwIPNmoves);
-
                             // Fetch MFPN for the selected row
                             await FetchMFPNForRow(selectedRow);
-                           
                             //await FetchMFPNsWithDelay();
                         }
                         else
@@ -1039,7 +908,6 @@ namespace WH_Panel
                 }
             }
         }
-
         private async Task FetchAndSetPackCodeAsync(DataGridViewRow row, string logDocNo, string partName, int quant)
         {
             string packCode = await FetchPackCodeAsync(logDocNo, partName, quant);
@@ -1080,13 +948,11 @@ namespace WH_Panel
                 catch (HttpRequestException ex)
                 {
                     MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                 
                     return null;
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-             
                     return null;
                 }
             }
@@ -1096,7 +962,6 @@ namespace WH_Panel
             // Update the ping label with the elapsed time
             lblPing.Text = $"tProc: {milliseconds} ms";
         }
-
         private void ColorTheRows(DataGridView dataGridView)
         {
             foreach (DataGridViewRow row in dataGridView.Rows)
@@ -1142,9 +1007,6 @@ namespace WH_Panel
                 }
             }
         }
-
-
-
         private async void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -1153,11 +1015,9 @@ namespace WH_Panel
                 bool found = false;
                 int visibleRowCount = 0;
                 bool dontneedeMoreItems = false;
-
                 foreach (DataGridViewRow row in dgwBom.Rows)
                 {
                     var needMoreItems = int.Parse(row.Cells["DELTA"].Value.ToString());
-
                     if (row.Cells["PARTNAME"].Value != null && row.Cells["PARTNAME"].Value.ToString() == filterText)
                     {
                         if (needMoreItems < 0)
@@ -1176,52 +1036,38 @@ namespace WH_Panel
                         row.Visible = false;
                     }
                 }
-
                 dgwBom.Update();
-
                 if (dontneedeMoreItems)
                 {
                     txtbInputIPN.Clear();
                     txtbInputIPN.Focus();
                     ClearFilters();
                     AutoClosingMessageBox.Show($"{filterText} NOT needed anymore!", 2000, Color.Orange);
-
                     return;
                 }
-
                 if (visibleRowCount == 1)
                 {
                     txtbINPUTqty.Focus();
                     await FetchMFPNForRow(dgwBom.Rows.Cast<DataGridViewRow>().FirstOrDefault(row => row.Visible));
                 }
-
                 if (!found)
                 {
-
                     txtbInputIPN.Clear();
                     ClearFilters();
                     AutoClosingMessageBox.Show($"{filterText} NOT FOUND!", 2000, Color.Red); // Show message for 2 seconds
-
                 }
             }
         }
-
-
         private void ClearFilters()
         {
             foreach (DataGridViewRow row in dgwBom.Rows)
             {
                 row.Visible = true;
             }
-
             dgwBom.Update();
         }
-
-
-
         private void txtbINPUTqty_KeyUp(object sender, KeyEventArgs e)
         {
-
             if (e.KeyCode == Keys.Escape)
             {
                 txtbInputIPN.Clear();
@@ -1230,17 +1076,13 @@ namespace WH_Panel
                 textBox4.Clear();
                 txtbINPUTqty.Clear();
                 txtbInputIPN.Focus();
-
-
                 foreach (DataGridViewRow row in dgwBom.Rows)
                 {
                     row.Visible = true;
                 }
-
                 dgwBom.Update();
             }
         }
-
         private async void txtbINPUTqty_KeyDown(object sender, KeyEventArgs e)
         {
             // Count only the visible rows
@@ -1258,15 +1100,11 @@ namespace WH_Panel
                             string serialName = txtbRob.Text; // Assuming txtbRob contains the SERIALNAME
                             int cQuant = int.Parse(filteredRow.Cells["CQUANT"].Value.ToString()); // Get the CQUANT value
                             int inKit = int.Parse(filteredRow.Cells["QUANT"].Value.ToString()); // Get the QUANT value
-
                             int neededQty = cQuant - inKit;
-
                             await AddItemToKit(partName, serialName, neededQty, qty, filteredRow);
                             txtbINPUTqty.Clear();
                             txtbInputIPN.Clear();
                             txtbInputIPN.Focus();
-
-
                             // Update the progress label
                             UpdateProgressLabel();
                         }
@@ -1286,15 +1124,11 @@ namespace WH_Panel
                 txtbInputIPN.Focus();
             }
         }
-
-
-
         private async Task AddItemToKit(string partName, string serialName, int cQuant, int qty, DataGridViewRow filteredRow)
         {
             // Check quantity availability in the warehouse
             string checkUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq 'ENE'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{partName}')";
             int availableQty = 0;
-
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -1304,7 +1138,6 @@ namespace WH_Panel
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                     // Make the HTTP GET request to check quantity availability
                     HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
                     string checkResponseBody = await checkResponse.Content.ReadAsStringAsync();
@@ -1331,19 +1164,15 @@ namespace WH_Panel
                     return;
                 }
             }
-
             if (availableQty < qty)
             {
                 MessageBox.Show("Insufficient quantity available in the warehouse.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-
             // Retrieve the TRANSORDER_K_SUBFORM data
             string getUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM?$filter=PARTNAME eq '{partName}'";
             int kline = 0;
-
             string package = string.Empty;
-
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -1353,21 +1182,18 @@ namespace WH_Panel
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                     // Make the HTTP GET request to retrieve the TRANSORDER_K_SUBFORM data
                     HttpResponseMessage getResponse = await client.GetAsync(getUrl);
                     string getResponseBody = await getResponse.Content.ReadAsStringAsync();
                     getResponse.EnsureSuccessStatusCode();
                     var getApiResponse = JsonConvert.DeserializeObject<JObject>(getResponseBody);
                     var transOrderKSubform = getApiResponse["value"];
-
                     if (transOrderKSubform != null)
                     {
                         // Filter the data to find the row with the matching PARTNAME and CQUANT
                         var matchingRow = transOrderKSubform.FirstOrDefault(row =>
                             row["PARTNAME"].ToString() == partName &&
                             row["CQUANT"].Value<int>() == cQuant);
-
                         if (matchingRow != null)
                         {
                             kline = matchingRow["KLINE"].Value<int>();
@@ -1394,10 +1220,8 @@ namespace WH_Panel
                     return;
                 }
             }
-
             // Construct the PATCH request URL
             string patchUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM(TYPE='K',KLINE={kline})";
-
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -1407,7 +1231,6 @@ namespace WH_Panel
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                     // Create the JSON payload for the PATCH request
                     var payload = new
                     {
@@ -1417,15 +1240,11 @@ namespace WH_Panel
                         PACKCODE = package
                     };
                     var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-
                     // Make the PATCH request
                     HttpResponseMessage patchResponse = await client.PatchAsync(patchUrl, content);
                     string patchResponseBody = await patchResponse.Content.ReadAsStringAsync();
                     patchResponse.EnsureSuccessStatusCode();
-
                     AutoClosingMessageBox.Show($"{partName} - {qty} PCS moved to {serialName}", 1000, Color.Green); // Show message for 2 seconds
-
-
                     // Make another GET request to update the WH cell
                     HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
                     string checkResponseBody = await checkResponse.Content.ReadAsStringAsync();
@@ -1441,15 +1260,11 @@ namespace WH_Panel
                             filteredRow.Cells["TBALANCE"].Value = availableQty;
                         }
                     }
-
                     // Update the DataGridView row
                     filteredRow.Cells["QUANT"].Value = qty;
                     filteredRow.Cells["DELTA"].Value = qty - cQuant;
                     txtbINPUTqty.Clear();
                     txtbINPUTqty.Focus();
-
-
-
                 }
                 catch (HttpRequestException ex)
                 {
@@ -1461,31 +1276,22 @@ namespace WH_Panel
                 }
             }
         }
-
         private void btnKitLabel_Click(object sender, EventArgs e)
         {
-
         }
-
         private void btnKitLabel_MouseDown(object sender, MouseEventArgs e)
         {
             // Check if the right mouse button was clicked
             if (e.Button == MouseButtons.Left && txtbName.Text != string.Empty)
             {
                 string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-
                 // Extract only the last part of the project name
                 string projectName = txtbName.Text;
-
-
-
                 using (CustomPrintDialog customDialog = new CustomPrintDialog())
                 {
                     // Show the custom dialog
                     DialogResult result = customDialog.ShowDialog();
-
                     int copiesToPrint = 0;
-
                     // Determine the number of copies based on the user's selection
                     switch (result)
                     {
@@ -1499,9 +1305,7 @@ namespace WH_Panel
                             copiesToPrint = 3;
                             break;
                         case DialogResult.Ignore:
-
                             string[] splitParts = projectName.Split('_');
-
                             WHitem itemToPrint = new WHitem();
                             itemToPrint.IPN = "קיט מלא";
                             itemToPrint.MFPN = splitParts[1];
@@ -1509,14 +1313,10 @@ namespace WH_Panel
                             itemToPrint.Stock = int.Parse(txtbQty.Text.ToString());
                             itemToPrint.Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
                             printStickerFullKit(itemToPrint);
-
                             break;
-
                         case DialogResult.Abort:
-
                             string modifiedProjectName2 = projectName.Substring(0, projectName.Length - 5);
                             string[] splitParts2 = modifiedProjectName2.Split('_');
-
                             WHitem itemToPrint2 = new WHitem();
                             itemToPrint2.IPN = "רכיבים בגלילה";
                             itemToPrint2.MFPN = splitParts2[1];
@@ -1524,13 +1324,9 @@ namespace WH_Panel
                             itemToPrint2.Stock = int.Parse(txtbQty.Text.ToString());
                             itemToPrint2.Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
                             printStickerFullKit(itemToPrint2);
-
-
                             break;
                         case DialogResult.Cancel:
-
                             SendEmail();
-
                             break;
                     }
                     if (result != DialogResult.Ignore && result != DialogResult.Abort && result != DialogResult.Cancel)
@@ -1538,22 +1334,17 @@ namespace WH_Panel
                         GenerateHTMLkitBoxLabel(copiesToPrint);
                     }
                     // Call the method with the chosen number of copies
-
                 }
             }
         }
-
         private void GenerateHTMLkitBoxLabel(int qtyToPrint)
         {
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-
             // Extract only the last part of the project name
             string projectName = txtbName.Text;
-
             // Construct the filename
             string filename = "\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\" +
                 _fileTimeStamp + "_box label for_" + projectName + ".html";
-
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.WriteLine("<html style='text-align:center'>");
@@ -1562,10 +1353,8 @@ namespace WH_Panel
                 writer.WriteLine("</head>");
                 writer.WriteLine("<body>");
                 string[] parts = { txtbName.Text, txtbRob.Text, txtbQty.Text + " PCS" };
-
                 string imageUrl = string.Empty;
                 string base64Image = string.Empty;
-
                 // Search for the prefix in the customer folders
                 string prefix = txtbName.Text.Substring(0, 3);
                 string customersPath = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS";
@@ -1586,7 +1375,6 @@ namespace WH_Panel
                         }
                     }
                 }
-
                 string backgroundImageUrl = "eleBackGND.png";
                 string altText = "WH image";
                 for (int i = 0; i < qtyToPrint; i++)
@@ -1595,7 +1383,6 @@ namespace WH_Panel
                     writer.WriteLine("<col style='width: 25%; background: url(" + backgroundImageUrl + ") no-repeat center center; background-size: 100% 100%;'>");
                     writer.WriteLine("<col style='width: 75%;'>");
                     writer.WriteLine("<tr>");
-
                     writer.WriteLine("<td style='position: relative; vertical-align: middle;'>");
                     writer.WriteLine("    <img id='logoImage' src='" + imageUrl + "' alt='" + altText + "' style='height: 100%; width: 100%;'>");
                     writer.WriteLine("    <div style='position: absolute; top: 1%; left: 5%; transform: translate(-1%, -1%); color: white; font-size: 15px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);'>");
@@ -1603,7 +1390,6 @@ namespace WH_Panel
                     writer.WriteLine(currentDateTime);
                     writer.WriteLine("    </div>");
                     writer.WriteLine("</td>");
-
                     writer.WriteLine("<td style='text-align: center; background: rgba(255, 255, 255, 0.1) url(" + backgroundImageUrl + ") no-repeat center center; background-size: 111% 111%; vertical-align: middle; transform: scaleX(-1);'>");
                     foreach (string part in parts)
                     {
@@ -1616,7 +1402,6 @@ namespace WH_Panel
                 writer.WriteLine("</body>");
                 writer.WriteLine("</html>");
             }
-
             // Open the file in default browser
             var p = new Process();
             p.StartInfo = new ProcessStartInfo(filename)
@@ -1625,14 +1410,12 @@ namespace WH_Panel
             };
             p.Start();
         }
-
         private void printStickerFullKit(WHitem wHitem)
         {
             try
             {
                 string userName = Environment.UserName;
                 string fpst = @"C:\\Users\\" + userName + "\\Desktop\\Print_Stickers.xlsx";
-
                 string thesheetName = "Sheet1";
                 string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fpst + "; Extended Properties=\"Excel 12.0;HDR=YES;IMEX=0\"";
                 OleDbConnection conn = new OleDbConnection(constr);
@@ -1640,63 +1423,48 @@ namespace WH_Panel
                 cmd.Connection = conn;
                 cmd.CommandType = CommandType.Text;
                 cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @Updated_on";
-
                 cmd.Parameters.AddWithValue("@PN", wHitem.IPN);
                 cmd.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
                 cmd.Parameters.AddWithValue("@ItemDesc", wHitem.Description);
                 cmd.Parameters.AddWithValue("@QTY", wHitem.Stock);
                 cmd.Parameters.AddWithValue("@Updated_on", wHitem.Updated_on);
-
                 conn.Open();
                 cmd.ExecuteNonQuery();
                 conn.Close();
-
                 Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
                 SendKeys.SendWait("^p");
                 SendKeys.SendWait("{Enter}");
                 //ComeBackFromPrint();
                 Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
-
             }
             catch (Exception e)
             {
                 MessageBox.Show("Sticker printing failed : " + e.Message);
             }
         }
-
-
         private void SendEmail()
         {
             string windowTitle = this.Text; // 'this' refers to the current Form
-
             // Find the index of ".xlsm" in the window title
             int index = windowTitle.IndexOf(".xlsm");
-
             // Extract the project name, including ".xlsm"
             string fullProjectName = index >= 0 ? windowTitle.Substring(0, index + 5) : windowTitle;
-
             // Extract only the last part of the project name
             string projectName = fullProjectName.Split('\\').Last();
-
             //string fileName = openFileDialog1.FileName;
             string fileName = fullProjectName;
             //MessageBox.Show(fileName);
-
-
             var excelApp = new Microsoft.Office.Interop.Excel.Application();
             Microsoft.Office.Interop.Excel.Workbook workbook = excelApp.Workbooks.Open(fileName);
             Microsoft.Office.Interop.Excel.Worksheet worksheet = (Microsoft.Office.Interop.Excel.Worksheet)workbook.Sheets[1]; // First sheet (index 1 in Interop)
-
             // Find the "Alts" and "DELTA" column indices
             int altsColumnIndex = -1;
             int deltaColumnIndex = -1;
             Microsoft.Office.Interop.Excel.Range headerRow = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[1];
-
             for (int i = 1; i <= headerRow.Columns.Count; i++)
             {
                 var cell = (Microsoft.Office.Interop.Excel.Range)headerRow.Cells[1, i];
                 string columnHeader = cell.Value?.ToString();
-
                 if (columnHeader == "Alts")
                 {
                     altsColumnIndex = i;
@@ -1705,13 +1473,11 @@ namespace WH_Panel
                 {
                     deltaColumnIndex = i;
                 }
-
                 if (altsColumnIndex != -1 && deltaColumnIndex != -1)
                 {
                     break;
                 }
             }
-
             if (deltaColumnIndex == -1)
             {
                 MessageBox.Show("Could not find the 'DELTA' column.");
@@ -1720,11 +1486,9 @@ namespace WH_Panel
                 Marshal.ReleaseComObject(excelApp);
                 return;
             }
-
             // Build HTML table from Excel data
             StringBuilder htmlTable = new StringBuilder();
             htmlTable.Append("<table border='1' style='border-collapse:collapse;'>");
-
             // Add header row
             htmlTable.Append("<tr>");
             for (int col = 1; col <= altsColumnIndex; col++)
@@ -1733,7 +1497,6 @@ namespace WH_Panel
                 htmlTable.AppendFormat("<th>{0}</th>", header ?? string.Empty);
             }
             htmlTable.Append("</tr>");
-
             // Add data rows with conditional formatting for "DELTA" values
             int row = 2;
             while (((Microsoft.Office.Interop.Excel.Range)worksheet.Cells[row, 1]).Value != null)
@@ -1743,7 +1506,6 @@ namespace WH_Panel
                 {
                     var cell = (Microsoft.Office.Interop.Excel.Range)worksheet.Cells[row, col];
                     string cellValue = cell.Value?.ToString() ?? string.Empty;
-
                     if (col == deltaColumnIndex && double.TryParse(cellValue, out double deltaValue))
                     {
                         string color = deltaValue < 0 ? "IndianRed" : "LightGreen";
@@ -1758,19 +1520,14 @@ namespace WH_Panel
                 row++;
             }
             htmlTable.Append("</table>");
-
             workbook.Close(false);
             Marshal.ReleaseComObject(workbook);
             Marshal.ReleaseComObject(excelApp);
-
             var outlookApp = new Outlook.Application();
             Outlook.MailItem mailItem = (Outlook.MailItem)outlookApp.CreateItem(Outlook.OlItemType.olMailItem);
-
             mailItem.Subject = projectName.Substring(0, projectName.Length - 5).ToString() + "_UPDATED_" + DateAndTime.Now.ToString("yyyyMMddHHmm");
-
             // Set CC field
             mailItem.CC = "lgt@robotron.co.il";
-
             // Hardcoded in-house email addresses
             List<string> inhouseEmails = new List<string>
     {
@@ -1779,55 +1536,41 @@ namespace WH_Panel
         "rehesh@robotron.co.il",
         "vlad@robotron.co.il"
     };
-
             // Extract client domain from project name
             string clientDomain = projectName.Split('_')[0].ToLower();
-
             // Get emails from the client's domain
             List<string> clientEmails = GetUniqueClientEmails(clientDomain);//GetEmailsFromDomain(outlookApp, clientDomain); 
-
             // Display a form with checkboxes for all recipients
             RecipientSelectionForm selectionForm = new RecipientSelectionForm(inhouseEmails, clientEmails);
             if (selectionForm.ShowDialog() == DialogResult.OK)
             {
                 // Combine selected emails into the "To" field
                 mailItem.To = string.Join(";", selectionForm.SelectedEmails);
-
                 // Embed the HTML table in the email body
                 mailItem.HTMLBody = "<html><body>" + htmlTable.ToString() + "</body></html>";
-
                 // Send the email
                 mailItem.Send();
                 MessageBox.Show("Email sent successfully.");
             }
-
             Marshal.ReleaseComObject(mailItem);
             Marshal.ReleaseComObject(outlookApp);
         }
-
-
-
-
         public List<string> GetUniqueClientEmails(string clientDomain)
         {
             var emails = new HashSet<string>();
             var outlookApp = new Outlook.Application();
-
             // Initialize and show the loading form
             LoadingForm loadingForm = new LoadingForm();
-
             // Display the loading form on a new thread to avoid blocking
             var loadingThread = new Thread(() =>
             {
                 loadingForm.ShowDialog();
             });
             loadingThread.Start();
-
             try
             {
                 Outlook.Folder inboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox) as Outlook.Folder;
                 Outlook.Folder outboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderSentMail) as Outlook.Folder;
-
                 // Helper function to add unique emails from a folder
                 void AddEmailsFromFolder(Outlook.Folder folder, string domain)
                 {
@@ -1837,7 +1580,6 @@ namespace WH_Panel
                         {
                             string senderEmailLower = mail.SenderEmailAddress.ToLower();
                             string domainLower = domain.ToLower();
-
                             if (senderEmailLower.Contains(domainLower))
                             {
                                 string contactInfo = $"{mail.SenderName} ({mail.SenderEmailAddress})";
@@ -1846,11 +1588,9 @@ namespace WH_Panel
                         }
                     }
                 }
-
                 // Add emails for the given client domain from both Inbox and Outbox folders
                 AddEmailsFromFolder(inboxFolder, clientDomain);
                 AddEmailsFromFolder(outboxFolder, clientDomain);
-
                 // If no emails found for the client domain, fallback to local domain
                 if (emails.Count == 0)
                 {
@@ -1876,68 +1616,55 @@ namespace WH_Panel
                     loadingForm.Close();
                 }
             }
-
             return emails.ToList();
         }
-
-
-
         public class RecipientSelectionForm : Form
         {
             private CheckedListBox checkedListBox;
             private Button sendButton;
             private Button cancelButton;
             public List<string> SelectedEmails { get; private set; }
-
             public RecipientSelectionForm(List<string> inhouseEmails, List<string> clientEmails)
             {
                 SelectedEmails = new List<string>();
-
                 checkedListBox = new CheckedListBox
                 {
                     Dock = DockStyle.Top,
                     Height = 200,
                     CheckOnClick = true
                 };
-
                 // Add in-house emails to the list with a label for clarity
                 checkedListBox.Items.Add("In-House Emails:", false);
                 foreach (var email in inhouseEmails)
                 {
                     checkedListBox.Items.Add(email, false);
                 }
-
                 // Add client emails to the list with a label for clarity
                 checkedListBox.Items.Add("Client Emails:", false);
                 foreach (var email in clientEmails)
                 {
                     checkedListBox.Items.Add(email, false);
                 }
-
                 sendButton = new Button
                 {
                     Text = "Send",
                     Dock = DockStyle.Bottom
                 };
                 sendButton.Click += SendButton_Click;
-
                 cancelButton = new Button
                 {
                     Text = "Cancel",
                     Dock = DockStyle.Bottom
                 };
                 cancelButton.Click += (s, e) => DialogResult = DialogResult.Cancel;
-
                 Controls.Add(checkedListBox);
                 Controls.Add(sendButton);
                 Controls.Add(cancelButton);
-
                 Text = "Select Recipients";
                 Height = 300;
                 Width = 300;
                 StartPosition = FormStartPosition.CenterScreen;
             }
-
             private void SendButton_Click(object sender, EventArgs e)
             {
                 // Collect selected emails from the CheckedListBox
@@ -1948,25 +1675,20 @@ namespace WH_Panel
                         SelectedEmails.Add(item.ToString());
                     }
                 }
-
                 //if (SelectedEmails.Count == 0)
                 //{
                 //    MessageBox.Show("Please select at least one recipient.");
                 //    return;
                 //}
-
                 DialogResult = DialogResult.OK;
             }
         }
-
         private void btnReport_Click(object sender, EventArgs e)
         {
             // Sort the DataGridView by the DELTA column in descending order
             dgwBom.Sort(dgwBom.Columns["DELTA"], ListSortDirection.Ascending);
-
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
             string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\KitsStatusReport_{_fileTimeStamp}.html";
-
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.WriteLine("<html style='text-align:center;background-color:gray;color:white;'>");
@@ -2056,7 +1778,6 @@ namespace WH_Panel
                 writer.WriteLine("</head>");
                 writer.WriteLine("<body>");
                 writer.WriteLine($"<h1>Kit Status Report {_fileTimeStamp}</h1>");
-
                 // Add the single row table with text from txtbRob, txtbName, txtbRev, and txtbQty
                 writer.WriteLine("<table class='header-table' style='margin-bottom: 20px;'>");
                 writer.WriteLine("<tr>");
@@ -2066,16 +1787,13 @@ namespace WH_Panel
                 writer.WriteLine($"<td>{txtbQty.Text}</td>");
                 writer.WriteLine("</tr>");
                 writer.WriteLine("</table>");
-
                 // Add the filter input box, clear button, and print button
                 writer.WriteLine("<div style='margin-bottom: 20px; text-align: center;'>");
                 writer.WriteLine("<input type='text' id='filterInput' onkeyup='filterTable()' placeholder='Filter table...' style='padding: 10px; width: 50%;text-align:center;background:orange;'>");
                 writer.WriteLine("<button onclick='clearFilter()' style='padding: 10px;'>Clear</button>");
                 writer.WriteLine("<button onclick='printReport()' style='padding: 10px;'>Print</button>");
                 writer.WriteLine("</div>");
-
                 writer.WriteLine("<table id='kitsTable'>");
-
                 // Write table headers
                 writer.WriteLine("<tr>");
                 foreach (DataGridViewColumn column in dgwBom.Columns)
@@ -2086,7 +1804,6 @@ namespace WH_Panel
                     }
                 }
                 writer.WriteLine("</tr>");
-
                 // Write table rows
                 foreach (DataGridViewRow row in dgwBom.Rows)
                 {
@@ -2097,7 +1814,6 @@ namespace WH_Panel
                         {
                             string cellValue = cell.Value?.ToString() ?? string.Empty;
                             string cellClass = string.Empty;
-
                             if (dgwBom.Columns[cell.ColumnIndex].Name == "DELTA")
                             {
                                 if (int.TryParse(cellValue, out int deltaValue))
@@ -2121,7 +1837,6 @@ namespace WH_Panel
                                     cellClass = (kitValue >= req && kitValue != 0) ? "green" : "red";
                                 }
                             }
-
                             writer.WriteLine($"<td class='{cellClass}'>{cellValue}</td>");
                         }
                     }
@@ -2131,7 +1846,6 @@ namespace WH_Panel
                 writer.WriteLine("</body>");
                 writer.WriteLine("</html>");
             }
-
             // Open the file in default browser
             var p = new Process();
             p.StartInfo = new ProcessStartInfo(filename)
@@ -2140,14 +1854,10 @@ namespace WH_Panel
             };
             p.Start();
         }
-
         private async void btnGetMFNs_Click(object sender, EventArgs e)
         {
             //await FetchMFPNsWithDelay();
-
             await FetchMFPNsForAllRows();
         }
     }
 }
-
-
