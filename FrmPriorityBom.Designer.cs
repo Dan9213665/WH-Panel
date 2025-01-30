@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmPriorityBom));
             tableLayoutPanel1 = new TableLayoutPanel();
             groupBox1 = new GroupBox();
             tableLayoutPanel2 = new TableLayoutPanel();
@@ -455,6 +456,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1158, 613);
             Controls.Add(tableLayoutPanel1);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FrmPriorityBom";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "FrmPriorityBom";

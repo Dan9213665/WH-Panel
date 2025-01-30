@@ -2109,17 +2109,6 @@ namespace WH_Panel
                 writer.WriteLine("  document.getElementById('filterInput').value = '';");
                 writer.WriteLine("  filterTable();");
                 writer.WriteLine("}");
-                //writer.WriteLine("function printReport() {");
-                //writer.WriteLine("  window.print();");
-                //writer.WriteLine("}");
-                //writer.WriteLine("function changeFontColor(color) {");
-                //writer.WriteLine("  var elements = document.querySelectorAll('body, body *');");
-                //writer.WriteLine("  for (var i = 0; i < elements.length; i++) {");
-                //writer.WriteLine("    elements[i].style.color = color;");
-                //writer.WriteLine("  }");
-                //writer.WriteLine("}");
-                //writer.WriteLine("window.addEventListener('beforeprint', function() { changeFontColor('black'); });");
-                //writer.WriteLine("window.addEventListener('afterprint', function() { changeFontColor(''); });");
                 writer.WriteLine("function printReport() {");
                 writer.WriteLine("  var elements = document.getElementsByClassName('no-print');");
                 writer.WriteLine("  for (var i = 0; i < elements.length; i++) {");
@@ -2138,7 +2127,6 @@ namespace WH_Panel
                 writer.WriteLine("}");
                 writer.WriteLine("window.addEventListener('beforeprint', function() { changeFontColor('black'); });");
                 writer.WriteLine("window.addEventListener('afterprint', function() { changeFontColor(''); });");
-
                 writer.WriteLine("</script>");
                 writer.WriteLine("</head>");
                 writer.WriteLine("<body>");

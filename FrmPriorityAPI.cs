@@ -1280,9 +1280,9 @@ namespace WH_Panel
             }
             else if (logDocNo.StartsWith("ROB"))
             {
-                txtLog.SelectionColor = Color.Red; // Set the color to red
-                txtLog.AppendText($"logDocNo: {logDocNo}\n");
-                txtLog.ScrollToCaret();
+                //txtLog.SelectionColor = Color.Red; // Set the color to red
+                //txtLog.AppendText($"logDocNo: {logDocNo}\n");
+                //txtLog.ScrollToCaret();
                 // Handle ROB documents
                 url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{logDocNo}'";
             }
