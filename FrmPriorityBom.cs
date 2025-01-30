@@ -178,11 +178,8 @@ namespace WH_Panel
                     //MessageBox.Show(pw);
                     //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{un}:{pw}"));
                     //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                     // Make the HTTP GET request
                     HttpResponseMessage response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
@@ -351,7 +348,6 @@ namespace WH_Panel
             dgwBom.Columns.Add("LEFTOVERS", "LEFTOVERS");
             dgwBom.Columns.Add("TRANS", "TRANS");
             dgwBom.Columns.Add("KLINE", "KLINE");
-
             // Ensure the LEFTOVERS column is sortable
             dgwBom.Columns["LEFTOVERS"].SortMode = DataGridViewColumnSortMode.Automatic;
             dgwBom.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
@@ -360,8 +356,6 @@ namespace WH_Panel
         {
             if (dgwBom != null)
             {
-
-
                 progressBar1.Value = 0;
                 progressBar1.Update();
                 int completedItems = 0;
@@ -415,7 +409,6 @@ namespace WH_Panel
                                 {
                                     detail.CALC = detail.CALC.Replace("+0", "");
                                 }
-
                                 // If CALC is "0" or contains a single number, set it to an empty string
                                 if (detail.CALC == "0" || !detail.CALC.Contains("+"))
                                 {
@@ -444,7 +437,6 @@ namespace WH_Panel
                             txtbLog.ForeColor = Color.Red;
                             txtbLog.AppendText("No BOM details found for the selected serial.\n");
                             txtbLog.ScrollToCaret();
-
                         }
                     }
                     catch (HttpRequestException ex)
@@ -480,15 +472,10 @@ namespace WH_Panel
                     lblProgress.Text = "0 / 0 items (0%)";
                 }
             }
-
         }
-
-
-
         private async Task FetchWarehouseBalances()
         {
             bool startFetching = false;
-
             foreach (DataGridViewRow row in dgwBom.Rows)
             {
                 // Check if the TBALANCE cell is empty or null
@@ -496,14 +483,12 @@ namespace WH_Panel
                 {
                     startFetching = true;
                 }
-
                 // Start fetching data only if the TBALANCE cell is empty or null
                 if (startFetching && row.Cells["PARTNAME"].Value != null)
                 {
                     string partName = row.Cells["PARTNAME"].Value.ToString();
                     string warehouseName = partName.Substring(0, 3); // Get the first 3 characters of the PARTNAME
                     string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{warehouseName}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{partName}')";
-
                     using (HttpClient client = new HttpClient())
                     {
                         try
@@ -513,14 +498,11 @@ namespace WH_Panel
                             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                             string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                             // Make the HTTP GET request
                             HttpResponseMessage response = await client.GetAsync(url);
                             response.EnsureSuccessStatusCode();
-
                             // Read the response content
                             string responseBody = await response.Content.ReadAsStringAsync();
-
                             // Parse the JSON response
                             var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
                             var warehouse = apiResponse["value"].FirstOrDefault();
@@ -552,27 +534,20 @@ namespace WH_Panel
                             txtbLog.ScrollToCaret();
                         }
                     }
-
                     // Calculate the LEFTOVERS for the current row
                     int delta = Convert.ToInt32(row.Cells["DELTA"].Value);
                     int whQuantity = row.Cells["TBALANCE"].Value != null ? Convert.ToInt32(row.Cells["TBALANCE"].Value) : 0;
                     int kitQuantity = row.Cells["QUANT"].Value != null ? Convert.ToInt32(row.Cells["QUANT"].Value) : 0;
                     int requiredQuantity = row.Cells["CQUANT"].Value != null ? Convert.ToInt32(row.Cells["CQUANT"].Value) : 0;
                     int leftovers = (whQuantity + kitQuantity) - requiredQuantity;
-
-
                     // Update the LEFTOVERS column in the DataGridView
                     row.Cells["LEFTOVERS"].Value = leftovers;
-
                     // Introduce an artificial delay between each API call
                     await Task.Delay(200); // 100 milliseconds delay
                 }
             }
-
             UpdateSimulationLabel();
         }
-
-
         private void UpdateSimulationLabel()
         {
             int totalItems = dgwBom.Rows.Count;
@@ -583,7 +558,6 @@ namespace WH_Panel
                 int kitQuantity = row.Cells["QUANT"].Value != null ? Convert.ToInt32(row.Cells["QUANT"].Value) : 0;
                 return (whQuantity + kitQuantity) >= Math.Abs(delta);
             });
-
             if (totalItems > 0)
             {
                 int simPercentage = (coveredItems * 100) / totalItems;
@@ -594,7 +568,6 @@ namespace WH_Panel
                 lblSim.Text = "0 / 0 items covered in simulation (0%)";
             }
         }
-
         private async Task FetchMFPNForRow(DataGridViewRow row)
         {
             //MessageBox.Show("Test");
@@ -658,7 +631,6 @@ namespace WH_Panel
                 await FetchMFPNForRow(row);
             }
         }
-
         private void AttachTextBoxEvents(Control parentControl)
         {
             foreach (Control control in parentControl.Controls)
@@ -842,8 +814,6 @@ namespace WH_Panel
                 }
             }
         }
-
-
         private async void dgwBom_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0) // Ensure the row index is valid
@@ -930,7 +900,6 @@ namespace WH_Panel
                                 AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
                                 Name = "PACK"
                             };
-
                             // Add columns to the DataGridView
                             dgwIPNmoves.Columns.AddRange(new DataGridViewColumn[]
                             {
@@ -943,7 +912,6 @@ namespace WH_Panel
                         PackColumn
                         //UDateColumn
                             });
-
                             dgwIPNmoves.Rows.Clear();
                             foreach (var logPart in logPartApiResponse.value)
                             {
@@ -985,7 +953,6 @@ namespace WH_Panel
                 }
             }
         }
-
         private async Task FetchAndSetPackCodeAndUDateAsync(DataGridViewRow row, string logDocNo, string partName, int quant)
         {
             var results = await FetchPackCodeAsync(logDocNo, partName, quant);
@@ -1005,11 +972,9 @@ namespace WH_Panel
                 }
             }
         }
-
         public async Task<List<(string PackCode, string BookNum, string Date)>> FetchPackCodeAsync(string logDocNo, string partName, int quant)
         {
             List<(string PackCode, string BookNum, string Date)> results = new List<(string PackCode, string BookNum, string Date)>();
-
             string url;
             if (logDocNo.StartsWith("GR"))
             {
@@ -1026,11 +991,9 @@ namespace WH_Panel
                 // Handle other document types if needed
                 url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM";
             }
-
             results = await FetchPackCodeFromUrlAsync(url, logDocNo, partName, quant, logDocNo.StartsWith("ROB"));
             return results;
         }
-
         private async Task<List<(string PackCode, string BookNum, string Date)>> FetchPackCodeFromUrlAsync(string url, string logDocNo, string partName, int quant, bool isRobDocument)
         {
             using (HttpClient client = new HttpClient())
@@ -1043,7 +1006,6 @@ namespace WH_Panel
                     // Set the Authorization header
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                     // Make the HTTP GET request
                     HttpResponseMessage response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
@@ -1055,15 +1017,12 @@ namespace WH_Panel
                     {
                         return new List<(string PackCode, string BookNum, string Date)>();
                     }
-
                     var document = apiResponse["value"].FirstOrDefault();
                     if (document == null)
                     {
                         return new List<(string PackCode, string BookNum, string Date)>();
                     }
-
                     var results = new List<(string PackCode, string BookNum, string Date)>();
-
                     if (isRobDocument)
                     {
                         // Handle ROB document logic
@@ -1080,10 +1039,8 @@ namespace WH_Panel
                         {
                             return new List<(string PackCode, string BookNum, string Date)>();
                         }
-
                         // Find all matching PARTNAME and QUANT
                         var matchingOrders = transOrders.Where(t => t["PARTNAME"].ToString() == partName && int.Parse(t["TQUANT"].ToString()) == quant).ToList();
-
                         foreach (var matchingOrder in matchingOrders)
                         {
                             string packCode = matchingOrder["PACKCODE"]?.ToString();
@@ -1092,7 +1049,6 @@ namespace WH_Panel
                             results.Add((packCode, bookNum, date));
                         }
                     }
-
                     return results;
                 }
                 catch (HttpRequestException ex)
@@ -1111,16 +1067,13 @@ namespace WH_Panel
                 }
             }
         }
-
         public async Task<string> FetchUDateAsync(string docNo)
         {
             string uDate = null;
-
             // Log the document number for debugging
             //txtLog.SelectionColor = Color.Blue; // Set the color to blue
             //txtLog.AppendText($"Document Number: '{docNo}'\n");
             //txtLog.ScrollToCaret();
-
             if (docNo.StartsWith("ROB"))
             {
                 // Fetch UDATE from SERIAL
@@ -1135,7 +1088,6 @@ namespace WH_Panel
                         // Set the Authorization header
                         string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                         // Make the HTTP GET request
                         HttpResponseMessage response = await client.GetAsync(url);
                         response.EnsureSuccessStatusCode();
@@ -1147,7 +1099,6 @@ namespace WH_Panel
                         if (serial != null)
                         {
                             //txtLog.AppendText($"Data for SERIALNAME: {serial}\n");
-
                             uDate = serial["UDATE"]?.ToString();
                             if (uDate == null)
                             {
@@ -1191,7 +1142,6 @@ namespace WH_Panel
                         // Set the Authorization header
                         string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                         // Make the HTTP GET request
                         HttpResponseMessage response = await client.GetAsync(url);
                         response.EnsureSuccessStatusCode();
@@ -1226,12 +1176,8 @@ namespace WH_Panel
                 //txtLog.AppendText($"Unhandled document type for DOCNO: {docNo}\n");
                 //txtLog.ScrollToCaret();
             }
-
             return uDate;
         }
-
-
-
         private void UpdatePing(long milliseconds)
         {
             // Update the ping label with the elapsed time
@@ -1380,7 +1326,6 @@ namespace WH_Panel
                             await AddItemToKit(partName, serialName, neededQty, qty, filteredRow);
                             txtbINPUTqty.Clear();
                             txtbInputIPN.Clear();
-
                             txtbInputIPN.Focus();
                             // Update the progress label
                             UpdateProgressLabel();
@@ -1509,12 +1454,8 @@ namespace WH_Panel
                     return;
                 }
             }
-
-
-
             string partNameWH = dgwBom.Rows[0].Cells["PARTNAME"].Value.ToString();
             string warehouseName = partNameWH.Substring(0, 3); // Get the first 3 characters of the PARTNAME
-
             // Construct the PATCH request URL
             string patchUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM(TYPE='K',KLINE={kline})";
             using (HttpClient client = new HttpClient())
@@ -1539,9 +1480,7 @@ namespace WH_Panel
                     HttpResponseMessage patchResponse = await client.PatchAsync(patchUrl, content);
                     string patchResponseBody = await patchResponse.Content.ReadAsStringAsync();
                     patchResponse.EnsureSuccessStatusCode();
-
                     AutoClosingMessageBox.Show($"{partName} - {qty} PCS moved to {serialName}", 1000, Color.Green); // Show message for 2 seconds
-
                     // Make another GET request to update the WH cell
                     HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
                     string checkResponseBody = await checkResponse.Content.ReadAsStringAsync();
@@ -1557,18 +1496,13 @@ namespace WH_Panel
                             filteredRow.Cells["TBALANCE"].Value = availableQty;
                         }
                     }
-          
-
                     int prevQty = int.Parse(filteredRow.Cells["QUANT"].Value.ToString());
-                   
                     string currentCALC = filteredRow.Cells["CALC"].Value?.ToString();
-
                     // Update the DataGridView row
                     filteredRow.Cells["QUANT"].Value = prevQty + qty;
                     int currentINkit = int.Parse(filteredRow.Cells["QUANT"].Value.ToString());
                     int requiredQty = int.Parse(filteredRow.Cells["CQUANT"].Value.ToString());
                     filteredRow.Cells["DELTA"].Value = currentINkit - requiredQty;
-
                     // Update the CALC field
                     if (string.IsNullOrEmpty(currentCALC) && prevQty == 0)
                     {
@@ -1584,17 +1518,13 @@ namespace WH_Panel
                         // If CALC is empty but QUANT is not 0, initialize CALC with the current and new quantities
                         filteredRow.Cells["CALC"].Value = $"{prevQty}+{qty}";
                     }
-
                     // Calculate the LEFTOVERS for the current row
                     int delta = Convert.ToInt32(filteredRow.Cells["DELTA"].Value);
                     int whQuantity = filteredRow.Cells["TBALANCE"].Value != null ? Convert.ToInt32(filteredRow.Cells["TBALANCE"].Value) : 0;
                     int kitQuantity = filteredRow.Cells["QUANT"].Value != null ? Convert.ToInt32(filteredRow.Cells["QUANT"].Value) : 0;
-
                     int leftovers = (whQuantity + kitQuantity) - requiredQty;
-
                     // Update the LEFTOVERS column in the DataGridView
                     filteredRow.Cells["LEFTOVERS"].Value = leftovers;
-
                     txtbINPUTqty.Clear();
                     txtbINPUTqty.Focus();
                 }
@@ -2021,8 +1951,6 @@ namespace WH_Panel
                 DialogResult = DialogResult.OK;
             }
         }
-
-
         private void btnReport_Click(object sender, EventArgs e)
         {
             // Sort the DataGridView by the DELTA column in ascending order
@@ -2228,15 +2156,11 @@ namespace WH_Panel
             };
             p.Start();
         }
-
-
-
         private async void btnGetMFNs_Click(object sender, EventArgs e)
         {
             //await FetchMFPNsWithDelay();
             await FetchMFPNsForAllRows();
         }
-
         private async void btnGetWHstock_Click(object sender, EventArgs e)
         {
             await FetchWarehouseBalances();

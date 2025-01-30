@@ -39,7 +39,6 @@ namespace WH_Panel
             txtbInputQty.TextChanged += textBox5_TextChanged;
             //textBox6.KeyDown += textBox6_KeyDown;
             // Simulate button3 click on form load
-           
             // Enable or disable gbxINSERT based on the current user
             if (Environment.UserName == "lgt")
             {
@@ -78,7 +77,6 @@ namespace WH_Panel
                     MessageBox.Show("Failed to load settings.");
                     return;
                 }
-
                 if (string.IsNullOrEmpty(settings.ApiUsername) || string.IsNullOrEmpty(settings.ApiPassword))
                 {
                     MessageBox.Show("API credentials are missing in the settings.");
@@ -89,14 +87,12 @@ namespace WH_Panel
                     button3_Click(this, EventArgs.Empty);
                     await PopulatePackCombobox();
                 }
-                
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"An error occurred during initialization: {ex.Message}");
             }
         }
-
         private void SetRightToLeftForControls(Control parentControl)
         {
             foreach (Control control in parentControl.Controls)
@@ -309,11 +305,8 @@ namespace WH_Panel
                     // Set the Authorization header
                     //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                     //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                     // Make the HTTP GET request
                     HttpResponseMessage response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
@@ -356,11 +349,8 @@ namespace WH_Panel
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                         //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                         //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-
                         string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                         // Construct the API URL
                         string apiUrl = $"{baseUrl}/DOCUMENTS_P";
                         // Serialize the document to JSON
@@ -426,11 +416,8 @@ namespace WH_Panel
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                         //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                         //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-
                         string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                         // Construct the API URL
                         string apiUrl = $"{baseUrl}/DOCUMENTS_P('{docNo}')";
                         // Create the update payload
@@ -593,11 +580,8 @@ namespace WH_Panel
                         // Set the Authorization header
                         //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                         //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-
                         string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                         // Make the HTTP GET request
                         HttpResponseMessage response = await client.GetAsync(url);
                         response.EnsureSuccessStatusCode();
@@ -683,7 +667,6 @@ namespace WH_Panel
                     //ComeBackFromPrint();
                     Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
                     //txtbInputIPN.Focus();
-
                     if (lastUserInput != null)
                     {
                         lastUserInput.Focus();
@@ -810,11 +793,8 @@ namespace WH_Panel
                         // Set the Authorization header
                         //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                         //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-
                         string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                         // Make the HTTP GET request
                         HttpResponseMessage response = await client.GetAsync(url);
                         response.EnsureSuccessStatusCode();
@@ -869,11 +849,8 @@ namespace WH_Panel
                     // Set the Authorization header
                     //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                     //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                     // Make the HTTP GET request
                     HttpResponseMessage response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
@@ -926,11 +903,8 @@ namespace WH_Panel
                         // Set the Authorization header
                         //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                         //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-
                         string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                         // Make the HTTP GET request
                         HttpResponseMessage response = await client.GetAsync(url);
                         response.EnsureSuccessStatusCode();
@@ -1023,7 +997,6 @@ namespace WH_Panel
                             }
                             groupBox3.Text = $"Warehouse  {selectedWarehouse} {selectedWarehouseDesc}";
                             ColorTheRows(dataGridView1);
-
                             if (lastUserInput != null)
                             {
                                 lastUserInput.Focus();
@@ -1065,11 +1038,8 @@ namespace WH_Panel
                     // Set the Authorization header
                     //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                     //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                     // Make the HTTP GET request for part details
                     HttpResponseMessage partResponse = await client.GetAsync(partUrl);
                     partResponse.EnsureSuccessStatusCode();
@@ -1101,7 +1071,6 @@ namespace WH_Panel
             }
             await Task.Delay(100); // Delay for 1 second
         }
-
         private async void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0) // Ensure the row index is valid
@@ -1120,11 +1089,8 @@ namespace WH_Panel
                         // Set the Authorization header
                         //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                         //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-
                         string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                         // Measure the time taken for the HTTP POST request
                         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
                         // Make the HTTP GET request for stock movements
@@ -1216,7 +1182,6 @@ namespace WH_Panel
                             }
                             groupBox4.Text = $"Stock Movements for {partName}";
                             ColorTheRows(dataGridView2);
-
                             foreach (DataGridViewRow row in dataGridView2.Rows)
                             {
                                 var logDocNo = row.Cells["LOGDOCNO"].Value?.ToString();
@@ -1242,7 +1207,6 @@ namespace WH_Panel
                                     }
                                 }
                             }
-
                         }
                         else
                         {
@@ -1264,14 +1228,9 @@ namespace WH_Panel
                 }
             }
         }
-
-
-
-
         public async Task<List<(string PackCode, string BookNum, string Date)>> FetchPackCodeAsync(string logDocNo, string partName, int quant)
         {
             List<(string PackCode, string BookNum, string Date)> results = new List<(string PackCode, string BookNum, string Date)>();
-
             string url;
             if (logDocNo.StartsWith("GR"))
             {
@@ -1291,11 +1250,9 @@ namespace WH_Panel
                 // Handle other document types if needed
                 url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM";
             }
-
             results = await FetchPackCodeFromUrlAsync(url, logDocNo, partName, quant, logDocNo.StartsWith("ROB"));
             return results;
         }
-
         private async Task<List<(string PackCode, string BookNum, string Date)>> FetchPackCodeFromUrlAsync(string url, string logDocNo, string partName, int quant, bool isRobDocument)
         {
             using (HttpClient client = new HttpClient())
@@ -1308,7 +1265,6 @@ namespace WH_Panel
                     // Set the Authorization header
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                     // Make the HTTP GET request
                     HttpResponseMessage response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
@@ -1320,15 +1276,12 @@ namespace WH_Panel
                     {
                         return new List<(string PackCode, string BookNum, string Date)>();
                     }
-
                     var document = apiResponse["value"].FirstOrDefault();
                     if (document == null)
                     {
                         return new List<(string PackCode, string BookNum, string Date)>();
                     }
-
                     var results = new List<(string PackCode, string BookNum, string Date)>();
-
                     if (isRobDocument)
                     {
                         // Handle ROB document logic
@@ -1345,10 +1298,8 @@ namespace WH_Panel
                         {
                             return new List<(string PackCode, string BookNum, string Date)>();
                         }
-
                         // Find all matching PARTNAME and QUANT
                         var matchingOrders = transOrders.Where(t => t["PARTNAME"].ToString() == partName && int.Parse(t["TQUANT"].ToString()) == quant).ToList();
-
                         foreach (var matchingOrder in matchingOrders)
                         {
                             string packCode = matchingOrder["PACKCODE"]?.ToString();
@@ -1357,7 +1308,6 @@ namespace WH_Panel
                             results.Add((packCode, bookNum, date));
                         }
                     }
-
                     return results;
                 }
                 catch (HttpRequestException ex)
@@ -1376,17 +1326,13 @@ namespace WH_Panel
                 }
             }
         }
-
-
         public async Task<string> FetchUDateAsync(string docNo)
         {
             string uDate = null;
-
             // Log the document number for debugging
             //txtLog.SelectionColor = Color.Blue; // Set the color to blue
             //txtLog.AppendText($"Document Number: '{docNo}'\n");
             //txtLog.ScrollToCaret();
-
             if (docNo.StartsWith("ROB"))
             {
                 // Fetch UDATE from SERIAL
@@ -1401,7 +1347,6 @@ namespace WH_Panel
                         // Set the Authorization header
                         string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                         // Make the HTTP GET request
                         HttpResponseMessage response = await client.GetAsync(url);
                         response.EnsureSuccessStatusCode();
@@ -1413,7 +1358,6 @@ namespace WH_Panel
                         if (serial != null)
                         {
                             txtLog.AppendText($"Data for SERIALNAME: {serial}\n");
-
                             uDate = serial["UDATE"]?.ToString();
                             if (uDate == null)
                             {
@@ -1457,7 +1401,6 @@ namespace WH_Panel
                         // Set the Authorization header
                         string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                         // Make the HTTP GET request
                         HttpResponseMessage response = await client.GetAsync(url);
                         response.EnsureSuccessStatusCode();
@@ -1492,10 +1435,8 @@ namespace WH_Panel
                 txtLog.AppendText($"Unhandled document type for DOCNO: {docNo}\n");
                 txtLog.ScrollToCaret();
             }
-
             return uDate;
         }
-
         private void textBox6_KeyUp_1(object sender, KeyEventArgs e)
         {
             string filterText = txtbFilterIPN.Text.Trim().ToLower();
@@ -1621,11 +1562,8 @@ namespace WH_Panel
                     // Set the Authorization header
                     //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                     //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                     // Make the HTTP GET request
                     HttpResponseMessage response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
@@ -1757,11 +1695,8 @@ namespace WH_Panel
                 // Set the Authorization header
                 //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                 //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-
                 string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                 // Serialize the logPartData to JSON
                 string jsonLogPartData = JsonConvert.SerializeObject(logPartData);
                 var content = new StringContent(jsonLogPartData, Encoding.UTF8, "application/json");
@@ -1785,11 +1720,8 @@ namespace WH_Panel
                 // Set the Authorization header
                 //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                 //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-
                 string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                 // Make the HTTP GET request
                 HttpResponseMessage response = await client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
@@ -1839,11 +1771,8 @@ namespace WH_Panel
                 // Set the Authorization header
                 //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                 //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-
                 string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                 // Serialize the partMnfOneData to JSON
                 string jsonPartMnfOneData = JsonConvert.SerializeObject(partMnfOneData);
                 var content = new StringContent(jsonPartMnfOneData, Encoding.UTF8, "application/json");
@@ -1863,11 +1792,8 @@ namespace WH_Panel
                 // Set the Authorization header
                 //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                 //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-
                 string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                 // Make the HTTP GET request
                 HttpResponseMessage response = await client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
@@ -2301,7 +2227,6 @@ namespace WH_Panel
                 }
             }
         }
-
         TextBox lastUserInput=null;
         private void txtbDecodeIPN_KeyDown(object sender, KeyEventArgs e)
         {
