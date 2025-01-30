@@ -134,7 +134,7 @@ namespace WH_Panel
         public int countStockItems = 0;
         int iAVL = 0;
         int iStock = 0;
-        private object cmd;
+        //private object cmd;
         public TextBox LastInputFromUser = new TextBox();
         bool isSql = false;
         private void UpdateControlColors(Control parentControl)

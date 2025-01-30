@@ -149,7 +149,7 @@ namespace WH_Panel
 
         
 
-        string sqlStock = "";
+        //string sqlStock = "";
         private void GenerateFilteredReport()
         {
 

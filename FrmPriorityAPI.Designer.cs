@@ -572,10 +572,11 @@
             // 
             // tableLayoutPanel3
             // 
-            tableLayoutPanel3.ColumnCount = 3;
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel3.ColumnCount = 4;
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
             tableLayoutPanel3.Controls.Add(comboBox1, 0, 0);
             tableLayoutPanel3.Controls.Add(groupBox3, 0, 2);
             tableLayoutPanel3.Controls.Add(txtbFilterIPN, 0, 1);
@@ -601,7 +602,7 @@
             comboBox1.FormattingEnabled = true;
             comboBox1.Location = new Point(3, 3);
             comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(399, 29);
+            comboBox1.Size = new Size(298, 29);
             comboBox1.TabIndex = 0;
             comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
             // 
@@ -612,7 +613,7 @@
             groupBox3.Dock = DockStyle.Fill;
             groupBox3.Location = new Point(3, 79);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(804, 307);
+            groupBox3.Size = new Size(602, 307);
             groupBox3.TabIndex = 2;
             groupBox3.TabStop = false;
             groupBox3.Text = "WH";
@@ -629,7 +630,7 @@
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
             dataGridView1.RowTemplate.Height = 25;
-            dataGridView1.Size = new Size(798, 285);
+            dataGridView1.Size = new Size(596, 285);
             dataGridView1.TabIndex = 0;
             dataGridView1.CellClick += dataGridView1_CellClick;
             dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
@@ -640,18 +641,19 @@
             txtbFilterIPN.Location = new Point(3, 41);
             txtbFilterIPN.Name = "txtbFilterIPN";
             txtbFilterIPN.PlaceholderText = "filter IPN";
-            txtbFilterIPN.Size = new Size(399, 23);
+            txtbFilterIPN.Size = new Size(298, 23);
             txtbFilterIPN.TabIndex = 3;
             txtbFilterIPN.TextAlign = HorizontalAlignment.Center;
             txtbFilterIPN.KeyUp += textBox6_KeyUp_1;
             // 
             // groupBox4
             // 
+            tableLayoutPanel3.SetColumnSpan(groupBox4, 2);
             groupBox4.Controls.Add(dataGridView2);
             groupBox4.Dock = DockStyle.Fill;
-            groupBox4.Location = new Point(813, 79);
+            groupBox4.Location = new Point(611, 79);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(401, 307);
+            groupBox4.Size = new Size(603, 307);
             groupBox4.TabIndex = 4;
             groupBox4.TabStop = false;
             groupBox4.Text = "Movements for IPN";
@@ -668,7 +670,7 @@
             dataGridView2.Name = "dataGridView2";
             dataGridView2.ReadOnly = true;
             dataGridView2.RowTemplate.Height = 25;
-            dataGridView2.Size = new Size(395, 285);
+            dataGridView2.Size = new Size(597, 285);
             dataGridView2.TabIndex = 0;
             dataGridView2.CellDoubleClick += dataGridView2_CellDoubleClick;
             dataGridView2.CellMouseDown += dataGridView2_CellMouseDown;
@@ -676,18 +678,18 @@
             // txtbWHSID
             // 
             txtbWHSID.Dock = DockStyle.Fill;
-            txtbWHSID.Location = new Point(813, 3);
+            txtbWHSID.Location = new Point(611, 3);
             txtbWHSID.Name = "txtbWHSID";
             txtbWHSID.ReadOnly = true;
-            txtbWHSID.Size = new Size(401, 23);
+            txtbWHSID.Size = new Size(298, 23);
             txtbWHSID.TabIndex = 5;
             // 
             // btnClearIpnFilter
             // 
             btnClearIpnFilter.Dock = DockStyle.Fill;
-            btnClearIpnFilter.Location = new Point(408, 41);
+            btnClearIpnFilter.Location = new Point(307, 41);
             btnClearIpnFilter.Name = "btnClearIpnFilter";
-            btnClearIpnFilter.Size = new Size(399, 32);
+            btnClearIpnFilter.Size = new Size(298, 32);
             btnClearIpnFilter.TabIndex = 6;
             btnClearIpnFilter.Text = "Clear IPN filter";
             btnClearIpnFilter.UseVisualStyleBackColor = true;
@@ -696,9 +698,9 @@
             // btnGetMFPNs
             // 
             btnGetMFPNs.Dock = DockStyle.Fill;
-            btnGetMFPNs.Location = new Point(408, 3);
+            btnGetMFPNs.Location = new Point(307, 3);
             btnGetMFPNs.Name = "btnGetMFPNs";
-            btnGetMFPNs.Size = new Size(399, 32);
+            btnGetMFPNs.Size = new Size(298, 32);
             btnGetMFPNs.TabIndex = 7;
             btnGetMFPNs.Text = "GET MFPNs";
             btnGetMFPNs.UseVisualStyleBackColor = true;

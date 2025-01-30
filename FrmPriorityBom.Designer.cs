@@ -50,10 +50,14 @@
             btnGetMFNs = new Button();
             progressBar1 = new ProgressBar();
             lblProgress = new Label();
+            lblSim = new Label();
+            btnGetWHstock = new Button();
             dgwBom = new DataGridView();
             gbxIPNstockMovements = new GroupBox();
             dgwIPNmoves = new DataGridView();
+            tableLayoutPanel4 = new TableLayoutPanel();
             lblPing = new Label();
+            txtbLog = new RichTextBox();
             tableLayoutPanel1.SuspendLayout();
             groupBox1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
@@ -62,6 +66,7 @@
             ((System.ComponentModel.ISupportInitialize)dgwBom).BeginInit();
             gbxIPNstockMovements.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgwIPNmoves).BeginInit();
+            tableLayoutPanel4.SuspendLayout();
             SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -74,7 +79,7 @@
             tableLayoutPanel1.Controls.Add(gbxLoadedWo, 0, 1);
             tableLayoutPanel1.Controls.Add(dgwBom, 0, 2);
             tableLayoutPanel1.Controls.Add(gbxIPNstockMovements, 1, 2);
-            tableLayoutPanel1.Controls.Add(lblPing, 1, 0);
+            tableLayoutPanel1.Controls.Add(tableLayoutPanel4, 1, 0);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -198,6 +203,8 @@
             tableLayoutPanel3.Controls.Add(btnGetMFNs, 1, 2);
             tableLayoutPanel3.Controls.Add(progressBar1, 4, 1);
             tableLayoutPanel3.Controls.Add(lblProgress, 4, 2);
+            tableLayoutPanel3.Controls.Add(lblSim, 3, 2);
+            tableLayoutPanel3.Controls.Add(btnGetWHstock, 2, 2);
             tableLayoutPanel3.Dock = DockStyle.Fill;
             tableLayoutPanel3.Location = new Point(3, 19);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -342,6 +349,28 @@
             lblProgress.TabIndex = 9;
             lblProgress.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // lblSim
+            // 
+            lblSim.AutoSize = true;
+            lblSim.Dock = DockStyle.Fill;
+            lblSim.Location = new Point(411, 54);
+            lblSim.Name = "lblSim";
+            lblSim.Size = new Size(130, 28);
+            lblSim.TabIndex = 10;
+            lblSim.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // btnGetWHstock
+            // 
+            btnGetWHstock.Dock = DockStyle.Fill;
+            btnGetWHstock.Font = new Font("Segoe UI", 7F);
+            btnGetWHstock.Location = new Point(275, 57);
+            btnGetWHstock.Name = "btnGetWHstock";
+            btnGetWHstock.Size = new Size(130, 22);
+            btnGetWHstock.TabIndex = 11;
+            btnGetWHstock.Text = "GET WH stock";
+            btnGetWHstock.UseVisualStyleBackColor = true;
+            btnGetWHstock.Click += btnGetWHstock_Click;
+            // 
             // dgwBom
             // 
             dgwBom.AllowUserToAddRows = false;
@@ -381,15 +410,44 @@
             dgwIPNmoves.Size = new Size(452, 497);
             dgwIPNmoves.TabIndex = 0;
             // 
+            // tableLayoutPanel4
+            // 
+            tableLayoutPanel4.ColumnCount = 2;
+            tableLayoutPanel1.SetColumnSpan(tableLayoutPanel4, 2);
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel4.Controls.Add(lblPing, 1, 0);
+            tableLayoutPanel4.Controls.Add(txtbLog, 0, 1);
+            tableLayoutPanel4.Dock = DockStyle.Fill;
+            tableLayoutPanel4.Location = new Point(697, 3);
+            tableLayoutPanel4.Name = "tableLayoutPanel4";
+            tableLayoutPanel4.RowCount = 2;
+            tableLayoutPanel1.SetRowSpan(tableLayoutPanel4, 2);
+            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 18.3908043F));
+            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 81.60919F));
+            tableLayoutPanel4.Size = new Size(458, 174);
+            tableLayoutPanel4.TabIndex = 6;
+            // 
             // lblPing
             // 
             lblPing.AutoSize = true;
-            lblPing.Location = new Point(697, 0);
+            lblPing.Dock = DockStyle.Fill;
+            lblPing.Location = new Point(232, 0);
             lblPing.Name = "lblPing";
-            lblPing.Size = new Size(35, 15);
+            lblPing.Size = new Size(223, 32);
             lblPing.TabIndex = 5;
             lblPing.Text = "tProc";
             lblPing.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // txtbLog
+            // 
+            tableLayoutPanel4.SetColumnSpan(txtbLog, 2);
+            txtbLog.Dock = DockStyle.Fill;
+            txtbLog.Location = new Point(3, 35);
+            txtbLog.Name = "txtbLog";
+            txtbLog.Size = new Size(452, 136);
+            txtbLog.TabIndex = 6;
+            txtbLog.Text = "";
             // 
             // FrmPriorityBom
             // 
@@ -413,6 +471,8 @@
             ((System.ComponentModel.ISupportInitialize)dgwBom).EndInit();
             gbxIPNstockMovements.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgwIPNmoves).EndInit();
+            tableLayoutPanel4.ResumeLayout(false);
+            tableLayoutPanel4.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -444,5 +504,9 @@
         private Button btnGetMFNs;
         private ProgressBar progressBar1;
         private Label lblProgress;
+        private Label lblSim;
+        private Button btnGetWHstock;
+        private TableLayoutPanel tableLayoutPanel4;
+        private RichTextBox txtbLog;
     }
 }

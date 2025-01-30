@@ -27,7 +27,7 @@ namespace WH_Panel
             // Any initialization or code you want to execute when the form is loaded
         }
 
-        private WMPLib.WindowsMediaPlayer videoPlayer;
+        //private WMPLib.WindowsMediaPlayer videoPlayer;
 
         //private void InitializeCustomDialog(string message)
         //{

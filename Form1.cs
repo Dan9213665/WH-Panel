@@ -206,7 +206,7 @@ namespace WH_Panel
             var fp = @"\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\_template.xlsm";
             openWHexcelDB(fp);
         }
-        private FrmUberSearch openUberSearchForm = null;
+        //private FrmUberSearch openUberSearchForm = null;
         private FrmUberSearch frmUberSearch = null;
         private FrmKITShistory openKITShistoryForm = null;
         private void button5_Click(object sender, EventArgs e)
