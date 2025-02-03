@@ -343,5 +343,11 @@ namespace WH_Panel
             FrmPriorityBom frm = new FrmPriorityBom();
             frm.Show();
         }
+
+        private void btnFrmPMB_Click(object sender, EventArgs e)
+        {
+            FrmPriorityMultiBom frm = new FrmPriorityMultiBom();    
+            frm.Show();
+        }
     }
 }

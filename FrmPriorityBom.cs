@@ -224,17 +224,29 @@ namespace WH_Panel
             if (serial.SERIALSTATUSDES == "קיט מלא")
             {
                 e.Graphics.FillRectangle(Brushes.Green, e.Bounds);
+                e.Graphics.DrawString(serial.ToString(), e.Font, Brushes.White, e.Bounds);
+            }
+            else if (serial.SERIALSTATUSDES == "שוחררה")
+            {
+                e.Graphics.FillRectangle(Brushes.Orange, e.Bounds);
+                e.Graphics.DrawString(serial.ToString(), e.Font, Brushes.Black, e.Bounds);
+            }
+            else if (serial.SERIALSTATUSDES == "נסגרה")
+            {
+                e.Graphics.FillRectangle(Brushes.Black, e.Bounds);
+                e.Graphics.DrawString(serial.ToString(), e.Font, Brushes.Gray, e.Bounds);
             }
             else if (serial.SERIALSTATUSDES == "הוקפאה")
             {
                 e.Graphics.FillRectangle(Brushes.Red, e.Bounds);
+                e.Graphics.DrawString(serial.ToString(), e.Font, Brushes.White, e.Bounds);
             }
             else
             {
                 e.Graphics.FillRectangle(new SolidBrush(comboBox.BackColor), e.Bounds);
+                e.Graphics.DrawString(serial.ToString(), e.Font, Brushes.White, e.Bounds);
             }
-            // Draw the text
-            e.Graphics.DrawString(serial.ToString(), e.Font, Brushes.White, e.Bounds);
+         
             // Draw the focus rectangle if the item has focus
             e.DrawFocusRectangle();
         }
