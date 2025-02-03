@@ -266,7 +266,7 @@
             txtbInputIPN.Size = new Size(130, 23);
             txtbInputIPN.TabIndex = 4;
             txtbInputIPN.TextAlign = HorizontalAlignment.Center;
-            txtbInputIPN.KeyDown += textBox1_KeyDown;
+            txtbInputIPN.KeyDown += txtbInputIPN_KeyDown;
             // 
             // textBox2
             // 

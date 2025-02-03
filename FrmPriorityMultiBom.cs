@@ -37,6 +37,8 @@ namespace WH_Panel
             }
             PopulateWarehouses();
             //GetGetRobWosList();
+            chkbBomsList.DrawMode = DrawMode.OwnerDrawFixed;
+            //chkbBomsList.DrawItem += chkbBomsList_DrawItem;
         }
         private async void GetGetRobWosList()
         {
@@ -86,6 +88,74 @@ namespace WH_Panel
         }
 
 
+        //private async void GetGetRobWosList(string warehouseName, string warehouseDesc)
+        //{
+        //    string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=PARTNAME eq '{warehouseName}*'";
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        try
+        //        {
+        //            // Set the request headers if needed
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            // Set the Authorization header
+        //            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+        //            // Make the HTTP GET request
+        //            HttpResponseMessage response = await client.GetAsync(url);
+        //            response.EnsureSuccessStatusCode();
+        //            // Read the response content
+        //            string responseBody = await response.Content.ReadAsStringAsync();
+        //            // Parse the JSON response
+        //            var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+        //            var serials = apiResponse["value"].ToObject<List<Serial>>();
+        //            chkbBomsList.Items.Clear();
+
+        //            if (serials.Count == 0)
+        //            {
+        //                AppendLogMessage($"No data found for {warehouseName} - {warehouseDesc} \n", Color.Red);
+        //                return;
+        //            }
+        //            else
+        //            {
+        //                // Populate the CheckedListBox with the data
+        //                foreach (var serial in serials)
+        //                {
+        //                    chkbBomsList.Items.Add(serial);
+        //                    if (serial.SERIALSTATUSDES != "נסגרה")
+        //                    {
+        //                        chkbBomsList.SetItemChecked(chkbBomsList.Items.Count - 1, true); // Select the item by default
+        //                    }
+
+
+        //                }
+
+        //                lblLoading.BackColor = Color.Green;
+        //                lblLoading.Text = "Data Loaded";
+
+        //                if (serials.Count == 1)
+        //                {
+        //                    AppendLogMessage($"{serials.Count} Work Order loaded for {warehouseName} - {warehouseDesc} \n", Color.Green);
+        //                }
+        //                else
+        //                {
+        //                    AppendLogMessage($"{serials.Count} Work Orders loaded for {warehouseName} - {warehouseDesc} \n", Color.Green);
+        //                }
+        //                // Force redraw of the CheckedListBox
+        //                chkbBomsList.Refresh();
+        //            }
+        //        }
+        //        catch (HttpRequestException ex)
+        //        {
+        //            AppendLogMessage($"Request error: {ex.Message} \n", Color.Red);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            AppendLogMessage($"Request error: {ex.Message}\n", Color.Red);
+        //        }
+        //    }
+        //}
+
         private async void GetGetRobWosList(string warehouseName, string warehouseDesc)
         {
             string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=PARTNAME eq '{warehouseName}*'";
@@ -120,7 +190,11 @@ namespace WH_Panel
                         foreach (var serial in serials)
                         {
                             chkbBomsList.Items.Add(serial);
-                            chkbBomsList.SetItemChecked(chkbBomsList.Items.Count - 1, true); // Select the item by default
+                            if (serial.SERIALSTATUSDES != "נסגרה")
+                            {
+                                chkbBomsList.SetItemChecked(chkbBomsList.Items.Count - 1, true); // Select the item by default
+                           
+                            }
                         }
 
                         lblLoading.BackColor = Color.Green;
@@ -134,6 +208,8 @@ namespace WH_Panel
                         {
                             AppendLogMessage($"{serials.Count} Work Orders loaded for {warehouseName} - {warehouseDesc} \n", Color.Green);
                         }
+                        // Force redraw of the CheckedListBox
+                        chkbBomsList.Refresh();
                     }
                 }
                 catch (HttpRequestException ex)
@@ -146,6 +222,55 @@ namespace WH_Panel
                 }
             }
         }
+
+        //private void chkbBomsList_DrawItem(object sender, DrawItemEventArgs e)
+        //{
+        //    if (e.Index < 0) return;
+
+        //    var serial = chkbBomsList.Items[e.Index] as Serial;
+        //    if (serial == null) return;
+
+        //    // Debugging output
+        //    Debug.WriteLine($"Drawing item: {serial.SERIALSTATUSDES}");
+
+        //    // Set the background color based on the SERIALSTATUSDES
+        //    Color backgroundColor;
+        //    Color textColor = Color.Black;
+
+        //    switch (serial.SERIALSTATUSDES)
+        //    {
+        //        case "קיט מלא":
+        //            backgroundColor = Color.Green;
+        //            textColor = Color.White;
+        //            break;
+        //        case "שוחררה":
+        //            backgroundColor = Color.Orange;
+        //            textColor = Color.Black;
+        //            break;
+        //        case "נסגרה":
+        //            backgroundColor = Color.Black;
+        //            textColor = Color.Gray;
+        //            break;
+        //        case "הוקפאה":
+        //            backgroundColor = Color.Red;
+        //            textColor = Color.White;
+        //            break;
+        //        default:
+        //            backgroundColor = chkbBomsList.BackColor;
+        //            textColor = chkbBomsList.ForeColor;
+        //            break;
+        //    }
+
+        //    // Draw the background
+        //    e.Graphics.FillRectangle(new SolidBrush(backgroundColor), e.Bounds);
+
+        //    // Draw the text
+        //    TextRenderer.DrawText(e.Graphics, serial.ToString(), e.Font, e.Bounds, textColor, TextFormatFlags.Left);
+
+        //    // Draw the focus rectangle if the item has focus
+        //    e.DrawFocusRectangle();
+        //}
+
 
         private void AppendLogMessage(string message, Color color)
         {
@@ -211,6 +336,86 @@ namespace WH_Panel
 
 
 
+        //private void SetDarkModeColors(Control parentControl)
+        //{
+        //    Color backgroundColor = Color.FromArgb(37, 37, 38); // Dark background color
+        //    Color foregroundColor = Color.FromArgb(241, 241, 241); // Light foreground color
+        //    Color borderColor = Color.FromArgb(45, 45, 48); // Border color for controls
+        //    foreach (Control control in parentControl.Controls)
+        //    {
+        //        // Set the background and foreground colors
+        //        control.BackColor = backgroundColor;
+        //        control.ForeColor = foregroundColor;
+        //        // Handle specific control types separately
+        //        if (control is System.Windows.Forms.Button button)
+        //        {
+        //            button.FlatStyle = FlatStyle.Flat;
+        //            button.FlatAppearance.BorderColor = borderColor;
+        //            button.ForeColor = foregroundColor;
+        //        }
+        //        else if (control is System.Windows.Forms.GroupBox groupBox)
+        //        {
+        //            groupBox.ForeColor = foregroundColor;
+        //        }
+        //        else if (control is System.Windows.Forms.TextBox textBox)
+        //        {
+        //            textBox.BorderStyle = BorderStyle.FixedSingle;
+        //            textBox.BackColor = backgroundColor;
+        //            textBox.ForeColor = foregroundColor;
+        //        }
+        //        else if (control is System.Windows.Forms.Label label)
+        //        {
+        //            if (label.Name != "lblLoading")
+        //            {
+        //                label.BackColor = backgroundColor;
+        //                label.ForeColor = foregroundColor;
+        //            }
+        //        }
+        //        else if (control is TabControl tabControl)
+        //        {
+        //            tabControl.BackColor = backgroundColor;
+        //            tabControl.ForeColor = foregroundColor;
+        //            foreach (TabPage tabPage in tabControl.TabPages)
+        //            {
+        //                tabPage.BackColor = backgroundColor;
+        //                tabPage.ForeColor = foregroundColor;
+        //            }
+        //        }
+        //        else if (control is DataGridView dataGridView)
+        //        {
+        //            dataGridView.EnableHeadersVisualStyles = false;
+        //            dataGridView.BackgroundColor = backgroundColor;
+        //            dataGridView.ColumnHeadersDefaultCellStyle.BackColor = borderColor;
+        //            dataGridView.ColumnHeadersDefaultCellStyle.ForeColor = foregroundColor;
+        //            dataGridView.RowHeadersDefaultCellStyle.BackColor = borderColor;
+        //            dataGridView.DefaultCellStyle.BackColor = backgroundColor;
+        //            dataGridView.DefaultCellStyle.ForeColor = foregroundColor;
+        //            dataGridView.DefaultCellStyle.SelectionBackColor = Color.FromArgb(51, 153, 255);
+        //            dataGridView.DefaultCellStyle.SelectionForeColor = foregroundColor;
+        //            foreach (DataGridViewColumn column in dataGridView.Columns)
+        //            {
+        //                column.HeaderCell.Style.BackColor = borderColor;
+        //                column.HeaderCell.Style.ForeColor = foregroundColor;
+        //            }
+        //        }
+        //        else if (control is System.Windows.Forms.ComboBox comboBox)
+        //        {
+        //            comboBox.FlatStyle = FlatStyle.Flat;
+        //            comboBox.BackColor = backgroundColor;
+        //            comboBox.ForeColor = foregroundColor;
+        //        }
+        //        else if (control is DateTimePicker dateTimePicker)
+        //        {
+        //            dateTimePicker.BackColor = backgroundColor;
+        //            dateTimePicker.ForeColor = foregroundColor;
+        //        }
+        //        // Recursively update controls within containers
+        //        if (control.Controls.Count > 0)
+        //        {
+        //            SetDarkModeColors(control);
+        //        }
+        //    }
+        //}
         private void SetDarkModeColors(Control parentControl)
         {
             Color backgroundColor = Color.FromArgb(37, 37, 38); // Dark background color
@@ -284,6 +489,13 @@ namespace WH_Panel
                     dateTimePicker.BackColor = backgroundColor;
                     dateTimePicker.ForeColor = foregroundColor;
                 }
+                else if (control is CheckedListBox checkedListBox)
+                {
+                    checkedListBox.BackColor = backgroundColor;
+                    checkedListBox.ForeColor = foregroundColor;
+                    checkedListBox.DrawMode = DrawMode.OwnerDrawFixed;
+                    checkedListBox.DrawItem += CheckedListBox_DrawItem;
+                }
                 // Recursively update controls within containers
                 if (control.Controls.Count > 0)
                 {
@@ -292,6 +504,52 @@ namespace WH_Panel
             }
         }
 
+
+        private void CheckedListBox_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0) return;
+
+            var checkedListBox = sender as CheckedListBox;
+            var serial = checkedListBox.Items[e.Index] as Serial;
+            if (serial == null) return;
+
+            // Set the background color based on the SERIALSTATUSDES
+            Color backgroundColor;
+            Color textColor = Color.Black;
+
+            switch (serial.SERIALSTATUSDES)
+            {
+                case "קיט מלא":
+                    backgroundColor = Color.Green;
+                    textColor = Color.White;
+                    break;
+                case "שוחררה":
+                    backgroundColor = Color.Orange;
+                    textColor = Color.Black;
+                    break;
+                case "נסגרה":
+                    backgroundColor = Color.Black;
+                    textColor = Color.Gray;
+                    break;
+                case "הוקפאה":
+                    backgroundColor = Color.Red;
+                    textColor = Color.White;
+                    break;
+                default:
+                    backgroundColor = checkedListBox.BackColor;
+                    textColor = checkedListBox.ForeColor;
+                    break;
+            }
+
+            // Draw the background
+            e.Graphics.FillRectangle(new SolidBrush(backgroundColor), e.Bounds);
+
+            // Draw the text
+            TextRenderer.DrawText(e.Graphics, serial.ToString(), e.Font, e.Bounds, textColor, TextFormatFlags.Left);
+
+            // Draw the focus rectangle if the item has focus
+            e.DrawFocusRectangle();
+        }
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboBox1.SelectedIndex >= 0)
@@ -403,7 +661,7 @@ namespace WH_Panel
                         foreach (var balance in warehouseBalances)
                         {
 
-                            warehouseStock[balance.PARTNAME] = balance.TBALANCE;
+                            warehouseStock[balance.PARTNAME] = balance.BALANCE;
 
                             //if (warehouseStock.ContainsKey(balance.PARTNAME))
                             //{
@@ -451,7 +709,9 @@ namespace WH_Panel
                 foreach (var ipn in ipnBalances.Keys)
                 {
                     int balance = ipnBalances[ipn];
-                    int stock = warehouseStock.ContainsKey(ipn) ? warehouseStock[ipn] : 0;
+                   // int stock = warehouseStock.ContainsKey(ipn) ? warehouseStock[ipn] : 0;
+                   int stock = warehouseStock.FirstOrDefault(x => x.Key == ipn).Value;
+
                     int simulation = stock + balance;
                     string rowClass = simulation >= 0 ? "green" : "red";
 
