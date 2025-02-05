@@ -158,6 +158,64 @@ namespace WH_Panel
         }
         // private string username = "api"; // Replace with your actual username
         //private string password = "DdD@12345"; // Replace with your actual password
+        //private async void GetGetRobWosList()
+        //{
+        //    string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL";
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        try
+        //        {
+        //            // Set the request headers if needed
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            // Set the Authorization header
+        //            //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+        //            //string un = settings.ApiUsername;
+        //            //string un = username;
+        //            //MessageBox.Show(un);
+        //            //string pw = settings.ApiPassword;
+        //            // pw = password;
+        //            //MessageBox.Show(pw);
+        //            //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{un}:{pw}"));
+        //            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+        //            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+        //            // Make the HTTP GET request
+        //            HttpResponseMessage response = await client.GetAsync(url);
+        //            response.EnsureSuccessStatusCode();
+        //            // Read the response content
+        //            string responseBody = await response.Content.ReadAsStringAsync();
+        //            // Parse the JSON response
+        //            var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+        //            var serials = apiResponse["value"].ToObject<List<Serial>>();
+        //            // Populate the dropdown with the data
+        //            cmbROBxList.Items.Clear();
+        //            foreach (var serial in serials)
+        //            {
+        //                //cmbROBxList.Items.Add($"{serial.SERIALNAME} - {serial.PARTNAME} - {serial.QUANT}PCS - {serial.SERIALSTATUSDES}");
+        //                cmbROBxList.Items.Add(serial);
+        //            }
+        //            lblLoading.BackColor = Color.Green;
+        //            lblLoading.Text = "Data Loaded";
+        //            cmbROBxList.DroppedDown = true;
+        //        }
+        //        catch (HttpRequestException ex)
+        //        {
+        //            //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            txtbLog.ForeColor = Color.Red;
+        //            txtbLog.AppendText($"Request error: {ex.Message} \n");
+        //            txtbLog.ScrollToCaret();
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            txtbLog.ForeColor = Color.Red;
+        //            txtbLog.AppendText($"Request error: {ex.Message}");
+        //            txtbLog.ScrollToCaret();
+        //        }
+        //    }
+        //}
+
         private async void GetGetRobWosList()
         {
             string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL";
@@ -169,15 +227,6 @@ namespace WH_Panel
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     // Set the Authorization header
-                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
-                    //string un = settings.ApiUsername;
-                    //string un = username;
-                    //MessageBox.Show(un);
-                    //string pw = settings.ApiPassword;
-                    // pw = password;
-                    //MessageBox.Show(pw);
-                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{un}:{pw}"));
-                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                     // Make the HTTP GET request
@@ -192,29 +241,46 @@ namespace WH_Panel
                     cmbROBxList.Items.Clear();
                     foreach (var serial in serials)
                     {
-                        //cmbROBxList.Items.Add($"{serial.SERIALNAME} - {serial.PARTNAME} - {serial.QUANT}PCS - {serial.SERIALSTATUSDES}");
-                        cmbROBxList.Items.Add(serial);
+                        // Hide work orders with status "נסגרה" if the checkbox is not checked
+                        if ((serial.SERIALSTATUSDES != "נסגרה" && serial.SERIALSTATUSDES != "קיט מלא") || cnkbClosed.Checked)
+                        {
+                            cmbROBxList.Items.Add(serial);
+                        }
                     }
                     lblLoading.BackColor = Color.Green;
                     lblLoading.Text = "Data Loaded";
                     cmbROBxList.DroppedDown = true;
+
+                    // Attach event handler to the checkbox
+                    cnkbClosed.CheckedChanged += (s, e) => FilterWorkOrders(serials);
                 }
                 catch (HttpRequestException ex)
                 {
-                    //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     txtbLog.ForeColor = Color.Red;
                     txtbLog.AppendText($"Request error: {ex.Message} \n");
                     txtbLog.ScrollToCaret();
                 }
                 catch (Exception ex)
                 {
-                    //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     txtbLog.ForeColor = Color.Red;
                     txtbLog.AppendText($"Request error: {ex.Message}");
                     txtbLog.ScrollToCaret();
                 }
             }
         }
+
+        private void FilterWorkOrders(List<Serial> serials)
+        {
+            cmbROBxList.Items.Clear();
+            foreach (var serial in serials)
+            {
+                if (serial.SERIALSTATUSDES != "נסגרה" || cnkbClosed.Checked)
+                {
+                    cmbROBxList.Items.Add(serial);
+                }
+            }
+        }
+
         private void cmbROBxList_DrawItem(object sender, DrawItemEventArgs e)
         {
             if (e.Index < 0) return;
@@ -228,7 +294,7 @@ namespace WH_Panel
             }
             else if (serial.SERIALSTATUSDES == "שוחררה")
             {
-                e.Graphics.FillRectangle(Brushes.Orange, e.Bounds);
+                e.Graphics.FillRectangle(Brushes.CadetBlue, e.Bounds);
                 e.Graphics.DrawString(serial.ToString(), e.Font, Brushes.Black, e.Bounds);
             }
             else if (serial.SERIALSTATUSDES == "ממתין להשלמה")
@@ -240,6 +306,12 @@ namespace WH_Panel
             {
                 e.Graphics.FillRectangle(Brushes.Black, e.Bounds);
                 e.Graphics.DrawString(serial.ToString(), e.Font, Brushes.Gray, e.Bounds);
+            }
+
+            else if (serial.SERIALSTATUSDES == "הרכבה בחוסר")
+            {
+                e.Graphics.FillRectangle(Brushes.DarkOrange, e.Bounds);
+                e.Graphics.DrawString(serial.ToString(), e.Font, Brushes.Black, e.Bounds);
             }
             else if (serial.SERIALSTATUSDES == "הוקפאה")
             {
@@ -1655,6 +1727,7 @@ namespace WH_Panel
                             txtbInputIPN.Focus();
                             // Update the progress label
                             UpdateProgressLabel();
+                            UpdateSimulationLabel();
                         }
                     }
                     else
@@ -2036,104 +2109,241 @@ namespace WH_Panel
                 MessageBox.Show("Sticker printing failed : " + e.Message);
             }
         }
+        //    private void SendEmail()
+        //    {
+        //        string windowTitle = this.Text; // 'this' refers to the current Form
+        //        // Find the index of ".xlsm" in the window title
+        //        int index = windowTitle.IndexOf(".xlsm");
+        //        // Extract the project name, including ".xlsm"
+        //        string fullProjectName = index >= 0 ? windowTitle.Substring(0, index + 5) : windowTitle;
+        //        // Extract only the last part of the project name
+        //        string projectName = fullProjectName.Split('\\').Last();
+        //        //string fileName = openFileDialog1.FileName;
+        //        string fileName = fullProjectName;
+        //        //MessageBox.Show(fileName);
+        //        var excelApp = new Microsoft.Office.Interop.Excel.Application();
+        //        Microsoft.Office.Interop.Excel.Workbook workbook = excelApp.Workbooks.Open(fileName);
+        //        Microsoft.Office.Interop.Excel.Worksheet worksheet = (Microsoft.Office.Interop.Excel.Worksheet)workbook.Sheets[1]; // First sheet (index 1 in Interop)
+        //        // Find the "Alts" and "DELTA" column indices
+        //        int altsColumnIndex = -1;
+        //        int deltaColumnIndex = -1;
+        //        Microsoft.Office.Interop.Excel.Range headerRow = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[1];
+        //        for (int i = 1; i <= headerRow.Columns.Count; i++)
+        //        {
+        //            var cell = (Microsoft.Office.Interop.Excel.Range)headerRow.Cells[1, i];
+        //            string columnHeader = cell.Value?.ToString();
+        //            if (columnHeader == "Alts")
+        //            {
+        //                altsColumnIndex = i;
+        //            }
+        //            else if (columnHeader == "DELTA")
+        //            {
+        //                deltaColumnIndex = i;
+        //            }
+        //            if (altsColumnIndex != -1 && deltaColumnIndex != -1)
+        //            {
+        //                break;
+        //            }
+        //        }
+        //        if (deltaColumnIndex == -1)
+        //        {
+        //            MessageBox.Show("Could not find the 'DELTA' column.");
+        //            workbook.Close(false);
+        //            Marshal.ReleaseComObject(workbook);
+        //            Marshal.ReleaseComObject(excelApp);
+        //            return;
+        //        }
+        //        // Build HTML table from Excel data
+        //        StringBuilder htmlTable = new StringBuilder();
+        //        htmlTable.Append("<table border='1' style='border-collapse:collapse;'>");
+        //        // Add header row
+        //        htmlTable.Append("<tr>");
+        //        for (int col = 1; col <= altsColumnIndex; col++)
+        //        {
+        //            string header = ((Microsoft.Office.Interop.Excel.Range)headerRow.Cells[1, col]).Value?.ToString();
+        //            htmlTable.AppendFormat("<th>{0}</th>", header ?? string.Empty);
+        //        }
+        //        htmlTable.Append("</tr>");
+        //        // Add data rows with conditional formatting for "DELTA" values
+        //        int row = 2;
+        //        while (((Microsoft.Office.Interop.Excel.Range)worksheet.Cells[row, 1]).Value != null)
+        //        {
+        //            htmlTable.Append("<tr>");
+        //            for (int col = 1; col <= altsColumnIndex; col++)
+        //            {
+        //                var cell = (Microsoft.Office.Interop.Excel.Range)worksheet.Cells[row, col];
+        //                string cellValue = cell.Value?.ToString() ?? string.Empty;
+        //                if (col == deltaColumnIndex && double.TryParse(cellValue, out double deltaValue))
+        //                {
+        //                    string color = deltaValue < 0 ? "IndianRed" : "LightGreen";
+        //                    htmlTable.AppendFormat("<td style='background-color:{0};'>{1}</td>", color, cellValue);
+        //                }
+        //                else
+        //                {
+        //                    htmlTable.AppendFormat("<td>{0}</td>", cellValue);
+        //                }
+        //            }
+        //            htmlTable.Append("</tr>");
+        //            row++;
+        //        }
+        //        htmlTable.Append("</table>");
+        //        workbook.Close(false);
+        //        Marshal.ReleaseComObject(workbook);
+        //        Marshal.ReleaseComObject(excelApp);
+        //        var outlookApp = new Outlook.Application();
+        //        Outlook.MailItem mailItem = (Outlook.MailItem)outlookApp.CreateItem(Outlook.OlItemType.olMailItem);
+        //        mailItem.Subject = projectName.Substring(0, projectName.Length - 5).ToString() + "_UPDATED_" + DateAndTime.Now.ToString("yyyyMMddHHmm");
+        //        // Set CC field
+        //        mailItem.CC = "lgt@robotron.co.il";
+        //        // Hardcoded in-house email addresses
+        //        List<string> inhouseEmails = new List<string>
+        //{
+        //    "production@robotron.co.il",
+        //    "avishay@robotron.co.il",
+        //    "rehesh@robotron.co.il",
+        //    "vlad@robotron.co.il"
+        //};
+        //        // Extract client domain from project name
+        //        string clientDomain = projectName.Split('_')[0].ToLower();
+        //        // Get emails from the client's domain
+        //        List<string> clientEmails = GetUniqueClientEmails(clientDomain);//GetEmailsFromDomain(outlookApp, clientDomain); 
+        //        // Display a form with checkboxes for all recipients
+        //        RecipientSelectionForm selectionForm = new RecipientSelectionForm(inhouseEmails, clientEmails);
+        //        if (selectionForm.ShowDialog() == DialogResult.OK)
+        //        {
+        //            // Combine selected emails into the "To" field
+        //            mailItem.To = string.Join(";", selectionForm.SelectedEmails);
+        //            // Embed the HTML table in the email body
+        //            mailItem.HTMLBody = "<html><body>" + htmlTable.ToString() + "</body></html>";
+        //            // Send the email
+        //            mailItem.Send();
+        //            MessageBox.Show("Email sent successfully.");
+        //        }
+        //        Marshal.ReleaseComObject(mailItem);
+        //        Marshal.ReleaseComObject(outlookApp);
+        //    }
+
+
         private void SendEmail()
         {
-            string windowTitle = this.Text; // 'this' refers to the current Form
-            // Find the index of ".xlsm" in the window title
-            int index = windowTitle.IndexOf(".xlsm");
-            // Extract the project name, including ".xlsm"
-            string fullProjectName = index >= 0 ? windowTitle.Substring(0, index + 5) : windowTitle;
-            // Extract only the last part of the project name
-            string projectName = fullProjectName.Split('\\').Last();
-            //string fileName = openFileDialog1.FileName;
-            string fileName = fullProjectName;
-            //MessageBox.Show(fileName);
-            var excelApp = new Microsoft.Office.Interop.Excel.Application();
-            Microsoft.Office.Interop.Excel.Workbook workbook = excelApp.Workbooks.Open(fileName);
-            Microsoft.Office.Interop.Excel.Worksheet worksheet = (Microsoft.Office.Interop.Excel.Worksheet)workbook.Sheets[1]; // First sheet (index 1 in Interop)
-            // Find the "Alts" and "DELTA" column indices
-            int altsColumnIndex = -1;
-            int deltaColumnIndex = -1;
-            Microsoft.Office.Interop.Excel.Range headerRow = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[1];
-            for (int i = 1; i <= headerRow.Columns.Count; i++)
-            {
-                var cell = (Microsoft.Office.Interop.Excel.Range)headerRow.Cells[1, i];
-                string columnHeader = cell.Value?.ToString();
-                if (columnHeader == "Alts")
-                {
-                    altsColumnIndex = i;
-                }
-                else if (columnHeader == "DELTA")
-                {
-                    deltaColumnIndex = i;
-                }
-                if (altsColumnIndex != -1 && deltaColumnIndex != -1)
-                {
-                    break;
-                }
-            }
-            if (deltaColumnIndex == -1)
-            {
-                MessageBox.Show("Could not find the 'DELTA' column.");
-                workbook.Close(false);
-                Marshal.ReleaseComObject(workbook);
-                Marshal.ReleaseComObject(excelApp);
-                return;
-            }
-            // Build HTML table from Excel data
+            // Build HTML table from DataGridView data
             StringBuilder htmlTable = new StringBuilder();
+            htmlTable.Append("<html><head>");
+            htmlTable.Append("<style>");
+            htmlTable.Append("table { border-collapse: collapse; }");
+            htmlTable.Append("th, td { padding: 5px; }");
+            htmlTable.Append(".green { background-color: green; color: white; }");
+            htmlTable.Append(".red { background-color: indianred; color: white; }");
+            htmlTable.Append(".center { text-align: center; }");
+            htmlTable.Append("</style>");
+            htmlTable.Append("</head><body>");
+
+            // Add the additional table with text from txtbRob, txtbName, txtbQty, txtbStatus, and lblProgress
+            htmlTable.Append("<table border='1' style='border-collapse:collapse; margin-bottom: 20px;'>");
+            htmlTable.Append("<tr><th>Rob</th><th>Name</th><th>Qty</th><th>Status</th><th>Progress</th></tr>");
+            htmlTable.AppendFormat("<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td></tr>",
+                txtbRob.Text, txtbName.Text, txtbQty.Text, txtbStatus.Text, lblProgress.Text);
+            htmlTable.Append("</table>");
+
+            // Add the main data table
             htmlTable.Append("<table border='1' style='border-collapse:collapse;'>");
             // Add header row
             htmlTable.Append("<tr>");
-            for (int col = 1; col <= altsColumnIndex; col++)
+            foreach (DataGridViewColumn column in dgwBom.Columns)
             {
-                string header = ((Microsoft.Office.Interop.Excel.Range)headerRow.Cells[1, col]).Value?.ToString();
-                htmlTable.AppendFormat("<th>{0}</th>", header ?? string.Empty);
+                if (column.Name != "TRANS" && column.Name != "KLINE")
+                {
+                    htmlTable.AppendFormat("<th>{0}</th>", column.HeaderText);
+                }
             }
             htmlTable.Append("</tr>");
             // Add data rows with conditional formatting for "DELTA" values
-            int row = 2;
-            while (((Microsoft.Office.Interop.Excel.Range)worksheet.Cells[row, 1]).Value != null)
+            foreach (DataGridViewRow row in dgwBom.Rows)
             {
                 htmlTable.Append("<tr>");
-                for (int col = 1; col <= altsColumnIndex; col++)
+                foreach (DataGridViewCell cell in row.Cells)
                 {
-                    var cell = (Microsoft.Office.Interop.Excel.Range)worksheet.Cells[row, col];
-                    string cellValue = cell.Value?.ToString() ?? string.Empty;
-                    if (col == deltaColumnIndex && double.TryParse(cellValue, out double deltaValue))
+                    if (dgwBom.Columns[cell.ColumnIndex].Name != "TRANS" && dgwBom.Columns[cell.ColumnIndex].Name != "KLINE")
                     {
-                        string color = deltaValue < 0 ? "IndianRed" : "LightGreen";
-                        htmlTable.AppendFormat("<td style='background-color:{0};'>{1}</td>", color, cellValue);
-                    }
-                    else
-                    {
-                        htmlTable.AppendFormat("<td>{0}</td>", cellValue);
+                        string cellValue = cell.Value?.ToString() ?? string.Empty;
+                        string cellClass = string.Empty;
+                        string alignmentClass = string.Empty;
+
+                        if (dgwBom.Columns[cell.ColumnIndex].Name == "DELTA")
+                        {
+                            if (int.TryParse(cellValue, out int deltaValue))
+                            {
+                                cellClass = deltaValue >= 0 ? "green" : "red";
+                            }
+                            alignmentClass = "center";
+                        }
+                        else if (dgwBom.Columns[cell.ColumnIndex].Name == "TBALANCE" ||
+                                 dgwBom.Columns[cell.ColumnIndex].Name == "QUANT" ||
+                                 dgwBom.Columns[cell.ColumnIndex].Name == "CQUANT" ||
+                                 dgwBom.Columns[cell.ColumnIndex].Name == "CALC" ||
+                                 dgwBom.Columns[cell.ColumnIndex].Name == "ALT" ||
+                                 dgwBom.Columns[cell.ColumnIndex].Name == "LEFTOVERS")
+                        {
+                            alignmentClass = "center";
+                        }
+
+                        if (dgwBom.Columns[cell.ColumnIndex].Name == "TBALANCE")
+                        {
+                            int DELTA = Convert.ToInt32(row.Cells["DELTA"].Value);
+                            if (int.TryParse(cellValue, out int whValue))
+                            {
+                                cellClass = (whValue >= Math.Abs(DELTA) && whValue != 0) ? "green" : "red";
+                            }
+                        }
+                        else if (dgwBom.Columns[cell.ColumnIndex].Name == "CQUANT")
+                        {
+                            int req = Convert.ToInt32(row.Cells["CQUANT"].Value);
+                            int kitQty = txtbQty.Text != string.Empty ? Convert.ToInt32(txtbQty.Text) : 0;
+                            if (kitQty != 0)
+                            {
+                                cellValue = $"{req} [{req / kitQty}]";
+                            }
+                        }
+                        else if (dgwBom.Columns[cell.ColumnIndex].Name == "QUANT")
+                        {
+                            int req = Convert.ToInt32(row.Cells["CQUANT"].Value);
+                            if (int.TryParse(cellValue, out int kitValue))
+                            {
+                                cellClass = (kitValue >= req && kitValue != 0) ? "green" : "red";
+                            }
+                        }
+                        else if (dgwBom.Columns[cell.ColumnIndex].Name == "LEFTOVERS")
+                        {
+                            if (int.TryParse(cellValue, out int leftoversValue))
+                            {
+                                cellClass = leftoversValue < 0 ? "red" : string.Empty;
+                            }
+                        }
+                        htmlTable.AppendFormat("<td class='{0} {1}'>{2}</td>", cellClass, alignmentClass, cellValue);
                     }
                 }
                 htmlTable.Append("</tr>");
-                row++;
             }
             htmlTable.Append("</table>");
-            workbook.Close(false);
-            Marshal.ReleaseComObject(workbook);
-            Marshal.ReleaseComObject(excelApp);
+            htmlTable.Append("</body></html>");
+
             var outlookApp = new Outlook.Application();
             Outlook.MailItem mailItem = (Outlook.MailItem)outlookApp.CreateItem(Outlook.OlItemType.olMailItem);
-            mailItem.Subject = projectName.Substring(0, projectName.Length - 5).ToString() + "_UPDATED_" + DateAndTime.Now.ToString("yyyyMMddHHmm");
+            mailItem.Subject = txtbName.Text + "_UPDATED_" + DateAndTime.Now.ToString("yyyyMMddHHmm");
             // Set CC field
             mailItem.CC = "lgt@robotron.co.il";
             // Hardcoded in-house email addresses
             List<string> inhouseEmails = new List<string>
-    {
-        "production@robotron.co.il",
-        "avishay@robotron.co.il",
-        "rehesh@robotron.co.il",
-        "vlad@robotron.co.il"
-    };
+            {
+                "production@robotron.co.il",
+                "avishay@robotron.co.il",
+                "rehesh@robotron.co.il",
+                "vlad@robotron.co.il"
+            };
             // Extract client domain from project name
-            string clientDomain = projectName.Split('_')[0].ToLower();
+            string clientDomain = txtbName.Text.Split('_')[0].ToLower();
             // Get emails from the client's domain
-            List<string> clientEmails = GetUniqueClientEmails(clientDomain);//GetEmailsFromDomain(outlookApp, clientDomain); 
+            List<string> clientEmails = GetUniqueClientEmails(clientDomain);
             // Display a form with checkboxes for all recipients
             RecipientSelectionForm selectionForm = new RecipientSelectionForm(inhouseEmails, clientEmails);
             if (selectionForm.ShowDialog() == DialogResult.OK)
@@ -2141,7 +2351,7 @@ namespace WH_Panel
                 // Combine selected emails into the "To" field
                 mailItem.To = string.Join(";", selectionForm.SelectedEmails);
                 // Embed the HTML table in the email body
-                mailItem.HTMLBody = "<html><body>" + htmlTable.ToString() + "</body></html>";
+                mailItem.HTMLBody = htmlTable.ToString();
                 // Send the email
                 mailItem.Send();
                 MessageBox.Show("Email sent successfully.");
@@ -2149,6 +2359,7 @@ namespace WH_Panel
             Marshal.ReleaseComObject(mailItem);
             Marshal.ReleaseComObject(outlookApp);
         }
+
         public List<string> GetUniqueClientEmails(string clientDomain)
         {
             var emails = new HashSet<string>();
@@ -2395,7 +2606,7 @@ namespace WH_Panel
                 writer.WriteLine("</tr>");
                 // Add another row for simulation and progress labels
                 writer.WriteLine("<tr>");
-                writer.WriteLine($"<td colspan='2'>{lblSim.Text}</td>");
+                writer.WriteLine($"<td colspan='2' class='no-print'>{lblSim.Text}</td>");
                 writer.WriteLine($"<td colspan='2'>{lblProgress.Text}</td>");
                 writer.WriteLine("</tr>");
                 writer.WriteLine("</table>");

@@ -692,54 +692,7 @@ namespace WH_Panel
             // Call the printSticker method
             printSticker(part);
         }
-        //private async void textBox2_KeyDown(object sender, KeyEventArgs e)
-        //{
-        //    if (e.KeyCode == Keys.Enter)
-        //    {
-        //        string mnfPartName = textBox2.Text;
-        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=MNFPARTNAME eq '{mnfPartName}'";
-        //        using (HttpClient client = new HttpClient())
-        //        {
-        //            try
-        //            {
-        //                // Set the request headers if needed
-        //                client.DefaultRequestHeaders.Accept.Clear();
-        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //                // Set the Authorization header
-        //                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
-        //                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //                // Make the HTTP GET request
-        //                HttpResponseMessage response = await client.GetAsync(url);
-        //                response.EnsureSuccessStatusCode();
-        //                // Read the response content
-        //                string responseBody = await response.Content.ReadAsStringAsync();
-        //                // Parse the JSON response
-        //                ApiResponse apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseBody);
-        //                // Check if the response contains any data
-        //                if (apiResponse.value != null && apiResponse.value.Count > 0)
-        //                {
-        //                    PR_PART part = apiResponse.value[0];
-        //                    // Populate the textboxes with the data
-        //                    txtbInputIPN.Text = part.PARTNAME;
-        //                    textBox3.Text = part.PARTDES;
-        //                    textBox4.Text = part.MNFNAME;
-        //                }
-        //                else
-        //                {
-        //                    MessageBox.Show("No data found for the specified manufacturer part name.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        //                }
-        //            }
-        //            catch (HttpRequestException ex)
-        //            {
-        //                MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //            }
-        //        }
-        //    }
-        //}
+     
         private async void txtbInputMFPN_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -1143,7 +1096,9 @@ namespace WH_Panel
                                 {
                                     dataGridView2.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME,"", trans.TQUANT, ""); 
                                 }
+                                
                             }
+                           
                             groupBox4.Text = $"Stock Movements for {partName}";
                             ColorTheRows(dataGridView2);
                             foreach (DataGridViewRow row in dataGridView2.Rows)
@@ -1171,6 +1126,8 @@ namespace WH_Panel
                                     }
                                 }
                             }
+                            // Sort the DataGridView by the first column in descending order
+                            dataGridView2.Sort(dataGridView2.Columns[0], ListSortDirection.Descending);
                         }
                         else
                         {
@@ -1871,6 +1828,7 @@ namespace WH_Panel
                     string _BOOKNUM = string.Empty;
                     string _OWNERLOGIN = "Yuri_G";
                     string _SUPNAME = string.Empty;
+
                     if (rbtIN.Checked)
                     {
                         if (txtbINdoc.Text == string.Empty)
