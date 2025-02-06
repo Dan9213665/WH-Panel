@@ -156,66 +156,6 @@ namespace WH_Panel
             public int PART { get; set; }
             public string MNFPARTNAME { get; set; }
         }
-        // private string username = "api"; // Replace with your actual username
-        //private string password = "DdD@12345"; // Replace with your actual password
-        //private async void GetGetRobWosList()
-        //{
-        //    string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL";
-        //    using (HttpClient client = new HttpClient())
-        //    {
-        //        try
-        //        {
-        //            // Set the request headers if needed
-        //            client.DefaultRequestHeaders.Accept.Clear();
-        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //            // Set the Authorization header
-        //            //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
-        //            //string un = settings.ApiUsername;
-        //            //string un = username;
-        //            //MessageBox.Show(un);
-        //            //string pw = settings.ApiPassword;
-        //            // pw = password;
-        //            //MessageBox.Show(pw);
-        //            //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{un}:{pw}"));
-        //            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //            // Make the HTTP GET request
-        //            HttpResponseMessage response = await client.GetAsync(url);
-        //            response.EnsureSuccessStatusCode();
-        //            // Read the response content
-        //            string responseBody = await response.Content.ReadAsStringAsync();
-        //            // Parse the JSON response
-        //            var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-        //            var serials = apiResponse["value"].ToObject<List<Serial>>();
-        //            // Populate the dropdown with the data
-        //            cmbROBxList.Items.Clear();
-        //            foreach (var serial in serials)
-        //            {
-        //                //cmbROBxList.Items.Add($"{serial.SERIALNAME} - {serial.PARTNAME} - {serial.QUANT}PCS - {serial.SERIALSTATUSDES}");
-        //                cmbROBxList.Items.Add(serial);
-        //            }
-        //            lblLoading.BackColor = Color.Green;
-        //            lblLoading.Text = "Data Loaded";
-        //            cmbROBxList.DroppedDown = true;
-        //        }
-        //        catch (HttpRequestException ex)
-        //        {
-        //            //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //            txtbLog.ForeColor = Color.Red;
-        //            txtbLog.AppendText($"Request error: {ex.Message} \n");
-        //            txtbLog.ScrollToCaret();
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //            txtbLog.ForeColor = Color.Red;
-        //            txtbLog.AppendText($"Request error: {ex.Message}");
-        //            txtbLog.ScrollToCaret();
-        //        }
-        //    }
-        //}
-
         private async void GetGetRobWosList()
         {
             string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL";
@@ -250,7 +190,6 @@ namespace WH_Panel
                     lblLoading.BackColor = Color.Green;
                     lblLoading.Text = "Data Loaded";
                     cmbROBxList.DroppedDown = true;
-
                     // Attach event handler to the checkbox
                     cnkbClosed.CheckedChanged += (s, e) => FilterWorkOrders(serials);
                 }
@@ -268,7 +207,6 @@ namespace WH_Panel
                 }
             }
         }
-
         private void FilterWorkOrders(List<Serial> serials)
         {
             cmbROBxList.Items.Clear();
@@ -280,7 +218,6 @@ namespace WH_Panel
                 }
             }
         }
-
         private void cmbROBxList_DrawItem(object sender, DrawItemEventArgs e)
         {
             if (e.Index < 0) return;
@@ -307,7 +244,6 @@ namespace WH_Panel
                 e.Graphics.FillRectangle(Brushes.Black, e.Bounds);
                 e.Graphics.DrawString(serial.ToString(), e.Font, Brushes.Gray, e.Bounds);
             }
-
             else if (serial.SERIALSTATUSDES == "הרכבה בחוסר")
             {
                 e.Graphics.FillRectangle(Brushes.DarkOrange, e.Bounds);
@@ -323,7 +259,6 @@ namespace WH_Panel
                 e.Graphics.FillRectangle(new SolidBrush(comboBox.BackColor), e.Bounds);
                 e.Graphics.DrawString(serial.ToString(), e.Font, Brushes.White, e.Bounds);
             }
-         
             // Draw the focus rectangle if the item has focus
             e.DrawFocusRectangle();
         }
@@ -442,235 +377,9 @@ namespace WH_Panel
             dgwBom.Columns["LEFTOVERS"].SortMode = DataGridViewColumnSortMode.Automatic;
             dgwBom.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
         }
-        //private async Task LoadBomDetails(string serialName)
-        //{
-
-
-        //    if (dgwBom != null)
-        //    {
-
-        //        progressBar1.Value = 0;
-        //        progressBar1.Update();
-        //        int completedItems = 0;
-        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{serialName}'&$expand=TRANSORDER_K_SUBFORM";
-        //        using (HttpClient client = new HttpClient())
-        //        {
-        //            try
-        //            {
-        //                // Set the request headers if needed
-        //                client.DefaultRequestHeaders.Accept.Clear();
-        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //                // Set the Authorization header
-        //                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //                // Make the HTTP GET request
-        //                HttpResponseMessage response = await client.GetAsync(url);
-        //                response.EnsureSuccessStatusCode();
-        //                // Read the response content
-        //                string responseBody = await response.Content.ReadAsStringAsync();
-        //                // Parse the JSON response
-        //                var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-        //                // Check if the response contains the expected data
-        //                if (apiResponse["value"] != null && apiResponse["value"].Any())
-        //                {
-        //                    var bomDetails = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
-        //                    // Aggregate the PQUANT values for each unique PARTNAME
-
-        //                    txtbLog.AppendText($"Loading {bomDetails.Count().ToString()} items\n");
-        //                    txtbLog.ScrollToCaret();
-
-        //                    dgwBom.Rows.Clear();
-
-        //                    var aggregatedDetails = bomDetails
-        //                        .GroupBy(detail => detail.PARTNAME)
-        //                        .Select(group => new TransOrderKSubform
-        //                        {
-        //                            PARTNAME = group.Key,
-        //                            PARTDES = group.First().PARTDES,
-        //                            CQUANT = group.First().CQUANT,
-        //                            CALC = string.Join("+", group.Select(detail => detail.QUANT)),
-        //                            QUANT = group.Sum(detail => detail.QUANT),
-        //                            KLINE = group.First().KLINE,
-        //                            TRANS = group.First().TRANS
-        //                        })
-        //                        .ToList();
-        //                    // Log the CALC values
-        //                    //foreach (var detail in aggregatedDetails)
-        //                    //{
-        //                    //    MessageBox.Show($"PARTNAME: {detail.PARTNAME}, CALC: {detail.CALC}");
-        //                    //}
-        //                    // Populate the DataGridView with the aggregated data
-
-        //                    foreach (var detail in aggregatedDetails)
-        //                    {
-        //                        // Remove "+0" from CALC if present
-        //                        if (detail.CALC.Contains("+0"))
-        //                        {
-        //                            detail.CALC = detail.CALC.Replace("+0", "");
-        //                        }
-        //                        // If CALC is "0" or contains a single number, set it to an empty string
-        //                        if (detail.CALC == "0" || !detail.CALC.Contains("+"))
-        //                        {
-        //                            detail.CALC = "";
-        //                        }
-        //                        dgwBom.Rows.Add(detail.PARTNAME, "", detail.PARTDES, "", detail.QUANT, detail.CQUANT, detail.DELTA, detail.CALC, "", "", detail.TRANS, detail.KLINE);
-        //                        int pbTotal = aggregatedDetails.Count;
-        //                        if (detail.DELTA >= 0)
-        //                        {
-        //                            completedItems++;
-        //                        }
-        //                        progressBar1.Value = (completedItems / pbTotal) * 100;
-        //                    }
-        //                    // Update the progress label
-        //                    UpdateProgressLabel();
-        //                    progressBar1.Update();
-        //                    txtbInputIPN.PlaceholderText = $"Filter by IPN ({aggregatedDetails.Count.ToString()})";
-        //                    // Fetch MFPNs for each row with a delay
-        //                    await FetchWarehouseBalances();
-        //                    //await FetchMFPNsWithDelay();
-        //                    //await FetchMFPNsForAllRows();
-        //                }
-        //                else
-        //                {
-        //                    //MessageBox.Show("No BOM details found for the selected serial.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        //                    txtbLog.ForeColor = Color.Red;
-        //                    txtbLog.AppendText("No BOM details found for the selected serial.\n");
-        //                    txtbLog.ScrollToCaret();
-        //                }
-        //            }
-        //            catch (HttpRequestException ex)
-        //            {
-        //                //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //                txtbLog.ForeColor = Color.Red;
-        //                txtbLog.AppendText($"Request error: {ex.Message} \n");
-        //                txtbLog.ScrollToCaret();
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //                txtbLog.ForeColor = Color.Red;
-        //                txtbLog.AppendText($"Request error: {ex.Message}\n");
-        //                txtbLog.ScrollToCaret();
-        //            }
-        //        }
-        //    }
-        //}
-
-        //private async Task LoadBomDetails(string serialName)
-        //{
-        //    if (dgwBom != null)
-        //    {
-        //        progressBar1.Value = 0;
-        //        progressBar1.Update();
-        //        int completedItems = 0;
-        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{serialName}'&$expand=TRANSORDER_K_SUBFORM";
-        //        using (HttpClient client = new HttpClient())
-        //        {
-        //            try
-        //            {
-        //                // Set the request headers if needed
-        //                client.DefaultRequestHeaders.Accept.Clear();
-        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //                // Set the Authorization header
-        //                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //                // Make the HTTP GET request
-        //                HttpResponseMessage response = await client.GetAsync(url);
-        //                response.EnsureSuccessStatusCode();
-        //                // Read the response content
-        //                string responseBody = await response.Content.ReadAsStringAsync();
-        //                // Parse the JSON response
-        //                var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-        //                // Check if the response contains the expected data
-        //                if (apiResponse["value"] != null && apiResponse["value"].Any())
-        //                {
-        //                    var bomDetails = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
-        //                    // Aggregate the PQUANT values for each unique PARTNAME
-
-        //                    int bomCountFromDB = await FetchIPNcountFromBom(txtbName.Text);
-
-
-        //                    txtbLog.AppendText($"Loading {bomCountFromDB} items from {txtbName.Text} bom \n");
-
-
-        //                    //txtbLog.AppendText($"Loading {bomDetails.Count().ToString()} items\n");
-        //                    txtbLog.ScrollToCaret();
-
-        //                    dgwBom.Rows.Clear();
-        //                    //dgwBom.Refresh();
-
-        //                    var aggregatedDetails = bomDetails
-        //                        .GroupBy(detail => detail.PARTNAME)
-        //                        .Select(group => new TransOrderKSubform
-        //                        {
-        //                            PARTNAME = group.Key,
-        //                            PARTDES = group.First().PARTDES,
-        //                            CQUANT = group.First().CQUANT,
-        //                            CALC = string.Join("+", group.Select(detail => detail.QUANT)),
-        //                            QUANT = group.Sum(detail => detail.QUANT),
-        //                            KLINE = group.First().KLINE,
-        //                            TRANS = group.First().TRANS
-        //                        })
-        //                        .ToList();
-
-        //                    // Populate the DataGridView with the aggregated data
-        //                    foreach (var detail in aggregatedDetails)
-        //                    {
-        //                        // Remove "+0" from CALC if present
-        //                        if (detail.CALC.Contains("+0"))
-        //                        {
-        //                            detail.CALC = detail.CALC.Replace("+0", "");
-        //                        }
-        //                        // If CALC is "0" or contains a single number, set it to an empty string
-        //                        if (detail.CALC == "0" || !detail.CALC.Contains("+"))
-        //                        {
-        //                            detail.CALC = "";
-        //                        }
-        //                        dgwBom.Rows.Add(detail.PARTNAME, "", detail.PARTDES, "", detail.QUANT, detail.CQUANT, detail.DELTA, detail.CALC, "", "", detail.TRANS, detail.KLINE);
-        //                        int pbTotal = aggregatedDetails.Count;
-        //                        if (detail.DELTA >= 0)
-        //                        {
-        //                            completedItems++;
-        //                        }
-        //                        progressBar1.Value = (completedItems * 100) / pbTotal;
-        //                    }
-        //                    // Update the progress label
-        //                    UpdateProgressLabel();
-        //                    progressBar1.Update();
-        //                    txtbInputIPN.PlaceholderText = $"Filter by IPN ({aggregatedDetails.Count.ToString()})";
-        //                    // Fetch MFPNs for each row with a delay
-        //                    await FetchWarehouseBalances();
-        //                    //await FetchMFPNsWithDelay();
-        //                    //await FetchMFPNsForAllRows();
-        //                }
-        //                else
-        //                {
-        //                    //MessageBox.Show("No BOM details found for the selected serial.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        //                    txtbLog.ForeColor = Color.Red;
-        //                    txtbLog.AppendText("No BOM details found for the selected serial.\n");
-        //                    txtbLog.ScrollToCaret();
-        //                }
-        //            }
-        //            catch (HttpRequestException ex)
-        //            {
-        //                //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //                txtbLog.ForeColor = Color.Red;
-        //                txtbLog.AppendText($"Request error: {ex.Message} \n");
-        //                txtbLog.ScrollToCaret();
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //                txtbLog.ForeColor = Color.Red;
-        //                txtbLog.AppendText($"Request error: {ex.Message}\n");
-        //                txtbLog.ScrollToCaret();
-        //            }
-        //        }
-        //    }
-        //}
-
         private async Task LoadBomDetails(string serialName)
         {
+            txtbLog.AppendText($"Fetching warehouse balances...\n");
             if (dgwBom != null)
             {
                 progressBar1.Value = 0;
@@ -699,14 +408,10 @@ namespace WH_Panel
                         {
                             var bomDetails = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
                             // Aggregate the PQUANT values for each unique PARTNAME
-
                             int bomCountFromDB = await FetchIPNcountFromBom(txtbName.Text);
-
                             txtbLog.AppendText($"Loading {bomCountFromDB} items from {txtbName.Text} bom \n");
                             txtbLog.ScrollToCaret();
-
                             dgwBom.Rows.Clear();
-
                             var aggregatedDetails = bomDetails
                                 .GroupBy(detail => detail.PARTNAME)
                                 .Select(group => new TransOrderKSubform
@@ -720,7 +425,6 @@ namespace WH_Panel
                                     TRANS = group.First().TRANS
                                 })
                                 .ToList();
-
                             // Populate the DataGridView with the aggregated data
                             foreach (var detail in aggregatedDetails)
                             {
@@ -771,137 +475,9 @@ namespace WH_Panel
                 }
             }
         }
-
-
-        //private async Task LoadBomDetails(string serialName, int retryCount = 0)
-        //{
-        //    const int maxRetries = 3; // Maximum number of retries
-        //    if (dgwBom != null)
-        //    {
-        //        progressBar1.Value = 0;
-        //        progressBar1.Update();
-        //        int completedItems = 0;
-        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{serialName}'&$expand=TRANSORDER_K_SUBFORM";
-        //        using (HttpClient client = new HttpClient())
-        //        {
-        //            try
-        //            {
-        //                // Set the request headers if needed
-        //                client.DefaultRequestHeaders.Accept.Clear();
-        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //                // Set the Authorization header
-        //                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //                // Make the HTTP GET request
-        //                HttpResponseMessage response = await client.GetAsync(url);
-        //                response.EnsureSuccessStatusCode();
-        //                // Read the response content
-        //                string responseBody = await response.Content.ReadAsStringAsync();
-        //                // Parse the JSON response
-        //                var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-        //                // Check if the response contains the expected data
-        //                if (apiResponse["value"] != null && apiResponse["value"].Any())
-        //                {
-        //                    var bomDetails = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
-        //                    // Aggregate the PQUANT values for each unique PARTNAME
-
-        //                    Task.Delay(1000).Wait();
-
-        //                    int bomCountFromDB = await FetchIPNcountFromBom(txtbName.Text);
-
-        //                    txtbLog.AppendText($"Loading {bomCountFromDB} items from {txtbName.Text} bom \n");
-
-        //                    if (bomDetails.Count() != bomCountFromDB)
-        //                    {
-        //                        if (retryCount < maxRetries)
-        //                        {
-        //                            txtbLog.AppendText($"Retrying to load BOM details... Attempt {retryCount + 1}\n");
-        //                            await Task.Delay(1000); // Wait for 1 second before retrying
-        //                            await LoadBomDetails(serialName, retryCount + 1);
-        //                        }
-        //                        else
-        //                        {
-        //                            txtbLog.AppendText($"Failed to load BOM details after {maxRetries} attempts.\n");
-        //                        }
-        //                        return;
-        //                    }
-
-        //                    txtbLog.ScrollToCaret();
-
-        //                    dgwBom.Rows.Clear();
-
-        //                    var aggregatedDetails = bomDetails
-        //                        .GroupBy(detail => detail.PARTNAME)
-        //                        .Select(group => new TransOrderKSubform
-        //                        {
-        //                            PARTNAME = group.Key,
-        //                            PARTDES = group.First().PARTDES,
-        //                            CQUANT = group.First().CQUANT,
-        //                            CALC = string.Join("+", group.Select(detail => detail.QUANT)),
-        //                            QUANT = group.Sum(detail => detail.QUANT),
-        //                            KLINE = group.First().KLINE,
-        //                            TRANS = group.First().TRANS
-        //                        })
-        //                        .ToList();
-
-        //                    // Populate the DataGridView with the aggregated data
-        //                    foreach (var detail in aggregatedDetails)
-        //                    {
-        //                        // Remove "+0" from CALC if present
-        //                        if (detail.CALC.Contains("+0"))
-        //                        {
-        //                            detail.CALC = detail.CALC.Replace("+0", "");
-        //                        }
-        //                        // If CALC is "0" or contains a single number, set it to an empty string
-        //                        if (detail.CALC == "0" || !detail.CALC.Contains("+"))
-        //                        {
-        //                            detail.CALC = "";
-        //                        }
-        //                        dgwBom.Rows.Add(detail.PARTNAME, "", detail.PARTDES, "", detail.QUANT, detail.CQUANT, detail.DELTA, detail.CALC, "", "", detail.TRANS, detail.KLINE);
-        //                        int pbTotal = aggregatedDetails.Count;
-        //                        if (detail.DELTA >= 0)
-        //                        {
-        //                            completedItems++;
-        //                        }
-        //                        progressBar1.Value = (completedItems * 100) / pbTotal;
-        //                    }
-        //                    // Update the progress label
-        //                    UpdateProgressLabel();
-        //                    progressBar1.Update();
-        //                    txtbInputIPN.PlaceholderText = $"Filter by IPN ({aggregatedDetails.Count.ToString()})";
-        //                    // Fetch MFPNs for each row with a delay
-        //                    await FetchWarehouseBalances();
-        //                    //await FetchMFPNsWithDelay();
-        //                    //await FetchMFPNsForAllRows();
-        //                }
-        //                else
-        //                {
-        //                    txtbLog.ForeColor = Color.Red;
-        //                    txtbLog.AppendText("No BOM details found for the selected serial.\n");
-        //                    txtbLog.ScrollToCaret();
-        //                }
-        //            }
-        //            catch (HttpRequestException ex)
-        //            {
-        //                txtbLog.ForeColor = Color.Red;
-        //                txtbLog.AppendText($"Request error: {ex.Message} \n");
-        //                txtbLog.ScrollToCaret();
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                txtbLog.ForeColor = Color.Red;
-        //                txtbLog.AppendText($"Request error: {ex.Message}\n");
-        //                txtbLog.ScrollToCaret();
-        //            }
-        //        }
-        //    }
-        //}
-
-
         private async Task<int> FetchIPNcountFromBom(string partName)
         {
             txtbLog.AppendText($"Fetching IPN count for {partName}\n");
-
             string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART?$filter=PARTNAME eq '{partName}'&$expand=PARTARC_SUBFORM";
             using (HttpClient client = new HttpClient())
             {
@@ -944,8 +520,6 @@ namespace WH_Panel
                 }
             }
         }
-
-
         private void UpdateProgressLabel()
         {
             if (dgwBom != null)
@@ -963,66 +537,148 @@ namespace WH_Panel
                 }
             }
         }
+        //private async Task FetchWarehouseBalances()
+        //{
+        //    bool startFetching = false;
+        //    foreach (DataGridViewRow row in dgwBom.Rows)
+        //    {
+        //        // Check if the TBALANCE cell is empty or null
+        //        if (row.Cells["TBALANCE"].Value == null || string.IsNullOrEmpty(row.Cells["TBALANCE"].Value.ToString()))
+        //        {
+        //            startFetching = true;
+        //        }
+        //        // Start fetching data only if the TBALANCE cell is empty or null
+        //        if (startFetching && row.Cells["PARTNAME"].Value != null)
+        //        {
+        //            string partName = row.Cells["PARTNAME"].Value.ToString();
+        //            string warehouseName = partName.Substring(0, 3); // Get the first 3 characters of the PARTNAME
+        //            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{warehouseName}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{partName}')";
+        //            using (HttpClient client = new HttpClient())
+        //            {
+        //                try
+        //                {
+        //                    // Set the request headers
+        //                    client.DefaultRequestHeaders.Accept.Clear();
+        //                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+        //                    // Make the HTTP GET request
+        //                    HttpResponseMessage response = await client.GetAsync(url);
+        //                    response.EnsureSuccessStatusCode();
+        //                    // Read the response content
+        //                    string responseBody = await response.Content.ReadAsStringAsync();
+        //                    // Parse the JSON response
+        //                    var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+        //                    var warehouse = apiResponse["value"].FirstOrDefault();
+        //                    if (warehouse != null)
+        //                    {
+        //                        var balance = warehouse["WARHSBAL_SUBFORM"].FirstOrDefault();
+        //                        if (balance != null)
+        //                        {
+        //                            int tBalance = balance["TBALANCE"].Value<int>();
+        //                            // Update the WH column in the DataGridView
+        //                            row.Cells["TBALANCE"].Value = tBalance;
+        //                        }
+        //                        else
+        //                        {
+        //                            row.Cells["TBALANCE"].Value = 0;
+        //                        }
+        //                    }
+        //                }
+        //                catch (HttpRequestException ex)
+        //                {
+        //                    txtbLog.ForeColor = Color.Red;
+        //                    txtbLog.AppendText($"Request error: {ex.Message}\n");
+        //                    txtbLog.ScrollToCaret();
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    txtbLog.ForeColor = Color.Red;
+        //                    txtbLog.AppendText($"Request error: {ex.Message}\n");
+        //                    txtbLog.ScrollToCaret();
+        //                }
+        //            }
+        //            // Calculate the LEFTOVERS for the current row
+        //            int delta = Convert.ToInt32(row.Cells["DELTA"].Value);
+        //            int whQuantity = row.Cells["TBALANCE"].Value != null ? Convert.ToInt32(row.Cells["TBALANCE"].Value) : 0;
+        //            int kitQuantity = row.Cells["QUANT"].Value != null ? Convert.ToInt32(row.Cells["QUANT"].Value) : 0;
+        //            int requiredQuantity = row.Cells["CQUANT"].Value != null ? Convert.ToInt32(row.Cells["CQUANT"].Value) : 0;
+        //            int leftovers = (whQuantity + kitQuantity) - requiredQuantity;
+        //            // Update the LEFTOVERS column in the DataGridView
+        //            row.Cells["LEFTOVERS"].Value = leftovers;
+        //            // Introduce an artificial delay between each API call
+        //            await Task.Delay(200); // 100 milliseconds delay
+        //        }
+        //    }
+        //    UpdateSimulationLabel();
+        //}
         private async Task FetchWarehouseBalances()
         {
-            bool startFetching = false;
+            // Create a list to store the fetched warehouse balances
+            List<WarehouseBalance> warehouseBalances = new List<WarehouseBalance>();
+            // Get the unique part names from the DataGridView
+            var partNames = dgwBom.Rows.Cast<DataGridViewRow>()
+                .Where(row => row.Cells["PARTNAME"].Value != null)
+                .Select(row => row.Cells["PARTNAME"].Value.ToString())
+                .Distinct()
+                .ToList();
+            if (partNames.Count == 0)
+            {
+                return;
+            }
+            // Construct the filter string for the API call
+            string partNamesFilter = string.Join(" or ", partNames.Select(p => $"PARTNAME eq '{p}'"));
+            string warehouseName = partNames.First().Substring(0, 3); // Assuming all parts belong to the same warehouse
+            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{warehouseName}'&$expand=WARHSBAL_SUBFORM";
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    // Set the request headers
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    // Make the HTTP GET request
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
+                    // Read the response content
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    // Parse the JSON response
+                    var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+                    var warehouse = apiResponse["value"].FirstOrDefault();
+                    if (warehouse != null)
+                    {
+                        warehouseBalances = warehouse["WARHSBAL_SUBFORM"].ToObject<List<WarehouseBalance>>();
+                    }
+                }
+                catch (HttpRequestException ex)
+                {
+                    txtbLog.ForeColor = Color.Red;
+                    txtbLog.AppendText($"Request error: {ex.Message}\n");
+                    txtbLog.ScrollToCaret();
+                }
+                catch (Exception ex)
+                {
+                    txtbLog.ForeColor = Color.Red;
+                    txtbLog.AppendText($"Request error: {ex.Message}\n");
+                    txtbLog.ScrollToCaret();
+                }
+            }
+            // Update the DataGridView rows using the fetched data
             foreach (DataGridViewRow row in dgwBom.Rows)
             {
-                // Check if the TBALANCE cell is empty or null
-                if (row.Cells["TBALANCE"].Value == null || string.IsNullOrEmpty(row.Cells["TBALANCE"].Value.ToString()))
-                {
-                    startFetching = true;
-                }
-                // Start fetching data only if the TBALANCE cell is empty or null
-                if (startFetching && row.Cells["PARTNAME"].Value != null)
+                if (row.Cells["PARTNAME"].Value != null)
                 {
                     string partName = row.Cells["PARTNAME"].Value.ToString();
-                    string warehouseName = partName.Substring(0, 3); // Get the first 3 characters of the PARTNAME
-                    string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{warehouseName}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{partName}')";
-                    using (HttpClient client = new HttpClient())
+                    var balance = warehouseBalances.FirstOrDefault(b => b.PARTNAME == partName);
+                    if (balance != null)
                     {
-                        try
-                        {
-                            // Set the request headers
-                            client.DefaultRequestHeaders.Accept.Clear();
-                            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-                            // Make the HTTP GET request
-                            HttpResponseMessage response = await client.GetAsync(url);
-                            response.EnsureSuccessStatusCode();
-                            // Read the response content
-                            string responseBody = await response.Content.ReadAsStringAsync();
-                            // Parse the JSON response
-                            var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-                            var warehouse = apiResponse["value"].FirstOrDefault();
-                            if (warehouse != null)
-                            {
-                                var balance = warehouse["WARHSBAL_SUBFORM"].FirstOrDefault();
-                                if (balance != null)
-                                {
-                                    int tBalance = balance["TBALANCE"].Value<int>();
-                                    // Update the WH column in the DataGridView
-                                    row.Cells["TBALANCE"].Value = tBalance;
-                                }
-                                else
-                                {
-                                    row.Cells["TBALANCE"].Value = 0;
-                                }
-                            }
-                        }
-                        catch (HttpRequestException ex)
-                        {
-                            txtbLog.ForeColor = Color.Red;
-                            txtbLog.AppendText($"Request error: {ex.Message}\n");
-                            txtbLog.ScrollToCaret();
-                        }
-                        catch (Exception ex)
-                        {
-                            txtbLog.ForeColor = Color.Red;
-                            txtbLog.AppendText($"Request error: {ex.Message}\n");
-                            txtbLog.ScrollToCaret();
-                        }
+                        row.Cells["TBALANCE"].Value = balance.TBALANCE;
+                    }
+                    else
+                    {
+                        row.Cells["TBALANCE"].Value = 0;
                     }
                     // Calculate the LEFTOVERS for the current row
                     int delta = Convert.ToInt32(row.Cells["DELTA"].Value);
@@ -1032,8 +688,6 @@ namespace WH_Panel
                     int leftovers = (whQuantity + kitQuantity) - requiredQuantity;
                     // Update the LEFTOVERS column in the DataGridView
                     row.Cells["LEFTOVERS"].Value = leftovers;
-                    // Introduce an artificial delay between each API call
-                    await Task.Delay(200); // 100 milliseconds delay
                 }
             }
             UpdateSimulationLabel();
@@ -1227,7 +881,6 @@ namespace WH_Panel
                 }
                 dgwBom.Update();
             }
-           
         }
         private void TextBox_Enter(object sender, EventArgs e)
         {
@@ -1419,8 +1072,9 @@ namespace WH_Panel
                             }
                             gbxIPNstockMovements.Text = $"Stock Movements for {partName}";
                             ColorTheRows(dgwIPNmoves);
-                            // Fetch MFPN for the selected row
-                            await FetchMFPNForRow(selectedRow);
+                            SortIPNMovesByDate();
+                             // Fetch MFPN for the selected row
+                             await FetchMFPNForRow(selectedRow);
                         }
                         else
                         {
@@ -1447,6 +1101,13 @@ namespace WH_Panel
                 }
             }
         }
+        private void SortIPNMovesByDate()
+        {
+            if (dgwIPNmoves.Columns["UDATE"] != null)
+            {
+                dgwIPNmoves.Sort(dgwIPNmoves.Columns["UDATE"], ListSortDirection.Descending);
+            }
+        }
         private async Task FetchAndSetPackCodeAndUDateAsync(DataGridViewRow row, string logDocNo, string partName, int quant)
         {
             var results = await FetchPackCodeAsync(logDocNo, partName, quant);
@@ -1465,6 +1126,7 @@ namespace WH_Panel
                     row.Cells["UDATE"].Value = result.Date;
                 }
             }
+            SortIPNMovesByDate();
         }
         public async Task<List<(string PackCode, string BookNum, string Date)>> FetchPackCodeAsync(string logDocNo, string partName, int quant)
         {
@@ -2326,8 +1988,6 @@ namespace WH_Panel
         //        Marshal.ReleaseComObject(mailItem);
         //        Marshal.ReleaseComObject(outlookApp);
         //    }
-
-
         private void SendEmail()
         {
             // Build HTML table from DataGridView data
@@ -2341,14 +2001,12 @@ namespace WH_Panel
             htmlTable.Append(".center { text-align: center; }");
             htmlTable.Append("</style>");
             htmlTable.Append("</head><body>");
-
             // Add the additional table with text from txtbRob, txtbName, txtbQty, txtbStatus, and lblProgress
             htmlTable.Append("<table border='1' style='border-collapse:collapse; margin-bottom: 20px;'>");
             htmlTable.Append("<tr><th>Rob</th><th>Name</th><th>Qty</th><th>Status</th><th>Progress</th></tr>");
             htmlTable.AppendFormat("<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td></tr>",
                 txtbRob.Text, txtbName.Text, txtbQty.Text, txtbStatus.Text, lblProgress.Text);
             htmlTable.Append("</table>");
-
             // Add the main data table
             htmlTable.Append("<table border='1' style='border-collapse:collapse;'>");
             // Add header row
@@ -2372,7 +2030,6 @@ namespace WH_Panel
                         string cellValue = cell.Value?.ToString() ?? string.Empty;
                         string cellClass = string.Empty;
                         string alignmentClass = string.Empty;
-
                         if (dgwBom.Columns[cell.ColumnIndex].Name == "DELTA")
                         {
                             if (int.TryParse(cellValue, out int deltaValue))
@@ -2390,7 +2047,6 @@ namespace WH_Panel
                         {
                             alignmentClass = "center";
                         }
-
                         if (dgwBom.Columns[cell.ColumnIndex].Name == "TBALANCE")
                         {
                             int DELTA = Convert.ToInt32(row.Cells["DELTA"].Value);
@@ -2430,7 +2086,6 @@ namespace WH_Panel
             }
             htmlTable.Append("</table>");
             htmlTable.Append("</body></html>");
-
             var outlookApp = new Outlook.Application();
             Outlook.MailItem mailItem = (Outlook.MailItem)outlookApp.CreateItem(Outlook.OlItemType.olMailItem);
             mailItem.Subject = txtbName.Text + "_UPDATED_" + DateAndTime.Now.ToString("yyyyMMddHHmm");
@@ -2463,7 +2118,6 @@ namespace WH_Panel
             Marshal.ReleaseComObject(mailItem);
             Marshal.ReleaseComObject(outlookApp);
         }
-
         public List<string> GetUniqueClientEmails(string clientDomain)
         {
             var emails = new HashSet<string>();

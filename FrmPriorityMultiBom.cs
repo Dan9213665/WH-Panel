@@ -14,21 +14,17 @@ using static WH_Panel.FrmPriorityBom;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Diagnostics;
 using System.Data.SqlClient;
-
 namespace WH_Panel
 {
-
     public partial class FrmPriorityMultiBom : Form
     {
         private AppSettings settings;
         List<Warehouse> loadedWareHouses = new List<Warehouse>();
         private Dictionary<string, ListSortDirection> columnSortDirections = new Dictionary<string, ListSortDirection>();
-
         public FrmPriorityMultiBom()
         {
             InitializeComponent();
             SetDarkModeColors(this);
-
             settings = SettingsManager.LoadSettings();
             if (settings == null)
             {
@@ -44,7 +40,6 @@ namespace WH_Panel
             //chkbBomsList.DrawMode = DrawMode.OwnerDrawFixed;
             //chkbBomsList.DrawItem += chkbBomsList_DrawItem;
         }
-
         private void InitializeDataGridView()
         {
             dgvBomsList.Columns.Clear();
@@ -54,14 +49,12 @@ namespace WH_Panel
             dgvBomsList.Columns.Add(new DataGridViewTextBoxColumn { Name = "SerialStatusDes", HeaderText = "Status" });
             dgvBomsList.Columns.Add(new DataGridViewTextBoxColumn { Name = "Quant", HeaderText = "Quantity" });
             dgvBomsList.Columns.Add(new DataGridViewTextBoxColumn { Name = "RevNum", HeaderText = "Revision" });
-
             dgvBomsList.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvBomsList.AllowUserToAddRows = false;
             dgvBomsList.AllowUserToDeleteRows = false;
             dgvBomsList.ReadOnly = false;
             dgvBomsList.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvBomsList.MultiSelect = false;
-
             // Handle the ColumnHeaderMouseClick event for sorting
             dgvBomsList.ColumnHeaderMouseClick += dgvBomsList_ColumnHeaderMouseClick;
             // Handle the CellValueChanged and CurrentCellDirtyStateChanged events for updating the selected label
@@ -75,7 +68,6 @@ namespace WH_Panel
                 UpdateSelectedLabel();
             }
         }
-
         private void dgvBomsList_CurrentCellDirtyStateChanged(object sender, EventArgs e)
         {
             if (dgvBomsList.IsCurrentCellDirty)
@@ -83,13 +75,9 @@ namespace WH_Panel
                 dgvBomsList.CommitEdit(DataGridViewDataErrorContexts.Commit);
             }
         }
-
-
-
         private void dgvBomsList_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             string columnName = dgvBomsList.Columns[e.ColumnIndex].Name;
-
             if (columnName != "Selected")
             {
                 ListSortDirection sortDirection;
@@ -103,17 +91,10 @@ namespace WH_Panel
                 {
                     sortDirection = ListSortDirection.Ascending;
                 }
-
                 dgvBomsList.Sort(dgvBomsList.Columns[e.ColumnIndex], sortDirection);
                 columnSortDirections[columnName] = sortDirection;
             }
         }
-
-
-
-
-
-
         private async void GetGetRobWosList(string warehouseName, string warehouseDesc)
         {
             string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=PARTNAME eq '{warehouseName}*'";
@@ -130,7 +111,6 @@ namespace WH_Panel
                     string responseBody = await response.Content.ReadAsStringAsync();
                     var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
                     var serials = apiResponse["value"].ToObject<List<Serial>>();
-
                     dgvBomsList.Rows.Clear();
                     if (serials.Count == 0)
                     {
@@ -147,11 +127,9 @@ namespace WH_Panel
                                 dgvBomsList.Rows[rowIndex].Cells["Selected"].Value = true;
                             }
                         }
-
                         lblLoading.BackColor = Color.Green;
                         lblLoading.Text = "Data Loaded";
                         UpdateSelectedLabel();
-
                         AppendLogMessage($"{serials.Count} Work Orders loaded for {warehouseName} - {warehouseDesc} \n", Color.Green);
                     }
                 }
@@ -165,10 +143,6 @@ namespace WH_Panel
                 }
             }
         }
-
-
-
-
         private void AppendLogMessage(string message, Color color)
         {
             txtbLog.SelectionStart = txtbLog.TextLength;
@@ -178,8 +152,6 @@ namespace WH_Panel
             txtbLog.SelectionColor = txtbLog.ForeColor; // Reset the color to default
             txtbLog.ScrollToCaret();
         }
-
-
         private async void PopulateWarehouses()
         {
             string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$select=WARHSNAME,WARHSDES,WARHS";
@@ -230,7 +202,6 @@ namespace WH_Panel
             }
             cmbWarehouses.DroppedDown = true; // Open the dropdown list
         }
-
         private void SetDarkModeColors(Control parentControl)
         {
             Color backgroundColor = Color.FromArgb(37, 37, 38); // Dark background color
@@ -318,20 +289,15 @@ namespace WH_Panel
                 }
             }
         }
-
-
         private void CheckedListBox_DrawItem(object sender, DrawItemEventArgs e)
         {
             if (e.Index < 0) return;
-
             var checkedListBox = sender as CheckedListBox;
             var serial = checkedListBox.Items[e.Index] as Serial;
             if (serial == null) return;
-
             // Set the background color based on the SERIALSTATUSDES
             Color backgroundColor;
             Color textColor = Color.Black;
-
             switch (serial.SERIALSTATUSDES)
             {
                 case "קיט מלא":
@@ -355,13 +321,10 @@ namespace WH_Panel
                     textColor = checkedListBox.ForeColor;
                     break;
             }
-
             // Draw the background
             e.Graphics.FillRectangle(new SolidBrush(backgroundColor), e.Bounds);
-
             // Draw the text
             TextRenderer.DrawText(e.Graphics, serial.ToString(), e.Font, e.Bounds, textColor, TextFormatFlags.Left);
-
             // Draw the focus rectangle if the item has focus
             e.DrawFocusRectangle();
         }
@@ -381,10 +344,6 @@ namespace WH_Panel
                 txtbLog.AppendText("Please select a warehouse.");
             }
         }
-
-
-
-
         private void UpdateSelectedLabel()
         {
             int selectedCount = dgvBomsList.Rows.Cast<DataGridViewRow>()
@@ -392,10 +351,6 @@ namespace WH_Panel
             int totalCount = dgvBomsList.Rows.Count;
             lblSelected.Text = $"Selected {selectedCount} of {totalCount}";
         }
-
-
-
-
         //private async void btnSim1_Click(object sender, EventArgs e)
         //{
         //    var selectedWorkOrders = dgvBomsList.Rows.Cast<DataGridViewRow>()
@@ -408,9 +363,7 @@ namespace WH_Panel
         //            QUANT = Convert.ToInt32(row.Cells["Quant"].Value),
         //            REVNUM = row.Cells["RevNum"].Value.ToString()
         //        }).ToList();
-
         //    var ipnBalances = new Dictionary<string, int>();
-
         //    foreach (var workOrder in selectedWorkOrders)
         //    {
         //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{workOrder.SERIALNAME}'&$expand=TRANSORDER_K_SUBFORM";
@@ -428,7 +381,6 @@ namespace WH_Panel
         //                string responseBody = await response.Content.ReadAsStringAsync();
         //                var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
         //                var transOrders = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
-
         //                foreach (var transOrder in transOrders)
         //                {
         //                    int balance = transOrder.QUANT - transOrder.CQUANT;
@@ -441,7 +393,6 @@ namespace WH_Panel
         //                        ipnBalances[transOrder.PARTNAME] = balance;
         //                    }
         //                }
-
         //                AppendLogMessage($"Loaded data for {workOrder.SERIALNAME} \n", Color.Green);
         //            }
         //            catch (HttpRequestException ex)
@@ -454,11 +405,9 @@ namespace WH_Panel
         //            }
         //        }
         //    }
-
         //    // Fetch warehouse stock levels
         //    var warehouseStock = new Dictionary<string, int>();
         //    string selectedWarehouseName = GetSelectedWarehouseName();
-
         //    if (selectedWarehouseName != null)
         //    {
         //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouseName}'&$expand=WARHSBAL_SUBFORM";
@@ -476,7 +425,6 @@ namespace WH_Panel
         //                string responseBody = await response.Content.ReadAsStringAsync();
         //                var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
         //                var warehouseBalances = apiResponse["value"].First["WARHSBAL_SUBFORM"].ToObject<List<WarehouseBalance>>();
-
         //                foreach (var balance in warehouseBalances)
         //                {
         //                    warehouseStock[balance.PARTNAME] = balance.BALANCE;
@@ -493,12 +441,10 @@ namespace WH_Panel
         //            }
         //        }
         //    }
-
         //    // Calculate the required values
         //    int totalUniqueIPNs = ipnBalances.Count;
         //    int sufficientIPNs = ipnBalances.Count(ipn => warehouseStock.ContainsKey(ipn.Key) && (warehouseStock[ipn.Key] + ipn.Value) >= 0);
         //    double completionPercentage = (double)sufficientIPNs / totalUniqueIPNs * 100;
-
         //    AppendLogMessage($"Generating HTML report \n", Color.Yellow);
         //    // Generate HTML report
         //    string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
@@ -557,13 +503,11 @@ namespace WH_Panel
         //        writer.WriteLine("</head>");
         //        writer.WriteLine("<body>");
         //        writer.WriteLine($"<h1>Multiple Kits Simulation Report {_fileTimeStamp}</h1>");
-
         //        foreach (var item in selectedWorkOrders)
         //        {
         //            writer.WriteLine($"<h2>{item.SERIALNAME} - {item.PARTNAME} - {item.QUANT}PCS - {item.SERIALSTATUSDES}</h2>");
         //        }
         //        writer.WriteLine($"<h2>Unique IPNs: {sufficientIPNs} / {totalUniqueIPNs} ({completionPercentage:F2}%)</h2>");
-
         //        writer.WriteLine("<table id='kitsTable'>");
         //        writer.WriteLine("<tr>");
         //        writer.WriteLine("<th onclick='sortTable(0)'>IPN</th>");
@@ -571,26 +515,19 @@ namespace WH_Panel
         //        writer.WriteLine("<th onclick='sortTable(2)'>Stock</th>");
         //        writer.WriteLine("<th onclick='sortTable(3)'>Simulation</th>");
         //        writer.WriteLine("</tr>");
-
         //        foreach (var ipn in ipnBalances.Keys)
         //        {
         //            int balance = ipnBalances[ipn];
         //            int stock = warehouseStock.ContainsKey(ipn) ? warehouseStock[ipn] : 0;
         //            int simulation = stock + balance;
         //            string rowClass = simulation >= 0 ? "green" : "red";
-
         //            writer.WriteLine($"<tr class='{rowClass}'><td>{ipn}</td><td>{balance}</td><td>{stock}</td><td>{simulation}</td></tr>");
         //        }
-
         //        writer.WriteLine("</table>");
-
         //        // Add the summary row
-
-
         //        writer.WriteLine("</body>");
         //        writer.WriteLine("</html>");
         //    }
-
         //    // Open the file in default browser
         //    var p = new Process();
         //    p.StartInfo = new ProcessStartInfo(filename)
@@ -599,7 +536,6 @@ namespace WH_Panel
         //    };
         //    p.Start();
         //}
-
         //private async void btnSim1_Click(object sender, EventArgs e)
         //{
         //    var selectedWorkOrders = dgvBomsList.Rows.Cast<DataGridViewRow>()
@@ -612,9 +548,7 @@ namespace WH_Panel
         //            QUANT = Convert.ToInt32(row.Cells["Quant"].Value),
         //            REVNUM = row.Cells["RevNum"].Value.ToString()
         //        }).ToList();
-
         //    var ipnBalances = new Dictionary<string, int>();
-
         //    foreach (var workOrder in selectedWorkOrders)
         //    {
         //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{workOrder.SERIALNAME}'&$expand=TRANSORDER_K_SUBFORM";
@@ -632,7 +566,6 @@ namespace WH_Panel
         //                string responseBody = await response.Content.ReadAsStringAsync();
         //                var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
         //                var transOrders = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
-
         //                foreach (var transOrder in transOrders)
         //                {
         //                    int balance = transOrder.QUANT - transOrder.CQUANT;
@@ -645,7 +578,6 @@ namespace WH_Panel
         //                        ipnBalances[transOrder.PARTNAME] = balance;
         //                    }
         //                }
-
         //                AppendLogMessage($"Loaded data for {workOrder.SERIALNAME} \n", Color.Green);
         //            }
         //            catch (HttpRequestException ex)
@@ -658,11 +590,9 @@ namespace WH_Panel
         //            }
         //        }
         //    }
-
         //    // Fetch warehouse stock levels
         //    var warehouseStock = new Dictionary<string, int>();
         //    string selectedWarehouseName = GetSelectedWarehouseName();
-
         //    if (selectedWarehouseName != null)
         //    {
         //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouseName}'&$expand=WARHSBAL_SUBFORM";
@@ -680,7 +610,6 @@ namespace WH_Panel
         //                string responseBody = await response.Content.ReadAsStringAsync();
         //                var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
         //                var warehouseBalances = apiResponse["value"].First["WARHSBAL_SUBFORM"].ToObject<List<WarehouseBalance>>();
-
         //                foreach (var balance in warehouseBalances)
         //                {
         //                    warehouseStock[balance.PARTNAME] = balance.BALANCE;
@@ -697,12 +626,10 @@ namespace WH_Panel
         //            }
         //        }
         //    }
-
         //    // Calculate the required values
         //    int totalUniqueIPNs = ipnBalances.Count;
         //    int sufficientIPNs = ipnBalances.Count(ipn => warehouseStock.ContainsKey(ipn.Key) && (warehouseStock[ipn.Key] + ipn.Value) >= 0);
         //    double completionPercentage = (double)sufficientIPNs / totalUniqueIPNs * 100;
-
         //    AppendLogMessage($"Generating HTML report \n", Color.Yellow);
         //    // Generate HTML report
         //    string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
@@ -762,13 +689,11 @@ namespace WH_Panel
         //        writer.WriteLine("</head>");
         //        writer.WriteLine("<body>");
         //        writer.WriteLine($"<h1>Multiple Kits Simulation Report {_fileTimeStamp}</h1>");
-
         //        foreach (var item in selectedWorkOrders)
         //        {
         //            writer.WriteLine($"<h2>{item.SERIALNAME} - {item.PARTNAME} - {item.QUANT}PCS - {item.SERIALSTATUSDES}</h2>");
         //        }
         //        writer.WriteLine($"<h2>Unique IPNs: {sufficientIPNs} / {totalUniqueIPNs} ({completionPercentage:F2}%)</h2>");
-
         //        writer.WriteLine("<table id='kitsTable'>");
         //        writer.WriteLine("<tr>");
         //        writer.WriteLine("<th onclick='sortTable(0)'>IPN</th>");
@@ -776,7 +701,6 @@ namespace WH_Panel
         //        writer.WriteLine("<th onclick='sortTable(2)'>Stock</th>");
         //        writer.WriteLine("<th onclick='sortTable(3)'>Simulation</th>");
         //        writer.WriteLine("</tr>");
-
         //        foreach (var ipn in ipnBalances.Keys)
         //        {
         //            int balance = ipnBalances[ipn];
@@ -784,7 +708,6 @@ namespace WH_Panel
         //            int simulation = stock + balance;
         //            string rowClass = simulation >= 0 ? "green" : "red";
         //            string balanceClass = balance < 0 ? "red-balance" : "";
-
         //            writer.WriteLine($"<tr class='{rowClass}'>");
         //            writer.WriteLine($"<td>{ipn}</td>");
         //            writer.WriteLine($"<td class='{balanceClass}'>{balance}</td>");
@@ -792,13 +715,10 @@ namespace WH_Panel
         //            writer.WriteLine($"<td>{simulation}</td>");
         //            writer.WriteLine("</tr>");
         //        }
-
         //        writer.WriteLine("</table>");
-
         //        writer.WriteLine("</body>");
         //        writer.WriteLine("</html>");
         //    }
-
         //    // Open the file in default browser
         //    var p = new Process();
         //    p.StartInfo = new ProcessStartInfo(filename)
@@ -807,7 +727,6 @@ namespace WH_Panel
         //    };
         //    p.Start();
         //}
-
         private async void btnSim1_Click(object sender, EventArgs e)
         {
             var selectedWorkOrders = dgvBomsList.Rows.Cast<DataGridViewRow>()
@@ -820,20 +739,16 @@ namespace WH_Panel
                     QUANT = Convert.ToInt32(row.Cells["Quant"].Value),
                     REVNUM = row.Cells["RevNum"].Value.ToString()
                 }).ToList();
-
             var tableData = await AggregatedSim(selectedWorkOrders);
-
             // Calculate the completion percentage
             int totalUniqueIPNs = tableData.Count;
             int sufficientIPNs = tableData.Count(ipn => ipn.Value.simulation >= 0);
             double completionPercentage = (double)sufficientIPNs / totalUniqueIPNs * 100;
-
             AppendLogMessage($"Generating HTML report \n", Color.Yellow);
             // Generate HTML report
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
             string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\MultiKitsStatusReport_{_fileTimeStamp}.html";
             GenerateHtmlReport(filename, tableData, $"Multiple Kits Simulation Report {_fileTimeStamp}", selectedWorkOrders, completionPercentage);
-
             // Open the file in default browser
             var p = new Process();
             p.StartInfo = new ProcessStartInfo(filename)
@@ -842,9 +757,6 @@ namespace WH_Panel
             };
             p.Start();
         }
-
-
-
         private string GetSelectedWarehouseName()
         {
             if (cmbWarehouses.SelectedIndex >= 0)
@@ -854,13 +766,11 @@ namespace WH_Panel
             }
             return null;
         }
-
         private void btnCheckAll_Click(object sender, EventArgs e)
         {
             bool allChecked = dgvBomsList.Rows.Cast<DataGridViewRow>()
                 .Where(row => row.Cells["SerialStatusDes"].Value.ToString() != "נסגרה")
                 .All(row => Convert.ToBoolean(row.Cells["Selected"].Value));
-
             foreach (DataGridViewRow row in dgvBomsList.Rows)
             {
                 if (row.Cells["SerialStatusDes"].Value.ToString() != "נסגרה")
@@ -868,16 +778,13 @@ namespace WH_Panel
                     row.Cells["Selected"].Value = !allChecked;
                 }
             }
-
             UpdateSelectedLabel();
         }
-
         private void btnFull_Click(object sender, EventArgs e)
         {
             bool allChecked = dgvBomsList.Rows.Cast<DataGridViewRow>()
                 .Where(row => row.Cells["SerialStatusDes"].Value.ToString() == "קיט מלא")
                 .All(row => Convert.ToBoolean(row.Cells["Selected"].Value));
-
             foreach (DataGridViewRow row in dgvBomsList.Rows)
             {
                 if (row.Cells["SerialStatusDes"].Value.ToString() == "קיט מלא")
@@ -885,16 +792,13 @@ namespace WH_Panel
                     row.Cells["Selected"].Value = !allChecked;
                 }
             }
-
             UpdateSelectedLabel();
         }
-
         private void btnReleased_Click(object sender, EventArgs e)
         {
             bool allChecked = dgvBomsList.Rows.Cast<DataGridViewRow>()
               .Where(row => row.Cells["SerialStatusDes"].Value.ToString() == "שוחררה")
               .All(row => Convert.ToBoolean(row.Cells["Selected"].Value));
-
             foreach (DataGridViewRow row in dgvBomsList.Rows)
             {
                 if (row.Cells["SerialStatusDes"].Value.ToString() == "שוחררה")
@@ -902,16 +806,13 @@ namespace WH_Panel
                     row.Cells["Selected"].Value = !allChecked;
                 }
             }
-
             UpdateSelectedLabel();
         }
-
         private void btnPartialAssy_Click(object sender, EventArgs e)
         {
             bool allChecked = dgvBomsList.Rows.Cast<DataGridViewRow>()
         .Where(row => row.Cells["SerialStatusDes"].Value.ToString() == "הרכבה בחוסר")
         .All(row => Convert.ToBoolean(row.Cells["Selected"].Value));
-
             foreach (DataGridViewRow row in dgvBomsList.Rows)
             {
                 if (row.Cells["SerialStatusDes"].Value.ToString() == "הרכבה בחוסר")
@@ -919,14 +820,11 @@ namespace WH_Panel
                     row.Cells["Selected"].Value = !allChecked;
                 }
             }
-
             UpdateSelectedLabel();
         }
-
         private async Task<Dictionary<string, (int balance, int stock, int simulation)>> AggregatedSim(List<Serial> selectedWorkOrders)
         {
             var ipnBalances = new Dictionary<string, int>();
-
             foreach (var workOrder in selectedWorkOrders)
             {
                 string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{workOrder.SERIALNAME}'&$expand=TRANSORDER_K_SUBFORM";
@@ -944,7 +842,6 @@ namespace WH_Panel
                         string responseBody = await response.Content.ReadAsStringAsync();
                         var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
                         var transOrders = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
-
                         foreach (var transOrder in transOrders)
                         {
                             int balance = transOrder.QUANT - transOrder.CQUANT;
@@ -957,7 +854,6 @@ namespace WH_Panel
                                 ipnBalances[transOrder.PARTNAME] = balance;
                             }
                         }
-
                         AppendLogMessage($"Loaded data for {workOrder.SERIALNAME} \n", Color.Green);
                     }
                     catch (HttpRequestException ex)
@@ -970,11 +866,9 @@ namespace WH_Panel
                     }
                 }
             }
-
             // Fetch warehouse stock levels
             var warehouseStock = new Dictionary<string, int>();
             string selectedWarehouseName = GetSelectedWarehouseName();
-
             if (selectedWarehouseName != null)
             {
                 string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouseName}'&$expand=WARHSBAL_SUBFORM";
@@ -992,7 +886,6 @@ namespace WH_Panel
                         string responseBody = await response.Content.ReadAsStringAsync();
                         var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
                         var warehouseBalances = apiResponse["value"].First["WARHSBAL_SUBFORM"].ToObject<List<WarehouseBalance>>();
-
                         foreach (var balance in warehouseBalances)
                         {
                             warehouseStock[balance.PARTNAME] = balance.BALANCE;
@@ -1009,7 +902,6 @@ namespace WH_Panel
                     }
                 }
             }
-
             // Calculate the required values
             var result = new Dictionary<string, (int balance, int stock, int simulation)>();
             foreach (var ipn in ipnBalances.Keys)
@@ -1019,7 +911,6 @@ namespace WH_Panel
                 int simulation = stock + balance;
                 result[ipn] = (balance, stock, simulation);
             }
-
             return result;
         }
         private async Task<Dictionary<string, List<Serial>>> SimByIPN(List<Serial> selectedWorkOrders)
@@ -1028,15 +919,12 @@ namespace WH_Panel
             // This function should return a dictionary where the key is the IPN and the value is a list of Serial objects that require that IPN
             return new Dictionary<string, List<Serial>>();
         }
-
         private async Task<Dictionary<string, List<Serial>>> SimByBoms(List<Serial> selectedWorkOrders)
         {
             // Placeholder for SimByBoms logic
             // This function should return a dictionary where the key is the BOM and the value is a list of Serial objects that are part of that BOM
             return new Dictionary<string, List<Serial>>();
         }
-
-
         private void GenerateHtmlReport(string filename, Dictionary<string, (int balance, int stock, int simulation)> tableData, string reportTitle, List<Serial> selectedWorkOrders, double completionPercentage)
         {
             using (StreamWriter writer = new StreamWriter(filename))
@@ -1111,13 +999,11 @@ namespace WH_Panel
                 writer.WriteLine("</head>");
                 writer.WriteLine("<body>");
                 writer.WriteLine($"<h1>{reportTitle}</h1>");
-
                 foreach (var item in selectedWorkOrders)
                 {
                     writer.WriteLine($"<h2>{item.SERIALNAME} - {item.PARTNAME} - {item.QUANT}PCS - {item.SERIALSTATUSDES}</h2>");
                 }
                 writer.WriteLine($"<h2>Unique IPNs: {tableData.Count} / {tableData.Count} ({completionPercentage:F2}%)</h2>");
-
                 writer.WriteLine("<table id='kitsTable'>");
                 writer.WriteLine("<tr>");
                 writer.WriteLine("<th onclick='sortTable(0)'>IPN</th>");
@@ -1125,13 +1011,11 @@ namespace WH_Panel
                 writer.WriteLine("<th onclick='sortTable(2)'>Stock</th>");
                 writer.WriteLine("<th onclick='sortTable(3)'>Simulation</th>");
                 writer.WriteLine("</tr>");
-
                 foreach (var ipn in tableData.Keys)
                 {
                     var (balance, stock, simulation) = tableData[ipn];
                     string rowClass = simulation >= 0 ? "green" : "red";
                     string balanceClass = balance < 0 ? "red-balance" : "";
-
                     writer.WriteLine($"<tr class='{rowClass}'>");
                     writer.WriteLine($"<td>{ipn}</td>");
                     writer.WriteLine($"<td class='{balanceClass}'>{balance}</td>");
@@ -1139,17 +1023,10 @@ namespace WH_Panel
                     writer.WriteLine($"<td>{simulation}</td>");
                     writer.WriteLine("</tr>");
                 }
-
                 writer.WriteLine("</table>");
-
                 writer.WriteLine("</body>");
                 writer.WriteLine("</html>");
             }
         }
-
-
     }
 }
-
-
-

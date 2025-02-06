@@ -11,7 +11,6 @@ using System.Data.SqlClient;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Reflection.Emit;
-
 namespace WH_Panel
 {
     public partial class Form1 : Form
@@ -39,9 +38,6 @@ namespace WH_Panel
             this.Location = new Point(x, y);
         }
         public List<ClientWarehouse> warehouses { get; set; }
-
-
-
         public List<ClientWarehouse> PopulateWarehouses()
         {
             string directoryPath = "\\\\dbr1\\Data\\WareHouse\\STOCK_CUSTOMERS";
@@ -56,14 +52,11 @@ namespace WH_Panel
                 string accDBfile = Directory.GetFiles(subDir, ".accdb").FirstOrDefault();
                 string clAvlFile = Directory.GetFiles(subDir, "*_AVL.XLSM").FirstOrDefault();
                 string clStockFile = Directory.GetFiles(subDir, "*_STOCK.XLSM").FirstOrDefault();
-
                 // Determine migration status based on database existence in SQL Server
                 bool isSqlMigrated = IsDatabaseInSQLServer(clName);
-
                 // Use SQL columns if migrated
                 string sqlAvl = isSqlMigrated ? GetSqlAvl(clName) : string.Empty;
                 string sqlStock = isSqlMigrated ? GetSqlStock(clName) : string.Empty;
-
                 if ((!isSqlMigrated && !string.IsNullOrEmpty(clAvlFile) && !string.IsNullOrEmpty(clStockFile)) || (isSqlMigrated && !string.IsNullOrEmpty(sqlAvl) && !string.IsNullOrEmpty(sqlStock)))
                 {
                     ClientWarehouse warehouse = new ClientWarehouse
@@ -96,16 +89,13 @@ namespace WH_Panel
                 return count > 0;
             }
         }
-
         // Function to retrieve SQL Avl file
         private string GetSqlAvl(string clName)
         {
             // Connection string for SQL Server Express
             //return $"Data Source=RT12\\SQLEXPRESS;Initial Catalog={clName};Integrated Security=True;";
             return $"Data Source=DBR3\\SQLEXPRESS;Initial Catalog={clName};Integrated Security=True;";
-
         }
-
         // Function to retrieve SQL Stock file
         private string GetSqlStock(string clName)
         {
@@ -113,12 +103,6 @@ namespace WH_Panel
             return $"Data Source=DBR3\\SQLEXPRESS;Initial Catalog={clName};Integrated Security=True;";
             //return $"Data Source=RT12\\SQLEXPRESS;Initial Catalog={clName};Integrated Security=True;";
         }
-
-
-
-
-
-
         private string GetPrefixFromFile(string prefixFilePath)
         {
             if (File.Exists(prefixFilePath))
@@ -294,19 +278,16 @@ namespace WH_Panel
             w.InitializeGlobalWarehouses(warehouses);
             w.Show();
         }
-
         private void button15_Click(object sender, EventArgs e)
         {
             FrmSQLWHDB frm = new FrmSQLWHDB();
             frm.Show();
         }
-
         private void btnMFPN_Click(object sender, EventArgs e)
         {
             FrmMFPNsearcher frm = new FrmMFPNsearcher();
             frm.Show();
         }
-
         private void button14_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -330,20 +311,15 @@ namespace WH_Panel
                     MessageBox.Show(ex.Message);
                 }
             }
-
         }
-
         private void button14_Click_1(object sender, EventArgs e)
         {
-
         }
-
         private void button16_Click(object sender, EventArgs e)
         {
             FrmPriorityBom frm = new FrmPriorityBom();
             frm.Show();
         }
-
         private void btnFrmPMB_Click(object sender, EventArgs e)
         {
             FrmPriorityMultiBom frm = new FrmPriorityMultiBom();    

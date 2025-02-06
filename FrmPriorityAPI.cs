@@ -126,8 +126,6 @@ namespace WH_Panel
         {
             public List<PR_PART> value { get; set; }
         }
-    
- 
         // Define the LogPartApiResponse class
         public class LogPartApiResponse
         {
@@ -692,12 +690,10 @@ namespace WH_Panel
             // Call the printSticker method
             printSticker(part);
         }
-
         private async void txtbInputMFPN_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
-
                 lastUserInput = txtbInputMFPN;
                 string mnfPartName = txtbInputMFPN.Text;
                 string encodedMnfPartName = Uri.EscapeDataString(mnfPartName); // URL-encode the MNFPARTNAME
@@ -753,7 +749,6 @@ namespace WH_Panel
                 }
             }
         }
-
         private void button2_Click(object sender, EventArgs e)
         {
             txtbInputIPN.Clear();
@@ -1106,9 +1101,7 @@ namespace WH_Panel
                                 {
                                     dataGridView2.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME,"", trans.TQUANT, ""); 
                                 }
-                                
                             }
-                           
                             groupBox4.Text = $"Stock Movements for {partName}";
                             ColorTheRows(dataGridView2);
                             foreach (DataGridViewRow row in dataGridView2.Rows)
@@ -1386,7 +1379,6 @@ namespace WH_Panel
                     }
                 }
             }
-               
         }
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {          
@@ -1842,7 +1834,6 @@ namespace WH_Panel
                     string _BOOKNUM = string.Empty;
                     string _OWNERLOGIN = "Yuri_G";
                     string _SUPNAME = string.Empty;
-
                     if (rbtIN.Checked)
                     {
                         if (txtbINdoc.Text == string.Empty)
@@ -2107,7 +2098,6 @@ namespace WH_Panel
             if (e.KeyCode == Keys.Enter)
             {
                 lastUserInput = txtbDecoder;
-
                 string decoderText = txtbDecoder.Text;
                 string preCode = cmbPreCode.Text;
                 string postCode = cmbPostCode.Text;
