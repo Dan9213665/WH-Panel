@@ -693,62 +693,12 @@ namespace WH_Panel
             printSticker(part);
         }
 
-        //private async void txtbInputMFPN_KeyDown(object sender, KeyEventArgs e)
-        //{
-        //    if (e.KeyCode == Keys.Enter)
-        //    {
-        //        string mnfPartName = txtbInputMFPN.Text;
-        //        string encodedMnfPartName = Uri.EscapeDataString(mnfPartName); // URL-encode the MNFPARTNAME
-        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=MNFPARTNAME eq '{encodedMnfPartName}'";
-        //        using (HttpClient client = new HttpClient())
-        //        {
-        //            try
-        //            {
-        //                // Set the request headers if needed
-        //                client.DefaultRequestHeaders.Accept.Clear();
-        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //                // Set the Authorization header
-        //                //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
-        //                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //                // Make the HTTP GET request
-        //                HttpResponseMessage response = await client.GetAsync(url);
-        //                response.EnsureSuccessStatusCode();
-        //                // Read the response content
-        //                string responseBody = await response.Content.ReadAsStringAsync();
-        //                // Parse the JSON response
-        //                ApiResponse apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseBody);
-        //                // Check if the response contains any data
-        //                if (apiResponse.value != null && apiResponse.value.Count > 0)
-        //                {
-        //                    PR_PART part = apiResponse.value[0];
-        //                    // Populate the textboxes with the data
-        //                    txtbInputIPN.Text = part.PARTNAME;
-        //                    textBox3.Text = part.PARTDES;
-        //                    textBox4.Text = part.MNFNAME;
-        //                }
-        //                else
-        //                {
-        //                    MessageBox.Show("No data found for the specified manufacturer part name.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        //                }
-        //            }
-        //            catch (HttpRequestException ex)
-        //            {
-        //                MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //            }
-        //        }
-        //    }
-        //}
-
         private async void txtbInputMFPN_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
+
+                lastUserInput = txtbInputMFPN;
                 string mnfPartName = txtbInputMFPN.Text;
                 string encodedMnfPartName = Uri.EscapeDataString(mnfPartName); // URL-encode the MNFPARTNAME
                 string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=MNFPARTNAME eq '{encodedMnfPartName}'";
@@ -780,6 +730,7 @@ namespace WH_Panel
                                 txtbInputIPN.Text = part.PARTNAME;
                                 textBox3.Text = part.PARTDES;
                                 textBox4.Text = part.MNFNAME;
+                                txtbInputQty.Focus();
                             }
                             else
                             {
@@ -969,7 +920,7 @@ namespace WH_Panel
                             // Populate the DataGridView with the data
                             foreach (var balance in warehouseBalances)
                             {
-                                dataGridView1.Rows.Add(balance.PARTNAME, balance.MNFPARTNAME, balance.PARTDES, balance.BALANCE, balance.CDATE, balance.PART); //balance.TBALANCE  //balance.LOCNAME
+                                dataGridView1.Rows.Add(balance.PARTNAME, balance.MNFPARTNAME, balance.PARTDES, balance.BALANCE, balance.CDATE.Substring(0,10), balance.PART); //balance.TBALANCE  //balance.LOCNAME
                             }
                             groupBox3.Text = $"Warehouse  {selectedWarehouse} {selectedWarehouseDesc}";
                             ColorTheRows(dataGridView1);
@@ -1419,19 +1370,23 @@ namespace WH_Panel
         }
         private void textBox6_KeyUp_1(object sender, KeyEventArgs e)
         {
-            string filterText = txtbFilterIPN.Text.Trim().ToLower();
-            if (e.KeyCode == Keys.Escape)
+            if (e.KeyCode == Keys.Enter)
             {
-                txtbFilterIPN.Clear();
-                filterText = string.Empty;
-            }
-            foreach (DataGridViewRow row in dataGridView1.Rows)
-            {
-                if (row.Cells["PARTNAME"].Value != null)
+                string filterText = txtbFilterIPN.Text.Trim().ToLower();
+                if (e.KeyCode == Keys.Escape)
                 {
-                    row.Visible = row.Cells["PARTNAME"].Value.ToString().ToLower().Contains(filterText);
+                    txtbFilterIPN.Clear();
+                    filterText = string.Empty;
+                }
+                foreach (DataGridViewRow row in dataGridView1.Rows)
+                {
+                    if (row.Cells["PARTNAME"].Value != null)
+                    {
+                        row.Visible = row.Cells["PARTNAME"].Value.ToString().ToLower().Contains(filterText);
+                    }
                 }
             }
+               
         }
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {          
@@ -1968,6 +1923,8 @@ namespace WH_Panel
         {
             if (rbtIN.Checked)
             {
+                string generatedDate = DateTime.Now.ToString("yy00MMdd");
+                txtbINdoc.Text = ($"WR{generatedDate}");
                 btnMFG.Text = "INCOMING";
                 btnMFG.Update();
                 txtbINdoc.ReadOnly = false;
@@ -2012,6 +1969,8 @@ namespace WH_Panel
         {
             if (rbtFTK.Checked)
             {
+                string generatedDate = DateTime.Now.ToString("yy00MMdd");
+                txtbINdoc.Text = ($"FTK{generatedDate}");
                 btnMFG.Text = "FTK";
                 btnMFG.Update();
                 txtbOUT.ReadOnly = true;
@@ -2147,6 +2106,8 @@ namespace WH_Panel
         {
             if (e.KeyCode == Keys.Enter)
             {
+                lastUserInput = txtbDecoder;
+
                 string decoderText = txtbDecoder.Text;
                 string preCode = cmbPreCode.Text;
                 string postCode = cmbPostCode.Text;

@@ -157,7 +157,7 @@ namespace WH_Panel
             // 
             button1.BackColor = Color.Black;
             button1.BackgroundImage = (Image)resources.GetObject("button1.BackgroundImage");
-            button1.BackgroundImageLayout = ImageLayout.Zoom;
+            button1.BackgroundImageLayout = ImageLayout.Stretch;
             button1.Dock = DockStyle.Fill;
             button1.Location = new Point(3, 19);
             button1.Name = "button1";
@@ -311,7 +311,7 @@ namespace WH_Panel
             gpbxPMB.Size = new Size(138, 122);
             gpbxPMB.TabIndex = 27;
             gpbxPMB.TabStop = false;
-            gpbxPMB.Text = "Piority Multi BOM";
+            gpbxPMB.Text = "Piority Simulator";
             // 
             // btnFrmPMB
             // 

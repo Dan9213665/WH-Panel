@@ -36,17 +36,22 @@
             lblLoading = new Label();
             tableLayoutPanel3 = new TableLayoutPanel();
             groupBox1 = new GroupBox();
-            chkbBomsList = new CheckedListBox();
+            dgvBomsList = new DataGridView();
             groupBox3 = new GroupBox();
-            comboBox1 = new ComboBox();
+            cmbWarehouses = new ComboBox();
             tableLayoutPanel4 = new TableLayoutPanel();
             lblSelected = new Label();
             btnSim1 = new Button();
+            btnCheckAll = new Button();
+            btnFull = new Button();
+            btnReleased = new Button();
+            btnPartialAssy = new Button();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
             groupBox2.SuspendLayout();
             tableLayoutPanel3.SuspendLayout();
             groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvBomsList).BeginInit();
             groupBox3.SuspendLayout();
             tableLayoutPanel4.SuspendLayout();
             SuspendLayout();
@@ -64,7 +69,7 @@
             tableLayoutPanel1.RowCount = 2;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.Size = new Size(800, 450);
+            tableLayoutPanel1.Size = new Size(852, 637);
             tableLayoutPanel1.TabIndex = 0;
             // 
             // tableLayoutPanel2
@@ -75,12 +80,12 @@
             tableLayoutPanel2.Controls.Add(groupBox2, 0, 1);
             tableLayoutPanel2.Controls.Add(lblLoading, 0, 0);
             tableLayoutPanel2.Dock = DockStyle.Fill;
-            tableLayoutPanel2.Location = new Point(403, 3);
+            tableLayoutPanel2.Location = new Point(429, 3);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 2;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 19.1780815F));
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 80.8219147F));
-            tableLayoutPanel2.Size = new Size(394, 219);
+            tableLayoutPanel2.Size = new Size(420, 312);
             tableLayoutPanel2.TabIndex = 3;
             // 
             // groupBox2
@@ -88,9 +93,9 @@
             tableLayoutPanel2.SetColumnSpan(groupBox2, 2);
             groupBox2.Controls.Add(txtbLog);
             groupBox2.Dock = DockStyle.Fill;
-            groupBox2.Location = new Point(3, 45);
+            groupBox2.Location = new Point(3, 62);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(388, 171);
+            groupBox2.Size = new Size(414, 247);
             groupBox2.TabIndex = 2;
             groupBox2.TabStop = false;
             groupBox2.Text = "Log";
@@ -101,7 +106,7 @@
             txtbLog.Font = new Font("Segoe UI", 12F);
             txtbLog.Location = new Point(3, 19);
             txtbLog.Name = "txtbLog";
-            txtbLog.Size = new Size(382, 149);
+            txtbLog.Size = new Size(408, 225);
             txtbLog.TabIndex = 1;
             txtbLog.Text = "";
             // 
@@ -111,7 +116,7 @@
             lblLoading.Dock = DockStyle.Fill;
             lblLoading.Location = new Point(3, 0);
             lblLoading.Name = "lblLoading";
-            lblLoading.Size = new Size(191, 42);
+            lblLoading.Size = new Size(204, 59);
             lblLoading.TabIndex = 3;
             lblLoading.Text = "Loading";
             lblLoading.TextAlign = ContentAlignment.MiddleCenter;
@@ -131,68 +136,76 @@
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 80F));
-            tableLayoutPanel3.Size = new Size(394, 444);
+            tableLayoutPanel3.Size = new Size(420, 631);
             tableLayoutPanel3.TabIndex = 4;
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(chkbBomsList);
+            groupBox1.Controls.Add(dgvBomsList);
             groupBox1.Dock = DockStyle.Fill;
-            groupBox1.Location = new Point(3, 91);
+            groupBox1.Location = new Point(3, 129);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(388, 350);
+            groupBox1.Size = new Size(414, 499);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "Work Orders List";
             // 
-            // chkbBomsList
+            // dgvBomsList
             // 
-            chkbBomsList.Dock = DockStyle.Fill;
-            chkbBomsList.Font = new Font("Segoe UI", 12F);
-            chkbBomsList.FormattingEnabled = true;
-            chkbBomsList.Location = new Point(3, 19);
-            chkbBomsList.Name = "chkbBomsList";
-            chkbBomsList.Size = new Size(382, 328);
-            chkbBomsList.TabIndex = 0;
-            chkbBomsList.ItemCheck += chkbBomsList_ItemCheck;
+            dgvBomsList.AllowUserToAddRows = false;
+            dgvBomsList.AllowUserToDeleteRows = false;
+            dgvBomsList.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvBomsList.Dock = DockStyle.Fill;
+            dgvBomsList.Location = new Point(3, 19);
+            dgvBomsList.MultiSelect = false;
+            dgvBomsList.Name = "dgvBomsList";
+            dgvBomsList.ReadOnly = true;
+            dgvBomsList.RowTemplate.Height = 25;
+            dgvBomsList.Size = new Size(408, 477);
+            dgvBomsList.TabIndex = 0;
             // 
             // groupBox3
             // 
-            groupBox3.Controls.Add(comboBox1);
+            groupBox3.Controls.Add(cmbWarehouses);
             groupBox3.Dock = DockStyle.Fill;
             groupBox3.Location = new Point(3, 3);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(388, 38);
+            groupBox3.Size = new Size(414, 57);
             groupBox3.TabIndex = 1;
             groupBox3.TabStop = false;
             groupBox3.Text = "Select Client Warehouse";
             // 
-            // comboBox1
+            // cmbWarehouses
             // 
-            comboBox1.Dock = DockStyle.Fill;
-            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBox1.Font = new Font("Segoe UI", 18F);
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(3, 19);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(382, 40);
-            comboBox1.TabIndex = 0;
-            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
+            cmbWarehouses.Dock = DockStyle.Fill;
+            cmbWarehouses.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbWarehouses.Font = new Font("Segoe UI", 18F);
+            cmbWarehouses.FormattingEnabled = true;
+            cmbWarehouses.Location = new Point(3, 19);
+            cmbWarehouses.Name = "cmbWarehouses";
+            cmbWarehouses.Size = new Size(408, 40);
+            cmbWarehouses.TabIndex = 0;
+            cmbWarehouses.SelectedIndexChanged += cmbWarehouses_SelectedIndexChanged;
             // 
             // tableLayoutPanel4
             // 
             tableLayoutPanel4.ColumnCount = 3;
             tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333359F));
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333359F));
             tableLayoutPanel4.Controls.Add(lblSelected, 0, 0);
-            tableLayoutPanel4.Controls.Add(btnSim1, 1, 0);
+            tableLayoutPanel4.Controls.Add(btnSim1, 0, 1);
+            tableLayoutPanel4.Controls.Add(btnCheckAll, 1, 0);
+            tableLayoutPanel4.Controls.Add(btnFull, 2, 0);
+            tableLayoutPanel4.Controls.Add(btnReleased, 1, 1);
+            tableLayoutPanel4.Controls.Add(btnPartialAssy, 2, 1);
             tableLayoutPanel4.Dock = DockStyle.Fill;
-            tableLayoutPanel4.Location = new Point(3, 47);
+            tableLayoutPanel4.Location = new Point(3, 66);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
-            tableLayoutPanel4.RowCount = 1;
-            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel4.Size = new Size(388, 38);
+            tableLayoutPanel4.RowCount = 2;
+            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel4.Size = new Size(414, 57);
             tableLayoutPanel4.TabIndex = 2;
             // 
             // lblSelected
@@ -202,7 +215,7 @@
             lblSelected.Font = new Font("Segoe UI", 18F);
             lblSelected.Location = new Point(3, 0);
             lblSelected.Name = "lblSelected";
-            lblSelected.Size = new Size(123, 38);
+            lblSelected.Size = new Size(131, 28);
             lblSelected.TabIndex = 0;
             lblSelected.Text = "Selected";
             lblSelected.TextAlign = ContentAlignment.MiddleCenter;
@@ -210,19 +223,63 @@
             // btnSim1
             // 
             btnSim1.Dock = DockStyle.Fill;
-            btnSim1.Location = new Point(132, 3);
+            btnSim1.Location = new Point(3, 31);
             btnSim1.Name = "btnSim1";
-            btnSim1.Size = new Size(123, 32);
+            btnSim1.Size = new Size(131, 23);
             btnSim1.TabIndex = 1;
             btnSim1.Text = "Simulation";
             btnSim1.UseVisualStyleBackColor = true;
             btnSim1.Click += btnSim1_Click;
             // 
+            // btnCheckAll
+            // 
+            btnCheckAll.Dock = DockStyle.Fill;
+            btnCheckAll.Location = new Point(140, 3);
+            btnCheckAll.Name = "btnCheckAll";
+            btnCheckAll.Size = new Size(132, 22);
+            btnCheckAll.TabIndex = 2;
+            btnCheckAll.Text = "*";
+            btnCheckAll.UseVisualStyleBackColor = true;
+            btnCheckAll.Click += btnCheckAll_Click;
+            // 
+            // btnFull
+            // 
+            btnFull.Dock = DockStyle.Fill;
+            btnFull.Location = new Point(278, 3);
+            btnFull.Name = "btnFull";
+            btnFull.Size = new Size(133, 22);
+            btnFull.TabIndex = 3;
+            btnFull.Text = "קיט מלא";
+            btnFull.UseVisualStyleBackColor = true;
+            btnFull.Click += btnFull_Click;
+            // 
+            // btnReleased
+            // 
+            btnReleased.Dock = DockStyle.Fill;
+            btnReleased.Location = new Point(140, 31);
+            btnReleased.Name = "btnReleased";
+            btnReleased.Size = new Size(132, 23);
+            btnReleased.TabIndex = 4;
+            btnReleased.Text = "שוחררה";
+            btnReleased.UseVisualStyleBackColor = true;
+            btnReleased.Click += btnReleased_Click;
+            // 
+            // btnPartialAssy
+            // 
+            btnPartialAssy.Dock = DockStyle.Fill;
+            btnPartialAssy.Location = new Point(278, 31);
+            btnPartialAssy.Name = "btnPartialAssy";
+            btnPartialAssy.Size = new Size(133, 23);
+            btnPartialAssy.TabIndex = 5;
+            btnPartialAssy.Text = "הרכבה בחוסר";
+            btnPartialAssy.UseVisualStyleBackColor = true;
+            btnPartialAssy.Click += btnPartialAssy_Click;
+            // 
             // FrmPriorityMultiBom
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(852, 637);
             Controls.Add(tableLayoutPanel1);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FrmPriorityMultiBom";
@@ -235,6 +292,7 @@
             groupBox2.ResumeLayout(false);
             tableLayoutPanel3.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvBomsList).EndInit();
             groupBox3.ResumeLayout(false);
             tableLayoutPanel4.ResumeLayout(false);
             tableLayoutPanel4.PerformLayout();
@@ -245,16 +303,20 @@
 
         private TableLayoutPanel tableLayoutPanel1;
         private GroupBox groupBox1;
-        private CheckedListBox chkbBomsList;
         private RichTextBox txtbLog;
         private GroupBox groupBox2;
         private TableLayoutPanel tableLayoutPanel2;
         private Label lblLoading;
         private TableLayoutPanel tableLayoutPanel3;
         private GroupBox groupBox3;
-        private ComboBox comboBox1;
+        private ComboBox cmbWarehouses;
         private TableLayoutPanel tableLayoutPanel4;
         private Label lblSelected;
         private Button btnSim1;
+        private DataGridView dgvBomsList;
+        private Button btnCheckAll;
+        private Button btnFull;
+        private Button btnReleased;
+        private Button btnPartialAssy;
     }
 }

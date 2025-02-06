@@ -85,7 +85,7 @@ namespace WH_Panel
             // Set the DrawMode property and handle the DrawItem event
             cmbROBxList.DrawMode = DrawMode.OwnerDrawFixed;
             cmbROBxList.DrawItem += cmbROBxList_DrawItem;
-            cmbROBxList.SelectedIndexChanged += cmbROBxList_SelectedIndexChanged;
+            //cmbROBxList.SelectedIndexChanged += cmbROBxList_SelectedIndexChanged;
             // Initialize DataGridView columns
             // Handle the CellFormatting event
             dgwBom.CellFormatting += dgwBom_CellFormatting;
@@ -556,6 +556,119 @@ namespace WH_Panel
         //    }
         //}
 
+        //private async Task LoadBomDetails(string serialName)
+        //{
+        //    if (dgwBom != null)
+        //    {
+        //        progressBar1.Value = 0;
+        //        progressBar1.Update();
+        //        int completedItems = 0;
+        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{serialName}'&$expand=TRANSORDER_K_SUBFORM";
+        //        using (HttpClient client = new HttpClient())
+        //        {
+        //            try
+        //            {
+        //                // Set the request headers if needed
+        //                client.DefaultRequestHeaders.Accept.Clear();
+        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //                // Set the Authorization header
+        //                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+        //                // Make the HTTP GET request
+        //                HttpResponseMessage response = await client.GetAsync(url);
+        //                response.EnsureSuccessStatusCode();
+        //                // Read the response content
+        //                string responseBody = await response.Content.ReadAsStringAsync();
+        //                // Parse the JSON response
+        //                var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+        //                // Check if the response contains the expected data
+        //                if (apiResponse["value"] != null && apiResponse["value"].Any())
+        //                {
+        //                    var bomDetails = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
+        //                    // Aggregate the PQUANT values for each unique PARTNAME
+
+        //                    int bomCountFromDB = await FetchIPNcountFromBom(txtbName.Text);
+
+
+        //                    txtbLog.AppendText($"Loading {bomCountFromDB} items from {txtbName.Text} bom \n");
+
+
+        //                    //txtbLog.AppendText($"Loading {bomDetails.Count().ToString()} items\n");
+        //                    txtbLog.ScrollToCaret();
+
+        //                    dgwBom.Rows.Clear();
+        //                    //dgwBom.Refresh();
+
+        //                    var aggregatedDetails = bomDetails
+        //                        .GroupBy(detail => detail.PARTNAME)
+        //                        .Select(group => new TransOrderKSubform
+        //                        {
+        //                            PARTNAME = group.Key,
+        //                            PARTDES = group.First().PARTDES,
+        //                            CQUANT = group.First().CQUANT,
+        //                            CALC = string.Join("+", group.Select(detail => detail.QUANT)),
+        //                            QUANT = group.Sum(detail => detail.QUANT),
+        //                            KLINE = group.First().KLINE,
+        //                            TRANS = group.First().TRANS
+        //                        })
+        //                        .ToList();
+
+        //                    // Populate the DataGridView with the aggregated data
+        //                    foreach (var detail in aggregatedDetails)
+        //                    {
+        //                        // Remove "+0" from CALC if present
+        //                        if (detail.CALC.Contains("+0"))
+        //                        {
+        //                            detail.CALC = detail.CALC.Replace("+0", "");
+        //                        }
+        //                        // If CALC is "0" or contains a single number, set it to an empty string
+        //                        if (detail.CALC == "0" || !detail.CALC.Contains("+"))
+        //                        {
+        //                            detail.CALC = "";
+        //                        }
+        //                        dgwBom.Rows.Add(detail.PARTNAME, "", detail.PARTDES, "", detail.QUANT, detail.CQUANT, detail.DELTA, detail.CALC, "", "", detail.TRANS, detail.KLINE);
+        //                        int pbTotal = aggregatedDetails.Count;
+        //                        if (detail.DELTA >= 0)
+        //                        {
+        //                            completedItems++;
+        //                        }
+        //                        progressBar1.Value = (completedItems * 100) / pbTotal;
+        //                    }
+        //                    // Update the progress label
+        //                    UpdateProgressLabel();
+        //                    progressBar1.Update();
+        //                    txtbInputIPN.PlaceholderText = $"Filter by IPN ({aggregatedDetails.Count.ToString()})";
+        //                    // Fetch MFPNs for each row with a delay
+        //                    await FetchWarehouseBalances();
+        //                    //await FetchMFPNsWithDelay();
+        //                    //await FetchMFPNsForAllRows();
+        //                }
+        //                else
+        //                {
+        //                    //MessageBox.Show("No BOM details found for the selected serial.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //                    txtbLog.ForeColor = Color.Red;
+        //                    txtbLog.AppendText("No BOM details found for the selected serial.\n");
+        //                    txtbLog.ScrollToCaret();
+        //                }
+        //            }
+        //            catch (HttpRequestException ex)
+        //            {
+        //                //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                txtbLog.ForeColor = Color.Red;
+        //                txtbLog.AppendText($"Request error: {ex.Message} \n");
+        //                txtbLog.ScrollToCaret();
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                txtbLog.ForeColor = Color.Red;
+        //                txtbLog.AppendText($"Request error: {ex.Message}\n");
+        //                txtbLog.ScrollToCaret();
+        //            }
+        //        }
+        //    }
+        //}
+
         private async Task LoadBomDetails(string serialName)
         {
             if (dgwBom != null)
@@ -589,15 +702,10 @@ namespace WH_Panel
 
                             int bomCountFromDB = await FetchIPNcountFromBom(txtbName.Text);
 
-
                             txtbLog.AppendText($"Loading {bomCountFromDB} items from {txtbName.Text} bom \n");
-
-                            
-                            //txtbLog.AppendText($"Loading {bomDetails.Count().ToString()} items\n");
                             txtbLog.ScrollToCaret();
 
                             dgwBom.Rows.Clear();
-                            //dgwBom.Refresh();
 
                             var aggregatedDetails = bomDetails
                                 .GroupBy(detail => detail.PARTNAME)
@@ -637,15 +745,12 @@ namespace WH_Panel
                             // Update the progress label
                             UpdateProgressLabel();
                             progressBar1.Update();
-                            txtbInputIPN.PlaceholderText = $"Filter by IPN ({aggregatedDetails.Count.ToString()})";
+                            txtbInputIPN.PlaceholderText = $"Filter by IPN ({aggregatedDetails.Count})";
                             // Fetch MFPNs for each row with a delay
                             await FetchWarehouseBalances();
-                            //await FetchMFPNsWithDelay();
-                            //await FetchMFPNsForAllRows();
                         }
                         else
                         {
-                            //MessageBox.Show("No BOM details found for the selected serial.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             txtbLog.ForeColor = Color.Red;
                             txtbLog.AppendText("No BOM details found for the selected serial.\n");
                             txtbLog.ScrollToCaret();
@@ -653,14 +758,12 @@ namespace WH_Panel
                     }
                     catch (HttpRequestException ex)
                     {
-                        //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         txtbLog.ForeColor = Color.Red;
                         txtbLog.AppendText($"Request error: {ex.Message} \n");
                         txtbLog.ScrollToCaret();
                     }
                     catch (Exception ex)
                     {
-                        //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         txtbLog.ForeColor = Color.Red;
                         txtbLog.AppendText($"Request error: {ex.Message}\n");
                         txtbLog.ScrollToCaret();
@@ -668,6 +771,7 @@ namespace WH_Panel
                 }
             }
         }
+
 
         //private async Task LoadBomDetails(string serialName, int retryCount = 0)
         //{
