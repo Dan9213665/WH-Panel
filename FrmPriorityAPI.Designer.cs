@@ -34,8 +34,8 @@
             tableLayoutPanel2 = new TableLayoutPanel();
             txtbInputIPN = new TextBox();
             txtbInputMFPN = new TextBox();
-            textBox3 = new TextBox();
-            textBox4 = new TextBox();
+            txtbPartDescription = new TextBox();
+            txtbManufacturer = new TextBox();
             txtbInputQty = new TextBox();
             label1 = new Label();
             label2 = new Label();
@@ -65,7 +65,7 @@
             lblIPNdecoder = new Label();
             groupBox2 = new GroupBox();
             tableLayoutPanel3 = new TableLayoutPanel();
-            comboBox1 = new ComboBox();
+            cmbWarehouseList = new ComboBox();
             groupBox3 = new GroupBox();
             dataGridView1 = new DataGridView();
             txtbFilterIPN = new TextBox();
@@ -151,8 +151,8 @@
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel2.Controls.Add(txtbInputIPN, 0, 1);
             tableLayoutPanel2.Controls.Add(txtbInputMFPN, 0, 3);
-            tableLayoutPanel2.Controls.Add(textBox3, 0, 5);
-            tableLayoutPanel2.Controls.Add(textBox4, 0, 7);
+            tableLayoutPanel2.Controls.Add(txtbPartDescription, 0, 5);
+            tableLayoutPanel2.Controls.Add(txtbManufacturer, 0, 7);
             tableLayoutPanel2.Controls.Add(txtbInputQty, 0, 9);
             tableLayoutPanel2.Controls.Add(label1, 0, 0);
             tableLayoutPanel2.Controls.Add(label2, 0, 2);
@@ -210,27 +210,27 @@
             txtbInputMFPN.TextAlign = HorizontalAlignment.Center;
             txtbInputMFPN.KeyDown += txtbInputMFPN_KeyDown;
             // 
-            // textBox3
+            // txtbPartDescription
             // 
-            textBox3.Dock = DockStyle.Fill;
-            textBox3.Location = new Point(3, 108);
-            textBox3.Name = "textBox3";
-            textBox3.PlaceholderText = "Description from DB";
-            textBox3.ReadOnly = true;
-            textBox3.Size = new Size(194, 23);
-            textBox3.TabIndex = 2;
-            textBox3.TextAlign = HorizontalAlignment.Center;
+            txtbPartDescription.Dock = DockStyle.Fill;
+            txtbPartDescription.Location = new Point(3, 108);
+            txtbPartDescription.Name = "txtbPartDescription";
+            txtbPartDescription.PlaceholderText = "Description from DB";
+            txtbPartDescription.ReadOnly = true;
+            txtbPartDescription.Size = new Size(194, 23);
+            txtbPartDescription.TabIndex = 2;
+            txtbPartDescription.TextAlign = HorizontalAlignment.Center;
             // 
-            // textBox4
+            // txtbManufacturer
             // 
-            textBox4.Dock = DockStyle.Fill;
-            textBox4.Location = new Point(3, 150);
-            textBox4.Name = "textBox4";
-            textBox4.PlaceholderText = "Manufacturer from DB";
-            textBox4.ReadOnly = true;
-            textBox4.Size = new Size(194, 23);
-            textBox4.TabIndex = 3;
-            textBox4.TextAlign = HorizontalAlignment.Center;
+            txtbManufacturer.Dock = DockStyle.Fill;
+            txtbManufacturer.Location = new Point(3, 150);
+            txtbManufacturer.Name = "txtbManufacturer";
+            txtbManufacturer.PlaceholderText = "Manufacturer from DB";
+            txtbManufacturer.ReadOnly = true;
+            txtbManufacturer.Size = new Size(194, 23);
+            txtbManufacturer.TabIndex = 3;
+            txtbManufacturer.TextAlign = HorizontalAlignment.Center;
             // 
             // txtbInputQty
             // 
@@ -577,7 +577,7 @@
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel3.Controls.Add(comboBox1, 0, 0);
+            tableLayoutPanel3.Controls.Add(cmbWarehouseList, 0, 0);
             tableLayoutPanel3.Controls.Add(groupBox3, 0, 2);
             tableLayoutPanel3.Controls.Add(txtbFilterIPN, 0, 1);
             tableLayoutPanel3.Controls.Add(groupBox4, 2, 2);
@@ -594,17 +594,17 @@
             tableLayoutPanel3.Size = new Size(1217, 389);
             tableLayoutPanel3.TabIndex = 2;
             // 
-            // comboBox1
+            // cmbWarehouseList
             // 
-            comboBox1.Dock = DockStyle.Fill;
-            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBox1.Font = new Font("Segoe UI", 12F);
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(3, 3);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(298, 29);
-            comboBox1.TabIndex = 0;
-            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
+            cmbWarehouseList.Dock = DockStyle.Fill;
+            cmbWarehouseList.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbWarehouseList.Font = new Font("Segoe UI", 12F);
+            cmbWarehouseList.FormattingEnabled = true;
+            cmbWarehouseList.Location = new Point(3, 3);
+            cmbWarehouseList.Name = "cmbWarehouseList";
+            cmbWarehouseList.Size = new Size(298, 29);
+            cmbWarehouseList.TabIndex = 0;
+            cmbWarehouseList.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
             // 
             // groupBox3
             // 
@@ -972,8 +972,8 @@
         private TableLayoutPanel tableLayoutPanel2;
         private TextBox txtbInputIPN;
         private TextBox txtbInputMFPN;
-        private TextBox textBox3;
-        private TextBox textBox4;
+        private TextBox txtbPartDescription;
+        private TextBox txtbManufacturer;
         private TextBox txtbInputQty;
         private Label label1;
         private Label label2;
@@ -983,7 +983,7 @@
         private Button btnPrinSticker;
         private Button button2;
         private GroupBox groupBox2;
-        private ComboBox comboBox1;
+        private ComboBox cmbWarehouseList;
         private TableLayoutPanel tableLayoutPanel3;
         private GroupBox groupBox3;
         private DataGridView dataGridView1;

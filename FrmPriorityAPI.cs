@@ -28,11 +28,14 @@ namespace WH_Panel
     public partial class FrmPriorityAPI : Form
     {
         public AppSettings settings;
+        //private DataTable dataTable;
+        //private DataView dataView;
         public FrmPriorityAPI()
         {
             InitializeComponent();
             SetDarkModeColors(this);
             AttachTextBoxEvents(this);
+            //InitializeDataTable();
             // Attach event handlers
             txtbFilterIPN.KeyUp += textBox6_KeyUp_1;
             txtbInputQty.KeyPress += textBox5_KeyPress;
@@ -67,6 +70,38 @@ namespace WH_Panel
         //    }
         //    await PopulatePackCombobox();
         //}
+
+      
+
+        //private void InitializeDataTable()
+        //{
+        //    dataTable = new DataTable();
+        //    dataTable.Columns.Add("PARTNAME", typeof(string));
+        //    dataTable.Columns.Add("PARTDES", typeof(string));
+        //    dataTable.Columns.Add("BALANCE", typeof(int));
+        //    dataTable.Columns.Add("CDATE", typeof(string));
+        //    dataTable.Columns.Add("PART", typeof(int));
+        //    dataTable.Columns.Add("MNFPARTNAME", typeof(string));
+
+        //    foreach (DataGridViewRow row in dataGridView1.Rows)
+        //    {
+        //        if (row.Cells["PARTNAME"].Value != null)
+        //        {
+        //            dataTable.Rows.Add(
+        //                row.Cells["PARTNAME"].Value,
+        //                row.Cells["PARTDES"].Value,
+        //                row.Cells["BALANCE"].Value,
+        //                row.Cells["CDATE"].Value,
+        //                row.Cells["PART"].Value,
+        //                row.Cells["MNFPARTNAME"].Value
+        //            );
+        //        }
+        //    }
+
+        //    dataView = new DataView(dataTable);
+        //    dataGridView1.DataSource = dataView;
+        //}
+
         public async void FrmPriorityAPI_Load(object sender, EventArgs e)
         {
             try
@@ -330,11 +365,11 @@ namespace WH_Panel
                             string docNo = responseJson["DOCNO"]?.ToString();
                             //MessageBox.Show(docNo);
                             string insertedIpn = formInstance.txtbInputIPN.Text;
-                            formInstance.comboBox1_SelectedIndexChanged(formInstance.comboBox1, EventArgs.Empty);
+                            formInstance.comboBox1_SelectedIndexChanged(formInstance.cmbWarehouseList, EventArgs.Empty);
                             formInstance.txtbInputIPN.Clear();
                             formInstance.txtbInputMFPN.Clear();
-                            formInstance.textBox3.Clear();
-                            formInstance.textBox4.Clear();
+                            formInstance.txtbPartDescription.Clear();
+                            formInstance.txtbManufacturer.Clear();
                             formInstance.txtbInputQty.Clear();
                             formInstance.txtbPART.Clear();
                             // Update the document status
@@ -557,8 +592,8 @@ namespace WH_Panel
                             PR_PART part = apiResponse.value[0];
                             // Populate the textboxes with the data
                             txtbInputMFPN.Text = part.MNFPARTNAME;
-                            textBox3.Text = part.PARTDES;
-                            textBox4.Text = part.MNFNAME;
+                            txtbPartDescription.Text = part.PARTDES;
+                            txtbManufacturer.Text = part.MNFNAME;
                             txtbPART.Text = part.PART.ToString();
                             txtbInputQty.Focus();
                         }
@@ -584,7 +619,7 @@ namespace WH_Panel
             }
             else if (e.KeyCode == Keys.Escape)
             {
-                txtbInputIPN.Clear(); txtbInputMFPN.Clear(); textBox3.Clear(); textBox4.Clear(); txtbPART.Clear();
+                txtbInputIPN.Clear(); txtbInputMFPN.Clear(); txtbPartDescription.Clear(); txtbManufacturer.Clear(); txtbPART.Clear();
             }
         }
         private void printSticker(PR_PART wHitem)
@@ -669,8 +704,8 @@ namespace WH_Panel
         {
             // Validate the required fields
             if (string.IsNullOrEmpty(txtbInputMFPN.Text) ||
-                string.IsNullOrEmpty(textBox3.Text) ||
-                string.IsNullOrEmpty(textBox4.Text) ||
+                string.IsNullOrEmpty(txtbPartDescription.Text) ||
+                string.IsNullOrEmpty(txtbManufacturer.Text) ||
                 string.IsNullOrEmpty(txtbInputQty.Text) ||
                 !int.TryParse(txtbInputQty.Text, out int qty) ||
                 qty <= 0)
@@ -681,10 +716,10 @@ namespace WH_Panel
             // Create a PR_PART object with the data from the textboxes
             PR_PART part = new PR_PART
             {
-                PARTNAME = txtbInputIPN.Text, // Assuming PART is an integer and is in textBox1
+                PARTNAME = txtbInputIPN.Text, 
                 MNFPARTNAME = txtbInputMFPN.Text,
-                PARTDES = textBox3.Text,
-                MNFNAME = textBox4.Text,
+                PARTDES = txtbPartDescription.Text,
+                MNFNAME = txtbManufacturer.Text,
                 QTY = qty // Set the QTY from textBox5
             };
             // Call the printSticker method
@@ -724,8 +759,8 @@ namespace WH_Panel
                             {
                                 // Populate the textboxes with the data
                                 txtbInputIPN.Text = part.PARTNAME;
-                                textBox3.Text = part.PARTDES;
-                                textBox4.Text = part.MNFNAME;
+                                txtbPartDescription.Text = part.PARTDES;
+                                txtbManufacturer.Text = part.MNFNAME;
                                 txtbInputQty.Focus();
                             }
                             else
@@ -753,8 +788,8 @@ namespace WH_Panel
         {
             txtbInputIPN.Clear();
             txtbInputMFPN.Clear();
-            textBox3.Clear();
-            textBox4.Clear();
+            txtbPartDescription.Clear();
+            txtbManufacturer.Clear();
             txtbPART.Clear();
         }
         List<Warehouse> loadedWareHouses = new List<Warehouse>();
@@ -784,11 +819,11 @@ namespace WH_Panel
                     if (apiResponse.value != null && apiResponse.value.Count > 0)
                     {
                         // Populate the combobox with the data
-                        comboBox1.Items.Clear();
+                        cmbWarehouseList.Items.Clear();
                         loadedWareHouses.Clear(); // Clear the list before adding new items
                         foreach (var warehouse in apiResponse.value)
                         {
-                            comboBox1.Items.Add($"{warehouse.WARHSNAME} - {warehouse.WARHSDES}");
+                            cmbWarehouseList.Items.Add($"{warehouse.WARHSNAME} - {warehouse.WARHSDES}");
                             loadedWareHouses.Add(warehouse);
                         }
                     }
@@ -806,14 +841,14 @@ namespace WH_Panel
                     MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            comboBox1.DroppedDown = true; // Open the dropdown list
+            cmbWarehouseList.DroppedDown = true; // Open the dropdown list
         }
         public async void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBox1.SelectedItem != null)
+            if (cmbWarehouseList.SelectedItem != null)
             {
-                string selectedWarehouse = comboBox1.SelectedItem.ToString().Split(' ')[0];
-                string selectedWarehouseDesc = comboBox1.SelectedItem.ToString().Substring(selectedWarehouse.Length).Trim();
+                string selectedWarehouse = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
+                string selectedWarehouseDesc = cmbWarehouseList.SelectedItem.ToString().Substring(selectedWarehouse.Length).Trim();
                 string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouse}'&$expand=WARHSBAL_SUBFORM";
                 using (HttpClient client = new HttpClient())
                 {
@@ -943,7 +978,7 @@ namespace WH_Panel
                     }
                 }
             }
-            txtbPrefix.Text = comboBox1.SelectedItem.ToString().Split(' ')[0];
+            txtbPrefix.Text = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
         }
         private async Task ExtractMFPNForRow(DataGridViewRow row)
         {
@@ -1380,6 +1415,29 @@ namespace WH_Panel
                 }
             }
         }
+
+        //private void textBox6_KeyUp_1(object sender, KeyEventArgs e)
+        //{
+        //    if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Escape)
+        //    {
+        //        string filterText = txtbFilterIPN.Text.Trim().ToLower();
+        //        if (e.KeyCode == Keys.Escape)
+        //        {
+        //            txtbFilterIPN.Clear();
+        //            filterText = string.Empty;
+        //        }
+
+        //        if (string.IsNullOrEmpty(filterText))
+        //        {
+        //            dataView.RowFilter = string.Empty;
+        //        }
+        //        else
+        //        {
+        //            dataView.RowFilter = $"PARTNAME LIKE '%{filterText}%'";
+        //        }
+        //    }
+        //}
+
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {          
             MessageBox.Show("Print stickers from Stock Movements list  >>>>");
@@ -1825,9 +1883,9 @@ namespace WH_Panel
         }
         private async void btnMFG_Click(object sender, EventArgs e)
         {
-            if (comboBox1.SelectedItem != null && txtbInputIPN.Text != string.Empty && txtbInputMFPN.Text != string.Empty && textBox3.Text != string.Empty && textBox4.Text != string.Empty && int.Parse(txtbInputQty.Text) > 0 && int.Parse(txtbInputQty.Text) <= 50000)
+            if (cmbWarehouseList.SelectedItem != null && txtbInputIPN.Text != string.Empty && txtbInputMFPN.Text != string.Empty && txtbPartDescription.Text != string.Empty && txtbManufacturer.Text != string.Empty && int.Parse(txtbInputQty.Text) > 0 && int.Parse(txtbInputQty.Text) <= 50000)
             {
-                string selectedWarehouseName = comboBox1.SelectedItem.ToString().Split(' ')[0];
+                string selectedWarehouseName = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
                 var selectedWarehouse = loadedWareHouses.FirstOrDefault(w => w.WARHSNAME == selectedWarehouseName);
                 if (selectedWarehouse != null)
                 {

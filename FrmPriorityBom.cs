@@ -111,6 +111,7 @@ namespace WH_Panel
             public int QUANT { get; set; }
             public string SERIALSTATUSDES { get; set; }
             public string REVNUM { get; set; }
+
             public override string ToString()
             {
                 return $"{SERIALNAME} - {PARTNAME} - REV({REVNUM}) - {QUANT}PCS - {SERIALSTATUSDES}";
@@ -212,7 +213,7 @@ namespace WH_Panel
             cmbROBxList.Items.Clear();
             foreach (var serial in serials)
             {
-                if (serial.SERIALSTATUSDES != "נסגרה" || cnkbClosed.Checked)
+                if ((serial.SERIALSTATUSDES != "נסגרה" && serial.SERIALSTATUSDES != "קיט מלא" )|| cnkbClosed.Checked)
                 {
                     cmbROBxList.Items.Add(serial);
                 }
@@ -1482,12 +1483,13 @@ namespace WH_Panel
                         var filteredRow = dgwBom.Rows.Cast<DataGridViewRow>().FirstOrDefault(row => row.Visible);
                         if (filteredRow != null)
                         {
+                            string wh= filteredRow.Cells["PARTNAME"].Value.ToString().Substring(0,3);
                             string partName = filteredRow.Cells["PARTNAME"].Value.ToString();
                             string serialName = txtbRob.Text; // Assuming txtbRob contains the SERIALNAME
                             int cQuant = int.Parse(filteredRow.Cells["CQUANT"].Value.ToString()); // Get the CQUANT value
                             int inKit = int.Parse(filteredRow.Cells["QUANT"].Value.ToString()); // Get the QUANT value
                             int neededQty = cQuant - inKit;
-                            await AddItemToKit(partName, serialName, neededQty, qty, filteredRow);
+                            await AddItemToKit(partName, serialName, neededQty, qty, filteredRow ,wh);
                             txtbINPUTqty.Clear();
                             txtbInputIPN.Clear();
                             txtbInputIPN.Focus();
@@ -1511,10 +1513,10 @@ namespace WH_Panel
                 txtbInputIPN.Focus();
             }
         }
-        private async Task AddItemToKit(string partName, string serialName, int cQuant, int qty, DataGridViewRow filteredRow)
+        private async Task AddItemToKit(string partName, string serialName, int cQuant, int qty, DataGridViewRow filteredRow,string wh)
         {
             // Check quantity availability in the warehouse
-            string checkUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq 'ENE'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{partName}')";
+            string checkUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{wh}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{partName}')";
             int availableQty = 0;
             using (HttpClient client = new HttpClient())
             {

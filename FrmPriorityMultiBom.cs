@@ -40,6 +40,7 @@ namespace WH_Panel
             //chkbBomsList.DrawMode = DrawMode.OwnerDrawFixed;
             //chkbBomsList.DrawItem += chkbBomsList_DrawItem;
         }
+
         private void InitializeDataGridView()
         {
             dgvBomsList.Columns.Clear();
@@ -52,7 +53,7 @@ namespace WH_Panel
             dgvBomsList.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvBomsList.AllowUserToAddRows = false;
             dgvBomsList.AllowUserToDeleteRows = false;
-            dgvBomsList.ReadOnly = false;
+            dgvBomsList.ReadOnly = true; // Set the DataGridView to read-only
             dgvBomsList.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvBomsList.MultiSelect = false;
             // Handle the ColumnHeaderMouseClick event for sorting
@@ -351,382 +352,6 @@ namespace WH_Panel
             int totalCount = dgvBomsList.Rows.Count;
             lblSelected.Text = $"Selected {selectedCount} of {totalCount}";
         }
-        //private async void btnSim1_Click(object sender, EventArgs e)
-        //{
-        //    var selectedWorkOrders = dgvBomsList.Rows.Cast<DataGridViewRow>()
-        //        .Where(row => Convert.ToBoolean(row.Cells["Selected"].Value))
-        //        .Select(row => new Serial
-        //        {
-        //            SERIALNAME = row.Cells["SerialName"].Value.ToString(),
-        //            PARTNAME = row.Cells["PartName"].Value.ToString(),
-        //            SERIALSTATUSDES = row.Cells["SerialStatusDes"].Value.ToString(),
-        //            QUANT = Convert.ToInt32(row.Cells["Quant"].Value),
-        //            REVNUM = row.Cells["RevNum"].Value.ToString()
-        //        }).ToList();
-        //    var ipnBalances = new Dictionary<string, int>();
-        //    foreach (var workOrder in selectedWorkOrders)
-        //    {
-        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{workOrder.SERIALNAME}'&$expand=TRANSORDER_K_SUBFORM";
-        //        using (HttpClient client = new HttpClient())
-        //        {
-        //            try
-        //            {
-        //                AppendLogMessage($"Retrieving data for {workOrder.SERIALNAME} \n", Color.Yellow);
-        //                client.DefaultRequestHeaders.Accept.Clear();
-        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //                HttpResponseMessage response = await client.GetAsync(url);
-        //                response.EnsureSuccessStatusCode();
-        //                string responseBody = await response.Content.ReadAsStringAsync();
-        //                var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-        //                var transOrders = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
-        //                foreach (var transOrder in transOrders)
-        //                {
-        //                    int balance = transOrder.QUANT - transOrder.CQUANT;
-        //                    if (ipnBalances.ContainsKey(transOrder.PARTNAME))
-        //                    {
-        //                        ipnBalances[transOrder.PARTNAME] += balance;
-        //                    }
-        //                    else
-        //                    {
-        //                        ipnBalances[transOrder.PARTNAME] = balance;
-        //                    }
-        //                }
-        //                AppendLogMessage($"Loaded data for {workOrder.SERIALNAME} \n", Color.Green);
-        //            }
-        //            catch (HttpRequestException ex)
-        //            {
-        //                AppendLogMessage($"Request error: {ex.Message} \n", Color.Red);
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                AppendLogMessage($"Request error: {ex.Message}\n", Color.Red);
-        //            }
-        //        }
-        //    }
-        //    // Fetch warehouse stock levels
-        //    var warehouseStock = new Dictionary<string, int>();
-        //    string selectedWarehouseName = GetSelectedWarehouseName();
-        //    if (selectedWarehouseName != null)
-        //    {
-        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouseName}'&$expand=WARHSBAL_SUBFORM";
-        //        using (HttpClient client = new HttpClient())
-        //        {
-        //            try
-        //            {
-        //                AppendLogMessage($"Retrieving data for {selectedWarehouseName} \n", Color.Yellow);
-        //                client.DefaultRequestHeaders.Accept.Clear();
-        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //                HttpResponseMessage response = await client.GetAsync(url);
-        //                response.EnsureSuccessStatusCode();
-        //                string responseBody = await response.Content.ReadAsStringAsync();
-        //                var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-        //                var warehouseBalances = apiResponse["value"].First["WARHSBAL_SUBFORM"].ToObject<List<WarehouseBalance>>();
-        //                foreach (var balance in warehouseBalances)
-        //                {
-        //                    warehouseStock[balance.PARTNAME] = balance.BALANCE;
-        //                }
-        //                AppendLogMessage($"Loaded data for {selectedWarehouseName} \n", Color.Green);
-        //            }
-        //            catch (HttpRequestException ex)
-        //            {
-        //                AppendLogMessage($"Request error: {ex.Message} \n", Color.Red);
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                AppendLogMessage($"Request error: {ex.Message}\n", Color.Red);
-        //            }
-        //        }
-        //    }
-        //    // Calculate the required values
-        //    int totalUniqueIPNs = ipnBalances.Count;
-        //    int sufficientIPNs = ipnBalances.Count(ipn => warehouseStock.ContainsKey(ipn.Key) && (warehouseStock[ipn.Key] + ipn.Value) >= 0);
-        //    double completionPercentage = (double)sufficientIPNs / totalUniqueIPNs * 100;
-        //    AppendLogMessage($"Generating HTML report \n", Color.Yellow);
-        //    // Generate HTML report
-        //    string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-        //    string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\MultiKitsStatusReport_{_fileTimeStamp}.html";
-        //    using (StreamWriter writer = new StreamWriter(filename))
-        //    {
-        //        writer.WriteLine("<html style='text-align:center;background-color:gray;color:white;'>");
-        //        writer.WriteLine("<head>");
-        //        writer.WriteLine("<title>Multi BOM simulation Report</title>");
-        //        writer.WriteLine("<style>");
-        //        writer.WriteLine("table { border-collapse: collapse; width: 100%; }");
-        //        writer.WriteLine("th, td { border: 1px solid black; padding: 8px; text-align: center;}");
-        //        writer.WriteLine("th { cursor: pointer; position: sticky; top: 0; background: black; z-index: 1; }");
-        //        writer.WriteLine(".green { background-color: green; color: white; }");
-        //        writer.WriteLine(".red { background-color: indianred; color: white; }");
-        //        writer.WriteLine(".header-table td { font-size: 2em; font-weight: bold; }");
-        //        writer.WriteLine("</style>");
-        //        writer.WriteLine("<script>");
-        //        writer.WriteLine("function sortTable(n) {");
-        //        writer.WriteLine("var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;");
-        //        writer.WriteLine("table = document.getElementById('kitsTable');");
-        //        writer.WriteLine("switching = true;");
-        //        writer.WriteLine("dir = 'asc';");
-        //        writer.WriteLine("while (switching) {");
-        //        writer.WriteLine("switching = false;");
-        //        writer.WriteLine("rows = table.rows;");
-        //        writer.WriteLine("for (i = 1; i < (rows.length - 1); i++) {");
-        //        writer.WriteLine("shouldSwitch = false;");
-        //        writer.WriteLine("x = rows[i].getElementsByTagName('TD')[n];");
-        //        writer.WriteLine("y = rows[i + 1].getElementsByTagName('TD')[n];");
-        //        writer.WriteLine("if (dir == 'asc') {");
-        //        writer.WriteLine("if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {");
-        //        writer.WriteLine("shouldSwitch = true;");
-        //        writer.WriteLine("break;");
-        //        writer.WriteLine("}");
-        //        writer.WriteLine("} else if (dir == 'desc') {");
-        //        writer.WriteLine("if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {");
-        //        writer.WriteLine("shouldSwitch = true;");
-        //        writer.WriteLine("break;");
-        //        writer.WriteLine("}");
-        //        writer.WriteLine("}");
-        //        writer.WriteLine("}");
-        //        writer.WriteLine("if (shouldSwitch) {");
-        //        writer.WriteLine("rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);");
-        //        writer.WriteLine("switching = true;");
-        //        writer.WriteLine("switchcount++;");
-        //        writer.WriteLine("} else {");
-        //        writer.WriteLine("if (switchcount == 0 && dir == 'asc') {");
-        //        writer.WriteLine("dir = 'desc';");
-        //        writer.WriteLine("switching = true;");
-        //        writer.WriteLine("}");
-        //        writer.WriteLine("}");
-        //        writer.WriteLine("}");
-        //        writer.WriteLine("}");
-        //        writer.WriteLine("</script>");
-        //        writer.WriteLine("</head>");
-        //        writer.WriteLine("<body>");
-        //        writer.WriteLine($"<h1>Multiple Kits Simulation Report {_fileTimeStamp}</h1>");
-        //        foreach (var item in selectedWorkOrders)
-        //        {
-        //            writer.WriteLine($"<h2>{item.SERIALNAME} - {item.PARTNAME} - {item.QUANT}PCS - {item.SERIALSTATUSDES}</h2>");
-        //        }
-        //        writer.WriteLine($"<h2>Unique IPNs: {sufficientIPNs} / {totalUniqueIPNs} ({completionPercentage:F2}%)</h2>");
-        //        writer.WriteLine("<table id='kitsTable'>");
-        //        writer.WriteLine("<tr>");
-        //        writer.WriteLine("<th onclick='sortTable(0)'>IPN</th>");
-        //        writer.WriteLine("<th onclick='sortTable(1)'>Balance</th>");
-        //        writer.WriteLine("<th onclick='sortTable(2)'>Stock</th>");
-        //        writer.WriteLine("<th onclick='sortTable(3)'>Simulation</th>");
-        //        writer.WriteLine("</tr>");
-        //        foreach (var ipn in ipnBalances.Keys)
-        //        {
-        //            int balance = ipnBalances[ipn];
-        //            int stock = warehouseStock.ContainsKey(ipn) ? warehouseStock[ipn] : 0;
-        //            int simulation = stock + balance;
-        //            string rowClass = simulation >= 0 ? "green" : "red";
-        //            writer.WriteLine($"<tr class='{rowClass}'><td>{ipn}</td><td>{balance}</td><td>{stock}</td><td>{simulation}</td></tr>");
-        //        }
-        //        writer.WriteLine("</table>");
-        //        // Add the summary row
-        //        writer.WriteLine("</body>");
-        //        writer.WriteLine("</html>");
-        //    }
-        //    // Open the file in default browser
-        //    var p = new Process();
-        //    p.StartInfo = new ProcessStartInfo(filename)
-        //    {
-        //        UseShellExecute = true
-        //    };
-        //    p.Start();
-        //}
-        //private async void btnSim1_Click(object sender, EventArgs e)
-        //{
-        //    var selectedWorkOrders = dgvBomsList.Rows.Cast<DataGridViewRow>()
-        //        .Where(row => Convert.ToBoolean(row.Cells["Selected"].Value))
-        //        .Select(row => new Serial
-        //        {
-        //            SERIALNAME = row.Cells["SerialName"].Value.ToString(),
-        //            PARTNAME = row.Cells["PartName"].Value.ToString(),
-        //            SERIALSTATUSDES = row.Cells["SerialStatusDes"].Value.ToString(),
-        //            QUANT = Convert.ToInt32(row.Cells["Quant"].Value),
-        //            REVNUM = row.Cells["RevNum"].Value.ToString()
-        //        }).ToList();
-        //    var ipnBalances = new Dictionary<string, int>();
-        //    foreach (var workOrder in selectedWorkOrders)
-        //    {
-        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{workOrder.SERIALNAME}'&$expand=TRANSORDER_K_SUBFORM";
-        //        using (HttpClient client = new HttpClient())
-        //        {
-        //            try
-        //            {
-        //                AppendLogMessage($"Retrieving data for {workOrder.SERIALNAME} \n", Color.Yellow);
-        //                client.DefaultRequestHeaders.Accept.Clear();
-        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //                HttpResponseMessage response = await client.GetAsync(url);
-        //                response.EnsureSuccessStatusCode();
-        //                string responseBody = await response.Content.ReadAsStringAsync();
-        //                var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-        //                var transOrders = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
-        //                foreach (var transOrder in transOrders)
-        //                {
-        //                    int balance = transOrder.QUANT - transOrder.CQUANT;
-        //                    if (ipnBalances.ContainsKey(transOrder.PARTNAME))
-        //                    {
-        //                        ipnBalances[transOrder.PARTNAME] += balance;
-        //                    }
-        //                    else
-        //                    {
-        //                        ipnBalances[transOrder.PARTNAME] = balance;
-        //                    }
-        //                }
-        //                AppendLogMessage($"Loaded data for {workOrder.SERIALNAME} \n", Color.Green);
-        //            }
-        //            catch (HttpRequestException ex)
-        //            {
-        //                AppendLogMessage($"Request error: {ex.Message} \n", Color.Red);
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                AppendLogMessage($"Request error: {ex.Message}\n", Color.Red);
-        //            }
-        //        }
-        //    }
-        //    // Fetch warehouse stock levels
-        //    var warehouseStock = new Dictionary<string, int>();
-        //    string selectedWarehouseName = GetSelectedWarehouseName();
-        //    if (selectedWarehouseName != null)
-        //    {
-        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouseName}'&$expand=WARHSBAL_SUBFORM";
-        //        using (HttpClient client = new HttpClient())
-        //        {
-        //            try
-        //            {
-        //                AppendLogMessage($"Retrieving data for {selectedWarehouseName} \n", Color.Yellow);
-        //                client.DefaultRequestHeaders.Accept.Clear();
-        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //                HttpResponseMessage response = await client.GetAsync(url);
-        //                response.EnsureSuccessStatusCode();
-        //                string responseBody = await response.Content.ReadAsStringAsync();
-        //                var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-        //                var warehouseBalances = apiResponse["value"].First["WARHSBAL_SUBFORM"].ToObject<List<WarehouseBalance>>();
-        //                foreach (var balance in warehouseBalances)
-        //                {
-        //                    warehouseStock[balance.PARTNAME] = balance.BALANCE;
-        //                }
-        //                AppendLogMessage($"Loaded data for {selectedWarehouseName} \n", Color.Green);
-        //            }
-        //            catch (HttpRequestException ex)
-        //            {
-        //                AppendLogMessage($"Request error: {ex.Message} \n", Color.Red);
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                AppendLogMessage($"Request error: {ex.Message}\n", Color.Red);
-        //            }
-        //        }
-        //    }
-        //    // Calculate the required values
-        //    int totalUniqueIPNs = ipnBalances.Count;
-        //    int sufficientIPNs = ipnBalances.Count(ipn => warehouseStock.ContainsKey(ipn.Key) && (warehouseStock[ipn.Key] + ipn.Value) >= 0);
-        //    double completionPercentage = (double)sufficientIPNs / totalUniqueIPNs * 100;
-        //    AppendLogMessage($"Generating HTML report \n", Color.Yellow);
-        //    // Generate HTML report
-        //    string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-        //    string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\MultiKitsStatusReport_{_fileTimeStamp}.html";
-        //    using (StreamWriter writer = new StreamWriter(filename))
-        //    {
-        //        writer.WriteLine("<html style='text-align:center;background-color:gray;color:white;'>");
-        //        writer.WriteLine("<head>");
-        //        writer.WriteLine("<title>Multi BOM simulation Report</title>");
-        //        writer.WriteLine("<style>");
-        //        writer.WriteLine("table { border-collapse: collapse; width: 100%; }");
-        //        writer.WriteLine("th, td { border: 1px solid black; padding: 8px; text-align: center;}");
-        //        writer.WriteLine("th { cursor: pointer; position: sticky; top: 0; background: black; z-index: 1; }");
-        //        writer.WriteLine(".green { background-color: green; color: white; }");
-        //        writer.WriteLine(".red { background-color: indianred; color: white; }");
-        //        writer.WriteLine(".red-balance { background-color: indianred; color: white; }");
-        //        writer.WriteLine(".header-table td { font-size: 2em; font-weight: bold; }");
-        //        writer.WriteLine("</style>");
-        //        writer.WriteLine("<script>");
-        //        writer.WriteLine("function sortTable(n) {");
-        //        writer.WriteLine("var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;");
-        //        writer.WriteLine("table = document.getElementById('kitsTable');");
-        //        writer.WriteLine("switching = true;");
-        //        writer.WriteLine("dir = 'asc';");
-        //        writer.WriteLine("while (switching) {");
-        //        writer.WriteLine("switching = false;");
-        //        writer.WriteLine("rows = table.rows;");
-        //        writer.WriteLine("for (i = 1; i < (rows.length - 1); i++) {");
-        //        writer.WriteLine("shouldSwitch = false;");
-        //        writer.WriteLine("x = rows[i].getElementsByTagName('TD')[n];");
-        //        writer.WriteLine("y = rows[i + 1].getElementsByTagName('TD')[n];");
-        //        writer.WriteLine("if (dir == 'asc') {");
-        //        writer.WriteLine("if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {");
-        //        writer.WriteLine("shouldSwitch = true;");
-        //        writer.WriteLine("break;");
-        //        writer.WriteLine("}");
-        //        writer.WriteLine("} else if (dir == 'desc') {");
-        //        writer.WriteLine("if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {");
-        //        writer.WriteLine("shouldSwitch = true;");
-        //        writer.WriteLine("break;");
-        //        writer.WriteLine("}");
-        //        writer.WriteLine("}");
-        //        writer.WriteLine("}");
-        //        writer.WriteLine("if (shouldSwitch) {");
-        //        writer.WriteLine("rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);");
-        //        writer.WriteLine("switching = true;");
-        //        writer.WriteLine("switchcount++;");
-        //        writer.WriteLine("} else {");
-        //        writer.WriteLine("if (switchcount == 0 && dir == 'asc') {");
-        //        writer.WriteLine("dir = 'desc';");
-        //        writer.WriteLine("switching = true;");
-        //        writer.WriteLine("}");
-        //        writer.WriteLine("}");
-        //        writer.WriteLine("}");
-        //        writer.WriteLine("}");
-        //        writer.WriteLine("</script>");
-        //        writer.WriteLine("</head>");
-        //        writer.WriteLine("<body>");
-        //        writer.WriteLine($"<h1>Multiple Kits Simulation Report {_fileTimeStamp}</h1>");
-        //        foreach (var item in selectedWorkOrders)
-        //        {
-        //            writer.WriteLine($"<h2>{item.SERIALNAME} - {item.PARTNAME} - {item.QUANT}PCS - {item.SERIALSTATUSDES}</h2>");
-        //        }
-        //        writer.WriteLine($"<h2>Unique IPNs: {sufficientIPNs} / {totalUniqueIPNs} ({completionPercentage:F2}%)</h2>");
-        //        writer.WriteLine("<table id='kitsTable'>");
-        //        writer.WriteLine("<tr>");
-        //        writer.WriteLine("<th onclick='sortTable(0)'>IPN</th>");
-        //        writer.WriteLine("<th onclick='sortTable(1)'>Balance</th>");
-        //        writer.WriteLine("<th onclick='sortTable(2)'>Stock</th>");
-        //        writer.WriteLine("<th onclick='sortTable(3)'>Simulation</th>");
-        //        writer.WriteLine("</tr>");
-        //        foreach (var ipn in ipnBalances.Keys)
-        //        {
-        //            int balance = ipnBalances[ipn];
-        //            int stock = warehouseStock.ContainsKey(ipn) ? warehouseStock[ipn] : 0;
-        //            int simulation = stock + balance;
-        //            string rowClass = simulation >= 0 ? "green" : "red";
-        //            string balanceClass = balance < 0 ? "red-balance" : "";
-        //            writer.WriteLine($"<tr class='{rowClass}'>");
-        //            writer.WriteLine($"<td>{ipn}</td>");
-        //            writer.WriteLine($"<td class='{balanceClass}'>{balance}</td>");
-        //            writer.WriteLine($"<td>{stock}</td>");
-        //            writer.WriteLine($"<td>{simulation}</td>");
-        //            writer.WriteLine("</tr>");
-        //        }
-        //        writer.WriteLine("</table>");
-        //        writer.WriteLine("</body>");
-        //        writer.WriteLine("</html>");
-        //    }
-        //    // Open the file in default browser
-        //    var p = new Process();
-        //    p.StartInfo = new ProcessStartInfo(filename)
-        //    {
-        //        UseShellExecute = true
-        //    };
-        //    p.Start();
-        //}
         private async void btnSim1_Click(object sender, EventArgs e)
         {
             var selectedWorkOrders = dgvBomsList.Rows.Cast<DataGridViewRow>()
@@ -748,7 +373,7 @@ namespace WH_Panel
             // Generate HTML report
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
             string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\MultiKitsStatusReport_{_fileTimeStamp}.html";
-            GenerateHtmlReport(filename, tableData, $"Multiple Kits Simulation Report {_fileTimeStamp}", selectedWorkOrders, completionPercentage);
+            GenerateHTMLaggregated(filename, tableData, $"Multiple Kits Simulation Report {_fileTimeStamp}", selectedWorkOrders, completionPercentage);
             // Open the file in default browser
             var p = new Process();
             p.StartInfo = new ProcessStartInfo(filename)
@@ -794,6 +419,7 @@ namespace WH_Panel
             }
             UpdateSelectedLabel();
         }
+
         private void btnReleased_Click(object sender, EventArgs e)
         {
             bool allChecked = dgvBomsList.Rows.Cast<DataGridViewRow>()
@@ -822,51 +448,106 @@ namespace WH_Panel
             }
             UpdateSelectedLabel();
         }
+
+        //private async Task<Dictionary<string, (int balance, int stock, int simulation)>> AggregatedSim(List<Serial> selectedWorkOrders)
+        //{
+        //    var ipnBalances = new Dictionary<string, int>();
+        //    foreach (var workOrder in selectedWorkOrders)
+        //    {
+        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{workOrder.SERIALNAME}'&$expand=TRANSORDER_K_SUBFORM";
+        //        using (HttpClient client = new HttpClient())
+        //        {
+        //            try
+        //            {
+        //                AppendLogMessage($"Retrieving data for {workOrder.SERIALNAME} \n", Color.Yellow);
+        //                client.DefaultRequestHeaders.Accept.Clear();
+        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+        //                HttpResponseMessage response = await client.GetAsync(url);
+        //                response.EnsureSuccessStatusCode();
+        //                string responseBody = await response.Content.ReadAsStringAsync();
+        //                var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+        //                var transOrders = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
+        //                foreach (var transOrder in transOrders)
+        //                {
+        //                    int balance = transOrder.QUANT - transOrder.CQUANT;
+        //                    if (ipnBalances.ContainsKey(transOrder.PARTNAME))
+        //                    {
+        //                        ipnBalances[transOrder.PARTNAME] += balance;
+        //                    }
+        //                    else
+        //                    {
+        //                        ipnBalances[transOrder.PARTNAME] = balance;
+        //                    }
+        //                }
+        //                AppendLogMessage($"Loaded data for {workOrder.SERIALNAME} \n", Color.Green);
+        //            }
+        //            catch (HttpRequestException ex)
+        //            {
+        //                AppendLogMessage($"Request error: {ex.Message} \n", Color.Red);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                AppendLogMessage($"Request error: {ex.Message}\n", Color.Red);
+        //            }
+        //        }
+        //    }
+        //    // Fetch warehouse stock levels
+        //    var warehouseStock = new Dictionary<string, int>();
+        //    string selectedWarehouseName = GetSelectedWarehouseName();
+        //    if (selectedWarehouseName != null)
+        //    {
+        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouseName}'&$expand=WARHSBAL_SUBFORM";
+        //        using (HttpClient client = new HttpClient())
+        //        {
+        //            try
+        //            {
+        //                AppendLogMessage($"Retrieving data for {selectedWarehouseName} \n", Color.Yellow);
+        //                client.DefaultRequestHeaders.Accept.Clear();
+        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+        //                HttpResponseMessage response = await client.GetAsync(url);
+        //                response.EnsureSuccessStatusCode();
+        //                string responseBody = await response.Content.ReadAsStringAsync();
+        //                var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+        //                var warehouseBalances = apiResponse["value"].First["WARHSBAL_SUBFORM"].ToObject<List<WarehouseBalance>>();
+        //                foreach (var balance in warehouseBalances)
+        //                {
+        //                    warehouseStock[balance.PARTNAME] = balance.BALANCE;
+        //                }
+        //                AppendLogMessage($"Loaded data for {selectedWarehouseName} \n", Color.Green);
+        //            }
+        //            catch (HttpRequestException ex)
+        //            {
+        //                AppendLogMessage($"Request error: {ex.Message} \n", Color.Red);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                AppendLogMessage($"Request error: {ex.Message}\n", Color.Red);
+        //            }
+        //        }
+        //    }
+        //    // Calculate the required values
+        //    var result = new Dictionary<string, (int balance, int stock, int simulation)>();
+        //    foreach (var ipn in ipnBalances.Keys)
+        //    {
+        //        int balance = ipnBalances[ipn];
+        //        int stock = warehouseStock.ContainsKey(ipn) ? warehouseStock[ipn] : 0;
+        //        int simulation = stock + balance;
+        //        result[ipn] = (balance, stock, simulation);
+        //    }
+        //    return result;
+        //}
+
+
         private async Task<Dictionary<string, (int balance, int stock, int simulation)>> AggregatedSim(List<Serial> selectedWorkOrders)
         {
-            var ipnBalances = new Dictionary<string, int>();
-            foreach (var workOrder in selectedWorkOrders)
-            {
-                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{workOrder.SERIALNAME}'&$expand=TRANSORDER_K_SUBFORM";
-                using (HttpClient client = new HttpClient())
-                {
-                    try
-                    {
-                        AppendLogMessage($"Retrieving data for {workOrder.SERIALNAME} \n", Color.Yellow);
-                        client.DefaultRequestHeaders.Accept.Clear();
-                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-                        HttpResponseMessage response = await client.GetAsync(url);
-                        response.EnsureSuccessStatusCode();
-                        string responseBody = await response.Content.ReadAsStringAsync();
-                        var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-                        var transOrders = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
-                        foreach (var transOrder in transOrders)
-                        {
-                            int balance = transOrder.QUANT - transOrder.CQUANT;
-                            if (ipnBalances.ContainsKey(transOrder.PARTNAME))
-                            {
-                                ipnBalances[transOrder.PARTNAME] += balance;
-                            }
-                            else
-                            {
-                                ipnBalances[transOrder.PARTNAME] = balance;
-                            }
-                        }
-                        AppendLogMessage($"Loaded data for {workOrder.SERIALNAME} \n", Color.Green);
-                    }
-                    catch (HttpRequestException ex)
-                    {
-                        AppendLogMessage($"Request error: {ex.Message} \n", Color.Red);
-                    }
-                    catch (Exception ex)
-                    {
-                        AppendLogMessage($"Request error: {ex.Message}\n", Color.Red);
-                    }
-                }
-            }
-            // Fetch warehouse stock levels
+            var ipnQuantities = new Dictionary<string, int>();
+            var ipnCQuantities = new Dictionary<string, int>();
+
+            // Fetch warehouse stock levels once
             var warehouseStock = new Dictionary<string, int>();
             string selectedWarehouseName = GetSelectedWarehouseName();
             if (selectedWarehouseName != null)
@@ -902,6 +583,58 @@ namespace WH_Panel
                     }
                 }
             }
+
+            foreach (var workOrder in selectedWorkOrders)
+            {
+                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{workOrder.SERIALNAME}'&$expand=TRANSORDER_K_SUBFORM";
+                using (HttpClient client = new HttpClient())
+                {
+                    try
+                    {
+                        AppendLogMessage($"Retrieving data for {workOrder.SERIALNAME} \n", Color.Yellow);
+                        client.DefaultRequestHeaders.Accept.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                        HttpResponseMessage response = await client.GetAsync(url);
+                        response.EnsureSuccessStatusCode();
+                        string responseBody = await response.Content.ReadAsStringAsync();
+                        var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+                        var transOrders = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
+
+                        foreach (var transOrder in transOrders)
+                        {
+                            if (ipnQuantities.ContainsKey(transOrder.PARTNAME))
+                            {
+                                ipnQuantities[transOrder.PARTNAME] += transOrder.QUANT;
+                            }
+                            else
+                            {
+                                ipnQuantities[transOrder.PARTNAME] = transOrder.QUANT;
+                                ipnCQuantities[transOrder.PARTNAME] = transOrder.CQUANT;
+                            }
+                        }
+
+                        AppendLogMessage($"Loaded data for {workOrder.SERIALNAME} \n", Color.Green);
+                    }
+                    catch (HttpRequestException ex)
+                    {
+                        AppendLogMessage($"Request error: {ex.Message} \n", Color.Red);
+                    }
+                    catch (Exception ex)
+                    {
+                        AppendLogMessage($"Request error: {ex.Message}\n", Color.Red);
+                    }
+                }
+            }
+
+            // Calculate the balance for each PARTNAME
+            var ipnBalances = new Dictionary<string, int>();
+            foreach (var partName in ipnQuantities.Keys)
+            {
+                ipnBalances[partName] = ipnQuantities[partName] - ipnCQuantities[partName];
+            }
+
             // Calculate the required values
             var result = new Dictionary<string, (int balance, int stock, int simulation)>();
             foreach (var ipn in ipnBalances.Keys)
@@ -913,20 +646,132 @@ namespace WH_Panel
             }
             return result;
         }
-        private async Task<Dictionary<string, List<Serial>>> SimByIPN(List<Serial> selectedWorkOrders)
+
+
+        private async Task<Dictionary<string, List<(Serial serial, int quant, int cquant, int balance, int simulation)>>> SimByIPN(List<Serial> selectedWorkOrders)
         {
-            // Placeholder for SimByIPN logic
-            // This function should return a dictionary where the key is the IPN and the value is a list of Serial objects that require that IPN
-            return new Dictionary<string, List<Serial>>();
+            var ipnToSerials = new Dictionary<string, List<(Serial serial, int quant, int cquant, int balance, int simulation)>>();
+
+            // Fetch warehouse stock levels once
+            var warehouseStock = new Dictionary<string, int>();
+            string selectedWarehouseName = GetSelectedWarehouseName();
+            if (selectedWarehouseName != null)
+            {
+                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouseName}'&$expand=WARHSBAL_SUBFORM";
+                using (HttpClient client = new HttpClient())
+                {
+                    try
+                    {
+                        AppendLogMessage($"Retrieving data for {selectedWarehouseName} \n", Color.Yellow);
+                        client.DefaultRequestHeaders.Accept.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                        HttpResponseMessage response = await client.GetAsync(url);
+                        response.EnsureSuccessStatusCode();
+                        string responseBody = await response.Content.ReadAsStringAsync();
+                        var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+                        var warehouseBalances = apiResponse["value"].First["WARHSBAL_SUBFORM"].ToObject<List<WarehouseBalance>>();
+                        foreach (var balance in warehouseBalances)
+                        {
+                            warehouseStock[balance.PARTNAME] = balance.BALANCE;
+                        }
+                        AppendLogMessage($"Loaded data for {selectedWarehouseName} \n", Color.Green);
+                    }
+                    catch (HttpRequestException ex)
+                    {
+                        AppendLogMessage($"Request error: {ex.Message} \n", Color.Red);
+                    }
+                    catch (Exception ex)
+                    {
+                        AppendLogMessage($"Request error: {ex.Message}\n", Color.Red);
+                    }
+                }
+            }
+
+            foreach (var workOrder in selectedWorkOrders)
+            {
+                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{workOrder.SERIALNAME}'&$expand=TRANSORDER_K_SUBFORM";
+                using (HttpClient client = new HttpClient())
+                {
+                    try
+                    {
+                        AppendLogMessage($"Retrieving data for {workOrder.SERIALNAME} \n", Color.Yellow);
+                        client.DefaultRequestHeaders.Accept.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                        HttpResponseMessage response = await client.GetAsync(url);
+                        response.EnsureSuccessStatusCode();
+                        string responseBody = await response.Content.ReadAsStringAsync();
+                        var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+                        var transOrders = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
+
+                        var partQuantities = new Dictionary<string, int>();
+                        int cquant = 0;
+
+                        foreach (var transOrder in transOrders)
+                        {
+                            if (partQuantities.ContainsKey(transOrder.PARTNAME))
+                            {
+                                partQuantities[transOrder.PARTNAME] += transOrder.QUANT;
+                            }
+                            else
+                            {
+                                partQuantities[transOrder.PARTNAME] = transOrder.QUANT;
+                                cquant = transOrder.CQUANT; // Assuming cquant is the same for all parts in the kit
+                            }
+                        }
+
+                        foreach (var part in partQuantities)
+                        {
+                            int quant = part.Value;
+                            int balance = quant - cquant;
+                            int simulation = balance; // This will be updated later with warehouse stock
+
+                            if (!ipnToSerials.ContainsKey(part.Key))
+                            {
+                                ipnToSerials[part.Key] = new List<(Serial serial, int quant, int cquant, int balance, int simulation)>();
+                            }
+                            ipnToSerials[part.Key].Add((workOrder, quant, cquant, balance, simulation));
+                        }
+
+                        AppendLogMessage($"Loaded data for {workOrder.SERIALNAME} \n", Color.Green);
+                    }
+                    catch (HttpRequestException ex)
+                    {
+                        AppendLogMessage($"Request error: {ex.Message} \n", Color.Red);
+                    }
+                    catch (Exception ex)
+                    {
+                        AppendLogMessage($"Request error: {ex.Message}\n", Color.Red);
+                    }
+                }
+            }
+
+            // Update simulation values with warehouse stock
+            foreach (var ipn in ipnToSerials.Keys.ToList())
+            {
+                int stock = warehouseStock.ContainsKey(ipn) ? warehouseStock[ipn] : 0;
+                var updatedList = new List<(Serial serial, int quant, int cquant, int balance, int simulation)>();
+                foreach (var (serial, quant, cquant, balance, simulation) in ipnToSerials[ipn])
+                {
+                    int updatedSimulation = stock - balance;
+                    updatedList.Add((serial, quant, cquant, balance, updatedSimulation));
+                }
+                ipnToSerials[ipn] = updatedList;
+            }
+
+            return ipnToSerials;
         }
-        private async Task<Dictionary<string, List<Serial>>> SimByBoms(List<Serial> selectedWorkOrders)
+
+     
+
+
+        private void GenerateHTMLaggregated(string filename, Dictionary<string, (int balance, int stock, int simulation)> tableData, string reportTitle, List<Serial> selectedWorkOrders, double completionPercentage)
         {
-            // Placeholder for SimByBoms logic
-            // This function should return a dictionary where the key is the BOM and the value is a list of Serial objects that are part of that BOM
-            return new Dictionary<string, List<Serial>>();
-        }
-        private void GenerateHtmlReport(string filename, Dictionary<string, (int balance, int stock, int simulation)> tableData, string reportTitle, List<Serial> selectedWorkOrders, double completionPercentage)
-        {
+            tableData.OrderBy(x => x.Key == "simulation");
+
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.WriteLine("<html style='text-align:center;background-color:gray;color:white;'>");
@@ -988,9 +833,6 @@ namespace WH_Panel
                 writer.WriteLine("if (switchcount == 0 && dir == 'asc') {");
                 writer.WriteLine("dir = 'desc';");
                 writer.WriteLine("switching = true;");
-                writer.WriteLine("} else if (switchcount == 0 && dir == 'desc') {");
-                writer.WriteLine("dir = 'asc';");
-                writer.WriteLine("switching = true;");
                 writer.WriteLine("}");
                 writer.WriteLine("}");
                 writer.WriteLine("}");
@@ -1003,27 +845,462 @@ namespace WH_Panel
                 {
                     writer.WriteLine($"<h2>{item.SERIALNAME} - {item.PARTNAME} - {item.QUANT}PCS - {item.SERIALSTATUSDES}</h2>");
                 }
-                writer.WriteLine($"<h2>Unique IPNs: {tableData.Count} / {tableData.Count} ({completionPercentage:F2}%)</h2>");
+                int ipnsWithPositiveSimulation = tableData.Count(ipn => ipn.Value.simulation >= 0);
+                writer.WriteLine($"<h2>Unique IPNs: {ipnsWithPositiveSimulation} / {tableData.Count} ({completionPercentage:F2}%)</h2>");
                 writer.WriteLine("<table id='kitsTable'>");
                 writer.WriteLine("<tr>");
                 writer.WriteLine("<th onclick='sortTable(0)'>IPN</th>");
-                writer.WriteLine("<th onclick='sortTable(1)'>Balance</th>");
-                writer.WriteLine("<th onclick='sortTable(2)'>Stock</th>");
+                writer.WriteLine("<th onclick='sortTable(2)'>WH Stock</th>");
+                writer.WriteLine("<th onclick='sortTable(1)'>Kit Balance</th>");
                 writer.WriteLine("<th onclick='sortTable(3)'>Simulation</th>");
                 writer.WriteLine("</tr>");
-                foreach (var ipn in tableData.Keys)
+
+                foreach (var ipn in tableData.OrderBy(x => x.Value.simulation))
                 {
-                    var (balance, stock, simulation) = tableData[ipn];
+                    var (balance, stock, simulation) = ipn.Value;
                     string rowClass = simulation >= 0 ? "green" : "red";
                     string balanceClass = balance < 0 ? "red-balance" : "";
                     writer.WriteLine($"<tr class='{rowClass}'>");
-                    writer.WriteLine($"<td>{ipn}</td>");
-                    writer.WriteLine($"<td class='{balanceClass}'>{balance}</td>");
+                    writer.WriteLine($"<td>{ipn.Key}</td>");
                     writer.WriteLine($"<td>{stock}</td>");
+                    writer.WriteLine($"<td class='{balanceClass}'>{balance}</td>");
                     writer.WriteLine($"<td>{simulation}</td>");
                     writer.WriteLine("</tr>");
                 }
                 writer.WriteLine("</table>");
+                writer.WriteLine("</body>");
+                writer.WriteLine("</html>");
+            }
+        }
+
+        private async void btnByIPN_Click(object sender, EventArgs e)
+        {
+            var selectedWorkOrders = dgvBomsList.Rows.Cast<DataGridViewRow>()
+                .Where(row => Convert.ToBoolean(row.Cells["Selected"].Value))
+                .Select(row => new Serial
+                {
+                    SERIALNAME = row.Cells["SerialName"].Value.ToString(),
+                    PARTNAME = row.Cells["PartName"].Value.ToString(),
+                    SERIALSTATUSDES = row.Cells["SerialStatusDes"].Value.ToString(),
+                    QUANT = Convert.ToInt32(row.Cells["Quant"].Value),
+                    REVNUM = row.Cells["RevNum"].Value.ToString()
+                }).ToList();
+
+            var ipnToSerials = await SimByIPN(selectedWorkOrders);
+            var warehouseStock = await GetWarehouseStock(); // Fetch warehouse stock levels
+            AppendLogMessage($"Generating HTML report by IPN \n", Color.Yellow);
+
+            // Generate HTML report by IPN
+            string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+            string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\IPNBasedReport_{_fileTimeStamp}.html";
+            GenerateHTMLbyIPN(filename, ipnToSerials, $"IPN-based Simulation Report {_fileTimeStamp}", warehouseStock, selectedWorkOrders);
+
+            // Open the file in default browser
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(filename)
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+        }
+
+        private async Task<Dictionary<string, int>> GetWarehouseStock()
+        {
+            var warehouseStock = new Dictionary<string, int>();
+            string selectedWarehouseName = GetSelectedWarehouseName();
+            if (selectedWarehouseName != null)
+            {
+                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouseName}'&$expand=WARHSBAL_SUBFORM";
+                using (HttpClient client = new HttpClient())
+                {
+                    try
+                    {
+                        AppendLogMessage($"Retrieving data for {selectedWarehouseName} \n", Color.Yellow);
+                        client.DefaultRequestHeaders.Accept.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                        HttpResponseMessage response = await client.GetAsync(url);
+                        response.EnsureSuccessStatusCode();
+                        string responseBody = await response.Content.ReadAsStringAsync();
+                        var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+                        var warehouseBalances = apiResponse["value"].First["WARHSBAL_SUBFORM"].ToObject<List<WarehouseBalance>>();
+                        foreach (var balance in warehouseBalances)
+                        {
+                            warehouseStock[balance.PARTNAME] = balance.BALANCE;
+                        }
+                        AppendLogMessage($"Loaded data for {selectedWarehouseName} \n", Color.Green);
+                    }
+                    catch (HttpRequestException ex)
+                    {
+                        AppendLogMessage($"Request error: {ex.Message} \n", Color.Red);
+                    }
+                    catch (Exception ex)
+                    {
+                        AppendLogMessage($"Request error: {ex.Message}\n", Color.Red);
+                    }
+                }
+            }
+            return warehouseStock;
+        }
+
+
+        private void GenerateHTMLbyIPN(string filename, Dictionary<string, List<(Serial serial, int quant, int cquant, int balance, int simulation)>> ipnToSerials, string reportTitle, Dictionary<string, int> warehouseStock, List<Serial> selectedWorkOrders)
+        {
+            using (StreamWriter writer = new StreamWriter(filename))
+            {
+                writer.WriteLine("<html style='text-align:center;background-color:gray;color:white;'>");
+                writer.WriteLine("<head>");
+                writer.WriteLine("<title>IPN-based Simulation Report</title>");
+                writer.WriteLine("<style>");
+                writer.WriteLine("table { border-collapse: collapse; width: 100%; border: solid 1px; }");
+                writer.WriteLine("th, td { border: 1px solid black; padding: 8px; text-align: center;}");
+                writer.WriteLine("th { cursor: pointer; position: sticky; top: 0; background: black; z-index: 1; }");
+                writer.WriteLine(".green { background-color: green; color: white; }");
+                writer.WriteLine(".red { background-color: indianred; color: white; }");
+                writer.WriteLine(".red-balance { background-color: indianred; color: white; }");
+                writer.WriteLine(".header-table td { font-size: 2em; font-weight: bold; }");
+                writer.WriteLine(".ipn-section { border: 2px solid white; padding: 10px; margin-bottom: 20px; }");
+                writer.WriteLine("</style>");
+                writer.WriteLine("<script>");
+                writer.WriteLine("function sortTable(n) {");
+                writer.WriteLine("var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;");
+                writer.WriteLine("table = document.getElementById('kitsTable');");
+                writer.WriteLine("switching = true;");
+                writer.WriteLine("dir = 'asc';");
+                writer.WriteLine("while (switching) {");
+                writer.WriteLine("switching = false;");
+                writer.WriteLine("rows = table.rows;");
+                writer.WriteLine("for (i = 1; i < (rows.length - 1); i++) {");
+                writer.WriteLine("shouldSwitch = false;");
+                writer.WriteLine("x = rows[i].getElementsByTagName('TD')[n];");
+                writer.WriteLine("y = rows[i + 1].getElementsByTagName('TD')[n];");
+                writer.WriteLine("if (dir == 'asc') {");
+                writer.WriteLine("if (n > 0 && n < 4) {"); // Numeric columns
+                writer.WriteLine("if (parseFloat(x.innerHTML) > parseFloat(y.innerHTML)) {");
+                writer.WriteLine("shouldSwitch = true;");
+                writer.WriteLine("break;");
+                writer.WriteLine("}");
+                writer.WriteLine("} else {"); // String columns
+                writer.WriteLine("if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {");
+                writer.WriteLine("shouldSwitch = true;");
+                writer.WriteLine("break;");
+                writer.WriteLine("}");
+                writer.WriteLine("}");
+                writer.WriteLine("} else if (dir == 'desc') {");
+                writer.WriteLine("if (n > 0 && n < 4) {"); // Numeric columns
+                writer.WriteLine("if (parseFloat(x.innerHTML) < parseFloat(y.innerHTML)) {");
+                writer.WriteLine("shouldSwitch = true;");
+                writer.WriteLine("break;");
+                writer.WriteLine("}");
+                writer.WriteLine("} else {"); // String columns
+                writer.WriteLine("if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {");
+                writer.WriteLine("shouldSwitch = true;");
+                writer.WriteLine("break;");
+                writer.WriteLine("}");
+                writer.WriteLine("}");
+                writer.WriteLine("}");
+                writer.WriteLine("}");
+                writer.WriteLine("if (shouldSwitch) {");
+                writer.WriteLine("rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);");
+                writer.WriteLine("switching = true;");
+                writer.WriteLine("switchcount++;");
+                writer.WriteLine("} else {");
+                writer.WriteLine("if (switchcount == 0 && dir == 'asc') {");
+                writer.WriteLine("dir = 'desc';");
+                writer.WriteLine("switching = true;");
+                writer.WriteLine("}");
+                writer.WriteLine("}");
+                writer.WriteLine("}");
+                writer.WriteLine("</script>");
+                writer.WriteLine("</head>");
+                writer.WriteLine("<body>");
+                writer.WriteLine($"<h1>{reportTitle}</h1>");
+
+                // Add the list of selected work orders
+                writer.WriteLine("<h2>Selected Work Orders</h2>");
+                writer.WriteLine("<table id='selectedWorkOrdersTable'>");
+                writer.WriteLine("<tr>");
+                writer.WriteLine("<th>Serial Name</th>");
+                writer.WriteLine("<th>Part Name</th>");
+                writer.WriteLine("<th>Quantity</th>");
+                writer.WriteLine("<th>Status</th>");
+                writer.WriteLine("<th>Revision</th>");
+                writer.WriteLine("</tr>");
+                foreach (var workOrder in selectedWorkOrders)
+                {
+                    writer.WriteLine("<tr>");
+                    writer.WriteLine($"<td>{workOrder.SERIALNAME}</td>");
+                    writer.WriteLine($"<td>{workOrder.PARTNAME}</td>");
+                    writer.WriteLine($"<td>{workOrder.QUANT}</td>");
+                    writer.WriteLine($"<td>{workOrder.SERIALSTATUSDES}</td>");
+                    writer.WriteLine($"<td>{workOrder.REVNUM}</td>");
+                    writer.WriteLine("</tr>");
+                }
+                writer.WriteLine("</table>");
+
+                foreach (var ipn in ipnToSerials.Keys)
+                {
+                    var serials = ipnToSerials[ipn];
+                    int totalQuant = serials.Sum(s => s.quant);
+                    int totalCQuant = serials.Sum(s => s.cquant);
+                    int totalBalance = serials.Sum(s => s.balance);
+                    int warehouseBalance = warehouseStock.ContainsKey(ipn) ? warehouseStock[ipn] : 0;
+                    int totalSimulation = warehouseBalance + totalBalance;
+
+                    string totalSimulationClass = totalSimulation > 0 ? "green" : "red";
+
+                    writer.WriteLine("<div class='ipn-section'>");
+                    writer.WriteLine($"<h2>IPN: {ipn}</h2>");
+                    writer.WriteLine("<table id='kitsTable'>");
+                    writer.WriteLine("<tr>");
+                    writer.WriteLine("<th>Warehouse Balance</th>");
+                    writer.WriteLine("<th>Total Qty in KITs</th>");
+                    writer.WriteLine("<th>Total Required in KITS</th>");
+                    writer.WriteLine("<th>Total Balance in KITs</th>");
+                    writer.WriteLine("<th>Total DELTA for all KITs</th>");
+                    writer.WriteLine("</tr>");
+                    writer.WriteLine("<tr>");
+                    writer.WriteLine($"<td>{warehouseBalance}</td>");
+                    writer.WriteLine($"<td>{totalQuant}</td>");
+                    writer.WriteLine($"<td>{totalCQuant}</td>");
+                    writer.WriteLine($"<td>{totalBalance}</td>");
+                    writer.WriteLine($"<td class='{totalSimulationClass}'>{totalSimulation}</td>");
+                    writer.WriteLine("</tr>");
+                    writer.WriteLine("</table>");
+
+                    writer.WriteLine("<table id='kitsTable'>");
+                    writer.WriteLine("<tr>");
+                    writer.WriteLine("<th onclick='sortTable(0)'>Work Order</th>");
+                    writer.WriteLine("<th onclick='sortTable(1)'>IPN</th>");
+                    writer.WriteLine("<th onclick='sortTable(2)'>Qty in KIT</th>");
+                    writer.WriteLine("<th onclick='sortTable(3)'>Required in KIT</th>");
+                    writer.WriteLine("<th onclick='sortTable(4)'>KIT DELTA</th>");
+                    writer.WriteLine("</tr>");
+
+                    // Subsequent rows: display each serial's balance and simulation
+                    int currentWarehouseBalance = warehouseBalance;
+                    foreach (var (serial, quant, cquant, balance, simulation) in serials)
+                    {
+                        int serialBalance = quant - cquant;
+                        int serialSimulation = currentWarehouseBalance + serialBalance;
+                        currentWarehouseBalance += serialBalance;
+
+                        string serialBalanceClass = serialBalance > 0 ? "green" : "red";
+                        string serialSimulationClass = serialSimulation > 0 ? "green" : "red";
+
+                        writer.WriteLine("<tr>");
+                        writer.WriteLine($"<td>{serial.SERIALNAME}</td>");
+                        writer.WriteLine($"<td>{serial.PARTNAME}</td>");
+                        writer.WriteLine($"<td>{quant}</td>");
+                        writer.WriteLine($"<td>{cquant}</td>");
+                        writer.WriteLine($"<td class='{serialBalanceClass}'>{serialBalance}</td>");
+                        writer.WriteLine("</tr>");
+                    }
+
+                    writer.WriteLine("</table>");
+                    writer.WriteLine("</div>");
+                    writer.WriteLine("<br>");
+                }
+
+                writer.WriteLine("</body>");
+                writer.WriteLine("</html>");
+            }
+        }
+
+
+
+
+        private async void btnByKit_Click(object sender, EventArgs e)
+        {
+            var selectedWorkOrders = dgvBomsList.Rows.Cast<DataGridViewRow>()
+                .Where(row => Convert.ToBoolean(row.Cells["Selected"].Value))
+                .Select(row => new Serial
+                {
+                    SERIALNAME = row.Cells["SerialName"].Value.ToString(),
+                    PARTNAME = row.Cells["PartName"].Value.ToString(),
+                    SERIALSTATUSDES = row.Cells["SerialStatusDes"].Value.ToString(),
+                    QUANT = Convert.ToInt32(row.Cells["Quant"].Value),
+                    REVNUM = row.Cells["RevNum"].Value.ToString()
+                }).ToList();
+
+            var warehouseStock = await GetWarehouseStock(); // Fetch warehouse stock levels
+            var kitDeficits = await SimByBoms(selectedWorkOrders, warehouseStock);
+            AppendLogMessage($"Generating HTML report by KITs \n", Color.Yellow);
+
+            // Generate HTML report by KITs
+            string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+            string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\KITBasedReport_{_fileTimeStamp}.html";
+            GenerateHTMLbyKITs(filename, kitDeficits, $"KIT-based Simulation Report {_fileTimeStamp}", selectedWorkOrders);
+
+            // Open the file in default browser
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(filename)
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+        }
+
+        private async Task<Dictionary<string, List<(string ipn, int quant, int cquant, int balance, int delta)>>> SimByBoms(List<Serial> selectedWorkOrders, Dictionary<string, int> warehouseStock)
+        {
+            var kitDeficits = new Dictionary<string, List<(string ipn, int quant, int cquant, int balance, int delta)>>();
+
+            foreach (var workOrder in selectedWorkOrders)
+            {
+                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{workOrder.SERIALNAME}'&$expand=TRANSORDER_K_SUBFORM";
+                using (HttpClient client = new HttpClient())
+                {
+                    try
+                    {
+                        AppendLogMessage($"Retrieving data for {workOrder.SERIALNAME} \n", Color.Yellow);
+                        client.DefaultRequestHeaders.Accept.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                        HttpResponseMessage response = await client.GetAsync(url);
+                        response.EnsureSuccessStatusCode();
+                        string responseBody = await response.Content.ReadAsStringAsync();
+                        var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+                        var transOrders = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
+
+                        var ipnQuantities = new Dictionary<string, int>();
+                        var ipnCQuantities = new Dictionary<string, int>();
+
+                        foreach (var transOrder in transOrders)
+                        {
+                            string ipn = transOrder.PARTNAME;
+                            int quant = transOrder.QUANT;
+                            int cquant = transOrder.CQUANT;
+
+                            // Sum up the quantities for each IPN
+                            if (ipnQuantities.ContainsKey(ipn))
+                            {
+                                ipnQuantities[ipn] += quant;
+                            }
+                            else
+                            {
+                                ipnQuantities[ipn] = quant;
+                                ipnCQuantities[ipn] = cquant;
+                            }
+                        }
+
+                        foreach (var ipn in ipnQuantities.Keys)
+                        {
+                            int quant = ipnQuantities[ipn];
+                            int cquant = ipnCQuantities[ipn];
+                            int balance = quant - cquant;
+                            int delta = warehouseStock.ContainsKey(ipn) ? warehouseStock[ipn] + balance : balance;
+
+                            // Exclude rows where KIT Balance is greater than or equal to zero
+                            if (balance < 0 && delta<0)
+                            {
+                                if (!kitDeficits.ContainsKey(workOrder.SERIALNAME))
+                                {
+                                    kitDeficits[workOrder.SERIALNAME] = new List<(string ipn, int quant, int cquant, int balance, int delta)>();
+                                }
+                                kitDeficits[workOrder.SERIALNAME].Add((ipn, quant, cquant, balance, delta));
+                            }
+
+                            if (warehouseStock.ContainsKey(ipn))
+                            {
+                                warehouseStock[ipn] += balance;
+                            }
+                            else
+                            {
+                                warehouseStock[ipn] = balance;
+                            }
+                        }
+
+                        AppendLogMessage($"Loaded data for {workOrder.SERIALNAME} \n", Color.Green);
+                    }
+                    catch (HttpRequestException ex)
+                    {
+                        AppendLogMessage($"Request error: {ex.Message} \n", Color.Red);
+                    }
+                    catch (Exception ex)
+                    {
+                        AppendLogMessage($"Request error: {ex.Message}\n", Color.Red);
+                    }
+                }
+            }
+
+            return kitDeficits;
+        }
+
+        private void GenerateHTMLbyKITs(string filename, Dictionary<string, List<(string ipn, int quant, int cquant, int balance, int delta)>> kitDeficits, string reportTitle, List<Serial> selectedWorkOrders)
+        {
+            using (StreamWriter writer = new StreamWriter(filename))
+            {
+                writer.WriteLine("<html style='text-align:center;background-color:gray;color:white;'>");
+                writer.WriteLine("<head>");
+                writer.WriteLine("<title>KIT-based Simulation Report</title>");
+                writer.WriteLine("<style>");
+                writer.WriteLine("table { border-collapse: collapse; width: 100%; border: solid 1px; }");
+                writer.WriteLine("th, td { border: 1px solid black; padding: 8px; text-align: center;}");
+                writer.WriteLine("th { cursor: pointer; position: sticky; top: 0; background: black; z-index: 1; }");
+                writer.WriteLine(".green { background-color: green; color: white; }");
+                writer.WriteLine(".red { background-color: indianred; color: white; }");
+                writer.WriteLine(".header-table td { font-size: 2em; font-weight: bold; }");
+                writer.WriteLine(".kit-section { border: 2px solid white; padding: 10px; margin-bottom: 20px; }");
+                writer.WriteLine("</style>");
+                writer.WriteLine("</head>");
+                writer.WriteLine("<body>");
+                writer.WriteLine($"<h1>{reportTitle}</h1>");
+
+                foreach (var workOrder in selectedWorkOrders)
+                {
+                    if (kitDeficits.ContainsKey(workOrder.SERIALNAME))
+                    {
+                        var deficits = kitDeficits[workOrder.SERIALNAME];
+
+                        writer.WriteLine("<div class='kit-section'>");
+                        writer.WriteLine($"<h2>Work Order: {workOrder.SERIALNAME}</h2>");
+                        writer.WriteLine("<table id='workOrderDetailsTable'>");
+                        writer.WriteLine("<tr>");
+                        writer.WriteLine("<th>Serial Name</th>");
+                        writer.WriteLine("<th>Part Name</th>");
+                        writer.WriteLine("<th>Quantity</th>");
+                        writer.WriteLine("<th>Status</th>");
+                        writer.WriteLine("<th>Revision</th>");
+                        writer.WriteLine("</tr>");
+                        writer.WriteLine("<tr>");
+                        writer.WriteLine($"<td>{workOrder.SERIALNAME}</td>");
+                        writer.WriteLine($"<td>{workOrder.PARTNAME}</td>");
+                        writer.WriteLine($"<td>{workOrder.QUANT}</td>");
+                        writer.WriteLine($"<td>{workOrder.SERIALSTATUSDES}</td>");
+                        writer.WriteLine($"<td>{workOrder.REVNUM}</td>");
+                        writer.WriteLine("</tr>");
+                        writer.WriteLine("</table>");
+
+                        writer.WriteLine("<table id='kitsTable'>");
+                        writer.WriteLine("<tr>");
+                        writer.WriteLine("<th>IPN</th>");
+                        writer.WriteLine("<th>Quantity in KIT</th>");
+                        writer.WriteLine("<th>Required in KIT</th>");
+                        writer.WriteLine("<th>KIT Balance</th>");
+                        writer.WriteLine("<th>Total DELTA</th>");
+                        writer.WriteLine("</tr>");
+
+                        foreach (var (ipn, quant, cquant, balance, delta) in deficits)
+                        {
+                            string deltaClass = delta < 0 ? "red" : "green";
+
+                            writer.WriteLine("<tr>");
+                            writer.WriteLine($"<td>{ipn}</td>");
+                            writer.WriteLine($"<td>{quant}</td>");
+                            writer.WriteLine($"<td>{cquant}</td>");
+                            writer.WriteLine($"<td>{balance}</td>");
+                            writer.WriteLine($"<td class='{deltaClass}'>{delta}</td>");
+                            writer.WriteLine("</tr>");
+                        }
+
+                        writer.WriteLine("</table>");
+                        writer.WriteLine("</div>");
+                        writer.WriteLine("<br>");
+                    }
+                }
+
                 writer.WriteLine("</body>");
                 writer.WriteLine("</html>");
             }

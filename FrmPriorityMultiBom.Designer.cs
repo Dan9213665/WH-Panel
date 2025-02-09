@@ -46,6 +46,8 @@
             btnFull = new Button();
             btnReleased = new Button();
             btnPartialAssy = new Button();
+            btnByIPN = new Button();
+            btnByKit = new Button();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -189,16 +191,20 @@
             // 
             // tableLayoutPanel4
             // 
-            tableLayoutPanel4.ColumnCount = 3;
-            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333359F));
-            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333359F));
+            tableLayoutPanel4.ColumnCount = 5;
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
             tableLayoutPanel4.Controls.Add(lblSelected, 0, 0);
             tableLayoutPanel4.Controls.Add(btnSim1, 0, 1);
             tableLayoutPanel4.Controls.Add(btnCheckAll, 1, 0);
             tableLayoutPanel4.Controls.Add(btnFull, 2, 0);
-            tableLayoutPanel4.Controls.Add(btnReleased, 1, 1);
-            tableLayoutPanel4.Controls.Add(btnPartialAssy, 2, 1);
+            tableLayoutPanel4.Controls.Add(btnReleased, 4, 0);
+            tableLayoutPanel4.Controls.Add(btnPartialAssy, 3, 0);
+            tableLayoutPanel4.Controls.Add(btnByIPN, 1, 1);
+            tableLayoutPanel4.Controls.Add(btnByKit, 2, 1);
             tableLayoutPanel4.Dock = DockStyle.Fill;
             tableLayoutPanel4.Location = new Point(3, 66);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
@@ -212,10 +218,10 @@
             // 
             lblSelected.AutoSize = true;
             lblSelected.Dock = DockStyle.Fill;
-            lblSelected.Font = new Font("Segoe UI", 18F);
+            lblSelected.Font = new Font("Segoe UI", 12F);
             lblSelected.Location = new Point(3, 0);
             lblSelected.Name = "lblSelected";
-            lblSelected.Size = new Size(131, 28);
+            lblSelected.Size = new Size(76, 28);
             lblSelected.TabIndex = 0;
             lblSelected.Text = "Selected";
             lblSelected.TextAlign = ContentAlignment.MiddleCenter;
@@ -225,7 +231,7 @@
             btnSim1.Dock = DockStyle.Fill;
             btnSim1.Location = new Point(3, 31);
             btnSim1.Name = "btnSim1";
-            btnSim1.Size = new Size(131, 23);
+            btnSim1.Size = new Size(76, 23);
             btnSim1.TabIndex = 1;
             btnSim1.Text = "Simulation";
             btnSim1.UseVisualStyleBackColor = true;
@@ -234,9 +240,9 @@
             // btnCheckAll
             // 
             btnCheckAll.Dock = DockStyle.Fill;
-            btnCheckAll.Location = new Point(140, 3);
+            btnCheckAll.Location = new Point(85, 3);
             btnCheckAll.Name = "btnCheckAll";
-            btnCheckAll.Size = new Size(132, 22);
+            btnCheckAll.Size = new Size(76, 22);
             btnCheckAll.TabIndex = 2;
             btnCheckAll.Text = "*";
             btnCheckAll.UseVisualStyleBackColor = true;
@@ -245,9 +251,9 @@
             // btnFull
             // 
             btnFull.Dock = DockStyle.Fill;
-            btnFull.Location = new Point(278, 3);
+            btnFull.Location = new Point(167, 3);
             btnFull.Name = "btnFull";
-            btnFull.Size = new Size(133, 22);
+            btnFull.Size = new Size(76, 22);
             btnFull.TabIndex = 3;
             btnFull.Text = "קיט מלא";
             btnFull.UseVisualStyleBackColor = true;
@@ -256,9 +262,9 @@
             // btnReleased
             // 
             btnReleased.Dock = DockStyle.Fill;
-            btnReleased.Location = new Point(140, 31);
+            btnReleased.Location = new Point(331, 3);
             btnReleased.Name = "btnReleased";
-            btnReleased.Size = new Size(132, 23);
+            btnReleased.Size = new Size(80, 22);
             btnReleased.TabIndex = 4;
             btnReleased.Text = "שוחררה";
             btnReleased.UseVisualStyleBackColor = true;
@@ -267,13 +273,35 @@
             // btnPartialAssy
             // 
             btnPartialAssy.Dock = DockStyle.Fill;
-            btnPartialAssy.Location = new Point(278, 31);
+            btnPartialAssy.Location = new Point(249, 3);
             btnPartialAssy.Name = "btnPartialAssy";
-            btnPartialAssy.Size = new Size(133, 23);
+            btnPartialAssy.Size = new Size(76, 22);
             btnPartialAssy.TabIndex = 5;
             btnPartialAssy.Text = "הרכבה בחוסר";
             btnPartialAssy.UseVisualStyleBackColor = true;
             btnPartialAssy.Click += btnPartialAssy_Click;
+            // 
+            // btnByIPN
+            // 
+            btnByIPN.Dock = DockStyle.Fill;
+            btnByIPN.Location = new Point(85, 31);
+            btnByIPN.Name = "btnByIPN";
+            btnByIPN.Size = new Size(76, 23);
+            btnByIPN.TabIndex = 6;
+            btnByIPN.Text = "by IPN";
+            btnByIPN.UseVisualStyleBackColor = true;
+            btnByIPN.Click += btnByIPN_Click;
+            // 
+            // btnByKit
+            // 
+            btnByKit.Dock = DockStyle.Fill;
+            btnByKit.Location = new Point(167, 31);
+            btnByKit.Name = "btnByKit";
+            btnByKit.Size = new Size(76, 23);
+            btnByKit.TabIndex = 7;
+            btnByKit.Text = "by KIT";
+            btnByKit.UseVisualStyleBackColor = true;
+            btnByKit.Click += btnByKit_Click;
             // 
             // FrmPriorityMultiBom
             // 
@@ -318,5 +346,7 @@
         private Button btnFull;
         private Button btnReleased;
         private Button btnPartialAssy;
+        private Button btnByIPN;
+        private Button btnByKit;
     }
 }
