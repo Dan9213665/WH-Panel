@@ -1125,13 +1125,13 @@ namespace WH_Panel
                 }).ToList();
 
             var warehouseStock = await GetWarehouseStock(); // Fetch warehouse stock levels
-            var kitDeficits = await SimByBoms(selectedWorkOrders, warehouseStock);
+            var (kitDeficits, allIPNs) = await SimByBoms(selectedWorkOrders, warehouseStock);
             AppendLogMessage($"Generating HTML report by KITs \n", Color.Yellow);
 
             // Generate HTML report by KITs
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
             string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\KITBasedReport_{_fileTimeStamp}.html";
-            GenerateHTMLbyKITs(filename, kitDeficits, $"KIT-based Simulation Report {_fileTimeStamp}", selectedWorkOrders);
+            GenerateHTMLbyKITs(filename, kitDeficits, allIPNs, $"KIT-based Simulation Report {_fileTimeStamp}", selectedWorkOrders);
 
             // Open the file in default browser
             var p = new Process();
@@ -1142,9 +1142,11 @@ namespace WH_Panel
             p.Start();
         }
 
-        private async Task<Dictionary<string, List<(string ipn, int quant, int cquant, int balance, int delta)>>> SimByBoms(List<Serial> selectedWorkOrders, Dictionary<string, int> warehouseStock)
+
+        private async Task<(Dictionary<string, List<(string ipn, int quant, int cquant, int balance, int delta)>> kitDeficits, Dictionary<string, HashSet<string>> allIPNs)> SimByBoms(List<Serial> selectedWorkOrders, Dictionary<string, int> warehouseStock)
         {
             var kitDeficits = new Dictionary<string, List<(string ipn, int quant, int cquant, int balance, int delta)>>();
+            var allIPNs = new Dictionary<string, HashSet<string>>();
 
             foreach (var workOrder in selectedWorkOrders)
             {
@@ -1183,6 +1185,13 @@ namespace WH_Panel
                                 ipnQuantities[ipn] = quant;
                                 ipnCQuantities[ipn] = cquant;
                             }
+
+                            // Track all IPNs for each work order
+                            if (!allIPNs.ContainsKey(workOrder.SERIALNAME))
+                            {
+                                allIPNs[workOrder.SERIALNAME] = new HashSet<string>();
+                            }
+                            allIPNs[workOrder.SERIALNAME].Add(ipn);
                         }
 
                         foreach (var ipn in ipnQuantities.Keys)
@@ -1193,7 +1202,7 @@ namespace WH_Panel
                             int delta = warehouseStock.ContainsKey(ipn) ? warehouseStock[ipn] + balance : balance;
 
                             // Exclude rows where KIT Balance is greater than or equal to zero
-                            if (balance < 0 && delta<0)
+                            if (balance < 0 && delta < 0)
                             {
                                 if (!kitDeficits.ContainsKey(workOrder.SERIALNAME))
                                 {
@@ -1212,6 +1221,12 @@ namespace WH_Panel
                             }
                         }
 
+                        // Ensure a table is generated for each work order
+                        if (!kitDeficits.ContainsKey(workOrder.SERIALNAME))
+                        {
+                            kitDeficits[workOrder.SERIALNAME] = new List<(string ipn, int quant, int cquant, int balance, int delta)>();
+                        }
+
                         AppendLogMessage($"Loaded data for {workOrder.SERIALNAME} \n", Color.Green);
                     }
                     catch (HttpRequestException ex)
@@ -1225,10 +1240,10 @@ namespace WH_Panel
                 }
             }
 
-            return kitDeficits;
+            return (kitDeficits, allIPNs);
         }
 
-        private void GenerateHTMLbyKITs(string filename, Dictionary<string, List<(string ipn, int quant, int cquant, int balance, int delta)>> kitDeficits, string reportTitle, List<Serial> selectedWorkOrders)
+        private void GenerateHTMLbyKITs(string filename, Dictionary<string, List<(string ipn, int quant, int cquant, int balance, int delta)>> kitDeficits, Dictionary<string, HashSet<string>> allIPNs, string reportTitle, List<Serial> selectedWorkOrders)
         {
             using (StreamWriter writer = new StreamWriter(filename))
             {
@@ -1250,29 +1265,44 @@ namespace WH_Panel
 
                 foreach (var workOrder in selectedWorkOrders)
                 {
-                    if (kitDeficits.ContainsKey(workOrder.SERIALNAME))
+                    var deficits = kitDeficits.ContainsKey(workOrder.SERIALNAME) ? kitDeficits[workOrder.SERIALNAME] : new List<(string ipn, int quant, int cquant, int balance, int delta)>();
+                    int totalIPNs = allIPNs.ContainsKey(workOrder.SERIALNAME) ? allIPNs[workOrder.SERIALNAME].Count : 0;
+                    int nonDeficitIPNs = totalIPNs - deficits.Count;
+                    int deficitIPNs = deficits.Count;
+                    double completionPercentage = totalIPNs > 0 ? (double)nonDeficitIPNs / totalIPNs * 100 : 100;
+
+                    string headerClass = completionPercentage == 100 ? "green" : "";
+
+                    writer.WriteLine($"<div class='kit-section {headerClass}'>");
+
+                    if (deficitIPNs > 0 )
                     {
-                        var deficits = kitDeficits[workOrder.SERIALNAME];
+                        writer.WriteLine($"<h2>Work Order: {workOrder.SERIALNAME} - In kit {nonDeficitIPNs} of {totalIPNs}, missing {deficitIPNs} (  {completionPercentage:F2} %)</h2>");
+                    }
+                    else
+                    {
+                        writer.WriteLine($"<h2>Work Order: {workOrder.SERIALNAME} - In kit {nonDeficitIPNs} of {totalIPNs} (  {completionPercentage:F2} %)</h2>");
+                    }
 
-                        writer.WriteLine("<div class='kit-section'>");
-                        writer.WriteLine($"<h2>Work Order: {workOrder.SERIALNAME}</h2>");
-                        writer.WriteLine("<table id='workOrderDetailsTable'>");
-                        writer.WriteLine("<tr>");
-                        writer.WriteLine("<th>Serial Name</th>");
-                        writer.WriteLine("<th>Part Name</th>");
-                        writer.WriteLine("<th>Quantity</th>");
-                        writer.WriteLine("<th>Status</th>");
-                        writer.WriteLine("<th>Revision</th>");
-                        writer.WriteLine("</tr>");
-                        writer.WriteLine("<tr>");
-                        writer.WriteLine($"<td>{workOrder.SERIALNAME}</td>");
-                        writer.WriteLine($"<td>{workOrder.PARTNAME}</td>");
-                        writer.WriteLine($"<td>{workOrder.QUANT}</td>");
-                        writer.WriteLine($"<td>{workOrder.SERIALSTATUSDES}</td>");
-                        writer.WriteLine($"<td>{workOrder.REVNUM}</td>");
-                        writer.WriteLine("</tr>");
-                        writer.WriteLine("</table>");
+                    writer.WriteLine("<table id='workOrderDetailsTable'>");
+                    writer.WriteLine("<tr>");
+                    writer.WriteLine("<th>Serial Name</th>");
+                    writer.WriteLine("<th>Part Name</th>");
+                    writer.WriteLine("<th>Quantity</th>");
+                    writer.WriteLine("<th>Status</th>");
+                    writer.WriteLine("<th>Revision</th>");
+                    writer.WriteLine("</tr>");
+                    writer.WriteLine("<tr>");
+                    writer.WriteLine($"<td>{workOrder.SERIALNAME}</td>");
+                    writer.WriteLine($"<td>{workOrder.PARTNAME}</td>");
+                    writer.WriteLine($"<td>{workOrder.QUANT}</td>");
+                    writer.WriteLine($"<td>{workOrder.SERIALSTATUSDES}</td>");
+                    writer.WriteLine($"<td>{workOrder.REVNUM}</td>");
+                    writer.WriteLine("</tr>");
+                    writer.WriteLine("</table>");
 
+                    if(completionPercentage<100)
+                    {
                         writer.WriteLine("<table id='kitsTable'>");
                         writer.WriteLine("<tr>");
                         writer.WriteLine("<th>IPN</th>");
@@ -1296,9 +1326,11 @@ namespace WH_Panel
                         }
 
                         writer.WriteLine("</table>");
-                        writer.WriteLine("</div>");
-                        writer.WriteLine("<br>");
                     }
+
+                
+                    writer.WriteLine("</div>");
+                    writer.WriteLine("<br>");
                 }
 
                 writer.WriteLine("</body>");
