@@ -111,7 +111,6 @@ namespace WH_Panel
             public int QUANT { get; set; }
             public string SERIALSTATUSDES { get; set; }
             public string REVNUM { get; set; }
-
             public override string ToString()
             {
                 return $"{SERIALNAME} - {PARTNAME} - REV({REVNUM}) - {QUANT}PCS - {SERIALSTATUSDES}";
@@ -1761,6 +1760,7 @@ namespace WH_Panel
                             printStickerFullKit(itemToPrint2);
                             break;
                         case DialogResult.Cancel:
+                            dgwBom.Sort(dgwBom.Columns["DELTA"], ListSortDirection.Ascending);
                             SendEmail();
                             break;
                     }
@@ -1877,119 +1877,6 @@ namespace WH_Panel
                 MessageBox.Show("Sticker printing failed : " + e.Message);
             }
         }
-        //    private void SendEmail()
-        //    {
-        //        string windowTitle = this.Text; // 'this' refers to the current Form
-        //        // Find the index of ".xlsm" in the window title
-        //        int index = windowTitle.IndexOf(".xlsm");
-        //        // Extract the project name, including ".xlsm"
-        //        string fullProjectName = index >= 0 ? windowTitle.Substring(0, index + 5) : windowTitle;
-        //        // Extract only the last part of the project name
-        //        string projectName = fullProjectName.Split('\\').Last();
-        //        //string fileName = openFileDialog1.FileName;
-        //        string fileName = fullProjectName;
-        //        //MessageBox.Show(fileName);
-        //        var excelApp = new Microsoft.Office.Interop.Excel.Application();
-        //        Microsoft.Office.Interop.Excel.Workbook workbook = excelApp.Workbooks.Open(fileName);
-        //        Microsoft.Office.Interop.Excel.Worksheet worksheet = (Microsoft.Office.Interop.Excel.Worksheet)workbook.Sheets[1]; // First sheet (index 1 in Interop)
-        //        // Find the "Alts" and "DELTA" column indices
-        //        int altsColumnIndex = -1;
-        //        int deltaColumnIndex = -1;
-        //        Microsoft.Office.Interop.Excel.Range headerRow = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[1];
-        //        for (int i = 1; i <= headerRow.Columns.Count; i++)
-        //        {
-        //            var cell = (Microsoft.Office.Interop.Excel.Range)headerRow.Cells[1, i];
-        //            string columnHeader = cell.Value?.ToString();
-        //            if (columnHeader == "Alts")
-        //            {
-        //                altsColumnIndex = i;
-        //            }
-        //            else if (columnHeader == "DELTA")
-        //            {
-        //                deltaColumnIndex = i;
-        //            }
-        //            if (altsColumnIndex != -1 && deltaColumnIndex != -1)
-        //            {
-        //                break;
-        //            }
-        //        }
-        //        if (deltaColumnIndex == -1)
-        //        {
-        //            MessageBox.Show("Could not find the 'DELTA' column.");
-        //            workbook.Close(false);
-        //            Marshal.ReleaseComObject(workbook);
-        //            Marshal.ReleaseComObject(excelApp);
-        //            return;
-        //        }
-        //        // Build HTML table from Excel data
-        //        StringBuilder htmlTable = new StringBuilder();
-        //        htmlTable.Append("<table border='1' style='border-collapse:collapse;'>");
-        //        // Add header row
-        //        htmlTable.Append("<tr>");
-        //        for (int col = 1; col <= altsColumnIndex; col++)
-        //        {
-        //            string header = ((Microsoft.Office.Interop.Excel.Range)headerRow.Cells[1, col]).Value?.ToString();
-        //            htmlTable.AppendFormat("<th>{0}</th>", header ?? string.Empty);
-        //        }
-        //        htmlTable.Append("</tr>");
-        //        // Add data rows with conditional formatting for "DELTA" values
-        //        int row = 2;
-        //        while (((Microsoft.Office.Interop.Excel.Range)worksheet.Cells[row, 1]).Value != null)
-        //        {
-        //            htmlTable.Append("<tr>");
-        //            for (int col = 1; col <= altsColumnIndex; col++)
-        //            {
-        //                var cell = (Microsoft.Office.Interop.Excel.Range)worksheet.Cells[row, col];
-        //                string cellValue = cell.Value?.ToString() ?? string.Empty;
-        //                if (col == deltaColumnIndex && double.TryParse(cellValue, out double deltaValue))
-        //                {
-        //                    string color = deltaValue < 0 ? "IndianRed" : "LightGreen";
-        //                    htmlTable.AppendFormat("<td style='background-color:{0};'>{1}</td>", color, cellValue);
-        //                }
-        //                else
-        //                {
-        //                    htmlTable.AppendFormat("<td>{0}</td>", cellValue);
-        //                }
-        //            }
-        //            htmlTable.Append("</tr>");
-        //            row++;
-        //        }
-        //        htmlTable.Append("</table>");
-        //        workbook.Close(false);
-        //        Marshal.ReleaseComObject(workbook);
-        //        Marshal.ReleaseComObject(excelApp);
-        //        var outlookApp = new Outlook.Application();
-        //        Outlook.MailItem mailItem = (Outlook.MailItem)outlookApp.CreateItem(Outlook.OlItemType.olMailItem);
-        //        mailItem.Subject = projectName.Substring(0, projectName.Length - 5).ToString() + "_UPDATED_" + DateAndTime.Now.ToString("yyyyMMddHHmm");
-        //        // Set CC field
-        //        mailItem.CC = "lgt@robotron.co.il";
-        //        // Hardcoded in-house email addresses
-        //        List<string> inhouseEmails = new List<string>
-        //{
-        //    "production@robotron.co.il",
-        //    "avishay@robotron.co.il",
-        //    "rehesh@robotron.co.il",
-        //    "vlad@robotron.co.il"
-        //};
-        //        // Extract client domain from project name
-        //        string clientDomain = projectName.Split('_')[0].ToLower();
-        //        // Get emails from the client's domain
-        //        List<string> clientEmails = GetUniqueClientEmails(clientDomain);//GetEmailsFromDomain(outlookApp, clientDomain); 
-        //        // Display a form with checkboxes for all recipients
-        //        RecipientSelectionForm selectionForm = new RecipientSelectionForm(inhouseEmails, clientEmails);
-        //        if (selectionForm.ShowDialog() == DialogResult.OK)
-        //        {
-        //            // Combine selected emails into the "To" field
-        //            mailItem.To = string.Join(";", selectionForm.SelectedEmails);
-        //            // Embed the HTML table in the email body
-        //            mailItem.HTMLBody = "<html><body>" + htmlTable.ToString() + "</body></html>";
-        //            // Send the email
-        //            mailItem.Send();
-        //            MessageBox.Show("Email sent successfully.");
-        //        }
-        //        Marshal.ReleaseComObject(mailItem);
-        //        Marshal.ReleaseComObject(outlookApp);
-        //    }
         private void SendEmail()
         {
             // Build HTML table from DataGridView data
@@ -2006,8 +1893,16 @@ namespace WH_Panel
             // Add the additional table with text from txtbRob, txtbName, txtbQty, txtbStatus, and lblProgress
             htmlTable.Append("<table border='1' style='border-collapse:collapse; margin-bottom: 20px;'>");
             htmlTable.Append("<tr><th>Rob</th><th>Name</th><th>Qty</th><th>Status</th><th>Progress</th></tr>");
+            string stat=string.Empty;
+            if (lblProgress.Text.Contains("100%"))
+            {
+                stat = "קיט מלא";
+            }
+            else {
+                stat = txtbStatus.Text;
+            }
             htmlTable.AppendFormat("<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td></tr>",
-                txtbRob.Text, txtbName.Text, txtbQty.Text, txtbStatus.Text, lblProgress.Text);
+                txtbRob.Text, txtbName.Text, txtbQty.Text, stat, lblProgress.Text);
             htmlTable.Append("</table>");
             // Add the main data table
             htmlTable.Append("<table border='1' style='border-collapse:collapse;'>");

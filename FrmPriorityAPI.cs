@@ -119,7 +119,8 @@ namespace WH_Panel
                 }
                 else
                 {
-                    button3_Click(this, EventArgs.Empty);
+                    await LoadWarehouseData();
+                   // button3_Click(this, EventArgs.Empty);
                     await PopulatePackCombobox();
                 }
             }
@@ -795,6 +796,13 @@ namespace WH_Panel
         List<Warehouse> loadedWareHouses = new List<Warehouse>();
         private async void button3_Click(object sender, EventArgs e)
         {
+            await LoadWarehouseData();
+        }
+
+        private async Task LoadWarehouseData()
+        {
+            txtLog.AppendText("Loading warehouses list...\n");
+
             string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$select=WARHSNAME,WARHSDES,WARHS";
             using (HttpClient client = new HttpClient())
             {
@@ -843,10 +851,12 @@ namespace WH_Panel
             }
             cmbWarehouseList.DroppedDown = true; // Open the dropdown list
         }
+
         public async void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cmbWarehouseList.SelectedItem != null)
             {
+                txtLog.AppendText("Loading warehouses list...\n");
                 string selectedWarehouse = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
                 string selectedWarehouseDesc = cmbWarehouseList.SelectedItem.ToString().Substring(selectedWarehouse.Length).Trim();
                 string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouse}'&$expand=WARHSBAL_SUBFORM";
