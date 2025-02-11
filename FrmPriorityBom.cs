@@ -72,8 +72,11 @@ using static WH_Panel.FrmPriorityBom;
 using Rectangle = System.Drawing.Rectangle;
 namespace WH_Panel
 {
+    
     public partial class FrmPriorityBom : Form
     {
+        public string SelectedSerialName { get; set; }
+
         private AppSettings settings;
         //private List<WarehouseBalance> warehouseBalances;
         public FrmPriorityBom()
@@ -103,7 +106,13 @@ namespace WH_Panel
                 txtbLog.ScrollToCaret();
                 return;
             }
-            GetGetRobWosList();
+            GetRobWosList();
+
+            // Select the serial name if it is set
+            if (!string.IsNullOrEmpty(SelectedSerialName))
+            {
+                cmbROBxList.SelectedItem = cmbROBxList.Items.Cast<Serial>().FirstOrDefault(s => s.SERIALNAME == SelectedSerialName);
+            }
         }
         public class Serial
         {
@@ -157,7 +166,7 @@ namespace WH_Panel
             public int PART { get; set; }
             public string MNFPARTNAME { get; set; }
         }
-        private async void GetGetRobWosList()
+        private async void GetRobWosList()
         {
             string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL";
             using (HttpClient client = new HttpClient())
@@ -772,10 +781,12 @@ namespace WH_Panel
         }
         private async Task FetchMFPNsForAllRows()
         {
+            txtbLog.AppendText("Fetching MFPNs for all rows\n");
             foreach (DataGridViewRow row in dgwBom.Rows)
             {
                 await FetchMFPNForRow(row);
             }
+            txtbLog.AppendText("MFPN fetching completed\n");
         }
         private void AttachTextBoxEvents(Control parentControl)
         {
@@ -1077,6 +1088,10 @@ namespace WH_Panel
                             SortIPNMovesByDate();
                             // Fetch MFPN for the selected row
                             await FetchMFPNForRow(selectedRow);
+                            await FetchAltForRow(selectedRow);
+
+
+
                         }
                         else
                         {
@@ -1103,6 +1118,70 @@ namespace WH_Panel
                 }
             }
         }
+
+        private async Task FetchAltsForAllRows()
+        {
+            txtbLog.AppendText("Fetching alts for all rows...\n");
+            foreach (DataGridViewRow row in dgwBom.Rows)
+            {
+                await FetchAltForRow(row);
+            }
+            txtbLog.AppendText("ALTs fetching complete.\n");
+        }
+
+        private async Task FetchAltForRow(DataGridViewRow row)
+        {
+            if (row.Cells["PARTNAME"].Value != null && (row.Cells["ALT"].Value == string.Empty || row.Cells["ALT"].Value == null))
+            {
+                string partName = row.Cells["PARTNAME"].Value.ToString();
+                string partUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART?$filter=PARTNAME eq '{partName}'&$expand=PARTALT_SUBFORM";
+                using (HttpClient client = new HttpClient())
+                {
+                    try
+                    {
+                        // Set the request headers if needed
+                        client.DefaultRequestHeaders.Accept.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        // Set the Authorization header
+                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                        // Make the HTTP GET request for part details
+                        HttpResponseMessage partResponse = await client.GetAsync(partUrl);
+                        partResponse.EnsureSuccessStatusCode();
+                        // Read the response content
+                        string partResponseBody = await partResponse.Content.ReadAsStringAsync();
+                        // Parse the JSON response
+                        var partApiResponse = JsonConvert.DeserializeObject<JObject>(partResponseBody);
+                        // Check if the response contains any data
+                        if (partApiResponse["value"] != null && partApiResponse["value"].Any())
+                        {
+                            var part = partApiResponse["value"].FirstOrDefault();
+                            var partAltSubform = part?["PARTALT_SUBFORM"]?.FirstOrDefault();
+                            if (partAltSubform != null)
+                            {
+                                string altName = partAltSubform["ALTNAME"]?.ToString();
+                                // Directly update the DataGridView cell
+                                row.Cells["ALT"].Value = altName;
+                            }
+                        }
+                    }
+                    catch (HttpRequestException ex)
+                    {
+                        txtbLog.ForeColor = Color.Red;
+                        txtbLog.AppendText($"Request error: {ex.Message}\n");
+                        txtbLog.ScrollToCaret();
+                    }
+                    catch (Exception ex)
+                    {
+                        txtbLog.ForeColor = Color.Red;
+                        txtbLog.AppendText($"Request error: {ex.Message}\n");
+                        txtbLog.ScrollToCaret();
+                    }
+                }
+            }
+            await Task.Delay(300); // 300 milliseconds delay
+        }
+
         private void SortIPNMovesByDate()
         {
             if (dgwIPNmoves.Columns["UDATE"] != null)
@@ -2354,7 +2433,7 @@ namespace WH_Panel
                 writer.WriteLine("</table>");
 
 
-            
+
 
                 writer.WriteLine("</body>");
                 writer.WriteLine("</html>");
@@ -2367,11 +2446,11 @@ namespace WH_Panel
             };
             p.Start();
         }
-        private async void btnGetMFNs_Click(object sender, EventArgs e)
-        {
-            //await FetchMFPNsWithDelay();
-            await FetchMFPNsForAllRows();
-        }
+        //private async void btnGetMFNs_Click(object sender, EventArgs e)
+        //{
+        //    //await FetchMFPNsWithDelay();
+        //    await FetchMFPNsForAllRows();
+        //}
         private async void btnGetWHstock_Click(object sender, EventArgs e)
         {
             await FetchWarehouseBalances();
@@ -2384,7 +2463,7 @@ namespace WH_Panel
 
         private async Task GetCommentsFromROBxxx()
         {
-             rtxtbComments.Clear();
+            rtxtbComments.Clear();
 
             if (string.IsNullOrEmpty(txtbRob.Text))
             {
@@ -2544,6 +2623,26 @@ namespace WH_Panel
             return $"<p>{input}</p>";
         }
 
+        private void btnGetMFNs_KeyDown(object sender, KeyEventArgs e)
+        {
+         
+        }
 
+        private async void btnGetMFNs_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (MouseButtons == MouseButtons.Right)
+            {
+                btnGetMFNs.Text = "GET ALTs";
+                FetchAltsForAllRows();
+                await(Task.Delay(1000));
+                btnGetMFNs.Text = "GET MFNPs";
+            }
+            else if (MouseButtons == MouseButtons.Left)
+            {
+                
+                FetchMFPNsForAllRows();
+                
+            }
+        }
     }
 }

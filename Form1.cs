@@ -322,7 +322,13 @@ namespace WH_Panel
         }
         private void btnFrmPMB_Click(object sender, EventArgs e)
         {
-            FrmPriorityMultiBom frm = new FrmPriorityMultiBom();    
+            FrmPriorityMultiBom frm = new FrmPriorityMultiBom();
+            frm.Show();
+        }
+
+        private void btnSearchROBs_Click(object sender, EventArgs e)
+        {
+            FrmPrioritySearchRob frm = new FrmPrioritySearchRob();
             frm.Show();
         }
     }

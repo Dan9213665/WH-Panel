@@ -60,6 +60,7 @@ namespace WH_Panel
             button7 = new Button();
             button2 = new Button();
             notifyIcon1 = new NotifyIcon(components);
+            btnSearchROBs = new Button();
             groupBox1.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
             groupBox4.SuspendLayout();
@@ -144,6 +145,7 @@ namespace WH_Panel
             // 
             // groupBox6
             // 
+            groupBox6.Controls.Add(btnSearchROBs);
             groupBox6.Controls.Add(button1);
             groupBox6.ForeColor = Color.White;
             groupBox6.Location = new Point(3, 136);
@@ -467,6 +469,17 @@ namespace WH_Panel
             notifyIcon1.MouseClick += notifyIcon1_MouseClick;
             notifyIcon1.MouseDoubleClick += notifyIcon1_MouseDoubleClick;
             // 
+            // btnSearchROBs
+            // 
+            btnSearchROBs.BackgroundImage = (Image)resources.GetObject("btnSearchROBs.BackgroundImage");
+            btnSearchROBs.BackgroundImageLayout = ImageLayout.Zoom;
+            btnSearchROBs.Location = new Point(60, 19);
+            btnSearchROBs.Name = "btnSearchROBs";
+            btnSearchROBs.Size = new Size(69, 64);
+            btnSearchROBs.TabIndex = 8;
+            btnSearchROBs.UseVisualStyleBackColor = true;
+            btnSearchROBs.Click += btnSearchROBs_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -530,5 +543,6 @@ namespace WH_Panel
         private GroupBox groupBox5;
         private GroupBox gpbxPMB;
         private Button btnFrmPMB;
+        private Button btnSearchROBs;
     }
 }

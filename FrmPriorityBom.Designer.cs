@@ -354,7 +354,7 @@
             btnGetMFNs.TabIndex = 7;
             btnGetMFNs.Text = "GET MFPNs";
             btnGetMFNs.UseVisualStyleBackColor = true;
-            btnGetMFNs.Click += btnGetMFNs_Click;
+            btnGetMFNs.MouseDown += btnGetMFNs_MouseDown;
             // 
             // progressBar1
             // 
