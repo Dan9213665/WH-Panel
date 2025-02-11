@@ -236,6 +236,8 @@ namespace WH_Panel
                         }
 
                         txtbLog.AppendText($"IPN: {partName}\n");
+                        txtbLog.ScrollToCaret();
+
                         var partParentSubform = part["PARTPARENT_SUBFORM"]?.FirstOrDefault();
                         if (partParentSubform == null)
                         {
@@ -255,6 +257,8 @@ namespace WH_Panel
                         }
 
                         txtbLog.AppendText($"Parent IPN: {parentName}\n");
+                        txtbLog.ScrollToCaret();
+
                         await FetchAndDisplaySerials(parentName);
                     }
                     catch (HttpRequestException ex)
@@ -371,6 +375,7 @@ namespace WH_Panel
                     SelectedSerialName = serialName
                 };
                 frmPriorityBom.Show();
+                frmPriorityBom.SelectComboBoxItem(serialName);
             }
             catch (Exception ex)
             {
@@ -379,6 +384,19 @@ namespace WH_Panel
                 txtbLog.ScrollToCaret();
             }
         }
+
+        private void SelectComboBoxItem(ComboBox comboBox, string serialName)
+        {
+            foreach (var item in comboBox.Items)
+            {
+                if (item is FrmPriorityBom.Serial serial && serial.SERIALNAME == serialName)
+                {
+                    comboBox.SelectedItem = item;
+                    break;
+                }
+            }
+        }
+
 
         private void dgwSerials_CellClick(object sender, DataGridViewCellEventArgs e)
         {

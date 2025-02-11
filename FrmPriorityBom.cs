@@ -89,8 +89,7 @@ namespace WH_Panel
             // Set the DrawMode property and handle the DrawItem event
             cmbROBxList.DrawMode = DrawMode.OwnerDrawFixed;
             cmbROBxList.DrawItem += cmbROBxList_DrawItem;
-            //cmbROBxList.SelectedIndexChanged += cmbROBxList_SelectedIndexChanged;
-            // Initialize DataGridView columns
+           
             // Handle the CellFormatting event
             dgwBom.CellFormatting += dgwBom_CellFormatting;
             AttachTextBoxEvents(this);
@@ -352,7 +351,19 @@ namespace WH_Panel
                 }
             }
         }
-        private async void cmbROBxList_SelectedIndexChanged(object sender, EventArgs e)
+        public void SelectComboBoxItem(string serialName)
+        {
+            foreach (var item in cmbROBxList.Items)
+            {
+                if (item is Serial serial && serial.SERIALNAME == serialName)
+                {
+                    cmbROBxList.SelectedItem = item;
+                    break;
+                }
+            }
+        }
+
+        public async void cmbROBxList_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cmbROBxList.SelectedItem is Serial selectedSerial)
             {
