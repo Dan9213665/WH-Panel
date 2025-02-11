@@ -34,6 +34,7 @@ namespace WH_Panel
             button4 = new Button();
             btnWorkProgramm = new Button();
             groupBox6 = new GroupBox();
+            btnSearchROBs = new Button();
             button1 = new Button();
             groupBox9 = new GroupBox();
             button14 = new Button();
@@ -60,7 +61,6 @@ namespace WH_Panel
             button7 = new Button();
             button2 = new Button();
             notifyIcon1 = new NotifyIcon(components);
-            btnSearchROBs = new Button();
             groupBox1.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
             groupBox4.SuspendLayout();
@@ -154,6 +154,18 @@ namespace WH_Panel
             groupBox6.TabIndex = 18;
             groupBox6.TabStop = false;
             groupBox6.Text = "Priority WH";
+            // 
+            // btnSearchROBs
+            // 
+            btnSearchROBs.BackColor = Color.IndianRed;
+            btnSearchROBs.BackgroundImage = (Image)resources.GetObject("btnSearchROBs.BackgroundImage");
+            btnSearchROBs.BackgroundImageLayout = ImageLayout.Zoom;
+            btnSearchROBs.Location = new Point(60, 19);
+            btnSearchROBs.Name = "btnSearchROBs";
+            btnSearchROBs.Size = new Size(69, 64);
+            btnSearchROBs.TabIndex = 8;
+            btnSearchROBs.UseVisualStyleBackColor = false;
+            btnSearchROBs.Click += btnSearchROBs_Click;
             // 
             // button1
             // 
@@ -468,17 +480,6 @@ namespace WH_Panel
             notifyIcon1.Visible = true;
             notifyIcon1.MouseClick += notifyIcon1_MouseClick;
             notifyIcon1.MouseDoubleClick += notifyIcon1_MouseDoubleClick;
-            // 
-            // btnSearchROBs
-            // 
-            btnSearchROBs.BackgroundImage = (Image)resources.GetObject("btnSearchROBs.BackgroundImage");
-            btnSearchROBs.BackgroundImageLayout = ImageLayout.Zoom;
-            btnSearchROBs.Location = new Point(60, 19);
-            btnSearchROBs.Name = "btnSearchROBs";
-            btnSearchROBs.Size = new Size(69, 64);
-            btnSearchROBs.TabIndex = 8;
-            btnSearchROBs.UseVisualStyleBackColor = true;
-            btnSearchROBs.Click += btnSearchROBs_Click;
             // 
             // Form1
             // 
