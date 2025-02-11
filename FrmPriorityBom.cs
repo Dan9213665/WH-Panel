@@ -69,6 +69,7 @@ using System.Security.Cryptography.Pkcs;
 using static QRCoder.PayloadGenerator;
 using OfficeOpenXml.Style;
 using static WH_Panel.FrmPriorityBom;
+using Rectangle = System.Drawing.Rectangle;
 namespace WH_Panel
 {
     public partial class FrmPriorityBom : Form
@@ -212,7 +213,7 @@ namespace WH_Panel
             cmbROBxList.Items.Clear();
             foreach (var serial in serials)
             {
-                if ((serial.SERIALSTATUSDES != "נסגרה" && serial.SERIALSTATUSDES != "קיט מלא" )|| cnkbClosed.Checked)
+                if ((serial.SERIALSTATUSDES != "נסגרה" && serial.SERIALSTATUSDES != "קיט מלא") || cnkbClosed.Checked)
                 {
                     cmbROBxList.Items.Add(serial);
                 }
@@ -356,6 +357,7 @@ namespace WH_Panel
                 txtbInputIPN.Focus();
                 // Load BOM details
                 await LoadBomDetails(selectedSerial.SERIALNAME);
+                await GetCommentsFromROBxxx();
             }
         }
         private void InitializeDataGridView()
@@ -825,7 +827,7 @@ namespace WH_Panel
         }
         private void TextBox_KeyUP(object sender, KeyEventArgs e)
         {
-            if (sender is System.Windows.Forms.TextBox textBox )
+            if (sender is System.Windows.Forms.TextBox textBox)
             {
                 string columnName = textBox.Tag?.ToString();
                 if (string.IsNullOrEmpty(columnName))
@@ -870,7 +872,7 @@ namespace WH_Panel
         }
         private void ApplyFilter(System.Windows.Forms.TextBox textBox, string columnName)
         {
-            if( textBox != txtbINPUTqty)
+            if (textBox != txtbINPUTqty)
             {
                 string filterText = textBox.Text.ToLower();
                 foreach (DataGridViewRow row in dgwBom.Rows)
@@ -1073,8 +1075,8 @@ namespace WH_Panel
                             gbxIPNstockMovements.Text = $"Stock Movements for {partName}";
                             ColorTheRows(dgwIPNmoves);
                             SortIPNMovesByDate();
-                             // Fetch MFPN for the selected row
-                             await FetchMFPNForRow(selectedRow);
+                            // Fetch MFPN for the selected row
+                            await FetchMFPNForRow(selectedRow);
                         }
                         else
                         {
@@ -1467,7 +1469,7 @@ namespace WH_Panel
             else
             {
                 //
-            }   
+            }
         }
         private async void txtbINPUTqty_KeyDown(object sender, KeyEventArgs e)
         {
@@ -1482,13 +1484,13 @@ namespace WH_Panel
                         var filteredRow = dgwBom.Rows.Cast<DataGridViewRow>().FirstOrDefault(row => row.Visible);
                         if (filteredRow != null)
                         {
-                            string wh= filteredRow.Cells["PARTNAME"].Value.ToString().Substring(0,3);
+                            string wh = filteredRow.Cells["PARTNAME"].Value.ToString().Substring(0, 3);
                             string partName = filteredRow.Cells["PARTNAME"].Value.ToString();
                             string serialName = txtbRob.Text; // Assuming txtbRob contains the SERIALNAME
                             int cQuant = int.Parse(filteredRow.Cells["CQUANT"].Value.ToString()); // Get the CQUANT value
                             int inKit = int.Parse(filteredRow.Cells["QUANT"].Value.ToString()); // Get the QUANT value
                             int neededQty = cQuant - inKit;
-                            await AddItemToKit(partName, serialName, neededQty, qty, filteredRow ,wh);
+                            await AddItemToKit(partName, serialName, neededQty, qty, filteredRow, wh);
                             txtbINPUTqty.Clear();
                             txtbInputIPN.Clear();
                             txtbInputIPN.Focus();
@@ -1512,7 +1514,7 @@ namespace WH_Panel
                 txtbInputIPN.Focus();
             }
         }
-        private async Task AddItemToKit(string partName, string serialName, int cQuant, int qty, DataGridViewRow filteredRow,string wh)
+        private async Task AddItemToKit(string partName, string serialName, int cQuant, int qty, DataGridViewRow filteredRow, string wh)
         {
             // Check quantity availability in the warehouse
             string checkUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{wh}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{partName}')";
@@ -1893,12 +1895,13 @@ namespace WH_Panel
             // Add the additional table with text from txtbRob, txtbName, txtbQty, txtbStatus, and lblProgress
             htmlTable.Append("<table border='1' style='border-collapse:collapse; margin-bottom: 20px;'>");
             htmlTable.Append("<tr><th>Rob</th><th>Name</th><th>Qty</th><th>Status</th><th>Progress</th></tr>");
-            string stat=string.Empty;
+            string stat = string.Empty;
             if (lblProgress.Text.Contains("100%"))
             {
                 stat = "קיט מלא";
             }
-            else {
+            else
+            {
                 stat = txtbStatus.Text;
             }
             htmlTable.AppendFormat("<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td></tr>",
@@ -2143,6 +2146,8 @@ namespace WH_Panel
                 DialogResult = DialogResult.OK;
             }
         }
+
+
         private void btnReport_Click(object sender, EventArgs e)
         {
             // Sort the DataGridView by the DELTA column in ascending order
@@ -2265,6 +2270,16 @@ namespace WH_Panel
                 writer.WriteLine($"<td colspan='2'>{lblProgress.Text}</td>");
                 writer.WriteLine("</tr>");
                 writer.WriteLine("</table>");
+
+                // Add a row displaying the comments if there are some in the work order
+                if (!string.IsNullOrEmpty(rtxtbComments.Text) && rtxtbComments.Text != "No comments found for the selected ROB work order.")
+                {
+                    writer.WriteLine("<div style='border: 1px solid black; padding: 10px; margin-top: 20px;'>");
+                    writer.WriteLine("<h2>Comments: ");
+                    writer.WriteLine(System.Net.WebUtility.HtmlEncode(rtxtbComments.Text).Replace(Environment.NewLine, "<br>"));
+                    writer.WriteLine("</h2></div>");
+                }
+
                 // Add the filter input box, clear button, and print button
                 writer.WriteLine("<div class='no-print' style='margin-bottom: 20px; text-align: center;'>");
                 writer.WriteLine("<input type='text' id='filterInput' onkeyup='filterTable()' placeholder='Filter table...' style='padding: 10px; width: 50%;text-align:center;background:orange;'>");
@@ -2337,6 +2352,10 @@ namespace WH_Panel
                     writer.WriteLine("</tr>");
                 }
                 writer.WriteLine("</table>");
+
+
+            
+
                 writer.WriteLine("</body>");
                 writer.WriteLine("</html>");
             }
@@ -2357,5 +2376,174 @@ namespace WH_Panel
         {
             await FetchWarehouseBalances();
         }
+
+        private async void btnGetComms_Click(object sender, EventArgs e)
+        {
+            await GetCommentsFromROBxxx();
+        }
+
+        private async Task GetCommentsFromROBxxx()
+        {
+             rtxtbComments.Clear();
+
+            if (string.IsNullOrEmpty(txtbRob.Text))
+            {
+                MessageBox.Show("No ROB work order is currently loaded.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            string serialName = txtbRob.Text;
+            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{serialName}'&$expand=SERIALTEXT_SUBFORM";
+
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    // Set the request headers if needed
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    // Set the Authorization header
+                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    // Make the HTTP GET request
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
+                    // Read the response content
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    // Parse the JSON response
+                    var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+                    var serialTextSubform = apiResponse["value"].FirstOrDefault()?["SERIALTEXT_SUBFORM"]?.ToObject<SerialText>();
+
+                    if (serialTextSubform != null)
+                    {
+                        rtxtbComments.Clear();
+                        string decodedText = System.Net.WebUtility.HtmlDecode(serialTextSubform.TEXT);
+                        string plainText = StripHtmlTags(decodedText);
+                        rtxtbComments.AppendText(plainText + Environment.NewLine);
+                    }
+                    else
+                    {
+                        //rtxtbComments.Text = "No comments found for the selected ROB work order.";
+                    }
+                }
+                catch (HttpRequestException ex)
+                {
+                    txtbLog.ForeColor = Color.Red;
+                    txtbLog.AppendText($"Request error: {ex.Message}\n");
+                    txtbLog.ScrollToCaret();
+                }
+                catch (Exception ex)
+                {
+                    txtbLog.ForeColor = Color.Red;
+                    txtbLog.AppendText($"Request error: {ex.Message}\n");
+                    txtbLog.ScrollToCaret();
+                }
+            }
+        }
+
+        private string StripHtmlTags(string input)
+        {
+
+            input = input.Replace("<br>", string.Empty);
+            input = input.Replace("<div>", string.Empty);
+            input = input.Replace("</div>", string.Empty);
+            input = input.Replace("<p>", string.Empty);
+            input = input.Replace("</p>", string.Empty);
+            input = input.Replace("p,div,li {margin:0cm;font-size:8.0pt;font-family:'Arial';}li > font > p {display: inline-block;}", string.Empty);
+            return System.Text.RegularExpressions.Regex.Replace(input, "<.*?>", string.Empty);
+        }
+
+
+
+        public class SerialText
+        {
+            public string TEXT { get; set; }
+        }
+
+        private void rtxtbComments_Enter(object sender, EventArgs e)
+        {
+            if (rtxtbComments.Text == "No comments found for the selected ROB work order.")
+            {
+                rtxtbComments.Clear();
+            }
+        }
+
+        private void rtxtbComments_Leave(object sender, EventArgs e)
+        {
+            if (rtxtbComments.Text == string.Empty)
+            {
+
+                //rtxtbComments.Text = "No comments found for the selected ROB work order.";
+            }
+
+        }
+
+        private async void btnSaveComments_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txtbRob.Text))
+            {
+                MessageBox.Show("No ROB work order is currently loaded.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            string serialName = txtbRob.Text;
+            string comments = rtxtbComments.Text;
+
+            // Ask for confirmation before patching the data
+            DialogResult result = MessageBox.Show("Are you sure you want to save the comments?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.No)
+            {
+                return;
+            }
+
+            // Reverse the process of stripping HTML tags
+            string htmlComments = ConvertToHtml(comments);
+
+            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/SERIALTEXT_SUBFORM";
+
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    // Set the request headers if needed
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    // Set the Authorization header
+                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    // Create the JSON payload for the PATCH request
+                    var payload = new
+                    {
+                        TEXT = htmlComments
+                    };
+                    var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+                    // Make the PATCH request
+                    HttpResponseMessage response = await client.PatchAsync(url, content);
+                    response.EnsureSuccessStatusCode();
+                    MessageBox.Show("Comments saved successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (HttpRequestException ex)
+                {
+                    txtbLog.ForeColor = Color.Red;
+                    txtbLog.AppendText($"Request error: {ex.Message}\n");
+                    txtbLog.ScrollToCaret();
+                }
+                catch (Exception ex)
+                {
+                    txtbLog.ForeColor = Color.Red;
+                    txtbLog.AppendText($"Request error: {ex.Message}\n");
+                    txtbLog.ScrollToCaret();
+                }
+            }
+        }
+
+        private string ConvertToHtml(string input)
+        {
+            input = input.Replace(Environment.NewLine, "<br>");
+            input = input.Replace(" ", "&nbsp;");
+            return $"<p>{input}</p>";
+        }
+
+
     }
 }

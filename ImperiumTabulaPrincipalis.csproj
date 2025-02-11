@@ -72,6 +72,7 @@
   <ItemGroup>
     <PackageReference Include="EPPlus" Version="7.5.2" />
     <PackageReference Include="FastMember.Signed" Version="1.5.0" />
+    <PackageReference Include="Markdig" Version="0.40.0" />
     <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
     <PackageReference Include="Microsoft.Office.Interop.Outlook" Version="15.0.4797.1004" />
     <PackageReference Include="OfficeOpenXml.Core.ExcelPackage" Version="1.0.0" />
