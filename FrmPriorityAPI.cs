@@ -28,6 +28,9 @@ namespace WH_Panel
     public partial class FrmPriorityAPI : Form
     {
         public AppSettings settings;
+        private DataTable dataTable;
+        private DataView dataView;
+
         //private DataTable dataTable;
         //private DataView dataView;
         public FrmPriorityAPI()
@@ -35,7 +38,7 @@ namespace WH_Panel
             InitializeComponent();
             SetDarkModeColors(this);
             AttachTextBoxEvents(this);
-            //InitializeDataTable();
+            InitializeDataTable();
             // Attach event handlers
             txtbFilterIPN.KeyUp += textBox6_KeyUp_1;
             txtbInputQty.KeyPress += textBox5_KeyPress;
@@ -59,6 +62,21 @@ namespace WH_Panel
             //this.RightToLeft = RightToLeft.Yes;
             //this.RightToLeftLayout = true;
             //SetRightToLeftForControls(this);
+        }
+
+        private void InitializeDataTable()
+        {
+            dataTable = new DataTable();
+            dataTable.Columns.Add("PARTNAME", typeof(string));
+            dataTable.Columns.Add("MNFPARTNAME", typeof(string));
+            dataTable.Columns.Add("PARTDES", typeof(string));
+            dataTable.Columns.Add("BALANCE", typeof(int));
+            dataTable.Columns.Add("CDATE", typeof(string));
+            dataTable.Columns.Add("PART", typeof(int));
+           
+
+            dataView = new DataView(dataTable);
+            dataGridView1.DataSource = dataView;
         }
         //public async void FrmPriorityAPI_Load(object sender, EventArgs e)
         //{
@@ -102,7 +120,35 @@ namespace WH_Panel
         //    dataGridView1.DataSource = dataView;
         //}
 
-        public async void FrmPriorityAPI_Load(object sender, EventArgs e)
+        //public async void FrmPriorityAPI_Load(object sender, EventArgs e)
+        //{
+        //    try
+        //    {
+        //        settings = SettingsManager.LoadSettings();
+        //        if (settings == null)
+        //        {
+        //            MessageBox.Show("Failed to load settings.");
+        //            return;
+        //        }
+        //        if (string.IsNullOrEmpty(settings.ApiUsername) || string.IsNullOrEmpty(settings.ApiPassword))
+        //        {
+        //            MessageBox.Show("API credentials are missing in the settings.");
+        //            return;
+        //        }
+        //        else
+        //        {
+        //            await LoadWarehouseData();
+        //            // button3_Click(this, EventArgs.Empty);
+        //            await PopulatePackCombobox();
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show($"An error occurred during initialization: {ex.Message}");
+        //    }
+        //}
+
+        private async void FrmPriorityAPI_Load(object sender, EventArgs e)
         {
             try
             {
@@ -120,7 +166,7 @@ namespace WH_Panel
                 else
                 {
                     await LoadWarehouseData();
-                    // button3_Click(this, EventArgs.Empty);
+                    InitializeDataTable(); // Initialize the DataTable after loading data
                     await PopulatePackCombobox();
                 }
             }
@@ -862,6 +908,7 @@ namespace WH_Panel
             cmbWarehouseList.DroppedDown = true; // Open the dropdown list
         }
 
+
         public async void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cmbWarehouseList.SelectedItem != null)
@@ -878,8 +925,6 @@ namespace WH_Panel
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                         // Set the Authorization header
-                        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
-                        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                         string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                         // Make the HTTP GET request
@@ -894,83 +939,26 @@ namespace WH_Panel
                         {
                             // Extract the WARHSBAL_SUBFORM data
                             var warehouseBalances = apiResponse.value.SelectMany(w => w.WARHSBAL_SUBFORM).ToList();
-                            // Set AutoGenerateColumns to false
-                            dataGridView1.AutoGenerateColumns = false;
-                            // Clear existing columns
-                            dataGridView1.Columns.Clear();
-                            // Define the columns you want to display
-                            //var locNameColumn = new DataGridViewTextBoxColumn
-                            //{
-                            //    DataPropertyName = "LOCNAME",
-                            //    HeaderText = "Location Name",
-                            //    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                            //    Name = "LOCNAME"
-                            //};
-                            var partNameColumn = new DataGridViewTextBoxColumn
-                            {
-                                DataPropertyName = "PARTNAME",
-                                HeaderText = "IPN",
-                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                                Name = "PARTNAME"
-                            };
-                            var partDesColumn = new DataGridViewTextBoxColumn
-                            {
-                                DataPropertyName = "PARTDES",
-                                HeaderText = "Description",
-                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                                Name = "PARTDES"
-                            };
-                            var balanceColumn = new DataGridViewTextBoxColumn
-                            {
-                                DataPropertyName = "BALANCE",
-                                HeaderText = "Balance",
-                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                                Name = "BALANCE"
-                            };
-                            //var tBalanceColumn = new DataGridViewTextBoxColumn
-                            //{
-                            //    DataPropertyName = "TBALANCE",
-                            //    HeaderText = "Total Balance",
-                            //    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                            //    Name = "TBALANCE"
-                            //};
-                            var cDateColumn = new DataGridViewTextBoxColumn
-                            {
-                                DataPropertyName = "CDATE",
-                                HeaderText = "DATE",
-                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                                Name = "CDATE"
-                            };
-                            var partIdColumn = new DataGridViewTextBoxColumn
-                            {
-                                DataPropertyName = "PART",
-                                HeaderText = "PART",
-                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                                Name = "PART"
-                            };
-                            var mfpnColumn = new DataGridViewTextBoxColumn
-                            {
-                                DataPropertyName = "MNFPARTNAME",
-                                HeaderText = "MFPN",
-                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                                Name = "MNFPARTNAME"
-                            };
-                            // Add columns to the DataGridView
-                            dataGridView1.Columns.AddRange(new DataGridViewColumn[]
-                            {
-                        //locNameColumn,
-                        partNameColumn,
-                        mfpnColumn,
-                        partDesColumn,
-                        balanceColumn,
-                        //tBalanceColumn,
-                        cDateColumn,
-                        partIdColumn
-                            });
-                            // Populate the DataGridView with the data
+                            // Clear existing rows in the DataTable
+                            dataTable.Rows.Clear();
+                            // Add rows to the DataTable
                             foreach (var balance in warehouseBalances)
                             {
-                                dataGridView1.Rows.Add(balance.PARTNAME, balance.MNFPARTNAME, balance.PARTDES, balance.BALANCE, balance.CDATE.Substring(0, 10), balance.PART); //balance.TBALANCE  //balance.LOCNAME
+                                try
+                                {
+                                    string partName = balance.PARTNAME ?? string.Empty;
+                                    string partDes = balance.PARTDES ?? string.Empty;
+                                    int balanceValue = balance.BALANCE;
+                                    string cDate = balance.CDATE?.Substring(0, 10) ?? string.Empty;
+                                    int partId = balance.PART;
+                                    string mfpn = balance.MNFPARTNAME ?? string.Empty;
+
+                                    dataTable.Rows.Add(partName, mfpn, partDes, balanceValue, cDate, partId );
+                                }
+                                catch (Exception ex)
+                                {
+                                    txtLog.AppendText($"Error adding row: {ex.Message}\n");
+                                }
                             }
                             groupBox3.Text = $"Warehouse  {selectedWarehouse} {selectedWarehouseDesc}";
                             ColorTheRows(dataGridView1);
@@ -1000,6 +988,214 @@ namespace WH_Panel
             }
             txtbPrefix.Text = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
         }
+
+
+        //public async void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    if (cmbWarehouseList.SelectedItem != null)
+        //    {
+        //        txtLog.AppendText("Loading warehouses list...\n");
+        //        string selectedWarehouse = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
+        //        string selectedWarehouseDesc = cmbWarehouseList.SelectedItem.ToString().Substring(selectedWarehouse.Length).Trim();
+        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouse}'&$expand=WARHSBAL_SUBFORM";
+        //        using (HttpClient client = new HttpClient())
+        //        {
+        //            try
+        //            {
+        //                // Set the request headers if needed
+        //                client.DefaultRequestHeaders.Accept.Clear();
+        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //                // Set the Authorization header
+        //                //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+        //                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+        //                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+        //                // Make the HTTP GET request
+        //                HttpResponseMessage response = await client.GetAsync(url);
+        //                response.EnsureSuccessStatusCode();
+        //                // Read the response content
+        //                string responseBody = await response.Content.ReadAsStringAsync();
+        //                // Parse the JSON response
+        //                var apiResponse = JsonConvert.DeserializeObject<WarehouseApiResponse>(responseBody);
+        //                // Check if the response contains any data
+        //                if (apiResponse.value != null && apiResponse.value.Count > 0)
+        //                {
+        //                    // Extract the WARHSBAL_SUBFORM data
+        //                    var warehouseBalances = apiResponse.value.SelectMany(w => w.WARHSBAL_SUBFORM).ToList();
+        //                    // Set AutoGenerateColumns to false
+        //                    dataGridView1.AutoGenerateColumns = false;
+        //                    // Clear existing columns
+        //                    dataGridView1.Columns.Clear();
+        //                    // Define the columns you want to display
+        //                    //var locNameColumn = new DataGridViewTextBoxColumn
+        //                    //{
+        //                    //    DataPropertyName = "LOCNAME",
+        //                    //    HeaderText = "Location Name",
+        //                    //    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+        //                    //    Name = "LOCNAME"
+        //                    //};
+        //                    var partNameColumn = new DataGridViewTextBoxColumn
+        //                    {
+        //                        DataPropertyName = "PARTNAME",
+        //                        HeaderText = "IPN",
+        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+        //                        Name = "PARTNAME"
+        //                    };
+        //                    var partDesColumn = new DataGridViewTextBoxColumn
+        //                    {
+        //                        DataPropertyName = "PARTDES",
+        //                        HeaderText = "Description",
+        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+        //                        Name = "PARTDES"
+        //                    };
+        //                    var balanceColumn = new DataGridViewTextBoxColumn
+        //                    {
+        //                        DataPropertyName = "BALANCE",
+        //                        HeaderText = "Balance",
+        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+        //                        Name = "BALANCE"
+        //                    };
+        //                    //var tBalanceColumn = new DataGridViewTextBoxColumn
+        //                    //{
+        //                    //    DataPropertyName = "TBALANCE",
+        //                    //    HeaderText = "Total Balance",
+        //                    //    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+        //                    //    Name = "TBALANCE"
+        //                    //};
+        //                    var cDateColumn = new DataGridViewTextBoxColumn
+        //                    {
+        //                        DataPropertyName = "CDATE",
+        //                        HeaderText = "DATE",
+        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+        //                        Name = "CDATE"
+        //                    };
+        //                    var partIdColumn = new DataGridViewTextBoxColumn
+        //                    {
+        //                        DataPropertyName = "PART",
+        //                        HeaderText = "PART",
+        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+        //                        Name = "PART"
+        //                    };
+        //                    var mfpnColumn = new DataGridViewTextBoxColumn
+        //                    {
+        //                        DataPropertyName = "MNFPARTNAME",
+        //                        HeaderText = "MFPN",
+        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+        //                        Name = "MNFPARTNAME"
+        //                    };
+        //                    // Add columns to the DataGridView
+        //                    dataGridView1.Columns.AddRange(new DataGridViewColumn[]
+        //                    {
+        //                //locNameColumn,
+        //                partNameColumn,
+        //                mfpnColumn,
+        //                partDesColumn,
+        //                balanceColumn,
+        //                //tBalanceColumn,
+        //                cDateColumn,
+        //                partIdColumn
+        //                    });
+        //                    // Populate the DataGridView with the data
+        //                    foreach (var balance in warehouseBalances)
+        //                    {
+        //                        dataGridView1.Rows.Add(balance.PARTNAME, balance.MNFPARTNAME, balance.PARTDES, balance.BALANCE, balance.CDATE.Substring(0, 10), balance.PART); //balance.TBALANCE  //balance.LOCNAME
+        //                    }
+        //                    groupBox3.Text = $"Warehouse  {selectedWarehouse} {selectedWarehouseDesc}";
+        //                    ColorTheRows(dataGridView1);
+        //                    if (lastUserInput != null)
+        //                    {
+        //                        lastUserInput.Focus();
+        //                    }
+        //                    else
+        //                    {
+        //                        txtbInputIPN.Focus();
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    MessageBox.Show("No data found for the selected warehouse balance.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //                }
+        //            }
+        //            catch (HttpRequestException ex)
+        //            {
+        //                MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            }
+        //        }
+        //    }
+        //    txtbPrefix.Text = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
+        //}
+
+
+        //public async void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    if (cmbWarehouseList.SelectedItem != null)
+        //    {
+        //        txtLog.AppendText("Loading warehouses list...\n");
+        //        string selectedWarehouse = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
+        //        string selectedWarehouseDesc = cmbWarehouseList.SelectedItem.ToString().Substring(selectedWarehouse.Length).Trim();
+        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouse}'&$expand=WARHSBAL_SUBFORM";
+        //        using (HttpClient client = new HttpClient())
+        //        {
+        //            try
+        //            {
+        //                // Set the request headers if needed
+        //                client.DefaultRequestHeaders.Accept.Clear();
+        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //                // Set the Authorization header
+        //                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+        //                // Make the HTTP GET request
+        //                HttpResponseMessage response = await client.GetAsync(url);
+        //                response.EnsureSuccessStatusCode();
+        //                // Read the response content
+        //                string responseBody = await response.Content.ReadAsStringAsync();
+        //                // Parse the JSON response
+        //                var apiResponse = JsonConvert.DeserializeObject<WarehouseApiResponse>(responseBody);
+        //                // Check if the response contains any data
+        //                if (apiResponse.value != null && apiResponse.value.Count > 0)
+        //                {
+        //                    // Extract the WARHSBAL_SUBFORM data
+        //                    var warehouseBalances = apiResponse.value.SelectMany(w => w.WARHSBAL_SUBFORM).ToList();
+        //                    // Clear existing rows in the DataTable
+        //                    dataTable.Rows.Clear();
+        //                    // Add rows to the DataTable
+        //                    foreach (var balance in warehouseBalances)
+        //                    {
+        //                        dataTable.Rows.Add(balance.PARTNAME, balance.MNFPARTNAME, balance.PARTDES, balance.BALANCE, balance.CDATE.Substring(0, 10), balance.PART);
+        //                    }
+        //                    groupBox3.Text = $"Warehouse  {selectedWarehouse} {selectedWarehouseDesc}";
+        //                    ColorTheRows(dataGridView1);
+        //                    if (lastUserInput != null)
+        //                    {
+        //                        lastUserInput.Focus();
+        //                    }
+        //                    else
+        //                    {
+        //                        txtbInputIPN.Focus();
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    MessageBox.Show("No data found for the selected warehouse balance.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //                }
+        //            }
+        //            catch (HttpRequestException ex)
+        //            {
+        //                MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            }
+        //        }
+        //    }
+        //    txtbPrefix.Text = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
+        //}
+
         private async Task ExtractMFPNForRow(DataGridViewRow row)
         {
             var partId = (int)row.Cells["PART"].Value;
@@ -1418,7 +1614,7 @@ namespace WH_Panel
         }
         private void textBox6_KeyUp_1(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Escape)
             {
                 string filterText = txtbFilterIPN.Text.Trim().ToLower();
                 if (e.KeyCode == Keys.Escape)
@@ -1426,12 +1622,16 @@ namespace WH_Panel
                     txtbFilterIPN.Clear();
                     filterText = string.Empty;
                 }
-                foreach (DataGridViewRow row in dataGridView1.Rows)
+
+                if (string.IsNullOrEmpty(filterText))
                 {
-                    if (row.Cells["PARTNAME"].Value != null)
-                    {
-                        row.Visible = row.Cells["PARTNAME"].Value.ToString().ToLower().Contains(filterText);
-                    }
+                    dataView.RowFilter = string.Empty;
+                    ColorTheRows(dataGridView1);
+                }
+                else
+                {
+                    dataView.RowFilter = $"PARTNAME LIKE '%{filterText}%'";
+                    ColorTheRows(dataGridView1);
                 }
             }
         }
@@ -2162,7 +2362,9 @@ namespace WH_Panel
         private void btnClearIpnFilter_Click(object sender, EventArgs e)
         {
             txtbFilterIPN.Clear();
+            dataView.RowFilter = string.Empty; // Clear the filter
             txtbFilterIPN.Focus();
+            ColorTheRows(dataGridView1);
         }
         private async void btnGetMFPNs_Click(object sender, EventArgs e)
         {
