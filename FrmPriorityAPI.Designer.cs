@@ -63,6 +63,7 @@
             txtbDecodeIPN = new TextBox();
             txtbPART = new TextBox();
             lblIPNdecoder = new Label();
+            chkbNoSticker = new CheckBox();
             groupBox2 = new GroupBox();
             tableLayoutPanel3 = new TableLayoutPanel();
             cmbWarehouseList = new ComboBox();
@@ -171,6 +172,7 @@
             tableLayoutPanel2.Controls.Add(tableLayoutPanel8, 1, 1);
             tableLayoutPanel2.Controls.Add(txtbPART, 2, 4);
             tableLayoutPanel2.Controls.Add(lblIPNdecoder, 1, 0);
+            tableLayoutPanel2.Controls.Add(chkbNoSticker, 1, 6);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.Location = new Point(3, 19);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -556,6 +558,17 @@
             lblIPNdecoder.TabIndex = 23;
             lblIPNdecoder.Text = "IPN Decoder";
             lblIPNdecoder.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // chkbNoSticker
+            // 
+            chkbNoSticker.AutoSize = true;
+            chkbNoSticker.Location = new Point(203, 129);
+            chkbNoSticker.Name = "chkbNoSticker";
+            chkbNoSticker.Size = new Size(81, 15);
+            chkbNoSticker.TabIndex = 24;
+            chkbNoSticker.Text = "NO sticker";
+            chkbNoSticker.UseVisualStyleBackColor = true;
+            chkbNoSticker.CheckedChanged += chkbNoSticker_CheckedChanged;
             // 
             // groupBox2
             // 
@@ -1030,5 +1043,6 @@
         private TextBox txtbPrefix;
         private TextBox txtbDecodeIPN;
         private Label lblIPNdecoder;
+        private CheckBox chkbNoSticker;
     }
 }

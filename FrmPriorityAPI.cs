@@ -71,7 +71,7 @@ namespace WH_Panel
         //    await PopulatePackCombobox();
         //}
 
-      
+
 
         //private void InitializeDataTable()
         //{
@@ -120,7 +120,7 @@ namespace WH_Panel
                 else
                 {
                     await LoadWarehouseData();
-                   // button3_Click(this, EventArgs.Empty);
+                    // button3_Click(this, EventArgs.Empty);
                     await PopulatePackCombobox();
                 }
             }
@@ -685,8 +685,18 @@ namespace WH_Panel
             if (e.KeyCode == Keys.Enter)
             {
                 // Call the button1_Click method programmatically
-                btnMFG_Click(sender, e);
-                btnPrintSticker_Click(sender, e);
+               
+                if(chkbNoSticker.Checked)
+                {
+                    btnMFG_Click(sender, e);
+                    
+                }
+                else
+                {
+                    btnMFG_Click(sender, e);
+                    btnPrintSticker_Click(sender, e);
+                }
+                
             }
         }
         private void textBox5_KeyPress(object sender, KeyPressEventArgs e)
@@ -717,7 +727,7 @@ namespace WH_Panel
             // Create a PR_PART object with the data from the textboxes
             PR_PART part = new PR_PART
             {
-                PARTNAME = txtbInputIPN.Text, 
+                PARTNAME = txtbInputIPN.Text,
                 MNFPARTNAME = txtbInputMFPN.Text,
                 PARTDES = txtbPartDescription.Text,
                 MNFNAME = txtbManufacturer.Text,
@@ -960,7 +970,7 @@ namespace WH_Panel
                             // Populate the DataGridView with the data
                             foreach (var balance in warehouseBalances)
                             {
-                                dataGridView1.Rows.Add(balance.PARTNAME, balance.MNFPARTNAME, balance.PARTDES, balance.BALANCE, balance.CDATE.Substring(0,10), balance.PART); //balance.TBALANCE  //balance.LOCNAME
+                                dataGridView1.Rows.Add(balance.PARTNAME, balance.MNFPARTNAME, balance.PARTDES, balance.BALANCE, balance.CDATE.Substring(0, 10), balance.PART); //balance.TBALANCE  //balance.LOCNAME
                             }
                             groupBox3.Text = $"Warehouse  {selectedWarehouse} {selectedWarehouseDesc}";
                             ColorTheRows(dataGridView1);
@@ -1144,7 +1154,7 @@ namespace WH_Panel
                             {
                                 foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
                                 {
-                                    dataGridView2.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME,"", trans.TQUANT, ""); 
+                                    dataGridView2.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "");
                                 }
                             }
                             groupBox4.Text = $"Stock Movements for {partName}";
@@ -1449,7 +1459,7 @@ namespace WH_Panel
         //}
 
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {          
+        {
             MessageBox.Show("Print stickers from Stock Movements list  >>>>");
         }
         private void ColorTheRows(DataGridView dataGridView)
@@ -1966,7 +1976,7 @@ namespace WH_Panel
                 }
                     };
                     // Insert the document
-                    await WarehouseService.InsertDocumentAsync(document, this,settings);
+                    await WarehouseService.InsertDocumentAsync(document, this, settings);
                 }
                 else
                 {
@@ -2227,7 +2237,7 @@ namespace WH_Panel
                 }
             }
         }
-        TextBox lastUserInput=null;
+        TextBox lastUserInput = null;
         private void txtbDecodeIPN_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -2261,9 +2271,17 @@ namespace WH_Panel
         }
         private void txtbINdoc_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.Enter && txtbINdoc.Text!=string.Empty)
+            if (e.KeyCode == Keys.Enter && txtbINdoc.Text != string.Empty)
             {
                 txtbInputQty.Focus();
+            }
+        }
+
+        private void chkbNoSticker_CheckedChanged(object sender, EventArgs e)
+        {
+            if(chkbNoSticker.Checked)
+            {
+                chkbNoSticker.BackColor = Color.IndianRed;
             }
         }
     }
