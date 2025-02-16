@@ -22,7 +22,8 @@ using System.Reflection; // Add this using directive if not already present
 using System.Drawing;
 using System.Security.Principal; // Add this using directive if not already present
 using System.IO;
-using OfficeOpenXml; // Add the EPPlus NuGet package for reading Excel files
+using OfficeOpenXml;
+using OfficeOpenXml.Drawing.Slicer.Style; // Add the EPPlus NuGet package for reading Excel files
 namespace WH_Panel
 {
     public partial class FrmPriorityAPI : Form
@@ -30,7 +31,6 @@ namespace WH_Panel
         public AppSettings settings;
         private DataTable dataTable;
         private DataView dataView;
-
         //private DataTable dataTable;
         //private DataView dataView;
         public FrmPriorityAPI()
@@ -63,7 +63,6 @@ namespace WH_Panel
             //this.RightToLeftLayout = true;
             //SetRightToLeftForControls(this);
         }
-
         private void InitializeDataTable()
         {
             dataTable = new DataTable();
@@ -73,8 +72,6 @@ namespace WH_Panel
             dataTable.Columns.Add("BALANCE", typeof(int));
             dataTable.Columns.Add("CDATE", typeof(string));
             dataTable.Columns.Add("PART", typeof(int));
-           
-
             dataView = new DataView(dataTable);
             dataGridView1.DataSource = dataView;
         }
@@ -88,9 +85,6 @@ namespace WH_Panel
         //    }
         //    await PopulatePackCombobox();
         //}
-
-
-
         //private void InitializeDataTable()
         //{
         //    dataTable = new DataTable();
@@ -100,7 +94,6 @@ namespace WH_Panel
         //    dataTable.Columns.Add("CDATE", typeof(string));
         //    dataTable.Columns.Add("PART", typeof(int));
         //    dataTable.Columns.Add("MNFPARTNAME", typeof(string));
-
         //    foreach (DataGridViewRow row in dataGridView1.Rows)
         //    {
         //        if (row.Cells["PARTNAME"].Value != null)
@@ -115,11 +108,9 @@ namespace WH_Panel
         //            );
         //        }
         //    }
-
         //    dataView = new DataView(dataTable);
         //    dataGridView1.DataSource = dataView;
         //}
-
         //public async void FrmPriorityAPI_Load(object sender, EventArgs e)
         //{
         //    try
@@ -147,7 +138,6 @@ namespace WH_Panel
         //        MessageBox.Show($"An error occurred during initialization: {ex.Message}");
         //    }
         //}
-
         private async void FrmPriorityAPI_Load(object sender, EventArgs e)
         {
             try
@@ -731,18 +721,15 @@ namespace WH_Panel
             if (e.KeyCode == Keys.Enter)
             {
                 // Call the button1_Click method programmatically
-               
                 if(chkbNoSticker.Checked)
                 {
                     btnMFG_Click(sender, e);
-                    
                 }
                 else
                 {
                     btnMFG_Click(sender, e);
                     btnPrintSticker_Click(sender, e);
                 }
-                
             }
         }
         private void textBox5_KeyPress(object sender, KeyPressEventArgs e)
@@ -854,11 +841,9 @@ namespace WH_Panel
         {
             await LoadWarehouseData();
         }
-
         private async Task LoadWarehouseData()
         {
             txtLog.AppendText("Loading warehouses list...\n");
-
             string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$select=WARHSNAME,WARHSDES,WARHS";
             using (HttpClient client = new HttpClient())
             {
@@ -907,8 +892,6 @@ namespace WH_Panel
             }
             cmbWarehouseList.DroppedDown = true; // Open the dropdown list
         }
-
-
         public async void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cmbWarehouseList.SelectedItem != null)
@@ -952,7 +935,6 @@ namespace WH_Panel
                                     string cDate = balance.CDATE?.Substring(0, 10) ?? string.Empty;
                                     int partId = balance.PART;
                                     string mfpn = balance.MNFPARTNAME ?? string.Empty;
-
                                     dataTable.Rows.Add(partName, mfpn, partDes, balanceValue, cDate, partId );
                                 }
                                 catch (Exception ex)
@@ -988,8 +970,6 @@ namespace WH_Panel
             }
             txtbPrefix.Text = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
         }
-
-
         //public async void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         //{
         //    if (cmbWarehouseList.SelectedItem != null)
@@ -1128,8 +1108,6 @@ namespace WH_Panel
         //    }
         //    txtbPrefix.Text = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
         //}
-
-
         //public async void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         //{
         //    if (cmbWarehouseList.SelectedItem != null)
@@ -1195,7 +1173,6 @@ namespace WH_Panel
         //    }
         //    txtbPrefix.Text = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
         //}
-
         private async Task ExtractMFPNForRow(DataGridViewRow row)
         {
             var partId = (int)row.Cells["PART"].Value;
@@ -1622,7 +1599,6 @@ namespace WH_Panel
                     txtbFilterIPN.Clear();
                     filterText = string.Empty;
                 }
-
                 if (string.IsNullOrEmpty(filterText))
                 {
                     dataView.RowFilter = string.Empty;
@@ -1635,7 +1611,6 @@ namespace WH_Panel
                 }
             }
         }
-
         //private void textBox6_KeyUp_1(object sender, KeyEventArgs e)
         //{
         //    if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Escape)
@@ -1646,7 +1621,6 @@ namespace WH_Panel
         //            txtbFilterIPN.Clear();
         //            filterText = string.Empty;
         //        }
-
         //        if (string.IsNullOrEmpty(filterText))
         //        {
         //            dataView.RowFilter = string.Empty;
@@ -1657,7 +1631,6 @@ namespace WH_Panel
         //        }
         //    }
         //}
-
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             MessageBox.Show("Print stickers from Stock Movements list  >>>>");
@@ -2175,8 +2148,13 @@ namespace WH_Panel
                     }
                 }
                     };
-                    // Insert the document
-                    await WarehouseService.InsertDocumentAsync(document, this, settings);
+                    if (!tbtOUT.Checked)
+                    {
+                        await WarehouseService.InsertDocumentAsync(document, this, settings);
+                    }
+                    else if (tbtOUT.Checked) {
+                        MessageBox.Show("UNDER CONSTRUCTION");
+                    } 
                 }
                 else
                 {
@@ -2478,7 +2456,6 @@ namespace WH_Panel
                 txtbInputQty.Focus();
             }
         }
-
         private void chkbNoSticker_CheckedChanged(object sender, EventArgs e)
         {
             if(chkbNoSticker.Checked)
