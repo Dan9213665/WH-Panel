@@ -314,26 +314,38 @@ namespace WH_Panel
         {
             listOfPaths.Clear();
             string thisYear = DateTime.Now.Year.ToString();
-            string thisMonth = DateTime.Now.Month.ToString();
-            string PrevMonth = (DateTime.Now.Month - 1).ToString();
-            listOfPaths.Add("\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\2025\\" + thisYear + "." + thisMonth);
-            listOfPaths.Add("\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\2025\\" + thisYear + "." + PrevMonth);
+            string thisMonth = DateTime.Now.Month.ToString("00");
+            string prevMonth = (DateTime.Now.Month == 1 ? 12 : DateTime.Now.Month - 1).ToString("00");
+            string prevYear = DateTime.Now.Month == 1 ? (DateTime.Now.Year - 1).ToString() : thisYear;
+
+            listOfPaths.Add($"\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\2025\\{thisYear}.{thisMonth}");
+            listOfPaths.Add($"\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\2025\\{prevYear}.{prevMonth}");
 
             stopWatch.Start();
             label12.BackColor = Color.IndianRed;
             foreach (string path in listOfPaths)
             {
-                foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
+                if (Directory.Exists(path))
                 {
-                    countLoadedFIles++;
-                    string Litem = Path.GetFileName(file);
-                    DataLoader(file, Litem);
+                    foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
+                    {
+                        countLoadedFIles++;
+                        string Litem = Path.GetFileName(file);
+                        DataLoader(file, Litem);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show($"Directory not found: {path}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             PopulateGridView();
             SetColumsOrderPS();
             stopWatch.Stop();
         }
+
+
+
 
         private void label10_Click(object sender, EventArgs e)
         {
