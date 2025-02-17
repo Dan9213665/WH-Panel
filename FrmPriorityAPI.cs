@@ -31,6 +31,8 @@ namespace WH_Panel
         public AppSettings settings;
         private DataTable dataTable;
         private DataView dataView;
+        private ContextMenuStrip contextMenuStrip;
+        private DataGridViewRow selectedRowForContextMenu; // Class-level variable to store the selected row
         //private DataTable dataTable;
         //private DataView dataView;
         public FrmPriorityAPI()
@@ -39,6 +41,7 @@ namespace WH_Panel
             SetDarkModeColors(this);
             AttachTextBoxEvents(this);
             InitializeDataTable();
+            
             // Attach event handlers
             txtbFilterIPN.KeyUp += textBox6_KeyUp_1;
             txtbInputQty.KeyPress += textBox5_KeyPress;
@@ -62,6 +65,7 @@ namespace WH_Panel
             //this.RightToLeft = RightToLeft.Yes;
             //this.RightToLeftLayout = true;
             //SetRightToLeftForControls(this);
+           
         }
         private void InitializeDataTable()
         {
@@ -159,6 +163,8 @@ namespace WH_Panel
                     InitializeDataTable(); // Initialize the DataTable after loading data
                     await PopulatePackCombobox();
                 }
+
+                InitializeContextMenu();
             }
             catch (Exception ex)
             {
@@ -1709,24 +1715,219 @@ namespace WH_Panel
                 }
             }
         }
-        private async void dataGridView2_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+
+        private void InitializeContextMenu()
         {
-            if (e.Button == MouseButtons.Right && e.RowIndex >= 0) // Ensure the row index is valid and right mouse button is clicked
+            contextMenuStrip = new ContextMenuStrip();
+            foreach (var item in cmbPackCode.Items)
             {
-                var selectedRow = dataGridView2.Rows[e.RowIndex];
-                var docDesCell = selectedRow.Cells["DOCDES"];
-                var serialNameCell = selectedRow.Cells.Cast<DataGridViewCell>().FirstOrDefault(c => c.OwningColumn.Name == "LOGDOCNO");
-                if (docDesCell != null && docDesCell.Value != null && docDesCell.Value.ToString().Contains("נפוק"))
+                contextMenuStrip.Items.Add(item.ToString(), null, ContextMenuItem_Click);
+                //txtLog.AppendText($"Added context menu item: {item}\n");
+            }
+        }
+        private async void ContextMenuItem_Click(object sender, EventArgs e)
+        {
+            txtLog.AppendText("Context menu item clicked\n");
+
+            if (sender is ToolStripMenuItem menuItem && contextMenuStrip.Tag is DataGridViewRow selectedRow)
+            {
+                //txtLog.AppendText("Context menu item is ToolStripMenuItem\n");
+                string selectedPackCode = menuItem.Text;
+                string docNo = selectedRow.Cells["LOGDOCNO"].Value.ToString();
+
+                // Extract PARTNAME from groupBox4.Text
+                string partName = groupBox4.Text.Replace("Stock Movements for ", "").Trim();
+
+                // Confirm the update
+                DialogResult result = MessageBox.Show($"Do you want to update the package to '{selectedPackCode}' for part '{partName}'?", "Confirm Update", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result == DialogResult.Yes)
                 {
-                    if (serialNameCell != null && serialNameCell.Value != null)
-                    {
-                        string serialName = serialNameCell.Value.ToString();
-                        //MessageBox.Show(serialName);
-                        ShowSerialDetails(serialName);
-                    }
+                    //txtLog.AppendText($"Updating package to '{selectedPackCode}' for part '{partName}'\n");
+                    string docType = "P";
+                    //await UpdatePackage(docNo, docType, partName, selectedPackCode);
+                    txtLog.SelectionColor = Color.Red; // Set the color to green
+                    txtLog.AppendText($"Only through web interface! ☹️\n");
+                    txtLog.ScrollToCaret();
                 }
             }
         }
+
+        private string statusUrl { get;set; }
+        private async Task UpdatePackage(string docNo, string docType, string partName, string packCode)
+        {
+            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{docNo}' and TYPE eq '{docType}'&$expand=TRANSORDER_P_SUBFORM($filter=PARTNAME eq '{partName}')";
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    // Set the request headers
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                    // Make the HTTP GET request
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
+
+                    // Read the response content
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+
+                    if (apiResponse == null)
+                    {
+                        txtLog.AppendText("apiResponse is null\n");
+                        return;
+                    }
+
+                    var document = apiResponse["value"]?.FirstOrDefault();
+                    if (document == null)
+                    {
+                        txtLog.AppendText("No document found in apiResponse\n");
+                        return;
+                    }
+
+                    var transOrderToken = document["TRANSORDER_P_SUBFORM"];
+                    if (transOrderToken == null)
+                    {
+                        txtLog.AppendText("document['TRANSORDER_P_SUBFORM'] is null\n");
+                        return;
+                    }
+
+                    var transOrder = transOrderToken.FirstOrDefault();
+                    if (transOrder == null)
+                    {
+                        txtLog.AppendText("No transOrder found in document['TRANSORDER_P_SUBFORM']\n");
+                        return;
+                    }
+
+                    string kline = transOrder["KLINE"].ToString();
+                    string type = transOrder["TYPE"].ToString();
+                    string trans = transOrder["TRANS"].ToString();
+                    string transOrderUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P(DOCNO='{docNo}',TYPE='{docType}')/TRANSORDER_P_SUBFORM(KLINE={kline},TYPE='{type}',TRANS={trans})";
+                    txtLog.AppendText($"PATCH URL: {transOrderUrl}\n"); // Log the PATCH URL
+
+                    // Check if the document is finalized
+                    string originalStatus = document["STATDES"]?.ToString();
+                    if (originalStatus == "סופית")
+                    {
+                        // Update the document status to allow modifications
+                        var updateStatusPayload = new { STATDES = "טיוטא" };
+                        string statusPayload = JsonConvert.SerializeObject(updateStatusPayload);
+                        var statusContent = new StringContent(statusPayload, Encoding.UTF8, "application/json");
+                        string statusUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P(DOCNO='{docNo}',TYPE='{docType}')";
+                        HttpResponseMessage statusResponse = await client.PatchAsync(statusUrl, statusContent);
+                        if (!statusResponse.IsSuccessStatusCode)
+                        {
+                            string errorContent = await statusResponse.Content.ReadAsStringAsync();
+                            txtLog.AppendText($"Error updating document status: {statusResponse.StatusCode}\n{errorContent}\n");
+                            return;
+                        }
+                    }
+
+                    var updatePayload = new { PACKCODE = packCode };
+                    string jsonPayload = JsonConvert.SerializeObject(updatePayload);
+                    var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+                    // Make the HTTP PATCH request
+                    HttpResponseMessage patchResponse = await client.PatchAsync(transOrderUrl, content);
+                    if (patchResponse.IsSuccessStatusCode)
+                    {
+                        MessageBox.Show("Package updated successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        selectedRowForContextMenu.Cells["PACKNAME"].Value = packCode; // Update the DataGridView cell
+
+                        // Revert the document status back to its original state if it was finalized
+                        if (originalStatus == "סופית")
+                        {
+                            var revertStatusPayload = new { STATDES = originalStatus };
+                            string revertPayload = JsonConvert.SerializeObject(revertStatusPayload);
+                            var revertContent = new StringContent(revertPayload, Encoding.UTF8, "application/json");
+                            HttpResponseMessage revertResponse = await client.PatchAsync(statusUrl, revertContent);
+                            if (!revertResponse.IsSuccessStatusCode)
+                            {
+                                string errorContent = await revertResponse.Content.ReadAsStringAsync();
+                                txtLog.AppendText($"Error reverting document status: {revertResponse.StatusCode}\n{errorContent}\n");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        string errorContent = await patchResponse.Content.ReadAsStringAsync();
+                        txtLog.AppendText($"Error updating package: {patchResponse.StatusCode}\n{errorContent}\n");
+                    }
+                }
+                catch (HttpRequestException ex)
+                {
+                    txtLog.AppendText($"Request error: {ex.Message}\n");
+                }
+                catch (Exception ex)
+                {
+                    txtLog.AppendText($"An error occurred: {ex.Message}\n");
+                }
+            }
+        }
+
+
+
+        //private async void dataGridView2_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+        //{
+        //    if (e.Button == MouseButtons.Right && e.RowIndex >= 0 && e.ColumnIndex >= 0) // Ensure the row and column indices are valid and right mouse button is clicked
+        //    {
+        //        var selectedRow = dataGridView2.Rows[e.RowIndex];
+        //        var clickedCell = selectedRow.Cells[e.ColumnIndex];
+
+        //        // Check if the clicked cell is in the DOCDES column
+        //        if (clickedCell.OwningColumn.Name == "DOCDES")
+        //        {
+        //            var docDesCell = clickedCell;
+        //            var serialNameCell = selectedRow.Cells.Cast<DataGridViewCell>().FirstOrDefault(c => c.OwningColumn.Name == "LOGDOCNO");
+
+        //            if (docDesCell != null && docDesCell.Value != null && docDesCell.Value.ToString().Contains("נפוק"))
+        //            {
+        //                if (serialNameCell != null && serialNameCell.Value != null)
+        //                {
+        //                    string serialName = serialNameCell.Value.ToString();
+        //                    //MessageBox.Show(serialName);
+        //                    ShowSerialDetails(serialName);
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+        private async void dataGridView2_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right && e.RowIndex >= 0 && e.ColumnIndex >= 0) // Ensure the row and column indices are valid and right mouse button is clicked
+            {
+                var selectedRow = dataGridView2.Rows[e.RowIndex];
+                var clickedCell = selectedRow.Cells[e.ColumnIndex];
+
+                // Check if the clicked cell is in the DOCDES column
+                if (clickedCell.OwningColumn.Name == "DOCDES")
+                {
+                    var docDesCell = clickedCell;
+                    var serialNameCell = selectedRow.Cells.Cast<DataGridViewCell>().FirstOrDefault(c => c.OwningColumn.Name == "LOGDOCNO");
+
+                    if (docDesCell != null && docDesCell.Value != null && docDesCell.Value.ToString().Contains("נפוק"))
+                    {
+                        if (serialNameCell != null && serialNameCell.Value != null)
+                        {
+                            string serialName = serialNameCell.Value.ToString();
+                            //MessageBox.Show(serialName);
+                            ShowSerialDetails(serialName);
+                        }
+                    }
+                }
+                // Check if the clicked cell is in the PACK column
+                else if (clickedCell.OwningColumn.Name == "PACKNAME")
+                {
+                    //txtLog.AppendText($"Right-clicked on PACK cell\n");
+                    contextMenuStrip.Tag = selectedRow; // Store the selected row in the context menu's Tag property
+                    contextMenuStrip.Show(Cursor.Position);
+                }
+            }
+        }
+
+
         private async void ShowSerialDetails(string serialName)
         {
             string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{serialName}'";
