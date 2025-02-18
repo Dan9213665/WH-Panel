@@ -61,7 +61,6 @@
             tableLayoutPanel8 = new TableLayoutPanel();
             txtbPrefix = new TextBox();
             txtbDecodeIPN = new TextBox();
-            txtbPART = new TextBox();
             lblIPNdecoder = new Label();
             chkbNoSticker = new CheckBox();
             cbmOUT = new ComboBox();
@@ -76,6 +75,7 @@
             txtbWHSID = new TextBox();
             btnClearIpnFilter = new Button();
             btnGetMFPNs = new Button();
+            txtbPART = new TextBox();
             tableLayoutPanel4 = new TableLayoutPanel();
             gbxINSERT = new GroupBox();
             tableLayoutPanel5 = new TableLayoutPanel();
@@ -171,7 +171,6 @@
             tableLayoutPanel2.Controls.Add(tableLayoutPanel7, 1, 3);
             tableLayoutPanel2.Controls.Add(lblMFPNdecoder, 1, 2);
             tableLayoutPanel2.Controls.Add(tableLayoutPanel8, 1, 1);
-            tableLayoutPanel2.Controls.Add(txtbPART, 2, 4);
             tableLayoutPanel2.Controls.Add(lblIPNdecoder, 1, 0);
             tableLayoutPanel2.Controls.Add(chkbNoSticker, 1, 6);
             tableLayoutPanel2.Controls.Add(cbmOUT, 2, 6);
@@ -217,7 +216,7 @@
             // txtbPartDescription
             // 
             txtbPartDescription.Dock = DockStyle.Fill;
-            txtbPartDescription.Location = new Point(203, 108);
+            txtbPartDescription.Location = new Point(3, 108);
             txtbPartDescription.Name = "txtbPartDescription";
             txtbPartDescription.PlaceholderText = "Description from DB";
             txtbPartDescription.ReadOnly = true;
@@ -542,16 +541,6 @@
             txtbDecodeIPN.TextAlign = HorizontalAlignment.Center;
             txtbDecodeIPN.KeyDown += txtbDecodeIPN_KeyDown;
             // 
-            // txtbPART
-            // 
-            txtbPART.Dock = DockStyle.Fill;
-            txtbPART.Location = new Point(3, 108);
-            txtbPART.Name = "txtbPART";
-            txtbPART.ReadOnly = true;
-            txtbPART.Size = new Size(194, 23);
-            txtbPART.TabIndex = 13;
-            txtbPART.TextAlign = HorizontalAlignment.Center;
-            // 
             // lblIPNdecoder
             // 
             lblIPNdecoder.AutoSize = true;
@@ -614,6 +603,7 @@
             tableLayoutPanel3.Controls.Add(txtbWHSID, 2, 0);
             tableLayoutPanel3.Controls.Add(btnClearIpnFilter, 1, 1);
             tableLayoutPanel3.Controls.Add(btnGetMFPNs, 1, 0);
+            tableLayoutPanel3.Controls.Add(txtbPART, 3, 0);
             tableLayoutPanel3.Dock = DockStyle.Fill;
             tableLayoutPanel3.Location = new Point(3, 19);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -735,6 +725,16 @@
             btnGetMFPNs.Text = "GET MFPNs";
             btnGetMFPNs.UseVisualStyleBackColor = true;
             btnGetMFPNs.Click += btnGetMFPNs_Click;
+            // 
+            // txtbPART
+            // 
+            txtbPART.Dock = DockStyle.Fill;
+            txtbPART.Location = new Point(915, 3);
+            txtbPART.Name = "txtbPART";
+            txtbPART.ReadOnly = true;
+            txtbPART.Size = new Size(299, 23);
+            txtbPART.TabIndex = 13;
+            txtbPART.TextAlign = HorizontalAlignment.Center;
             // 
             // tableLayoutPanel4
             // 

@@ -309,7 +309,6 @@ namespace WH_Panel
             public long DOC { get; set; }
             public List<TransOrder> TRANSORDER_P_SUBFORM { get; set; }
 
-            public List<TransOrder> TRANSORDER_T_SUBFORM { get; set; }
         }
 
         public class TDocument
@@ -1056,11 +1055,13 @@ namespace WH_Panel
                     }
                     catch (HttpRequestException ex)
                     {
-                        MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        txtLog.AppendText($"Request error: {ex.Message}\n");
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        txtLog.AppendText($"An error occurred: {ex.Message}\n");
                     }
                 }
             }
@@ -2413,6 +2414,120 @@ namespace WH_Panel
             txtbDESC.Clear();
             txtbBuffer.Clear();
         }
+        //private async void btnMFG_Click(object sender, EventArgs e)
+        //{
+        //    if (cmbWarehouseList.SelectedItem != null && txtbInputIPN.Text != string.Empty && txtbInputMFPN.Text != string.Empty && txtbPartDescription.Text != string.Empty && txtbManufacturer.Text != string.Empty && int.Parse(txtbInputQty.Text) > 0 && int.Parse(txtbInputQty.Text) <= 50000)
+        //    {
+        //        string selectedWarehouseName = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
+        //        var selectedWarehouse = loadedWareHouses.FirstOrDefault(w => w.WARHSNAME == selectedWarehouseName);
+        //        if (selectedWarehouse != null)
+        //        {
+        //            string _BOOKNUM = string.Empty;
+        //            string _OWNERLOGIN = "Yuri_G";
+        //            string _SUPNAME = string.Empty;
+        //            if (rbtIN.Checked)
+        //            {
+        //                if (txtbINdoc.Text == string.Empty)
+        //                {
+        //                    MessageBox.Show("Please enter the supplier document description", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                    txtbINdoc.Focus();
+        //                    return;
+        //                }
+        //                else
+        //                {
+        //                    _BOOKNUM = txtbINdoc.Text;
+        //                    _SUPNAME = "CLIENT";
+        //                }
+        //            }
+        //            else if (tbtOUT.Checked)
+        //            {
+        //                if (txtbOUT.Text == string.Empty)
+        //                {
+        //                    MessageBox.Show("Please enter the requester", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                    txtbOUT.Focus();
+        //                    return;
+        //                }
+        //                else
+        //                {
+        //                    _BOOKNUM = txtbOUT.Text;
+        //                    _SUPNAME = "***";
+        //                }
+        //            }
+        //            else if (rbtMFG.Checked)
+        //            {
+        //                _BOOKNUM = "MFG";
+        //                _SUPNAME = "MFG";
+        //            }
+        //            else if (rbtFTK.Checked)
+        //            {
+        //                _BOOKNUM = "FTK";
+        //                _SUPNAME = "FTK";
+        //            }
+        //            // Create a new Document object
+        //            Document Pdocument = new Document
+        //            {
+        //                //DOCNO = "GR25000123", // Set the document number
+        //                //STATDES= "סופית",
+        //                USERLOGIN = _OWNERLOGIN,
+        //                //FLAG= "Y",
+        //                TYPE = "P", // Set the document type
+        //                CURDATE = DateTimeOffset.UtcNow,
+        //                SUPNAME = _SUPNAME, // Set the supplier name
+        //                BOOKNUM = _BOOKNUM, // Set the supplier number
+        //                TOWARHSNAME = selectedWarehouse.WARHSNAME,
+        //                TRANSORDER_P_SUBFORM = new List<TransOrder>
+        //        {
+        //            new TransOrder
+        //            {
+        //                PARTNAME = txtbInputIPN.Text,
+        //                TQUANT = int.Parse(txtbInputQty.Text),
+        //                PACKCODE = cmbPackCode.SelectedItem != null ? cmbPackCode.SelectedItem.ToString() : "Bag",
+        //                UNITNAME = "יח'",
+        //                //SERIALNAME = "0",
+        //                //CURDATE = DateTime.Now // Set UDATE to the current date and time
+        //            }
+        //        }
+        //            };
+
+        //            if (tbtOUT.Checked)
+        //            {
+        //                TDocument documentT = new TDocument
+        //                {
+        //                    USERLOGIN = _OWNERLOGIN,
+        //                    TYPE = "T", // Set the document type
+        //                    CURDATE = DateTimeOffset.UtcNow,
+        //                    WARHSNAME = selectedWarehouse.WARHSNAME,
+        //                    BOOKNUM = _BOOKNUM, // Set the supplier number
+        //                    TOWARHSNAME = "Flr",
+        //                    TRANSORDER_T_SUBFORM = new List<TransOrder>
+        //{
+        //    new TransOrder
+        //    {
+        //        PARTNAME = txtbInputIPN.Text,
+        //        QUANT = int.Parse(txtbInputQty.Text),
+        //        PACKCODE = cmbPackCode.SelectedItem != null ? cmbPackCode.SelectedItem.ToString() : "Bag",
+        //        UNITNAME = "יח'"
+        //    }
+        //}
+        //                };
+        //                await WarehouseService.TransfertDocumentAsync(documentT, this, settings);
+        //            }
+        //            else if (rbtMFG.Checked)
+        //            {
+        //                await WarehouseService.InsertDocumentAsync(Pdocument, this, settings);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            MessageBox.Show("Selected warehouse not found.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        MessageBox.Show("Please check data fields.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //    }
+        //}
+
         private async void btnMFG_Click(object sender, EventArgs e)
         {
             if (cmbWarehouseList.SelectedItem != null && txtbInputIPN.Text != string.Empty && txtbInputMFPN.Text != string.Empty && txtbPartDescription.Text != string.Empty && txtbManufacturer.Text != string.Empty && int.Parse(txtbInputQty.Text) > 0 && int.Parse(txtbInputQty.Text) <= 50000)
@@ -2462,34 +2577,10 @@ namespace WH_Panel
                         _BOOKNUM = "FTK";
                         _SUPNAME = "FTK";
                     }
-                    // Create a new Document object
-                    Document Pdocument = new Document
-                    {
-                        //DOCNO = "GR25000123", // Set the document number
-                        //STATDES= "סופית",
-                        USERLOGIN = _OWNERLOGIN,
-                        //FLAG= "Y",
-                        TYPE = "P", // Set the document type
-                        CURDATE = DateTimeOffset.UtcNow,
-                        SUPNAME = _SUPNAME, // Set the supplier name
-                        BOOKNUM = _BOOKNUM, // Set the supplier number
-                        TOWARHSNAME = selectedWarehouse.WARHSNAME,
-                        TRANSORDER_P_SUBFORM = new List<TransOrder>
-                {
-                    new TransOrder
-                    {
-                        PARTNAME = txtbInputIPN.Text,
-                        TQUANT = int.Parse(txtbInputQty.Text),
-                        PACKCODE = cmbPackCode.SelectedItem != null ? cmbPackCode.SelectedItem.ToString() : "Bag",
-                        UNITNAME = "יח'",
-                        //SERIALNAME = "0",
-                        //CURDATE = DateTime.Now // Set UDATE to the current date and time
-                    }
-                }
-                    };
 
                     if (tbtOUT.Checked)
                     {
+                        // Create a new TDocument object for outgoing transactions
                         TDocument documentT = new TDocument
                         {
                             USERLOGIN = _OWNERLOGIN,
@@ -2499,20 +2590,40 @@ namespace WH_Panel
                             BOOKNUM = _BOOKNUM, // Set the supplier number
                             TOWARHSNAME = "Flr",
                             TRANSORDER_T_SUBFORM = new List<TransOrder>
-        {
-            new TransOrder
-            {
-                PARTNAME = txtbInputIPN.Text,
-                QUANT = int.Parse(txtbInputQty.Text),
-                PACKCODE = cmbPackCode.SelectedItem != null ? cmbPackCode.SelectedItem.ToString() : "Bag",
-                UNITNAME = "יח'"
-            }
-        }
+                    {
+                        new TransOrder
+                        {
+                            PARTNAME = txtbInputIPN.Text,
+                            QUANT = int.Parse(txtbInputQty.Text),
+                            PACKCODE = cmbPackCode.SelectedItem != null ? cmbPackCode.SelectedItem.ToString() : "Bag",
+                            UNITNAME = "יח'"
+                        }
+                    }
                         };
                         await WarehouseService.TransfertDocumentAsync(documentT, this, settings);
                     }
                     else
                     {
+                        // Create a new Document object for incoming and manufacturing transactions
+                        Document Pdocument = new Document
+                        {
+                            USERLOGIN = _OWNERLOGIN,
+                            TYPE = "P", // Set the document type
+                            CURDATE = DateTimeOffset.UtcNow,
+                            SUPNAME = _SUPNAME, // Set the supplier name
+                            BOOKNUM = _BOOKNUM, // Set the supplier number
+                            TOWARHSNAME = selectedWarehouse.WARHSNAME,
+                            TRANSORDER_P_SUBFORM = new List<TransOrder>
+                    {
+                        new TransOrder
+                        {
+                            PARTNAME = txtbInputIPN.Text,
+                            QUANT = int.Parse(txtbInputQty.Text),
+                            PACKCODE = cmbPackCode.SelectedItem != null ? cmbPackCode.SelectedItem.ToString() : "Bag",
+                            UNITNAME = "יח'"
+                        }
+                    }
+                        };
                         await WarehouseService.InsertDocumentAsync(Pdocument, this, settings);
                     }
                 }
@@ -2526,6 +2637,7 @@ namespace WH_Panel
                 MessageBox.Show("Please check data fields.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
         private void rbtIN_CheckedChanged(object sender, EventArgs e)
         {
             if (rbtIN.Checked)
