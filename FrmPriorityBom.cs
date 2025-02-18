@@ -468,6 +468,10 @@ namespace WH_Panel
                                 }
                                 progressBar1.Value = (completedItems * 100) / pbTotal;
                             }
+
+                            // Sort the DataGridView by the DELTA column in descending order
+                            dgwBom.Sort(dgwBom.Columns["DELTA"], ListSortDirection.Ascending);
+
                             // Update the progress label
                             UpdateProgressLabel();
                             progressBar1.Update();

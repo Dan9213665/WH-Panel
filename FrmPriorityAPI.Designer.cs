@@ -328,6 +328,8 @@
             // 
             // btnMFG
             // 
+            btnMFG.BackgroundImage = (Image)resources.GetObject("btnMFG.BackgroundImage");
+            btnMFG.BackgroundImageLayout = ImageLayout.Stretch;
             btnMFG.Dock = DockStyle.Fill;
             btnMFG.Location = new Point(403, 171);
             btnMFG.Name = "btnMFG";
