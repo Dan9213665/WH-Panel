@@ -64,6 +64,7 @@
             txtbPART = new TextBox();
             lblIPNdecoder = new Label();
             chkbNoSticker = new CheckBox();
+            cbmOUT = new ComboBox();
             groupBox2 = new GroupBox();
             tableLayoutPanel3 = new TableLayoutPanel();
             cmbWarehouseList = new ComboBox();
@@ -166,13 +167,14 @@
             tableLayoutPanel2.Controls.Add(tableLayoutPanel6, 1, 9);
             tableLayoutPanel2.Controls.Add(txtbINdoc, 1, 7);
             tableLayoutPanel2.Controls.Add(txtbOUT, 2, 7);
-            tableLayoutPanel2.Controls.Add(cmbPackCode, 1, 5);
+            tableLayoutPanel2.Controls.Add(cmbPackCode, 1, 4);
             tableLayoutPanel2.Controls.Add(tableLayoutPanel7, 1, 3);
             tableLayoutPanel2.Controls.Add(lblMFPNdecoder, 1, 2);
             tableLayoutPanel2.Controls.Add(tableLayoutPanel8, 1, 1);
             tableLayoutPanel2.Controls.Add(txtbPART, 2, 4);
             tableLayoutPanel2.Controls.Add(lblIPNdecoder, 1, 0);
             tableLayoutPanel2.Controls.Add(chkbNoSticker, 1, 6);
+            tableLayoutPanel2.Controls.Add(cbmOUT, 2, 6);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.Location = new Point(3, 19);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -215,7 +217,7 @@
             // txtbPartDescription
             // 
             txtbPartDescription.Dock = DockStyle.Fill;
-            txtbPartDescription.Location = new Point(3, 108);
+            txtbPartDescription.Location = new Point(203, 108);
             txtbPartDescription.Name = "txtbPartDescription";
             txtbPartDescription.PlaceholderText = "Description from DB";
             txtbPartDescription.ReadOnly = true;
@@ -432,9 +434,8 @@
             cmbPackCode.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbPackCode.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
             cmbPackCode.FormattingEnabled = true;
-            cmbPackCode.Location = new Point(403, 108);
+            cmbPackCode.Location = new Point(403, 87);
             cmbPackCode.Name = "cmbPackCode";
-            tableLayoutPanel2.SetRowSpan(cmbPackCode, 2);
             cmbPackCode.Size = new Size(196, 40);
             cmbPackCode.Sorted = true;
             cmbPackCode.TabIndex = 19;
@@ -452,10 +453,10 @@
             tableLayoutPanel7.Location = new Point(203, 66);
             tableLayoutPanel7.Name = "tableLayoutPanel7";
             tableLayoutPanel7.RowCount = 1;
-            tableLayoutPanel2.SetRowSpan(tableLayoutPanel7, 3);
+            tableLayoutPanel2.SetRowSpan(tableLayoutPanel7, 2);
             tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel7.Size = new Size(194, 57);
+            tableLayoutPanel7.Size = new Size(194, 36);
             tableLayoutPanel7.TabIndex = 20;
             // 
             // cmbPreCode
@@ -541,10 +542,10 @@
             // txtbPART
             // 
             txtbPART.Dock = DockStyle.Fill;
-            txtbPART.Location = new Point(403, 87);
+            txtbPART.Location = new Point(3, 108);
             txtbPART.Name = "txtbPART";
             txtbPART.ReadOnly = true;
-            txtbPART.Size = new Size(196, 23);
+            txtbPART.Size = new Size(194, 23);
             txtbPART.TabIndex = 13;
             txtbPART.TextAlign = HorizontalAlignment.Center;
             // 
@@ -569,6 +570,19 @@
             chkbNoSticker.Text = "NO sticker";
             chkbNoSticker.UseVisualStyleBackColor = true;
             chkbNoSticker.CheckedChanged += chkbNoSticker_CheckedChanged;
+            // 
+            // cbmOUT
+            // 
+            cbmOUT.Dock = DockStyle.Fill;
+            cbmOUT.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbmOUT.Font = new Font("Segoe UI", 12F);
+            cbmOUT.FormattingEnabled = true;
+            cbmOUT.Items.AddRange(new object[] { "Yuri", "RWK", "TH", "QC", "" });
+            cbmOUT.Location = new Point(403, 129);
+            cbmOUT.Name = "cbmOUT";
+            cbmOUT.Size = new Size(196, 29);
+            cbmOUT.TabIndex = 25;
+            cbmOUT.SelectedIndexChanged += cbmOUT_SelectedIndexChanged;
             // 
             // groupBox2
             // 
@@ -1044,5 +1058,6 @@
         private TextBox txtbDecodeIPN;
         private Label lblIPNdecoder;
         private CheckBox chkbNoSticker;
+        private ComboBox cbmOUT;
     }
 }

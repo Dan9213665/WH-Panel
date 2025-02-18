@@ -1092,6 +1092,7 @@ namespace WH_Panel
                                     var row = dgwIPNmoves.Rows[rowIndex];
                                     // Fetch the PACK code and UDATE asynchronously
                                     _ = FetchAndSetPackCodeAndUDateAsync(row, trans.LOGDOCNO, partName, trans.TQUANT);
+                                    await Task.Delay(400); // 300 milliseconds delay
                                 }
                             }
                             gbxIPNstockMovements.Text = $"Stock Movements for {partName}";
@@ -1240,6 +1241,7 @@ namespace WH_Panel
                 url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM";
             }
             results = await FetchPackCodeFromUrlAsync(url, logDocNo, partName, quant, logDocNo.StartsWith("ROB"));
+           
             return results;
         }
         private async Task<List<(string PackCode, string BookNum, string Date)>> FetchPackCodeFromUrlAsync(string url, string logDocNo, string partName, int quant, bool isRobDocument)
@@ -1294,9 +1296,11 @@ namespace WH_Panel
                             string packCode = matchingOrder["PACKCODE"]?.ToString();
                             string bookNum = document["BOOKNUM"]?.ToString();
                             string date = await FetchUDateAsync(logDocNo);
+                          
                             results.Add((packCode, bookNum, date));
                         }
                     }
+                    
                     return results;
                 }
                 catch (HttpRequestException ex)
@@ -1424,6 +1428,8 @@ namespace WH_Panel
                 //txtLog.AppendText($"Unhandled document type for DOCNO: {docNo}\n");
                 //txtLog.ScrollToCaret();
             }
+
+           
             return uDate;
         }
         private void UpdatePing(long milliseconds)

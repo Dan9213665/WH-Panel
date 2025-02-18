@@ -41,7 +41,7 @@ namespace WH_Panel
             SetDarkModeColors(this);
             AttachTextBoxEvents(this);
             InitializeDataTable();
-            
+
             // Attach event handlers
             txtbFilterIPN.KeyUp += textBox6_KeyUp_1;
             txtbInputQty.KeyPress += textBox5_KeyPress;
@@ -65,7 +65,7 @@ namespace WH_Panel
             //this.RightToLeft = RightToLeft.Yes;
             //this.RightToLeftLayout = true;
             //SetRightToLeftForControls(this);
-           
+
         }
         private void InitializeDataTable()
         {
@@ -308,11 +308,33 @@ namespace WH_Panel
             public string Y_11663_5_ESH { get; set; }
             public long DOC { get; set; }
             public List<TransOrder> TRANSORDER_P_SUBFORM { get; set; }
+
+            public List<TransOrder> TRANSORDER_T_SUBFORM { get; set; }
         }
+
+        public class TDocument
+        {
+            public string WARHSNAME { get; set; }
+
+            public string TOWARHSNAME { get; set; }
+
+            public string USERLOGIN { get; set; }
+
+            public DateTimeOffset CURDATE { get; set; }
+            public string BOOKNUM { get; set; }
+            public string DOCNO { get; set; }
+            public string TYPE { get; set; }
+
+            public List<TransOrder> TRANSORDER_T_SUBFORM { get; set; }
+        }
+
+
         public class TransOrder
         {
             public string PARTNAME { get; set; }
             public int TQUANT { get; set; }
+
+            public int QUANT { get; set; }
             public string PACKCODE { get; set; }
             public string UNITNAME { get; set; }
             //public DateTime CURDATE { get; set; } // Add UDATE property
@@ -376,8 +398,7 @@ namespace WH_Panel
         public class WarehouseService
         {
             private static readonly string baseUrl = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522";
-            //private static readonly string username = "api"; // Replace with your actual username
-            //private static readonly string password = "DdD@12345"; // Replace with your actual password
+
             public static async Task InsertDocumentAsync(Document document, FrmPriorityAPI formInstance, AppSettings settings)
             {
                 using (HttpClient client = new HttpClient())
@@ -419,6 +440,75 @@ namespace WH_Panel
                             //await WarehouseService.UpdateDocumentStatusAsync(docNo, "סופית", "Y", formInstance);
                             //MessageBox.Show("Item successfully inserted.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             formInstance.txtLog.AppendText($"{insertedIpn} successfully inserted. Document number: {docNo}\n");
+                            formInstance.txtLog.ScrollToCaret();
+                        }
+                        else
+                        {
+                            // Read the error content
+                            string errorContent = await response.Content.ReadAsStringAsync();
+                            Clipboard.SetText($"Error: {response.StatusCode}\n{errorContent}");
+                            //MessageBox.Show($"Error: {response.StatusCode}\n{errorContent}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            formInstance.txtLog.AppendText($"Error: {response.StatusCode}\n{errorContent}\n");
+                            formInstance.txtLog.ScrollToCaret();
+                        }
+                    }
+                    catch (HttpRequestException ex)
+                    {
+                        //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        formInstance.txtLog.AppendText($"Request error: {ex.Message}\n");
+                        formInstance.txtLog.ScrollToCaret();
+                    }
+                    catch (Exception ex)
+                    {
+                        //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        formInstance.txtLog.AppendText($"An error occurred: {ex.Message}\n");
+                        formInstance.txtLog.ScrollToCaret();
+                    }
+                }
+            }
+
+
+            public static async Task TransfertDocumentAsync(TDocument document, FrmPriorityAPI formInstance, AppSettings settings)
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    try
+                    {
+                        // Set the request headers
+                        client.DefaultRequestHeaders.Accept.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+                        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                        // Construct the API URL
+                        string apiUrl = $"{baseUrl}/DOCUMENTS_T";
+                        // Serialize the document to JSON
+                        string jsonPayload = JsonConvert.SerializeObject(document);
+                        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+                        // Make the HTTP POST request
+                        HttpResponseMessage response = await client.PostAsync(apiUrl, content);
+                        // Check if the response indicates success
+                        if (response.IsSuccessStatusCode)
+                        {
+                            // Read the response content
+                            string responseBody = await response.Content.ReadAsStringAsync();
+                            var responseJson = JObject.Parse(responseBody);
+                            // MessageBox.Show(responseJson.ToString());
+                            string docNo = responseJson["DOCNO"]?.ToString();
+                            //MessageBox.Show(docNo);
+                            string insertedIpn = formInstance.txtbInputIPN.Text;
+                            formInstance.comboBox1_SelectedIndexChanged(formInstance.cmbWarehouseList, EventArgs.Empty);
+                            formInstance.txtbInputIPN.Clear();
+                            formInstance.txtbInputMFPN.Clear();
+                            formInstance.txtbPartDescription.Clear();
+                            formInstance.txtbManufacturer.Clear();
+                            formInstance.txtbInputQty.Clear();
+                            formInstance.txtbPART.Clear();
+                            // Update the document status
+                            //await WarehouseService.UpdateDocumentStatusAsync(docNo, "סופית", "Y", formInstance);
+                            //MessageBox.Show("Item successfully inserted.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            formInstance.txtLog.AppendText($"{insertedIpn} successfully transferred. Document number: {docNo}\n");
                             formInstance.txtLog.ScrollToCaret();
                         }
                         else
@@ -727,7 +817,7 @@ namespace WH_Panel
             if (e.KeyCode == Keys.Enter)
             {
                 // Call the button1_Click method programmatically
-                if(chkbNoSticker.Checked)
+                if (chkbNoSticker.Checked)
                 {
                     btnMFG_Click(sender, e);
                 }
@@ -941,7 +1031,7 @@ namespace WH_Panel
                                     string cDate = balance.CDATE?.Substring(0, 10) ?? string.Empty;
                                     int partId = balance.PART;
                                     string mfpn = balance.MNFPARTNAME ?? string.Empty;
-                                    dataTable.Rows.Add(partName, mfpn, partDes, balanceValue, cDate, partId );
+                                    dataTable.Rows.Add(partName, mfpn, partDes, balanceValue, cDate, partId);
                                 }
                                 catch (Exception ex)
                                 {
@@ -1395,6 +1485,11 @@ namespace WH_Panel
                 // Handle GR documents
                 url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM";
             }
+            else if (logDocNo.StartsWith("WR"))
+            {
+                // Handle GR documents
+                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_T?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_T_SUBFORM";
+            }
             else if (logDocNo.StartsWith("ROB"))
             {
                 //txtLog.SelectionColor = Color.Red; // Set the color to red
@@ -1411,6 +1506,8 @@ namespace WH_Panel
             results = await FetchPackCodeFromUrlAsync(url, logDocNo, partName, quant, logDocNo.StartsWith("ROB"));
             return results;
         }
+
+
         private async Task<List<(string PackCode, string BookNum, string Date)>> FetchPackCodeFromUrlAsync(string url, string logDocNo, string partName, int quant, bool isRobDocument)
         {
             using (HttpClient client = new HttpClient())
@@ -1447,6 +1544,24 @@ namespace WH_Panel
                         string bookNum = document["BOOKNUM"]?.ToString();
                         string date = document["UDATE"]?.ToString();
                         results.Add((packCode, bookNum, date));
+                    }
+                    else if (logDocNo.StartsWith("WR"))
+                    {
+                        // Handle WR document logic
+                        var transOrders = document["TRANSORDER_T_SUBFORM"]?.ToList();
+                        if (transOrders == null)
+                        {
+                            return new List<(string PackCode, string BookNum, string Date)>();
+                        }
+                        // Find all matching PARTNAME and QUANT
+                        var matchingOrders = transOrders.Where(t => t["PARTNAME"].ToString() == partName && int.Parse(t["QUANT"].ToString()) == quant).ToList();
+                        foreach (var matchingOrder in matchingOrders)
+                        {
+                            string packCode = matchingOrder["PACKCODE"]?.ToString();
+                            string bookNum = document["BOOKNUM"]?.ToString();
+                            string date = await FetchUDateAsync(logDocNo);
+                            results.Add((packCode, bookNum, date));
+                        }
                     }
                     else
                     {
@@ -1586,6 +1701,48 @@ namespace WH_Panel
                     }
                 }
             }
+            else if (docNo.StartsWith("WR"))
+            {
+                // Fetch UDATE from DOCUMENTS_P
+                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_T?$filter=DOCNO eq '{docNo}'";
+                using (HttpClient client = new HttpClient())
+                {
+                    try
+                    {
+                        // Set the request headers if needed
+                        client.DefaultRequestHeaders.Accept.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        // Set the Authorization header
+                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                        // Make the HTTP GET request
+                        HttpResponseMessage response = await client.GetAsync(url);
+                        response.EnsureSuccessStatusCode();
+                        // Read the response content
+                        string responseBody = await response.Content.ReadAsStringAsync();
+                        // Parse the JSON response
+                        var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+                        var document = apiResponse["value"].FirstOrDefault();
+                        if (document != null)
+                        {
+                            uDate = document["UDATE"]?.ToString();
+                            //txtLog.AppendText($"Data for DOCNO: {document} UDATE: {uDate} \n");
+                        }
+                    }
+                    catch (HttpRequestException ex)
+                    {
+                        txtLog.SelectionColor = Color.Red; // Set the color to red
+                        txtLog.AppendText($"Request error: {ex.Message}\n");
+                        txtLog.ScrollToCaret();
+                    }
+                    catch (Exception ex)
+                    {
+                        txtLog.SelectionColor = Color.Red; // Set the color to red
+                        txtLog.AppendText($"Request error: {ex.Message}\n");
+                        txtLog.ScrollToCaret();
+                    }
+                }
+            }
             else
             {
                 // Handle other document types if needed
@@ -1617,26 +1774,7 @@ namespace WH_Panel
                 }
             }
         }
-        //private void textBox6_KeyUp_1(object sender, KeyEventArgs e)
-        //{
-        //    if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Escape)
-        //    {
-        //        string filterText = txtbFilterIPN.Text.Trim().ToLower();
-        //        if (e.KeyCode == Keys.Escape)
-        //        {
-        //            txtbFilterIPN.Clear();
-        //            filterText = string.Empty;
-        //        }
-        //        if (string.IsNullOrEmpty(filterText))
-        //        {
-        //            dataView.RowFilter = string.Empty;
-        //        }
-        //        else
-        //        {
-        //            dataView.RowFilter = $"PARTNAME LIKE '%{filterText}%'";
-        //        }
-        //    }
-        //}
+
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             MessageBox.Show("Print stickers from Stock Movements list  >>>>");
@@ -1752,7 +1890,7 @@ namespace WH_Panel
             }
         }
 
-        private string statusUrl { get;set; }
+        private string statusUrl { get; set; }
         private async Task UpdatePackage(string docNo, string docType, string partName, string packCode)
         {
             string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{docNo}' and TYPE eq '{docType}'&$expand=TRANSORDER_P_SUBFORM($filter=PARTNAME eq '{partName}')";
@@ -2304,7 +2442,7 @@ namespace WH_Panel
                     {
                         if (txtbOUT.Text == string.Empty)
                         {
-                            MessageBox.Show("Please enter the supplier name", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show("Please enter the requester", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             txtbOUT.Focus();
                             return;
                         }
@@ -2325,7 +2463,7 @@ namespace WH_Panel
                         _SUPNAME = "FTK";
                     }
                     // Create a new Document object
-                    Document document = new Document
+                    Document Pdocument = new Document
                     {
                         //DOCNO = "GR25000123", // Set the document number
                         //STATDES= "סופית",
@@ -2349,13 +2487,34 @@ namespace WH_Panel
                     }
                 }
                     };
-                    if (!tbtOUT.Checked)
+
+                    if (tbtOUT.Checked)
                     {
-                        await WarehouseService.InsertDocumentAsync(document, this, settings);
+                        TDocument documentT = new TDocument
+                        {
+                            USERLOGIN = _OWNERLOGIN,
+                            TYPE = "T", // Set the document type
+                            CURDATE = DateTimeOffset.UtcNow,
+                            WARHSNAME = selectedWarehouse.WARHSNAME,
+                            BOOKNUM = _BOOKNUM, // Set the supplier number
+                            TOWARHSNAME = "Flr",
+                            TRANSORDER_T_SUBFORM = new List<TransOrder>
+        {
+            new TransOrder
+            {
+                PARTNAME = txtbInputIPN.Text,
+                QUANT = int.Parse(txtbInputQty.Text),
+                PACKCODE = cmbPackCode.SelectedItem != null ? cmbPackCode.SelectedItem.ToString() : "Bag",
+                UNITNAME = "יח'"
+            }
+        }
+                        };
+                        await WarehouseService.TransfertDocumentAsync(documentT, this, settings);
                     }
-                    else if (tbtOUT.Checked) {
-                        MessageBox.Show("UNDER CONSTRUCTION");
-                    } 
+                    else
+                    {
+                        await WarehouseService.InsertDocumentAsync(Pdocument, this, settings);
+                    }
                 }
                 else
                 {
@@ -2391,6 +2550,7 @@ namespace WH_Panel
                 btnMFG.Text = "OUTGOING";
                 btnMFG.Update();
                 txtbOUT.ReadOnly = false;
+                cbmOUT.DroppedDown = true;
                 txtbOUT.Focus();
             }
             else
@@ -2659,10 +2819,16 @@ namespace WH_Panel
         }
         private void chkbNoSticker_CheckedChanged(object sender, EventArgs e)
         {
-            if(chkbNoSticker.Checked)
+            if (chkbNoSticker.Checked)
             {
                 chkbNoSticker.BackColor = Color.IndianRed;
             }
+        }
+
+        private void cbmOUT_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            txtbOUT.Text = cbmOUT.SelectedItem.ToString();
+            txtbInputIPN.Focus();
         }
     }
 }
