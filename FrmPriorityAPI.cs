@@ -939,7 +939,7 @@ namespace WH_Panel
         }
         private async Task LoadWarehouseData()
         {
-            txtLog.AppendText("Loading warehouses list...\n");
+            txtLog.AppendText($"Loading warehouses list...\n");
             string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$select=WARHSNAME,WARHSDES,WARHS";
             using (HttpClient client = new HttpClient())
             {
@@ -992,7 +992,7 @@ namespace WH_Panel
         {
             if (cmbWarehouseList.SelectedItem != null)
             {
-                txtLog.AppendText("Loading warehouses list...\n");
+                txtLog.AppendText($"Loading {cmbWarehouseList.SelectedItem} stock data ...\n");
                 string selectedWarehouse = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
                 string selectedWarehouseDesc = cmbWarehouseList.SelectedItem.ToString().Substring(selectedWarehouse.Length).Trim();
                 string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouse}'&$expand=WARHSBAL_SUBFORM";

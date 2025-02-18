@@ -331,6 +331,7 @@
             btnMFG.BackgroundImage = (Image)resources.GetObject("btnMFG.BackgroundImage");
             btnMFG.BackgroundImageLayout = ImageLayout.Stretch;
             btnMFG.Dock = DockStyle.Fill;
+            btnMFG.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnMFG.Location = new Point(403, 171);
             btnMFG.Name = "btnMFG";
             tableLayoutPanel2.SetRowSpan(btnMFG, 2);
