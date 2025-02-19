@@ -923,7 +923,7 @@ namespace WH_Panel
                 }
             }
         }
-        private void button2_Click(object sender, EventArgs e)
+        private void btnClearFields_Click(object sender, EventArgs e)
         {
             txtbInputIPN.Clear();
             txtbInputMFPN.Clear();

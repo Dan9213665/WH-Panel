@@ -42,8 +42,6 @@
             label3 = new Label();
             label4 = new Label();
             label5 = new Label();
-            btnPrinSticker = new Button();
-            button2 = new Button();
             btnMFG = new Button();
             tableLayoutPanel6 = new TableLayoutPanel();
             rbtMFG = new RadioButton();
@@ -64,6 +62,9 @@
             lblIPNdecoder = new Label();
             chkbNoSticker = new CheckBox();
             cbmOUT = new ComboBox();
+            tableLayoutPanel9 = new TableLayoutPanel();
+            btnPrinSticker = new Button();
+            button2 = new Button();
             groupBox2 = new GroupBox();
             tableLayoutPanel3 = new TableLayoutPanel();
             cmbWarehouseList = new ComboBox();
@@ -73,9 +74,10 @@
             groupBox4 = new GroupBox();
             dataGridView2 = new DataGridView();
             txtbWHSID = new TextBox();
+            txtbPART = new TextBox();
+            tableLayoutPanel10 = new TableLayoutPanel();
             btnClearIpnFilter = new Button();
             btnGetMFPNs = new Button();
-            txtbPART = new TextBox();
             tableLayoutPanel4 = new TableLayoutPanel();
             gbxINSERT = new GroupBox();
             tableLayoutPanel5 = new TableLayoutPanel();
@@ -100,12 +102,14 @@
             tableLayoutPanel6.SuspendLayout();
             tableLayoutPanel7.SuspendLayout();
             tableLayoutPanel8.SuspendLayout();
+            tableLayoutPanel9.SuspendLayout();
             groupBox2.SuspendLayout();
             tableLayoutPanel3.SuspendLayout();
             groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
+            tableLayoutPanel10.SuspendLayout();
             tableLayoutPanel4.SuspendLayout();
             gbxINSERT.SuspendLayout();
             tableLayoutPanel5.SuspendLayout();
@@ -161,8 +165,6 @@
             tableLayoutPanel2.Controls.Add(label3, 0, 4);
             tableLayoutPanel2.Controls.Add(label4, 0, 6);
             tableLayoutPanel2.Controls.Add(label5, 0, 8);
-            tableLayoutPanel2.Controls.Add(btnPrinSticker, 2, 2);
-            tableLayoutPanel2.Controls.Add(button2, 2, 0);
             tableLayoutPanel2.Controls.Add(btnMFG, 2, 8);
             tableLayoutPanel2.Controls.Add(tableLayoutPanel6, 1, 9);
             tableLayoutPanel2.Controls.Add(txtbINdoc, 1, 7);
@@ -174,6 +176,7 @@
             tableLayoutPanel2.Controls.Add(lblIPNdecoder, 1, 0);
             tableLayoutPanel2.Controls.Add(chkbNoSticker, 1, 6);
             tableLayoutPanel2.Controls.Add(cbmOUT, 2, 6);
+            tableLayoutPanel2.Controls.Add(tableLayoutPanel9, 2, 0);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.Location = new Point(3, 19);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -300,30 +303,6 @@
             label5.TabIndex = 9;
             label5.Text = "QTY";
             label5.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // btnPrinSticker
-            // 
-            btnPrinSticker.Dock = DockStyle.Fill;
-            btnPrinSticker.Location = new Point(403, 45);
-            btnPrinSticker.Name = "btnPrinSticker";
-            tableLayoutPanel2.SetRowSpan(btnPrinSticker, 2);
-            btnPrinSticker.Size = new Size(196, 36);
-            btnPrinSticker.TabIndex = 10;
-            btnPrinSticker.Text = "Print Sticker";
-            btnPrinSticker.UseVisualStyleBackColor = true;
-            btnPrinSticker.Click += btnPrintSticker_Click;
-            // 
-            // button2
-            // 
-            button2.Dock = DockStyle.Fill;
-            button2.Location = new Point(403, 3);
-            button2.Name = "button2";
-            tableLayoutPanel2.SetRowSpan(button2, 2);
-            button2.Size = new Size(196, 36);
-            button2.TabIndex = 11;
-            button2.Text = "CLEAR";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
             // 
             // btnMFG
             // 
@@ -576,6 +555,46 @@
             cbmOUT.TabIndex = 25;
             cbmOUT.SelectedIndexChanged += cbmOUT_SelectedIndexChanged;
             // 
+            // tableLayoutPanel9
+            // 
+            tableLayoutPanel9.ColumnCount = 2;
+            tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel9.Controls.Add(btnPrinSticker, 1, 0);
+            tableLayoutPanel9.Controls.Add(button2, 0, 0);
+            tableLayoutPanel9.Dock = DockStyle.Fill;
+            tableLayoutPanel9.Location = new Point(403, 3);
+            tableLayoutPanel9.Name = "tableLayoutPanel9";
+            tableLayoutPanel9.RowCount = 1;
+            tableLayoutPanel2.SetRowSpan(tableLayoutPanel9, 4);
+            tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel9.Size = new Size(196, 78);
+            tableLayoutPanel9.TabIndex = 26;
+            // 
+            // btnPrinSticker
+            // 
+            btnPrinSticker.BackgroundImage = (Image)resources.GetObject("btnPrinSticker.BackgroundImage");
+            btnPrinSticker.BackgroundImageLayout = ImageLayout.Stretch;
+            btnPrinSticker.Dock = DockStyle.Fill;
+            btnPrinSticker.Location = new Point(101, 3);
+            btnPrinSticker.Name = "btnPrinSticker";
+            btnPrinSticker.Size = new Size(92, 72);
+            btnPrinSticker.TabIndex = 10;
+            btnPrinSticker.UseVisualStyleBackColor = true;
+            btnPrinSticker.Click += btnPrintSticker_Click;
+            // 
+            // button2
+            // 
+            button2.BackgroundImage = (Image)resources.GetObject("button2.BackgroundImage");
+            button2.BackgroundImageLayout = ImageLayout.Stretch;
+            button2.Dock = DockStyle.Fill;
+            button2.Location = new Point(3, 3);
+            button2.Name = "button2";
+            button2.Size = new Size(92, 72);
+            button2.TabIndex = 11;
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += btnClearFields_Click;
+            // 
             // groupBox2
             // 
             tableLayoutPanel1.SetColumnSpan(groupBox2, 4);
@@ -601,9 +620,8 @@
             tableLayoutPanel3.Controls.Add(txtbFilterIPN, 0, 1);
             tableLayoutPanel3.Controls.Add(groupBox4, 2, 2);
             tableLayoutPanel3.Controls.Add(txtbWHSID, 2, 0);
-            tableLayoutPanel3.Controls.Add(btnClearIpnFilter, 1, 1);
-            tableLayoutPanel3.Controls.Add(btnGetMFPNs, 1, 0);
             tableLayoutPanel3.Controls.Add(txtbPART, 3, 0);
+            tableLayoutPanel3.Controls.Add(tableLayoutPanel10, 1, 0);
             tableLayoutPanel3.Dock = DockStyle.Fill;
             tableLayoutPanel3.Location = new Point(3, 19);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -704,28 +722,6 @@
             txtbWHSID.Size = new Size(298, 23);
             txtbWHSID.TabIndex = 5;
             // 
-            // btnClearIpnFilter
-            // 
-            btnClearIpnFilter.Dock = DockStyle.Fill;
-            btnClearIpnFilter.Location = new Point(307, 41);
-            btnClearIpnFilter.Name = "btnClearIpnFilter";
-            btnClearIpnFilter.Size = new Size(298, 32);
-            btnClearIpnFilter.TabIndex = 6;
-            btnClearIpnFilter.Text = "Clear IPN filter";
-            btnClearIpnFilter.UseVisualStyleBackColor = true;
-            btnClearIpnFilter.Click += btnClearIpnFilter_Click;
-            // 
-            // btnGetMFPNs
-            // 
-            btnGetMFPNs.Dock = DockStyle.Fill;
-            btnGetMFPNs.Location = new Point(307, 3);
-            btnGetMFPNs.Name = "btnGetMFPNs";
-            btnGetMFPNs.Size = new Size(298, 32);
-            btnGetMFPNs.TabIndex = 7;
-            btnGetMFPNs.Text = "GET MFPNs";
-            btnGetMFPNs.UseVisualStyleBackColor = true;
-            btnGetMFPNs.Click += btnGetMFPNs_Click;
-            // 
             // txtbPART
             // 
             txtbPART.Dock = DockStyle.Fill;
@@ -735,6 +731,48 @@
             txtbPART.Size = new Size(299, 23);
             txtbPART.TabIndex = 13;
             txtbPART.TextAlign = HorizontalAlignment.Center;
+            // 
+            // tableLayoutPanel10
+            // 
+            tableLayoutPanel10.ColumnCount = 2;
+            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel10.Controls.Add(btnClearIpnFilter, 0, 0);
+            tableLayoutPanel10.Controls.Add(btnGetMFPNs, 1, 0);
+            tableLayoutPanel10.Dock = DockStyle.Fill;
+            tableLayoutPanel10.Location = new Point(307, 3);
+            tableLayoutPanel10.Name = "tableLayoutPanel10";
+            tableLayoutPanel10.RowCount = 1;
+            tableLayoutPanel3.SetRowSpan(tableLayoutPanel10, 2);
+            tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel10.Size = new Size(298, 70);
+            tableLayoutPanel10.TabIndex = 14;
+            // 
+            // btnClearIpnFilter
+            // 
+            btnClearIpnFilter.BackgroundImage = (Image)resources.GetObject("btnClearIpnFilter.BackgroundImage");
+            btnClearIpnFilter.BackgroundImageLayout = ImageLayout.Stretch;
+            btnClearIpnFilter.Dock = DockStyle.Fill;
+            btnClearIpnFilter.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnClearIpnFilter.Location = new Point(3, 3);
+            btnClearIpnFilter.Name = "btnClearIpnFilter";
+            btnClearIpnFilter.Size = new Size(143, 64);
+            btnClearIpnFilter.TabIndex = 6;
+            btnClearIpnFilter.Text = "Clear IPN filter";
+            btnClearIpnFilter.UseVisualStyleBackColor = true;
+            btnClearIpnFilter.Click += btnClearIpnFilter_Click;
+            // 
+            // btnGetMFPNs
+            // 
+            btnGetMFPNs.BackgroundImage = (Image)resources.GetObject("btnGetMFPNs.BackgroundImage");
+            btnGetMFPNs.BackgroundImageLayout = ImageLayout.Stretch;
+            btnGetMFPNs.Dock = DockStyle.Fill;
+            btnGetMFPNs.Location = new Point(152, 3);
+            btnGetMFPNs.Name = "btnGetMFPNs";
+            btnGetMFPNs.Size = new Size(143, 64);
+            btnGetMFPNs.TabIndex = 7;
+            btnGetMFPNs.UseVisualStyleBackColor = true;
+            btnGetMFPNs.Click += btnGetMFPNs_Click;
             // 
             // tableLayoutPanel4
             // 
@@ -979,6 +1017,7 @@
             tableLayoutPanel7.PerformLayout();
             tableLayoutPanel8.ResumeLayout(false);
             tableLayoutPanel8.PerformLayout();
+            tableLayoutPanel9.ResumeLayout(false);
             groupBox2.ResumeLayout(false);
             tableLayoutPanel3.ResumeLayout(false);
             tableLayoutPanel3.PerformLayout();
@@ -986,6 +1025,7 @@
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             groupBox4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
+            tableLayoutPanel10.ResumeLayout(false);
             tableLayoutPanel4.ResumeLayout(false);
             gbxINSERT.ResumeLayout(false);
             tableLayoutPanel5.ResumeLayout(false);
@@ -1062,5 +1102,7 @@
         private Label lblIPNdecoder;
         private CheckBox chkbNoSticker;
         private ComboBox cbmOUT;
+        private TableLayoutPanel tableLayoutPanel9;
+        private TableLayoutPanel tableLayoutPanel10;
     }
 }
