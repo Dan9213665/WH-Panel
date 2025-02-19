@@ -759,7 +759,6 @@
             btnClearIpnFilter.Name = "btnClearIpnFilter";
             btnClearIpnFilter.Size = new Size(93, 64);
             btnClearIpnFilter.TabIndex = 6;
-            btnClearIpnFilter.Text = "Clear IPN filter";
             btnClearIpnFilter.UseVisualStyleBackColor = true;
             btnClearIpnFilter.Click += btnClearIpnFilter_Click;
             // 

@@ -41,16 +41,13 @@ namespace WH_Panel
             SetDarkModeColors(this);
             AttachTextBoxEvents(this);
             InitializeDataTable();
-
             // Attach event handlers
             txtbFilterIPN.KeyUp += textBox6_KeyUp_1;
             txtbInputQty.KeyPress += textBox5_KeyPress;
             txtbInputQty.TextChanged += textBox5_TextChanged;
-
             // Attach Sorted event handlers to DataGridViews
             dataGridView1.Sorted += DataGridView_Sorted;
             dataGridView2.Sorted += DataGridView_Sorted;
-
             //textBox6.KeyDown += textBox6_KeyDown;
             // Simulate button3 click on form load
             // Enable or disable gbxINSERT based on the current user
@@ -70,7 +67,6 @@ namespace WH_Panel
             //this.RightToLeft = RightToLeft.Yes;
             //this.RightToLeftLayout = true;
             //SetRightToLeftForControls(this);
-
         }
         private void InitializeDataTable()
         {
@@ -168,7 +164,6 @@ namespace WH_Panel
                     InitializeDataTable(); // Initialize the DataTable after loading data
                     await PopulatePackCombobox();
                 }
-
                 InitializeContextMenu();
             }
             catch (Exception ex)
@@ -320,31 +315,22 @@ namespace WH_Panel
             public string Y_11663_5_ESH { get; set; }
             public long DOC { get; set; }
             public List<TransOrder> TRANSORDER_P_SUBFORM { get; set; }
-
         }
-
         public class TDocument
         {
             public string WARHSNAME { get; set; }
-
             public string TOWARHSNAME { get; set; }
-
             public string USERLOGIN { get; set; }
-
             public DateTimeOffset CURDATE { get; set; }
             public string BOOKNUM { get; set; }
             public string DOCNO { get; set; }
             public string TYPE { get; set; }
-
             public List<TransOrder> TRANSORDER_T_SUBFORM { get; set; }
         }
-
-
         public class TransOrder
         {
             public string PARTNAME { get; set; }
             public int TQUANT { get; set; }
-
             public int QUANT { get; set; }
             public string PACKCODE { get; set; }
             public string UNITNAME { get; set; }
@@ -409,7 +395,6 @@ namespace WH_Panel
         public class WarehouseService
         {
             private static readonly string baseUrl = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522";
-
             public static async Task InsertDocumentAsync(Document document, FrmPriorityAPI formInstance, AppSettings settings)
             {
                 using (HttpClient client = new HttpClient())
@@ -477,8 +462,6 @@ namespace WH_Panel
                     }
                 }
             }
-
-
             public static async Task TransfertDocumentAsync(TDocument document, FrmPriorityAPI formInstance, AppSettings settings)
             {
                 using (HttpClient client = new HttpClient())
@@ -1524,8 +1507,6 @@ namespace WH_Panel
             results = await FetchPackCodeFromUrlAsync(url, logDocNo, partName, quant, logDocNo.StartsWith("ROB"));
             return results;
         }
-
-
         private async Task<List<(string PackCode, string BookNum, string Date)>> FetchPackCodeFromUrlAsync(string url, string logDocNo, string partName, int quant, bool isRobDocument)
         {
             using (HttpClient client = new HttpClient())
@@ -1799,7 +1780,6 @@ namespace WH_Panel
                 }
             }
         }
-
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             MessageBox.Show("Print stickers from Stock Movements list  >>>>");
@@ -1882,7 +1862,6 @@ namespace WH_Panel
                 }
             }
         }
-
         private void InitializeContextMenu()
         {
             contextMenuStrip = new ContextMenuStrip();
@@ -1895,16 +1874,13 @@ namespace WH_Panel
         private async void ContextMenuItem_Click(object sender, EventArgs e)
         {
             txtLog.AppendText("Context menu item clicked\n");
-
             if (sender is ToolStripMenuItem menuItem && contextMenuStrip.Tag is DataGridViewRow selectedRow)
             {
                 //txtLog.AppendText("Context menu item is ToolStripMenuItem\n");
                 string selectedPackCode = menuItem.Text;
                 string docNo = selectedRow.Cells["LOGDOCNO"].Value.ToString();
-
                 // Extract PARTNAME from groupBox4.Text
                 string partName = groupBox4.Text.Replace("Stock Movements for ", "").Trim();
-
                 // Confirm the update
                 DialogResult result = MessageBox.Show($"Do you want to update the package to '{selectedPackCode}' for part '{partName}'?", "Confirm Update", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (result == DialogResult.Yes)
@@ -1918,7 +1894,6 @@ namespace WH_Panel
                 }
             }
         }
-
         private string statusUrl { get; set; }
         private async Task UpdatePackage(string docNo, string docType, string partName, string packCode)
         {
@@ -1932,48 +1907,40 @@ namespace WH_Panel
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                     // Make the HTTP GET request
                     HttpResponseMessage response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
-
                     // Read the response content
                     string responseBody = await response.Content.ReadAsStringAsync();
                     var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-
                     if (apiResponse == null)
                     {
                         txtLog.AppendText("apiResponse is null\n");
                         return;
                     }
-
                     var document = apiResponse["value"]?.FirstOrDefault();
                     if (document == null)
                     {
                         txtLog.AppendText("No document found in apiResponse\n");
                         return;
                     }
-
                     var transOrderToken = document["TRANSORDER_P_SUBFORM"];
                     if (transOrderToken == null)
                     {
                         txtLog.AppendText("document['TRANSORDER_P_SUBFORM'] is null\n");
                         return;
                     }
-
                     var transOrder = transOrderToken.FirstOrDefault();
                     if (transOrder == null)
                     {
                         txtLog.AppendText("No transOrder found in document['TRANSORDER_P_SUBFORM']\n");
                         return;
                     }
-
                     string kline = transOrder["KLINE"].ToString();
                     string type = transOrder["TYPE"].ToString();
                     string trans = transOrder["TRANS"].ToString();
                     string transOrderUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P(DOCNO='{docNo}',TYPE='{docType}')/TRANSORDER_P_SUBFORM(KLINE={kline},TYPE='{type}',TRANS={trans})";
                     txtLog.AppendText($"PATCH URL: {transOrderUrl}\n"); // Log the PATCH URL
-
                     // Check if the document is finalized
                     string originalStatus = document["STATDES"]?.ToString();
                     if (originalStatus == "סופית")
@@ -1991,18 +1958,15 @@ namespace WH_Panel
                             return;
                         }
                     }
-
                     var updatePayload = new { PACKCODE = packCode };
                     string jsonPayload = JsonConvert.SerializeObject(updatePayload);
                     var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-
                     // Make the HTTP PATCH request
                     HttpResponseMessage patchResponse = await client.PatchAsync(transOrderUrl, content);
                     if (patchResponse.IsSuccessStatusCode)
                     {
                         MessageBox.Show("Package updated successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         selectedRowForContextMenu.Cells["PACKNAME"].Value = packCode; // Update the DataGridView cell
-
                         // Revert the document status back to its original state if it was finalized
                         if (originalStatus == "סופית")
                         {
@@ -2033,22 +1997,17 @@ namespace WH_Panel
                 }
             }
         }
-
-
-
         //private async void dataGridView2_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         //{
         //    if (e.Button == MouseButtons.Right && e.RowIndex >= 0 && e.ColumnIndex >= 0) // Ensure the row and column indices are valid and right mouse button is clicked
         //    {
         //        var selectedRow = dataGridView2.Rows[e.RowIndex];
         //        var clickedCell = selectedRow.Cells[e.ColumnIndex];
-
         //        // Check if the clicked cell is in the DOCDES column
         //        if (clickedCell.OwningColumn.Name == "DOCDES")
         //        {
         //            var docDesCell = clickedCell;
         //            var serialNameCell = selectedRow.Cells.Cast<DataGridViewCell>().FirstOrDefault(c => c.OwningColumn.Name == "LOGDOCNO");
-
         //            if (docDesCell != null && docDesCell.Value != null && docDesCell.Value.ToString().Contains("נפוק"))
         //            {
         //                if (serialNameCell != null && serialNameCell.Value != null)
@@ -2067,13 +2026,11 @@ namespace WH_Panel
             {
                 var selectedRow = dataGridView2.Rows[e.RowIndex];
                 var clickedCell = selectedRow.Cells[e.ColumnIndex];
-
                 // Check if the clicked cell is in the DOCDES column
                 if (clickedCell.OwningColumn.Name == "DOCDES")
                 {
                     var docDesCell = clickedCell;
                     var serialNameCell = selectedRow.Cells.Cast<DataGridViewCell>().FirstOrDefault(c => c.OwningColumn.Name == "LOGDOCNO");
-
                     if (docDesCell != null && docDesCell.Value != null && docDesCell.Value.ToString().Contains("נפוק"))
                     {
                         if (serialNameCell != null && serialNameCell.Value != null)
@@ -2093,8 +2050,6 @@ namespace WH_Panel
                 }
             }
         }
-
-
         private async void ShowSerialDetails(string serialName)
         {
             string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{serialName}'";
@@ -2516,7 +2471,6 @@ namespace WH_Panel
         //            }
         //        }
         //            };
-
         //            if (tbtOUT.Checked)
         //            {
         //                TDocument documentT = new TDocument
@@ -2555,7 +2509,6 @@ namespace WH_Panel
         //        MessageBox.Show("Please check data fields.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         //    }
         //}
-
         private async void btnMFG_Click(object sender, EventArgs e)
         {
             if (cmbWarehouseList.SelectedItem != null && txtbInputIPN.Text != string.Empty && txtbInputMFPN.Text != string.Empty && txtbPartDescription.Text != string.Empty && txtbManufacturer.Text != string.Empty && int.Parse(txtbInputQty.Text) > 0 && int.Parse(txtbInputQty.Text) <= 50000)
@@ -2605,7 +2558,6 @@ namespace WH_Panel
                         _BOOKNUM = "FTK";
                         _SUPNAME = "FTK";
                     }
-
                     if (tbtOUT.Checked)
                     {
                         // Create a new TDocument object for outgoing transactions
@@ -2665,7 +2617,6 @@ namespace WH_Panel
                 MessageBox.Show("Please check data fields.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         private void rbtIN_CheckedChanged(object sender, EventArgs e)
         {
             if (rbtIN.Checked)
@@ -2964,7 +2915,6 @@ namespace WH_Panel
                 chkbNoSticker.BackColor = Color.IndianRed;
             }
         }
-
         private void cbmOUT_SelectedIndexChanged(object sender, EventArgs e)
         {
             txtbOUT.Text = cbmOUT.SelectedItem.ToString();
