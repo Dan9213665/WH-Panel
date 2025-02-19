@@ -46,6 +46,11 @@ namespace WH_Panel
             txtbFilterIPN.KeyUp += textBox6_KeyUp_1;
             txtbInputQty.KeyPress += textBox5_KeyPress;
             txtbInputQty.TextChanged += textBox5_TextChanged;
+
+            // Attach Sorted event handlers to DataGridViews
+            dataGridView1.Sorted += DataGridView_Sorted;
+            dataGridView2.Sorted += DataGridView_Sorted;
+
             //textBox6.KeyDown += textBox6_KeyDown;
             // Simulate button3 click on form load
             // Enable or disable gbxINSERT based on the current user
@@ -180,6 +185,13 @@ namespace WH_Panel
                 {
                     SetRightToLeftForControls(control);
                 }
+            }
+        }
+        private void DataGridView_Sorted(object sender, EventArgs e)
+        {
+            if (sender is DataGridView dataGridView)
+            {
+                ColorTheRows(dataGridView);
             }
         }
         //public string username = "api"; // Replace with your actual username
@@ -1491,6 +1503,11 @@ namespace WH_Panel
                 // Handle GR documents
                 url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_T?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_T_SUBFORM";
             }
+            else if (logDocNo.StartsWith("SH"))
+            {
+                // Handle GR documents
+                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_D?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_D_SUBFORM";
+            }
             else if (logDocNo.StartsWith("ROB"))
             {
                 //txtLog.SelectionColor = Color.Red; // Set the color to red
@@ -1563,6 +1580,13 @@ namespace WH_Panel
                             string date = await FetchUDateAsync(logDocNo);
                             results.Add((packCode, bookNum, date));
                         }
+                    }
+                    else if (logDocNo.StartsWith("SH"))
+                    {
+                        // Handle SH document logic
+                        string bookNum = document["CDES"]?.ToString();
+                        string date = document["UDATE"]?.ToString();
+                        results.Add((null, bookNum, date));
                     }
                     else
                     {
@@ -1815,6 +1839,10 @@ namespace WH_Panel
                             else if (docDesValue.Contains("נפוק"))
                             {
                                 cell.Style.BackColor = Color.IndianRed;
+                            }
+                            else if (docDesValue.Contains("ללקוח"))
+                            {
+                                cell.Style.BackColor = Color.BlueViolet;
                             }
                             else if (docDesValue.Contains("העברה"))
                             {

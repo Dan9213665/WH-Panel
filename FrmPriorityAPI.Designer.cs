@@ -734,9 +734,10 @@
             // 
             // tableLayoutPanel10
             // 
-            tableLayoutPanel10.ColumnCount = 2;
-            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel10.ColumnCount = 3;
+            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel10.Controls.Add(btnClearIpnFilter, 0, 0);
             tableLayoutPanel10.Controls.Add(btnGetMFPNs, 1, 0);
             tableLayoutPanel10.Dock = DockStyle.Fill;
@@ -756,7 +757,7 @@
             btnClearIpnFilter.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnClearIpnFilter.Location = new Point(3, 3);
             btnClearIpnFilter.Name = "btnClearIpnFilter";
-            btnClearIpnFilter.Size = new Size(143, 64);
+            btnClearIpnFilter.Size = new Size(93, 64);
             btnClearIpnFilter.TabIndex = 6;
             btnClearIpnFilter.Text = "Clear IPN filter";
             btnClearIpnFilter.UseVisualStyleBackColor = true;
@@ -767,9 +768,9 @@
             btnGetMFPNs.BackgroundImage = (Image)resources.GetObject("btnGetMFPNs.BackgroundImage");
             btnGetMFPNs.BackgroundImageLayout = ImageLayout.Stretch;
             btnGetMFPNs.Dock = DockStyle.Fill;
-            btnGetMFPNs.Location = new Point(152, 3);
+            btnGetMFPNs.Location = new Point(102, 3);
             btnGetMFPNs.Name = "btnGetMFPNs";
-            btnGetMFPNs.Size = new Size(143, 64);
+            btnGetMFPNs.Size = new Size(93, 64);
             btnGetMFPNs.TabIndex = 7;
             btnGetMFPNs.UseVisualStyleBackColor = true;
             btnGetMFPNs.Click += btnGetMFPNs_Click;
