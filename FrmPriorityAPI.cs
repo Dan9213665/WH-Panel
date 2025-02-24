@@ -24,6 +24,10 @@ using System.Security.Principal; // Add this using directive if not already pres
 using System.IO;
 using OfficeOpenXml;
 using OfficeOpenXml.Drawing.Slicer.Style; // Add the EPPlus NuGet package for reading Excel files
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+
 namespace WH_Panel
 {
     public partial class FrmPriorityAPI : Form
@@ -33,6 +37,12 @@ namespace WH_Panel
         private DataView dataView;
         private ContextMenuStrip contextMenuStrip;
         private DataGridViewRow selectedRowForContextMenu; // Class-level variable to store the selected row
+
+        private System.Windows.Forms.Timer breathingTimer;
+        private int opacityStep = 5;
+        private int currentOpacity = 100;
+        private bool increasing = false;
+
         //private DataTable dataTable;
         //private DataView dataView;
         public FrmPriorityAPI()
@@ -67,6 +77,80 @@ namespace WH_Panel
             //this.RightToLeft = RightToLeft.Yes;
             //this.RightToLeftLayout = true;
             //SetRightToLeftForControls(this);
+
+
+           // InitializeBreathingEffect();
+            InitializeGifButton();
+        }
+
+        private void InitializeGifButton()
+        {
+            // Load GIF from Resources folder
+            string resourcesFolder = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources");
+            string gifFilePath = Path.Combine(resourcesFolder, "RtN7.gif");
+
+            // Check if the GIF file exists
+            if (File.Exists(gifFilePath))
+            {
+                // Initialize PictureBox
+                var pictureBox = new PictureBox
+                {
+                    Image = Image.FromFile(gifFilePath), // Load the GIF from the file path
+                    SizeMode = PictureBoxSizeMode.StretchImage,
+                    Dock = DockStyle.Fill // Fill the cell
+                };
+
+                // Add PictureBox to the same cell as btnMFG in tableLayoutPanel2
+                int column = tableLayoutPanel2.GetColumn(btnMFG);
+                int row = tableLayoutPanel2.GetRow(btnMFG);
+                tableLayoutPanel2.Controls.Add(pictureBox, column, row);
+                tableLayoutPanel2.SetRowSpan(pictureBox, 2); // Set the RowSpan to 2
+
+                // Set the button's parent to the PictureBox to ensure proper layering
+                btnMFG.Parent = pictureBox;
+                btnMFG.BackColor = Color.Transparent;
+
+                // Bring the button to the front
+                btnMFG.BringToFront();
+            }
+            else
+            {
+                MessageBox.Show("GIF file not found!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
+
+        private void InitializeBreathingEffect()
+        {
+            breathingTimer = new System.Windows.Forms.Timer();
+            breathingTimer.Interval = 100; // Adjust the interval as needed
+            breathingTimer.Tick += BreathingTimer_Tick;
+            breathingTimer.Start();
+        }
+
+        private void BreathingTimer_Tick(object sender, EventArgs e)
+        {
+            if (increasing)
+            {
+                currentOpacity += opacityStep;
+                if (currentOpacity >= 100)
+                {
+                    currentOpacity = 100;
+                    increasing = false;
+                }
+            }
+            else
+            {
+                currentOpacity -= opacityStep;
+                if (currentOpacity <= 10)
+                {
+                    currentOpacity = 10;
+                    increasing = true;
+                }
+            }
+
+            btnMFG.BackColor = Color.FromArgb((int)(currentOpacity * 2.55), btnMFG.BackColor.R, btnMFG.BackColor.G, btnMFG.BackColor.B);
         }
         private void InitializeDataTable()
         {
@@ -581,7 +665,7 @@ namespace WH_Panel
         }
         private void SetDarkModeColors(Control parentControl)
         {
-            Color backgroundColor = Color.FromArgb(50, 50, 50); // Dark background color
+            Color backgroundColor = Color.FromArgb(55, 55, 55); // Dark background color
             Color foregroundColor = Color.FromArgb(220, 220, 220); // Light foreground color
             Color borderColor = Color.FromArgb(45, 45, 48); // Border color for controls
             foreach (Control control in parentControl.Controls)
@@ -859,11 +943,11 @@ namespace WH_Panel
             // Call the printSticker method
             printSticker(part);
         }
-        private async void txtbInputMFPN_KeyDown(object sender, KeyEventArgs e)
+        private async void txtbInputMFPN_KeyDown(object sender, KeyEventArgs e,TextBox lastInput)
         {
             if (e.KeyCode == Keys.Enter)
             {
-                lastUserInput = txtbInputMFPN;
+                lastUserInput = lastInput;
                 string mnfPartName = txtbInputMFPN.Text;
                 string encodedMnfPartName = Uri.EscapeDataString(mnfPartName); // URL-encode the MNFPARTNAME
                 string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=MNFPARTNAME eq '{encodedMnfPartName}'";
@@ -2646,6 +2730,7 @@ namespace WH_Panel
             }
             else
             {
+                txtbOUT.Text= string.Empty;
                 txtbOUT.ReadOnly = true;
                 // btnMFG.Text = "";
             }
@@ -2803,6 +2888,8 @@ namespace WH_Panel
                 await ExtractMFPNForRow(row);
             }
         }
+
+        TextBox lastUserInput = null;
         private void txtbDecoder_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -2821,8 +2908,9 @@ namespace WH_Panel
                         txtbInputMFPN.Text = extractedText;
                         txtbInputMFPN.Focus();
                         // Simulate ENTER key press on txtbInputMFPN
-                        txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter));
+                        txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter), txtbDecoder);
                         txtbDecoder.Clear();
+                        lastUserInput.Focus();
                     }
                     else
                     {
@@ -2838,8 +2926,9 @@ namespace WH_Panel
                         txtbInputMFPN.Text = extractedText;
                         txtbInputMFPN.Focus();
                         // Simulate ENTER key press on txtbInputMFPN
-                        txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter));
+                        txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter), txtbDecoder);
                         txtbDecoder.Clear();
+                        lastUserInput.Focus();
                     }
                     else
                     {
@@ -2855,8 +2944,9 @@ namespace WH_Panel
                         txtbInputMFPN.Text = extractedText;
                         txtbInputMFPN.Focus();
                         // Simulate ENTER key press on txtbInputMFPN
-                        txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter));
+                        txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter), txtbDecoder);
                         txtbDecoder.Clear();
+                        lastUserInput.Focus();
                     }
                     else
                     {
@@ -2869,7 +2959,7 @@ namespace WH_Panel
                 }
             }
         }
-        TextBox lastUserInput = null;
+       
         private void txtbDecodeIPN_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)

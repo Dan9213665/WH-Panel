@@ -165,7 +165,7 @@
             tableLayoutPanel2.Controls.Add(label3, 0, 4);
             tableLayoutPanel2.Controls.Add(label4, 0, 6);
             tableLayoutPanel2.Controls.Add(label5, 0, 8);
-            tableLayoutPanel2.Controls.Add(btnMFG, 2, 8);
+            tableLayoutPanel2.Controls.Add(btnMFG, 3, 8);
             tableLayoutPanel2.Controls.Add(tableLayoutPanel6, 1, 9);
             tableLayoutPanel2.Controls.Add(txtbINdoc, 1, 7);
             tableLayoutPanel2.Controls.Add(txtbOUT, 2, 7);
@@ -214,7 +214,6 @@
             txtbInputMFPN.Size = new Size(194, 23);
             txtbInputMFPN.TabIndex = 1;
             txtbInputMFPN.TextAlign = HorizontalAlignment.Center;
-            txtbInputMFPN.KeyDown += txtbInputMFPN_KeyDown;
             // 
             // txtbPartDescription
             // 
@@ -306,10 +305,10 @@
             // 
             // btnMFG
             // 
-            btnMFG.BackgroundImage = (Image)resources.GetObject("btnMFG.BackgroundImage");
             btnMFG.BackgroundImageLayout = ImageLayout.Stretch;
             btnMFG.Dock = DockStyle.Fill;
-            btnMFG.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnMFG.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnMFG.ForeColor = SystemColors.ControlText;
             btnMFG.Location = new Point(403, 171);
             btnMFG.Name = "btnMFG";
             tableLayoutPanel2.SetRowSpan(btnMFG, 2);
