@@ -70,12 +70,16 @@ using static QRCoder.PayloadGenerator;
 using OfficeOpenXml.Style;
 using static WH_Panel.FrmPriorityBom;
 using Rectangle = System.Drawing.Rectangle;
+using ComboBox = System.Windows.Forms.ComboBox;
 namespace WH_Panel
 {
     
     public partial class FrmPriorityBom : Form
     {
         public string SelectedSerialName { get; set; }
+        private bool isProgrammaticChange = false;
+
+        private List<Serial> originalSerials; // List to store the original work orders
 
         private AppSettings settings;
         //private List<WarehouseBalance> warehouseBalances;
@@ -89,7 +93,10 @@ namespace WH_Panel
             // Set the DrawMode property and handle the DrawItem event
             cmbROBxList.DrawMode = DrawMode.OwnerDrawFixed;
             cmbROBxList.DrawItem += cmbROBxList_DrawItem;
-           
+
+       
+   
+
             // Handle the CellFormatting event
             dgwBom.CellFormatting += dgwBom_CellFormatting;
             AttachTextBoxEvents(this);
@@ -113,6 +120,10 @@ namespace WH_Panel
                 cmbROBxList.SelectedItem = cmbROBxList.Items.Cast<Serial>().FirstOrDefault(s => s.SERIALNAME == SelectedSerialName);
             }
         }
+
+
+
+
         public class Serial
         {
             public string PARTNAME { get; set; }
@@ -165,6 +176,113 @@ namespace WH_Panel
             public int PART { get; set; }
             public string MNFPARTNAME { get; set; }
         }
+        //private async void GetRobWosList()
+        //{
+        //    string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL";
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        try
+        //        {
+        //            // Set the request headers if needed
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            // Set the Authorization header
+        //            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+        //            // Make the HTTP GET request
+        //            HttpResponseMessage response = await client.GetAsync(url);
+        //            response.EnsureSuccessStatusCode();
+        //            // Read the response content
+        //            string responseBody = await response.Content.ReadAsStringAsync();
+        //            // Parse the JSON response
+        //            var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+        //            var serials = apiResponse["value"].ToObject<List<Serial>>();
+        //            // Populate the dropdown with the data
+        //            cmbROBxList.Items.Clear();
+        //            foreach (var serial in serials)
+        //            {
+        //                // Hide work orders with status "נסגרה" if the checkbox is not checked
+        //                if ((serial.SERIALSTATUSDES != "נסגרה" && serial.SERIALSTATUSDES != "קיט מלא") || cnkbClosed.Checked)
+        //                {
+
+        //                    cmbROBxList.Items.Add(serial);
+        //                }
+        //            }
+        //            lblLoading.BackColor = Color.Green;
+        //            lblLoading.Text = "Data Loaded";
+        //            cmbROBxList.DroppedDown = true;
+        //            // Attach event handler to the checkbox
+        //            cnkbClosed.CheckedChanged += (s, e) => FilterWorkOrders(serials);
+        //        }
+        //        catch (HttpRequestException ex)
+        //        {
+        //            txtbLog.ForeColor = Color.Red;
+        //            txtbLog.AppendText($"Request error: {ex.Message} \n");
+        //            txtbLog.ScrollToCaret();
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            txtbLog.ForeColor = Color.Red;
+        //            txtbLog.AppendText($"Request error: {ex.Message}");
+        //            txtbLog.ScrollToCaret();
+        //        }
+        //    }
+        //}
+
+        //private async void GetRobWosList()
+        //{
+        //    string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL";
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        try
+        //        {
+        //            // Set the request headers if needed
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            // Set the Authorization header
+        //            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+        //            // Make the HTTP GET request
+        //            HttpResponseMessage response = await client.GetAsync(url);
+        //            response.EnsureSuccessStatusCode();
+        //            // Read the response content
+        //            string responseBody = await response.Content.ReadAsStringAsync();
+        //            // Parse the JSON response
+        //            var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+        //            var serials = apiResponse["value"].ToObject<List<Serial>>();
+        //            // Store the original work orders
+        //            originalSerials = serials;
+        //            // Populate the dropdown with the data
+        //            cmbROBxList.Items.Clear();
+        //            foreach (var serial in serials)
+        //            {
+        //                // Hide work orders with status "נסגרה" if the checkbox is not checked
+        //                if ((serial.SERIALSTATUSDES != "נסגרה" && serial.SERIALSTATUSDES != "קיט מלא") || cnkbClosed.Checked)
+        //                {
+        //                    cmbROBxList.Items.Add(serial);
+        //                }
+        //            }
+        //            lblLoading.BackColor = Color.Green;
+        //            lblLoading.Text = "Data Loaded";
+        //            cmbROBxList.DroppedDown = true;
+        //            // Attach event handler to the checkbox
+        //            cnkbClosed.CheckedChanged += (s, e) => FilterWorkOrders(serials);
+        //        }
+        //        catch (HttpRequestException ex)
+        //        {
+        //            txtbLog.ForeColor = Color.Red;
+        //            txtbLog.AppendText($"Request error: {ex.Message} \n");
+        //            txtbLog.ScrollToCaret();
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            txtbLog.ForeColor = Color.Red;
+        //            txtbLog.AppendText($"Request error: {ex.Message}");
+        //            txtbLog.ScrollToCaret();
+        //        }
+        //    }
+        //}
+
         private async void GetRobWosList()
         {
             string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL";
@@ -186,6 +304,8 @@ namespace WH_Panel
                     // Parse the JSON response
                     var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
                     var serials = apiResponse["value"].ToObject<List<Serial>>();
+                    // Store the original work orders
+                    originalSerials = serials ?? new List<Serial>();
                     // Populate the dropdown with the data
                     cmbROBxList.Items.Clear();
                     foreach (var serial in serials)
@@ -216,6 +336,7 @@ namespace WH_Panel
                 }
             }
         }
+
         private void FilterWorkOrders(List<Serial> serials)
         {
             cmbROBxList.Items.Clear();
@@ -227,6 +348,31 @@ namespace WH_Panel
                 }
             }
         }
+
+
+
+
+
+        public async void cmbROBxList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbROBxList.SelectedItem is Serial selectedSerial)
+            {
+                //dgwBom.Rows.Clear();
+                gbxLoadedWo.Text = selectedSerial.SERIALNAME + " status";
+                txtbName.Text = selectedSerial.PARTNAME;
+                txtbRob.Text = selectedSerial.SERIALNAME;
+                txtbRev.Text = $"REV ( {selectedSerial.REVNUM} )";
+                txtbQty.Text = selectedSerial.QUANT.ToString();
+                txtbStatus.Text = selectedSerial.SERIALSTATUSDES;
+                txtbInputIPN.Focus();
+                // Load BOM details
+                await LoadBomDetails(selectedSerial.SERIALNAME);
+                await GetCommentsFromROBxxx();
+            }
+        }
+
+
+
         private void cmbROBxList_DrawItem(object sender, DrawItemEventArgs e)
         {
             if (e.Index < 0) return;
@@ -363,23 +509,7 @@ namespace WH_Panel
             }
         }
 
-        public async void cmbROBxList_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (cmbROBxList.SelectedItem is Serial selectedSerial)
-            {
-                //dgwBom.Rows.Clear();
-                gbxLoadedWo.Text = selectedSerial.SERIALNAME + " status";
-                txtbName.Text = selectedSerial.PARTNAME;
-                txtbRob.Text = selectedSerial.SERIALNAME;
-                txtbRev.Text = $"REV ( {selectedSerial.REVNUM} )";
-                txtbQty.Text = selectedSerial.QUANT.ToString();
-                txtbStatus.Text = selectedSerial.SERIALSTATUSDES;
-                txtbInputIPN.Focus();
-                // Load BOM details
-                await LoadBomDetails(selectedSerial.SERIALNAME);
-                await GetCommentsFromROBxxx();
-            }
-        }
+
         private void InitializeDataGridView()
         {
             dgwBom.Columns.Clear();

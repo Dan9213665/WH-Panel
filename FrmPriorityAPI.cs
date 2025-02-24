@@ -5,7 +5,6 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -19,15 +18,10 @@ using TextBox = System.Windows.Forms.TextBox;
 using ComboBox = System.Windows.Forms.ComboBox;
 using System.Diagnostics;
 using System.Reflection; // Add this using directive if not already present
-using System.Drawing;
 using System.Security.Principal; // Add this using directive if not already present
 using System.IO;
 using OfficeOpenXml;
 using OfficeOpenXml.Drawing.Slicer.Style; // Add the EPPlus NuGet package for reading Excel files
-using System;
-using System.Drawing;
-using System.Windows.Forms;
-
 namespace WH_Panel
 {
     public partial class FrmPriorityAPI : Form
@@ -37,12 +31,10 @@ namespace WH_Panel
         private DataView dataView;
         private ContextMenuStrip contextMenuStrip;
         private DataGridViewRow selectedRowForContextMenu; // Class-level variable to store the selected row
-
         private System.Windows.Forms.Timer breathingTimer;
         private int opacityStep = 5;
         private int currentOpacity = 100;
         private bool increasing = false;
-
         //private DataTable dataTable;
         //private DataView dataView;
         public FrmPriorityAPI()
@@ -77,18 +69,14 @@ namespace WH_Panel
             //this.RightToLeft = RightToLeft.Yes;
             //this.RightToLeftLayout = true;
             //SetRightToLeftForControls(this);
-
-
-           // InitializeBreathingEffect();
+            // InitializeBreathingEffect();
             InitializeGifButton();
         }
-
         private void InitializeGifButton()
         {
             // Load GIF from Resources folder
             string resourcesFolder = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources");
             string gifFilePath = Path.Combine(resourcesFolder, "RtN7.gif");
-
             // Check if the GIF file exists
             if (File.Exists(gifFilePath))
             {
@@ -99,17 +87,14 @@ namespace WH_Panel
                     SizeMode = PictureBoxSizeMode.StretchImage,
                     Dock = DockStyle.Fill // Fill the cell
                 };
-
                 // Add PictureBox to the same cell as btnMFG in tableLayoutPanel2
                 int column = tableLayoutPanel2.GetColumn(btnMFG);
                 int row = tableLayoutPanel2.GetRow(btnMFG);
                 tableLayoutPanel2.Controls.Add(pictureBox, column, row);
                 tableLayoutPanel2.SetRowSpan(pictureBox, 2); // Set the RowSpan to 2
-
                 // Set the button's parent to the PictureBox to ensure proper layering
                 btnMFG.Parent = pictureBox;
                 btnMFG.BackColor = Color.Transparent;
-
                 // Bring the button to the front
                 btnMFG.BringToFront();
             }
@@ -118,9 +103,6 @@ namespace WH_Panel
                 MessageBox.Show("GIF file not found!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-
-
         private void InitializeBreathingEffect()
         {
             breathingTimer = new System.Windows.Forms.Timer();
@@ -128,7 +110,6 @@ namespace WH_Panel
             breathingTimer.Tick += BreathingTimer_Tick;
             breathingTimer.Start();
         }
-
         private void BreathingTimer_Tick(object sender, EventArgs e)
         {
             if (increasing)
@@ -149,7 +130,6 @@ namespace WH_Panel
                     increasing = true;
                 }
             }
-
             btnMFG.BackColor = Color.FromArgb((int)(currentOpacity * 2.55), btnMFG.BackColor.R, btnMFG.BackColor.G, btnMFG.BackColor.B);
         }
         private void InitializeDataTable()
@@ -943,7 +923,7 @@ namespace WH_Panel
             // Call the printSticker method
             printSticker(part);
         }
-        private async void txtbInputMFPN_KeyDown(object sender, KeyEventArgs e,TextBox lastInput)
+        private async void txtbInputMFPN_KeyDown(object sender, KeyEventArgs e, TextBox lastInput)
         {
             if (e.KeyCode == Keys.Enter)
             {
@@ -1146,209 +1126,6 @@ namespace WH_Panel
             }
             txtbPrefix.Text = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
         }
-        //public async void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        //{
-        //    if (cmbWarehouseList.SelectedItem != null)
-        //    {
-        //        txtLog.AppendText("Loading warehouses list...\n");
-        //        string selectedWarehouse = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
-        //        string selectedWarehouseDesc = cmbWarehouseList.SelectedItem.ToString().Substring(selectedWarehouse.Length).Trim();
-        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouse}'&$expand=WARHSBAL_SUBFORM";
-        //        using (HttpClient client = new HttpClient())
-        //        {
-        //            try
-        //            {
-        //                // Set the request headers if needed
-        //                client.DefaultRequestHeaders.Accept.Clear();
-        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //                // Set the Authorization header
-        //                //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
-        //                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //                // Make the HTTP GET request
-        //                HttpResponseMessage response = await client.GetAsync(url);
-        //                response.EnsureSuccessStatusCode();
-        //                // Read the response content
-        //                string responseBody = await response.Content.ReadAsStringAsync();
-        //                // Parse the JSON response
-        //                var apiResponse = JsonConvert.DeserializeObject<WarehouseApiResponse>(responseBody);
-        //                // Check if the response contains any data
-        //                if (apiResponse.value != null && apiResponse.value.Count > 0)
-        //                {
-        //                    // Extract the WARHSBAL_SUBFORM data
-        //                    var warehouseBalances = apiResponse.value.SelectMany(w => w.WARHSBAL_SUBFORM).ToList();
-        //                    // Set AutoGenerateColumns to false
-        //                    dataGridView1.AutoGenerateColumns = false;
-        //                    // Clear existing columns
-        //                    dataGridView1.Columns.Clear();
-        //                    // Define the columns you want to display
-        //                    //var locNameColumn = new DataGridViewTextBoxColumn
-        //                    //{
-        //                    //    DataPropertyName = "LOCNAME",
-        //                    //    HeaderText = "Location Name",
-        //                    //    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-        //                    //    Name = "LOCNAME"
-        //                    //};
-        //                    var partNameColumn = new DataGridViewTextBoxColumn
-        //                    {
-        //                        DataPropertyName = "PARTNAME",
-        //                        HeaderText = "IPN",
-        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-        //                        Name = "PARTNAME"
-        //                    };
-        //                    var partDesColumn = new DataGridViewTextBoxColumn
-        //                    {
-        //                        DataPropertyName = "PARTDES",
-        //                        HeaderText = "Description",
-        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-        //                        Name = "PARTDES"
-        //                    };
-        //                    var balanceColumn = new DataGridViewTextBoxColumn
-        //                    {
-        //                        DataPropertyName = "BALANCE",
-        //                        HeaderText = "Balance",
-        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-        //                        Name = "BALANCE"
-        //                    };
-        //                    //var tBalanceColumn = new DataGridViewTextBoxColumn
-        //                    //{
-        //                    //    DataPropertyName = "TBALANCE",
-        //                    //    HeaderText = "Total Balance",
-        //                    //    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-        //                    //    Name = "TBALANCE"
-        //                    //};
-        //                    var cDateColumn = new DataGridViewTextBoxColumn
-        //                    {
-        //                        DataPropertyName = "CDATE",
-        //                        HeaderText = "DATE",
-        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-        //                        Name = "CDATE"
-        //                    };
-        //                    var partIdColumn = new DataGridViewTextBoxColumn
-        //                    {
-        //                        DataPropertyName = "PART",
-        //                        HeaderText = "PART",
-        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-        //                        Name = "PART"
-        //                    };
-        //                    var mfpnColumn = new DataGridViewTextBoxColumn
-        //                    {
-        //                        DataPropertyName = "MNFPARTNAME",
-        //                        HeaderText = "MFPN",
-        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-        //                        Name = "MNFPARTNAME"
-        //                    };
-        //                    // Add columns to the DataGridView
-        //                    dataGridView1.Columns.AddRange(new DataGridViewColumn[]
-        //                    {
-        //                //locNameColumn,
-        //                partNameColumn,
-        //                mfpnColumn,
-        //                partDesColumn,
-        //                balanceColumn,
-        //                //tBalanceColumn,
-        //                cDateColumn,
-        //                partIdColumn
-        //                    });
-        //                    // Populate the DataGridView with the data
-        //                    foreach (var balance in warehouseBalances)
-        //                    {
-        //                        dataGridView1.Rows.Add(balance.PARTNAME, balance.MNFPARTNAME, balance.PARTDES, balance.BALANCE, balance.CDATE.Substring(0, 10), balance.PART); //balance.TBALANCE  //balance.LOCNAME
-        //                    }
-        //                    groupBox3.Text = $"Warehouse  {selectedWarehouse} {selectedWarehouseDesc}";
-        //                    ColorTheRows(dataGridView1);
-        //                    if (lastUserInput != null)
-        //                    {
-        //                        lastUserInput.Focus();
-        //                    }
-        //                    else
-        //                    {
-        //                        txtbInputIPN.Focus();
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    MessageBox.Show("No data found for the selected warehouse balance.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        //                }
-        //            }
-        //            catch (HttpRequestException ex)
-        //            {
-        //                MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //            }
-        //        }
-        //    }
-        //    txtbPrefix.Text = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
-        //}
-        //public async void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        //{
-        //    if (cmbWarehouseList.SelectedItem != null)
-        //    {
-        //        txtLog.AppendText("Loading warehouses list...\n");
-        //        string selectedWarehouse = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
-        //        string selectedWarehouseDesc = cmbWarehouseList.SelectedItem.ToString().Substring(selectedWarehouse.Length).Trim();
-        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouse}'&$expand=WARHSBAL_SUBFORM";
-        //        using (HttpClient client = new HttpClient())
-        //        {
-        //            try
-        //            {
-        //                // Set the request headers if needed
-        //                client.DefaultRequestHeaders.Accept.Clear();
-        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //                // Set the Authorization header
-        //                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //                // Make the HTTP GET request
-        //                HttpResponseMessage response = await client.GetAsync(url);
-        //                response.EnsureSuccessStatusCode();
-        //                // Read the response content
-        //                string responseBody = await response.Content.ReadAsStringAsync();
-        //                // Parse the JSON response
-        //                var apiResponse = JsonConvert.DeserializeObject<WarehouseApiResponse>(responseBody);
-        //                // Check if the response contains any data
-        //                if (apiResponse.value != null && apiResponse.value.Count > 0)
-        //                {
-        //                    // Extract the WARHSBAL_SUBFORM data
-        //                    var warehouseBalances = apiResponse.value.SelectMany(w => w.WARHSBAL_SUBFORM).ToList();
-        //                    // Clear existing rows in the DataTable
-        //                    dataTable.Rows.Clear();
-        //                    // Add rows to the DataTable
-        //                    foreach (var balance in warehouseBalances)
-        //                    {
-        //                        dataTable.Rows.Add(balance.PARTNAME, balance.MNFPARTNAME, balance.PARTDES, balance.BALANCE, balance.CDATE.Substring(0, 10), balance.PART);
-        //                    }
-        //                    groupBox3.Text = $"Warehouse  {selectedWarehouse} {selectedWarehouseDesc}";
-        //                    ColorTheRows(dataGridView1);
-        //                    if (lastUserInput != null)
-        //                    {
-        //                        lastUserInput.Focus();
-        //                    }
-        //                    else
-        //                    {
-        //                        txtbInputIPN.Focus();
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    MessageBox.Show("No data found for the selected warehouse balance.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        //                }
-        //            }
-        //            catch (HttpRequestException ex)
-        //            {
-        //                MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //            }
-        //        }
-        //    }
-        //    txtbPrefix.Text = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
-        //}
         private async Task ExtractMFPNForRow(DataGridViewRow row)
         {
             var partId = (int)row.Cells["PART"].Value;
@@ -2481,118 +2258,6 @@ namespace WH_Panel
             txtbDESC.Clear();
             txtbBuffer.Clear();
         }
-        //private async void btnMFG_Click(object sender, EventArgs e)
-        //{
-        //    if (cmbWarehouseList.SelectedItem != null && txtbInputIPN.Text != string.Empty && txtbInputMFPN.Text != string.Empty && txtbPartDescription.Text != string.Empty && txtbManufacturer.Text != string.Empty && int.Parse(txtbInputQty.Text) > 0 && int.Parse(txtbInputQty.Text) <= 50000)
-        //    {
-        //        string selectedWarehouseName = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
-        //        var selectedWarehouse = loadedWareHouses.FirstOrDefault(w => w.WARHSNAME == selectedWarehouseName);
-        //        if (selectedWarehouse != null)
-        //        {
-        //            string _BOOKNUM = string.Empty;
-        //            string _OWNERLOGIN = "Yuri_G";
-        //            string _SUPNAME = string.Empty;
-        //            if (rbtIN.Checked)
-        //            {
-        //                if (txtbINdoc.Text == string.Empty)
-        //                {
-        //                    MessageBox.Show("Please enter the supplier document description", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //                    txtbINdoc.Focus();
-        //                    return;
-        //                }
-        //                else
-        //                {
-        //                    _BOOKNUM = txtbINdoc.Text;
-        //                    _SUPNAME = "CLIENT";
-        //                }
-        //            }
-        //            else if (tbtOUT.Checked)
-        //            {
-        //                if (txtbOUT.Text == string.Empty)
-        //                {
-        //                    MessageBox.Show("Please enter the requester", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //                    txtbOUT.Focus();
-        //                    return;
-        //                }
-        //                else
-        //                {
-        //                    _BOOKNUM = txtbOUT.Text;
-        //                    _SUPNAME = "***";
-        //                }
-        //            }
-        //            else if (rbtMFG.Checked)
-        //            {
-        //                _BOOKNUM = "MFG";
-        //                _SUPNAME = "MFG";
-        //            }
-        //            else if (rbtFTK.Checked)
-        //            {
-        //                _BOOKNUM = "FTK";
-        //                _SUPNAME = "FTK";
-        //            }
-        //            // Create a new Document object
-        //            Document Pdocument = new Document
-        //            {
-        //                //DOCNO = "GR25000123", // Set the document number
-        //                //STATDES= "סופית",
-        //                USERLOGIN = _OWNERLOGIN,
-        //                //FLAG= "Y",
-        //                TYPE = "P", // Set the document type
-        //                CURDATE = DateTimeOffset.UtcNow,
-        //                SUPNAME = _SUPNAME, // Set the supplier name
-        //                BOOKNUM = _BOOKNUM, // Set the supplier number
-        //                TOWARHSNAME = selectedWarehouse.WARHSNAME,
-        //                TRANSORDER_P_SUBFORM = new List<TransOrder>
-        //        {
-        //            new TransOrder
-        //            {
-        //                PARTNAME = txtbInputIPN.Text,
-        //                TQUANT = int.Parse(txtbInputQty.Text),
-        //                PACKCODE = cmbPackCode.SelectedItem != null ? cmbPackCode.SelectedItem.ToString() : "Bag",
-        //                UNITNAME = "יח'",
-        //                //SERIALNAME = "0",
-        //                //CURDATE = DateTime.Now // Set UDATE to the current date and time
-        //            }
-        //        }
-        //            };
-        //            if (tbtOUT.Checked)
-        //            {
-        //                TDocument documentT = new TDocument
-        //                {
-        //                    USERLOGIN = _OWNERLOGIN,
-        //                    TYPE = "T", // Set the document type
-        //                    CURDATE = DateTimeOffset.UtcNow,
-        //                    WARHSNAME = selectedWarehouse.WARHSNAME,
-        //                    BOOKNUM = _BOOKNUM, // Set the supplier number
-        //                    TOWARHSNAME = "Flr",
-        //                    TRANSORDER_T_SUBFORM = new List<TransOrder>
-        //{
-        //    new TransOrder
-        //    {
-        //        PARTNAME = txtbInputIPN.Text,
-        //        QUANT = int.Parse(txtbInputQty.Text),
-        //        PACKCODE = cmbPackCode.SelectedItem != null ? cmbPackCode.SelectedItem.ToString() : "Bag",
-        //        UNITNAME = "יח'"
-        //    }
-        //}
-        //                };
-        //                await WarehouseService.TransfertDocumentAsync(documentT, this, settings);
-        //            }
-        //            else if (rbtMFG.Checked)
-        //            {
-        //                await WarehouseService.InsertDocumentAsync(Pdocument, this, settings);
-        //            }
-        //        }
-        //        else
-        //        {
-        //            MessageBox.Show("Selected warehouse not found.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        MessageBox.Show("Please check data fields.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //    }
-        //}
         private async void btnMFG_Click(object sender, EventArgs e)
         {
             if (cmbWarehouseList.SelectedItem != null && txtbInputIPN.Text != string.Empty && txtbInputMFPN.Text != string.Empty && txtbPartDescription.Text != string.Empty && txtbManufacturer.Text != string.Empty && int.Parse(txtbInputQty.Text) > 0 && int.Parse(txtbInputQty.Text) <= 50000)
@@ -2730,7 +2395,7 @@ namespace WH_Panel
             }
             else
             {
-                txtbOUT.Text= string.Empty;
+                txtbOUT.Text = string.Empty;
                 txtbOUT.ReadOnly = true;
                 // btnMFG.Text = "";
             }
@@ -2888,7 +2553,6 @@ namespace WH_Panel
                 await ExtractMFPNForRow(row);
             }
         }
-
         TextBox lastUserInput = null;
         private void txtbDecoder_KeyDown(object sender, KeyEventArgs e)
         {
@@ -2959,7 +2623,6 @@ namespace WH_Panel
                 }
             }
         }
-       
         private void txtbDecodeIPN_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -3009,6 +2672,15 @@ namespace WH_Panel
         {
             txtbOUT.Text = cbmOUT.SelectedItem.ToString();
             txtbInputIPN.Focus();
+        }
+
+        private void txtbInputMFPN_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter), txtbInputMFPN);
+            }
+                
         }
     }
 }

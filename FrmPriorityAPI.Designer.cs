@@ -214,6 +214,7 @@
             txtbInputMFPN.Size = new Size(194, 23);
             txtbInputMFPN.TabIndex = 1;
             txtbInputMFPN.TextAlign = HorizontalAlignment.Center;
+            txtbInputMFPN.KeyDown += txtbInputMFPN_KeyDown;
             // 
             // txtbPartDescription
             // 
