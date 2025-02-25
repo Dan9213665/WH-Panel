@@ -59,7 +59,6 @@ namespace WH_Panel
             selectedBOMs = new List<BOMList>();
             dataGridView1.CellContentClick += DataGridView1_CellContentClick;
             dataGridView1.CellClick += dataGridView1_CellClick;
-
         }
         public void InitializeGlobalWarehouses(List<ClientWarehouse> warehousesFromTheMain)
         {
@@ -178,7 +177,6 @@ namespace WH_Panel
         {
         }
         string[] fileNames { get; set; }
-
         private void button1_Click(object sender, EventArgs e)
         {
             openFileDialog1.Title = "Select BOM File";
@@ -201,9 +199,6 @@ namespace WH_Panel
                         DataLoader(fileName, theExcelFilePath);
                         // Add the selected file path to the list
                         selectedFileNames.Add(theExcelFilePath);
-
-
-
                     }
                 }
             }
@@ -267,26 +262,30 @@ namespace WH_Panel
             dataGridView1.Columns.Add(projectCheckBoxColumn);
             // Add CellContentClick event handler to the DataGridView
 
+           
+
             DataGridViewTextBoxColumn projectColumn = new DataGridViewTextBoxColumn();
             projectColumn.HeaderText = "Project";
             projectColumn.ReadOnly = true;
             dataGridView1.Columns.Add(projectColumn);
-
             DataGridViewTextBoxColumn ipnsColumn = new DataGridViewTextBoxColumn();
             ipnsColumn.HeaderText = "IPNs in KIT";
             ipnsColumn.ReadOnly = true;
             dataGridView1.Columns.Add(ipnsColumn);
-
             DataGridViewTextBoxColumn percentageColumn = new DataGridViewTextBoxColumn();
             percentageColumn.HeaderText = "Percentage";
             percentageColumn.ReadOnly = true;
             dataGridView1.Columns.Add(percentageColumn);
-
             DataGridViewTextBoxColumn folderColumn = new DataGridViewTextBoxColumn();
             folderColumn.HeaderText = "Folder";
             folderColumn.Name = "Folder";
             folderColumn.ReadOnly = true;
             dataGridView1.Columns.Add(folderColumn);
+
+            DataGridViewTextBoxColumn priorityColumn = new DataGridViewTextBoxColumn();
+            priorityColumn.HeaderText = "Priority"; // Header text of the checkbox column
+            priorityColumn.ReadOnly = false; // Enable editing
+            dataGridView1.Columns.Add(priorityColumn);
 
             dataGridView1.EditMode = DataGridViewEditMode.EditOnKeystrokeOrF2; // E
             foreach (var bom in loadedBOMs)
@@ -328,9 +327,6 @@ namespace WH_Panel
                 // Create a DataGridViewTextBoxCell for the percentage column
                 DataGridViewTextBoxCell percentageCell = new DataGridViewTextBoxCell { Value = completionPercentage };
                 // Check if the completion percentage is 100% and set the background color accordingly
-
-
-
                 if (completionPercentage == 100)
                 {
                     percentageCell.Style.BackColor = Color.LightGreen;
@@ -338,15 +334,12 @@ namespace WH_Panel
                 // Add the percentage cell to the row
                 row.Cells.Add(percentageCell);
                 // Add the row to the DataGridView
-
-
                 // Check if loadedfiles is null or empty
                 if (allFiles != null && allFiles.Any())
                 {
                     string folderText = allFiles
                         .Where(x => x.Contains(projectName))
                         .FirstOrDefault() ?? "DefaultFolderText"; // Provide a fallback value if no match is found
-
                     // Add folderText to the row in DataGridView
                     row.Cells.Add(new DataGridViewTextBoxCell { Value = folderText });
                 }
@@ -355,13 +348,6 @@ namespace WH_Panel
                     // Handle the case where loadedfiles is null or empty
                     row.Cells.Add(new DataGridViewTextBoxCell { Value = "No files loaded" });
                 }
-
-
-
-
-
-
-
                 dataGridView1.Rows.Add(row);
             }
             // Autofit columns
@@ -370,47 +356,31 @@ namespace WH_Panel
                 column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
         }
-        // Define the CellContentClick event handler
-        //private void DataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        //{
-        //    if (dataGridView1 != null && dataGridView1.Columns.Count > 0)
-        //    {
-        //        // Display column header text and indices for debugging
-        //        //string columnInfo = "Columns in DataGridView:\n\n";
-        //        //foreach (DataGridViewColumn column in dataGridView1.Columns)
-        //        //{
-        //        //    columnInfo += "Header Text: " + column.HeaderText + ", Index: " + column.Index + "\n";
-        //        //}
 
-        //        //MessageBox.Show(columnInfo, "DataGridView Columns Information");
+        private void DataGridView1_SortCompare(object sender, DataGridViewSortCompareEventArgs e)
+        {
+            // Check if the column being sorted is the "Priority" column
+            if (e.Column.Name == "Priority")
+            {
+                // Parse the cell values as integers for comparison
+                int value1 = int.TryParse(e.CellValue1?.ToString(), out int result1) ? result1 : int.MinValue;
+                int value2 = int.TryParse(e.CellValue2?.ToString(), out int result2) ? result2 : int.MinValue;
 
-        //        // Check if the clicked cell belongs to the checkbox column
-        //        //if (dataGridView1.Columns.Contains("Calculate") && e.ColumnIndex == dataGridView1.Columns["Calculate"].Index && e.RowIndex >= 0)
-        //        if (e.RowIndex >= 0 && dataGridView1.Columns[e.ColumnIndex].HeaderText == "Calculate")
-        //        {
-        //            // Handle checkbox click event here
-        //            DataGridViewCheckBoxCell cell = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex] as DataGridViewCheckBoxCell;
-        //            if (cell != null)
-        //            {
-        //                bool isChecked = (bool)cell.EditedFormattedValue;
-        //                // Perform actions based on the checkbox state (isChecked)
-        //                // For example:
-        //                if (isChecked)
-        //                {
-        //                    // Checkbox is checked
-        //                    SetSelectedBoms();
-        //                    //MessageBox.Show("SetSelectedBoms called - Checkbox Checked");
-        //                }
-        //                else
-        //                {
-        //                    // Checkbox is unchecked
-        //                    SetSelectedBoms();
-        //                    //MessageBox.Show("SetSelectedBoms called - Checkbox unchecked");
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
+                // Compare the integer values
+                e.SortResult = value1.CompareTo(value2);
+
+                // If the values are equal, use the row indices to maintain the original order
+                if (e.SortResult == 0)
+                {
+                    e.SortResult = e.RowIndex1.CompareTo(e.RowIndex2);
+                }
+
+                e.Handled = true; // Indicate that the event is handled
+            }
+        }
+
+
+
         private void DataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             if (IsCalculateColumn(e.ColumnIndex) && e.RowIndex >= 0)
@@ -431,9 +401,7 @@ namespace WH_Panel
                     if (checkBoxCell != null)
                     {
                         //bool isChecked = (bool)checkBoxCell.EditedFormattedValue;
-
                         bool isChecked = (checkBoxCell.Value != null && (bool)checkBoxCell.Value);
-
                         if (isChecked)
                         {
                             // Checkbox is checked
@@ -448,7 +416,6 @@ namespace WH_Panel
                 }
             }
         }
-
         private bool IsCalculateColumn(int columnIndex)
         {
             if (dataGridView1.Columns[columnIndex].HeaderText == "Calculate")
@@ -457,8 +424,6 @@ namespace WH_Panel
             }
             return false;
         }
-
-
         private void dataGridView1_CurrentCellDirtyStateChanged_1(object sender, EventArgs e)
         {
             // Check if the current cell is a checkbox cell
@@ -468,7 +433,6 @@ namespace WH_Panel
                 dataGridView1.CommitEdit(DataGridViewDataErrorContexts.Commit);
             }
         }
-
         private void DataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             // Check if the changed cell is in the "Calculate" column
@@ -484,32 +448,6 @@ namespace WH_Panel
         }
 
 
-        //private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
-        //{
-
-        //    // Check if the clicked cell belongs to the checkbox column
-        //    if (dataGridView1.Columns.Contains("Calculate") && e.ColumnIndex == dataGridView1.Columns["Calculate"].Index)
-        //    {
-        //        // Handle checkbox click event here
-        //        DataGridViewCheckBoxCell cell = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex] as DataGridViewCheckBoxCell;
-        //        if (cell != null)
-        //        {
-        //            bool isChecked = (bool)cell.EditedFormattedValue;
-        //            if (isChecked)
-        //            {
-        //                SetSelectedBoms();
-        //                //MessageBox.Show("SetSelectedBoms called - Checkbox Checked");
-        //            }
-        //            else
-        //            {
-        //                SetSelectedBoms();
-        //                //MessageBox.Show("SetSelectedBoms called - Checkbox Unchecked");
-        //            }
-        //        }
-        //    }
-        //    //MessageBox.Show("Cell Clicked!");
-
-        //}
         private void button7_Click(object sender, EventArgs e)
         {
             // Iterate through each column in the DataGridView
@@ -523,7 +461,6 @@ namespace WH_Panel
                     {
                         // Get the cell in the current row corresponding to the "Percentage" column
                         DataGridViewCell cell = row.Cells[column.Index];
-
                         // Check if the cell value is not null and equals "100"
                         if (cell.Value != null && cell.Value.ToString() == "100")
                         {
@@ -540,7 +477,6 @@ namespace WH_Panel
                                         bool currentValue = (bool)checkBoxCell.Value;
                                         checkBoxCell.Value = !currentValue;
                                     }
-
                                     // Handle checkbox click event
                                     HandleCheckboxClick(row.Index);
                                     SetSelectedBoms();
@@ -552,8 +488,6 @@ namespace WH_Panel
                 }
             }
         }
-
-
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (IsCalculateColumn(e.ColumnIndex) && e.RowIndex >= 0)
@@ -561,7 +495,6 @@ namespace WH_Panel
                 HandleCheckboxClick(e.RowIndex);
             }
         }
-
         private bool IsFileLoaded(string fileName)
         {
             foreach (BOMList bom in loadedBOMs)
@@ -648,117 +581,19 @@ namespace WH_Panel
                 MessageBox.Show(e.Message);
             }
         }
-
         private bool warehouseSelected = false; // Tracks if the warehouse is already selected
-         
         private void CheckAndSetWarehouse(string firstIPN)
         {
             foreach (ClientWarehouse warehouse in warehouses)
             {
                 if (firstIPN.StartsWith(warehouse.clPrefix))
                 {
-                //    if (warehouse.clPrefix == "LDT" && !warehouseSelected)
-                //    {
-                //        // Create a dynamic form for warehouse selection
-                //        Form warehouseSelectionForm = new Form
-                //        {
-                //            Text = "Select Warehouse",
-                //            Size = new Size(610, 225),
-                //            StartPosition = FormStartPosition.CenterScreen
-                //        };
-
-                //        // Ensure that warehouse.clLogo contains a valid path or resource identifier
-                //        string logoPathAYS = warehouses
-                //            .Where(x => x.clName == "AYS")
-                //            .Select(x => x.clLogo)
-                //            .FirstOrDefault();
-
-                //        string logoPathSTXI = warehouses
-                //            .Where(x => x.clName == "STXI")
-                //            .Select(x => x.clLogo)
-                //            .FirstOrDefault();
-
-                //        try
-                //        {
-                //            // Load the logos dynamically from warehouse.clLogo
-                //            Image imageAYS = Image.FromFile(logoPathAYS);  // Assuming clLogo is a valid path
-                //            Image imageSTXI = Image.FromFile(logoPathSTXI); // Assuming clLogo is a valid path
-
-                //            // Create AYS button with logo
-                //            Button buttonAYS = new Button
-                //            {
-                //                Text = "AYS",
-                //                Image = imageAYS,
-                //                TextAlign = ContentAlignment.TopLeft,
-                //                Font = new Font("Microsoft Sans Serif", 40),  // Set the font size here
-                //                ImageAlign = ContentAlignment.MiddleCenter,
-                //                BackgroundImageLayout = ImageLayout.Zoom,
-                //                Width = 275,
-                //                Height = 150,
-                //                Location = new Point(15, 25),
-                //                AutoSize = false  // Disable AutoSize
-                //            };
-
-
-                //            // Set the background image layout to Stretch to fill the button
-                //            buttonAYS.Click += (sender, e) =>
-                //            {
-                //                warehouse.clName = "AYS";
-                //                comboBox6.SelectedItem = warehouse.clName;
-                //                warehouseSelected = true; // Mark as selected to avoid re-prompting
-                //                warehouseSelectionForm.DialogResult = DialogResult.OK;
-                //                warehouseSelectionForm.Close();
-                //            };
-
-                //            // Create STXI button with logo
-                //            Button buttonSTXI = new Button
-                //            {
-                //                // Text = "STXI",
-                //                Image = imageSTXI,
-                //                TextAlign = ContentAlignment.BottomCenter,
-                //                ImageAlign = ContentAlignment.MiddleCenter,
-                //                BackgroundImageLayout = ImageLayout.Zoom,
-                //                Width = 275,
-                //                Height = 150,
-                //                Location = new Point(310, 25),
-                //                AutoSize = false  // Disable AutoSize
-                //            };
-
-                //            // Set the background image layout to Stretch to fill the button
-                //            buttonSTXI.Click += (sender, e) =>
-                //            {
-                //                warehouse.clName = "STXI";
-                //                comboBox6.SelectedItem = warehouse.clName;
-                //                warehouseSelected = true; // Mark as selected to avoid re-prompting
-                //                warehouseSelectionForm.DialogResult = DialogResult.OK;
-                //                warehouseSelectionForm.Close();
-                //            };
-
-                //            // Add the buttons to the form
-                //            warehouseSelectionForm.Controls.Add(buttonAYS);
-                //            warehouseSelectionForm.Controls.Add(buttonSTXI);
-
-                //            // Show the form as a dialog
-                //            warehouseSelectionForm.ShowDialog();
-                //        }
-                //        catch (Exception ex)
-                //        {
-                //            MessageBox.Show("Error loading warehouse logos: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //        }
-
-                //        break;
-                //    }
-                //    else if (!warehouse.clPrefix.Equals("LDT"))
-                //    {
                         comboBox6.SelectedItem = warehouse.clName;
                         warehouseSelected = true; // Mark as selected to break after the first match
                         break;
-                    
                 }
             }
         }
-
-
         private void button4_MouseDown(object sender, MouseEventArgs e)
         {
             foreach (ClientWarehouse w in warehouses)
@@ -807,7 +642,6 @@ namespace WH_Panel
                 StartPosition = FormStartPosition.CenterScreen,
                 Text = "IPN Kit Usage Overview"
             };
-
             // Create and configure the DataGridView
             DataGridView dataGridView = new DataGridView
             {
@@ -816,107 +650,20 @@ namespace WH_Panel
                 ReadOnly = true,
                 AllowUserToAddRows = false
             };
-
             // Add the DataGridView to the popup form
             popupForm.Controls.Add(dataGridView);
-
             // Populate the DataGridView asynchronously
             await PopulateDataGridViewAsync(dataGridView);
-
             // Show the popup form
             popupForm.ShowDialog();
         }
-
-        //private async Task PopulateDataGridViewAsync(DataGridView dataGridView)
-        //{
-        //    dataGridView.Columns.Clear();
-        //    dataGridView.Columns.Add("IPN", "IPN");
-
-        //    //// Step 1: Add columns for each kit in selectedBOMs
-        //    //foreach (var bom in selectedBOMs)
-        //    //{
-        //    //    dataGridView.Columns.Add(bom.Name, bom.Name);
-        //    //}
-        //    // Step 1: Add columns for each kit, displaying only the relevant part of bom.Name
-        //    foreach (var bom in selectedBOMs)
-        //    {
-        //        string[] nameParts = bom.Name.Split('_');
-        //        string displayName = nameParts.Length >= 3 ? $"{nameParts[1]}_{nameParts[2].Replace(".xlsm", "")}" : bom.Name;
-        //        dataGridView.Columns.Add(displayName, displayName);
-        //    }
-
-        //    // Step 2: Prepare a dictionary to track IPNs and their DELTA values across kits
-        //    var ipnData = new Dictionary<string, Dictionary<string, int?>>(); // Nullable int for DELTA
-
-        //    foreach (var bom in selectedBOMs)
-        //    {
-        //        foreach (var item in bom.Items)
-        //        {
-        //            if (!ipnData.ContainsKey(item.IPN))
-        //            {
-        //                ipnData[item.IPN] = new Dictionary<string, int?>();
-        //            }
-
-        //            ipnData[item.IPN][bom.Name] = item.Delta; // Add DELTA for IPN in this kit
-        //        }
-        //    }
-
-        //    // Step 3: Populate DataGridView rows with IPN data
-        //    foreach (var ipn in ipnData.OrderByDescending(entry => entry.Value.Count(v => v.Value.HasValue)))
-        //    {
-        //        var row = new DataGridViewRow();
-        //        row.CreateCells(dataGridView);
-
-        //        row.Cells[0].Value = ipn.Key; // IPN
-
-        //        foreach (var bom in selectedBOMs)
-        //        {
-        //            // Extract the relevant part of bom.Name for the column header
-        //            string[] nameParts = bom.Name.Split('_');
-        //            string displayName = nameParts.Length >= 3 ? $"{nameParts[1]}_{nameParts[2].Replace(".xlsm", "")}" : bom.Name;
-
-        //            // Use the extracted displayName to access the correct column index
-        //            if (dataGridView.Columns.Contains(displayName))
-        //            {
-        //                if (ipn.Value.TryGetValue(bom.Name, out var delta))
-        //                {
-        //                    row.Cells[dataGridView.Columns[displayName].Index].Value = delta;
-
-        //                    // Apply color based on delta value
-        //                    if (delta >= 0)
-        //                    {
-        //                        row.Cells[dataGridView.Columns[displayName].Index].Style.BackColor = Color.LightGreen;
-        //                    }
-        //                    else if (delta < 0)
-        //                    {
-        //                        row.Cells[dataGridView.Columns[displayName].Index].Style.BackColor = Color.IndianRed;
-        //                    }
-        //                    // No color for delta == 0 or null
-        //                }
-        //                else
-        //                {
-        //                    row.Cells[dataGridView.Columns[displayName].Index].Value = string.Empty;
-        //                }
-        //            }
-        //        }
-
-        //        dataGridView.Rows.Add(row);
-        //    }
-
-
-        //}
-
-
         private async Task PopulateDataGridViewAsync(DataGridView dataGridView)
         {
             dataGridView.Columns.Clear();
-
             // Set default styles for DataGridView
             dataGridView.BackgroundColor = Color.LightGray; // Set background color to light gray
             dataGridView.DefaultCellStyle.BackColor = Color.LightGray; // Default cell background color
             dataGridView.DefaultCellStyle.Font = new Font(dataGridView.DefaultCellStyle.Font, FontStyle.Regular); // Default font style
-
-
             // Step 1: Add Total Appearances column and IPN column
             dataGridView.Columns.Add("Count", "Count"); // New count column
             var ipnColumn = new DataGridViewTextBoxColumn
@@ -926,7 +673,6 @@ namespace WH_Panel
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells // Automatically adjusts the width to fit content
             };
             dataGridView.Columns.Add(ipnColumn);
-
             // Step 2: Add columns for each kit, displaying only the relevant part of bom.Name
             foreach (var bom in selectedBOMs)
             {
@@ -934,10 +680,8 @@ namespace WH_Panel
                 string displayName = nameParts.Length >= 3 ? $"{nameParts[1]}_{nameParts[2].Replace(".xlsm", "")}" : bom.Name;
                 dataGridView.Columns.Add(displayName, displayName);
             }
-
             // Step 3: Prepare a dictionary to track IPNs and their DELTA values across kits
             var ipnData = new Dictionary<string, Dictionary<string, int?>>(); // Nullable int for DELTA
-
             foreach (var bom in selectedBOMs)
             {
                 foreach (var item in bom.Items)
@@ -946,29 +690,23 @@ namespace WH_Panel
                     {
                         ipnData[item.IPN] = new Dictionary<string, int?>();
                     }
-
                     ipnData[item.IPN][bom.Name] = item.Delta; // Add DELTA for IPN in this kit
                 }
             }
-
             // Step 4: Populate DataGridView rows with IPN data
             foreach (var ipn in ipnData.OrderByDescending(entry => entry.Value.Count(v => v.Value.HasValue)))
             {
                 var row = new DataGridViewRow();
                 row.CreateCells(dataGridView);
-
                 // Calculate the total appearances of the IPN across all kits
                 int appearanceCount = ipn.Value.Values.Count(delta => delta.HasValue);
-
                 row.Cells[0].Value = appearanceCount; // Total Appearances
                 row.Cells[1].Value = ipn.Key; // IPN
-
                 foreach (var bom in selectedBOMs)
                 {
                     // Extract the relevant part of bom.Name for the column header
                     string[] nameParts = bom.Name.Split('_');
                     string displayName = nameParts.Length >= 3 ? $"{nameParts[1]}_{nameParts[2].Replace(".xlsm", "")}" : bom.Name;
-
                     // Use the extracted displayName to access the correct column index
                     if (dataGridView.Columns.Contains(displayName))
                     {
@@ -976,7 +714,6 @@ namespace WH_Panel
                         {
                             row.Cells[dataGridView.Columns[displayName].Index].Value = delta;
                             row.Cells[dataGridView.Columns[displayName].Index].Style.Font = new Font(dataGridView.DefaultCellStyle.Font, FontStyle.Bold); // Bold font for delta values
-
                             // Apply color based on delta value
                             if (delta >= 0)
                             {
@@ -996,45 +733,9 @@ namespace WH_Panel
                         }
                     }
                 }
-
                 dataGridView.Rows.Add(row);
             }
         }
-
-
-
-        //public class Int32Comparer : IComparer
-        //{
-        //    public int Compare(object x, object y)
-        //    {
-        //        if (x == null && y == null) return 0;
-        //        if (x == null) return -1;
-        //        if (y == null) return 1;
-
-        //        if (int.TryParse(x.ToString(), out int intX) && int.TryParse(y.ToString(), out int intY))
-        //            return intX.CompareTo(intY);
-
-        //        return string.Compare(x.ToString(), y.ToString(), StringComparison.Ordinal);
-        //    }
-        //}
-
-        //private void dataGridView_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
-        //{
-        //    var column = dataGridView.Columns[e.ColumnIndex];
-        //    if (column.HeaderText != "IPN") // Apply only to kit columns
-        //    {
-        //        dataGridView.Sort(new Int32Comparer());
-        //    }
-        //    else
-        //    {
-        //        dataGridView.Sort(column, ListSortDirection.Ascending); // Default sorting for IPN
-        //    }
-        //}
-
-
-
-
-
         private void GenerateHtmlReportWithKitSeparation()
         {
             var stockDataDetailed = selectedBOMs
@@ -1178,12 +879,6 @@ namespace WH_Panel
             MAINDATASOURCE_LIST = MAINDATASOURCE_LIST.OrderBy(mainDataSource => mainDataSource.DELTA).ToList();
             // Generate HTML
             htmlContent += "<table border='1' style='border-collapse: collapse; width: 100%;'>";
-            //htmlContent += "<tr style='background-color: #f2f2f2;'>";
-            //htmlContent += "<th style='padding: 10px;'>IPN</th>";
-            //htmlContent += "<th style='padding: 10px;'>Warehouse Quantity</th>";
-            //htmlContent += "<th style='padding: 10px;'>KITs Balance</th>";
-            //htmlContent += "<th style='padding: 10px;'>Delta</th>";
-            //htmlContent += "</tr>";
             foreach (var mainDataSource in MAINDATASOURCE_LIST)
             {
                 var rowColorClass = mainDataSource.DELTA < 0 ? "lightcoral" : "lightgreen";
@@ -1198,15 +893,7 @@ namespace WH_Panel
                 htmlContent += "<tr>";
                 htmlContent += "<td  colspan='7'>";
                 htmlContent += "<table border='1' style='border-collapse: collapse; width: 100%;border: 1px solid black;'>";
-                // Add BOM item header
-                //htmlContent += "<tr class='{rowColorClass}' style='background-color: #d9edf7;'>";
-                //htmlContent += "<th style='padding: 10px;'>Project Name</th>";
-                //htmlContent += "<th style='padding: 10px;'>MFPN</th>";
-                //htmlContent += "<th style='padding: 10px;'>Description</th>";
-                //htmlContent += "<th style='padding: 10px;'>Quantity in Kit</th>";
-                //htmlContent += "</tr>";
-                // Add BOM item data
-                foreach (var bomItem in mainDataSource.BOMITEMS)
+                 foreach (var bomItem in mainDataSource.BOMITEMS)
                 {
                     htmlContent += "<tr style='text-align:center;'>";
                     //Truncate the last 5 characters of Title
@@ -1571,7 +1258,6 @@ var myPieChart = new Chart(ctx, {
                 htmlContent += $"<td>{item.StockQuantity}</td>";
                 //htmlContent += $"<td>{item.TotalRequired}</td>";
                 htmlContent += $"<td style='background-color: {(item.TotalRequired < 0 ? "lightcoral" : "lightgreen")}'>{item.TotalRequired}</td>";
-
                 htmlContent += $"<td>{item.StockQuantity + item.TotalRequired}</td>";
                 htmlContent += "</tr>";
             }
@@ -1702,7 +1388,6 @@ var myPieChart = new Chart(ctx, {
         private async void button3_Click(object sender, EventArgs e)
         {
             SetSelectedBoms();
-
             // Step 1: Load stock data based on the selected warehouse
             foreach (ClientWarehouse w in warehouses)
             {
@@ -1713,29 +1398,22 @@ var myPieChart = new Chart(ctx, {
                     break;
                 }
             }
-
             //OptimizeBOMOrder();
             await OptimizeBOMOrderAsync();
         }
-
-
-
         private async Task OptimizeBOMOrderAsync()
         {
             // Step 1: Start the stopwatch to measure performance
             var stopwatch = new System.Diagnostics.Stopwatch();
             stopwatch.Start();
-
             // Step 2: Initialize a thread-safe list to store kits with their completion status
             var kitCompletionStatus = new ConcurrentBag<Tuple<BOMList, int, int, int, int>>();
-
             // Parallelize the calculation for each kit
             await Task.WhenAll(selectedBOMs.Select(bom => Task.Run(() =>
             {
                 int totalItems = bom.Items.Count;
                 int fullyStockedItemsBefore = 0;
                 int fullyStockedItemsAfter = 0;
-
                 foreach (var kitItem in bom.Items)
                 {
                     if (kitItem.Delta >= 0)
@@ -1747,24 +1425,19 @@ var myPieChart = new Chart(ctx, {
                         var stockItem = stockItems
                             .Where(s => s.IPN == kitItem.IPN)
                             .Sum(s => s.Stock);
-
                         if (stockItem != null && stockItem >= Math.Abs((decimal)kitItem.Delta))
                         {
                             fullyStockedItemsAfter++;
                         }
                     }
                 }
-
                 kitCompletionStatus.Add(new Tuple<BOMList, int, int, int, int>(
                     bom, fullyStockedItemsBefore, totalItems, fullyStockedItemsAfter, 0));
             })));
-
             stopwatch.Stop(); // Stop the stopwatch once processing is done
-
             // Step 3: Calculate time taken and threads used
             var timeTaken = stopwatch.ElapsedMilliseconds;
             var threadsUsed = Environment.ProcessorCount;
-
             // Step 4: Create a form to display the kits sorted by completion
             Form kitsForm = new Form
             {
@@ -1773,20 +1446,17 @@ var myPieChart = new Chart(ctx, {
                 Width = 1500,
                 StartPosition = FormStartPosition.CenterScreen,
             };
-
             DataGridView dataGridView = new DataGridView
             {
                 Dock = DockStyle.Fill,
                 AutoGenerateColumns = false
             };
-
             // Add columns to the DataGridView
             dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Kit Name", DataPropertyName = "KitName" });
             dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Total Items", DataPropertyName = "TotalItems" });
             dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "In kit", DataPropertyName = "FullyStockedBefore" });
             dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "In warehouse", DataPropertyName = "FullyStockedAfter" });
             dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Simulated Completion %", DataPropertyName = "CompletionPercentage" });
-
             var dataSource = kitCompletionStatus.Select(k =>
                 new
                 {
@@ -1798,25 +1468,18 @@ var myPieChart = new Chart(ctx, {
                 })
                 .OrderByDescending(x => x.CompletionPercentage)
                 .ToList();
-
             dataGridView.DataSource = dataSource;
-
             // Enable sorting and auto-sizing to fit contents
             foreach (DataGridViewColumn column in dataGridView.Columns)
             {
                 column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
-
             // Step 7: Display the DataGridView in the form
             kitsForm.Controls.Add(dataGridView);
             kitsForm.ShowDialog();
         }
-
-
         private void OptimizeBOMOrder()
         {
-
-
             if (selectedBOMs.Count >= 2)
             {
                 // Step 2: Create a new list to store kits with their completion status
@@ -1826,7 +1489,6 @@ var myPieChart = new Chart(ctx, {
                     int totalItems = bom.Items.Count;
                     int fullyStockedItemsBefore = 0;   // Fully stocked items before simulation
                     int fullyStockedItemsAfter = 0; // Total fully stocked items after simulation
-
                     // Count items already in the kit
                     foreach (var kitItem in bom.Items)
                     {
@@ -1837,12 +1499,10 @@ var myPieChart = new Chart(ctx, {
                         else if (kitItem.Delta < 0)
                         {
                             //var stockItem = stockItems.Sum().(s => s.IPN == kitItem.IPN);
-
                             var stockItem = stockItems
     .Where(s => s.IPN == kitItem.IPN) // Filter based on the condition
     .Sum(s => s.Stock);
                             // Count items already in kit and available from stock
-
                             if (stockItem != null && stockItem >= Math.Abs((decimal)kitItem.Delta)) // Check if stock is available
                             {
                                 // Add the stock available to the count, up to what is needed
@@ -1850,9 +1510,6 @@ var myPieChart = new Chart(ctx, {
                             }
                         }
                     }
-
-
-
                     // Add the kit and its statuses to the list
                     kitCompletionStatus.Add(new Tuple<BOMList, int, int, int, int>(
                         bom,                              // BOMList
@@ -1861,7 +1518,6 @@ var myPieChart = new Chart(ctx, {
                         fullyStockedItemsAfter,          // Fully stocked items after simulation
                         0)); // Add a default value for item5 (you need to replace this with actual logic if needed)
                 }
-
                 // Step 5: Create a sortable table to display the kits and their statuses
                 Form kitsForm = new Form
                 {
@@ -1870,21 +1526,17 @@ var myPieChart = new Chart(ctx, {
                     Width = 1500,
                     StartPosition = FormStartPosition.CenterScreen, // Ensure you're using the correct enum type
                 };
-
                 DataGridView dataGridView = new DataGridView
                 {
                     Dock = DockStyle.Fill,
                     AutoGenerateColumns = false
                 };
-
                 // Add columns to the DataGridView
                 dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Kit Name", DataPropertyName = "KitName" });
                 dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Total Items", DataPropertyName = "TotalItems" });
                 dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "In kit", DataPropertyName = "FullyStockedBefore" });
-
                 dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "In warehouse", DataPropertyName = "FullyStockedAfter" });
                 dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Simulated Completion %", DataPropertyName = "CompletionPercentage" });
-
                 var dataSource = kitCompletionStatus.Select(k =>
        new
        {
@@ -1896,30 +1548,19 @@ var myPieChart = new Chart(ctx, {
        })
        .OrderByDescending(x => x.CompletionPercentage) // Specify how to order by the CompletionPercentage
        .ToList();
-
                 dataGridView.DataSource = dataSource;
-
-
-
                 // Enable sorting and auto-sizing to fit contents
                 foreach (DataGridViewColumn column in dataGridView.Columns)
                 {
                     column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells; // Fit to all cell contents
                 }
-
                 // Step 7: Display the DataGridView in the form
                 kitsForm.Controls.Add(dataGridView);
-
-
                 kitsForm.ShowDialog();
-
                 // Sort by CompletionPercentage in descending order
                 //dataGridView.Sort(dataGridView.Columns["CompletionPercentage"], System.ComponentModel.ListSortDirection.Descending);
-
             }
         }
-
-
         private void button4_Click(object sender, EventArgs e)
         {
             //foreach (ClientWarehouse w in warehouses)
@@ -2044,9 +1685,7 @@ var myPieChart = new Chart(ctx, {
             htmlContent += @"<td style='width: 25%;'></td>";
             htmlContent += @"</tr>";
             //htmlContent += @"<tr style='text-align:center;'><td>Multi-BOM simulation for " + selectedBOMs.Count + " kits:</td></tr>";
-
             htmlContent += @"<tr style='text-align:center;'><td></td><td>Multi-BOM simulation for " + selectedBOMs.Count.ToString() + " kits:</td></tr>";
-
             foreach (var bom in selectedBOMs)
             {
                 int bomPositiveDelta = 0;
@@ -2332,26 +1971,19 @@ var myPieChart = new Chart(ctx, {
             PopulateDataGridView();
             SetSelectedBoms();
         }
-
-
-
         private void button8_Click(object sender, EventArgs e)
         {
             // Get the warehouse name from comboBox6
             string selectedWarehouseName = comboBox6.SelectedItem.ToString();
-
             // Construct the directory path for the current month
             string directoryPath = "\\\\dbr1\\Data\\WareHouse\\2025\\" + DateTime.Now.ToString("MM.yyyy");
-
             // Get all files in the directory that start with the selected warehouse name and have the .xlsm extension
             allFiles = Directory.GetFiles(directoryPath, $"{selectedWarehouseName}*.xlsm");
-
             if (allFiles.Length == 0)
             {
                 MessageBox.Show("No files found for the selected warehouse.");
                 return;
             }
-
             foreach (string fileName in allFiles)
             {
                 string theExcelFilePath = Path.GetFileName(fileName);
@@ -2366,12 +1998,10 @@ var myPieChart = new Chart(ctx, {
                     selectedFileNames.Add(theExcelFilePath);
                 }
             }
-
             // Update the DataGridView and selected BOMs
             PopulateDataGridView();
             SetSelectedBoms();
         }
-
         private void button9_Click(object sender, EventArgs e)
         {
             // Check if a warehouse has been selected
@@ -2382,28 +2012,21 @@ var myPieChart = new Chart(ctx, {
                 comboBox6.DroppedDown = true; // Opens the drop-down list
                 return; // Exit the method until a selection is made
             }
-
             // Get the warehouse name from comboBox6
             string selectedWarehouseName = comboBox6.SelectedItem.ToString();
-
             // Construct the directory paths for the current and previous months
             string currentMonthPath = "\\\\dbr1\\Data\\WareHouse\\2025\\" + DateTime.Now.ToString("MM.yyyy");
             string previousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2025\\" + DateTime.Now.AddMonths(-1).ToString("MM.yyyy");
-
             // Get all files in the directories that start with the selected warehouse name and have the .xlsm extension
             string[] currentMonthFiles = Directory.GetFiles(currentMonthPath, $"{selectedWarehouseName}*.xlsm");
             string[] previousMonthFiles = Directory.GetFiles(previousMonthPath, $"{selectedWarehouseName}*.xlsm");
-
-
             // Combine the files from both months
             allFiles = currentMonthFiles.Concat(previousMonthFiles).ToArray();
-
             if (allFiles.Length == 0)
             {
                 MessageBox.Show("No files found for the selected warehouse.");
                 return;
             }
-
             foreach (string fileName in allFiles)
             {
                 string theExcelFilePath = Path.GetFileName(fileName);
@@ -2418,12 +2041,10 @@ var myPieChart = new Chart(ctx, {
                     selectedFileNames.Add(theExcelFilePath);
                 }
             }
-
             // Update the DataGridView and selected BOMs
             PopulateDataGridView();
             SetSelectedBoms();
         }
-
         private void button10_Click(object sender, EventArgs e)
         {
             // Check if a warehouse has been selected
@@ -2434,32 +2055,26 @@ var myPieChart = new Chart(ctx, {
                 comboBox6.DroppedDown = true; // Opens the drop-down list
                 return; // Exit the method until a selection is made
             }
-
             // Get the warehouse name from comboBox6
             string selectedWarehouseName = comboBox6.SelectedItem.ToString();
-
             // Construct the directory paths for the current and previous three months
             string currentMonthPath = "\\\\dbr1\\Data\\WareHouse\\2025\\" + DateTime.Now.ToString("MM.yyyy");
             string previousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2025\\" + DateTime.Now.AddMonths(-1).ToString("MM.yyyy");
             string prepreviousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.AddMonths(-2).ToString("MM.yyyy");
-
             // Get all files in the directories that start with the selected warehouse name and have the .xlsm extension
             string[] currentMonthFiles = Directory.GetFiles(currentMonthPath, $"{selectedWarehouseName}*.xlsm");
             string[] previousMonthFiles = Directory.GetFiles(previousMonthPath, $"{selectedWarehouseName}*.xlsm");
             string[] prepreviousMonthFiles = Directory.GetFiles(prepreviousMonthPath, $"{selectedWarehouseName}*.xlsm");
-
             // Combine the files from all three months
             allFiles = currentMonthFiles
                .Concat(previousMonthFiles)
                .Concat(prepreviousMonthFiles)
                .ToArray();
-
             if (allFiles.Length == 0)
             {
                 MessageBox.Show("No files found for the selected warehouse.");
                 return;
             }
-
             foreach (string fileName in allFiles)
             {
                 string theExcelFilePath = Path.GetFileName(fileName);
@@ -2474,15 +2089,12 @@ var myPieChart = new Chart(ctx, {
                     selectedFileNames.Add(theExcelFilePath);
                 }
             }
-
             // Update the DataGridView and selected BOMs
             PopulateDataGridView();
             SetSelectedBoms();
         }
-
         private void button11_Click(object sender, EventArgs e)
         {
-
             // Check if a warehouse has been selected
             if (comboBox6.SelectedItem == null)
             {
@@ -2491,35 +2103,29 @@ var myPieChart = new Chart(ctx, {
                 comboBox6.DroppedDown = true; // Opens the drop-down list
                 return; // Exit the method until a selection is made
             }
-
             // Get the warehouse name from comboBox6
             string selectedWarehouseName = comboBox6.SelectedItem.ToString();
-
             // Construct the directory paths for the current and previous three months
             string currentMonthPath = "\\\\dbr1\\Data\\WareHouse\\2025\\" + DateTime.Now.ToString("MM.yyyy");
             string previousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2025\\" + DateTime.Now.AddMonths(-1).ToString("MM.yyyy");
             string prepreviousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.AddMonths(-2).ToString("MM.yyyy");
             string preprepreviousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.AddMonths(-3).ToString("MM.yyyy");
-
             // Get all files in the directories that start with the selected warehouse name and have the .xlsm extension
             string[] currentMonthFiles = Directory.GetFiles(currentMonthPath, $"{selectedWarehouseName}*.xlsm");
             string[] previousMonthFiles = Directory.GetFiles(previousMonthPath, $"{selectedWarehouseName}*.xlsm");
             string[] prepreviousMonthFiles = Directory.GetFiles(prepreviousMonthPath, $"{selectedWarehouseName}*.xlsm");
             string[] preprepreviousMonthFiles = Directory.GetFiles(preprepreviousMonthPath, $"{selectedWarehouseName}*.xlsm");
-
             // Combine the files from all three months
             allFiles = currentMonthFiles
                 .Concat(previousMonthFiles)
                 .Concat(prepreviousMonthFiles)
                 .Concat(preprepreviousMonthFiles)
                 .ToArray();
-
             if (allFiles.Length == 0)
             {
                 MessageBox.Show("No files found for the selected warehouse.");
                 return;
             }
-
             foreach (string fileName in allFiles)
             {
                 string theExcelFilePath = Path.GetFileName(fileName);
@@ -2534,21 +2140,17 @@ var myPieChart = new Chart(ctx, {
                     selectedFileNames.Add(theExcelFilePath);
                 }
             }
-
             // Update the DataGridView and selected BOMs
             PopulateDataGridView();
             SetSelectedBoms();
         }
-
         private void button7_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
                 // Assuming the checkbox column is at index 0 (change the index to match your setup)
                 int checkboxColumnIndex = 0;
-
                 bool allChecked = true;
-
                 // First, check if all checkboxes are already checked
                 foreach (DataGridViewRow row in dataGridView1.Rows)
                 {
@@ -2558,7 +2160,6 @@ var myPieChart = new Chart(ctx, {
                         break;
                     }
                 }
-
                 // If all are checked, uncheck all; otherwise, check all
                 foreach (DataGridViewRow row in dataGridView1.Rows)
                 {
@@ -2566,7 +2167,6 @@ var myPieChart = new Chart(ctx, {
                 }
             }
         }
-
         private async void button2_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -2579,7 +2179,6 @@ var myPieChart = new Chart(ctx, {
                 //    StartPosition = FormStartPosition.CenterScreen,
                 //    Text = "IPN Kit Usage Overview"
                 //};
-
                 //DataGridView dataGridView = new DataGridView
                 //{
                 //    Dock = DockStyle.Fill,
@@ -2588,10 +2187,8 @@ var myPieChart = new Chart(ctx, {
                 //    AllowUserToAddRows = false,
                 //    BackgroundColor = Color.LightGray // Set default background color
                 //};
-
                 //popupForm.Controls.Add(dataGridView);
                 //await PopulateDataGridViewAsync(dataGridView);
-
                 //popupForm.ShowDialog();
             }
             else if (e.Button == MouseButtons.Right)
@@ -2599,10 +2196,8 @@ var myPieChart = new Chart(ctx, {
                 // Right-click: Generate HTML report
                 string timestamp = DateTime.Now.ToString("yyyyMMddHHmm");
                 string filePath = $@"\\dbr1\Data\WareHouse\2025\WHsearcher\qSim_{timestamp}_{comboBox6.SelectedItem.ToString()}.html";
-
                 await GenerateHtmlReportAsync(filePath);
                 // MessageBox.Show($"Report saved at: {filePath}", "Report Generated", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
                 // Open the HTML file in the default web browser
                 try
                 {
@@ -2618,12 +2213,10 @@ var myPieChart = new Chart(ctx, {
                 }
             }
         }
-
         private async Task GenerateHtmlReportAsync(string filePath)
         {
             // Prepare the dictionary to track IPNs and their DELTA values across kits
             var ipnData = new Dictionary<string, Dictionary<string, int?>>(); // Nullable int for DELTA
-
             foreach (var bom in selectedBOMs)
             {
                 foreach (var item in bom.Items)
@@ -2632,13 +2225,10 @@ var myPieChart = new Chart(ctx, {
                     {
                         ipnData[item.IPN] = new Dictionary<string, int?>();
                     }
-
                     ipnData[item.IPN][bom.Name] = item.Delta; // Add DELTA for IPN in this kit
                 }
             }
-
             string connectionString = string.Empty;
-
             foreach (ClientWarehouse w in warehouses)
             {
                 if (comboBox6.SelectedItem == w.clName)
@@ -2649,12 +2239,9 @@ var myPieChart = new Chart(ctx, {
                     }
                 }
             }
-
             // Pull relevant stock data for IPNs from SQL
             var whStockData = new Dictionary<string, int>(); // Store summed stock for each IPN
-
             var ipnList = string.Join("','", ipnData.Keys.Select(ipn => ipn.Replace("'", "''"))); // Sanitize for SQL query
-
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 string query = $"SELECT IPN, SUM(CAST(Stock AS INT)) AS TotalStock FROM STOCK WHERE IPN IN ('{ipnList}') GROUP BY IPN";
@@ -2670,9 +2257,7 @@ var myPieChart = new Chart(ctx, {
                     }
                 }
             }
-
             var htmlContent = new StringBuilder();
-
             // HTML header and CSS styles
             htmlContent.AppendLine("<html>");
             htmlContent.AppendLine("<head>");
@@ -2691,7 +2276,6 @@ var myPieChart = new Chart(ctx, {
             htmlContent.AppendLine("    100% { transform: scale(1.2); opacity: 0; }");
             htmlContent.AppendLine("}");
             htmlContent.AppendLine("</style>");
-
             // Insert this section after your CSS in the HTML content generation
             htmlContent.AppendLine("<script>");
             htmlContent.AppendLine("document.addEventListener('DOMContentLoaded', function() {");
@@ -2703,41 +2287,31 @@ var myPieChart = new Chart(ctx, {
             htmlContent.AppendLine("            setTimeout(() => { header.classList.remove('ripple'); }, 300);"); // Remove ripple effect after animation
             htmlContent.AppendLine("        });");
             htmlContent.AppendLine("    });");
-
             htmlContent.AppendLine("    let sortDirection = 1;"); // 1 for ascending, -1 for descending
-
             htmlContent.AppendLine("    function sortTable(columnIndex) {");
             htmlContent.AppendLine("        let table = document.querySelector('table tbody');");
             htmlContent.AppendLine("        let rows = Array.from(table.rows);");
-
             htmlContent.AppendLine("        // Toggle sort direction");
             htmlContent.AppendLine("        sortDirection = -sortDirection;");
-
             htmlContent.AppendLine("        rows.sort((rowA, rowB) => {");
             htmlContent.AppendLine("            let cellA = rowA.cells[columnIndex]?.textContent.trim() || '';");
             htmlContent.AppendLine("            let cellB = rowB.cells[columnIndex]?.textContent.trim() || '';");
-
             htmlContent.AppendLine("            // Always place empty cells below non-empty cells");
             htmlContent.AppendLine("            if (cellA === '' && cellB !== '') return 1;"); // Empty cell comes last
             htmlContent.AppendLine("            if (cellA !== '' && cellB === '') return -1;"); // Non-empty cell comes first
-
             htmlContent.AppendLine("            let a = isNaN(cellA) || cellA === '' ? cellA : parseInt(cellA);");
             htmlContent.AppendLine("            let b = isNaN(cellB) || cellB === '' ? cellB : parseInt(cellB);");
-
             htmlContent.AppendLine("            if (a < b) return -sortDirection;");
             htmlContent.AppendLine("            if (a > b) return sortDirection;");
             htmlContent.AppendLine("            return 0;");
             htmlContent.AppendLine("        });");
-
             htmlContent.AppendLine("        // Append sorted rows back to the table");
             htmlContent.AppendLine("        rows.forEach(row => table.appendChild(row));");
             htmlContent.AppendLine("    }");
             htmlContent.AppendLine("});");
             htmlContent.AppendLine("</script>");
-
             htmlContent.AppendLine("</head>");
             htmlContent.AppendLine("<body style='background-color: grey;'>");
-
             htmlContent.AppendLine("<table>");
             htmlContent.AppendLine("<thead>");
             htmlContent.AppendLine("<tr>");
@@ -2745,18 +2319,15 @@ var myPieChart = new Chart(ctx, {
             htmlContent.AppendLine("<th class='nowrap'>Balance</th>");
             htmlContent.AppendLine("<th class='nowrap'>Count</th>");
             htmlContent.AppendLine("<th class='nowrap'>IPN</th>");
-
             foreach (var bom in selectedBOMs)
             {
                 string[] nameParts = bom.Name.Split('_');
                 string displayName = nameParts.Length >= 3 ? $"{nameParts[1]}_{nameParts[2].Replace(".xlsm", "")}" : bom.Name;
                 htmlContent.AppendLine($"<th class='rotated-header'>{displayName}</th>");
             }
-
             htmlContent.AppendLine("</tr>");
             htmlContent.AppendLine("</thead>");
             htmlContent.AppendLine("<tbody>");
-
             // Data rows with IPN, WH, balance, count, and delta values
             foreach (var ipnEntry in ipnData.OrderByDescending(entry => entry.Value.Count(v => v.Value.HasValue)))
             {
@@ -2764,16 +2335,13 @@ var myPieChart = new Chart(ctx, {
                 int totalAppearances = ipnEntry.Value.Count(v => v.Value.HasValue);
                 int balance = ipnEntry.Value.Values.Where(v => v.HasValue).Sum(v => v ?? 0);
                 int whStock = whStockData.ContainsKey(ipn) ? whStockData[ipn] : 0;
-
                 string balanceClass = balance > 0 ? "positive" : (balance < 0 ? "negative" : "positive");
                 string whClass = ((whStock >= Math.Abs(balance) && whStock > 0) || (whStock > 0 && balance >= 0)) ? "positive" : "negative";
-
                 htmlContent.AppendLine("<tr>");
                 htmlContent.AppendLine($"<td class='{whClass} bold'>{whStock}</td>"); // WH column with coloring
                 htmlContent.AppendLine($"<td class='{balanceClass} bold'>{balance}</td>");
                 htmlContent.AppendLine($"<td style='color:white;'>{totalAppearances}</td>");
                 htmlContent.AppendLine($"<td style='color:white;'>{ipn}</td>");
-
                 foreach (var bom in selectedBOMs)
                 {
                     if (ipnEntry.Value.TryGetValue(bom.Name, out var delta))
@@ -2786,27 +2354,21 @@ var myPieChart = new Chart(ctx, {
                         htmlContent.AppendLine("<td></td>");
                     }
                 }
-
                 htmlContent.AppendLine("</tr>");
             }
-
             htmlContent.AppendLine("</tbody>");
             htmlContent.AppendLine("</table>");
             htmlContent.AppendLine("</body>");
             htmlContent.AppendLine("</html>");
-
             await File.WriteAllTextAsync(filePath, htmlContent.ToString());
-
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
             {
                 FileName = filePath,
                 UseShellExecute = true
             });
         }
-
         private void button12_Click(object sender, EventArgs e)
         {
-
             // Check if a warehouse has been selected
             if (comboBox6.SelectedItem == null)
             {
@@ -2815,24 +2377,20 @@ var myPieChart = new Chart(ctx, {
                 comboBox6.DroppedDown = true; // Opens the drop-down list
                 return; // Exit the method until a selection is made
             }
-
             // Get the warehouse name from comboBox6
             string selectedWarehouseName = comboBox6.SelectedItem.ToString();
-
             // Construct the directory paths for the current and previous three months
             string currentMonthPath = "\\\\dbr1\\Data\\WareHouse\\2025\\" + DateTime.Now.ToString("MM.yyyy");
             string previousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2025\\" + DateTime.Now.AddMonths(-1).ToString("MM.yyyy");
             string prepreviousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.AddMonths(-2).ToString("MM.yyyy");
             string preprepreviousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.AddMonths(-3).ToString("MM.yyyy");
             string prepreprepreviousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2024\\" + DateTime.Now.AddMonths(-4).ToString("MM.yyyy");
-
             // Get all files in the directories that start with the selected warehouse name and have the .xlsm extension
             string[] currentMonthFiles = Directory.GetFiles(currentMonthPath, $"{selectedWarehouseName}*.xlsm");
             string[] previousMonthFiles = Directory.GetFiles(previousMonthPath, $"{selectedWarehouseName}*.xlsm");
             string[] prepreviousMonthFiles = Directory.GetFiles(prepreviousMonthPath, $"{selectedWarehouseName}*.xlsm");
             string[] preprepreviousMonthFiles = Directory.GetFiles(preprepreviousMonthPath, $"{selectedWarehouseName}*.xlsm");
             string[] prepreprepreviousMonthFiles = Directory.GetFiles(prepreprepreviousMonthPath, $"{selectedWarehouseName}*.xlsm");
-
             // Combine the files from all three months
             allFiles = currentMonthFiles
                .Concat(previousMonthFiles)
@@ -2840,13 +2398,11 @@ var myPieChart = new Chart(ctx, {
                .Concat(preprepreviousMonthFiles)
                .Concat(prepreprepreviousMonthFiles)
                .ToArray();
-
             if (allFiles.Length == 0)
             {
                 MessageBox.Show("No files found for the selected warehouse.");
                 return;
             }
-
             foreach (string fileName in allFiles)
             {
                 string theExcelFilePath = Path.GetFileName(fileName);
@@ -2861,13 +2417,10 @@ var myPieChart = new Chart(ctx, {
                     selectedFileNames.Add(theExcelFilePath);
                 }
             }
-
             // Update the DataGridView and selected BOMs
             PopulateDataGridView();
             SetSelectedBoms();
         }
-
-    
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             // Ensure the clicked cell is valid
@@ -2882,7 +2435,6 @@ var myPieChart = new Chart(ctx, {
                     // Get the file path from the clicked cell
                     string filePath = dataGridView1.Rows[e.RowIndex].Cells["Folder"].Value?.ToString();
                     //MessageBox.Show($"FilePath: {filePath}");
-
                     if (!string.IsNullOrEmpty(filePath))
                     {
                         // Confirm with the user
@@ -2890,7 +2442,6 @@ var myPieChart = new Chart(ctx, {
                             "Load the BOM : " + filePath + "?",
                             "Load BOM",
                             MessageBoxButtons.OKCancel);
-
                         if (result == DialogResult.OK)
                         {
                             // Check if Form1 is open
@@ -2913,6 +2464,5 @@ var myPieChart = new Chart(ctx, {
                 }
             }
         }
-
     }
 }
