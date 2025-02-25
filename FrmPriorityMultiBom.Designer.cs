@@ -48,6 +48,8 @@
             btnPartialAssy = new Button();
             btnByIPN = new Button();
             btnByKit = new Button();
+            btnAwaitingComp = new Button();
+            btnNotSentYet = new Button();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -205,6 +207,8 @@
             tableLayoutPanel4.Controls.Add(btnPartialAssy, 3, 0);
             tableLayoutPanel4.Controls.Add(btnByIPN, 1, 1);
             tableLayoutPanel4.Controls.Add(btnByKit, 2, 1);
+            tableLayoutPanel4.Controls.Add(btnAwaitingComp, 3, 1);
+            tableLayoutPanel4.Controls.Add(btnNotSentYet, 4, 1);
             tableLayoutPanel4.Dock = DockStyle.Fill;
             tableLayoutPanel4.Location = new Point(3, 66);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
@@ -303,6 +307,28 @@
             btnByKit.UseVisualStyleBackColor = true;
             btnByKit.Click += btnByKit_Click;
             // 
+            // btnAwaitingComp
+            // 
+            btnAwaitingComp.Dock = DockStyle.Fill;
+            btnAwaitingComp.Location = new Point(249, 31);
+            btnAwaitingComp.Name = "btnAwaitingComp";
+            btnAwaitingComp.Size = new Size(76, 23);
+            btnAwaitingComp.TabIndex = 8;
+            btnAwaitingComp.Text = "ממתין להשלמה";
+            btnAwaitingComp.UseVisualStyleBackColor = true;
+            btnAwaitingComp.Click += btnAwaitingComp_Click;
+            // 
+            // btnNotSentYet
+            // 
+            btnNotSentYet.Dock = DockStyle.Fill;
+            btnNotSentYet.Location = new Point(331, 31);
+            btnNotSentYet.Name = "btnNotSentYet";
+            btnNotSentYet.Size = new Size(80, 23);
+            btnNotSentYet.TabIndex = 9;
+            btnNotSentYet.Text = "טרם נשלח קיט";
+            btnNotSentYet.UseVisualStyleBackColor = true;
+            btnNotSentYet.Click += btnNotSentYet_Click;
+            // 
             // FrmPriorityMultiBom
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -348,5 +374,7 @@
         private Button btnPartialAssy;
         private Button btnByIPN;
         private Button btnByKit;
+        private Button btnAwaitingComp;
+        private Button btnNotSentYet;
     }
 }

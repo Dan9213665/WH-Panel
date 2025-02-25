@@ -14,6 +14,7 @@ using static WH_Panel.FrmPriorityBom;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Diagnostics;
 using System.Data.SqlClient;
+using Button = System.Windows.Forms.Button;
 namespace WH_Panel
 {
     public partial class FrmPriorityMultiBom : Form
@@ -36,24 +37,22 @@ namespace WH_Panel
             }
             PopulateWarehouses();
             InitializeDataGridView();
-            //GetGetRobWosList();
-            //chkbBomsList.DrawMode = DrawMode.OwnerDrawFixed;
-            //chkbBomsList.DrawItem += chkbBomsList_DrawItem;
         }
 
         private void InitializeDataGridView()
         {
             dgvBomsList.Columns.Clear();
-            dgvBomsList.Columns.Add(new DataGridViewCheckBoxColumn { Name = "Selected", HeaderText = "Selected" });
-            dgvBomsList.Columns.Add(new DataGridViewTextBoxColumn { Name = "SerialName", HeaderText = "Serial Name" });
-            dgvBomsList.Columns.Add(new DataGridViewTextBoxColumn { Name = "PartName", HeaderText = "Part Name" });
-            dgvBomsList.Columns.Add(new DataGridViewTextBoxColumn { Name = "SerialStatusDes", HeaderText = "Status" });
-            dgvBomsList.Columns.Add(new DataGridViewTextBoxColumn { Name = "Quant", HeaderText = "Quantity" });
-            dgvBomsList.Columns.Add(new DataGridViewTextBoxColumn { Name = "RevNum", HeaderText = "Revision" });
+            dgvBomsList.Columns.Add(new DataGridViewCheckBoxColumn { Name = "Selected", HeaderText = "בחירה", ReadOnly = false });
+            dgvBomsList.Columns.Add(new DataGridViewTextBoxColumn { Name = "SerialName", HeaderText = "פק\"ע" });
+            dgvBomsList.Columns.Add(new DataGridViewTextBoxColumn { Name = "PartName", HeaderText = "מק\"ט הרכבה" });
+            dgvBomsList.Columns.Add(new DataGridViewTextBoxColumn { Name = "SerialStatusDes", HeaderText = "סטטוס קיט" });
+            dgvBomsList.Columns.Add(new DataGridViewTextBoxColumn { Name = "Quant", HeaderText = "כמות" });
+            dgvBomsList.Columns.Add(new DataGridViewTextBoxColumn { Name = "RevNum", HeaderText = "רוויזיה" });
+            dgvBomsList.Columns.Add(new DataGridViewTextBoxColumn { Name = "Priority", HeaderText = "עדיפות" });
             dgvBomsList.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvBomsList.AllowUserToAddRows = false;
             dgvBomsList.AllowUserToDeleteRows = false;
-            dgvBomsList.ReadOnly = true; // Set the DataGridView to read-only
+            dgvBomsList.ReadOnly = false; // Set the DataGridView to read-only
             dgvBomsList.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvBomsList.MultiSelect = false;
             // Handle the ColumnHeaderMouseClick event for sorting
@@ -122,10 +121,10 @@ namespace WH_Panel
                     {
                         foreach (var serial in serials)
                         {
-                            int rowIndex = dgvBomsList.Rows.Add(false, serial.SERIALNAME, serial.PARTNAME, serial.SERIALSTATUSDES, serial.QUANT, serial.REVNUM);
                             if (serial.SERIALSTATUSDES != "נסגרה")
                             {
-                                dgvBomsList.Rows[rowIndex].Cells["Selected"].Value = true;
+                                int rowIndex = dgvBomsList.Rows.Add(false, serial.SERIALNAME, serial.PARTNAME, serial.SERIALSTATUSDES, serial.QUANT, serial.REVNUM);
+                                dgvBomsList.Rows[rowIndex].Cells["Selected"].Value = false;
                             }
                         }
                         lblLoading.BackColor = Color.Green;
@@ -418,6 +417,7 @@ namespace WH_Panel
                 }
             }
             UpdateSelectedLabel();
+            ToggleButtonColor((Button)sender, Color.DarkGreen); // Toggle button color
         }
 
         private void btnReleased_Click(object sender, EventArgs e)
@@ -448,99 +448,6 @@ namespace WH_Panel
             }
             UpdateSelectedLabel();
         }
-
-        //private async Task<Dictionary<string, (int balance, int stock, int simulation)>> AggregatedSim(List<Serial> selectedWorkOrders)
-        //{
-        //    var ipnBalances = new Dictionary<string, int>();
-        //    foreach (var workOrder in selectedWorkOrders)
-        //    {
-        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{workOrder.SERIALNAME}'&$expand=TRANSORDER_K_SUBFORM";
-        //        using (HttpClient client = new HttpClient())
-        //        {
-        //            try
-        //            {
-        //                AppendLogMessage($"Retrieving data for {workOrder.SERIALNAME} \n", Color.Yellow);
-        //                client.DefaultRequestHeaders.Accept.Clear();
-        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //                HttpResponseMessage response = await client.GetAsync(url);
-        //                response.EnsureSuccessStatusCode();
-        //                string responseBody = await response.Content.ReadAsStringAsync();
-        //                var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-        //                var transOrders = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
-        //                foreach (var transOrder in transOrders)
-        //                {
-        //                    int balance = transOrder.QUANT - transOrder.CQUANT;
-        //                    if (ipnBalances.ContainsKey(transOrder.PARTNAME))
-        //                    {
-        //                        ipnBalances[transOrder.PARTNAME] += balance;
-        //                    }
-        //                    else
-        //                    {
-        //                        ipnBalances[transOrder.PARTNAME] = balance;
-        //                    }
-        //                }
-        //                AppendLogMessage($"Loaded data for {workOrder.SERIALNAME} \n", Color.Green);
-        //            }
-        //            catch (HttpRequestException ex)
-        //            {
-        //                AppendLogMessage($"Request error: {ex.Message} \n", Color.Red);
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                AppendLogMessage($"Request error: {ex.Message}\n", Color.Red);
-        //            }
-        //        }
-        //    }
-        //    // Fetch warehouse stock levels
-        //    var warehouseStock = new Dictionary<string, int>();
-        //    string selectedWarehouseName = GetSelectedWarehouseName();
-        //    if (selectedWarehouseName != null)
-        //    {
-        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouseName}'&$expand=WARHSBAL_SUBFORM";
-        //        using (HttpClient client = new HttpClient())
-        //        {
-        //            try
-        //            {
-        //                AppendLogMessage($"Retrieving data for {selectedWarehouseName} \n", Color.Yellow);
-        //                client.DefaultRequestHeaders.Accept.Clear();
-        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //                HttpResponseMessage response = await client.GetAsync(url);
-        //                response.EnsureSuccessStatusCode();
-        //                string responseBody = await response.Content.ReadAsStringAsync();
-        //                var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-        //                var warehouseBalances = apiResponse["value"].First["WARHSBAL_SUBFORM"].ToObject<List<WarehouseBalance>>();
-        //                foreach (var balance in warehouseBalances)
-        //                {
-        //                    warehouseStock[balance.PARTNAME] = balance.BALANCE;
-        //                }
-        //                AppendLogMessage($"Loaded data for {selectedWarehouseName} \n", Color.Green);
-        //            }
-        //            catch (HttpRequestException ex)
-        //            {
-        //                AppendLogMessage($"Request error: {ex.Message} \n", Color.Red);
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                AppendLogMessage($"Request error: {ex.Message}\n", Color.Red);
-        //            }
-        //        }
-        //    }
-        //    // Calculate the required values
-        //    var result = new Dictionary<string, (int balance, int stock, int simulation)>();
-        //    foreach (var ipn in ipnBalances.Keys)
-        //    {
-        //        int balance = ipnBalances[ipn];
-        //        int stock = warehouseStock.ContainsKey(ipn) ? warehouseStock[ipn] : 0;
-        //        int simulation = stock + balance;
-        //        result[ipn] = (balance, stock, simulation);
-        //    }
-        //    return result;
-        //}
-
 
         private async Task<Dictionary<string, (int balance, int stock, int simulation)>> AggregatedSim(List<Serial> selectedWorkOrders)
         {
@@ -765,7 +672,7 @@ namespace WH_Panel
             return ipnToSerials;
         }
 
-     
+
 
 
         private void GenerateHTMLaggregated(string filename, Dictionary<string, (int balance, int stock, int simulation)> tableData, string reportTitle, List<Serial> selectedWorkOrders, double completionPercentage)
@@ -1275,7 +1182,7 @@ namespace WH_Panel
 
                     writer.WriteLine($"<div class='kit-section {headerClass}'>");
 
-                    if (deficitIPNs > 0 )
+                    if (deficitIPNs > 0)
                     {
                         writer.WriteLine($"<h2>Work Order: {workOrder.SERIALNAME} - In kit {nonDeficitIPNs} of {totalIPNs}, missing {deficitIPNs} (  {completionPercentage:F2} %)</h2>");
                     }
@@ -1301,7 +1208,7 @@ namespace WH_Panel
                     writer.WriteLine("</tr>");
                     writer.WriteLine("</table>");
 
-                    if(completionPercentage<100)
+                    if (completionPercentage < 100)
                     {
                         writer.WriteLine("<table id='kitsTable'>");
                         writer.WriteLine("<tr>");
@@ -1328,13 +1235,59 @@ namespace WH_Panel
                         writer.WriteLine("</table>");
                     }
 
-                
+
                     writer.WriteLine("</div>");
                     writer.WriteLine("<br>");
                 }
 
                 writer.WriteLine("</body>");
                 writer.WriteLine("</html>");
+            }
+        }
+
+        private void btnAwaitingComp_Click(object sender, EventArgs e)
+        {
+            bool allChecked = dgvBomsList.Rows.Cast<DataGridViewRow>()
+          .Where(row => row.Cells["SerialStatusDes"].Value.ToString() == "ממתין להשלמה")
+          .All(row => Convert.ToBoolean(row.Cells["Selected"].Value));
+            foreach (DataGridViewRow row in dgvBomsList.Rows)
+            {
+                if (row.Cells["SerialStatusDes"].Value.ToString() == "ממתין להשלמה")
+                {
+                    row.Cells["Selected"].Value = !allChecked;
+                }
+            }
+            UpdateSelectedLabel();
+            ToggleButtonColor((Button)sender, Color.OrangeRed); // Toggle button color
+        }
+
+        private void btnNotSentYet_Click(object sender, EventArgs e)
+        {
+            bool allChecked = dgvBomsList.Rows.Cast<DataGridViewRow>()
+            .Where(row => row.Cells["SerialStatusDes"].Value.ToString() == "טרם נשלח קיט")
+            .All(row => Convert.ToBoolean(row.Cells["Selected"].Value));
+            foreach (DataGridViewRow row in dgvBomsList.Rows)
+            {
+                if (row.Cells["SerialStatusDes"].Value.ToString() == "טרם נשלח קיט")
+                {
+                    row.Cells["Selected"].Value = !allChecked;
+                }
+            }
+            UpdateSelectedLabel();
+            ToggleButtonColor((Button)sender, Color.Blue); // Toggle button color
+
+        }
+
+       
+        private void ToggleButtonColor(Button button, Color color)
+        {
+            if (button.BackColor == color)
+            {
+                button.BackColor = Color.FromArgb(37, 37, 38); // Default color
+            }
+            else
+            {
+                button.BackColor = color;
             }
         }
     }
