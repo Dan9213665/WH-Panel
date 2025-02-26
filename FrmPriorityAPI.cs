@@ -1354,11 +1354,11 @@ namespace WH_Panel
             }
             else if (logDocNo.StartsWith("ROB"))
             {
-                //txtLog.SelectionColor = Color.Red; // Set the color to red
-                //txtLog.AppendText($"logDocNo: {logDocNo}\n");
-                //txtLog.ScrollToCaret();
-                // Handle ROB documents
                 url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{logDocNo}'";
+            }
+            else if (logDocNo.StartsWith("IC"))
+            {
+                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_C?$filter=DOCNO eq '{logDocNo}'";
             }
             else
             {
@@ -1424,6 +1424,13 @@ namespace WH_Panel
                         }
                     }
                     else if (logDocNo.StartsWith("SH"))
+                    {
+                        // Handle SH document logic
+                        string bookNum = document["CDES"]?.ToString();
+                        string date = document["UDATE"]?.ToString();
+                        results.Add((null, bookNum, date));
+                    }
+                    else if (logDocNo.StartsWith("IC"))
                     {
                         // Handle SH document logic
                         string bookNum = document["CDES"]?.ToString();

@@ -38,7 +38,6 @@ namespace WH_Panel
             PopulateWarehouses();
             InitializeDataGridView();
         }
-
         private void InitializeDataGridView()
         {
             dgvBomsList.Columns.Clear();
@@ -419,7 +418,6 @@ namespace WH_Panel
             UpdateSelectedLabel();
             ToggleButtonColor((Button)sender, Color.DarkGreen); // Toggle button color
         }
-
         private void btnReleased_Click(object sender, EventArgs e)
         {
             bool allChecked = dgvBomsList.Rows.Cast<DataGridViewRow>()
@@ -448,12 +446,10 @@ namespace WH_Panel
             }
             UpdateSelectedLabel();
         }
-
         private async Task<Dictionary<string, (int balance, int stock, int simulation)>> AggregatedSim(List<Serial> selectedWorkOrders)
         {
             var ipnQuantities = new Dictionary<string, int>();
             var ipnCQuantities = new Dictionary<string, int>();
-
             // Fetch warehouse stock levels once
             var warehouseStock = new Dictionary<string, int>();
             string selectedWarehouseName = GetSelectedWarehouseName();
@@ -490,7 +486,6 @@ namespace WH_Panel
                     }
                 }
             }
-
             foreach (var workOrder in selectedWorkOrders)
             {
                 string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{workOrder.SERIALNAME}'&$expand=TRANSORDER_K_SUBFORM";
@@ -508,7 +503,6 @@ namespace WH_Panel
                         string responseBody = await response.Content.ReadAsStringAsync();
                         var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
                         var transOrders = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
-
                         foreach (var transOrder in transOrders)
                         {
                             if (ipnQuantities.ContainsKey(transOrder.PARTNAME))
@@ -521,7 +515,6 @@ namespace WH_Panel
                                 ipnCQuantities[transOrder.PARTNAME] = transOrder.CQUANT;
                             }
                         }
-
                         AppendLogMessage($"Loaded data for {workOrder.SERIALNAME} \n", Color.Green);
                     }
                     catch (HttpRequestException ex)
@@ -534,14 +527,12 @@ namespace WH_Panel
                     }
                 }
             }
-
             // Calculate the balance for each PARTNAME
             var ipnBalances = new Dictionary<string, int>();
             foreach (var partName in ipnQuantities.Keys)
             {
                 ipnBalances[partName] = ipnQuantities[partName] - ipnCQuantities[partName];
             }
-
             // Calculate the required values
             var result = new Dictionary<string, (int balance, int stock, int simulation)>();
             foreach (var ipn in ipnBalances.Keys)
@@ -553,12 +544,9 @@ namespace WH_Panel
             }
             return result;
         }
-
-
         private async Task<Dictionary<string, List<(Serial serial, int quant, int cquant, int balance, int simulation)>>> SimByIPN(List<Serial> selectedWorkOrders)
         {
             var ipnToSerials = new Dictionary<string, List<(Serial serial, int quant, int cquant, int balance, int simulation)>>();
-
             // Fetch warehouse stock levels once
             var warehouseStock = new Dictionary<string, int>();
             string selectedWarehouseName = GetSelectedWarehouseName();
@@ -595,7 +583,6 @@ namespace WH_Panel
                     }
                 }
             }
-
             foreach (var workOrder in selectedWorkOrders)
             {
                 string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{workOrder.SERIALNAME}'&$expand=TRANSORDER_K_SUBFORM";
@@ -613,10 +600,8 @@ namespace WH_Panel
                         string responseBody = await response.Content.ReadAsStringAsync();
                         var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
                         var transOrders = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
-
                         var partQuantities = new Dictionary<string, int>();
                         int cquant = 0;
-
                         foreach (var transOrder in transOrders)
                         {
                             if (partQuantities.ContainsKey(transOrder.PARTNAME))
@@ -629,20 +614,17 @@ namespace WH_Panel
                                 cquant = transOrder.CQUANT; // Assuming cquant is the same for all parts in the kit
                             }
                         }
-
                         foreach (var part in partQuantities)
                         {
                             int quant = part.Value;
                             int balance = quant - cquant;
                             int simulation = balance; // This will be updated later with warehouse stock
-
                             if (!ipnToSerials.ContainsKey(part.Key))
                             {
                                 ipnToSerials[part.Key] = new List<(Serial serial, int quant, int cquant, int balance, int simulation)>();
                             }
                             ipnToSerials[part.Key].Add((workOrder, quant, cquant, balance, simulation));
                         }
-
                         AppendLogMessage($"Loaded data for {workOrder.SERIALNAME} \n", Color.Green);
                     }
                     catch (HttpRequestException ex)
@@ -655,7 +637,6 @@ namespace WH_Panel
                     }
                 }
             }
-
             // Update simulation values with warehouse stock
             foreach (var ipn in ipnToSerials.Keys.ToList())
             {
@@ -668,17 +649,11 @@ namespace WH_Panel
                 }
                 ipnToSerials[ipn] = updatedList;
             }
-
             return ipnToSerials;
         }
-
-
-
-
         private void GenerateHTMLaggregated(string filename, Dictionary<string, (int balance, int stock, int simulation)> tableData, string reportTitle, List<Serial> selectedWorkOrders, double completionPercentage)
         {
             tableData.OrderBy(x => x.Key == "simulation");
-
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.WriteLine("<html style='text-align:center;background-color:gray;color:white;'>");
@@ -761,7 +736,6 @@ namespace WH_Panel
                 writer.WriteLine("<th onclick='sortTable(1)'>Kit Balance</th>");
                 writer.WriteLine("<th onclick='sortTable(3)'>Simulation</th>");
                 writer.WriteLine("</tr>");
-
                 foreach (var ipn in tableData.OrderBy(x => x.Value.simulation))
                 {
                     var (balance, stock, simulation) = ipn.Value;
@@ -779,7 +753,6 @@ namespace WH_Panel
                 writer.WriteLine("</html>");
             }
         }
-
         private async void btnByIPN_Click(object sender, EventArgs e)
         {
             var selectedWorkOrders = dgvBomsList.Rows.Cast<DataGridViewRow>()
@@ -792,16 +765,13 @@ namespace WH_Panel
                     QUANT = Convert.ToInt32(row.Cells["Quant"].Value),
                     REVNUM = row.Cells["RevNum"].Value.ToString()
                 }).ToList();
-
             var ipnToSerials = await SimByIPN(selectedWorkOrders);
             var warehouseStock = await GetWarehouseStock(); // Fetch warehouse stock levels
             AppendLogMessage($"Generating HTML report by IPN \n", Color.Yellow);
-
             // Generate HTML report by IPN
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
             string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\IPNBasedReport_{_fileTimeStamp}.html";
             GenerateHTMLbyIPN(filename, ipnToSerials, $"IPN-based Simulation Report {_fileTimeStamp}", warehouseStock, selectedWorkOrders);
-
             // Open the file in default browser
             var p = new Process();
             p.StartInfo = new ProcessStartInfo(filename)
@@ -810,7 +780,6 @@ namespace WH_Panel
             };
             p.Start();
         }
-
         private async Task<Dictionary<string, int>> GetWarehouseStock()
         {
             var warehouseStock = new Dictionary<string, int>();
@@ -850,8 +819,6 @@ namespace WH_Panel
             }
             return warehouseStock;
         }
-
-
         private void GenerateHTMLbyIPN(string filename, Dictionary<string, List<(Serial serial, int quant, int cquant, int balance, int simulation)>> ipnToSerials, string reportTitle, Dictionary<string, int> warehouseStock, List<Serial> selectedWorkOrders)
         {
             using (StreamWriter writer = new StreamWriter(filename))
@@ -923,7 +890,6 @@ namespace WH_Panel
                 writer.WriteLine("</head>");
                 writer.WriteLine("<body>");
                 writer.WriteLine($"<h1>{reportTitle}</h1>");
-
                 // Add the list of selected work orders
                 writer.WriteLine("<h2>Selected Work Orders</h2>");
                 writer.WriteLine("<table id='selectedWorkOrdersTable'>");
@@ -945,7 +911,6 @@ namespace WH_Panel
                     writer.WriteLine("</tr>");
                 }
                 writer.WriteLine("</table>");
-
                 foreach (var ipn in ipnToSerials.Keys)
                 {
                     var serials = ipnToSerials[ipn];
@@ -954,9 +919,7 @@ namespace WH_Panel
                     int totalBalance = serials.Sum(s => s.balance);
                     int warehouseBalance = warehouseStock.ContainsKey(ipn) ? warehouseStock[ipn] : 0;
                     int totalSimulation = warehouseBalance + totalBalance;
-
                     string totalSimulationClass = totalSimulation > 0 ? "green" : "red";
-
                     writer.WriteLine("<div class='ipn-section'>");
                     writer.WriteLine($"<h2>IPN: {ipn}</h2>");
                     writer.WriteLine("<table id='kitsTable'>");
@@ -975,7 +938,6 @@ namespace WH_Panel
                     writer.WriteLine($"<td class='{totalSimulationClass}'>{totalSimulation}</td>");
                     writer.WriteLine("</tr>");
                     writer.WriteLine("</table>");
-
                     writer.WriteLine("<table id='kitsTable'>");
                     writer.WriteLine("<tr>");
                     writer.WriteLine("<th onclick='sortTable(0)'>Work Order</th>");
@@ -984,7 +946,6 @@ namespace WH_Panel
                     writer.WriteLine("<th onclick='sortTable(3)'>Required in KIT</th>");
                     writer.WriteLine("<th onclick='sortTable(4)'>KIT DELTA</th>");
                     writer.WriteLine("</tr>");
-
                     // Subsequent rows: display each serial's balance and simulation
                     int currentWarehouseBalance = warehouseBalance;
                     foreach (var (serial, quant, cquant, balance, simulation) in serials)
@@ -992,10 +953,8 @@ namespace WH_Panel
                         int serialBalance = quant - cquant;
                         int serialSimulation = currentWarehouseBalance + serialBalance;
                         currentWarehouseBalance += serialBalance;
-
                         string serialBalanceClass = serialBalance > 0 ? "green" : "red";
                         string serialSimulationClass = serialSimulation > 0 ? "green" : "red";
-
                         writer.WriteLine("<tr>");
                         writer.WriteLine($"<td>{serial.SERIALNAME}</td>");
                         writer.WriteLine($"<td>{serial.PARTNAME}</td>");
@@ -1004,20 +963,14 @@ namespace WH_Panel
                         writer.WriteLine($"<td class='{serialBalanceClass}'>{serialBalance}</td>");
                         writer.WriteLine("</tr>");
                     }
-
                     writer.WriteLine("</table>");
                     writer.WriteLine("</div>");
                     writer.WriteLine("<br>");
                 }
-
                 writer.WriteLine("</body>");
                 writer.WriteLine("</html>");
             }
         }
-
-
-
-
         private async void btnByKit_Click(object sender, EventArgs e)
         {
             var selectedWorkOrders = dgvBomsList.Rows.Cast<DataGridViewRow>()
@@ -1030,16 +983,13 @@ namespace WH_Panel
                     QUANT = Convert.ToInt32(row.Cells["Quant"].Value),
                     REVNUM = row.Cells["RevNum"].Value.ToString()
                 }).ToList();
-
             var warehouseStock = await GetWarehouseStock(); // Fetch warehouse stock levels
             var (kitDeficits, allIPNs) = await SimByBoms(selectedWorkOrders, warehouseStock);
             AppendLogMessage($"Generating HTML report by KITs \n", Color.Yellow);
-
             // Generate HTML report by KITs
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
             string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\KITBasedReport_{_fileTimeStamp}.html";
             GenerateHTMLbyKITs(filename, kitDeficits, allIPNs, $"KIT-based Simulation Report {_fileTimeStamp}", selectedWorkOrders);
-
             // Open the file in default browser
             var p = new Process();
             p.StartInfo = new ProcessStartInfo(filename)
@@ -1048,13 +998,10 @@ namespace WH_Panel
             };
             p.Start();
         }
-
-
         private async Task<(Dictionary<string, List<(string ipn, int quant, int cquant, int balance, int delta)>> kitDeficits, Dictionary<string, HashSet<string>> allIPNs)> SimByBoms(List<Serial> selectedWorkOrders, Dictionary<string, int> warehouseStock)
         {
             var kitDeficits = new Dictionary<string, List<(string ipn, int quant, int cquant, int balance, int delta)>>();
             var allIPNs = new Dictionary<string, HashSet<string>>();
-
             foreach (var workOrder in selectedWorkOrders)
             {
                 string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{workOrder.SERIALNAME}'&$expand=TRANSORDER_K_SUBFORM";
@@ -1072,16 +1019,13 @@ namespace WH_Panel
                         string responseBody = await response.Content.ReadAsStringAsync();
                         var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
                         var transOrders = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
-
                         var ipnQuantities = new Dictionary<string, int>();
                         var ipnCQuantities = new Dictionary<string, int>();
-
                         foreach (var transOrder in transOrders)
                         {
                             string ipn = transOrder.PARTNAME;
                             int quant = transOrder.QUANT;
                             int cquant = transOrder.CQUANT;
-
                             // Sum up the quantities for each IPN
                             if (ipnQuantities.ContainsKey(ipn))
                             {
@@ -1092,7 +1036,6 @@ namespace WH_Panel
                                 ipnQuantities[ipn] = quant;
                                 ipnCQuantities[ipn] = cquant;
                             }
-
                             // Track all IPNs for each work order
                             if (!allIPNs.ContainsKey(workOrder.SERIALNAME))
                             {
@@ -1100,14 +1043,12 @@ namespace WH_Panel
                             }
                             allIPNs[workOrder.SERIALNAME].Add(ipn);
                         }
-
                         foreach (var ipn in ipnQuantities.Keys)
                         {
                             int quant = ipnQuantities[ipn];
                             int cquant = ipnCQuantities[ipn];
                             int balance = quant - cquant;
                             int delta = warehouseStock.ContainsKey(ipn) ? warehouseStock[ipn] + balance : balance;
-
                             // Exclude rows where KIT Balance is greater than or equal to zero
                             if (balance < 0 && delta < 0)
                             {
@@ -1117,7 +1058,6 @@ namespace WH_Panel
                                 }
                                 kitDeficits[workOrder.SERIALNAME].Add((ipn, quant, cquant, balance, delta));
                             }
-
                             if (warehouseStock.ContainsKey(ipn))
                             {
                                 warehouseStock[ipn] += balance;
@@ -1127,13 +1067,11 @@ namespace WH_Panel
                                 warehouseStock[ipn] = balance;
                             }
                         }
-
                         // Ensure a table is generated for each work order
                         if (!kitDeficits.ContainsKey(workOrder.SERIALNAME))
                         {
                             kitDeficits[workOrder.SERIALNAME] = new List<(string ipn, int quant, int cquant, int balance, int delta)>();
                         }
-
                         AppendLogMessage($"Loaded data for {workOrder.SERIALNAME} \n", Color.Green);
                     }
                     catch (HttpRequestException ex)
@@ -1146,10 +1084,8 @@ namespace WH_Panel
                     }
                 }
             }
-
             return (kitDeficits, allIPNs);
         }
-
         private void GenerateHTMLbyKITs(string filename, Dictionary<string, List<(string ipn, int quant, int cquant, int balance, int delta)>> kitDeficits, Dictionary<string, HashSet<string>> allIPNs, string reportTitle, List<Serial> selectedWorkOrders)
         {
             using (StreamWriter writer = new StreamWriter(filename))
@@ -1169,7 +1105,6 @@ namespace WH_Panel
                 writer.WriteLine("</head>");
                 writer.WriteLine("<body>");
                 writer.WriteLine($"<h1>{reportTitle}</h1>");
-
                 foreach (var workOrder in selectedWorkOrders)
                 {
                     var deficits = kitDeficits.ContainsKey(workOrder.SERIALNAME) ? kitDeficits[workOrder.SERIALNAME] : new List<(string ipn, int quant, int cquant, int balance, int delta)>();
@@ -1177,11 +1112,8 @@ namespace WH_Panel
                     int nonDeficitIPNs = totalIPNs - deficits.Count;
                     int deficitIPNs = deficits.Count;
                     double completionPercentage = totalIPNs > 0 ? (double)nonDeficitIPNs / totalIPNs * 100 : 100;
-
                     string headerClass = completionPercentage == 100 ? "green" : "";
-
                     writer.WriteLine($"<div class='kit-section {headerClass}'>");
-
                     if (deficitIPNs > 0)
                     {
                         writer.WriteLine($"<h2>Work Order: {workOrder.SERIALNAME} - In kit {nonDeficitIPNs} of {totalIPNs}, missing {deficitIPNs} (  {completionPercentage:F2} %)</h2>");
@@ -1190,7 +1122,6 @@ namespace WH_Panel
                     {
                         writer.WriteLine($"<h2>Work Order: {workOrder.SERIALNAME} - In kit {nonDeficitIPNs} of {totalIPNs} (  {completionPercentage:F2} %)</h2>");
                     }
-
                     writer.WriteLine("<table id='workOrderDetailsTable'>");
                     writer.WriteLine("<tr>");
                     writer.WriteLine("<th>Serial Name</th>");
@@ -1207,7 +1138,6 @@ namespace WH_Panel
                     writer.WriteLine($"<td>{workOrder.REVNUM}</td>");
                     writer.WriteLine("</tr>");
                     writer.WriteLine("</table>");
-
                     if (completionPercentage < 100)
                     {
                         writer.WriteLine("<table id='kitsTable'>");
@@ -1218,11 +1148,9 @@ namespace WH_Panel
                         writer.WriteLine("<th>KIT Balance</th>");
                         writer.WriteLine("<th>Total DELTA</th>");
                         writer.WriteLine("</tr>");
-
                         foreach (var (ipn, quant, cquant, balance, delta) in deficits)
                         {
                             string deltaClass = delta < 0 ? "red" : "green";
-
                             writer.WriteLine("<tr>");
                             writer.WriteLine($"<td>{ipn}</td>");
                             writer.WriteLine($"<td>{quant}</td>");
@@ -1231,20 +1159,15 @@ namespace WH_Panel
                             writer.WriteLine($"<td class='{deltaClass}'>{delta}</td>");
                             writer.WriteLine("</tr>");
                         }
-
                         writer.WriteLine("</table>");
                     }
-
-
                     writer.WriteLine("</div>");
                     writer.WriteLine("<br>");
                 }
-
                 writer.WriteLine("</body>");
                 writer.WriteLine("</html>");
             }
         }
-
         private void btnAwaitingComp_Click(object sender, EventArgs e)
         {
             bool allChecked = dgvBomsList.Rows.Cast<DataGridViewRow>()
@@ -1260,7 +1183,6 @@ namespace WH_Panel
             UpdateSelectedLabel();
             ToggleButtonColor((Button)sender, Color.OrangeRed); // Toggle button color
         }
-
         private void btnNotSentYet_Click(object sender, EventArgs e)
         {
             bool allChecked = dgvBomsList.Rows.Cast<DataGridViewRow>()
@@ -1275,10 +1197,7 @@ namespace WH_Panel
             }
             UpdateSelectedLabel();
             ToggleButtonColor((Button)sender, Color.Blue); // Toggle button color
-
         }
-
-       
         private void ToggleButtonColor(Button button, Color color)
         {
             if (button.BackColor == color)
