@@ -1364,6 +1364,10 @@ namespace WH_Panel
                 // Handle GR documents
                 url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM";
             }
+            else if (logDocNo.StartsWith("IC"))
+            {
+                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_C?$filter=DOCNO eq '{logDocNo}'";
+            }
             else if (logDocNo.StartsWith("ROB"))
             {
                 // Handle ROB documents
@@ -1415,7 +1419,13 @@ namespace WH_Panel
                         string date = document["UDATE"]?.ToString();
                         results.Add((packCode, bookNum, date));
                     }
-                    else
+                    else if (logDocNo.StartsWith("IC"))
+                    {
+                        // Handle IC document logic
+                        string date = document["UDATE"]?.ToString();
+                        results.Add((null, null, date));
+                    }
+                    else if (logDocNo.StartsWith("GR"))
                     {
                         // Handle GR document logic
                         var transOrders = document["TRANSORDER_P_SUBFORM"]?.ToList();
@@ -1552,6 +1562,47 @@ namespace WH_Panel
                         //txtLog.SelectionColor = Color.Red; // Set the color to red
                         //txtLog.AppendText($"Request error: {ex.Message}\n");
                         //txtLog.ScrollToCaret();
+                    }
+                }
+            }
+            else if (docNo.StartsWith("IC"))
+            {
+                // Fetch UDATE from DOCUMENTS_P
+                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_C?$filter=DOCNO eq '{docNo}'";
+                using (HttpClient client = new HttpClient())
+                {
+                    try
+                    {
+                        // Set the request headers if needed
+                        client.DefaultRequestHeaders.Accept.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        // Set the Authorization header
+                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                        // Make the HTTP GET request
+                        HttpResponseMessage response = await client.GetAsync(url);
+                        response.EnsureSuccessStatusCode();
+                        // Read the response content
+                        string responseBody = await response.Content.ReadAsStringAsync();
+                        // Parse the JSON response
+                        var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+                        var document = apiResponse["value"].FirstOrDefault();
+                        if (document != null)
+                        {
+                            uDate = document["UDATE"]?.ToString();
+                        }
+                    }
+                    catch (HttpRequestException ex)
+                    {
+                        txtbLog.SelectionColor = Color.Red; // Set the color to red
+                        txtbLog.AppendText($"Request error: {ex.Message}\n");
+                        txtbLog.ScrollToCaret();
+                    }
+                    catch (Exception ex)
+                    {
+                        txtbLog.SelectionColor = Color.Red; // Set the color to red
+                        txtbLog.AppendText($"Request error: {ex.Message}\n");
+                        txtbLog.ScrollToCaret();
                     }
                 }
             }
@@ -2795,6 +2846,7 @@ namespace WH_Panel
 
             }
         }
+
         private List<DataGridViewRow> originalRows = new List<DataGridViewRow>();
         private bool isFiltered = false;
 
@@ -2814,8 +2866,13 @@ namespace WH_Panel
                     if (row.Cells["LOGDOCNO"].Value != null && row.Cells["UDATE"].Value != null && DateTime.TryParse(row.Cells["UDATE"].Value.ToString(), out _))
                     {
                         string docNo = row.Cells["LOGDOCNO"].Value.ToString();
-                        if (docNo.StartsWith("ROB"))
+                        if (docNo.StartsWith("ROB") || docNo.StartsWith("IC"))
                         {
+                            // Handle IC documents by converting the quantity to a positive value
+                            if (docNo.StartsWith("IC"))
+                            {
+                                row.Cells["TQUANT"].Value = Math.Abs(Convert.ToInt32(row.Cells["TQUANT"].Value));
+                            }
                             robList.Add(row);
                         }
                         else
@@ -2866,7 +2923,6 @@ namespace WH_Panel
                 isFiltered = false;
             }
         }
-
 
 
     }
