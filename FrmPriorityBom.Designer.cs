@@ -55,27 +55,28 @@
             lblSim = new Label();
             btnGetWHstock = new Button();
             dgwBom = new DataGridView();
-            gbxIPNstockMovements = new GroupBox();
-            dgwIPNmoves = new DataGridView();
             tableLayoutPanel4 = new TableLayoutPanel();
             lblPing = new Label();
             txtbLog = new RichTextBox();
+            btnInStock = new Button();
             groupBox2 = new GroupBox();
             tableLayoutPanel5 = new TableLayoutPanel();
             rtxtbComments = new RichTextBox();
             btnSaveComments = new Button();
             btnGetComms = new Button();
+            gbxIPNstockMovements = new GroupBox();
+            dgwIPNmoves = new DataGridView();
             tableLayoutPanel1.SuspendLayout();
             groupBox1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
             gbxLoadedWo.SuspendLayout();
             tableLayoutPanel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgwBom).BeginInit();
-            gbxIPNstockMovements.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dgwIPNmoves).BeginInit();
             tableLayoutPanel4.SuspendLayout();
             groupBox2.SuspendLayout();
             tableLayoutPanel5.SuspendLayout();
+            gbxIPNstockMovements.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgwIPNmoves).BeginInit();
             SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -87,15 +88,16 @@
             tableLayoutPanel1.Controls.Add(groupBox1, 0, 0);
             tableLayoutPanel1.Controls.Add(gbxLoadedWo, 0, 1);
             tableLayoutPanel1.Controls.Add(dgwBom, 0, 2);
-            tableLayoutPanel1.Controls.Add(gbxIPNstockMovements, 1, 2);
             tableLayoutPanel1.Controls.Add(tableLayoutPanel4, 1, 0);
-            tableLayoutPanel1.Controls.Add(groupBox2, 1, 3);
+            tableLayoutPanel1.Controls.Add(groupBox2, 1, 4);
+            tableLayoutPanel1.Controls.Add(gbxIPNstockMovements, 1, 3);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 4;
+            tableLayoutPanel1.RowCount = 5;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 70F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 110F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 65F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 80F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
             tableLayoutPanel1.Size = new Size(1182, 752);
@@ -405,37 +407,11 @@
             dgwBom.Location = new Point(3, 183);
             dgwBom.Name = "dgwBom";
             dgwBom.ReadOnly = true;
-            tableLayoutPanel1.SetRowSpan(dgwBom, 2);
+            tableLayoutPanel1.SetRowSpan(dgwBom, 3);
             dgwBom.RowTemplate.Height = 25;
             dgwBom.Size = new Size(703, 566);
             dgwBom.TabIndex = 3;
             dgwBom.CellClick += dgwBom_CellClick;
-            // 
-            // gbxIPNstockMovements
-            // 
-            gbxIPNstockMovements.AutoSize = true;
-            tableLayoutPanel1.SetColumnSpan(gbxIPNstockMovements, 2);
-            gbxIPNstockMovements.Controls.Add(dgwIPNmoves);
-            gbxIPNstockMovements.Dock = DockStyle.Fill;
-            gbxIPNstockMovements.Location = new Point(712, 183);
-            gbxIPNstockMovements.Name = "gbxIPNstockMovements";
-            gbxIPNstockMovements.Size = new Size(467, 451);
-            gbxIPNstockMovements.TabIndex = 4;
-            gbxIPNstockMovements.TabStop = false;
-            gbxIPNstockMovements.Text = "Stock Movements";
-            // 
-            // dgwIPNmoves
-            // 
-            dgwIPNmoves.AllowUserToAddRows = false;
-            dgwIPNmoves.AllowUserToDeleteRows = false;
-            dgwIPNmoves.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgwIPNmoves.Dock = DockStyle.Fill;
-            dgwIPNmoves.Location = new Point(3, 19);
-            dgwIPNmoves.Name = "dgwIPNmoves";
-            dgwIPNmoves.ReadOnly = true;
-            dgwIPNmoves.RowTemplate.Height = 25;
-            dgwIPNmoves.Size = new Size(461, 429);
-            dgwIPNmoves.TabIndex = 0;
             // 
             // tableLayoutPanel4
             // 
@@ -445,14 +421,17 @@
             tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel4.Controls.Add(lblPing, 1, 0);
             tableLayoutPanel4.Controls.Add(txtbLog, 0, 1);
+            tableLayoutPanel4.Controls.Add(btnInStock, 0, 2);
             tableLayoutPanel4.Dock = DockStyle.Fill;
             tableLayoutPanel4.Location = new Point(712, 3);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 2;
-            tableLayoutPanel1.SetRowSpan(tableLayoutPanel4, 2);
+            tableLayoutPanel1.SetRowSpan(tableLayoutPanel4, 3);
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 18.3908043F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 81.60919F));
-            tableLayoutPanel4.Size = new Size(467, 174);
+            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Absolute, 31F));
+            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel4.Size = new Size(467, 239);
             tableLayoutPanel4.TabIndex = 6;
             // 
             // lblPing
@@ -461,7 +440,7 @@
             lblPing.Dock = DockStyle.Fill;
             lblPing.Location = new Point(236, 0);
             lblPing.Name = "lblPing";
-            lblPing.Size = new Size(228, 32);
+            lblPing.Size = new Size(228, 38);
             lblPing.TabIndex = 5;
             lblPing.Text = "tProc";
             lblPing.TextAlign = ContentAlignment.MiddleCenter;
@@ -470,20 +449,31 @@
             // 
             tableLayoutPanel4.SetColumnSpan(txtbLog, 2);
             txtbLog.Dock = DockStyle.Fill;
-            txtbLog.Location = new Point(3, 35);
+            txtbLog.Location = new Point(3, 41);
             txtbLog.Name = "txtbLog";
-            txtbLog.Size = new Size(461, 136);
+            txtbLog.Size = new Size(461, 163);
             txtbLog.TabIndex = 6;
             txtbLog.Text = "";
+            // 
+            // btnInStock
+            // 
+            btnInStock.Dock = DockStyle.Fill;
+            btnInStock.Location = new Point(3, 210);
+            btnInStock.Name = "btnInStock";
+            btnInStock.Size = new Size(227, 26);
+            btnInStock.TabIndex = 7;
+            btnInStock.Text = "IN STOCK";
+            btnInStock.UseVisualStyleBackColor = true;
+            btnInStock.Click += btnInStock_Click;
             // 
             // groupBox2
             // 
             tableLayoutPanel1.SetColumnSpan(groupBox2, 2);
             groupBox2.Controls.Add(tableLayoutPanel5);
             groupBox2.Dock = DockStyle.Fill;
-            groupBox2.Location = new Point(712, 640);
+            groupBox2.Location = new Point(712, 653);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(467, 109);
+            groupBox2.Size = new Size(467, 96);
             groupBox2.TabIndex = 7;
             groupBox2.TabStop = false;
             groupBox2.Text = "Comments";
@@ -502,7 +492,7 @@
             tableLayoutPanel5.RowCount = 2;
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel5.Size = new Size(461, 87);
+            tableLayoutPanel5.Size = new Size(461, 74);
             tableLayoutPanel5.TabIndex = 0;
             // 
             // rtxtbComments
@@ -511,7 +501,7 @@
             rtxtbComments.Location = new Point(3, 3);
             rtxtbComments.Name = "rtxtbComments";
             tableLayoutPanel5.SetRowSpan(rtxtbComments, 2);
-            rtxtbComments.Size = new Size(327, 81);
+            rtxtbComments.Size = new Size(327, 68);
             rtxtbComments.TabIndex = 0;
             rtxtbComments.Text = "";
             rtxtbComments.Enter += rtxtbComments_Enter;
@@ -520,9 +510,9 @@
             // btnSaveComments
             // 
             btnSaveComments.Dock = DockStyle.Fill;
-            btnSaveComments.Location = new Point(336, 46);
+            btnSaveComments.Location = new Point(336, 40);
             btnSaveComments.Name = "btnSaveComments";
-            btnSaveComments.Size = new Size(122, 38);
+            btnSaveComments.Size = new Size(122, 31);
             btnSaveComments.TabIndex = 1;
             btnSaveComments.Text = "SET Comments";
             btnSaveComments.UseVisualStyleBackColor = true;
@@ -533,11 +523,37 @@
             btnGetComms.Dock = DockStyle.Fill;
             btnGetComms.Location = new Point(336, 3);
             btnGetComms.Name = "btnGetComms";
-            btnGetComms.Size = new Size(122, 37);
+            btnGetComms.Size = new Size(122, 31);
             btnGetComms.TabIndex = 2;
             btnGetComms.Text = "GET Comments";
             btnGetComms.UseVisualStyleBackColor = true;
             btnGetComms.Click += btnGetComms_Click;
+            // 
+            // gbxIPNstockMovements
+            // 
+            gbxIPNstockMovements.AutoSize = true;
+            tableLayoutPanel1.SetColumnSpan(gbxIPNstockMovements, 2);
+            gbxIPNstockMovements.Controls.Add(dgwIPNmoves);
+            gbxIPNstockMovements.Dock = DockStyle.Fill;
+            gbxIPNstockMovements.Location = new Point(712, 248);
+            gbxIPNstockMovements.Name = "gbxIPNstockMovements";
+            gbxIPNstockMovements.Size = new Size(467, 399);
+            gbxIPNstockMovements.TabIndex = 4;
+            gbxIPNstockMovements.TabStop = false;
+            gbxIPNstockMovements.Text = "Stock Movements";
+            // 
+            // dgwIPNmoves
+            // 
+            dgwIPNmoves.AllowUserToAddRows = false;
+            dgwIPNmoves.AllowUserToDeleteRows = false;
+            dgwIPNmoves.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgwIPNmoves.Dock = DockStyle.Fill;
+            dgwIPNmoves.Location = new Point(3, 19);
+            dgwIPNmoves.Name = "dgwIPNmoves";
+            dgwIPNmoves.ReadOnly = true;
+            dgwIPNmoves.RowTemplate.Height = 25;
+            dgwIPNmoves.Size = new Size(461, 377);
+            dgwIPNmoves.TabIndex = 0;
             // 
             // FrmPriorityBom
             // 
@@ -560,12 +576,12 @@
             tableLayoutPanel3.ResumeLayout(false);
             tableLayoutPanel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dgwBom).EndInit();
-            gbxIPNstockMovements.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dgwIPNmoves).EndInit();
             tableLayoutPanel4.ResumeLayout(false);
             tableLayoutPanel4.PerformLayout();
             groupBox2.ResumeLayout(false);
             tableLayoutPanel5.ResumeLayout(false);
+            gbxIPNstockMovements.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgwIPNmoves).EndInit();
             ResumeLayout(false);
         }
 
@@ -607,5 +623,6 @@
         private RichTextBox rtxtbComments;
         private Button btnSaveComments;
         private Button btnGetComms;
+        private Button btnInStock;
     }
 }

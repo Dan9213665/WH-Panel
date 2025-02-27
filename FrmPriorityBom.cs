@@ -73,7 +73,7 @@ using Rectangle = System.Drawing.Rectangle;
 using ComboBox = System.Windows.Forms.ComboBox;
 namespace WH_Panel
 {
-    
+
     public partial class FrmPriorityBom : Form
     {
         public string SelectedSerialName { get; set; }
@@ -94,8 +94,8 @@ namespace WH_Panel
             cmbROBxList.DrawMode = DrawMode.OwnerDrawFixed;
             cmbROBxList.DrawItem += cmbROBxList_DrawItem;
 
-       
-   
+
+
 
             // Handle the CellFormatting event
             dgwBom.CellFormatting += dgwBom_CellFormatting;
@@ -1375,7 +1375,7 @@ namespace WH_Panel
                 url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM";
             }
             results = await FetchPackCodeFromUrlAsync(url, logDocNo, partName, quant, logDocNo.StartsWith("ROB"));
-           
+
             return results;
         }
         private async Task<List<(string PackCode, string BookNum, string Date)>> FetchPackCodeFromUrlAsync(string url, string logDocNo, string partName, int quant, bool isRobDocument)
@@ -1430,11 +1430,11 @@ namespace WH_Panel
                             string packCode = matchingOrder["PACKCODE"]?.ToString();
                             string bookNum = document["BOOKNUM"]?.ToString();
                             string date = await FetchUDateAsync(logDocNo);
-                          
+
                             results.Add((packCode, bookNum, date));
                         }
                     }
-                    
+
                     return results;
                 }
                 catch (HttpRequestException ex)
@@ -1563,7 +1563,7 @@ namespace WH_Panel
                 //txtLog.ScrollToCaret();
             }
 
-           
+
             return uDate;
         }
         private void UpdatePing(long milliseconds)
@@ -2776,7 +2776,7 @@ namespace WH_Panel
 
         private void btnGetMFNs_KeyDown(object sender, KeyEventArgs e)
         {
-         
+
         }
 
         private async void btnGetMFNs_MouseDown(object sender, MouseEventArgs e)
@@ -2785,15 +2785,89 @@ namespace WH_Panel
             {
                 btnGetMFNs.Text = "GET ALTs";
                 FetchAltsForAllRows();
-                await(Task.Delay(1000));
+                await (Task.Delay(1000));
                 btnGetMFNs.Text = "GET MFNPs";
             }
             else if (MouseButtons == MouseButtons.Left)
             {
-                
+
                 FetchMFPNsForAllRows();
-                
+
             }
         }
+        private List<DataGridViewRow> originalRows = new List<DataGridViewRow>();
+        private bool isFiltered = false;
+
+        private void btnInStock_Click(object sender, EventArgs e)
+        {
+            if (!isFiltered)
+            {
+                // Store the original data
+                originalRows = dgwIPNmoves.Rows.Cast<DataGridViewRow>().ToList();
+
+                // Separate data into ROB and notRob lists
+                var robList = new List<DataGridViewRow>();
+                var notRobList = new List<DataGridViewRow>();
+
+                foreach (DataGridViewRow row in dgwIPNmoves.Rows)
+                {
+                    if (row.Cells["LOGDOCNO"].Value != null && row.Cells["UDATE"].Value != null && DateTime.TryParse(row.Cells["UDATE"].Value.ToString(), out _))
+                    {
+                        string docNo = row.Cells["LOGDOCNO"].Value.ToString();
+                        if (docNo.StartsWith("ROB"))
+                        {
+                            robList.Add(row);
+                        }
+                        else
+                        {
+                            notRobList.Add(row);
+                        }
+                    }
+                }
+
+                // Sort both lists by transaction date
+                robList = robList.OrderBy(row => DateTime.Parse(row.Cells["UDATE"].Value.ToString())).ToList();
+                notRobList = notRobList.OrderBy(row => DateTime.Parse(row.Cells["UDATE"].Value.ToString())).ToList();
+
+                // Filter out matching pairs
+                var filteredNotRobList = new List<DataGridViewRow>(notRobList);
+                foreach (var notRobRow in notRobList)
+                {
+                    if (robList.Count == 0) break;
+
+                    int notRobQty = Convert.ToInt32(notRobRow.Cells["TQUANT"].Value);
+                    var matchingRobRow = robList.FirstOrDefault(robRow => Convert.ToInt32(robRow.Cells["TQUANT"].Value) == notRobQty);
+
+                    if (matchingRobRow != null)
+                    {
+                        filteredNotRobList.Remove(notRobRow);
+                        robList.Remove(matchingRobRow);
+                    }
+                }
+
+                // Filter the DataGridView to show only items left from the notRob list
+                dgwIPNmoves.Rows.Clear();
+                foreach (var row in filteredNotRobList)
+                {
+                    dgwIPNmoves.Rows.Add(row);
+                }
+
+                isFiltered = true;
+            }
+            else
+            {
+                // Restore the original data
+                dgwIPNmoves.Rows.Clear();
+                foreach (var row in originalRows)
+                {
+                    dgwIPNmoves.Rows.Add(row);
+                }
+
+                isFiltered = false;
+            }
+        }
+
+
+
     }
 }
