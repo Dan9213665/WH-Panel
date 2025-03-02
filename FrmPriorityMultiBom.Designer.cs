@@ -87,9 +87,14 @@
             tableLayoutPanel2.Location = new Point(429, 3);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 2;
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 19.1780815F));
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 80.8219147F));
-            tableLayoutPanel2.Size = new Size(420, 312);
+            tableLayoutPanel1.SetRowSpan(tableLayoutPanel2, 2);
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 6.9730587F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 93.02694F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel2.Size = new Size(420, 631);
             tableLayoutPanel2.TabIndex = 3;
             // 
             // groupBox2
@@ -97,9 +102,9 @@
             tableLayoutPanel2.SetColumnSpan(groupBox2, 2);
             groupBox2.Controls.Add(txtbLog);
             groupBox2.Dock = DockStyle.Fill;
-            groupBox2.Location = new Point(3, 62);
+            groupBox2.Location = new Point(3, 47);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(414, 247);
+            groupBox2.Size = new Size(414, 581);
             groupBox2.TabIndex = 2;
             groupBox2.TabStop = false;
             groupBox2.Text = "Log";
@@ -110,7 +115,7 @@
             txtbLog.Font = new Font("Segoe UI", 12F);
             txtbLog.Location = new Point(3, 19);
             txtbLog.Name = "txtbLog";
-            txtbLog.Size = new Size(408, 225);
+            txtbLog.Size = new Size(408, 559);
             txtbLog.TabIndex = 1;
             txtbLog.Text = "";
             // 
@@ -120,7 +125,7 @@
             lblLoading.Dock = DockStyle.Fill;
             lblLoading.Location = new Point(3, 0);
             lblLoading.Name = "lblLoading";
-            lblLoading.Size = new Size(204, 59);
+            lblLoading.Size = new Size(204, 44);
             lblLoading.TabIndex = 3;
             lblLoading.Text = "Loading";
             lblLoading.TextAlign = ContentAlignment.MiddleCenter;

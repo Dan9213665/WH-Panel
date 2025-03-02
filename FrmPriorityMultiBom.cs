@@ -111,6 +111,7 @@ namespace WH_Panel
                     var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
                     var serials = apiResponse["value"].ToObject<List<Serial>>();
                     dgvBomsList.Rows.Clear();
+                    int notClosedCount = serials.Count(serial => serial.SERIALSTATUSDES != "נסגרה");
                     if (serials.Count == 0)
                     {
                         AppendLogMessage($"No data found for {warehouseName} - {warehouseDesc} \n", Color.Red);
@@ -129,7 +130,8 @@ namespace WH_Panel
                         lblLoading.BackColor = Color.Green;
                         lblLoading.Text = "Data Loaded";
                         UpdateSelectedLabel();
-                        AppendLogMessage($"{serials.Count} Work Orders loaded for {warehouseName} - {warehouseDesc} \n", Color.Green);
+                        AppendLogMessage($"{notClosedCount} not closed Work Orders loaded for {warehouseName} - {warehouseDesc} \n", Color.Green);
+                        SortDataGridViewByStatus();
                     }
                 }
                 catch (HttpRequestException ex)
@@ -141,6 +143,11 @@ namespace WH_Panel
                     AppendLogMessage($"Request error: {ex.Message}\n", Color.Red);
                 }
             }
+        }
+
+        private void SortDataGridViewByStatus()
+        {
+            dgvBomsList.Sort(dgvBomsList.Columns["SerialStatusDes"], ListSortDirection.Ascending);
         }
         private void AppendLogMessage(string message, Color color)
         {
