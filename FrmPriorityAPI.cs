@@ -69,14 +69,13 @@ namespace WH_Panel
             //this.RightToLeft = RightToLeft.Yes;
             //this.RightToLeftLayout = true;
             //SetRightToLeftForControls(this);
-            // InitializeBreathingEffect();
             InitializeGifButton();
         }
         private void InitializeGifButton()
         {
             // Load GIF from Resources folder
             string resourcesFolder = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources");
-            string gifFilePath = Path.Combine(resourcesFolder, "RtN7.gif");
+            string gifFilePath = Path.Combine(resourcesFolder, "mfgGif.gif");
             // Check if the GIF file exists
             if (File.Exists(gifFilePath))
             {
@@ -103,35 +102,6 @@ namespace WH_Panel
                 MessageBox.Show("GIF file not found!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        private void InitializeBreathingEffect()
-        {
-            breathingTimer = new System.Windows.Forms.Timer();
-            breathingTimer.Interval = 100; // Adjust the interval as needed
-            breathingTimer.Tick += BreathingTimer_Tick;
-            breathingTimer.Start();
-        }
-        private void BreathingTimer_Tick(object sender, EventArgs e)
-        {
-            if (increasing)
-            {
-                currentOpacity += opacityStep;
-                if (currentOpacity >= 100)
-                {
-                    currentOpacity = 100;
-                    increasing = false;
-                }
-            }
-            else
-            {
-                currentOpacity -= opacityStep;
-                if (currentOpacity <= 10)
-                {
-                    currentOpacity = 10;
-                    increasing = true;
-                }
-            }
-            btnMFG.BackColor = Color.FromArgb((int)(currentOpacity * 2.55), btnMFG.BackColor.R, btnMFG.BackColor.G, btnMFG.BackColor.B);
-        }
         private void InitializeDataTable()
         {
             dataTable = new DataTable();
@@ -144,69 +114,6 @@ namespace WH_Panel
             dataView = new DataView(dataTable);
             dataGridView1.DataSource = dataView;
         }
-        //public async void FrmPriorityAPI_Load(object sender, EventArgs e)
-        //{
-        //    settings = SettingsManager.LoadSettings();
-        //    if (settings == null)
-        //    {
-        //        MessageBox.Show("Failed to load settings.");
-        //        return;
-        //    }
-        //    await PopulatePackCombobox();
-        //}
-        //private void InitializeDataTable()
-        //{
-        //    dataTable = new DataTable();
-        //    dataTable.Columns.Add("PARTNAME", typeof(string));
-        //    dataTable.Columns.Add("PARTDES", typeof(string));
-        //    dataTable.Columns.Add("BALANCE", typeof(int));
-        //    dataTable.Columns.Add("CDATE", typeof(string));
-        //    dataTable.Columns.Add("PART", typeof(int));
-        //    dataTable.Columns.Add("MNFPARTNAME", typeof(string));
-        //    foreach (DataGridViewRow row in dataGridView1.Rows)
-        //    {
-        //        if (row.Cells["PARTNAME"].Value != null)
-        //        {
-        //            dataTable.Rows.Add(
-        //                row.Cells["PARTNAME"].Value,
-        //                row.Cells["PARTDES"].Value,
-        //                row.Cells["BALANCE"].Value,
-        //                row.Cells["CDATE"].Value,
-        //                row.Cells["PART"].Value,
-        //                row.Cells["MNFPARTNAME"].Value
-        //            );
-        //        }
-        //    }
-        //    dataView = new DataView(dataTable);
-        //    dataGridView1.DataSource = dataView;
-        //}
-        //public async void FrmPriorityAPI_Load(object sender, EventArgs e)
-        //{
-        //    try
-        //    {
-        //        settings = SettingsManager.LoadSettings();
-        //        if (settings == null)
-        //        {
-        //            MessageBox.Show("Failed to load settings.");
-        //            return;
-        //        }
-        //        if (string.IsNullOrEmpty(settings.ApiUsername) || string.IsNullOrEmpty(settings.ApiPassword))
-        //        {
-        //            MessageBox.Show("API credentials are missing in the settings.");
-        //            return;
-        //        }
-        //        else
-        //        {
-        //            await LoadWarehouseData();
-        //            // button3_Click(this, EventArgs.Empty);
-        //            await PopulatePackCombobox();
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show($"An error occurred during initialization: {ex.Message}");
-        //    }
-        //}
         private async void FrmPriorityAPI_Load(object sender, EventArgs e)
         {
             try
@@ -2680,14 +2587,12 @@ namespace WH_Panel
             txtbOUT.Text = cbmOUT.SelectedItem.ToString();
             txtbInputIPN.Focus();
         }
-
         private void txtbInputMFPN_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
                 txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter), txtbInputMFPN);
             }
-                
         }
     }
 }

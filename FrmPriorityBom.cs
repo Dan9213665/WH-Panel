@@ -71,16 +71,15 @@ using OfficeOpenXml.Style;
 using static WH_Panel.FrmPriorityBom;
 using Rectangle = System.Drawing.Rectangle;
 using ComboBox = System.Windows.Forms.ComboBox;
+using ToolTip = System.Windows.Forms.ToolTip;
 namespace WH_Panel
 {
-
     public partial class FrmPriorityBom : Form
     {
+        private ToolTip toolTip;
         public string SelectedSerialName { get; set; }
         private bool isProgrammaticChange = false;
-
         private List<Serial> originalSerials; // List to store the original work orders
-
         private AppSettings settings;
         //private List<WarehouseBalance> warehouseBalances;
         public FrmPriorityBom()
@@ -93,10 +92,14 @@ namespace WH_Panel
             // Set the DrawMode property and handle the DrawItem event
             cmbROBxList.DrawMode = DrawMode.OwnerDrawFixed;
             cmbROBxList.DrawItem += cmbROBxList_DrawItem;
-
-
-
-
+            // Initialize the ToolTip and set up the delay for the ToolTip.
+            toolTip = new ToolTip();
+            toolTip.AutoPopDelay = 5000;
+            toolTip.InitialDelay = 1000;
+            toolTip.ReshowDelay = 500;
+            toolTip.ShowAlways = true;
+            // Set up the ToolTip text for the btnGetMFNs button.
+            toolTip.SetToolTip(btnGetMFNs, "Click to fetch Manufacturer Part Numbers (MFPNs) or right-click to fetch ALTs.");
             // Handle the CellFormatting event
             dgwBom.CellFormatting += dgwBom_CellFormatting;
             AttachTextBoxEvents(this);
@@ -113,17 +116,12 @@ namespace WH_Panel
                 return;
             }
             GetRobWosList();
-
             // Select the serial name if it is set
             if (!string.IsNullOrEmpty(SelectedSerialName))
             {
                 cmbROBxList.SelectedItem = cmbROBxList.Items.Cast<Serial>().FirstOrDefault(s => s.SERIALNAME == SelectedSerialName);
             }
         }
-
-
-
-
         public class Serial
         {
             public string PARTNAME { get; set; }
@@ -176,114 +174,7 @@ namespace WH_Panel
             public int PART { get; set; }
             public string MNFPARTNAME { get; set; }
         }
-        //private async void GetRobWosList()
-        //{
-        //    string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL";
-        //    using (HttpClient client = new HttpClient())
-        //    {
-        //        try
-        //        {
-        //            // Set the request headers if needed
-        //            client.DefaultRequestHeaders.Accept.Clear();
-        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //            // Set the Authorization header
-        //            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //            // Make the HTTP GET request
-        //            HttpResponseMessage response = await client.GetAsync(url);
-        //            response.EnsureSuccessStatusCode();
-        //            // Read the response content
-        //            string responseBody = await response.Content.ReadAsStringAsync();
-        //            // Parse the JSON response
-        //            var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-        //            var serials = apiResponse["value"].ToObject<List<Serial>>();
-        //            // Populate the dropdown with the data
-        //            cmbROBxList.Items.Clear();
-        //            foreach (var serial in serials)
-        //            {
-        //                // Hide work orders with status "נסגרה" if the checkbox is not checked
-        //                if ((serial.SERIALSTATUSDES != "נסגרה" && serial.SERIALSTATUSDES != "קיט מלא") || cnkbClosed.Checked)
-        //                {
-
-        //                    cmbROBxList.Items.Add(serial);
-        //                }
-        //            }
-        //            lblLoading.BackColor = Color.Green;
-        //            lblLoading.Text = "Data Loaded";
-        //            cmbROBxList.DroppedDown = true;
-        //            // Attach event handler to the checkbox
-        //            cnkbClosed.CheckedChanged += (s, e) => FilterWorkOrders(serials);
-        //        }
-        //        catch (HttpRequestException ex)
-        //        {
-        //            txtbLog.ForeColor = Color.Red;
-        //            txtbLog.AppendText($"Request error: {ex.Message} \n");
-        //            txtbLog.ScrollToCaret();
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            txtbLog.ForeColor = Color.Red;
-        //            txtbLog.AppendText($"Request error: {ex.Message}");
-        //            txtbLog.ScrollToCaret();
-        //        }
-        //    }
-        //}
-
-        //private async void GetRobWosList()
-        //{
-        //    string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL";
-        //    using (HttpClient client = new HttpClient())
-        //    {
-        //        try
-        //        {
-        //            // Set the request headers if needed
-        //            client.DefaultRequestHeaders.Accept.Clear();
-        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //            // Set the Authorization header
-        //            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //            // Make the HTTP GET request
-        //            HttpResponseMessage response = await client.GetAsync(url);
-        //            response.EnsureSuccessStatusCode();
-        //            // Read the response content
-        //            string responseBody = await response.Content.ReadAsStringAsync();
-        //            // Parse the JSON response
-        //            var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-        //            var serials = apiResponse["value"].ToObject<List<Serial>>();
-        //            // Store the original work orders
-        //            originalSerials = serials;
-        //            // Populate the dropdown with the data
-        //            cmbROBxList.Items.Clear();
-        //            foreach (var serial in serials)
-        //            {
-        //                // Hide work orders with status "נסגרה" if the checkbox is not checked
-        //                if ((serial.SERIALSTATUSDES != "נסגרה" && serial.SERIALSTATUSDES != "קיט מלא") || cnkbClosed.Checked)
-        //                {
-        //                    cmbROBxList.Items.Add(serial);
-        //                }
-        //            }
-        //            lblLoading.BackColor = Color.Green;
-        //            lblLoading.Text = "Data Loaded";
-        //            cmbROBxList.DroppedDown = true;
-        //            // Attach event handler to the checkbox
-        //            cnkbClosed.CheckedChanged += (s, e) => FilterWorkOrders(serials);
-        //        }
-        //        catch (HttpRequestException ex)
-        //        {
-        //            txtbLog.ForeColor = Color.Red;
-        //            txtbLog.AppendText($"Request error: {ex.Message} \n");
-        //            txtbLog.ScrollToCaret();
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            txtbLog.ForeColor = Color.Red;
-        //            txtbLog.AppendText($"Request error: {ex.Message}");
-        //            txtbLog.ScrollToCaret();
-        //        }
-        //    }
-        //}
-
-        private async void GetRobWosList()
+          private async void GetRobWosList()
         {
             string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL";
             using (HttpClient client = new HttpClient())
@@ -336,7 +227,6 @@ namespace WH_Panel
                 }
             }
         }
-
         private void FilterWorkOrders(List<Serial> serials)
         {
             cmbROBxList.Items.Clear();
@@ -348,11 +238,6 @@ namespace WH_Panel
                 }
             }
         }
-
-
-
-
-
         public async void cmbROBxList_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cmbROBxList.SelectedItem is Serial selectedSerial)
@@ -370,9 +255,6 @@ namespace WH_Panel
                 await GetCommentsFromROBxxx();
             }
         }
-
-
-
         private void cmbROBxList_DrawItem(object sender, DrawItemEventArgs e)
         {
             if (e.Index < 0) return;
@@ -508,8 +390,6 @@ namespace WH_Panel
                 }
             }
         }
-
-
         private void InitializeDataGridView()
         {
             dgwBom.Columns.Clear();
@@ -598,10 +478,8 @@ namespace WH_Panel
                                 }
                                 progressBar1.Value = (completedItems * 100) / pbTotal;
                             }
-
                             // Sort the DataGridView by the DELTA column in descending order
                             dgwBom.Sort(dgwBom.Columns["DELTA"], ListSortDirection.Ascending);
-
                             // Update the progress label
                             UpdateProgressLabel();
                             progressBar1.Update();
@@ -693,81 +571,6 @@ namespace WH_Panel
                 }
             }
         }
-        //private async Task FetchWarehouseBalances()
-        //{
-        //    bool startFetching = false;
-        //    foreach (DataGridViewRow row in dgwBom.Rows)
-        //    {
-        //        // Check if the TBALANCE cell is empty or null
-        //        if (row.Cells["TBALANCE"].Value == null || string.IsNullOrEmpty(row.Cells["TBALANCE"].Value.ToString()))
-        //        {
-        //            startFetching = true;
-        //        }
-        //        // Start fetching data only if the TBALANCE cell is empty or null
-        //        if (startFetching && row.Cells["PARTNAME"].Value != null)
-        //        {
-        //            string partName = row.Cells["PARTNAME"].Value.ToString();
-        //            string warehouseName = partName.Substring(0, 3); // Get the first 3 characters of the PARTNAME
-        //            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{warehouseName}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{partName}')";
-        //            using (HttpClient client = new HttpClient())
-        //            {
-        //                try
-        //                {
-        //                    // Set the request headers
-        //                    client.DefaultRequestHeaders.Accept.Clear();
-        //                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //                    // Make the HTTP GET request
-        //                    HttpResponseMessage response = await client.GetAsync(url);
-        //                    response.EnsureSuccessStatusCode();
-        //                    // Read the response content
-        //                    string responseBody = await response.Content.ReadAsStringAsync();
-        //                    // Parse the JSON response
-        //                    var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-        //                    var warehouse = apiResponse["value"].FirstOrDefault();
-        //                    if (warehouse != null)
-        //                    {
-        //                        var balance = warehouse["WARHSBAL_SUBFORM"].FirstOrDefault();
-        //                        if (balance != null)
-        //                        {
-        //                            int tBalance = balance["TBALANCE"].Value<int>();
-        //                            // Update the WH column in the DataGridView
-        //                            row.Cells["TBALANCE"].Value = tBalance;
-        //                        }
-        //                        else
-        //                        {
-        //                            row.Cells["TBALANCE"].Value = 0;
-        //                        }
-        //                    }
-        //                }
-        //                catch (HttpRequestException ex)
-        //                {
-        //                    txtbLog.ForeColor = Color.Red;
-        //                    txtbLog.AppendText($"Request error: {ex.Message}\n");
-        //                    txtbLog.ScrollToCaret();
-        //                }
-        //                catch (Exception ex)
-        //                {
-        //                    txtbLog.ForeColor = Color.Red;
-        //                    txtbLog.AppendText($"Request error: {ex.Message}\n");
-        //                    txtbLog.ScrollToCaret();
-        //                }
-        //            }
-        //            // Calculate the LEFTOVERS for the current row
-        //            int delta = Convert.ToInt32(row.Cells["DELTA"].Value);
-        //            int whQuantity = row.Cells["TBALANCE"].Value != null ? Convert.ToInt32(row.Cells["TBALANCE"].Value) : 0;
-        //            int kitQuantity = row.Cells["QUANT"].Value != null ? Convert.ToInt32(row.Cells["QUANT"].Value) : 0;
-        //            int requiredQuantity = row.Cells["CQUANT"].Value != null ? Convert.ToInt32(row.Cells["CQUANT"].Value) : 0;
-        //            int leftovers = (whQuantity + kitQuantity) - requiredQuantity;
-        //            // Update the LEFTOVERS column in the DataGridView
-        //            row.Cells["LEFTOVERS"].Value = leftovers;
-        //            // Introduce an artificial delay between each API call
-        //            await Task.Delay(200); // 100 milliseconds delay
-        //        }
-        //    }
-        //    UpdateSimulationLabel();
-        //}
         private async Task FetchWarehouseBalances()
         {
             // Create a list to store the fetched warehouse balances
@@ -1235,9 +1038,6 @@ namespace WH_Panel
                             // Fetch MFPN for the selected row
                             await FetchMFPNForRow(selectedRow);
                             await FetchAltForRow(selectedRow);
-
-
-
                         }
                         else
                         {
@@ -1264,7 +1064,6 @@ namespace WH_Panel
                 }
             }
         }
-
         private async Task FetchAltsForAllRows()
         {
             txtbLog.AppendText("Fetching alts for all rows...\n");
@@ -1274,7 +1073,6 @@ namespace WH_Panel
             }
             txtbLog.AppendText("ALTs fetching complete.\n");
         }
-
         private async Task FetchAltForRow(DataGridViewRow row)
         {
             if (row.Cells["PARTNAME"].Value != null && (row.Cells["ALT"].Value == string.Empty || row.Cells["ALT"].Value == null))
@@ -1327,7 +1125,6 @@ namespace WH_Panel
             }
             await Task.Delay(300); // 300 milliseconds delay
         }
-
         private void SortIPNMovesByDate()
         {
             if (dgwIPNmoves.Columns["UDATE"] != null)
@@ -1379,7 +1176,6 @@ namespace WH_Panel
                 url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM";
             }
             results = await FetchPackCodeFromUrlAsync(url, logDocNo, partName, quant, logDocNo.StartsWith("ROB"));
-
             return results;
         }
         private async Task<List<(string PackCode, string BookNum, string Date)>> FetchPackCodeFromUrlAsync(string url, string logDocNo, string partName, int quant, bool isRobDocument)
@@ -1440,11 +1236,9 @@ namespace WH_Panel
                             string packCode = matchingOrder["PACKCODE"]?.ToString();
                             string bookNum = document["BOOKNUM"]?.ToString();
                             string date = await FetchUDateAsync(logDocNo);
-
                             results.Add((packCode, bookNum, date));
                         }
                     }
-
                     return results;
                 }
                 catch (HttpRequestException ex)
@@ -1613,8 +1407,6 @@ namespace WH_Panel
                 //txtLog.AppendText($"Unhandled document type for DOCNO: {docNo}\n");
                 //txtLog.ScrollToCaret();
             }
-
-
             return uDate;
         }
         private void UpdatePing(long milliseconds)
@@ -2427,8 +2219,6 @@ namespace WH_Panel
                 DialogResult = DialogResult.OK;
             }
         }
-
-
         private void btnReport_Click(object sender, EventArgs e)
         {
             // Sort the DataGridView by the DELTA column in ascending order
@@ -2551,7 +2341,6 @@ namespace WH_Panel
                 writer.WriteLine($"<td colspan='2'>{lblProgress.Text}</td>");
                 writer.WriteLine("</tr>");
                 writer.WriteLine("</table>");
-
                 // Add a row displaying the comments if there are some in the work order
                 if (!string.IsNullOrEmpty(rtxtbComments.Text) && rtxtbComments.Text != "No comments found for the selected ROB work order.")
                 {
@@ -2560,7 +2349,6 @@ namespace WH_Panel
                     writer.WriteLine(System.Net.WebUtility.HtmlEncode(rtxtbComments.Text).Replace(Environment.NewLine, "<br>"));
                     writer.WriteLine("</h2></div>");
                 }
-
                 // Add the filter input box, clear button, and print button
                 writer.WriteLine("<div class='no-print' style='margin-bottom: 20px; text-align: center;'>");
                 writer.WriteLine("<input type='text' id='filterInput' onkeyup='filterTable()' placeholder='Filter table...' style='padding: 10px; width: 50%;text-align:center;background:orange;'>");
@@ -2633,10 +2421,6 @@ namespace WH_Panel
                     writer.WriteLine("</tr>");
                 }
                 writer.WriteLine("</table>");
-
-
-
-
                 writer.WriteLine("</body>");
                 writer.WriteLine("</html>");
             }
@@ -2657,25 +2441,20 @@ namespace WH_Panel
         {
             await FetchWarehouseBalances();
         }
-
         private async void btnGetComms_Click(object sender, EventArgs e)
         {
             await GetCommentsFromROBxxx();
         }
-
         private async Task GetCommentsFromROBxxx()
         {
             rtxtbComments.Clear();
-
             if (string.IsNullOrEmpty(txtbRob.Text))
             {
                 MessageBox.Show("No ROB work order is currently loaded.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-
             string serialName = txtbRob.Text;
             string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{serialName}'&$expand=SERIALTEXT_SUBFORM";
-
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -2694,7 +2473,6 @@ namespace WH_Panel
                     // Parse the JSON response
                     var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
                     var serialTextSubform = apiResponse["value"].FirstOrDefault()?["SERIALTEXT_SUBFORM"]?.ToObject<SerialText>();
-
                     if (serialTextSubform != null)
                     {
                         rtxtbComments.Clear();
@@ -2721,10 +2499,8 @@ namespace WH_Panel
                 }
             }
         }
-
         private string StripHtmlTags(string input)
         {
-
             input = input.Replace("<br>", string.Empty);
             input = input.Replace("<div>", string.Empty);
             input = input.Replace("</div>", string.Empty);
@@ -2733,14 +2509,10 @@ namespace WH_Panel
             input = input.Replace("p,div,li {margin:0cm;font-size:8.0pt;font-family:'Arial';}li > font > p {display: inline-block;}", string.Empty);
             return System.Text.RegularExpressions.Regex.Replace(input, "<.*?>", string.Empty);
         }
-
-
-
         public class SerialText
         {
             public string TEXT { get; set; }
         }
-
         private void rtxtbComments_Enter(object sender, EventArgs e)
         {
             if (rtxtbComments.Text == "No comments found for the selected ROB work order.")
@@ -2748,17 +2520,13 @@ namespace WH_Panel
                 rtxtbComments.Clear();
             }
         }
-
         private void rtxtbComments_Leave(object sender, EventArgs e)
         {
             if (rtxtbComments.Text == string.Empty)
             {
-
                 //rtxtbComments.Text = "No comments found for the selected ROB work order.";
             }
-
         }
-
         private async void btnSaveComments_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(txtbRob.Text))
@@ -2766,22 +2534,17 @@ namespace WH_Panel
                 MessageBox.Show("No ROB work order is currently loaded.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-
             string serialName = txtbRob.Text;
             string comments = rtxtbComments.Text;
-
             // Ask for confirmation before patching the data
             DialogResult result = MessageBox.Show("Are you sure you want to save the comments?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.No)
             {
                 return;
             }
-
             // Reverse the process of stripping HTML tags
             string htmlComments = ConvertToHtml(comments);
-
             string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/SERIALTEXT_SUBFORM";
-
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -2817,19 +2580,15 @@ namespace WH_Panel
                 }
             }
         }
-
         private string ConvertToHtml(string input)
         {
             input = input.Replace(Environment.NewLine, "<br>");
             input = input.Replace(" ", "&nbsp;");
             return $"<p>{input}</p>";
         }
-
         private void btnGetMFNs_KeyDown(object sender, KeyEventArgs e)
         {
-
         }
-
         private async void btnGetMFNs_MouseDown(object sender, MouseEventArgs e)
         {
             if (MouseButtons == MouseButtons.Right)
@@ -2841,26 +2600,20 @@ namespace WH_Panel
             }
             else if (MouseButtons == MouseButtons.Left)
             {
-
                 FetchMFPNsForAllRows();
-
             }
         }
-
         private List<DataGridViewRow> originalRows = new List<DataGridViewRow>();
         private bool isFiltered = false;
-
         private void btnInStock_Click(object sender, EventArgs e)
         {
             if (!isFiltered)
             {
                 // Store the original data
                 originalRows = dgwIPNmoves.Rows.Cast<DataGridViewRow>().ToList();
-
                 // Separate data into ROB and notRob lists
                 var robList = new List<DataGridViewRow>();
                 var notRobList = new List<DataGridViewRow>();
-
                 foreach (DataGridViewRow row in dgwIPNmoves.Rows)
                 {
                     if (row.Cells["LOGDOCNO"].Value != null && row.Cells["UDATE"].Value != null && DateTime.TryParse(row.Cells["UDATE"].Value.ToString(), out _))
@@ -2881,34 +2634,28 @@ namespace WH_Panel
                         }
                     }
                 }
-
                 // Sort both lists by transaction date
                 robList = robList.OrderBy(row => DateTime.Parse(row.Cells["UDATE"].Value.ToString())).ToList();
                 notRobList = notRobList.OrderBy(row => DateTime.Parse(row.Cells["UDATE"].Value.ToString())).ToList();
-
                 // Filter out matching pairs
                 var filteredNotRobList = new List<DataGridViewRow>(notRobList);
                 foreach (var notRobRow in notRobList)
                 {
                     if (robList.Count == 0) break;
-
                     int notRobQty = Convert.ToInt32(notRobRow.Cells["TQUANT"].Value);
                     var matchingRobRow = robList.FirstOrDefault(robRow => Convert.ToInt32(robRow.Cells["TQUANT"].Value) == notRobQty);
-
                     if (matchingRobRow != null)
                     {
                         filteredNotRobList.Remove(notRobRow);
                         robList.Remove(matchingRobRow);
                     }
                 }
-
                 // Filter the DataGridView to show only items left from the notRob list
                 dgwIPNmoves.Rows.Clear();
                 foreach (var row in filteredNotRobList)
                 {
                     dgwIPNmoves.Rows.Add(row);
                 }
-
                 isFiltered = true;
             }
             else
@@ -2919,11 +2666,8 @@ namespace WH_Panel
                 {
                     dgwIPNmoves.Rows.Add(row);
                 }
-
                 isFiltered = false;
             }
         }
-
-
     }
 }
