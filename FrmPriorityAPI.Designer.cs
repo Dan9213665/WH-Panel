@@ -78,6 +78,7 @@
             tableLayoutPanel10 = new TableLayoutPanel();
             btnClearIpnFilter = new Button();
             btnGetMFPNs = new Button();
+            btnPrintStock = new Button();
             tableLayoutPanel4 = new TableLayoutPanel();
             gbxINSERT = new GroupBox();
             tableLayoutPanel5 = new TableLayoutPanel();
@@ -669,7 +670,6 @@
             dataGridView1.Location = new Point(3, 19);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
-            dataGridView1.RowTemplate.Height = 25;
             dataGridView1.Size = new Size(596, 285);
             dataGridView1.TabIndex = 0;
             dataGridView1.CellClick += dataGridView1_CellClick;
@@ -711,7 +711,6 @@
             dataGridView2.Location = new Point(3, 19);
             dataGridView2.Name = "dataGridView2";
             dataGridView2.ReadOnly = true;
-            dataGridView2.RowTemplate.Height = 25;
             dataGridView2.Size = new Size(597, 285);
             dataGridView2.TabIndex = 0;
             dataGridView2.CellDoubleClick += dataGridView2_CellDoubleClick;
@@ -744,6 +743,7 @@
             tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel10.Controls.Add(btnClearIpnFilter, 0, 0);
             tableLayoutPanel10.Controls.Add(btnGetMFPNs, 1, 0);
+            tableLayoutPanel10.Controls.Add(btnPrintStock, 2, 0);
             tableLayoutPanel10.Dock = DockStyle.Fill;
             tableLayoutPanel10.Location = new Point(307, 3);
             tableLayoutPanel10.Name = "tableLayoutPanel10";
@@ -777,6 +777,18 @@
             btnGetMFPNs.TabIndex = 7;
             btnGetMFPNs.UseVisualStyleBackColor = true;
             btnGetMFPNs.Click += btnGetMFPNs_Click;
+            // 
+            // btnPrintStock
+            // 
+            btnPrintStock.BackgroundImage = (Image)resources.GetObject("btnPrintStock.BackgroundImage");
+            btnPrintStock.BackgroundImageLayout = ImageLayout.Stretch;
+            btnPrintStock.Dock = DockStyle.Fill;
+            btnPrintStock.Location = new Point(201, 3);
+            btnPrintStock.Name = "btnPrintStock";
+            btnPrintStock.Size = new Size(94, 64);
+            btnPrintStock.TabIndex = 8;
+            btnPrintStock.UseVisualStyleBackColor = true;
+            btnPrintStock.Click += btnPrintStock_Click;
             // 
             // tableLayoutPanel4
             // 
@@ -1108,5 +1120,6 @@
         private ComboBox cbmOUT;
         private TableLayoutPanel tableLayoutPanel9;
         private TableLayoutPanel tableLayoutPanel10;
+        private Button btnPrintStock;
     }
 }

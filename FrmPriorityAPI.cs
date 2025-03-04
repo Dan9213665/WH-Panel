@@ -2594,5 +2594,113 @@ namespace WH_Panel
                 txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter), txtbInputMFPN);
             }
         }
+
+        private void btnPrintStock_Click(object sender, EventArgs e)
+        {
+            // Get the selected warehouse name
+            string selectedWarehouseName = GetSelectedWarehouseName();
+            if (string.IsNullOrEmpty(selectedWarehouseName))
+            {
+                MessageBox.Show("Please select a warehouse.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Generate HTML report
+            txtLog.AppendText($"Generating HTML report for {selectedWarehouseName} \n");
+            string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+            string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\{selectedWarehouseName}_StockReport_{_fileTimeStamp}.html";
+            GenerateHTMLFromDataGridView(filename, dataGridView1, $"{selectedWarehouseName} Stock Report {_fileTimeStamp}");
+
+            // Open the file in default browser
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(filename)
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+        }
+
+        private void GenerateHTMLFromDataGridView(string filename, DataGridView dataGridView, string reportTitle)
+        {
+            using (StreamWriter writer = new StreamWriter(filename))
+            {
+                writer.WriteLine("<html style='text-align:center;background-color:gray;color:white;'>");
+                writer.WriteLine("<head>");
+                writer.WriteLine("<title>Stock Report</title>");
+                writer.WriteLine("<style>");
+                writer.WriteLine("table { border-collapse: collapse; width: 100%; border: solid 1px; }");
+                writer.WriteLine("th, td { border: 1px solid black; padding: 8px; text-align: center;}");
+                writer.WriteLine("th { cursor: pointer; position: sticky; top: 0; background: black; z-index: 1; }");
+                writer.WriteLine(".green { background-color: green; color: white; }");
+                writer.WriteLine(".red { background-color: indianred; color: white; }");
+                writer.WriteLine(".header-table td { font-size: 2em; font-weight: bold; }");
+                writer.WriteLine("</style>");
+                writer.WriteLine("<script>");
+                writer.WriteLine("function filterTable() {");
+                writer.WriteLine("  var input, filter, table, tr, td, i, j, txtValue;");
+                writer.WriteLine("  input = document.getElementById('searchInput');");
+                writer.WriteLine("  filter = input.value.toLowerCase();");
+                writer.WriteLine("  table = document.getElementById('stockTable');");
+                writer.WriteLine("  tr = table.getElementsByTagName('tr');");
+                writer.WriteLine("  for (i = 1; i < tr.length; i++) {");
+                writer.WriteLine("    tr[i].style.display = 'none';");
+                writer.WriteLine("    td = tr[i].getElementsByTagName('td');");
+                writer.WriteLine("    for (j = 0; j < td.length; j++) {");
+                writer.WriteLine("      if (td[j]) {");
+                writer.WriteLine("        txtValue = td[j].textContent || td[j].innerText;");
+                writer.WriteLine("        if (txtValue.toLowerCase().indexOf(filter) > -1) {");
+                writer.WriteLine("          tr[i].style.display = '';");
+                writer.WriteLine("          break;");
+                writer.WriteLine("        }");
+                writer.WriteLine("      }");
+                writer.WriteLine("    }");
+                writer.WriteLine("  }");
+                writer.WriteLine("}");
+                writer.WriteLine("function clearSearch() {");
+                writer.WriteLine("  document.getElementById('searchInput').value = '';");
+                writer.WriteLine("  filterTable();");
+                writer.WriteLine("}");
+                writer.WriteLine("</script>");
+                writer.WriteLine("</head>");
+                writer.WriteLine("<body>");
+                writer.WriteLine($"<h1>{reportTitle}</h1>");
+                writer.WriteLine($"<div>Displaying {dataGridView.RowCount} rows</div>");
+                writer.WriteLine("<input type='text' id='searchInput' onkeyup='filterTable()' placeholder='Search for keywords..' style='margin-bottom: 10px;'>");
+                writer.WriteLine("<button onclick='clearSearch()'>Clear</button>");
+                writer.WriteLine("<table id='stockTable'>");
+                writer.WriteLine("<tr>");
+
+                // Add table headers
+                foreach (DataGridViewColumn column in dataGridView.Columns)
+                {
+                    writer.WriteLine($"<th>{column.HeaderText}</th>");
+                }
+                writer.WriteLine("</tr>");
+
+                // Add table rows
+                foreach (DataGridViewRow row in dataGridView.Rows)
+                {
+                    writer.WriteLine("<tr>");
+                    foreach (DataGridViewCell cell in row.Cells)
+                    {
+                        writer.WriteLine($"<td>{cell.Value}</td>");
+                    }
+                    writer.WriteLine("</tr>");
+                }
+
+                writer.WriteLine("</table>");
+                writer.WriteLine("</body>");
+                writer.WriteLine("</html>");
+            }
+        }
+        private string GetSelectedWarehouseName()
+        {
+            if (cmbWarehouseList.SelectedIndex >= 0)
+            {
+                string selectedItem = cmbWarehouseList.SelectedItem.ToString();
+                return selectedItem.Split('-')[0].Trim();
+            }
+            return null;
+        }
     }
 }
