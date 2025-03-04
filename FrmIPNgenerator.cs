@@ -35,7 +35,7 @@ namespace WH_Panel
         public string sqlAvlConnectionStringFromMainForm = string.Empty;
         List<string> typesNamesList = new List<string>
 {
-    "ANT", "BUZ", "CAP", "CON","CRY", "DID","DIO", "FER", "FIL", "FUS", "ICT","ICA", "IND",
+    "ANT", "BUZ", "CAP", "CON","CRY", "DID","DIO", "FER", "FIL", "FUS", "ICT","ICA" ,"ICC", "IND",
     "LED", "MAG", "MOS","MEC","MOD", "OPT", "OSC", "PCB", "PWR", "RES", "RLY", "SWT",
     "TER", "TRN" ,"VAR"
 };
@@ -605,56 +605,6 @@ namespace WH_Panel
             comboBox2.Items.Clear();
             comboBox2.Items.AddRange(orderedmanList.ToArray());
         }
-        //private void IPNstringConstructor()
-        //{
-        //    textBox3.Text = string.Empty;
-        //    string typeOfTheIem = comboBox1.SelectedItem.ToString();
-        //    try
-        //    {
-        //        //Sample selected type
-        //        string selectedType = comboBox1.SelectedItem.ToString(); // Replace with your actual ComboBox logic
-        //                                                                 // Filter WHitems by the selected type
-
-
-        //        var filteredItems = avlItemsFromTheMainForm.Where(item => item.IPN.StartsWith($"{_clientPrefix}_{selectedType}-")).ToList();
-        //        // Extract numbers from the filtered WHitems
-        //         var numbers = filteredItems .Select(item => int.Parse(item.IPN.Split('-')[1])) .ToList();
-
-        //        //var filteredItems = avlItemsFromTheMainForm
-        //        //    .Where(item => item.IPN.StartsWith($"{_clientPrefix}_{selectedType}-"))
-        //        //    .ToList();
-        //        //var numbers=new List<int>();
-        //        //// Extract numbers from the filtered WHitems
-        //        //if (filteredItems[0].IPN.StartsWith($"{_clientPrefix}_"))               
-        //        //{
-        //        //     numbers = filteredItems
-        //        //    .Select(item => int.Parse(item.IPN.Split('-')[1]))
-        //        //    .ToList();
-        //        //}
-        //        //else
-        //        //{
-        //        //    numbers = filteredItems
-        //        //    .Select(item => int.Parse(item.IPN.Split('_')[1]))
-        //        //    .ToList();
-        //        //}
-
-        //        // Find the lowest available number
-        //        int lowestAvailableNumber = Enumerable.Range(1, 9999)
-        //            .Except(numbers)
-        //            .Min();
-        //        // Display the result in textbox2
-        //        textBox1.Text = $"{lowestAvailableNumber:D4}";
-        //    }
-        //    catch (InvalidOperationException ex)
-        //    {
-        //        // Handle the case where the selected type does not exist
-        //        // You can display a message or take appropriate action here
-        //        textBox1.Text = "0001";
-        //    }
-        //    string numericVal = textBox1.Text.ToString();
-        //    textBox3.Text = _clientPrefix + "_" + typeOfTheIem + "-" + numericVal;
-        //    textBox3.Update();
-        //}
 
         private void IPNstringConstructor()
         {
@@ -667,18 +617,22 @@ namespace WH_Panel
 
                 // Filter WHitems by the selected type for both formats
                 var filteredItemsWithDash = avlItemsFromTheMainForm
-                    .Where(item => item.IPN.StartsWith($"{_clientPrefix}_{selectedType}-"))
+                    .Where(item => item.IPN.Length > _clientPrefix.Length + 4 && item.IPN[_clientPrefix.Length + 4] == '-' && item.IPN.StartsWith($"{_clientPrefix}_{selectedType}"))
                     .ToList();
                 var filteredItemsWithoutDash = avlItemsFromTheMainForm
-                    .Where(item => item.IPN.StartsWith($"{_clientPrefix}_{selectedType}") && !item.IPN.Contains("-"))
+                    .Where(item => item.IPN.Length > _clientPrefix.Length + 4 && item.IPN[_clientPrefix.Length + 4] != '-' && item.IPN.StartsWith($"{_clientPrefix}_{selectedType}"))
                     .ToList();
 
                 // Extract numbers from the filtered WHitems
                 var numbersWithDash = filteredItemsWithDash
-                    .Select(item => int.Parse(item.IPN.Split('-')[1]))
+                    .Select(item => int.TryParse(item.IPN.Split('-')[1], out int number) ? number : (int?)null)
+                    .Where(number => number.HasValue)
+                    .Select(number => number.Value)
                     .ToList();
                 var numbersWithoutDash = filteredItemsWithoutDash
-                    .Select(item => int.Parse(item.IPN.Substring($"{_clientPrefix}_{selectedType}".Length)))
+                    .Select(item => int.TryParse(item.IPN.Substring($"{_clientPrefix}_{selectedType}".Length), out int number) ? number : (int?)null)
+                    .Where(number => number.HasValue)
+                    .Select(number => number.Value)
                     .ToList();
 
                 // Combine both lists of numbers
@@ -701,7 +655,7 @@ namespace WH_Panel
                 else
                 {
                     // Default format with the second dash
-                    textBox3.Text = _clientPrefix + "_" + typeOfTheIem + "-" + numericVal;
+                    textBox3.Text = _clientPrefix + "_" + typeOfTheIem + numericVal; //+ "-"
                 }
             }
             catch (InvalidOperationException ex)
@@ -710,9 +664,36 @@ namespace WH_Panel
                 // You can display a message or take appropriate action here
                 textBox1.Text = "0001";
             }
-            
+
             textBox3.Update();
         }
+
+
+
+        private List<WHitem> FilterItemsByFormat(List<WHitem> items, string selectedType, char separator)
+        {
+            return items
+                .Where(item => item.IPN.Length > _clientPrefix.Length + 4 && item.IPN[_clientPrefix.Length + 4] == separator && item.IPN.StartsWith($"{_clientPrefix}_{selectedType}"))
+                .ToList();
+        }
+
+        private List<int> ExtractNumbers(List<WHitem> items, char separator)
+        {
+            return items
+                .Select(item => int.TryParse(item.IPN.Split(separator)[1], out int number) ? number : (int?)null)
+                .Where(number => number.HasValue)
+                .Select(number => number.Value)
+                .ToList();
+        }
+
+        private int FindLowestAvailableNumber(List<int> numbers)
+        {
+            return Enumerable.Range(1, 9999)
+                .Except(numbers)
+                .Min();
+        }
+
+
 
 
         private void comboBox1_SelectedIndexChanged_1(object sender, EventArgs e)
