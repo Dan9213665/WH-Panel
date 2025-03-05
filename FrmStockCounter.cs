@@ -26,6 +26,7 @@ using TextBox = System.Windows.Forms.TextBox;
 using QRCoder;
 using Point = System.Drawing.Point;
 using Font = System.Drawing.Font;
+using System.Diagnostics;
 
 namespace WH_Panel
 {
@@ -197,7 +198,7 @@ namespace WH_Panel
 
             textBox1.Focus();
             comboBox1.SelectedIndex = 5;
-            button1.BackColor = Color.IndianRed;
+            btnLoadReport.BackColor = Color.IndianRed;
             lblCalc.BackColor = Color.IndianRed;
             //StartCountingProcess();
         }
@@ -1078,10 +1079,233 @@ namespace WH_Panel
         }
 
 
-        private void button1_Click(object sender, EventArgs e)
+        private async void btnLoadReport_Click(object sender, EventArgs e)
         {
+            // Get the current warehouse name from comboBox3
+            string currentWarehouseName = comboBox3.SelectedItem?.ToString();
+            if (string.IsNullOrEmpty(currentWarehouseName))
+            {
+                MessageBox.Show("Please select a warehouse.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
+            // Define the SQL query
+            string query = $@"
+        DECLARE @DatabaseName NVARCHAR(100) = '{currentWarehouseName}';
+        DECLARE @SQL NVARCHAR(MAX);
+
+        SET @SQL = '
+        SELECT 
+            COALESCE(s.IPN, c.IPN) AS IPN,
+            ISNULL(s.TotalStock, 0) AS TotalStock,
+            ISNULL(c.TotalCount, 0) AS TotalCount
+        FROM 
+            (SELECT IPN, SUM(CAST(stock AS FLOAT)) AS TotalStock
+             FROM [' + @DatabaseName + '].dbo.STOCK
+             GROUP BY IPN) s
+        FULL OUTER JOIN 
+            (SELECT IPN, SUM(stock) AS TotalCount
+             FROM [' + @DatabaseName + '].dbo.COUNT
+             GROUP BY IPN) c
+        ON s.IPN = c.IPN
+        WHERE 
+            ISNULL(s.TotalStock, 0) <> ISNULL(c.TotalCount, 0)
+        ORDER BY 
+            COALESCE(s.IPN, c.IPN);';
+
+        EXEC sp_executesql @SQL;";
+
+            // Execute the SQL query and get the data
+            DataTable dataTable = await ExecuteSqlQueryAsync(query, currentWarehouseName);
+
+            // Generate the HTML content from the data
+            string htmlContent = GenerateHtmlReport(dataTable, $"{currentWarehouseName} Stock Report");
+
+            // Save the HTML content to a file
+            string fileName = $"{currentWarehouseName}_StockReport_{DateTime.Now:yyyyMMddHHmm}.html";
+            string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), fileName);
+            File.WriteAllText(filePath, htmlContent);
+
+            // Open the HTML file in the default browser
+            Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true });
         }
+
+        private async Task<DataTable> ExecuteSqlQueryAsync(string query, string databaseName)
+        {
+            DataTable dataTable = new DataTable();
+            string connectionString = $"Data Source=DBR3\\SQLEXPRESS;Initial Catalog={databaseName};Integrated Security=True;";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    try
+                    {
+                        await connection.OpenAsync();
+                        using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                        {
+                            dataTable.Load(reader);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"An error occurred while executing the SQL query: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+
+            return dataTable;
+        }
+
+        private string GenerateHtmlReport(DataTable dataTable, string reportTitle)
+        {
+            StringBuilder html = new StringBuilder();
+
+            html.AppendLine("<html style='text-align:center;background-color:gray;color:white;'>");
+            html.AppendLine("<head>");
+            html.AppendLine("<title>Stock Report</title>");
+            html.AppendLine("<style>");
+            html.AppendLine("table { border-collapse: collapse; width: 100%; border: solid 1px; }");
+            html.AppendLine("th, td { border: 1px solid black; padding: 8px; text-align: center;}");
+            html.AppendLine("th { cursor: pointer; position: sticky; top: 0; background: black; z-index: 1; }");
+            html.AppendLine(".green { background-color: lightgreen; color: black; }");
+            html.AppendLine(".zero { background-color: indianred; color: white; }");
+            html.AppendLine(".negative { background-color: red; color: white; }");
+            html.AppendLine(".header-table td { font-size: 2em; font-weight: bold; }");
+            html.AppendLine("</style>");
+            html.AppendLine("<script>");
+            html.AppendLine("function filterTable() {");
+            html.AppendLine("  var input, filter, table, tr, td, i, j, txtValue;");
+            html.AppendLine("  input = document.getElementById('searchInput');");
+            html.AppendLine("  filter = input.value.toLowerCase();");
+            html.AppendLine("  table = document.getElementById('stockTable');");
+            html.AppendLine("  tr = table.getElementsByTagName('tr');");
+            html.AppendLine("  for (i = 1; i < tr.length; i++) {");
+            html.AppendLine("    tr[i].style.display = 'none';");
+            html.AppendLine("    td = tr[i].getElementsByTagName('td');");
+            html.AppendLine("    for (j = 0; j < td.length; j++) {");
+            html.AppendLine("      if (td[j]) {");
+            html.AppendLine("        txtValue = td[j].textContent || td[j].innerText;");
+            html.AppendLine("        if (txtValue.toLowerCase().indexOf(filter) > -1) {");
+            html.AppendLine("          tr[i].style.display = '';");
+            html.AppendLine("          break;");
+            html.AppendLine("        }");
+            html.AppendLine("      }");
+            html.AppendLine("    }");
+            html.AppendLine("  }");
+            html.AppendLine("}");
+            html.AppendLine("function clearSearch() {");
+            html.AppendLine("  document.getElementById('searchInput').value = '';");
+            html.AppendLine("  filterTable();");
+            html.AppendLine("}");
+            html.AppendLine("function sortTable(n, isNumeric) {");
+            html.AppendLine("  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;");
+            html.AppendLine("  table = document.getElementById('stockTable');");
+            html.AppendLine("  switching = true;");
+            html.AppendLine("  dir = 'asc';");
+            html.AppendLine("  while (switching) {");
+            html.AppendLine("    switching = false;");
+            html.AppendLine("    rows = table.rows;");
+            html.AppendLine("    for (i = 1; i < (rows.length - 1); i++) {");
+            html.AppendLine("      shouldSwitch = false;");
+            html.AppendLine("      x = rows[i].getElementsByTagName('TD')[n];");
+            html.AppendLine("      y = rows[i + 1].getElementsByTagName('TD')[n];");
+            html.AppendLine("      if (isNumeric) {");
+            html.AppendLine("        if (dir == 'asc') {");
+            html.AppendLine("          if (parseFloat(x.innerHTML) > parseFloat(y.innerHTML)) {");
+            html.AppendLine("            shouldSwitch = true;");
+            html.AppendLine("            break;");
+            html.AppendLine("          }");
+            html.AppendLine("        } else if (dir == 'desc') {");
+            html.AppendLine("          if (parseFloat(x.innerHTML) < parseFloat(y.innerHTML)) {");
+            html.AppendLine("            shouldSwitch = true;");
+            html.AppendLine("            break;");
+            html.AppendLine("          }");
+            html.AppendLine("        }");
+            html.AppendLine("      } else {");
+            html.AppendLine("        if (dir == 'asc') {");
+            html.AppendLine("          if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {");
+            html.AppendLine("            shouldSwitch = true;");
+            html.AppendLine("            break;");
+            html.AppendLine("          }");
+            html.AppendLine("        } else if (dir == 'desc') {");
+            html.AppendLine("          if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {");
+            html.AppendLine("            shouldSwitch = true;");
+            html.AppendLine("            break;");
+            html.AppendLine("          }");
+            html.AppendLine("        }");
+            html.AppendLine("      }");
+            html.AppendLine("    }");
+            html.AppendLine("    if (shouldSwitch) {");
+            html.AppendLine("      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);");
+            html.AppendLine("      switching = true;");
+            html.AppendLine("      switchcount ++;");
+            html.AppendLine("    } else {");
+            html.AppendLine("      if (switchcount == 0 && dir == 'asc') {");
+            html.AppendLine("        dir = 'desc';");
+            html.AppendLine("        switching = true;");
+            html.AppendLine("      }");
+            html.AppendLine("    }");
+            html.AppendLine("  }");
+            html.AppendLine("}");
+            html.AppendLine("</script>");
+            html.AppendLine("</head>");
+            html.AppendLine("<body>");
+            html.AppendLine($"<h1>{reportTitle}</h1>");
+            html.AppendLine($"<div>Displaying {dataTable.Rows.Count} rows</div>");
+            html.AppendLine("<input type='text' id='searchInput' onkeyup='filterTable()' placeholder='Search for keywords..' style='margin-bottom: 10px;'>");
+            html.AppendLine("<button onclick='clearSearch()'>Clear</button>");
+            html.AppendLine("<table id='stockTable'>");
+            html.AppendLine("<tr>");
+
+            // Add table headers
+            foreach (DataColumn column in dataTable.Columns)
+            {
+                bool isNumeric = column.ColumnName == "TotalStock" || column.ColumnName == "TotalCount";
+                html.AppendLine($"<th onclick='sortTable({dataTable.Columns.IndexOf(column)}, {isNumeric.ToString().ToLower()})'>{column.ColumnName}</th>");
+            }
+            html.AppendLine("</tr>");
+
+            // Add table rows
+            foreach (DataRow row in dataTable.Rows)
+            {
+                html.AppendLine("<tr>");
+                foreach (DataColumn column in dataTable.Columns)
+                {
+                    string cellValue = row[column]?.ToString() ?? string.Empty;
+                    string cellClass = string.Empty;
+
+                    if (column.ColumnName == "TotalStock" || column.ColumnName == "TotalCount")
+                    {
+                        if (decimal.TryParse(cellValue, out decimal value))
+                        {
+                            if (value > 0)
+                            {
+                                cellClass = "green";
+                            }
+                            else if (value == 0)
+                            {
+                                cellClass = "zero";
+                            }
+                            else
+                            {
+                                cellClass = "negative";
+                            }
+                        }
+                    }
+
+                    html.AppendLine($"<td class='{cellClass}'>{cellValue}</td>");
+                }
+                html.AppendLine("</tr>");
+            }
+
+            html.AppendLine("</table>");
+            html.AppendLine("</body>");
+            html.AppendLine("</html>");
+
+            return html.ToString();
+        }
+
 
 
         private void button1_MouseDown(object sender, MouseEventArgs e)

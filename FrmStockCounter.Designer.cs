@@ -43,7 +43,7 @@
             checkBox1 = new CheckBox();
             groupBox6 = new GroupBox();
             comboBox1 = new ComboBox();
-            button1 = new Button();
+            btnLoadReport = new Button();
             button2 = new Button();
             lblCalc = new Label();
             button3 = new Button();
@@ -64,7 +64,7 @@
             comboBox3.Cursor = Cursors.Hand;
             comboBox3.Dock = DockStyle.Fill;
             comboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBox3.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point);
+            comboBox3.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold);
             comboBox3.ForeColor = Color.White;
             comboBox3.FormattingEnabled = true;
             comboBox3.Location = new Point(3, 19);
@@ -79,7 +79,7 @@
             // textBox1
             // 
             textBox1.Dock = DockStyle.Fill;
-            textBox1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            textBox1.Font = new Font("Segoe UI", 12F);
             textBox1.Location = new Point(3, 19);
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(240, 29);
@@ -126,7 +126,7 @@
             // textBox2
             // 
             textBox2.Dock = DockStyle.Fill;
-            textBox2.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            textBox2.Font = new Font("Segoe UI", 12F);
             textBox2.Location = new Point(3, 19);
             textBox2.Name = "textBox2";
             textBox2.Size = new Size(240, 29);
@@ -139,7 +139,7 @@
             // textBox3
             // 
             textBox3.Dock = DockStyle.Fill;
-            textBox3.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            textBox3.Font = new Font("Segoe UI", 12F);
             textBox3.Location = new Point(3, 19);
             textBox3.Name = "textBox3";
             textBox3.Size = new Size(240, 29);
@@ -198,7 +198,7 @@
             tableLayoutPanel1.Controls.Add(groupBox2, 1, 0);
             tableLayoutPanel1.Controls.Add(checkBox1, 1, 1);
             tableLayoutPanel1.Controls.Add(groupBox6, 4, 0);
-            tableLayoutPanel1.Controls.Add(button1, 0, 1);
+            tableLayoutPanel1.Controls.Add(btnLoadReport, 0, 1);
             tableLayoutPanel1.Controls.Add(button2, 2, 1);
             tableLayoutPanel1.Controls.Add(lblCalc, 3, 1);
             tableLayoutPanel1.Controls.Add(button3, 4, 1);
@@ -240,7 +240,7 @@
             comboBox1.AutoCompleteCustomSource.AddRange(new string[] { "5\"", "7\"", "10\"", "13\"", "15\"", "Bag", "Box", "Stick", "Stick_in_a_bag", "Tray" });
             comboBox1.Dock = DockStyle.Fill;
             comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBox1.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point);
+            comboBox1.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold);
             comboBox1.FormattingEnabled = true;
             comboBox1.Items.AddRange(new object[] { "5\"", "7\"", "10\"", "13\"", "15\"", "Bag", "Box", "Stick", "Stick_in_a_bag", "Tray" });
             comboBox1.Location = new Point(3, 19);
@@ -249,18 +249,18 @@
             comboBox1.TabIndex = 0;
             comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
             // 
-            // button1
+            // btnLoadReport
             // 
-            button1.Dock = DockStyle.Fill;
-            button1.Location = new Point(3, 60);
-            button1.Name = "button1";
-            button1.Size = new Size(246, 51);
-            button1.TabIndex = 18;
-            button1.Text = "LOAD count log";
-            button1.UseVisualStyleBackColor = true;
-            button1.Visible = false;
-            button1.Click += button1_Click;
-            button1.MouseDown += button1_MouseDown;
+            btnLoadReport.BackColor = Color.FromArgb(255, 128, 0);
+            btnLoadReport.Dock = DockStyle.Fill;
+            btnLoadReport.Location = new Point(3, 60);
+            btnLoadReport.Name = "btnLoadReport";
+            btnLoadReport.Size = new Size(246, 51);
+            btnLoadReport.TabIndex = 18;
+            btnLoadReport.Text = "LOAD count report";
+            btnLoadReport.UseVisualStyleBackColor = false;
+            btnLoadReport.Click += btnLoadReport_Click;
+            btnLoadReport.MouseDown += button1_MouseDown;
             // 
             // button2
             // 
@@ -277,7 +277,7 @@
             // 
             lblCalc.AutoSize = true;
             lblCalc.Dock = DockStyle.Fill;
-            lblCalc.Font = new Font("Segoe UI", 20.25F, FontStyle.Regular, GraphicsUnit.Point);
+            lblCalc.Font = new Font("Segoe UI", 20.25F);
             lblCalc.Location = new Point(759, 57);
             lblCalc.Name = "lblCalc";
             lblCalc.Size = new Size(246, 57);
@@ -342,7 +342,7 @@
         private CheckBox checkBox1;
         private GroupBox groupBox6;
         private ComboBox comboBox1;
-        private Button button1;
+        private Button btnLoadReport;
         private OpenFileDialog openFileDialog1;
         private Button button2;
         private Label lblCalc;

@@ -25,8 +25,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmPackingSlipShip));
             groupBox3 = new GroupBox();
             dataGridView1 = new DataGridView();
@@ -116,26 +116,25 @@
             // 
             dataGridView1.AllowUserToAddRows = false;
             dataGridView1.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle1.BackColor = Color.DarkGray;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            dataGridViewCellStyle1.ForeColor = Color.White;
-            dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.BackColor = Color.DarkGray;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            dataGridViewCellStyle3.ForeColor = Color.White;
+            dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle3;
             dataGridView1.BackgroundColor = SystemColors.ControlDarkDark;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = Color.DarkGray;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            dataGridViewCellStyle2.ForeColor = Color.White;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-            dataGridView1.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = Color.DarkGray;
+            dataGridViewCellStyle4.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            dataGridViewCellStyle4.ForeColor = Color.White;
+            dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
+            dataGridView1.DefaultCellStyle = dataGridViewCellStyle4;
             dataGridView1.Dock = DockStyle.Fill;
             dataGridView1.Location = new Point(3, 19);
             dataGridView1.MultiSelect = false;
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
-            dataGridView1.RowTemplate.Height = 25;
             dataGridView1.Size = new Size(1256, 115);
             dataGridView1.TabIndex = 0;
             dataGridView1.CellClick += dataGridView1_CellClick;
@@ -199,7 +198,6 @@
             // 
             btnPrintSticker.AutoSize = true;
             btnPrintSticker.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            btnPrintSticker.BackgroundImage = (Image)resources.GetObject("btnPrintSticker.BackgroundImage");
             btnPrintSticker.BackgroundImageLayout = ImageLayout.Stretch;
             btnPrintSticker.Dock = DockStyle.Fill;
             btnPrintSticker.Location = new Point(839, 3);
@@ -307,7 +305,7 @@
             checkBox1.Checked = true;
             checkBox1.CheckState = CheckState.Checked;
             checkBox1.Dock = DockStyle.Fill;
-            checkBox1.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
+            checkBox1.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             checkBox1.Location = new Point(3, 53);
             checkBox1.Name = "checkBox1";
             checkBox1.Size = new Size(197, 44);
@@ -320,7 +318,7 @@
             // txtbQty
             // 
             txtbQty.Dock = DockStyle.Fill;
-            txtbQty.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
+            txtbQty.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             txtbQty.Location = new Point(3, 3);
             txtbQty.Name = "txtbQty";
             txtbQty.Size = new Size(197, 39);
@@ -845,7 +843,6 @@
             dataGridView2.Location = new Point(3, 19);
             dataGridView2.Name = "dataGridView2";
             dataGridView2.ReadOnly = true;
-            dataGridView2.RowTemplate.Height = 25;
             dataGridView2.Size = new Size(1256, 116);
             dataGridView2.TabIndex = 0;
             dataGridView2.CellClick += dataGridView2_CellClick;
