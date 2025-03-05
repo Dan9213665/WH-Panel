@@ -242,7 +242,7 @@
             btnSim1.Name = "btnSim1";
             btnSim1.Size = new Size(76, 23);
             btnSim1.TabIndex = 1;
-            btnSim1.Text = "Simulation";
+            btnSim1.Text = "סימולציה מצרפית";
             btnSim1.UseVisualStyleBackColor = true;
             btnSim1.Click += btnSim1_Click;
             // 
@@ -297,7 +297,7 @@
             btnByIPN.Name = "btnByIPN";
             btnByIPN.Size = new Size(76, 23);
             btnByIPN.TabIndex = 6;
-            btnByIPN.Text = "by IPN";
+            btnByIPN.Text = "הצג ע\"פ מק\"ט";
             btnByIPN.UseVisualStyleBackColor = true;
             btnByIPN.Click += btnByIPN_Click;
             // 
@@ -308,7 +308,7 @@
             btnByKit.Name = "btnByKit";
             btnByKit.Size = new Size(76, 23);
             btnByKit.TabIndex = 7;
-            btnByKit.Text = "by KIT";
+            btnByKit.Text = "הצג ע\"פ קיט";
             btnByKit.UseVisualStyleBackColor = true;
             btnByKit.Click += btnByKit_Click;
             // 

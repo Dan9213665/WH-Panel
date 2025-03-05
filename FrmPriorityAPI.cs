@@ -160,8 +160,6 @@ namespace WH_Panel
                 ColorTheRows(dataGridView);
             }
         }
-        //public string username = "api"; // Replace with your actual username
-        //public string password = "DdD@12345"; // Replace with your actual password
         public class PR_PART
         {
             public string PARTNAME { get; set; }
@@ -333,8 +331,6 @@ namespace WH_Panel
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     // Set the Authorization header
-                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
-                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                     // Make the HTTP GET request
@@ -375,8 +371,6 @@ namespace WH_Panel
                         // Set the request headers
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
-                        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                         string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                         // Construct the API URL
@@ -2631,8 +2625,9 @@ namespace WH_Panel
                 writer.WriteLine("table { border-collapse: collapse; width: 100%; border: solid 1px; }");
                 writer.WriteLine("th, td { border: 1px solid black; padding: 8px; text-align: center;}");
                 writer.WriteLine("th { cursor: pointer; position: sticky; top: 0; background: black; z-index: 1; }");
-                writer.WriteLine(".green { background-color: green; color: white; }");
-                writer.WriteLine(".red { background-color: indianred; color: white; }");
+                writer.WriteLine(".green { background-color: lightgreen; color: black; }");
+                writer.WriteLine(".zero { background-color: indianred; color: white; }");
+                writer.WriteLine(".negative { background-color: red; color: white; }");
                 writer.WriteLine(".header-table td { font-size: 2em; font-weight: bold; }");
                 writer.WriteLine("</style>");
                 writer.WriteLine("<script>");
@@ -2660,6 +2655,56 @@ namespace WH_Panel
                 writer.WriteLine("  document.getElementById('searchInput').value = '';");
                 writer.WriteLine("  filterTable();");
                 writer.WriteLine("}");
+                writer.WriteLine("function sortTable(n, isNumeric) {");
+                writer.WriteLine("  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;");
+                writer.WriteLine("  table = document.getElementById('stockTable');");
+                writer.WriteLine("  switching = true;");
+                writer.WriteLine("  dir = 'asc';");
+                writer.WriteLine("  while (switching) {");
+                writer.WriteLine("    switching = false;");
+                writer.WriteLine("    rows = table.rows;");
+                writer.WriteLine("    for (i = 1; i < (rows.length - 1); i++) {");
+                writer.WriteLine("      shouldSwitch = false;");
+                writer.WriteLine("      x = rows[i].getElementsByTagName('TD')[n];");
+                writer.WriteLine("      y = rows[i + 1].getElementsByTagName('TD')[n];");
+                writer.WriteLine("      if (isNumeric) {");
+                writer.WriteLine("        if (dir == 'asc') {");
+                writer.WriteLine("          if (parseFloat(x.innerHTML) > parseFloat(y.innerHTML)) {");
+                writer.WriteLine("            shouldSwitch = true;");
+                writer.WriteLine("            break;");
+                writer.WriteLine("          }");
+                writer.WriteLine("        } else if (dir == 'desc') {");
+                writer.WriteLine("          if (parseFloat(x.innerHTML) < parseFloat(y.innerHTML)) {");
+                writer.WriteLine("            shouldSwitch = true;");
+                writer.WriteLine("            break;");
+                writer.WriteLine("          }");
+                writer.WriteLine("        }");
+                writer.WriteLine("      } else {");
+                writer.WriteLine("        if (dir == 'asc') {");
+                writer.WriteLine("          if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {");
+                writer.WriteLine("            shouldSwitch = true;");
+                writer.WriteLine("            break;");
+                writer.WriteLine("          }");
+                writer.WriteLine("        } else if (dir == 'desc') {");
+                writer.WriteLine("          if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {");
+                writer.WriteLine("            shouldSwitch = true;");
+                writer.WriteLine("            break;");
+                writer.WriteLine("          }");
+                writer.WriteLine("        }");
+                writer.WriteLine("      }");
+                writer.WriteLine("    }");
+                writer.WriteLine("    if (shouldSwitch) {");
+                writer.WriteLine("      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);");
+                writer.WriteLine("      switching = true;");
+                writer.WriteLine("      switchcount ++;");
+                writer.WriteLine("    } else {");
+                writer.WriteLine("      if (switchcount == 0 && dir == 'asc') {");
+                writer.WriteLine("        dir = 'desc';");
+                writer.WriteLine("        switching = true;");
+                writer.WriteLine("      }");
+                writer.WriteLine("    }");
+                writer.WriteLine("  }");
+                writer.WriteLine("}");
                 writer.WriteLine("</script>");
                 writer.WriteLine("</head>");
                 writer.WriteLine("<body>");
@@ -2669,11 +2714,11 @@ namespace WH_Panel
                 writer.WriteLine("<button onclick='clearSearch()'>Clear</button>");
                 writer.WriteLine("<table id='stockTable'>");
                 writer.WriteLine("<tr>");
-
                 // Add table headers
                 foreach (DataGridViewColumn column in dataGridView.Columns)
                 {
-                    writer.WriteLine($"<th>{column.HeaderText}</th>");
+                    bool isNumeric = column.Name == "BALANCE" || column.Name == "PART";
+                    writer.WriteLine($"<th onclick='sortTable({column.Index}, {isNumeric.ToString().ToLower()})'>{column.HeaderText}</th>");
                 }
                 writer.WriteLine("</tr>");
 
@@ -2683,7 +2728,26 @@ namespace WH_Panel
                     writer.WriteLine("<tr>");
                     foreach (DataGridViewCell cell in row.Cells)
                     {
-                        writer.WriteLine($"<td>{cell.Value}</td>");
+                        string cellValue = cell.Value?.ToString() ?? string.Empty;
+                        string cellClass = string.Empty;
+
+                        if (cell.OwningColumn.Name == "BALANCE" && int.TryParse(cellValue, out int balanceValue))
+                        {
+                            if (balanceValue > 0)
+                            {
+                                cellClass = "green";
+                            }
+                            else if (balanceValue == 0)
+                            {
+                                cellClass = "zero";
+                            }
+                            else
+                            {
+                                cellClass = "negative";
+                            }
+                        }
+
+                        writer.WriteLine($"<td class='{cellClass}'>{cellValue}</td>");
                     }
                     writer.WriteLine("</tr>");
                 }
