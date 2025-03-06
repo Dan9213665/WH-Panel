@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmStockCounter));
             comboBox3 = new ComboBox();
             textBox1 = new TextBox();
             groupBox1 = new GroupBox();
@@ -64,7 +63,7 @@
             comboBox3.Cursor = Cursors.Hand;
             comboBox3.Dock = DockStyle.Fill;
             comboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBox3.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold);
+            comboBox3.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
             comboBox3.ForeColor = Color.White;
             comboBox3.FormattingEnabled = true;
             comboBox3.Location = new Point(3, 19);
@@ -94,7 +93,7 @@
             // 
             groupBox1.Controls.Add(comboBox3);
             groupBox1.Dock = DockStyle.Fill;
-            groupBox1.Location = new Point(3, 3);
+            groupBox1.Location = new Point(3, 60);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(246, 51);
             groupBox1.TabIndex = 10;
@@ -105,7 +104,7 @@
             // 
             groupBox2.Controls.Add(textBox1);
             groupBox2.Dock = DockStyle.Fill;
-            groupBox2.Location = new Point(255, 3);
+            groupBox2.Location = new Point(255, 60);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(246, 51);
             groupBox2.TabIndex = 11;
@@ -116,7 +115,7 @@
             // 
             groupBox3.Controls.Add(textBox2);
             groupBox3.Dock = DockStyle.Fill;
-            groupBox3.Location = new Point(507, 3);
+            groupBox3.Location = new Point(507, 60);
             groupBox3.Name = "groupBox3";
             groupBox3.Size = new Size(246, 51);
             groupBox3.TabIndex = 12;
@@ -153,7 +152,7 @@
             // 
             groupBox4.Controls.Add(textBox3);
             groupBox4.Dock = DockStyle.Fill;
-            groupBox4.Location = new Point(759, 3);
+            groupBox4.Location = new Point(759, 60);
             groupBox4.Name = "groupBox4";
             groupBox4.Size = new Size(246, 51);
             groupBox4.TabIndex = 14;
@@ -178,7 +177,6 @@
             dataGridView1.Dock = DockStyle.Fill;
             dataGridView1.Location = new Point(3, 19);
             dataGridView1.Name = "dataGridView1";
-            dataGridView1.RowTemplate.Height = 25;
             dataGridView1.Size = new Size(1248, 436);
             dataGridView1.TabIndex = 0;
             dataGridView1.MouseDown += dataGridView1_MouseDown;
@@ -192,16 +190,16 @@
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
             tableLayoutPanel1.Controls.Add(groupBox5, 0, 2);
-            tableLayoutPanel1.Controls.Add(groupBox4, 3, 0);
-            tableLayoutPanel1.Controls.Add(groupBox3, 2, 0);
-            tableLayoutPanel1.Controls.Add(groupBox1, 0, 0);
-            tableLayoutPanel1.Controls.Add(groupBox2, 1, 0);
-            tableLayoutPanel1.Controls.Add(checkBox1, 1, 1);
-            tableLayoutPanel1.Controls.Add(groupBox6, 4, 0);
-            tableLayoutPanel1.Controls.Add(btnLoadReport, 0, 1);
-            tableLayoutPanel1.Controls.Add(button2, 2, 1);
-            tableLayoutPanel1.Controls.Add(lblCalc, 3, 1);
-            tableLayoutPanel1.Controls.Add(button3, 4, 1);
+            tableLayoutPanel1.Controls.Add(groupBox4, 3, 1);
+            tableLayoutPanel1.Controls.Add(groupBox3, 2, 1);
+            tableLayoutPanel1.Controls.Add(groupBox1, 0, 1);
+            tableLayoutPanel1.Controls.Add(groupBox2, 1, 1);
+            tableLayoutPanel1.Controls.Add(checkBox1, 1, 0);
+            tableLayoutPanel1.Controls.Add(groupBox6, 4, 1);
+            tableLayoutPanel1.Controls.Add(btnLoadReport, 0, 0);
+            tableLayoutPanel1.Controls.Add(button2, 2, 0);
+            tableLayoutPanel1.Controls.Add(lblCalc, 3, 0);
+            tableLayoutPanel1.Controls.Add(button3, 4, 0);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -209,6 +207,7 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 80F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
             tableLayoutPanel1.Size = new Size(1260, 578);
             tableLayoutPanel1.TabIndex = 17;
             // 
@@ -216,7 +215,7 @@
             // 
             checkBox1.AutoSize = true;
             checkBox1.Dock = DockStyle.Fill;
-            checkBox1.Location = new Point(255, 60);
+            checkBox1.Location = new Point(255, 3);
             checkBox1.Name = "checkBox1";
             checkBox1.Size = new Size(246, 51);
             checkBox1.TabIndex = 16;
@@ -228,7 +227,7 @@
             // 
             groupBox6.Controls.Add(comboBox1);
             groupBox6.Dock = DockStyle.Fill;
-            groupBox6.Location = new Point(1011, 3);
+            groupBox6.Location = new Point(1011, 60);
             groupBox6.Name = "groupBox6";
             groupBox6.Size = new Size(246, 51);
             groupBox6.TabIndex = 17;
@@ -240,36 +239,40 @@
             comboBox1.AutoCompleteCustomSource.AddRange(new string[] { "5\"", "7\"", "10\"", "13\"", "15\"", "Bag", "Box", "Stick", "Stick_in_a_bag", "Tray" });
             comboBox1.Dock = DockStyle.Fill;
             comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBox1.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold);
+            comboBox1.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
             comboBox1.FormattingEnabled = true;
             comboBox1.Items.AddRange(new object[] { "5\"", "7\"", "10\"", "13\"", "15\"", "Bag", "Box", "Stick", "Stick_in_a_bag", "Tray" });
             comboBox1.Location = new Point(3, 19);
             comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(240, 33);
+            comboBox1.Size = new Size(240, 38);
             comboBox1.TabIndex = 0;
             comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
             // 
             // btnLoadReport
             // 
-            btnLoadReport.BackColor = Color.FromArgb(255, 128, 0);
+            btnLoadReport.BackgroundImage = Properties.Resources.reportBtn;
+            btnLoadReport.BackgroundImageLayout = ImageLayout.Stretch;
             btnLoadReport.Dock = DockStyle.Fill;
-            btnLoadReport.Location = new Point(3, 60);
+            btnLoadReport.Location = new Point(3, 3);
             btnLoadReport.Name = "btnLoadReport";
             btnLoadReport.Size = new Size(246, 51);
             btnLoadReport.TabIndex = 18;
-            btnLoadReport.Text = "LOAD count report";
             btnLoadReport.UseVisualStyleBackColor = false;
             btnLoadReport.Click += btnLoadReport_Click;
             btnLoadReport.MouseDown += button1_MouseDown;
             // 
             // button2
             // 
+            button2.BackgroundImage = Properties.Resources.Screenshot_2025_02_18_125408;
+            button2.BackgroundImageLayout = ImageLayout.Stretch;
             button2.Dock = DockStyle.Fill;
-            button2.Location = new Point(507, 60);
+            button2.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            button2.ForeColor = Color.White;
+            button2.Location = new Point(507, 3);
             button2.Name = "button2";
             button2.Size = new Size(246, 51);
             button2.TabIndex = 19;
-            button2.Text = "Recalculate balance";
+            button2.Text = "Recalculate Balance";
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
             // 
@@ -277,8 +280,8 @@
             // 
             lblCalc.AutoSize = true;
             lblCalc.Dock = DockStyle.Fill;
-            lblCalc.Font = new Font("Segoe UI", 20.25F);
-            lblCalc.Location = new Point(759, 57);
+            lblCalc.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblCalc.Location = new Point(759, 0);
             lblCalc.Name = "lblCalc";
             lblCalc.Size = new Size(246, 57);
             lblCalc.TabIndex = 20;
@@ -286,12 +289,13 @@
             // 
             // button3
             // 
+            button3.BackgroundImage = Properties.Resources.openWH;
+            button3.BackgroundImageLayout = ImageLayout.Stretch;
             button3.Dock = DockStyle.Fill;
-            button3.Location = new Point(1011, 60);
+            button3.Location = new Point(1011, 3);
             button3.Name = "button3";
             button3.Size = new Size(246, 51);
             button3.TabIndex = 21;
-            button3.Text = "Open WH";
             button3.UseVisualStyleBackColor = true;
             button3.Click += button3_Click;
             // 
@@ -305,7 +309,6 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1260, 578);
             Controls.Add(tableLayoutPanel1);
-            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FrmStockCounter";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "FrmStockCounter";

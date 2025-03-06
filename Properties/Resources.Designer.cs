@@ -192,6 +192,16 @@ namespace WH_Panel.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap openWH {
+            get {
+                object obj = ResourceManager.GetObject("openWH", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap P {
             get {
                 object obj = ResourceManager.GetObject("P", resourceCulture);
@@ -212,6 +222,26 @@ namespace WH_Panel.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap recalculate {
+            get {
+                object obj = ResourceManager.GetObject("recalculate", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap recalculate1 {
+            get {
+                object obj = ResourceManager.GetObject("recalculate1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap reloadDB {
             get {
                 object obj = ResourceManager.GetObject("reloadDB", resourceCulture);
@@ -222,9 +252,29 @@ namespace WH_Panel.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap reportBtn {
+            get {
+                object obj = ResourceManager.GetObject("reportBtn", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Screenshot_2025_01_12_071621 {
             get {
                 object obj = ResourceManager.GetObject("Screenshot 2025-01-12 071621", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Screenshot_2025_02_18_125408 {
+            get {
+                object obj = ResourceManager.GetObject("Screenshot 2025-02-18 125408", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

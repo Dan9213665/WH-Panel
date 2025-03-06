@@ -25,8 +25,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmPackingSlipShip));
             groupBox3 = new GroupBox();
             dataGridView1 = new DataGridView();
@@ -116,20 +116,20 @@
             // 
             dataGridView1.AllowUserToAddRows = false;
             dataGridView1.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle3.BackColor = Color.DarkGray;
-            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            dataGridViewCellStyle3.ForeColor = Color.White;
-            dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.BackColor = Color.DarkGray;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            dataGridViewCellStyle1.ForeColor = Color.White;
+            dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             dataGridView1.BackgroundColor = SystemColors.ControlDarkDark;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = Color.DarkGray;
-            dataGridViewCellStyle4.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            dataGridViewCellStyle4.ForeColor = Color.White;
-            dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
-            dataGridView1.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.DarkGray;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            dataGridViewCellStyle2.ForeColor = Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+            dataGridView1.DefaultCellStyle = dataGridViewCellStyle2;
             dataGridView1.Dock = DockStyle.Fill;
             dataGridView1.Location = new Point(3, 19);
             dataGridView1.MultiSelect = false;
