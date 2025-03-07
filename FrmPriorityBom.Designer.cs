@@ -408,7 +408,6 @@
             dgwBom.Name = "dgwBom";
             dgwBom.ReadOnly = true;
             tableLayoutPanel1.SetRowSpan(dgwBom, 3);
-            dgwBom.RowTemplate.Height = 25;
             dgwBom.Size = new Size(703, 566);
             dgwBom.TabIndex = 3;
             dgwBom.CellClick += dgwBom_CellClick;
@@ -551,7 +550,6 @@
             dgwIPNmoves.Location = new Point(3, 19);
             dgwIPNmoves.Name = "dgwIPNmoves";
             dgwIPNmoves.ReadOnly = true;
-            dgwIPNmoves.RowTemplate.Height = 25;
             dgwIPNmoves.Size = new Size(461, 377);
             dgwIPNmoves.TabIndex = 0;
             // 

@@ -865,11 +865,15 @@ namespace WH_Panel
             {
                 if (e.Value != null && int.TryParse(e.Value.ToString(), out int deltaValue))
                 {
-                    if (deltaValue >= 0)
+                    if (deltaValue >= 10)
                     {
                         e.CellStyle.BackColor = Color.Green;
                     }
-                    else
+                    else if (deltaValue >=0 && deltaValue < 10)
+                    {
+                        e.CellStyle.BackColor = Color.OrangeRed;
+                    }
+                    else if (deltaValue < 0)
                     {
                         e.CellStyle.BackColor = Color.IndianRed;
                     }
@@ -2235,6 +2239,7 @@ namespace WH_Panel
                 writer.WriteLine("th, td { border: 1px solid black; padding: 8px; text-align: center;}");
                 writer.WriteLine("th { cursor: pointer; position: sticky; top: 0; background: black; z-index: 1; }");
                 writer.WriteLine(".green { background-color: green; color: white; }");
+                writer.WriteLine(".orange { background-color: orangered; color: white; }");
                 writer.WriteLine(".red { background-color: indianred; color: white; }");
                 writer.WriteLine(".header-table td { font-size: 2em; font-weight: bold; }");
                 writer.WriteLine("</style>");
@@ -2380,7 +2385,18 @@ namespace WH_Panel
                             {
                                 if (int.TryParse(cellValue, out int deltaValue))
                                 {
-                                    cellClass = deltaValue >= 0 ? "green" : "red";
+                                    if (deltaValue >= 10)
+                                    {
+                                        cellClass = "green";
+                                    }
+                                    else if (deltaValue >= 0 && deltaValue < 10)
+                                    {
+                                        cellClass = "orange";
+                                    }
+                                    else
+                                    {
+                                        cellClass = "red";
+                                    }
                                 }
                             }
                             else if (dgwBom.Columns[cell.ColumnIndex].Name == "TBALANCE")
