@@ -324,11 +324,15 @@ namespace WH_Panel
                 {
                     var whbalanceValue = Convert.ToDecimal(whbalanceCell.Value);
                     var deltaValue = Convert.ToDecimal(deltaCell.Value);
-                    if (whbalanceValue + deltaValue >= 0)
+                    if ((whbalanceValue + deltaValue) > 10)
                     {
                         e.CellStyle.BackColor = Color.LightGreen;
                     }
-                    else
+                    else if ((whbalanceValue + deltaValue >= 0)&&(whbalanceValue + deltaValue) <= 10)
+                    {
+                        e.CellStyle.BackColor = Color.Orange;
+                    }
+                    else if((whbalanceValue + deltaValue) <0)
                     {
                         e.CellStyle.BackColor = Color.IndianRed;
                     }
