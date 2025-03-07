@@ -1276,6 +1276,8 @@ namespace WH_Panel
         }
         private void GenerateHTMLsim()
         {
+            //dataGridView1.Sort(dataGridView1.Columns["Delta"], ListSortDirection.Ascending);
+
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
             string filename = "\\\\dbr1\\Data\\WareHouse\\2025\\WHsim\\" + _fileTimeStamp + "_" + projectName.Substring(0, projectName.Length - 5) + ".html";
             using (StreamWriter writer = new StreamWriter(filename))
@@ -1313,6 +1315,8 @@ namespace WH_Panel
                         columnIndexMap[columnName] = column.Index;
                     }
                 }
+
+                
                 // Write the rows and data
                 foreach (DataGridViewRow row in dataGridView1.Rows)
                 {
