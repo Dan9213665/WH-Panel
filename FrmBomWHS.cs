@@ -1417,10 +1417,20 @@ namespace WH_Panel
             jsContent.AppendLine("var whBalanceCell = table.rows[i].cells[3];");
             jsContent.AppendLine("var deltaValue = parseInt(deltaCell.textContent);");
             jsContent.AppendLine("var whBalanceValue = parseInt(whBalanceCell.textContent);");
-            jsContent.AppendLine("if (Math.abs(deltaValue) <= whBalanceValue) {");
+
+
+            jsContent.AppendLine("var delta = (whBalanceValue-Math.abs(deltaValue)); if (delta>10) {");
             jsContent.AppendLine("table.rows[i].style.backgroundColor = 'lightgreen';");
-            jsContent.AppendLine("} else {");
+
+            jsContent.AppendLine("} else if ( delta >= 0 && delta <= 10){");
+            jsContent.AppendLine("table.rows[i].style.backgroundColor = 'orange';");
+
+            jsContent.AppendLine("} else if (delta<0){");
             jsContent.AppendLine("table.rows[i].style.backgroundColor = 'lightcoral';");
+
+
+
+
             jsContent.AppendLine("}");
             jsContent.AppendLine("}");
             jsContent.AppendLine("}");

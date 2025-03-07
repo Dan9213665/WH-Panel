@@ -1227,9 +1227,13 @@ namespace WH_Panel
                     }
                     catch (Exception ex)
                     {
-                        txtLog.SelectionColor = Color.Red; // Set the color to acid green
-                        txtLog.AppendText($"Request error: {ex.Message}");
-                        txtLog.ScrollToCaret();
+                        if (txtLog != null && !txtLog.IsDisposed)
+                        {
+                            txtLog.SelectionColor = Color.Red; // Set the color to acid green
+                            txtLog.AppendText($"Request error: {ex.Message}");
+                            txtLog.ScrollToCaret();
+                        }
+                            
                     }
                 }
             }

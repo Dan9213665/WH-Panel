@@ -715,11 +715,17 @@ namespace WH_Panel
                             row.Cells[dataGridView.Columns[displayName].Index].Value = delta;
                             row.Cells[dataGridView.Columns[displayName].Index].Style.Font = new Font(dataGridView.DefaultCellStyle.Font, FontStyle.Bold); // Bold font for delta values
                             // Apply color based on delta value
-                            if (delta >= 0)
+                            if (delta >= 0 && delta <10)
+                            {
+                                row.Cells[dataGridView.Columns[displayName].Index].Style.BackColor = Color.Orange;
+                                row.Cells[dataGridView.Columns[displayName].Index].Style.ForeColor = Color.Black;
+                            }
+                            else if (delta >= 10)
                             {
                                 row.Cells[dataGridView.Columns[displayName].Index].Style.BackColor = Color.LightGreen;
                                 row.Cells[dataGridView.Columns[displayName].Index].Style.ForeColor = Color.Black;
                             }
+
                             else if (delta < 0)
                             {
                                 row.Cells[dataGridView.Columns[displayName].Index].Style.BackColor = Color.IndianRed;
@@ -1168,6 +1174,7 @@ var myPieChart = new Chart(ctx, {
                         <style>
                         .lightcoral { background-color: lightcoral; }
                         .lightgreen { background-color: lightgreen; }
+                        .orange { background-color: orange; }
                          .sticky {
         position: sticky;
         top: 0;
@@ -1250,21 +1257,28 @@ var myPieChart = new Chart(ctx, {
                 <tr><th  onclick='sortTable(0)'>IPN</th><th onclick='sortTable(1)'>MFPN</th><th onclick='sortTable(2)'>Description</th><th onclick='sortTable(3)'>WH Qty</th><th onclick='sortTable(4)'>KITs BALANCE</th><th onclick='sortTable(5)'>DELTA</th></tr>";
             foreach (var item in stockData)
             {
-                var rowColorClass = item.StockQuantity + item.TotalRequired < 0 ? "lightcoral" : "lightgreen";
+                //var rowColorClass = item.StockQuantity + item.TotalRequired < 0 ? "lightcoral" : "lightgreen";
+
+                var rowColorClass = item.StockQuantity + item.TotalRequired < 0 ? "lightcoral" : ((item.StockQuantity + item.TotalRequired >= 0) && (item.StockQuantity + item.TotalRequired < 10) ? "orange" : "lightgreen");
+
                 htmlContent += $"<tr class='{rowColorClass}'>";
                 htmlContent += $"<td class='wrap-content;white-space: nowrap;'>{item.IPN}</td>";
                 htmlContent += $"<td class='wrap-content'>{item.MFPN}</td>";
                 htmlContent += $"<td class='wrap-content'>{item.Description}</td>";
                 htmlContent += $"<td>{item.StockQuantity}</td>";
-                //htmlContent += $"<td>{item.TotalRequired}</td>";
+                
                 htmlContent += $"<td style='background-color: {(item.TotalRequired < 0 ? "lightcoral" : "lightgreen")}'>{item.TotalRequired}</td>";
+             
+
                 htmlContent += $"<td>{item.StockQuantity + item.TotalRequired}</td>";
                 htmlContent += "</tr>";
             }
             htmlContent += "</table></div>";
             htmlContent += @"<script>
     window.onload = function() {
+        sortTable(5);
      CalculateCompletion();
+     
     };
     function sortTable(columnIndex) {
         var table, rows, switching, i, x, y, shouldSwitch;
