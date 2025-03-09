@@ -1276,7 +1276,6 @@ var myPieChart = new Chart(ctx, {
             htmlContent += "</table></div>";
             htmlContent += @"<script>
     window.onload = function() {
-        sortTable(5);
      CalculateCompletion();
      
     };

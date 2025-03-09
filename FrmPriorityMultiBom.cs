@@ -15,6 +15,8 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Diagnostics;
 using System.Data.SqlClient;
 using Button = System.Windows.Forms.Button;
+using Microsoft.Office.Interop.Outlook;
+using Exception = System.Exception;
 namespace WH_Panel
 {
     public partial class FrmPriorityMultiBom : Form
@@ -359,33 +361,44 @@ namespace WH_Panel
         }
         private async void btnSim1_Click(object sender, EventArgs e)
         {
-            var selectedWorkOrders = dgvBomsList.Rows.Cast<DataGridViewRow>()
-                .Where(row => Convert.ToBoolean(row.Cells["Selected"].Value))
-                .Select(row => new Serial
-                {
-                    SERIALNAME = row.Cells["SerialName"].Value.ToString(),
-                    PARTNAME = row.Cells["PartName"].Value.ToString(),
-                    SERIALSTATUSDES = row.Cells["SerialStatusDes"].Value.ToString(),
-                    QUANT = Convert.ToInt32(row.Cells["Quant"].Value),
-                    REVNUM = row.Cells["RevNum"].Value.ToString()
-                }).ToList();
-            var tableData = await AggregatedSim(selectedWorkOrders);
-            // Calculate the completion percentage
-            int totalUniqueIPNs = tableData.Count;
-            int sufficientIPNs = tableData.Count(ipn => ipn.Value.simulation >= 0);
-            double completionPercentage = (double)sufficientIPNs / totalUniqueIPNs * 100;
-            AppendLogMessage($"Generating HTML report \n", Color.Yellow);
-            // Generate HTML report
-            string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-            string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\MultiKitsStatusReport_{_fileTimeStamp}.html";
-            GenerateHTMLaggregated(filename, tableData, $"Multiple Kits Simulation Report {_fileTimeStamp}", selectedWorkOrders, completionPercentage);
-            // Open the file in default browser
-            var p = new Process();
-            p.StartInfo = new ProcessStartInfo(filename)
+            if (dgvBomsList.Rows.Cast<DataGridViewRow>().Any(row => Convert.ToBoolean(row.Cells["Selected"].Value)))
             {
-                UseShellExecute = true
-            };
-            p.Start();
+                var selectedWorkOrders = dgvBomsList.Rows.Cast<DataGridViewRow>()
+                                .Where(row => Convert.ToBoolean(row.Cells["Selected"].Value))
+                                .Select(row => new Serial
+                                {
+                                    SERIALNAME = row.Cells["SerialName"].Value.ToString(),
+                                    PARTNAME = row.Cells["PartName"].Value.ToString(),
+                                    SERIALSTATUSDES = row.Cells["SerialStatusDes"].Value.ToString(),
+                                    QUANT = Convert.ToInt32(row.Cells["Quant"].Value),
+                                    REVNUM = row.Cells["RevNum"].Value.ToString()
+                                }).ToList();
+                var tableData = await AggregatedSim(selectedWorkOrders);
+                // Calculate the completion percentage
+                int totalUniqueIPNs = tableData.Count;
+                int sufficientIPNs = tableData.Count(ipn => ipn.Value.simulation >= 0);
+                double completionPercentage = (double)sufficientIPNs / totalUniqueIPNs * 100;
+                AppendLogMessage($"Generating HTML report \n", Color.Yellow);
+                // Generate HTML report
+                string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+                string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\MultiKitsStatusReport_{_fileTimeStamp}.html";
+                GenerateHTMLaggregated(filename, tableData, $"Multiple Kits Simulation Report {_fileTimeStamp}", selectedWorkOrders, completionPercentage);
+                // Open the file in default browser
+                var p = new Process();
+                p.StartInfo = new ProcessStartInfo(filename)
+                {
+                    UseShellExecute = true
+                };
+                p.Start();
+            }
+            else
+            {
+                MessageBox.Show("Please select at least one work order. \n");
+            }
+
+
+
+
         }
         private string GetSelectedWarehouseName()
         {
@@ -762,7 +775,9 @@ namespace WH_Panel
         }
         private async void btnByIPN_Click(object sender, EventArgs e)
         {
-            var selectedWorkOrders = dgvBomsList.Rows.Cast<DataGridViewRow>()
+            if (dgvBomsList.Rows.Cast<DataGridViewRow>().Any(row => Convert.ToBoolean(row.Cells["Selected"].Value)))
+            {
+                var selectedWorkOrders = dgvBomsList.Rows.Cast<DataGridViewRow>()
                 .Where(row => Convert.ToBoolean(row.Cells["Selected"].Value))
                 .Select(row => new Serial
                 {
@@ -772,20 +787,27 @@ namespace WH_Panel
                     QUANT = Convert.ToInt32(row.Cells["Quant"].Value),
                     REVNUM = row.Cells["RevNum"].Value.ToString()
                 }).ToList();
-            var ipnToSerials = await SimByIPN(selectedWorkOrders);
-            var warehouseStock = await GetWarehouseStock(); // Fetch warehouse stock levels
-            AppendLogMessage($"Generating HTML report by IPN \n", Color.Yellow);
-            // Generate HTML report by IPN
-            string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-            string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\IPNBasedReport_{_fileTimeStamp}.html";
-            GenerateHTMLbyIPN(filename, ipnToSerials, $"IPN-based Simulation Report {_fileTimeStamp}", warehouseStock, selectedWorkOrders);
-            // Open the file in default browser
-            var p = new Process();
-            p.StartInfo = new ProcessStartInfo(filename)
+                var ipnToSerials = await SimByIPN(selectedWorkOrders);
+                var warehouseStock = await GetWarehouseStock(); // Fetch warehouse stock levels
+                AppendLogMessage($"Generating HTML report by IPN \n", Color.Yellow);
+                // Generate HTML report by IPN
+                string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+                string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\IPNBasedReport_{_fileTimeStamp}.html";
+                GenerateHTMLbyIPN(filename, ipnToSerials, $"IPN-based Simulation Report {_fileTimeStamp}", warehouseStock, selectedWorkOrders);
+                // Open the file in default browser
+                var p = new Process();
+                p.StartInfo = new ProcessStartInfo(filename)
+                {
+                    UseShellExecute = true
+                };
+                p.Start();
+            }
+            else
             {
-                UseShellExecute = true
-            };
-            p.Start();
+                MessageBox.Show("Please select at least one work order.", "No Work Orders Selected", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
+
         }
         private async Task<Dictionary<string, int>> GetWarehouseStock()
         {
@@ -980,30 +1002,39 @@ namespace WH_Panel
         }
         private async void btnByKit_Click(object sender, EventArgs e)
         {
-            var selectedWorkOrders = dgvBomsList.Rows.Cast<DataGridViewRow>()
-                .Where(row => Convert.ToBoolean(row.Cells["Selected"].Value))
-                .Select(row => new Serial
-                {
-                    SERIALNAME = row.Cells["SerialName"].Value.ToString(),
-                    PARTNAME = row.Cells["PartName"].Value.ToString(),
-                    SERIALSTATUSDES = row.Cells["SerialStatusDes"].Value.ToString(),
-                    QUANT = Convert.ToInt32(row.Cells["Quant"].Value),
-                    REVNUM = row.Cells["RevNum"].Value.ToString()
-                }).ToList();
-            var warehouseStock = await GetWarehouseStock(); // Fetch warehouse stock levels
-            var (kitDeficits, allIPNs) = await SimByBoms(selectedWorkOrders, warehouseStock);
-            AppendLogMessage($"Generating HTML report by KITs \n", Color.Yellow);
-            // Generate HTML report by KITs
-            string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-            string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\KITBasedReport_{_fileTimeStamp}.html";
-            GenerateHTMLbyKITs(filename, kitDeficits, allIPNs, $"KIT-based Simulation Report {_fileTimeStamp}", selectedWorkOrders);
-            // Open the file in default browser
-            var p = new Process();
-            p.StartInfo = new ProcessStartInfo(filename)
+            if (dgvBomsList.Rows.Cast<DataGridViewRow>().Any(row => Convert.ToBoolean(row.Cells["Selected"].Value)))
             {
-                UseShellExecute = true
-            };
-            p.Start();
+                var selectedWorkOrders = dgvBomsList.Rows.Cast<DataGridViewRow>()
+                               .Where(row => Convert.ToBoolean(row.Cells["Selected"].Value))
+                               .Select(row => new Serial
+                               {
+                                   SERIALNAME = row.Cells["SerialName"].Value.ToString(),
+                                   PARTNAME = row.Cells["PartName"].Value.ToString(),
+                                   SERIALSTATUSDES = row.Cells["SerialStatusDes"].Value.ToString(),
+                                   QUANT = Convert.ToInt32(row.Cells["Quant"].Value),
+                                   REVNUM = row.Cells["RevNum"].Value.ToString()
+                               }).ToList();
+                var warehouseStock = await GetWarehouseStock(); // Fetch warehouse stock levels
+                var (kitDeficits, allIPNs) = await SimByBoms(selectedWorkOrders, warehouseStock);
+                AppendLogMessage($"Generating HTML report by KITs \n", Color.Yellow);
+                // Generate HTML report by KITs
+                string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+                string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\KITBasedReport_{_fileTimeStamp}.html";
+                GenerateHTMLbyKITs(filename, kitDeficits, allIPNs, $"KIT-based Simulation Report {_fileTimeStamp}", selectedWorkOrders);
+                // Open the file in default browser
+                var p = new Process();
+                p.StartInfo = new ProcessStartInfo(filename)
+                {
+                    UseShellExecute = true
+                };
+                p.Start();
+            }
+            else
+            {
+                MessageBox.Show("Please select at least one work order to simulate", "No work orders selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
+               
         }
         private async Task<(Dictionary<string, List<(string ipn, int quant, int cquant, int balance, int delta)>> kitDeficits, Dictionary<string, HashSet<string>> allIPNs)> SimByBoms(List<Serial> selectedWorkOrders, Dictionary<string, int> warehouseStock)
         {
