@@ -2951,8 +2951,19 @@ namespace WH_Panel
                 writer.WriteLine("</head>");
                 writer.WriteLine("<body>");
                 writer.WriteLine($"<h1>{reportTitle}</h1>");
-              
-                writer.WriteLine($"<div>Displaying {dataGridView.RowCount} rows</div>");
+
+
+                int intRowsDisplayed = 0;
+                foreach (DataGridViewRow row in dataGridView.Rows)
+                {
+                    if (row.Cells["DOCDES"].Value.ToString() != "קיזוז אוטומטי")
+                    {
+                        intRowsDisplayed++;
+                    }
+                }
+                    
+
+                writer.WriteLine($"<div>Displaying {intRowsDisplayed} rows</div>");
                 writer.WriteLine("<input type='text' id='searchInput' onkeyup='filterTable()' placeholder='Search for keywords..' style='margin-bottom: 10px;'>");
                 writer.WriteLine("<button onclick='clearSearch()'>Clear</button>");
 
@@ -3040,7 +3051,6 @@ namespace WH_Panel
                         }
                         writer.WriteLine("</tr>");
                     }
-                  
                 }
 
                 writer.WriteLine("</table>");
