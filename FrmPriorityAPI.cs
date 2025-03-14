@@ -1233,7 +1233,7 @@ namespace WH_Panel
                             txtLog.AppendText($"Request error: {ex.Message}");
                             txtLog.ScrollToCaret();
                         }
-                            
+
                     }
                 }
             }
@@ -2719,6 +2719,9 @@ namespace WH_Panel
                 writer.WriteLine("<table id='stockTable'>");
                 writer.WriteLine("<tr>");
                 // Add table headers
+
+
+
                 foreach (DataGridViewColumn column in dataGridView.Columns)
                 {
                     bool isNumeric = column.Name == "BALANCE" || column.Name == "PART";
@@ -2726,8 +2729,46 @@ namespace WH_Panel
                 }
                 writer.WriteLine("</tr>");
 
+
+
+
+                //// Add table rows
+                //foreach (DataGridViewRow row in dataGridView.Rows)
+                //{
+                //    writer.WriteLine("<tr>");
+                //    foreach (DataGridViewCell cell in row.Cells)
+                //    {
+                //        string cellValue = cell.Value?.ToString() ?? string.Empty;
+                //        string cellClass = string.Empty;
+
+                //        if (cell.OwningColumn.Name == "BALANCE" && int.TryParse(cellValue, out int balanceValue))
+                //        {
+                //            if (balanceValue > 0)
+                //            {
+                //                cellClass = "green";
+                //            }
+                //            else if (balanceValue == 0)
+                //            {
+                //                cellClass = "zero";
+                //            }
+                //            else
+                //            {
+                //                cellClass = "negative";
+                //            }
+                //        }
+
+                //        writer.WriteLine($"<td class='{cellClass}'>{cellValue}</td>");
+                //    }
+                //    writer.WriteLine("</tr>");
+                //}
+
+                // Order the rows by BALANCE column values in descending order
+                var orderedRows = dataGridView.Rows.Cast<DataGridViewRow>()
+                    .OrderByDescending(r => Convert.ToInt32(r.Cells["BALANCE"].Value))
+                    .ToList();
+
                 // Add table rows
-                foreach (DataGridViewRow row in dataGridView.Rows)
+                foreach (DataGridViewRow row in orderedRows)
                 {
                     writer.WriteLine("<tr>");
                     foreach (DataGridViewCell cell in row.Cells)
@@ -2756,6 +2797,7 @@ namespace WH_Panel
                     writer.WriteLine("</tr>");
                 }
 
+
                 writer.WriteLine("</table>");
                 writer.WriteLine("</body>");
                 writer.WriteLine("</html>");
@@ -2770,5 +2812,294 @@ namespace WH_Panel
             }
             return null;
         }
+
+        private void btnPrintIPNmoves_Click(object sender, EventArgs e)
+        {
+            // Get the IPN from groupBox4.Text
+            string ipn = groupBox4.Text.Replace("Stock Movements for ", "").Trim();
+            if (string.IsNullOrEmpty(ipn))
+            {
+                MessageBox.Show("No IPN found in the group box title.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Get the balance for the IPN from dataGridView1
+            int balance = 0;
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                if (row.Cells["PARTNAME"].Value.ToString() == ipn)
+                {
+                    balance = Convert.ToInt32(row.Cells["BALANCE"].Value);
+                    break;
+                }
+            }
+
+            // Generate HTML report
+            txtLog.AppendText($"Generating HTML report for stock movements of {ipn} \n");
+            string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+            string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\{ipn}_StockMovements_{_fileTimeStamp}.html";
+            GenerateHTMLFromDataGridView(filename, dataGridView2, $"STOCK MOVEMENTS FOR {ipn}", balance);
+
+            // Open the file in default browser
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(filename)
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+        }
+
+  
+
+
+        private void GenerateHTMLFromDataGridView(string filename, DataGridView dataGridView, string reportTitle, int balance)
+        {
+            using (StreamWriter writer = new StreamWriter(filename))
+            {
+                writer.WriteLine("<html style='text-align:center;background-color:gray;color:white;'>");
+                writer.WriteLine("<head>");
+                writer.WriteLine("<title>Stock Movements Report</title>");
+                writer.WriteLine("<style>");
+                writer.WriteLine("table { border-collapse: collapse; width: 100%; border: solid 1px; }");
+                writer.WriteLine("th, td { border: 1px solid black; padding: 8px; text-align: center;}");
+                writer.WriteLine("th { cursor: pointer; position: sticky; top: 0; background: black; z-index: 1; }");
+                writer.WriteLine(".green { background-color: lightgreen; color: black; }");
+                writer.WriteLine(".zero { background-color: indianred; color: white; }");
+                writer.WriteLine(".negative { background-color: red; color: white; }");
+                writer.WriteLine(".header-table td { font-size: 2em; font-weight: bold; }");
+                writer.WriteLine("</style>");
+                writer.WriteLine("<script>");
+                writer.WriteLine("function filterTable() {");
+                writer.WriteLine("  var input, filter, table, tr, td, i, j, txtValue;");
+                writer.WriteLine("  input = document.getElementById('searchInput');");
+                writer.WriteLine("  filter = input.value.toLowerCase();");
+                writer.WriteLine("  table = document.getElementById('stockTable');");
+                writer.WriteLine("  tr = table.getElementsByTagName('tr');");
+                writer.WriteLine("  for (i = 1; i < tr.length; i++) {");
+                writer.WriteLine("    tr[i].style.display = 'none';");
+                writer.WriteLine("    td = tr[i].getElementsByTagName('td');");
+                writer.WriteLine("    for (j = 0; j < td.length; j++) {");
+                writer.WriteLine("      if (td[j]) {");
+                writer.WriteLine("        txtValue = td[j].textContent || td[j].innerText;");
+                writer.WriteLine("        if (txtValue.toLowerCase().indexOf(filter) > -1) {");
+                writer.WriteLine("          tr[i].style.display = '';");
+                writer.WriteLine("          break;");
+                writer.WriteLine("        }");
+                writer.WriteLine("      }");
+                writer.WriteLine("    }");
+                writer.WriteLine("  }");
+                writer.WriteLine("}");
+                writer.WriteLine("function clearSearch() {");
+                writer.WriteLine("  document.getElementById('searchInput').value = '';");
+                writer.WriteLine("  filterTable();");
+                writer.WriteLine("}");
+                writer.WriteLine("function sortTable(n, isNumeric) {");
+                writer.WriteLine("  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;");
+                writer.WriteLine("  table = document.getElementById('stockTable');");
+                writer.WriteLine("  switching = true;");
+                writer.WriteLine("  dir = 'asc';");
+                writer.WriteLine("  while (switching) {");
+                writer.WriteLine("    switching = false;");
+                writer.WriteLine("    rows = table.rows;");
+                writer.WriteLine("    for (i = 1; i < (rows.length - 1); i++) {");
+                writer.WriteLine("      shouldSwitch = false;");
+                writer.WriteLine("      x = rows[i].getElementsByTagName('TD')[n];");
+                writer.WriteLine("      y = rows[i + 1].getElementsByTagName('TD')[n];");
+                writer.WriteLine("      if (isNumeric) {");
+                writer.WriteLine("        if (dir == 'asc') {");
+                writer.WriteLine("          if (parseFloat(x.innerHTML) > parseFloat(y.innerHTML)) {");
+                writer.WriteLine("            shouldSwitch = true;");
+                writer.WriteLine("            break;");
+                writer.WriteLine("          }");
+                writer.WriteLine("        } else if (dir == 'desc') {");
+                writer.WriteLine("          if (parseFloat(x.innerHTML) < parseFloat(y.innerHTML)) {");
+                writer.WriteLine("            shouldSwitch = true;");
+                writer.WriteLine("            break;");
+                writer.WriteLine("          }");
+                writer.WriteLine("        }");
+                writer.WriteLine("      } else {");
+                writer.WriteLine("        if (dir == 'asc') {");
+                writer.WriteLine("          if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {");
+                writer.WriteLine("            shouldSwitch = true;");
+                writer.WriteLine("            break;");
+                writer.WriteLine("          }");
+                writer.WriteLine("        } else if (dir == 'desc') {");
+                writer.WriteLine("          if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {");
+                writer.WriteLine("            shouldSwitch = true;");
+                writer.WriteLine("            break;");
+                writer.WriteLine("          }");
+                writer.WriteLine("        }");
+                writer.WriteLine("      }");
+                writer.WriteLine("    }");
+                writer.WriteLine("    if (shouldSwitch) {");
+                writer.WriteLine("      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);");
+                writer.WriteLine("      switching = true;");
+                writer.WriteLine("      switchcount ++;");
+                writer.WriteLine("    } else {");
+                writer.WriteLine("      if (switchcount == 0 && dir == 'asc') {");
+                writer.WriteLine("        dir = 'desc';");
+                writer.WriteLine("        switching = true;");
+                writer.WriteLine("      }");
+                writer.WriteLine("    }");
+                writer.WriteLine("  }");
+                writer.WriteLine("}");
+                writer.WriteLine("</script>");
+                writer.WriteLine("</head>");
+                writer.WriteLine("<body>");
+                writer.WriteLine($"<h1>{reportTitle}</h1>");
+              
+                writer.WriteLine($"<div>Displaying {dataGridView.RowCount} rows</div>");
+                writer.WriteLine("<input type='text' id='searchInput' onkeyup='filterTable()' placeholder='Search for keywords..' style='margin-bottom: 10px;'>");
+                writer.WriteLine("<button onclick='clearSearch()'>Clear</button>");
+
+                // Generate the "CURRENT STOCK TABLE"
+                writer.WriteLine($"<h2>Current Stock : {balance}</h2>");
+                writer.WriteLine("<table id='currentStockTable'>");
+                writer.WriteLine("<tr>");
+                // Add table headers
+                foreach (DataGridViewColumn column in dataGridView.Columns)
+                {
+                    bool isNumeric = column.Name == "TQUANT";
+                    writer.WriteLine($"<th onclick='sortTable({column.Index}, {isNumeric.ToString().ToLower()})'>{column.HeaderText}</th>");
+                }
+                writer.WriteLine("</tr>");
+
+                // Add table rows for current stock
+                var currentStockRows = new List<DataGridViewRow>();
+                foreach (DataGridViewRow row in dataGridView.Rows)
+                {
+                    if(row.Cells["DOCDES"].Value == "קיזוז אוטומטי")
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        string rowDocType = row.Cells["LOGDOCNO"].Value?.ToString() ?? string.Empty;
+                        if (rowDocType.StartsWith("GR") && int.TryParse(row.Cells["TQUANT"].Value?.ToString(), out int balanceValue) && balanceValue > 0)
+                        {
+                                          
+                            bool hasOutgoingMovement = dataGridView.Rows.Cast<DataGridViewRow>().Any(r =>
+        (r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("ROB") == true ||
+         r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("RD") == true ||
+         r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("SH") == true ||
+         r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("IC") == true) &&
+        (r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("IC") == true
+            ? Math.Abs(Convert.ToInt32(r.Cells["TQUANT"].Value)) == Math.Abs(Convert.ToInt32(row.Cells["TQUANT"].Value))
+            : r.Cells["TQUANT"].Value?.ToString() == row.Cells["TQUANT"].Value?.ToString())
+    );
+
+                            if (!hasOutgoingMovement)
+                            {
+                                currentStockRows.Add(row);
+                            }
+
+
+
+
+                        }
+                    }
+                       
+                }
+
+                foreach (var row in currentStockRows)
+                {
+
+                    if (row.Cells["DOCDES"].Value.ToString() == "קיזוז אוטומטי")
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        writer.WriteLine("<tr>");
+                        foreach (DataGridViewCell cell in row.Cells)
+                        {
+                            string cellValue = cell.Value?.ToString() ?? string.Empty;
+                            string cellClass = string.Empty;
+
+                            if (cell.OwningColumn.Name == "TQUANT" && int.TryParse(cellValue, out int balanceValue))
+                            {
+                                if (balanceValue > 0)
+                                {
+                                    cellClass = "green";
+                                }
+                                else if (balanceValue == 0)
+                                {
+                                    cellClass = "zero";
+                                }
+                                else if (balanceValue < 0)
+                                {
+                                    cellClass = "negative";
+                                }
+                            }
+
+                            writer.WriteLine($"<td class='{cellClass}'>{cellValue}</td>");
+                        }
+                        writer.WriteLine("</tr>");
+                    }
+                  
+                }
+
+                writer.WriteLine("</table>");
+
+                // Generate the existing stock movements table
+                writer.WriteLine("<h2>Stock Movements</h2>");
+                writer.WriteLine("<table id='stockTable'>");
+                writer.WriteLine("<tr>");
+                // Add table headers
+                foreach (DataGridViewColumn column in dataGridView.Columns)
+                {
+                    bool isNumeric = column.Name == "TQUANT";
+                    writer.WriteLine($"<th onclick='sortTable({column.Index}, {isNumeric.ToString().ToLower()})'>{column.HeaderText}</th>");
+                }
+                writer.WriteLine("</tr>");
+
+                // Add table rows for stock movements
+                foreach (DataGridViewRow row in dataGridView.Rows)
+                {
+                    if (row.Cells["DOCDES"].Value.ToString() == "קיזוז אוטומטי")
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        writer.WriteLine("<tr>");
+
+                        string rowDocType = row.Cells["LOGDOCNO"].Value?.ToString() ?? string.Empty;
+
+                        foreach (DataGridViewCell cell in row.Cells)
+                        {
+                            string cellValue = cell.Value?.ToString() ?? string.Empty;
+                            string cellClass = string.Empty;
+
+                            if (cell.OwningColumn.Name == "TQUANT" && int.TryParse(cellValue, out int balanceValue))
+                            {
+                                if (balanceValue > 0 && rowDocType.StartsWith("GR"))
+                                {
+                                    cellClass = "green";
+                                }
+                                else if (balanceValue == 0)
+                                {
+                                    cellClass = "zero";
+                                }
+                                else if (balanceValue > 0 && !rowDocType.StartsWith("GR") || balanceValue < 0)
+                                {
+                                    cellClass = "negative";
+                                }
+                            }
+
+                            writer.WriteLine($"<td class='{cellClass}'>{cellValue}</td>");
+                        }
+                        writer.WriteLine("</tr>");
+                    }
+                        
+                }
+
+                writer.WriteLine("</table>");
+                writer.WriteLine("</body>");
+                writer.WriteLine("</html>");
+            }
+        }
+
+
     }
 }

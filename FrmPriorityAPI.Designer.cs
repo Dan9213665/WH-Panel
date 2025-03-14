@@ -79,6 +79,7 @@
             btnClearIpnFilter = new Button();
             btnGetMFPNs = new Button();
             btnPrintStock = new Button();
+            btnPrintIPNmoves = new Button();
             tableLayoutPanel4 = new TableLayoutPanel();
             gbxINSERT = new GroupBox();
             tableLayoutPanel5 = new TableLayoutPanel();
@@ -618,15 +619,16 @@
             tableLayoutPanel3.ColumnCount = 4;
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 7.88825F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 42.1528358F));
             tableLayoutPanel3.Controls.Add(cmbWarehouseList, 0, 0);
             tableLayoutPanel3.Controls.Add(groupBox3, 0, 2);
             tableLayoutPanel3.Controls.Add(txtbFilterIPN, 0, 1);
             tableLayoutPanel3.Controls.Add(groupBox4, 2, 2);
-            tableLayoutPanel3.Controls.Add(txtbWHSID, 2, 0);
+            tableLayoutPanel3.Controls.Add(txtbWHSID, 3, 1);
             tableLayoutPanel3.Controls.Add(txtbPART, 3, 0);
             tableLayoutPanel3.Controls.Add(tableLayoutPanel10, 1, 0);
+            tableLayoutPanel3.Controls.Add(btnPrintIPNmoves, 2, 0);
             tableLayoutPanel3.Dock = DockStyle.Fill;
             tableLayoutPanel3.Location = new Point(3, 19);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -723,19 +725,19 @@
             // txtbWHSID
             // 
             txtbWHSID.Dock = DockStyle.Fill;
-            txtbWHSID.Location = new Point(611, 3);
+            txtbWHSID.Location = new Point(706, 41);
             txtbWHSID.Name = "txtbWHSID";
             txtbWHSID.ReadOnly = true;
-            txtbWHSID.Size = new Size(298, 23);
+            txtbWHSID.Size = new Size(508, 23);
             txtbWHSID.TabIndex = 5;
             // 
             // txtbPART
             // 
             txtbPART.Dock = DockStyle.Fill;
-            txtbPART.Location = new Point(915, 3);
+            txtbPART.Location = new Point(706, 3);
             txtbPART.Name = "txtbPART";
             txtbPART.ReadOnly = true;
-            txtbPART.Size = new Size(299, 23);
+            txtbPART.Size = new Size(508, 23);
             txtbPART.TabIndex = 13;
             txtbPART.TextAlign = HorizontalAlignment.Center;
             // 
@@ -793,6 +795,19 @@
             btnPrintStock.TabIndex = 8;
             btnPrintStock.UseVisualStyleBackColor = true;
             btnPrintStock.Click += btnPrintStock_Click;
+            // 
+            // btnPrintIPNmoves
+            // 
+            btnPrintIPNmoves.BackgroundImage = (Image)resources.GetObject("btnPrintIPNmoves.BackgroundImage");
+            btnPrintIPNmoves.BackgroundImageLayout = ImageLayout.Stretch;
+            btnPrintIPNmoves.Dock = DockStyle.Fill;
+            btnPrintIPNmoves.Location = new Point(611, 3);
+            btnPrintIPNmoves.Name = "btnPrintIPNmoves";
+            tableLayoutPanel3.SetRowSpan(btnPrintIPNmoves, 2);
+            btnPrintIPNmoves.Size = new Size(89, 70);
+            btnPrintIPNmoves.TabIndex = 15;
+            btnPrintIPNmoves.UseVisualStyleBackColor = true;
+            btnPrintIPNmoves.Click += btnPrintIPNmoves_Click;
             // 
             // tableLayoutPanel4
             // 
@@ -1128,5 +1143,6 @@
         private TableLayoutPanel tableLayoutPanel9;
         private TableLayoutPanel tableLayoutPanel10;
         private Button btnPrintStock;
+        private Button btnPrintIPNmoves;
     }
 }
