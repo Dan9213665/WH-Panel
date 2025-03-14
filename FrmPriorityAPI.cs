@@ -783,7 +783,11 @@ namespace WH_Panel
                 else
                 {
                     btnMFG_Click(sender, e);
-                    btnPrintSticker_Click(sender, e);
+                    if(!tbtOUT.Checked)
+                    {
+                     btnPrintSticker_Click(sender, e);
+                    }
+                        
                 }
             }
         }
@@ -2216,7 +2220,7 @@ namespace WH_Panel
                     }
                     else if (rbtFTK.Checked)
                     {
-                        _BOOKNUM = "FTK";
+                        _BOOKNUM = txtbINdoc.Text;
                         _SUPNAME = "FTK";
                     }
                     if (tbtOUT.Checked)
