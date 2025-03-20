@@ -661,10 +661,10 @@ namespace WH_Panel
                 int kitQuantity = row.Cells["QUANT"].Value != null ? Convert.ToInt32(row.Cells["QUANT"].Value) : 0;
                 return (whQuantity + kitQuantity) >= Math.Abs(delta);
             });
-            if (totalItems > 0)
+            if (totalItems > 0&& coveredItems>0)
             {
                 int simPercentage = (coveredItems * 100) / totalItems;
-                lblSim.Text = $"{coveredItems} of {totalItems} IPNs simulation ({simPercentage}%)";
+                lblSim.Text = $"{coveredItems-1} of {totalItems} IPNs simulation ({simPercentage}%)";
             }
             else
             {

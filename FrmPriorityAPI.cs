@@ -2765,6 +2765,8 @@ namespace WH_Panel
 
         private void GenerateHTMLFromDataGridView(string filename, DataGridView dataGridView, string reportTitle)
         {
+            
+
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.WriteLine("<html style='text-align:center;background-color:gray;color:white;'>");
@@ -2858,7 +2860,11 @@ namespace WH_Panel
                 writer.WriteLine("</head>");
                 writer.WriteLine("<body>");
                 writer.WriteLine($"<h1>{reportTitle}</h1>");
-                writer.WriteLine($"<div>Displaying {dataGridView.RowCount} rows</div>");
+                // Calculate the total balance
+                int totalBalance = dataGridView.Rows.Cast<DataGridViewRow>()
+                    .Sum(row => Convert.ToInt32(row.Cells["BALANCE"].Value));
+
+                writer.WriteLine($"<div>Displaying {dataGridView.RowCount} rows. Total Balance:{totalBalance} items</div>");
                 writer.WriteLine("<input type='text' id='searchInput' onkeyup='filterTable()' placeholder='Search for keywords..' style='margin-bottom: 10px;'>");
                 writer.WriteLine("<button onclick='clearSearch()'>Clear</button>");
                 writer.WriteLine("<table id='stockTable'>");
