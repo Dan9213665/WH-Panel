@@ -554,7 +554,7 @@
             cbmOUT.DropDownStyle = ComboBoxStyle.DropDownList;
             cbmOUT.Font = new Font("Segoe UI", 12F);
             cbmOUT.FormattingEnabled = true;
-            cbmOUT.Items.AddRange(new object[] { "Yuri", "RWK", "TH", "QC", "" });
+            cbmOUT.Items.AddRange(new object[] { "Yuri", "RWK", "TH", "QC", "SMT" });
             cbmOUT.Location = new Point(403, 129);
             cbmOUT.Name = "cbmOUT";
             cbmOUT.Size = new Size(196, 29);
@@ -1026,6 +1026,7 @@
             // 
             // txtLog
             // 
+            txtLog.BackColor = Color.DarkGray;
             txtLog.Dock = DockStyle.Fill;
             txtLog.Location = new Point(617, 3);
             txtLog.Name = "txtLog";
@@ -1037,6 +1038,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.DarkGray;
             ClientSize = new Size(1229, 659);
             Controls.Add(tableLayoutPanel1);
             Icon = (Icon)resources.GetObject("$this.Icon");

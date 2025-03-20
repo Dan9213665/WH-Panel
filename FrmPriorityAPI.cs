@@ -1910,42 +1910,117 @@ namespace WH_Panel
                 }
             }
         }
+        //private async void btnINSERTlogpart_Click(object sender, EventArgs e)
+        //{
+        //    string partName = txtbIPN.Text.Trim();
+        //    string partDes = txtbDESC.Text.Trim();
+        //    string partMFPN = txtbMFPN.Text.Trim().ToUpper();
+        //    string partMNFDes = txtbMNF.Text.Trim().ToUpper();
+        //    // Validate the required fields
+        //    if (string.IsNullOrEmpty(partName) || string.IsNullOrEmpty(partDes) || string.IsNullOrEmpty(partMFPN) || string.IsNullOrEmpty(partMNFDes))
+        //    {
+        //        MessageBox.Show("Please ensure all fields are filled in before inserting.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        return;
+        //    }
+        //    // Truncate MNFDES to fit within the 32-character limit
+        //    if (partMNFDes.Length > 32)
+        //    {
+        //        partMNFDes = partMNFDes.Substring(0, 32);
+        //    }
+        //    // Generate MNFNAME by truncating MNFDES to fit within the 10-character limit
+        //    string partMNFName = partMNFDes.Length > 10 ? partMNFDes.Substring(0, 10) : partMNFDes;
+        //    try
+        //    {
+        //        // Measure the time taken for the HTTP POST request
+        //        var stopwatch = Stopwatch.StartNew();
+        //        // Insert into LOGPART and get the generated PART ID
+        //        int partId = await InsertLogPart(partName, partDes);
+        //        // Check if the manufacturer exists, if not, insert it and get the MNF ID
+        //        int mnfId = await GetOrInsertManufacturer(partMNFName, partMNFDes);
+        //        // Insert into PARTMNFONE
+        //        await InsertPartMnfOne(partId, partMFPN, mnfId, partDes);
+        //        // Fetch and display the inserted data
+        //        await DisplayInsertedData(partId);
+        //        stopwatch.Stop();
+        //        // Update the ping label
+        //        UpdatePing(stopwatch.ElapsedMilliseconds);
+        //        btnClear.PerformClick();
+        //        //MessageBox.Show("Item successfully inserted into LOGPART and PARTMNFONE.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //    }
+        //    catch (HttpRequestException ex)
+        //    {
+        //        MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //    }
+        //}
+
         private async void btnINSERTlogpart_Click(object sender, EventArgs e)
         {
             string partName = txtbIPN.Text.Trim();
             string partDes = txtbDESC.Text.Trim();
             string partMFPN = txtbMFPN.Text.Trim().ToUpper();
             string partMNFDes = txtbMNF.Text.Trim().ToUpper();
+
             // Validate the required fields
             if (string.IsNullOrEmpty(partName) || string.IsNullOrEmpty(partDes) || string.IsNullOrEmpty(partMFPN) || string.IsNullOrEmpty(partMNFDes))
             {
                 MessageBox.Show("Please ensure all fields are filled in before inserting.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+
             // Truncate MNFDES to fit within the 32-character limit
             if (partMNFDes.Length > 32)
             {
                 partMNFDes = partMNFDes.Substring(0, 32);
             }
+
             // Generate MNFNAME by truncating MNFDES to fit within the 10-character limit
             string partMNFName = partMNFDes.Length > 10 ? partMNFDes.Substring(0, 10) : partMNFDes;
+
             try
             {
                 // Measure the time taken for the HTTP POST request
                 var stopwatch = Stopwatch.StartNew();
-                // Insert into LOGPART and get the generated PART ID
-                int partId = await InsertLogPart(partName, partDes);
-                // Check if the manufacturer exists, if not, insert it and get the MNF ID
-                int mnfId = await GetOrInsertManufacturer(partMNFName, partMNFDes);
-                // Insert into PARTMNFONE
-                await InsertPartMnfOne(partId, partMFPN, mnfId, partDes);
-                // Fetch and display the inserted data
-                await DisplayInsertedData(partId);
+
+                // Check if the IPN already exists
+                int existingPartId = await CheckIfIPNExists(partName);
+                if (existingPartId > 0)
+                {
+                    // IPN exists, check if the MFPN is different
+                    bool isMFPNDifferent = await CheckIfMFPNIsDifferent(existingPartId, partMFPN);
+                    if (isMFPNDifferent)
+                    {
+                        // Patch the existing IPN to add the new MFPN
+                        await PatchExistingIPN(existingPartId, partMFPN, partDes);
+                        MessageBox.Show("MFPN added to the existing IPN.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("IPN and MFPN already exist.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+                else
+                {
+                    // Insert into LOGPART and get the generated PART ID
+                    int partId = await InsertLogPart(partName, partDes);
+
+                    // Check if the manufacturer exists, if not, insert it and get the MNF ID
+                    int mnfId = await GetOrInsertManufacturer(partMNFName, partMNFDes);
+
+                    // Insert into PARTMNFONE
+                    await InsertPartMnfOne(partId, partMFPN, mnfId, partDes);
+
+                    // Fetch and display the inserted data
+                    await DisplayInsertedData(partId);
+                }
+
                 stopwatch.Stop();
                 // Update the ping label
                 UpdatePing(stopwatch.ElapsedMilliseconds);
                 btnClear.PerformClick();
-                //MessageBox.Show("Item successfully inserted into LOGPART and PARTMNFONE.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (HttpRequestException ex)
             {
@@ -1956,6 +2031,72 @@ namespace WH_Panel
                 MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        private async Task<int> CheckIfIPNExists(string partName)
+        {
+            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART?$filter=PARTNAME eq '{partName}'";
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                HttpResponseMessage response = await client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+                string responseBody = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+                var part = apiResponse["value"].FirstOrDefault();
+                if (part != null)
+                {
+                    return part["PART"].Value<int>();
+                }
+                return 0;
+            }
+        }
+
+        private async Task<bool> CheckIfMFPNIsDifferent(int partId, string partMFPN)
+        {
+            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PART eq {partId}";
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                HttpResponseMessage response = await client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+                string responseBody = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+                var mfpn = apiResponse["value"].FirstOrDefault(p => p["MNFPARTNAME"].ToString() == partMFPN);
+                return mfpn == null;
+            }
+        }
+
+        private async Task PatchExistingIPN(int partId, string partMFPN, string partDes)
+        {
+            var partMnfOneData = new
+            {
+                PART = partId,
+                MNFPARTNAME = partMFPN,
+                MNFPARTDES = partDes
+            };
+            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE";
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                string jsonPartMnfOneData = JsonConvert.SerializeObject(partMnfOneData);
+                var content = new StringContent(jsonPartMnfOneData, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PatchAsync(url, content);
+                response.EnsureSuccessStatusCode();
+            }
+        }
+
         private async Task<int> InsertLogPart(string partName, string partDes)
         {
             var logPartData = new
