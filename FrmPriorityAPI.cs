@@ -783,11 +783,11 @@ namespace WH_Panel
                 else
                 {
                     btnMFG_Click(sender, e);
-                    if(!tbtOUT.Checked)
+                    if (!tbtOUT.Checked)
                     {
-                     btnPrintSticker_Click(sender, e);
+                        btnPrintSticker_Click(sender, e);
                     }
-                        
+
                 }
             }
         }
@@ -2765,7 +2765,7 @@ namespace WH_Panel
 
         private void GenerateHTMLFromDataGridView(string filename, DataGridView dataGridView, string reportTitle)
         {
-            
+
 
             using (StreamWriter writer = new StreamWriter(filename))
             {
@@ -3000,7 +3000,7 @@ namespace WH_Panel
             p.Start();
         }
 
-  
+
 
 
         private void GenerateHTMLFromDataGridView(string filename, DataGridView dataGridView, string reportTitle, int balance)
@@ -3108,7 +3108,7 @@ namespace WH_Panel
                         intRowsDisplayed++;
                     }
                 }
-                    
+
 
                 writer.WriteLine($"<div>Displaying {intRowsDisplayed} rows</div>");
                 writer.WriteLine("<input type='text' id='searchInput' onkeyup='filterTable()' placeholder='Search for keywords..' style='margin-bottom: 10px;'>");
@@ -3130,7 +3130,7 @@ namespace WH_Panel
                 var currentStockRows = new List<DataGridViewRow>();
                 foreach (DataGridViewRow row in dataGridView.Rows)
                 {
-                    if(row.Cells["DOCDES"].Value == "קיזוז אוטומטי")
+                    if (row.Cells["DOCDES"].Value == "קיזוז אוטומטי")
                     {
                         continue;
                     }
@@ -3139,7 +3139,7 @@ namespace WH_Panel
                         string rowDocType = row.Cells["LOGDOCNO"].Value?.ToString() ?? string.Empty;
                         if (rowDocType.StartsWith("GR") && int.TryParse(row.Cells["TQUANT"].Value?.ToString(), out int balanceValue) && balanceValue > 0)
                         {
-                                          
+
                             bool hasOutgoingMovement = dataGridView.Rows.Cast<DataGridViewRow>().Any(r =>
         (r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("ROB") == true ||
          r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("RD") == true ||
@@ -3160,7 +3160,7 @@ namespace WH_Panel
 
                         }
                     }
-                       
+
                 }
 
                 foreach (var row in currentStockRows)
@@ -3252,7 +3252,7 @@ namespace WH_Panel
                         }
                         writer.WriteLine("</tr>");
                     }
-                        
+
                 }
 
                 writer.WriteLine("</table>");
@@ -3261,6 +3261,10 @@ namespace WH_Panel
             }
         }
 
-
+        private void btnPandatabaseSearch_Click(object sender, EventArgs e)
+        {
+            FrmPriorityPanDbSearch frmPriorityPanDbSearch = new FrmPriorityPanDbSearch();
+            frmPriorityPanDbSearch.Show();
+        }
     }
 }
