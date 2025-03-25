@@ -654,17 +654,35 @@ namespace WH_Panel
         private void UpdateSimulationLabel()
         {
             int totalItems = dgwBom.Rows.Count;
+            //int coveredItems = dgwBom.Rows.Cast<DataGridViewRow>().Count(row =>
+            //{
+            //    int delta = Convert.ToInt32(row.Cells["DELTA"].Value);
+            //    int whQuantity = row.Cells["TBALANCE"].Value != null ? Convert.ToInt32(row.Cells["TBALANCE"].Value) : 0;
+            //    int kitQuantity = row.Cells["QUANT"].Value != null ? Convert.ToInt32(row.Cells["QUANT"].Value) : 0;
+            //    return (whQuantity + kitQuantity) >= Math.Abs(delta);
+            //});
+
+            //int delta = Convert.ToInt32(row.Cells["DELTA"].Value);
+            //int whQuantity = row.Cells["TBALANCE"].Value != null ? Convert.ToInt32(row.Cells["TBALANCE"].Value) : 0;
+            //int kitQuantity = row.Cells["QUANT"].Value != null ? Convert.ToInt32(row.Cells["QUANT"].Value) : 0;
+            //int requiredQuantity = row.Cells["CQUANT"].Value != null ? Convert.ToInt32(row.Cells["CQUANT"].Value) : 0;
+            //int leftovers = (whQuantity + kitQuantity) - requiredQuantity;
+
+
             int coveredItems = dgwBom.Rows.Cast<DataGridViewRow>().Count(row =>
             {
                 int delta = Convert.ToInt32(row.Cells["DELTA"].Value);
                 int whQuantity = row.Cells["TBALANCE"].Value != null ? Convert.ToInt32(row.Cells["TBALANCE"].Value) : 0;
                 int kitQuantity = row.Cells["QUANT"].Value != null ? Convert.ToInt32(row.Cells["QUANT"].Value) : 0;
-                return (whQuantity + kitQuantity) >= Math.Abs(delta);
+                int requiredQuantity = row.Cells["CQUANT"].Value != null ? Convert.ToInt32(row.Cells["CQUANT"].Value) : 0;
+                int leftovers = (whQuantity + kitQuantity) - requiredQuantity;
+                return (leftovers>=0);
             });
+
             if (totalItems > 0 && coveredItems > 0)
             {
                 int simPercentage = (coveredItems * 100) / totalItems;
-                lblSim.Text = $"{coveredItems - 1} of {totalItems} IPNs simulation ({simPercentage}%)";
+                lblSim.Text = $"{coveredItems} of {totalItems} IPNs simulation ({simPercentage}%)";
             }
             else
             {
