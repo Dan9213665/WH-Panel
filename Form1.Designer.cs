@@ -285,7 +285,7 @@ namespace WH_Panel
             button10.BackColor = Color.Transparent;
             button10.BackgroundImage = (Image)resources.GetObject("button10.BackgroundImage");
             button10.BackgroundImageLayout = ImageLayout.Zoom;
-            button10.Location = new Point(76, 72);
+            button10.Location = new Point(76, 33);
             button10.Name = "button10";
             button10.Size = new Size(39, 36);
             button10.TabIndex = 2;
@@ -296,11 +296,12 @@ namespace WH_Panel
             // 
             button6.BackgroundImage = (Image)resources.GetObject("button6.BackgroundImage");
             button6.BackgroundImageLayout = ImageLayout.Stretch;
-            button6.Location = new Point(76, 34);
+            button6.Location = new Point(76, 80);
             button6.Name = "button6";
             button6.Size = new Size(39, 32);
             button6.TabIndex = 1;
             button6.UseVisualStyleBackColor = true;
+            button6.Visible = false;
             button6.Click += button6_Click_1;
             // 
             // button11
