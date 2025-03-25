@@ -34,7 +34,7 @@ namespace WH_Panel
             SetDarkModeColors(this);
             InitializeDataTable(); // Initialize the DataTable after loading data
             this.Load += FrmPriorityPanDbSearch_Load; // Attach the Load event
-            dataGridView1.CellFormatting += DataGridView1_CellFormatting; // Attach the CellFormatting event
+            dgwALLDATA.CellFormatting += DataGridView1_CellFormatting; // Attach the CellFormatting event
                                                                           // Attach the TextChanged event for filtering
             txtbWH.TextChanged += FilterData;
             txtbIPN.TextChanged += FilterData;
@@ -220,8 +220,8 @@ namespace WH_Panel
                     if (apiResponse.value != null && apiResponse.value.Count > 0)
                     {
                         loadedWareHouses.Clear();
-                    
-                        var excludedWarehouses = new HashSet<string> { "666", "400", "450", "500","Flr" ,"Main"};
+
+                        var excludedWarehouses = new HashSet<string> { "666", "400", "450", "500", "Flr", "Main" };
                         var filteredWarehouses = apiResponse.value.Where(warehouse => !excludedWarehouses.Contains(warehouse.WARHSNAME)).ToList();
 
                         loadedWareHouses.AddRange(filteredWarehouses);
@@ -245,13 +245,13 @@ namespace WH_Panel
         int countOFWHs = 0;
         private async Task LoadDataIntoDataTable()
         {
-           
-           
+
+
             int currentWH = 0;
 
             foreach (var warehouse in loadedWareHouses)
             {
-                AddLogRow(Text = $"Loading data for warehouse: {warehouse.WARHSNAME}", Color.Orange);
+                AddLogRow($"Loading data for warehouse: {warehouse.WARHSNAME}", Color.Orange);
                 string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{warehouse.WARHSNAME}'&$expand=WARHSBAL_SUBFORM";
                 using (HttpClient client = new HttpClient())
                 {
@@ -270,7 +270,7 @@ namespace WH_Panel
                             var warehouseBalances = apiResponse.value.SelectMany(w => w.WARHSBAL_SUBFORM).ToList();
                             foreach (var balance in warehouseBalances)
                             {
-                                dataTable.Rows.Add(warehouse.WARHSNAME, balance.PARTNAME, balance.MNFPARTNAME, balance.PARTDES, balance.BALANCE, balance.CDATE, balance.PART);
+                                dataTable.Rows.Add(warehouse.WARHSNAME, balance.PARTNAME, balance.MNFPARTNAME, balance.PARTDES, balance.BALANCE, balance.CDATE.Substring(0,10), balance.PART);
                             }
                         }
                     }
@@ -284,10 +284,10 @@ namespace WH_Panel
                     }
                 }
                 currentWH++;
-                AddLogRow(Text = $"Data loaded for warehouse: {warehouse.WARHSNAME} ({currentWH}/{countOFWHs})", Color.Green);
+                AddLogRow($"Data loaded for warehouse: {warehouse.WARHSNAME} ({currentWH}/{countOFWHs})", Color.Green);
             }
             dataView = new DataView(dataTable);
-            dataGridView1.DataSource = dataView;
+            dgwALLDATA.DataSource = dataView;
         }
 
         private void InitializeDataTable()
@@ -301,16 +301,16 @@ namespace WH_Panel
             dataTable.Columns.Add("CDATE", typeof(string));
             dataTable.Columns.Add("PART", typeof(int));
             dataView = new DataView(dataTable);
-            dataGridView1.DataSource = dataView;
+            dgwALLDATA.DataSource = dataView;
 
             // Auto-widen the IPN, MFPN, and Desc columns
-            dataGridView1.Columns["PARTNAME"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridView1.Columns["MNFPARTNAME"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridView1.Columns["PARTDES"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dgwALLDATA.Columns["PARTNAME"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dgwALLDATA.Columns["MNFPARTNAME"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dgwALLDATA.Columns["PARTDES"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
         }
         private void DataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            if (dataGridView1.Columns[e.ColumnIndex].Name == "BALANCE")
+            if (dgwALLDATA.Columns[e.ColumnIndex].Name == "BALANCE")
             {
                 if (e.Value != null && int.TryParse(e.Value.ToString(), out int balance))
                 {
@@ -368,7 +368,8 @@ namespace WH_Panel
         {
             if (e.RowIndex >= 0) // Ensure the row index is valid
             {
-                var selectedRow = dataGridView1.Rows[e.RowIndex];
+                dgwINSTOCK.Rows.Clear();
+                var selectedRow = dgwALLDATA.Rows[e.RowIndex];
                 await ExtractMFPNForRow(selectedRow);
                 var partName = selectedRow.Cells["PARTNAME"].Value.ToString();
                 string logPartUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART?$filter=PARTNAME eq '{partName}'&$expand=PARTTRANSLAST2_SUBFORM";
@@ -400,9 +401,9 @@ namespace WH_Panel
                         if (logPartApiResponse.value != null && logPartApiResponse.value.Count > 0)
                         {
                             // Set AutoGenerateColumns to false
-                            dataGridView2.AutoGenerateColumns = false;
+                            dgwTRANSACTIONS.AutoGenerateColumns = false;
                             // Clear existing columns
-                            dataGridView2.Columns.Clear();
+                            dgwTRANSACTIONS.Columns.Clear();
                             // Define the columns you want to display
                             var curDateColumn = new DataGridViewTextBoxColumn
                             {
@@ -454,7 +455,7 @@ namespace WH_Panel
                                 Name = "BOOKNUM"
                             };
                             // Add columns to the DataGridView
-                            dataGridView2.Columns.AddRange(new DataGridViewColumn[]
+                            dgwTRANSACTIONS.Columns.AddRange(new DataGridViewColumn[]
                             {
                         curDateColumn,
                         logDocNoColumn,
@@ -465,17 +466,17 @@ namespace WH_Panel
                         tPACKNAMEColumn
                             });
                             // Populate the DataGridView with the data
-                            dataGridView2.Rows.Clear();
+                            dgwTRANSACTIONS.Rows.Clear();
                             foreach (var logPart in logPartApiResponse.value)
                             {
                                 foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
                                 {
-                                    dataGridView2.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "");
+                                    dgwTRANSACTIONS.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "");
                                 }
                             }
-                            groupBox4.Text = $"Stock Movements for {partName}";
+                            groupBox6.Text = $"TRANSACTIONS for {partName}";
                             //ColorTheRows(dataGridView2);
-                            foreach (DataGridViewRow row in dataGridView2.Rows)
+                            foreach (DataGridViewRow row in dgwTRANSACTIONS.Rows)
                             {
                                 var logDocNo = row.Cells["LOGDOCNO"].Value?.ToString();
                                 var partNameCell = partName;
@@ -501,7 +502,9 @@ namespace WH_Panel
                                 }
                             }
                             // Sort the DataGridView by the first column in descending order
-                            dataGridView2.Sort(dataGridView2.Columns[0], ListSortDirection.Descending);
+                            dgwTRANSACTIONS.Sort(dgwTRANSACTIONS.Columns[0], ListSortDirection.Descending);
+                            // Populate dgwINSTOCK with items that are currently in stock
+                            await PopulateInStockData(partName);
                         }
                         else
                         {
@@ -527,6 +530,132 @@ namespace WH_Panel
                 }
             }
         }
+        private async Task PopulateInStockData(string partName)
+        {
+            // Separate data into ROB and notRob lists
+            var robList = new List<DataGridViewRow>();
+            var notRobList = new List<DataGridViewRow>();
+            foreach (DataGridViewRow row in dgwTRANSACTIONS.Rows)
+            {
+                if (row.Cells["LOGDOCNO"].Value != null && row.Cells["UDATE"].Value != null && DateTime.TryParse(row.Cells["UDATE"].Value.ToString(), out _))
+                {
+                    string docNo = row.Cells["LOGDOCNO"].Value.ToString();
+                    if (docNo.StartsWith("ROB") || docNo.StartsWith("IC")|| docNo.StartsWith("WR"))
+                    {
+                        // Handle IC documents by converting the quantity to a positive value
+                        if (docNo.StartsWith("IC"))
+                        {
+                            row.Cells["TQUANT"].Value = Math.Abs(Convert.ToInt32(row.Cells["TQUANT"].Value));
+                        }
+                        robList.Add(row);
+                    }
+                    else
+                    {
+                        notRobList.Add(row);
+                    }
+                }
+            }
+
+            // Sort both lists by transaction date
+            robList = robList.OrderBy(row => DateTime.Parse(row.Cells["UDATE"].Value.ToString())).ToList();
+            notRobList = notRobList.OrderBy(row => DateTime.Parse(row.Cells["UDATE"].Value.ToString())).ToList();
+
+            // Filter out matching pairs
+            var filteredNotRobList = new List<DataGridViewRow>(notRobList);
+            foreach (var notRobRow in notRobList)
+            {
+                if (robList.Count == 0) break;
+                int notRobQty = Convert.ToInt32(notRobRow.Cells["TQUANT"].Value);
+                var matchingRobRow = robList.FirstOrDefault(robRow => Convert.ToInt32(robRow.Cells["TQUANT"].Value) == notRobQty);
+                if (matchingRobRow != null)
+                {
+                    filteredNotRobList.Remove(notRobRow);
+                    robList.Remove(matchingRobRow);
+                }
+            }
+
+            // Populate the dgwINSTOCK DataGridView with the remaining items from the notRob list
+            dgwINSTOCK.AutoGenerateColumns = false;
+            dgwINSTOCK.Columns.Clear();
+            // Define the columns you want to display
+            var curDateColumn = new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "UDATE",
+                HeaderText = "Transaction Date",
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                Name = "UDATE"
+            };
+            var logDocNoColumn = new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "LOGDOCNO",
+                HeaderText = "Document Number",
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                Name = "LOGDOCNO"
+            };
+            var logDOCDESColumn = new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "DOCDES",
+                HeaderText = "DOCDES",
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                Name = "DOCDES"
+            };
+            var SUPCUSTNAMEColumn = new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "SUPCUSTNAME",
+                HeaderText = "Source_Requester",
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                Name = "SUPCUSTNAME"
+            };
+            var tQuantColumn = new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "TQUANT",
+                HeaderText = "QTY",
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                Name = "TQUANT"
+            };
+            var tPACKNAMEColumn = new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "PACKNAME",
+                HeaderText = "PACK",
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                Name = "PACKNAME"
+            };
+            var DocBOOKNUMColumn = new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "BOOKNUM",
+                HeaderText = "Client`s Document",
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                Name = "BOOKNUM"
+            };
+            // Add columns to the DataGridView
+            dgwINSTOCK.Columns.AddRange(new DataGridViewColumn[]
+            {
+        curDateColumn,
+        logDocNoColumn,
+        logDOCDESColumn,
+        SUPCUSTNAMEColumn,
+        DocBOOKNUMColumn,
+        tQuantColumn,
+        tPACKNAMEColumn
+            });
+            // Populate the DataGridView with the data
+            dgwINSTOCK.Rows.Clear();
+            foreach (var row in filteredNotRobList)
+            {
+                dgwINSTOCK.Rows.Add(
+                    row.Cells["UDATE"].Value,
+                    row.Cells["LOGDOCNO"].Value,
+                    row.Cells["DOCDES"].Value,
+                    row.Cells["SUPCUSTNAME"].Value,
+                    row.Cells["BOOKNUM"].Value,
+                    row.Cells["TQUANT"].Value,
+                    row.Cells["PACKNAME"].Value
+                );
+            }
+            dgwINSTOCK.Sort(dgwINSTOCK.Columns[0], ListSortDirection.Descending);
+        }
+
+
 
         private async Task ExtractMFPNForRow(DataGridViewRow row)
         {
@@ -558,7 +687,7 @@ namespace WH_Panel
                         var part = partApiResponse.value[0];
                         // Directly update the DataGridView cell
                         row.Cells["MNFPARTNAME"].Value = part.MNFPARTNAME;
-                        dataGridView1.Refresh();
+                        dgwALLDATA.Refresh();
                     }
                     else
                     {
@@ -870,6 +999,21 @@ namespace WH_Panel
             return uDate;
         }
 
-       
+        private async void btnGETMFPN_Click(object sender, EventArgs e)
+        {
+            await FetchMFPNsForAllRows();
+        }
+
+        private async Task FetchMFPNsForAllRows()
+        {
+            AddLogRow("Fetching MFPNs for all rows\n",Color.Yellow);
+            foreach (DataGridViewRow row in dgwALLDATA.Rows)
+            {
+                await ExtractMFPNForRow(row);
+            }
+            AddLogRow("MFPN fetching completed\n", Color.Green);
+        }
+
+
     }
 }

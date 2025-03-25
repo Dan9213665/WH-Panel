@@ -174,7 +174,7 @@ namespace WH_Panel
             public int PART { get; set; }
             public string MNFPARTNAME { get; set; }
         }
-          private async void GetRobWosList()
+        private async void GetRobWosList()
         {
             string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL";
             using (HttpClient client = new HttpClient())
@@ -661,10 +661,10 @@ namespace WH_Panel
                 int kitQuantity = row.Cells["QUANT"].Value != null ? Convert.ToInt32(row.Cells["QUANT"].Value) : 0;
                 return (whQuantity + kitQuantity) >= Math.Abs(delta);
             });
-            if (totalItems > 0&& coveredItems>0)
+            if (totalItems > 0 && coveredItems > 0)
             {
                 int simPercentage = (coveredItems * 100) / totalItems;
-                lblSim.Text = $"{coveredItems-1} of {totalItems} IPNs simulation ({simPercentage}%)";
+                lblSim.Text = $"{coveredItems - 1} of {totalItems} IPNs simulation ({simPercentage}%)";
             }
             else
             {
@@ -869,7 +869,7 @@ namespace WH_Panel
                     {
                         e.CellStyle.BackColor = Color.Green;
                     }
-                    else if (deltaValue >=0 && deltaValue < 10)
+                    else if (deltaValue >= 0 && deltaValue < 10)
                     {
                         e.CellStyle.BackColor = Color.OrangeRed;
                     }
@@ -2621,6 +2621,8 @@ namespace WH_Panel
         }
         private List<DataGridViewRow> originalRows = new List<DataGridViewRow>();
         private bool isFiltered = false;
+
+
         private void btnInStock_Click(object sender, EventArgs e)
         {
             if (!isFiltered)
@@ -2684,6 +2686,11 @@ namespace WH_Panel
                 }
                 isFiltered = false;
             }
+        }
+
+        private void btnGetMFNs_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
