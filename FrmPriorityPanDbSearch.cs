@@ -18,7 +18,6 @@ using DataTable = System.Data.DataTable;
 using GroupBox = System.Windows.Forms.GroupBox;
 using Label = System.Windows.Forms.Label;
 using TextBox = System.Windows.Forms.TextBox;
-
 namespace WH_Panel
 {
     public partial class FrmPriorityPanDbSearch : Form
@@ -27,7 +26,6 @@ namespace WH_Panel
         private DataView dataView;
         private List<Warehouse> loadedWareHouses = new List<Warehouse>();
         public AppSettings settings;
-
         public FrmPriorityPanDbSearch()
         {
             InitializeComponent();
@@ -45,7 +43,6 @@ namespace WH_Panel
             txtbIPN.KeyDown += TextBox_KeyDown;
             txtbMFPN.KeyDown += TextBox_KeyDown;
             txtbDESC.KeyDown += TextBox_KeyDown;
-
             // Attach the Enter and Leave events for changing background color
             txtbWH.Enter += TextBox_Enter;
             txtbWH.Leave += TextBox_Leave;
@@ -61,7 +58,6 @@ namespace WH_Panel
             ((TextBox)sender).ForeColor = Color.Black;
             ((TextBox)sender).BackColor = Color.LightGreen;
         }
-
         private void TextBox_Leave(object sender, EventArgs e)
         {
             ((TextBox)sender).ForeColor = Color.White;
@@ -93,7 +89,6 @@ namespace WH_Panel
                 else
                 {
                     await LoadWarehouseData();
-
                     await LoadDataIntoDataTable(); // Load data into the DataTable after initializing
                 }
             }
@@ -102,7 +97,6 @@ namespace WH_Panel
                 AddLogRow($"An error occurred during initialization: {ex.Message}", Color.Red);
             }
         }
-
         private void AddLogRow(string errorText, Color textColor)
         {
             if (txtLog.InvokeRequired)
@@ -119,19 +113,16 @@ namespace WH_Panel
                 txtLog.ScrollToCaret();
             }
         }
-
         private void SetDarkModeColors(Control parentControl)
         {
             Color backgroundColor = Color.FromArgb(55, 55, 55); // Dark background color
             Color foregroundColor = Color.FromArgb(220, 220, 220); // Light foreground color
             Color borderColor = Color.FromArgb(45, 45, 48); // Border color for controls
-
             foreach (Control control in parentControl.Controls)
             {
                 // Set the background and foreground colors
                 control.BackColor = backgroundColor;
                 control.ForeColor = foregroundColor;
-
                 // Handle specific control types separately
                 if (control is Button button)
                 {
@@ -192,7 +183,6 @@ namespace WH_Panel
                     dateTimePicker.BackColor = backgroundColor;
                     dateTimePicker.ForeColor = foregroundColor;
                 }
-
                 // Recursively update controls within containers
                 if (control.Controls.Count > 0)
                 {
@@ -200,7 +190,6 @@ namespace WH_Panel
                 }
             }
         }
-
         private async Task LoadWarehouseData()
         {
             AddLogRow("Loading warehouse data...", Color.Orange);
@@ -220,10 +209,8 @@ namespace WH_Panel
                     if (apiResponse.value != null && apiResponse.value.Count > 0)
                     {
                         loadedWareHouses.Clear();
-
                         var excludedWarehouses = new HashSet<string> { "666", "400", "450", "500", "Flr", "Main" };
                         var filteredWarehouses = apiResponse.value.Where(warehouse => !excludedWarehouses.Contains(warehouse.WARHSNAME)).ToList();
-
                         loadedWareHouses.AddRange(filteredWarehouses);
                         countOFWHs += filteredWarehouses.Count;
                     }
@@ -245,10 +232,7 @@ namespace WH_Panel
         int countOFWHs = 0;
         private async Task LoadDataIntoDataTable()
         {
-
-
             int currentWH = 0;
-
             foreach (var warehouse in loadedWareHouses)
             {
                 AddLogRow($"Loading data for warehouse: {warehouse.WARHSNAME}", Color.Orange);
@@ -289,7 +273,6 @@ namespace WH_Panel
             dataView = new DataView(dataTable);
             dgwALLDATA.DataSource = dataView;
         }
-
         private void InitializeDataTable()
         {
             dataTable = new DataTable();
@@ -302,7 +285,6 @@ namespace WH_Panel
             dataTable.Columns.Add("PART", typeof(int));
             dataView = new DataView(dataTable);
             dgwALLDATA.DataSource = dataView;
-
             // Auto-widen the IPN, MFPN, and Desc columns
             dgwALLDATA.Columns["PARTNAME"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             dgwALLDATA.Columns["MNFPARTNAME"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
@@ -335,7 +317,6 @@ namespace WH_Panel
         private void FilterData(object sender, EventArgs e)
         {
             StringBuilder filter = new StringBuilder();
-
             if (!string.IsNullOrEmpty(txtbWH.Text))
             {
                 filter.Append($"WH LIKE '%{txtbWH.Text}%'");
@@ -360,10 +341,8 @@ namespace WH_Panel
                 }
                 filter.Length -= 5; // Remove the trailing " AND "
             }
-
             dataView.RowFilter = filter.ToString();
         }
-
         private async void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0) // Ensure the row index is valid
@@ -526,7 +505,6 @@ namespace WH_Panel
                             txtLog.AppendText($"Request error: {ex.Message}");
                             txtLog.ScrollToCaret();
                         }
-
                     }
                 }
             }
@@ -535,8 +513,6 @@ namespace WH_Panel
         {
             if(zeroOrHero > 0)
             {
-                
-           
             // Separate data into ROB and notRob lists
             var robList = new List<DataGridViewRow>();
             var notRobList = new List<DataGridViewRow>();
@@ -560,11 +536,9 @@ namespace WH_Panel
                     }
                 }
             }
-
             // Sort both lists by transaction date
             robList = robList.OrderBy(row => DateTime.Parse(row.Cells["UDATE"].Value.ToString())).ToList();
             notRobList = notRobList.OrderBy(row => DateTime.Parse(row.Cells["UDATE"].Value.ToString())).ToList();
-
             // Filter out matching pairs
             var filteredNotRobList = new List<DataGridViewRow>(notRobList);
             foreach (var notRobRow in notRobList)
@@ -578,7 +552,6 @@ namespace WH_Panel
                     robList.Remove(matchingRobRow);
                 }
             }
-
             // Populate the dgwINSTOCK DataGridView with the remaining items from the notRob list
             dgwINSTOCK.AutoGenerateColumns = false;
             dgwINSTOCK.Columns.Clear();
@@ -660,9 +633,6 @@ namespace WH_Panel
             dgwINSTOCK.Sort(dgwINSTOCK.Columns[0], ListSortDirection.Descending);
             }
         }
-
-
-
         private async Task ExtractMFPNForRow(DataGridViewRow row)
         {
             var partId = (int)row.Cells["PART"].Value;
@@ -1004,12 +974,10 @@ namespace WH_Panel
             }
             return uDate;
         }
-
         private async void btnGETMFPN_Click(object sender, EventArgs e)
         {
             await FetchMFPNsForAllRows();
         }
-
         private async Task FetchMFPNsForAllRows()
         {
             AddLogRow("Fetching MFPNs for all rows\n",Color.Yellow);
@@ -1019,7 +987,5 @@ namespace WH_Panel
             }
             AddLogRow("MFPN fetching completed\n", Color.Green);
         }
-
-
     }
 }
