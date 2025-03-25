@@ -504,7 +504,8 @@ namespace WH_Panel
                             // Sort the DataGridView by the first column in descending order
                             dgwTRANSACTIONS.Sort(dgwTRANSACTIONS.Columns[0], ListSortDirection.Descending);
                             // Populate dgwINSTOCK with items that are currently in stock
-                            await PopulateInStockData(partName);
+                            var actualStock = int.Parse(selectedRow.Cells["BALANCE"].Value.ToString());
+                            await PopulateInStockData(partName, actualStock);
                         }
                         else
                         {
@@ -530,8 +531,12 @@ namespace WH_Panel
                 }
             }
         }
-        private async Task PopulateInStockData(string partName)
+        private async Task PopulateInStockData(string partName, int zeroOrHero)
         {
+            if(zeroOrHero > 0)
+            {
+                
+           
             // Separate data into ROB and notRob lists
             var robList = new List<DataGridViewRow>();
             var notRobList = new List<DataGridViewRow>();
@@ -540,7 +545,7 @@ namespace WH_Panel
                 if (row.Cells["LOGDOCNO"].Value != null && row.Cells["UDATE"].Value != null && DateTime.TryParse(row.Cells["UDATE"].Value.ToString(), out _))
                 {
                     string docNo = row.Cells["LOGDOCNO"].Value.ToString();
-                    if (docNo.StartsWith("ROB") || docNo.StartsWith("IC")|| docNo.StartsWith("WR"))
+                    if (docNo.StartsWith("ROB") || docNo.StartsWith("IC")|| docNo.StartsWith("WR")||docNo.StartsWith("SH"))
                     {
                         // Handle IC documents by converting the quantity to a positive value
                         if (docNo.StartsWith("IC"))
@@ -653,6 +658,7 @@ namespace WH_Panel
                 );
             }
             dgwINSTOCK.Sort(dgwINSTOCK.Columns[0], ListSortDirection.Descending);
+            }
         }
 
 
