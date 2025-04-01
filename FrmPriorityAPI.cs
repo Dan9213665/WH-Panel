@@ -3266,5 +3266,375 @@ namespace WH_Panel
             FrmPriorityPanDbSearch frmPriorityPanDbSearch = new FrmPriorityPanDbSearch();
             frmPriorityPanDbSearch.Show();
         }
+        private async void btnDIGIAPI_Click(object sender, EventArgs e)
+        {
+            string apiUrl = "https://api.digikey.com/products/v4/search/keyword";
+            string clientId = "1V0C9rxhmIcEf28EC6ADmF9avL74IDF0"; // Replace with your actual client ID
+            string clientSecret = "bbNRuLqxaxjN87AQ"; // Replace with your actual client secret
+            string keyword = txtbMFPN.Text; // Get the keyword from the txtbMFPN
+
+            txtLog.AppendText("Getting access token...\n");
+
+            string accessTokenReceived = string.Empty;
+            try
+            {
+                accessTokenReceived = await GetAccessTokenAsync(clientId, clientSecret);
+                txtLog.AppendText($"Access token obtained successfully: {accessTokenReceived}\n");
+            }
+            catch (Exception ex)
+            {
+                txtLog.AppendText($"Error obtaining access token: {ex.Message}\n");
+                return;
+            }
+
+            var requestData = new
+            {
+                Keywords = keyword,
+                Limit = 10,
+                Offset = 0,
+                FilterOptionsRequest = new
+                {
+                    ManufacturerFilter = new List<object>(),
+                    CategoryFilter = new List<object>(),
+                    StatusFilter = new List<object>(),
+                    PackagingFilter = new List<object>(),
+                    MarketPlaceFilter = "NoFilter",
+                    SeriesFilter = new List<object>(),
+                    MinimumQuantityAvailable = 0,
+                    ParameterFilterRequest = new
+                    {
+                        CategoryFilter = new { Id = "string" },
+                        ParameterFilters = new List<object>()
+                    },
+                    SearchOptions = new List<string> { }
+                },
+                SortOptions = new
+                {
+                    Field = "None",
+                    SortOrder = "Ascending"
+                }
+            };
+
+            var jsonRequest = System.Text.Json.JsonSerializer.Serialize(requestData);
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessTokenReceived);
+                client.DefaultRequestHeaders.Add("X-DIGIKEY-Client-Id", clientId);
+
+                txtLog.AppendText("Sending search request...\n");
+                txtLog.AppendText($"Request URL: {apiUrl}\n");
+                txtLog.AppendText($"Request Data: {jsonRequest}\n");
+
+                HttpResponseMessage response = null;
+                try
+                {
+                    response = await client.PostAsync(apiUrl, content);
+                    response.EnsureSuccessStatusCode();
+                    txtLog.AppendText("Search request successful.\n");
+                }
+                catch (HttpRequestException ex)
+                {
+                    string errorContent = response != null ? await response.Content.ReadAsStringAsync() : "No response content";
+                    txtLog.AppendText($"Error sending search request: {ex.Message}\n");
+                    txtLog.AppendText($"Response Content: {errorContent}\n");
+                    return;
+                }
+
+                string jsonResponse;
+                try
+                {
+                    jsonResponse = await response.Content.ReadAsStringAsync();
+                    txtLog.AppendText("Response received successfully.\n");
+                    txtLog.AppendText($"JSON Response: {jsonResponse}\n"); // Log the JSON response contents
+                }
+                catch (Exception ex)
+                {
+                    txtLog.AppendText($"Error reading response: {ex.Message}\n");
+                    return;
+                }
+
+                KeywordResponse keywordResponse;
+                try
+                {
+                    keywordResponse = System.Text.Json.JsonSerializer.Deserialize<KeywordResponse>(jsonResponse);
+                    txtLog.AppendText("Response deserialized successfully.\n");
+                }
+                catch (Exception ex)
+                {
+                    txtLog.AppendText($"Error deserializing response: {ex.Message}\n");
+                    return;
+                }
+
+                // Map to simplified products
+                var simplifiedProducts = keywordResponse.ExactMatches.Select(p => new
+                {
+                    Description = p.Description.ProductDescription,
+                    Manufacturer = p.Manufacturer.Name
+                }).ToList();
+
+                // Log the contents of the simplified products list
+                txtLog.AppendText($"Products Count: {simplifiedProducts.Count}\n");
+                foreach (var product in simplifiedProducts)
+                {
+                    txtLog.AppendText($"Manufacturer: {product.Manufacturer}, Description: {product.Description}\n");
+                    txtbDESC.Text = product.Description;
+                    txtbMNF.Text = product.Manufacturer.ToUpper();
+                }
+            }
+        }
+
+        private async Task<string> GetAccessTokenAsync(string clientId, string clientSecret)
+        {
+            string tokenUrl = "https://api.digikey.com/v1/oauth2/token";
+            var requestBody = new Dictionary<string, string>
+    {
+        { "client_id", clientId },
+        { "client_secret", clientSecret },
+        { "grant_type", "client_credentials" }
+    };
+
+            using (HttpClient client = new HttpClient())
+            {
+                var requestContent = new FormUrlEncodedContent(requestBody);
+                HttpResponseMessage response = await client.PostAsync(tokenUrl, requestContent);
+                response.EnsureSuccessStatusCode();
+
+                string responseBody = await response.Content.ReadAsStringAsync();
+                var tokenResponse = System.Text.Json.JsonSerializer.Deserialize<TokenResponse>(responseBody);
+                return tokenResponse.access_token;
+            }
+        }
+
+        public class KeywordResponse
+        {
+            public List<Product> ExactMatches { get; set; }
+        }
+
+        public class Product
+        {
+            public Description Description { get; set; }
+            public Manufacturer Manufacturer { get; set; }
+        }
+
+        public class Description
+        {
+            public string ProductDescription { get; set; }
+            public string DetailedDescription { get; set; }
+        }
+
+        public class Manufacturer
+        {
+            public string Name { get; set; }
+        }
+
+        public class TokenResponse
+        {
+            public string access_token { get; set; }
+            public int expires_in { get; set; }
+            public string token_type { get; set; }
+        }
+
+        private async void btnAVL_Click(object sender, EventArgs e)
+        {
+            string selectedPrefix = txtbPrefix.Text.Trim();
+            var prefixExceptions = new List<string> { "Flr" };
+
+            // Check if the selected prefix is valid
+            if (prefixExceptions.Contains(selectedPrefix))
+            {
+                MessageBox.Show($"The prefix '{selectedPrefix}' is not valid for AVL.", "Invalid Prefix", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Change the button text to include the prefix
+            btnAVL.Text = $"{selectedPrefix} AVL";
+
+            // Make the API call to fetch the data
+            string apiUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PARTNAME eq '{selectedPrefix}_*'";
+            List<PartMnfOne> partMnfOnes = new List<PartMnfOne>();
+
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                    HttpResponseMessage response = await client.GetAsync(apiUrl);
+                    response.EnsureSuccessStatusCode();
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<PartMnfOneApiResponse>(responseBody);
+                    partMnfOnes = apiResponse.value;
+                }
+                catch (HttpRequestException ex)
+                {
+                    txtLog.AppendText($"Request error: {ex.Message}\n");
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    txtLog.AppendText($"An error occurred: {ex.Message}\n");
+                    return;
+                }
+            }
+
+            // Generate HTML report
+            txtLog.AppendText($"Generating HTML report for {selectedPrefix} AVL\n");
+            string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+            string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\{selectedPrefix}_AVLReport_{_fileTimeStamp}.html";
+
+            List<PartMnfOne>orderedbyIPN = partMnfOnes.OrderBy(x => x.PARTNAME).ToList();
+
+            GenerateHTMLFromPartMnfOneList(filename, orderedbyIPN, $"{selectedPrefix} AVL Report {_fileTimeStamp}");
+
+            // Open the file in default browser
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(filename)
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+        }
+
+        private void GenerateHTMLFromPartMnfOneList(string filename, List<PartMnfOne> partMnfOnes, string reportTitle)
+        {
+            using (StreamWriter writer = new StreamWriter(filename))
+            {
+                writer.WriteLine("<html style='text-align:center;background-color:gray;color:white;'>");
+                writer.WriteLine("<head>");
+                writer.WriteLine("<title>AVL Report</title>");
+                writer.WriteLine("<style>");
+                writer.WriteLine("table { border-collapse: collapse; width: 100%; border: solid 1px; }");
+                writer.WriteLine("th, td { border: 1px solid black; padding: 8px; text-align: center;}");
+                writer.WriteLine("th { cursor: pointer; position: sticky; top: 0; background: black; z-index: 1; }");
+                writer.WriteLine(".green { background-color: lightgreen; color: black; }");
+                writer.WriteLine(".zero { background-color: indianred; color: white; }");
+                writer.WriteLine(".negative { background-color: red; color: white; }");
+                writer.WriteLine(".header-table td { font-size: 2em; font-weight: bold; }");
+                writer.WriteLine("</style>");
+                writer.WriteLine("<script>");
+                writer.WriteLine("function filterTable() {");
+                writer.WriteLine("  var input, filter, table, tr, td, i, j, txtValue;");
+                writer.WriteLine("  input = document.getElementById('searchInput');");
+                writer.WriteLine("  filter = input.value.toLowerCase();");
+                writer.WriteLine("  table = document.getElementById('stockTable');");
+                writer.WriteLine("  tr = table.getElementsByTagName('tr');");
+                writer.WriteLine("  for (i = 1; i < tr.length; i++) {");
+                writer.WriteLine("    tr[i].style.display = 'none';");
+                writer.WriteLine("    td = tr[i].getElementsByTagName('td');");
+                writer.WriteLine("    for (j = 0; j < td.length; j++) {");
+                writer.WriteLine("      if (td[j]) {");
+                writer.WriteLine("        txtValue = td[j].textContent || td[j].innerText;");
+                writer.WriteLine("        if (txtValue.toLowerCase().indexOf(filter) > -1) {");
+                writer.WriteLine("          tr[i].style.display = '';");
+                writer.WriteLine("          break;");
+                writer.WriteLine("        }");
+                writer.WriteLine("      }");
+                writer.WriteLine("    }");
+                writer.WriteLine("  }");
+                writer.WriteLine("}");
+                writer.WriteLine("function clearSearch() {");
+                writer.WriteLine("  document.getElementById('searchInput').value = '';");
+                writer.WriteLine("  filterTable();");
+                writer.WriteLine("}");
+                writer.WriteLine("function sortTable(n, isNumeric) {");
+                writer.WriteLine("  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;");
+                writer.WriteLine("  table = document.getElementById('stockTable');");
+                writer.WriteLine("  switching = true;");
+                writer.WriteLine("  dir = 'asc';");
+                writer.WriteLine("  while (switching) {");
+                writer.WriteLine("    switching = false;");
+                writer.WriteLine("    rows = table.rows;");
+                writer.WriteLine("    for (i = 1; i < (rows.length - 1); i++) {");
+                writer.WriteLine("      shouldSwitch = false;");
+                writer.WriteLine("      x = rows[i].getElementsByTagName('TD')[n];");
+                writer.WriteLine("      y = rows[i + 1].getElementsByTagName('TD')[n];");
+                writer.WriteLine("      if (isNumeric) {");
+                writer.WriteLine("        if (dir == 'asc') {");
+                writer.WriteLine("          if (parseFloat(x.innerHTML) > parseFloat(y.innerHTML)) {");
+                writer.WriteLine("            shouldSwitch = true;");
+                writer.WriteLine("            break;");
+                writer.WriteLine("          }");
+                writer.WriteLine("        } else if (dir == 'desc') {");
+                writer.WriteLine("          if (parseFloat(x.innerHTML) < parseFloat(y.innerHTML)) {");
+                writer.WriteLine("            shouldSwitch = true;");
+                writer.WriteLine("            break;");
+                writer.WriteLine("          }");
+                writer.WriteLine("        }");
+                writer.WriteLine("      } else {");
+                writer.WriteLine("        if (dir == 'asc') {");
+                writer.WriteLine("          if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {");
+                writer.WriteLine("            shouldSwitch = true;");
+                writer.WriteLine("            break;");
+                writer.WriteLine("          }");
+                writer.WriteLine("        } else if (dir == 'desc') {");
+                writer.WriteLine("          if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {");
+                writer.WriteLine("            shouldSwitch = true;");
+                writer.WriteLine("            break;");
+                writer.WriteLine("          }");
+                writer.WriteLine("        }");
+                writer.WriteLine("      }");
+                writer.WriteLine("    }");
+                writer.WriteLine("    if (shouldSwitch) {");
+                writer.WriteLine("      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);");
+                writer.WriteLine("      switching = true;");
+                writer.WriteLine("      switchcount ++;");
+                writer.WriteLine("    } else {");
+                writer.WriteLine("      if (switchcount == 0 && dir == 'asc') {");
+                writer.WriteLine("        dir = 'desc';");
+                writer.WriteLine("        switching = true;");
+                writer.WriteLine("      }");
+                writer.WriteLine("    }");
+                writer.WriteLine("  }");
+                writer.WriteLine("}");
+                writer.WriteLine("</script>");
+                writer.WriteLine("</head>");
+                writer.WriteLine("<body>");
+                writer.WriteLine($"<h1>{reportTitle}</h1>");
+                writer.WriteLine($"<div>Displaying {partMnfOnes.Count} rows</div>");
+                writer.WriteLine("<input type='text' id='searchInput' onkeyup='filterTable()' placeholder='Search for keywords..' style='margin-bottom: 10px;'>");
+                writer.WriteLine("<button onclick='clearSearch()'>Clear</button>");
+                writer.WriteLine("<table id='stockTable'>");
+                writer.WriteLine("<tr>");
+                writer.WriteLine("<th onclick='sortTable(0, false)'>IPN</th>");
+                writer.WriteLine("<th onclick='sortTable(1, false)'>MFPN</th>");
+                writer.WriteLine("<th onclick='sortTable(2, false)'>Description</th>");
+                writer.WriteLine("<th onclick='sortTable(4, false)'>Manufacturer</th>");
+                writer.WriteLine("</tr>");
+
+                // Add table rows
+                foreach (var partMnfOne in partMnfOnes)
+                {
+                    writer.WriteLine("<tr>");
+                    writer.WriteLine($"<td>{partMnfOne.PARTNAME}</td>");
+                    writer.WriteLine($"<td>{partMnfOne.MNFPARTNAME}</td>");
+                    writer.WriteLine($"<td>{partMnfOne.PARTDES}</td>");
+                    writer.WriteLine($"<td>{partMnfOne.MNFDES}</td>");
+                    writer.WriteLine("</tr>");
+                }
+
+                writer.WriteLine("</table>");
+                writer.WriteLine("</body>");
+                writer.WriteLine("</html>");
+            }
+        }
+
+        public class PartMnfOneApiResponse
+        {
+            public List<PartMnfOne> value { get; set; }
+        }
+
+        public class PartMnfOne
+        {
+            public string PARTNAME { get; set; }
+            public string MNFPARTNAME { get; set; }
+            public string PARTDES { get; set; }
+            public string MNFDES { get; set; }
+        }
+
     }
 }

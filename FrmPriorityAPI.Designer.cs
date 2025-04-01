@@ -81,6 +81,7 @@
             btnPrintStock = new Button();
             btnPrintIPNmoves = new Button();
             btnPandatabaseSearch = new Button();
+            btnAVL = new Button();
             tableLayoutPanel4 = new TableLayoutPanel();
             gbxINSERT = new GroupBox();
             tableLayoutPanel5 = new TableLayoutPanel();
@@ -96,6 +97,7 @@
             txtbBuffer = new TextBox();
             btnClear = new Button();
             btnBULKinsert = new Button();
+            btnDIGIAPI = new Button();
             groupBox5 = new GroupBox();
             txtbPing = new TextBox();
             txtLog = new RichTextBox();
@@ -617,21 +619,23 @@
             // 
             // tableLayoutPanel3
             // 
-            tableLayoutPanel3.ColumnCount = 5;
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 21F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 21F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 7F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 7F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 44F));
+            tableLayoutPanel3.ColumnCount = 6;
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 19.6261673F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 19.6261673F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 6.542056F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 6.542056F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 6.542056F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 41.1214943F));
             tableLayoutPanel3.Controls.Add(cmbWarehouseList, 0, 0);
             tableLayoutPanel3.Controls.Add(groupBox3, 0, 2);
             tableLayoutPanel3.Controls.Add(txtbFilterIPN, 0, 1);
-            tableLayoutPanel3.Controls.Add(groupBox4, 3, 2);
-            tableLayoutPanel3.Controls.Add(txtbWHSID, 4, 1);
-            tableLayoutPanel3.Controls.Add(txtbPART, 4, 0);
+            tableLayoutPanel3.Controls.Add(groupBox4, 4, 2);
+            tableLayoutPanel3.Controls.Add(txtbWHSID, 5, 1);
+            tableLayoutPanel3.Controls.Add(txtbPART, 5, 0);
             tableLayoutPanel3.Controls.Add(tableLayoutPanel10, 1, 0);
-            tableLayoutPanel3.Controls.Add(btnPrintIPNmoves, 3, 0);
-            tableLayoutPanel3.Controls.Add(btnPandatabaseSearch, 2, 0);
+            tableLayoutPanel3.Controls.Add(btnPrintIPNmoves, 4, 0);
+            tableLayoutPanel3.Controls.Add(btnPandatabaseSearch, 3, 0);
+            tableLayoutPanel3.Controls.Add(btnAVL, 2, 0);
             tableLayoutPanel3.Dock = DockStyle.Fill;
             tableLayoutPanel3.Location = new Point(3, 19);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -650,18 +654,18 @@
             cmbWarehouseList.FormattingEnabled = true;
             cmbWarehouseList.Location = new Point(3, 3);
             cmbWarehouseList.Name = "cmbWarehouseList";
-            cmbWarehouseList.Size = new Size(249, 29);
+            cmbWarehouseList.Size = new Size(232, 29);
             cmbWarehouseList.TabIndex = 0;
             cmbWarehouseList.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
             // 
             // groupBox3
             // 
-            tableLayoutPanel3.SetColumnSpan(groupBox3, 3);
+            tableLayoutPanel3.SetColumnSpan(groupBox3, 4);
             groupBox3.Controls.Add(dataGridView1);
             groupBox3.Dock = DockStyle.Fill;
             groupBox3.Location = new Point(3, 79);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(589, 307);
+            groupBox3.Size = new Size(628, 307);
             groupBox3.TabIndex = 2;
             groupBox3.TabStop = false;
             groupBox3.Text = "WH";
@@ -679,7 +683,7 @@
             dataGridView1.Location = new Point(3, 19);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
-            dataGridView1.Size = new Size(583, 285);
+            dataGridView1.Size = new Size(622, 285);
             dataGridView1.TabIndex = 0;
             dataGridView1.CellClick += dataGridView1_CellClick;
             dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
@@ -690,7 +694,7 @@
             txtbFilterIPN.Location = new Point(3, 41);
             txtbFilterIPN.Name = "txtbFilterIPN";
             txtbFilterIPN.PlaceholderText = "filter IPN";
-            txtbFilterIPN.Size = new Size(249, 23);
+            txtbFilterIPN.Size = new Size(232, 23);
             txtbFilterIPN.TabIndex = 3;
             txtbFilterIPN.TextAlign = HorizontalAlignment.Center;
             txtbFilterIPN.KeyUp += textBox6_KeyUp_1;
@@ -700,9 +704,9 @@
             tableLayoutPanel3.SetColumnSpan(groupBox4, 2);
             groupBox4.Controls.Add(dataGridView2);
             groupBox4.Dock = DockStyle.Fill;
-            groupBox4.Location = new Point(598, 79);
+            groupBox4.Location = new Point(637, 79);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(616, 307);
+            groupBox4.Size = new Size(577, 307);
             groupBox4.TabIndex = 4;
             groupBox4.TabStop = false;
             groupBox4.Text = "Movements for IPN";
@@ -720,7 +724,7 @@
             dataGridView2.Location = new Point(3, 19);
             dataGridView2.Name = "dataGridView2";
             dataGridView2.ReadOnly = true;
-            dataGridView2.Size = new Size(610, 285);
+            dataGridView2.Size = new Size(571, 285);
             dataGridView2.TabIndex = 0;
             dataGridView2.CellDoubleClick += dataGridView2_CellDoubleClick;
             dataGridView2.CellMouseDown += dataGridView2_CellMouseDown;
@@ -728,19 +732,19 @@
             // txtbWHSID
             // 
             txtbWHSID.Dock = DockStyle.Fill;
-            txtbWHSID.Location = new Point(683, 41);
+            txtbWHSID.Location = new Point(716, 41);
             txtbWHSID.Name = "txtbWHSID";
             txtbWHSID.ReadOnly = true;
-            txtbWHSID.Size = new Size(531, 23);
+            txtbWHSID.Size = new Size(498, 23);
             txtbWHSID.TabIndex = 5;
             // 
             // txtbPART
             // 
             txtbPART.Dock = DockStyle.Fill;
-            txtbPART.Location = new Point(683, 3);
+            txtbPART.Location = new Point(716, 3);
             txtbPART.Name = "txtbPART";
             txtbPART.ReadOnly = true;
-            txtbPART.Size = new Size(531, 23);
+            txtbPART.Size = new Size(498, 23);
             txtbPART.TabIndex = 13;
             txtbPART.TextAlign = HorizontalAlignment.Center;
             // 
@@ -754,12 +758,12 @@
             tableLayoutPanel10.Controls.Add(btnGetMFPNs, 1, 0);
             tableLayoutPanel10.Controls.Add(btnPrintStock, 2, 0);
             tableLayoutPanel10.Dock = DockStyle.Fill;
-            tableLayoutPanel10.Location = new Point(258, 3);
+            tableLayoutPanel10.Location = new Point(241, 3);
             tableLayoutPanel10.Name = "tableLayoutPanel10";
             tableLayoutPanel10.RowCount = 1;
             tableLayoutPanel3.SetRowSpan(tableLayoutPanel10, 2);
             tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel10.Size = new Size(249, 70);
+            tableLayoutPanel10.Size = new Size(232, 70);
             tableLayoutPanel10.TabIndex = 14;
             // 
             // btnClearIpnFilter
@@ -770,7 +774,7 @@
             btnClearIpnFilter.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnClearIpnFilter.Location = new Point(3, 3);
             btnClearIpnFilter.Name = "btnClearIpnFilter";
-            btnClearIpnFilter.Size = new Size(77, 64);
+            btnClearIpnFilter.Size = new Size(71, 64);
             btnClearIpnFilter.TabIndex = 6;
             btnClearIpnFilter.UseVisualStyleBackColor = true;
             btnClearIpnFilter.Click += btnClearIpnFilter_Click;
@@ -780,9 +784,9 @@
             btnGetMFPNs.BackgroundImage = (Image)resources.GetObject("btnGetMFPNs.BackgroundImage");
             btnGetMFPNs.BackgroundImageLayout = ImageLayout.Stretch;
             btnGetMFPNs.Dock = DockStyle.Fill;
-            btnGetMFPNs.Location = new Point(86, 3);
+            btnGetMFPNs.Location = new Point(80, 3);
             btnGetMFPNs.Name = "btnGetMFPNs";
-            btnGetMFPNs.Size = new Size(77, 64);
+            btnGetMFPNs.Size = new Size(71, 64);
             btnGetMFPNs.TabIndex = 7;
             btnGetMFPNs.UseVisualStyleBackColor = true;
             btnGetMFPNs.Click += btnGetMFPNs_Click;
@@ -792,9 +796,9 @@
             btnPrintStock.BackgroundImage = (Image)resources.GetObject("btnPrintStock.BackgroundImage");
             btnPrintStock.BackgroundImageLayout = ImageLayout.Stretch;
             btnPrintStock.Dock = DockStyle.Fill;
-            btnPrintStock.Location = new Point(169, 3);
+            btnPrintStock.Location = new Point(157, 3);
             btnPrintStock.Name = "btnPrintStock";
-            btnPrintStock.Size = new Size(77, 64);
+            btnPrintStock.Size = new Size(72, 64);
             btnPrintStock.TabIndex = 8;
             btnPrintStock.UseVisualStyleBackColor = true;
             btnPrintStock.Click += btnPrintStock_Click;
@@ -804,10 +808,10 @@
             btnPrintIPNmoves.BackgroundImage = (Image)resources.GetObject("btnPrintIPNmoves.BackgroundImage");
             btnPrintIPNmoves.BackgroundImageLayout = ImageLayout.Stretch;
             btnPrintIPNmoves.Dock = DockStyle.Fill;
-            btnPrintIPNmoves.Location = new Point(598, 3);
+            btnPrintIPNmoves.Location = new Point(637, 3);
             btnPrintIPNmoves.Name = "btnPrintIPNmoves";
             tableLayoutPanel3.SetRowSpan(btnPrintIPNmoves, 2);
-            btnPrintIPNmoves.Size = new Size(79, 70);
+            btnPrintIPNmoves.Size = new Size(73, 70);
             btnPrintIPNmoves.TabIndex = 15;
             btnPrintIPNmoves.UseVisualStyleBackColor = true;
             btnPrintIPNmoves.Click += btnPrintIPNmoves_Click;
@@ -817,13 +821,29 @@
             btnPandatabaseSearch.BackgroundImage = (Image)resources.GetObject("btnPandatabaseSearch.BackgroundImage");
             btnPandatabaseSearch.BackgroundImageLayout = ImageLayout.Stretch;
             btnPandatabaseSearch.Dock = DockStyle.Fill;
-            btnPandatabaseSearch.Location = new Point(513, 3);
+            btnPandatabaseSearch.Location = new Point(558, 3);
             btnPandatabaseSearch.Name = "btnPandatabaseSearch";
             tableLayoutPanel3.SetRowSpan(btnPandatabaseSearch, 2);
-            btnPandatabaseSearch.Size = new Size(79, 70);
+            btnPandatabaseSearch.Size = new Size(73, 70);
             btnPandatabaseSearch.TabIndex = 16;
             btnPandatabaseSearch.UseVisualStyleBackColor = true;
             btnPandatabaseSearch.Click += btnPandatabaseSearch_Click;
+            // 
+            // btnAVL
+            // 
+            btnAVL.BackgroundImage = (Image)resources.GetObject("btnAVL.BackgroundImage");
+            btnAVL.BackgroundImageLayout = ImageLayout.Stretch;
+            btnAVL.Dock = DockStyle.Fill;
+            btnAVL.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnAVL.ForeColor = Color.White;
+            btnAVL.Location = new Point(479, 3);
+            btnAVL.Name = "btnAVL";
+            tableLayoutPanel3.SetRowSpan(btnAVL, 2);
+            btnAVL.Size = new Size(73, 70);
+            btnAVL.TabIndex = 17;
+            btnAVL.Text = "AVL";
+            btnAVL.UseVisualStyleBackColor = true;
+            btnAVL.Click += btnAVL_Click;
             // 
             // tableLayoutPanel4
             // 
@@ -871,6 +891,7 @@
             tableLayoutPanel5.Controls.Add(txtbBuffer, 1, 0);
             tableLayoutPanel5.Controls.Add(btnClear, 2, 0);
             tableLayoutPanel5.Controls.Add(btnBULKinsert, 0, 0);
+            tableLayoutPanel5.Controls.Add(btnDIGIAPI, 2, 2);
             tableLayoutPanel5.Dock = DockStyle.Fill;
             tableLayoutPanel5.Location = new Point(3, 19);
             tableLayoutPanel5.Name = "tableLayoutPanel5";
@@ -1019,6 +1040,18 @@
             btnBULKinsert.UseVisualStyleBackColor = true;
             btnBULKinsert.Click += btnBULKinsert_Click;
             // 
+            // btnDIGIAPI
+            // 
+            btnDIGIAPI.BackgroundImage = (Image)resources.GetObject("btnDIGIAPI.BackgroundImage");
+            btnDIGIAPI.BackgroundImageLayout = ImageLayout.Stretch;
+            btnDIGIAPI.Dock = DockStyle.Fill;
+            btnDIGIAPI.Location = new Point(187, 85);
+            btnDIGIAPI.Name = "btnDIGIAPI";
+            btnDIGIAPI.Size = new Size(86, 35);
+            btnDIGIAPI.TabIndex = 7;
+            btnDIGIAPI.UseVisualStyleBackColor = true;
+            btnDIGIAPI.Click += btnDIGIAPI_Click;
+            // 
             // groupBox5
             // 
             groupBox5.Controls.Add(txtbPing);
@@ -1163,5 +1196,7 @@
         private Button btnPrintStock;
         private Button btnPrintIPNmoves;
         private Button btnPandatabaseSearch;
+        private Button btnDIGIAPI;
+        private Button btnAVL;
     }
 }
