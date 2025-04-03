@@ -934,6 +934,9 @@ namespace WH_Panel
                             cmbWarehouseList.Items.Add($"{warehouse.WARHSNAME} - {warehouse.WARHSDES}");
                             loadedWareHouses.Add(warehouse);
                         }
+                        // Set the autocomplete source
+                        cmbWarehouseList.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                        cmbWarehouseList.AutoCompleteSource = AutoCompleteSource.ListItems;
                     }
                     else
                     {
@@ -1910,52 +1913,7 @@ namespace WH_Panel
                 }
             }
         }
-        //private async void btnINSERTlogpart_Click(object sender, EventArgs e)
-        //{
-        //    string partName = txtbIPN.Text.Trim();
-        //    string partDes = txtbDESC.Text.Trim();
-        //    string partMFPN = txtbMFPN.Text.Trim().ToUpper();
-        //    string partMNFDes = txtbMNF.Text.Trim().ToUpper();
-        //    // Validate the required fields
-        //    if (string.IsNullOrEmpty(partName) || string.IsNullOrEmpty(partDes) || string.IsNullOrEmpty(partMFPN) || string.IsNullOrEmpty(partMNFDes))
-        //    {
-        //        MessageBox.Show("Please ensure all fields are filled in before inserting.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //        return;
-        //    }
-        //    // Truncate MNFDES to fit within the 32-character limit
-        //    if (partMNFDes.Length > 32)
-        //    {
-        //        partMNFDes = partMNFDes.Substring(0, 32);
-        //    }
-        //    // Generate MNFNAME by truncating MNFDES to fit within the 10-character limit
-        //    string partMNFName = partMNFDes.Length > 10 ? partMNFDes.Substring(0, 10) : partMNFDes;
-        //    try
-        //    {
-        //        // Measure the time taken for the HTTP POST request
-        //        var stopwatch = Stopwatch.StartNew();
-        //        // Insert into LOGPART and get the generated PART ID
-        //        int partId = await InsertLogPart(partName, partDes);
-        //        // Check if the manufacturer exists, if not, insert it and get the MNF ID
-        //        int mnfId = await GetOrInsertManufacturer(partMNFName, partMNFDes);
-        //        // Insert into PARTMNFONE
-        //        await InsertPartMnfOne(partId, partMFPN, mnfId, partDes);
-        //        // Fetch and display the inserted data
-        //        await DisplayInsertedData(partId);
-        //        stopwatch.Stop();
-        //        // Update the ping label
-        //        UpdatePing(stopwatch.ElapsedMilliseconds);
-        //        btnClear.PerformClick();
-        //        //MessageBox.Show("Item successfully inserted into LOGPART and PARTMNFONE.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        //    }
-        //    catch (HttpRequestException ex)
-        //    {
-        //        MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //    }
-        //}
+     
 
         private async void btnINSERTlogpart_Click(object sender, EventArgs e)
         {
@@ -3439,7 +3397,7 @@ namespace WH_Panel
         private async void btnAVL_Click(object sender, EventArgs e)
         {
             string selectedPrefix = txtbPrefix.Text.Trim();
-            var prefixExceptions = new List<string> { "Flr" };
+            var prefixExceptions = new List<string> { "Flr", "666", "400", "450", "500", "501", "550", "600", "650", "Main", "Outl", "Trn","MRB" };
 
             // Check if the selected prefix is valid
             if (prefixExceptions.Contains(selectedPrefix))
@@ -3487,7 +3445,7 @@ namespace WH_Panel
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
             string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\{selectedPrefix}_AVLReport_{_fileTimeStamp}.html";
 
-            List<PartMnfOne>orderedbyIPN = partMnfOnes.OrderBy(x => x.PARTNAME).ToList();
+            List<PartMnfOne> orderedbyIPN = partMnfOnes.OrderBy(x => x.PARTNAME).ToList();
 
             GenerateHTMLFromPartMnfOneList(filename, orderedbyIPN, $"{selectedPrefix} AVL Report {_fileTimeStamp}");
 
@@ -3636,5 +3594,21 @@ namespace WH_Panel
             public string MNFDES { get; set; }
         }
 
+        private void txtbPrefix_TextChanged(object sender, EventArgs e)
+        {
+            string selectedPrefix = txtbPrefix.Text.Trim();
+            var prefixExceptions = new List<string> { "Flr", "666", "400", "450", "500", "501", "550", "600", "650", "Main", "Outl", "Trn" ,"MRB"};
+
+            // Check if the selected prefix is valid
+            if (prefixExceptions.Contains(selectedPrefix))
+            {
+                btnAVL.Text = "AVL";
+            }
+            else {
+                // Change the button text to include the prefix
+                btnAVL.Text = $"{selectedPrefix} AVL";
+            }
+              
+        }
     }
 }

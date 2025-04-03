@@ -312,6 +312,7 @@
             // btnMFG
             // 
             btnMFG.BackgroundImageLayout = ImageLayout.Stretch;
+            btnMFG.Cursor = Cursors.Hand;
             btnMFG.Dock = DockStyle.Fill;
             btnMFG.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnMFG.ForeColor = SystemColors.ControlText;
@@ -517,6 +518,7 @@
             txtbPrefix.Size = new Size(42, 23);
             txtbPrefix.TabIndex = 1;
             txtbPrefix.TextAlign = HorizontalAlignment.Center;
+            txtbPrefix.TextChanged += txtbPrefix_TextChanged;
             // 
             // txtbDecodeIPN
             // 
@@ -584,6 +586,7 @@
             // 
             btnPrinSticker.BackgroundImage = (Image)resources.GetObject("btnPrinSticker.BackgroundImage");
             btnPrinSticker.BackgroundImageLayout = ImageLayout.Stretch;
+            btnPrinSticker.Cursor = Cursors.Hand;
             btnPrinSticker.Dock = DockStyle.Fill;
             btnPrinSticker.Location = new Point(101, 3);
             btnPrinSticker.Name = "btnPrinSticker";
@@ -596,6 +599,7 @@
             // 
             button2.BackgroundImage = (Image)resources.GetObject("button2.BackgroundImage");
             button2.BackgroundImageLayout = ImageLayout.Stretch;
+            button2.Cursor = Cursors.Hand;
             button2.Dock = DockStyle.Fill;
             button2.Location = new Point(3, 3);
             button2.Name = "button2";
@@ -649,7 +653,6 @@
             // cmbWarehouseList
             // 
             cmbWarehouseList.Dock = DockStyle.Fill;
-            cmbWarehouseList.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbWarehouseList.Font = new Font("Segoe UI", 12F);
             cmbWarehouseList.FormattingEnabled = true;
             cmbWarehouseList.Location = new Point(3, 3);
@@ -770,6 +773,7 @@
             // 
             btnClearIpnFilter.BackgroundImage = (Image)resources.GetObject("btnClearIpnFilter.BackgroundImage");
             btnClearIpnFilter.BackgroundImageLayout = ImageLayout.Stretch;
+            btnClearIpnFilter.Cursor = Cursors.Hand;
             btnClearIpnFilter.Dock = DockStyle.Fill;
             btnClearIpnFilter.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnClearIpnFilter.Location = new Point(3, 3);
@@ -783,6 +787,7 @@
             // 
             btnGetMFPNs.BackgroundImage = (Image)resources.GetObject("btnGetMFPNs.BackgroundImage");
             btnGetMFPNs.BackgroundImageLayout = ImageLayout.Stretch;
+            btnGetMFPNs.Cursor = Cursors.Hand;
             btnGetMFPNs.Dock = DockStyle.Fill;
             btnGetMFPNs.Location = new Point(80, 3);
             btnGetMFPNs.Name = "btnGetMFPNs";
@@ -795,6 +800,7 @@
             // 
             btnPrintStock.BackgroundImage = (Image)resources.GetObject("btnPrintStock.BackgroundImage");
             btnPrintStock.BackgroundImageLayout = ImageLayout.Stretch;
+            btnPrintStock.Cursor = Cursors.Hand;
             btnPrintStock.Dock = DockStyle.Fill;
             btnPrintStock.Location = new Point(157, 3);
             btnPrintStock.Name = "btnPrintStock";
@@ -807,6 +813,7 @@
             // 
             btnPrintIPNmoves.BackgroundImage = (Image)resources.GetObject("btnPrintIPNmoves.BackgroundImage");
             btnPrintIPNmoves.BackgroundImageLayout = ImageLayout.Stretch;
+            btnPrintIPNmoves.Cursor = Cursors.Hand;
             btnPrintIPNmoves.Dock = DockStyle.Fill;
             btnPrintIPNmoves.Location = new Point(637, 3);
             btnPrintIPNmoves.Name = "btnPrintIPNmoves";
@@ -820,6 +827,7 @@
             // 
             btnPandatabaseSearch.BackgroundImage = (Image)resources.GetObject("btnPandatabaseSearch.BackgroundImage");
             btnPandatabaseSearch.BackgroundImageLayout = ImageLayout.Stretch;
+            btnPandatabaseSearch.Cursor = Cursors.Hand;
             btnPandatabaseSearch.Dock = DockStyle.Fill;
             btnPandatabaseSearch.Location = new Point(558, 3);
             btnPandatabaseSearch.Name = "btnPandatabaseSearch";
@@ -833,6 +841,7 @@
             // 
             btnAVL.BackgroundImage = (Image)resources.GetObject("btnAVL.BackgroundImage");
             btnAVL.BackgroundImageLayout = ImageLayout.Stretch;
+            btnAVL.Cursor = Cursors.Hand;
             btnAVL.Dock = DockStyle.Fill;
             btnAVL.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnAVL.ForeColor = Color.White;
@@ -941,6 +950,7 @@
             // 
             btnINSERTlogpart.BackgroundImage = (Image)resources.GetObject("btnINSERTlogpart.BackgroundImage");
             btnINSERTlogpart.BackgroundImageLayout = ImageLayout.Stretch;
+            btnINSERTlogpart.Cursor = Cursors.Hand;
             btnINSERTlogpart.Dock = DockStyle.Fill;
             btnINSERTlogpart.Location = new Point(187, 167);
             btnINSERTlogpart.Name = "btnINSERTlogpart";
@@ -1020,6 +1030,7 @@
             // 
             btnClear.BackgroundImage = (Image)resources.GetObject("btnClear.BackgroundImage");
             btnClear.BackgroundImageLayout = ImageLayout.Stretch;
+            btnClear.Cursor = Cursors.Hand;
             btnClear.Dock = DockStyle.Fill;
             btnClear.Location = new Point(187, 3);
             btnClear.Name = "btnClear";
@@ -1032,6 +1043,7 @@
             // 
             btnBULKinsert.BackgroundImage = (Image)resources.GetObject("btnBULKinsert.BackgroundImage");
             btnBULKinsert.BackgroundImageLayout = ImageLayout.Stretch;
+            btnBULKinsert.Cursor = Cursors.Hand;
             btnBULKinsert.Dock = DockStyle.Fill;
             btnBULKinsert.Location = new Point(3, 3);
             btnBULKinsert.Name = "btnBULKinsert";
@@ -1044,6 +1056,7 @@
             // 
             btnDIGIAPI.BackgroundImage = (Image)resources.GetObject("btnDIGIAPI.BackgroundImage");
             btnDIGIAPI.BackgroundImageLayout = ImageLayout.Stretch;
+            btnDIGIAPI.Cursor = Cursors.Hand;
             btnDIGIAPI.Dock = DockStyle.Fill;
             btnDIGIAPI.Location = new Point(187, 85);
             btnDIGIAPI.Name = "btnDIGIAPI";
