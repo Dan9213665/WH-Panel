@@ -1989,7 +1989,7 @@ namespace WH_Panel
             htmlTable.Append("</head><body>");
             // Add the additional table with text from txtbRob, txtbName, txtbQty, txtbStatus, and lblProgress
             htmlTable.Append("<table border='1' style='border-collapse:collapse; margin-bottom: 20px;'>");
-            htmlTable.Append("<tr><th>Rob</th><th>Name</th><th>Qty</th><th>Status</th><th>Progress</th></tr>");
+            htmlTable.Append("<tr><th>Rob</th><th>Name</th><th>Qty</th><th>Status</th><th>Progress</th><th>Comments</th></tr>");
             string stat = string.Empty;
             if (lblProgress.Text.Contains("100%"))
             {
@@ -1999,8 +1999,8 @@ namespace WH_Panel
             {
                 stat = txtbStatus.Text;
             }
-            htmlTable.AppendFormat("<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td></tr>",
-                txtbRob.Text, txtbName.Text, txtbQty.Text, stat, lblProgress.Text);
+            htmlTable.AppendFormat("<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td><td>{5}</td></tr>",
+                txtbRob.Text, txtbName.Text, txtbQty.Text, stat, lblProgress.Text,rtxtbComments.Text);
             htmlTable.Append("</table>");
             // Add the main data table
             htmlTable.Append("<table border='1' style='border-collapse:collapse;'>");
