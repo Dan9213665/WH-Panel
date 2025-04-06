@@ -2241,6 +2241,9 @@ namespace WH_Panel
                 DialogResult = DialogResult.OK;
             }
         }
+    
+
+
         private void btnReport_Click(object sender, EventArgs e)
         {
             // Sort the DataGridView by the DELTA column in ascending order
@@ -2346,6 +2349,47 @@ namespace WH_Panel
                 writer.WriteLine("}");
                 writer.WriteLine("window.addEventListener('beforeprint', function() { changeFontColor('black'); });");
                 writer.WriteLine("window.addEventListener('afterprint', function() { changeFontColor(''); });");
+
+                // Add JavaScript for the SIM QTY button
+                writer.WriteLine("function openSimQtyPopup() {");
+                writer.WriteLine("  var currentQty = document.getElementById('currentQty').innerText;");
+                writer.WriteLine("  var newQty = prompt('Enter new quantity for simulation:', currentQty);");
+                writer.WriteLine("  if (newQty != null && !isNaN(newQty) && newQty > 0) {");
+                writer.WriteLine("    document.getElementById('currentQty').innerText = newQty;");
+                writer.WriteLine("    recalculateKitBalances(newQty);");
+                writer.WriteLine("  }");
+                writer.WriteLine("}");
+                writer.WriteLine("function recalculateKitBalances(newQty) {");
+                writer.WriteLine("  var table = document.getElementById('kitsTable');");
+                writer.WriteLine("  for (var i = 1; i < table.rows.length; i++) {");
+                writer.WriteLine("    var row = table.rows[i];");
+                writer.WriteLine("    var cQuantCell = row.cells[5];"); // CQUANT column
+                writer.WriteLine("    var quantCell = row.cells[4];"); // QUANT column
+                writer.WriteLine("    var deltaCell = row.cells[6];"); // DELTA column
+                writer.WriteLine("    var leftoversCell = row.cells[9];"); // LEFTOVERS column
+                writer.WriteLine("    var requiredPerUnit = parseInt(cQuantCell.innerText.split('[')[1].split(']')[0]);");
+                writer.WriteLine("    var newCQuant = requiredPerUnit * newQty;"); // Update the required quantity directly
+                writer.WriteLine("    cQuantCell.innerText = newCQuant + ' [' + requiredPerUnit + ']';");
+                writer.WriteLine("    var quant = parseInt(quantCell.innerText);");
+                writer.WriteLine("    var delta = quant - newCQuant;");
+                writer.WriteLine("    deltaCell.innerText = delta;");
+                writer.WriteLine("    if (delta >= 10) {");
+                writer.WriteLine("      deltaCell.className = 'green';");
+                writer.WriteLine("    } else if (delta >= 0 && delta < 10) {");
+                writer.WriteLine("      deltaCell.className = 'orange';");
+                writer.WriteLine("    } else {");
+                writer.WriteLine("      deltaCell.className = 'red';");
+                writer.WriteLine("    }");
+                writer.WriteLine("    var whQuantity = parseInt(row.cells[3].innerText);"); // WH column
+                writer.WriteLine("    var leftovers = (whQuantity + quant) - newCQuant;");
+                writer.WriteLine("    leftoversCell.innerText = leftovers;");
+                writer.WriteLine("    if (leftovers < 0) {");
+                writer.WriteLine("      leftoversCell.className = 'red';");
+                writer.WriteLine("    } else {");
+                writer.WriteLine("      leftoversCell.className = '';"); // Reset class if no condition met
+                writer.WriteLine("    }");
+                writer.WriteLine("  }");
+                writer.WriteLine("}");
                 writer.WriteLine("</script>");
                 writer.WriteLine("</head>");
                 writer.WriteLine("<body>");
@@ -2356,7 +2400,7 @@ namespace WH_Panel
                 writer.WriteLine($"<td>{txtbRob.Text}</td>");
                 writer.WriteLine($"<td>{txtbName.Text}</td>");
                 writer.WriteLine($"<td>{txtbRev.Text}</td>");
-                writer.WriteLine($"<td>{txtbQty.Text}</td>");
+                writer.WriteLine($"<td id='currentQty'>{txtbQty.Text}</td>");
                 writer.WriteLine("</tr>");
                 // Add another row for simulation and progress labels
                 writer.WriteLine("<tr>");
@@ -2372,11 +2416,12 @@ namespace WH_Panel
                     writer.WriteLine(System.Net.WebUtility.HtmlEncode(rtxtbComments.Text).Replace(Environment.NewLine, "<br>"));
                     writer.WriteLine("</h2></div>");
                 }
-                // Add the filter input box, clear button, and print button
+                // Add the filter input box, clear button, print button, and SIM QTY button
                 writer.WriteLine("<div class='no-print' style='margin-bottom: 20px; text-align: center;'>");
                 writer.WriteLine("<input type='text' id='filterInput' onkeyup='filterTable()' placeholder='Filter table...' style='padding: 10px; width: 50%;text-align:center;background:orange;'>");
                 writer.WriteLine("<button onclick='clearFilter()' style='padding: 10px;'>Clear</button>");
                 writer.WriteLine("<button onclick='printReport()' style='padding: 10px;'>Print</button>");
+                writer.WriteLine("<button onclick='openSimQtyPopup()' style='padding: 10px;'>SIM QTY</button>");
                 writer.WriteLine("</div>");
                 writer.WriteLine("<table id='kitsTable'>");
                 // Write table headers
@@ -2428,11 +2473,8 @@ namespace WH_Panel
                             else if (dgwBom.Columns[cell.ColumnIndex].Name == "CQUANT")
                             {
                                 int req = Convert.ToInt32(row.Cells["CQUANT"].Value);
-                                int kitQty = txtbQty.Text != string.Empty ? Convert.ToInt32(txtbQty.Text) : 0;
-                                if (kitQty != 0)
-                                {
-                                    cellValue = $"{req} [{req / kitQty}]";
-                                }
+                                int requiredPerUnit = req / Convert.ToInt32(txtbQty.Text);
+                                cellValue = $"{req} [{requiredPerUnit}]";
                             }
                             else if (dgwBom.Columns[cell.ColumnIndex].Name == "QUANT")
                             {
@@ -2466,11 +2508,8 @@ namespace WH_Panel
             };
             p.Start();
         }
-        //private async void btnGetMFNs_Click(object sender, EventArgs e)
-        //{
-        //    //await FetchMFPNsWithDelay();
-        //    await FetchMFPNsForAllRows();
-        //}
+
+
         private async void btnGetWHstock_Click(object sender, EventArgs e)
         {
             await FetchWarehouseBalances();
