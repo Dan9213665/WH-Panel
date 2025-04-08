@@ -787,7 +787,6 @@ namespace WH_Panel
                     {
                         btnPrintSticker_Click(sender, e);
                     }
-
                 }
             }
         }
@@ -1034,9 +1033,7 @@ namespace WH_Panel
         //    }
         //    txtbPrefix.Text = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
         //}
-
         private Dictionary<string, string> avlDictionary = new Dictionary<string, string>();
-
         public async void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cmbWarehouseList.SelectedItem != null)
@@ -1046,7 +1043,6 @@ namespace WH_Panel
                 string selectedWarehouseDesc = cmbWarehouseList.SelectedItem.ToString().Substring(selectedWarehouse.Length).Trim();
                 string avlUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PARTNAME eq '{selectedWarehouse}_*'";
                 string balanceUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouse}'&$expand=WARHSBAL_SUBFORM";
-
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -1056,7 +1052,6 @@ namespace WH_Panel
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                         string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                         // Make the HTTP GET request for AVL list
                         HttpResponseMessage avlResponse = await client.GetAsync(avlUrl);
                         avlResponse.EnsureSuccessStatusCode();
@@ -1076,13 +1071,11 @@ namespace WH_Panel
                                // txtLog.AppendText($"Duplicate PARTNAME found: {part.PARTNAME}. Skipping...\n");
                             }
                         }
-
                         // Make the HTTP GET request for warehouse balance
                         HttpResponseMessage balanceResponse = await client.GetAsync(balanceUrl);
                         balanceResponse.EnsureSuccessStatusCode();
                         string balanceResponseBody = await balanceResponse.Content.ReadAsStringAsync();
                         var balanceApiResponse = JsonConvert.DeserializeObject<WarehouseApiResponse>(balanceResponseBody);
-
                         // Check if the response contains any data
                         if (balanceApiResponse.value != null && balanceApiResponse.value.Count > 0)
                         {
@@ -1136,10 +1129,6 @@ namespace WH_Panel
             }
             txtbPrefix.Text = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
         }
-
-
-
-
         private async Task ExtractMFPNForRow(DataGridViewRow row)
         {
             var partId = (int)row.Cells["PART"].Value;
@@ -1346,7 +1335,6 @@ namespace WH_Panel
                             txtLog.AppendText($"Request error: {ex.Message}");
                             txtLog.ScrollToCaret();
                         }
-
                     }
                 }
             }
@@ -2019,36 +2007,29 @@ namespace WH_Panel
                 }
             }
         }
-     
-
         private async void btnINSERTlogpart_Click(object sender, EventArgs e)
         {
             string partName = txtbIPN.Text.Trim();
             string partDes = txtbDESC.Text.Trim();
             string partMFPN = txtbMFPN.Text.Trim().ToUpper();
             string partMNFDes = txtbMNF.Text.Trim().ToUpper();
-
             // Validate the required fields
             if (string.IsNullOrEmpty(partName) || string.IsNullOrEmpty(partDes) || string.IsNullOrEmpty(partMFPN) || string.IsNullOrEmpty(partMNFDes))
             {
                 MessageBox.Show("Please ensure all fields are filled in before inserting.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-
             // Truncate MNFDES to fit within the 32-character limit
             if (partMNFDes.Length > 32)
             {
                 partMNFDes = partMNFDes.Substring(0, 32);
             }
-
             // Generate MNFNAME by truncating MNFDES to fit within the 10-character limit
             string partMNFName = partMNFDes.Length > 10 ? partMNFDes.Substring(0, 10) : partMNFDes;
-
             try
             {
                 // Measure the time taken for the HTTP POST request
                 var stopwatch = Stopwatch.StartNew();
-
                 // Check if the IPN already exists
                 int existingPartId = await CheckIfIPNExists(partName);
                 if (existingPartId > 0)
@@ -2070,17 +2051,13 @@ namespace WH_Panel
                 {
                     // Insert into LOGPART and get the generated PART ID
                     int partId = await InsertLogPart(partName, partDes);
-
                     // Check if the manufacturer exists, if not, insert it and get the MNF ID
                     int mnfId = await GetOrInsertManufacturer(partMNFName, partMNFDes);
-
                     // Insert into PARTMNFONE
                     await InsertPartMnfOne(partId, partMFPN, mnfId, partDes);
-
                     // Fetch and display the inserted data
                     await DisplayInsertedData(partId);
                 }
-
                 stopwatch.Stop();
                 // Update the ping label
                 UpdatePing(stopwatch.ElapsedMilliseconds);
@@ -2095,7 +2072,6 @@ namespace WH_Panel
                 MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         private async Task<int> CheckIfIPNExists(string partName)
         {
             string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART?$filter=PARTNAME eq '{partName}'";
@@ -2105,7 +2081,6 @@ namespace WH_Panel
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                 HttpResponseMessage response = await client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync();
@@ -2118,7 +2093,6 @@ namespace WH_Panel
                 return 0;
             }
         }
-
         private async Task<bool> CheckIfMFPNIsDifferent(int partId, string partMFPN)
         {
             string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PART eq {partId}";
@@ -2128,7 +2102,6 @@ namespace WH_Panel
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                 HttpResponseMessage response = await client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync();
@@ -2137,7 +2110,6 @@ namespace WH_Panel
                 return mfpn == null;
             }
         }
-
         private async Task PatchExistingIPN(int partId, string partMFPN, string partDes)
         {
             var partMnfOneData = new
@@ -2153,14 +2125,12 @@ namespace WH_Panel
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                 string jsonPartMnfOneData = JsonConvert.SerializeObject(partMnfOneData);
                 var content = new StringContent(jsonPartMnfOneData, Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await client.PatchAsync(url, content);
                 response.EnsureSuccessStatusCode();
             }
         }
-
         private async Task<int> InsertLogPart(string partName, string partDes)
         {
             var logPartData = new
@@ -2801,7 +2771,6 @@ namespace WH_Panel
                 txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter), txtbInputMFPN);
             }
         }
-
         private void btnPrintStock_Click(object sender, EventArgs e)
         {
             // Get the selected warehouse name
@@ -2811,13 +2780,11 @@ namespace WH_Panel
                 MessageBox.Show("Please select a warehouse.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-
             // Generate HTML report
             txtLog.AppendText($"Generating HTML report for {selectedWarehouseName} \n");
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
             string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\{selectedWarehouseName}_StockReport_{_fileTimeStamp}.html";
             GenerateHTMLFromDataGridView(filename, dataGridView1, $"{selectedWarehouseName} Stock Report {_fileTimeStamp}");
-
             // Open the file in default browser
             var p = new Process();
             p.StartInfo = new ProcessStartInfo(filename)
@@ -2826,11 +2793,8 @@ namespace WH_Panel
             };
             p.Start();
         }
-
         private void GenerateHTMLFromDataGridView(string filename, DataGridView dataGridView, string reportTitle)
         {
-
-
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.WriteLine("<html style='text-align:center;background-color:gray;color:white;'>");
@@ -2927,29 +2891,22 @@ namespace WH_Panel
                 // Calculate the total balance
                 int totalBalance = dataGridView.Rows.Cast<DataGridViewRow>()
                     .Sum(row => Convert.ToInt32(row.Cells["BALANCE"].Value));
-
                 writer.WriteLine($"<div>Displaying {dataGridView.RowCount} rows. Total Balance:{totalBalance} items</div>");
                 writer.WriteLine("<input type='text' id='searchInput' onkeyup='filterTable()' placeholder='Search for keywords..' style='margin-bottom: 10px;'>");
                 writer.WriteLine("<button onclick='clearSearch()'>Clear</button>");
                 writer.WriteLine("<table id='stockTable'>");
                 writer.WriteLine("<tr>");
                 // Add table headers
-
-
-
                 foreach (DataGridViewColumn column in dataGridView.Columns)
                 {
                     bool isNumeric = column.Name == "BALANCE" || column.Name == "PART";
                     writer.WriteLine($"<th onclick='sortTable({column.Index}, {isNumeric.ToString().ToLower()})'>{column.HeaderText}</th>");
                 }
                 writer.WriteLine("</tr>");
-
-
                 // Order the rows by BALANCE column values in descending order
                 var orderedRows = dataGridView.Rows.Cast<DataGridViewRow>()
                     .OrderByDescending(r => Convert.ToInt32(r.Cells["BALANCE"].Value))
                     .ToList();
-
                 // Add table rows
                 foreach (DataGridViewRow row in orderedRows)
                 {
@@ -2958,7 +2915,6 @@ namespace WH_Panel
                     {
                         string cellValue = cell.Value?.ToString() ?? string.Empty;
                         string cellClass = string.Empty;
-
                         if (cell.OwningColumn.Name == "BALANCE" && int.TryParse(cellValue, out int balanceValue))
                         {
                             if (balanceValue > 0)
@@ -2974,13 +2930,10 @@ namespace WH_Panel
                                 cellClass = "negative";
                             }
                         }
-
                         writer.WriteLine($"<td class='{cellClass}'>{cellValue}</td>");
                     }
                     writer.WriteLine("</tr>");
                 }
-
-
                 writer.WriteLine("</table>");
                 writer.WriteLine("</body>");
                 writer.WriteLine("</html>");
@@ -2995,7 +2948,6 @@ namespace WH_Panel
             }
             return null;
         }
-
         private void btnPrintIPNmoves_Click(object sender, EventArgs e)
         {
             // Get the IPN from groupBox4.Text
@@ -3005,7 +2957,6 @@ namespace WH_Panel
                 MessageBox.Show("No IPN found in the group box title.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-
             // Get the balance for the IPN from dataGridView1
             int balance = 0;
             foreach (DataGridViewRow row in dataGridView1.Rows)
@@ -3016,13 +2967,11 @@ namespace WH_Panel
                     break;
                 }
             }
-
             // Generate HTML report
             txtLog.AppendText($"Generating HTML report for stock movements of {ipn} \n");
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
             string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\{ipn}_StockMovements_{_fileTimeStamp}.html";
             GenerateHTMLFromDataGridView(filename, dataGridView2, $"STOCK MOVEMENTS FOR {ipn}", balance);
-
             // Open the file in default browser
             var p = new Process();
             p.StartInfo = new ProcessStartInfo(filename)
@@ -3031,10 +2980,6 @@ namespace WH_Panel
             };
             p.Start();
         }
-
-
-
-
         private void GenerateHTMLFromDataGridView(string filename, DataGridView dataGridView, string reportTitle, int balance)
         {
             using (StreamWriter writer = new StreamWriter(filename))
@@ -3130,8 +3075,6 @@ namespace WH_Panel
                 writer.WriteLine("</head>");
                 writer.WriteLine("<body>");
                 writer.WriteLine($"<h1>{reportTitle}</h1>");
-
-
                 int intRowsDisplayed = 0;
                 foreach (DataGridViewRow row in dataGridView.Rows)
                 {
@@ -3140,12 +3083,9 @@ namespace WH_Panel
                         intRowsDisplayed++;
                     }
                 }
-
-
                 writer.WriteLine($"<div>Displaying {intRowsDisplayed} rows</div>");
                 writer.WriteLine("<input type='text' id='searchInput' onkeyup='filterTable()' placeholder='Search for keywords..' style='margin-bottom: 10px;'>");
                 writer.WriteLine("<button onclick='clearSearch()'>Clear</button>");
-
                 // Generate the "CURRENT STOCK TABLE"
                 writer.WriteLine($"<h2>Current Stock : {balance}</h2>");
                 writer.WriteLine("<table id='currentStockTable'>");
@@ -3157,7 +3097,6 @@ namespace WH_Panel
                     writer.WriteLine($"<th onclick='sortTable({column.Index}, {isNumeric.ToString().ToLower()})'>{column.HeaderText}</th>");
                 }
                 writer.WriteLine("</tr>");
-
                 // Add table rows for current stock
                 var currentStockRows = new List<DataGridViewRow>();
                 foreach (DataGridViewRow row in dataGridView.Rows)
@@ -3171,7 +3110,6 @@ namespace WH_Panel
                         string rowDocType = row.Cells["LOGDOCNO"].Value?.ToString() ?? string.Empty;
                         if (rowDocType.StartsWith("GR") && int.TryParse(row.Cells["TQUANT"].Value?.ToString(), out int balanceValue) && balanceValue > 0)
                         {
-
                             bool hasOutgoingMovement = dataGridView.Rows.Cast<DataGridViewRow>().Any(r =>
         (r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("ROB") == true ||
          r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("RD") == true ||
@@ -3181,23 +3119,15 @@ namespace WH_Panel
             ? Math.Abs(Convert.ToInt32(r.Cells["TQUANT"].Value)) == Math.Abs(Convert.ToInt32(row.Cells["TQUANT"].Value))
             : r.Cells["TQUANT"].Value?.ToString() == row.Cells["TQUANT"].Value?.ToString())
     );
-
                             if (!hasOutgoingMovement)
                             {
                                 currentStockRows.Add(row);
                             }
-
-
-
-
                         }
                     }
-
                 }
-
                 foreach (var row in currentStockRows)
                 {
-
                     if (row.Cells["DOCDES"].Value.ToString() == "קיזוז אוטומטי")
                     {
                         continue;
@@ -3209,7 +3139,6 @@ namespace WH_Panel
                         {
                             string cellValue = cell.Value?.ToString() ?? string.Empty;
                             string cellClass = string.Empty;
-
                             if (cell.OwningColumn.Name == "TQUANT" && int.TryParse(cellValue, out int balanceValue))
                             {
                                 if (balanceValue > 0)
@@ -3225,15 +3154,12 @@ namespace WH_Panel
                                     cellClass = "negative";
                                 }
                             }
-
                             writer.WriteLine($"<td class='{cellClass}'>{cellValue}</td>");
                         }
                         writer.WriteLine("</tr>");
                     }
                 }
-
                 writer.WriteLine("</table>");
-
                 // Generate the existing stock movements table
                 writer.WriteLine("<h2>Stock Movements</h2>");
                 writer.WriteLine("<table id='stockTable'>");
@@ -3245,7 +3171,6 @@ namespace WH_Panel
                     writer.WriteLine($"<th onclick='sortTable({column.Index}, {isNumeric.ToString().ToLower()})'>{column.HeaderText}</th>");
                 }
                 writer.WriteLine("</tr>");
-
                 // Add table rows for stock movements
                 foreach (DataGridViewRow row in dataGridView.Rows)
                 {
@@ -3256,14 +3181,11 @@ namespace WH_Panel
                     else
                     {
                         writer.WriteLine("<tr>");
-
                         string rowDocType = row.Cells["LOGDOCNO"].Value?.ToString() ?? string.Empty;
-
                         foreach (DataGridViewCell cell in row.Cells)
                         {
                             string cellValue = cell.Value?.ToString() ?? string.Empty;
                             string cellClass = string.Empty;
-
                             if (cell.OwningColumn.Name == "TQUANT" && int.TryParse(cellValue, out int balanceValue))
                             {
                                 if (balanceValue > 0 && rowDocType.StartsWith("GR"))
@@ -3279,20 +3201,16 @@ namespace WH_Panel
                                     cellClass = "negative";
                                 }
                             }
-
                             writer.WriteLine($"<td class='{cellClass}'>{cellValue}</td>");
                         }
                         writer.WriteLine("</tr>");
                     }
-
                 }
-
                 writer.WriteLine("</table>");
                 writer.WriteLine("</body>");
                 writer.WriteLine("</html>");
             }
         }
-
         private void btnPandatabaseSearch_Click(object sender, EventArgs e)
         {
             FrmPriorityPanDbSearch frmPriorityPanDbSearch = new FrmPriorityPanDbSearch();
@@ -3304,9 +3222,7 @@ namespace WH_Panel
             string clientId = "1V0C9rxhmIcEf28EC6ADmF9avL74IDF0"; // Replace with your actual client ID
             string clientSecret = "bbNRuLqxaxjN87AQ"; // Replace with your actual client secret
             string keyword = txtbMFPN.Text; // Get the keyword from the txtbMFPN
-
             txtLog.AppendText("Getting access token...\n");
-
             string accessTokenReceived = string.Empty;
             try
             {
@@ -3318,7 +3234,6 @@ namespace WH_Panel
                 txtLog.AppendText($"Error obtaining access token: {ex.Message}\n");
                 return;
             }
-
             var requestData = new
             {
                 Keywords = keyword,
@@ -3346,19 +3261,15 @@ namespace WH_Panel
                     SortOrder = "Ascending"
                 }
             };
-
             var jsonRequest = System.Text.Json.JsonSerializer.Serialize(requestData);
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
-
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessTokenReceived);
                 client.DefaultRequestHeaders.Add("X-DIGIKEY-Client-Id", clientId);
-
                 txtLog.AppendText("Sending search request...\n");
                 txtLog.AppendText($"Request URL: {apiUrl}\n");
                 txtLog.AppendText($"Request Data: {jsonRequest}\n");
-
                 HttpResponseMessage response = null;
                 try
                 {
@@ -3373,7 +3284,6 @@ namespace WH_Panel
                     txtLog.AppendText($"Response Content: {errorContent}\n");
                     return;
                 }
-
                 string jsonResponse;
                 try
                 {
@@ -3386,7 +3296,6 @@ namespace WH_Panel
                     txtLog.AppendText($"Error reading response: {ex.Message}\n");
                     return;
                 }
-
                 KeywordResponse keywordResponse;
                 try
                 {
@@ -3398,14 +3307,12 @@ namespace WH_Panel
                     txtLog.AppendText($"Error deserializing response: {ex.Message}\n");
                     return;
                 }
-
                 // Map to simplified products
                 var simplifiedProducts = keywordResponse.ExactMatches.Select(p => new
                 {
                     Description = p.Description.ProductDescription,
                     Manufacturer = p.Manufacturer.Name
                 }).ToList();
-
                 // Log the contents of the simplified products list
                 txtLog.AppendText($"Products Count: {simplifiedProducts.Count}\n");
                 foreach (var product in simplifiedProducts)
@@ -3416,7 +3323,6 @@ namespace WH_Panel
                 }
             }
         }
-
         private async Task<string> GetAccessTokenAsync(string clientId, string clientSecret)
         {
             string tokenUrl = "https://api.digikey.com/v1/oauth2/token";
@@ -3426,67 +3332,55 @@ namespace WH_Panel
         { "client_secret", clientSecret },
         { "grant_type", "client_credentials" }
     };
-
             using (HttpClient client = new HttpClient())
             {
                 var requestContent = new FormUrlEncodedContent(requestBody);
                 HttpResponseMessage response = await client.PostAsync(tokenUrl, requestContent);
                 response.EnsureSuccessStatusCode();
-
                 string responseBody = await response.Content.ReadAsStringAsync();
                 var tokenResponse = System.Text.Json.JsonSerializer.Deserialize<TokenResponse>(responseBody);
                 return tokenResponse.access_token;
             }
         }
-
         public class KeywordResponse
         {
             public List<Product> ExactMatches { get; set; }
         }
-
         public class Product
         {
             public Description Description { get; set; }
             public Manufacturer Manufacturer { get; set; }
         }
-
         public class Description
         {
             public string ProductDescription { get; set; }
             public string DetailedDescription { get; set; }
         }
-
         public class Manufacturer
         {
             public string Name { get; set; }
         }
-
         public class TokenResponse
         {
             public string access_token { get; set; }
             public int expires_in { get; set; }
             public string token_type { get; set; }
         }
-
         private async void btnAVL_Click(object sender, EventArgs e)
         {
             string selectedPrefix = txtbPrefix.Text.Trim();
             var prefixExceptions = new List<string> { "Flr", "666", "400", "450", "500", "501", "550", "600", "650", "Main", "Outl", "Trn","MRB" };
-
             // Check if the selected prefix is valid
             if (prefixExceptions.Contains(selectedPrefix))
             {
                 MessageBox.Show($"The prefix '{selectedPrefix}' is not valid for AVL.", "Invalid Prefix", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
             // Change the button text to include the prefix
             btnAVL.Text = $"{selectedPrefix} AVL";
-
             // Make the API call to fetch the data
             string apiUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PARTNAME eq '{selectedPrefix}_*'";
             List<PartMnfOne> partMnfOnes = new List<PartMnfOne>();
-
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -3495,7 +3389,6 @@ namespace WH_Panel
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                     HttpResponseMessage response = await client.GetAsync(apiUrl);
                     response.EnsureSuccessStatusCode();
                     string responseBody = await response.Content.ReadAsStringAsync();
@@ -3513,16 +3406,12 @@ namespace WH_Panel
                     return;
                 }
             }
-
             // Generate HTML report
             txtLog.AppendText($"Generating HTML report for {selectedPrefix} AVL\n");
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
             string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\{selectedPrefix}_AVLReport_{_fileTimeStamp}.html";
-
             List<PartMnfOne> orderedbyIPN = partMnfOnes.OrderBy(x => x.PARTNAME).ToList();
-
             GenerateHTMLFromPartMnfOneList(filename, orderedbyIPN, $"{selectedPrefix} AVL Report {_fileTimeStamp}");
-
             // Open the file in default browser
             var p = new Process();
             p.StartInfo = new ProcessStartInfo(filename)
@@ -3531,7 +3420,6 @@ namespace WH_Panel
             };
             p.Start();
         }
-
         private void GenerateHTMLFromPartMnfOneList(string filename, List<PartMnfOne> partMnfOnes, string reportTitle)
         {
             using (StreamWriter writer = new StreamWriter(filename))
@@ -3637,7 +3525,6 @@ namespace WH_Panel
                 writer.WriteLine("<th onclick='sortTable(2, false)'>Description</th>");
                 writer.WriteLine("<th onclick='sortTable(4, false)'>Manufacturer</th>");
                 writer.WriteLine("</tr>");
-
                 // Add table rows
                 foreach (var partMnfOne in partMnfOnes)
                 {
@@ -3648,18 +3535,15 @@ namespace WH_Panel
                     writer.WriteLine($"<td>{partMnfOne.MNFDES}</td>");
                     writer.WriteLine("</tr>");
                 }
-
                 writer.WriteLine("</table>");
                 writer.WriteLine("</body>");
                 writer.WriteLine("</html>");
             }
         }
-
         public class PartMnfOneApiResponse
         {
             public List<PartMnfOne> value { get; set; }
         }
-
         public class PartMnfOne
         {
             public string PARTNAME { get; set; }
@@ -3667,12 +3551,10 @@ namespace WH_Panel
             public string PARTDES { get; set; }
             public string MNFDES { get; set; }
         }
-
         private void txtbPrefix_TextChanged(object sender, EventArgs e)
         {
             string selectedPrefix = txtbPrefix.Text.Trim();
             var prefixExceptions = new List<string> { "Flr", "666", "400", "450", "500", "501", "550", "600", "650", "Main", "Outl", "Trn" ,"MRB"};
-
             // Check if the selected prefix is valid
             if (prefixExceptions.Contains(selectedPrefix))
             {
@@ -3682,7 +3564,6 @@ namespace WH_Panel
                 // Change the button text to include the prefix
                 btnAVL.Text = $"{selectedPrefix} AVL";
             }
-              
         }
     }
 }
