@@ -48,7 +48,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Exception = System.Exception;
 using static WH_Panel.FrmPriorityAPI;
-
 namespace WH_Panel
 {
     public partial class FrmClientAgnosticWH : Form
@@ -82,7 +81,6 @@ namespace WH_Panel
                 {
                     stockButton.Click += (sender, e) => MessageBox.Show("SQL Managment Studio only");
                 }
-
                 stockButton.Top = 15; // Adjust the top position as needed
                 stockButton.Left = 5; // Adjust the left position as needed
                 //stockButton.Width = 66;
@@ -94,7 +92,6 @@ namespace WH_Panel
                     stockButton.Width = 140;
                     stockButton.Height = 50;
                 }
-
                 Button avlButton = new Button();
                 //avlButton.Text = "Open AVL File";
                 if (warehouse.sqlAvl == string.Empty)
@@ -105,7 +102,6 @@ namespace WH_Panel
                 {
                     avlButton.Click += (sender, e) => MessageBox.Show("SQL Managment Studio only");
                 }
-
                 avlButton.Top = stockButton.Bottom + 2; // Adjust the top position as needed
                 avlButton.Left = 5;
                 string avlImagePath = Path.Combine(Application.StartupPath, "Resources", "AVL.png");
@@ -262,11 +258,8 @@ namespace WH_Panel
                     // Set the image in PictureBox based on the selected warehouse
                     pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
                     pictureBox1.Image = Image.FromFile(w.clLogo);
-
-
                     if (w.sqlAvl != string.Empty && w.sqlStock != string.Empty)
                     {
-
                         avlFile = w.sqlAvl;
                         stockFile = w.sqlStock;
                         //MasterReload(avlFile, stockFile);
@@ -298,10 +291,8 @@ namespace WH_Panel
             {
                 DataLoaderAVL(avlFile, "AVL");
             }
-
             PopulateAVLGridView();
         }
-
         private void DataLoaderAVLSql(string fp)
         {
             // Connection string for SQL Server Express
@@ -309,14 +300,12 @@ namespace WH_Panel
             try
             {
                 avlItems.Clear();
-
                 // Load AVL table into avlItems list
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
                     SqlCommand command = new SqlCommand("SELECT * FROM AVL", connection);
                     SqlDataReader reader = command.ExecuteReader();
-
                     while (reader.Read())
                     {
                         WHitem abc = new WHitem
@@ -344,14 +333,12 @@ namespace WH_Panel
                     }
                     reader.Close();
                 }
-
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error loading AVL items: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         private void DataLoaderAVL(string fp, string thesheetName)
         {
             try
@@ -454,16 +441,12 @@ namespace WH_Panel
             }
             try
             {
-
-
                 DataView dv = avlDTable.DefaultView;
                 //dv.RowFilter = "[IPN] LIKE '%" + searchByIPN.ToString() +
                 //    "%' AND [MFPN] LIKE '%" + searchbyMFPN.ToString() +
                 //    "%' AND [DESCRIPTION] LIKE '%" + txtbFiltAVLbyDESCR.Text.ToString() +
                 //    "%'";
-
                 StringBuilder filterQuery = new StringBuilder();
-
                 if (!string.IsNullOrEmpty(textBox1.Text))
                     filterQuery.Append("[IPN] LIKE '%" + textBox1.Text + "%' AND ");
                 if (!string.IsNullOrEmpty(textBox2.Text))
@@ -478,7 +461,6 @@ namespace WH_Panel
                         filterQuery.Append("[Description] LIKE '%" + term + "%' AND ");
                     }
                 }
-
                 if (filterQuery.Length > 0)
                 {
                     filterQuery.Remove(filterQuery.Length - 5, 5); // Remove the extra 'AND' at the end
@@ -488,8 +470,6 @@ namespace WH_Panel
                 {
                     dv.RowFilter = string.Empty; // No filter applied
                 }
-
-
                 dataGridView2.DataSource = dv;
                 SetColumsOrder();
             }
@@ -617,7 +597,6 @@ namespace WH_Panel
         {
             if (Environment.MachineName == "RT13" || Environment.MachineName == "RT12" || Environment.MachineName == "RT1" || Environment.MachineName == "RT19")
             {
-
                 //int qty = 0;
                 string sorce_req = string.Empty;
                 if (radioButton1.Checked == true)
@@ -666,7 +645,6 @@ namespace WH_Panel
                                     textBox6.Focus();
                                 }
                             }
-
                             else
                             {
                                 inQty = (string)textBox6.Text;
@@ -812,11 +790,7 @@ namespace WH_Panel
                         textBox9.Focus();
                     }
                 }
-
-
-
             }
-
         }
         private void ComeBackFromPrint()
         {
@@ -837,7 +811,6 @@ namespace WH_Panel
                 Comments = comboBox1.Text,
                 Source_Requester = sorce_req
             };
-
             if (isSql)
             {
                 DataInserterSql(stockFile, inputWHitem, toPrint);
@@ -846,14 +819,11 @@ namespace WH_Panel
             {
                 DataInserter(stockFile, "STOCK", inputWHitem, toPrint);
             }
-
-
             stockItems.Add(inputWHitem);
             textBox10.Text = inputWHitem.IPN;
             textBox10.BackColor = Color.LightGreen;
             PopulateStockView();
         }
-
         private void DataInserterSql(string fp, WHitem wHitem, bool toPrintOrNotToPrint)
         {
             bool toPrint = toPrintOrNotToPrint;
@@ -890,9 +860,6 @@ namespace WH_Panel
                 MessageBox.Show("Error");
             }
         }
-
-
-
         private void DataInserter(string fp, string thesheetName, WHitem wHitem, bool toPrintOrNotToPrint)
         {
             bool toPrint = toPrintOrNotToPrint;
@@ -956,10 +923,6 @@ namespace WH_Panel
                         conn.Close();
                     }
                 }
-
-
-
-
                 if (toPrintOrNotToPrint)
                 {
                     printStickerSplitter(wHitem);
@@ -1005,7 +968,6 @@ namespace WH_Panel
             {
                 string userName = Environment.UserName;
                 string fpst = @"C:\\Users\\" + userName + "\\Desktop\\Print_Stickers.xlsx";
-
                 string thesheetName = "Sheet1";
                 string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fpst + "; Extended Properties=\"Excel 12.0;HDR=YES;IMEX=0\"";
                 OleDbConnection conn = new OleDbConnection(constr);
@@ -1013,20 +975,16 @@ namespace WH_Panel
                 cmd.Connection = conn;
                 cmd.CommandType = CommandType.Text;
                 cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @Updated_on";
-
                 cmd.Parameters.AddWithValue("@PN", wHitem.IPN);
                 cmd.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
                 cmd.Parameters.AddWithValue("@ItemDesc", wHitem.Description);
                 cmd.Parameters.AddWithValue("@QTY", wHitem.Stock);
                 cmd.Parameters.AddWithValue("@Updated_on", wHitem.Updated_on);
-
                 conn.Open();
                 cmd.ExecuteNonQuery();
                 conn.Close();
-
                 // Switch to English keyboard layout (you can adjust the culture code as needed)
                 InputLanguage.CurrentInputLanguage = InputLanguage.FromCulture(new System.Globalization.CultureInfo("en-US"));
-
                 Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
                 SendKeys.SendWait("^p");
                 SendKeys.SendWait("{Enter}");
@@ -1069,7 +1027,6 @@ namespace WH_Panel
                 {
                     Thread.Sleep(500);
                 }
-
                 SendKeys.SendWait("^p");
                 if (Environment.UserName == "rbtwh")
                 {
@@ -1179,26 +1136,19 @@ namespace WH_Panel
                 dataGridView2.Focus();
             }
         }
-
-
         private void StockViewDataLoaderSql(string fp)
         {
             stockItems.Clear();
             // Connection string for SQL Server Express
             string connectionString = fp;
-
             try
             {
                 // Load STOCK table into dataGridView1
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-
-
                     SqlDataAdapter adapterStock = new SqlDataAdapter("SELECT * FROM STOCK", connection);
-
                     DataTable stockTable = new DataTable();
                     adapterStock.Fill(stockTable);
-
                     foreach (DataRow row in stockTable.Rows)
                     {
                         WHitem item = new WHitem
@@ -1212,7 +1162,6 @@ namespace WH_Panel
                             Comments = row["Comments"].ToString(),
                             Source_Requester = row["Source_Requester"].ToString()
                         };
-
                         stockItems.Add(item);
                     }
                 }
@@ -1221,7 +1170,6 @@ namespace WH_Panel
             {
                  MessageBox.Show($"Error loading STOCK table: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
             // Update UI elements
             countStockItems = stockItems.Count;
             button3.Text = "Rows in STOCK: " + countStockItems.ToString();
@@ -1229,15 +1177,9 @@ namespace WH_Panel
             {
                 button3.Update();
             }
-
             textBox1.Focus();
             LastInputFromUser = textBox1;
         }
-
-
-
-
-
         private void StockViewDataLoader(string fp, string thesheetName)
         {
             try
@@ -1265,8 +1207,6 @@ namespace WH_Panel
                                 {
                                     toStk = 0;
                                 }
-
-
                                 WHitem abc = new WHitem
                                 {
                                     IPN = reader["IPN"].ToString(),
@@ -1278,7 +1218,6 @@ namespace WH_Panel
                                     Comments = reader["Comments"].ToString(),
                                     Source_Requester = reader["Source_Requester"].ToString()
                                 };
-
                                 countStockItems = iStock;
                                 button3.Text = "Rows in STOCK: " + (countStockItems).ToString();
                                 if (countStockItems % 1000 == 0)
@@ -1313,10 +1252,8 @@ namespace WH_Panel
             dataGridView1.DataSource = null;
             button3.Text = "LOAD STOCK";
             button3.Update();
-
             if (isSql)
             {
-
                 StockViewDataLoaderSql(stockFile);
                 PopulateStockView();
             }
@@ -1325,16 +1262,10 @@ namespace WH_Panel
                 StockViewDataLoader(stockFile, "STOCK");
                 PopulateStockView();
             }
-
-
-
         }
-
-
         private void PopulateStockView()
         {
             dataGridView1.DataSource = null;
-
             IEnumerable<WHitem> data = stockItems;
             stockDTable.Clear();
             using (var reader = ObjectReader.Create(data))
@@ -1355,7 +1286,6 @@ namespace WH_Panel
             dataGridView1.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dataGridView1.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dataGridView1.Columns[7].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-
             dataGridView1.Columns["IPN"].DisplayIndex = 0;
             dataGridView1.Columns["Manufacturer"].DisplayIndex = 1;
             dataGridView1.Columns["MFPN"].DisplayIndex = 2;
@@ -1461,7 +1391,6 @@ namespace WH_Panel
                     Source_Requester = dataGridView1.Rows[i].Cells[dataGridView1.Columns["Source_Requester"].Index].Value.ToString()
                 };
                 inWHstock.Add(wHitemABC);
-
                 inWHstock.OrderBy(x => x.Updated_on).ToList();
             }
             List<WHitem> negatiVEQTYs = new List<WHitem>();
@@ -2450,17 +2379,13 @@ namespace WH_Panel
                     Source_Requester = dataGridView1.Rows[rowindex].Cells[dataGridView1.Columns["Source_Requester"].Index].Value.ToString()
                 };
                 ContextMenuStrip contextMenu = new ContextMenuStrip();
-
                 List<string> list = new List<string>();
-
                 foreach (string option in comboBox1.Items)
                 {
                     list.Add(option);
                 }
                 list.Add("UPDATE Source_Requester");
                 list.Add("DELETE");
-
-
                 foreach (string option in list)
                 {
                     ToolStripMenuItem item = new ToolStripMenuItem(option);
@@ -2468,12 +2393,10 @@ namespace WH_Panel
                     {
                         ToolStripMenuItem clickedItem = (ToolStripMenuItem)sender;
                         string newComments = clickedItem.Text;
-
                         if (newComments == "DELETE")
                         {
                             // Show a confirmation message box before applying the changes
                             // DialogResult dialogResult = MessageBox.Show($"DELETE the {wHitemABCD.IPN} {wHitemABCD.MFPN} {wHitemABCD.Description} {wHitemABCD.Stock} {wHitemABCD.Updated_on} {wHitemABCD.Source_Requester}?", "Confirmation", MessageBoxButtons.YesNo);
-
                             //                            DialogResult dialogResult = MessageBox.Show(
                             //    $"DELETE ? \n IPN: {wHitemABCD.IPN}\n MFPN: {wHitemABCD.MFPN}\n Description: {wHitemABCD.Description}\n Stock: {wHitemABCD.Stock}\n Updated_on: {wHitemABCD.Updated_on}\n Source_Requester: {wHitemABCD.Source_Requester}",
                             //    "Confirmation", $"DELETE {wHitemABCD.IPN}",
@@ -2485,19 +2408,14 @@ namespace WH_Panel
                                 MessageBoxButtons.YesNo,
                                 MessageBoxIcon.Stop
                             );
-
-
-
                             if (dialogResult == DialogResult.Yes)
                             {
                                 string selectedWarehouseName = comboBox3.SelectedItem.ToString(); // Get the selected name from ComboBox1
-
                                 // Assuming warehouses is a collection of Warehouse objects
                                 string fp = warehouses
                                     .Where(w => w.clName == selectedWarehouseName) // Filter warehouses by selected name
                                     .Select(w => w.sqlStock)
                                     .FirstOrDefault(); // Use FirstOrDefault() instead of First() to handle the case where no warehouse matches the selected name
-
                                 string constr = fp;
                                 using (SqlConnection conn = new SqlConnection(constr))
                                 {
@@ -2516,7 +2434,6 @@ namespace WH_Panel
                                 MessageBox.Show($"{wHitemABCD.IPN} {wHitemABCD.Stock} PCS  deleted");
                                 button3_Click(button3, EventArgs.Empty);
                                 textBox1.Text = wHitemABCD.IPN;
-
                             }
                         }
                         //else if (newComments == "UPDATE Source_Requester")
@@ -2527,18 +2444,14 @@ namespace WH_Panel
                         //      MessageBoxButtons.YesNo,
                         //      MessageBoxIcon.Stop
                         //  );
-
-
                         //    if (dialogResult == DialogResult.Yes)
                         //    {
                         //        string selectedWarehouseName = comboBox3.SelectedItem.ToString(); // Get the selected name from ComboBox1
-
                         //        // Assuming warehouses is a collection of Warehouse objects
                         //        string fp = warehouses
                         //            .Where(w => w.clName == selectedWarehouseName) // Filter warehouses by selected name
                         //            .Select(w => w.sqlStock)
                         //            .FirstOrDefault(); // Use FirstOrDefault() instead of First() to handle the case where no warehouse matches the selected name
-
                         //        string constr = fp;
                         //        using (SqlConnection conn = new SqlConnection(constr))
                         //        {
@@ -2557,14 +2470,11 @@ namespace WH_Panel
                         //        MessageBox.Show($"{wHitemABCD.IPN} {wHitemABCD.Stock} PCS Source_Requester value UPDATED");
                         //        button3_Click(button3, EventArgs.Empty);
                         //        textBox1.Text = wHitemABCD.IPN;
-
                         //    }
                         //    else
                         //    {
-
                         //    }
                         //}
-
                         else if (newComments == "UPDATE Source_Requester")
                         {
                             DialogResult dialogResult = MessageBox.Show(
@@ -2573,22 +2483,18 @@ namespace WH_Panel
                                 MessageBoxButtons.YesNo,
                                 MessageBoxIcon.Stop
                             );
-
                             if (dialogResult == DialogResult.Yes)
                             {
                                 string selectedWarehouseName = comboBox3.SelectedItem.ToString(); // Get the selected name from ComboBox3
-
                                 // Assuming warehouses is a collection of Warehouse objects
                                 string fp = warehouses
                                     .Where(w => w.clName == selectedWarehouseName) // Filter warehouses by selected name
                                     .Select(w => w.sqlStock)
                                     .FirstOrDefault(); // Use FirstOrDefault() to handle the case where no warehouse matches the selected name
-
                                 string constr = fp;
                                 using (SqlConnection conn = new SqlConnection(constr))
                                 {
                                     conn.Open();
-
                                     // Corrected SQL Command Syntax
                                     string sqlCommandText = @"
                 UPDATE [STOCK] 
@@ -2599,7 +2505,6 @@ namespace WH_Panel
                 AND Description = @Description 
                 AND Stock = @Stock 
                 AND Updated_on = @Updated_on";
-
                                     using (SqlCommand command = new SqlCommand(sqlCommandText, conn))
                                     {
                                         command.Parameters.AddWithValue("@currentComments", currentComments);
@@ -2609,19 +2514,14 @@ namespace WH_Panel
                                         command.Parameters.AddWithValue("@Stock", wHitemABCD.Stock);
                                         command.Parameters.AddWithValue("@Updated_on", wHitemABCD.Updated_on);
                                         command.Parameters.AddWithValue("@Source_Requester", textBox8.Text);
-
                                         command.ExecuteNonQuery();
                                     }
                                 }
-
                                 MessageBox.Show($"{wHitemABCD.IPN} {wHitemABCD.Stock} PCS Source_Requester value UPDATED");
                                 button3_Click(button3, EventArgs.Empty);
                                 textBox1.Text = wHitemABCD.IPN;
                             }
                         }
-
-
-
                         else
                         {
                             // Show a confirmation message box before applying the changes
@@ -2630,11 +2530,8 @@ namespace WH_Panel
                             {
                                 selectedRow.Cells["Comments"].Value = newComments;
                                 DataUpdater(stockFile, "STOCK", currentComments, wHitemABCD, newComments);
-
-
                             }
                         }
-
                     };
                     contextMenu.Items.Add(item);
                 }
@@ -2647,7 +2544,6 @@ namespace WH_Panel
             //AND Manufacturer = @Manufacturer
             try
             {
-
                 if (isSql)
                 {
                     string constr = fp;
@@ -2687,7 +2583,6 @@ namespace WH_Panel
                         conn.Close();
                     }
                 }
-
                 // Update the UI or perform any necessary actions after the update
             }
             catch (IOException)
@@ -2772,17 +2667,17 @@ namespace WH_Panel
                             }
                         }
                     }
-                    void OpenExcelFile(string filePath)
-                    {
-                        try
-                        {
-                            System.Diagnostics.Process.Start(filePath);
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show($"Error opening Excel file: {ex.Message}");
-                        }
-                    }
+                    //void OpenExcelFile(string filePath)
+                    //{
+                    //    try
+                    //    {
+                    //        System.Diagnostics.Process.Start(filePath);
+                    //    }
+                    //    catch (Exception ex)
+                    //    {
+                    //        MessageBox.Show($"Error opening Excel file: {ex.Message}");
+                    //    }
+                    //}
                     // Helper method to check if the sheet name is valid
                     bool IsValidSheet(string sheetName)
                     {
@@ -2841,7 +2736,6 @@ namespace WH_Panel
                     //            message += $"IPN: {item.IPN}, Manufacturer: {item.Manufacturer}, MFPN: {item.MFPN}, Description: {item.Description}\n\n";
                     //        }
                     //        MessageBox.Show(message);
-
                     //        // Call the function to add new items to the database
                     //        AddNewItemsToAVL(currentAvl, uniqueMFPNItems);
                     //    }
@@ -2856,12 +2750,10 @@ namespace WH_Panel
                         var uniqueMFPNItems = ItemsToAddToAvl
                             .Where(newItem => !avlItems.Any(existingItem => existingItem.MFPN == newItem.MFPN))
                             .ToList();
-
                         // Find items with the same MFPN but different IPN
                         var duplicateMFPNItems = ItemsToAddToAvl
                             .Where(newItem => avlItems.Any(existingItem => existingItem.MFPN == newItem.MFPN && existingItem.IPN != newItem.IPN))
                             .ToList();
-
                         // Handle unique MFPN items
                         if (uniqueMFPNItems.Count > 0)
                         {
@@ -2871,7 +2763,6 @@ namespace WH_Panel
                                 message += $"IPN: {item.IPN}, Manufacturer: {item.Manufacturer}, MFPN: {item.MFPN}, Description: {item.Description}\n\n";
                             }
                             MessageBox.Show(message);
-
                             // Call the function to add new items to the database
                             AddNewItemsToAVL(currentAvl, uniqueMFPNItems);
                         }
@@ -2879,7 +2770,6 @@ namespace WH_Panel
                         {
                             MessageBox.Show("No unique items found.");
                         }
-
                         // Handle duplicate MFPN items
                         if (duplicateMFPNItems.Count > 0)
                         {
@@ -2888,7 +2778,6 @@ namespace WH_Panel
                             {
                                 message += $"IPN: {item.IPN}, Manufacturer: {item.Manufacturer}, MFPN: {item.MFPN}, Description: {item.Description}\n\n";
                             }
-
                             // Ask for user confirmation
                             DialogResult result = MessageBox.Show(message + "Do you want to add these items to the database?", "Confirmation", MessageBoxButtons.YesNo);
                             if (result == DialogResult.Yes)
@@ -2898,7 +2787,6 @@ namespace WH_Panel
                             }
                         }
                     }
-
                 }
             }
         }
@@ -2979,7 +2867,6 @@ namespace WH_Panel
                         button2.PerformClick();
                     }
                 }
-
             }
             catch (Exception ex)
             {
@@ -3112,20 +2999,16 @@ namespace WH_Panel
                 if (e.Button == MouseButtons.Right)
                 {
                     int rowIndex = dataGridView2.HitTest(e.X, e.Y).RowIndex;
-
                     if (rowIndex >= 0)
                     {
                         // Create a new WHitem object
                         WHitem avlItem = new WHitem();
-
                         DataGridViewRow selectedRow = dataGridView2.Rows[rowIndex];
-
                         // Loop through each cell in the row
                         foreach (DataGridViewCell cell in selectedRow.Cells)
                         {
                             // Get the column name of the current cell
                             string columnName = dataGridView2.Columns[cell.ColumnIndex].Name;
-
                             // Populate WHitem object based on column name
                             switch (columnName)
                             {
@@ -3152,21 +3035,16 @@ namespace WH_Panel
                             $"Description: {avlItem.Description}\n" +
                             $"Manufacturer: {avlItem.Manufacturer}\n"
                         );
-
                         DialogResult result = customDialog.ShowDialog();
-
                         if (result == DialogResult.Yes)
                         {
                             // Continue with your existing logic for deletion
-
                             string selectedWarehouseName = comboBox3.SelectedItem.ToString(); // Get the selected name from ComboBox1
-
                             // Assuming warehouses is a collection of Warehouse objects
                             string fp = warehouses
                                 .Where(w => w.clName == selectedWarehouseName) // Filter warehouses by selected name
                                 .Select(w => w.sqlAvl)
                                 .FirstOrDefault(); // Use FirstOrDefault() instead of First() to handle the case where no warehouse matches the selected name
-
                             string constr = fp;
                             using (SqlConnection conn = new SqlConnection(constr))
                             {
@@ -3176,7 +3054,6 @@ namespace WH_Panel
                                 command.Parameters.AddWithValue("@MFPN", avlItem.MFPN);
                                 command.Parameters.AddWithValue("@Description", avlItem.Description);
                                 command.Parameters.AddWithValue("@Manufacturer", avlItem.Manufacturer);
-
                                 command.ExecuteNonQuery();
                                 conn.Close();
                             }
@@ -3194,23 +3071,19 @@ namespace WH_Panel
             saveFileDialog.Filter = "Excel Files|*.xls;*.xlsx";
             saveFileDialog.Title = "Save as Excel File";
             saveFileDialog.FileName = "AVL_" + comboBox3.SelectedItem.ToString() + ".xlsx";
-
             // Show SaveFileDialog and check if the user clicked Save
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 // Create Excel application instance
                 Excel.Application excelApp = new Excel.Application();
                 excelApp.Workbooks.Add();
-
                 // Get active worksheet
                 Excel._Worksheet workSheet = (Excel._Worksheet)excelApp.ActiveSheet;
-
                 // Export column headers to Excel
                 for (int i = 0; i < dataGridView2.Columns.Count; i++)
                 {
                     workSheet.Cells[1, i + 1] = dataGridView2.Columns[i].HeaderText;
                 }
-
                 // Export data to Excel
                 for (int i = 0; i < dataGridView2.Rows.Count; i++)
                 {
@@ -3219,23 +3092,17 @@ namespace WH_Panel
                         workSheet.Cells[i + 2, j + 1] = dataGridView2.Rows[i].Cells[j].Value?.ToString();
                     }
                 }
-
                 // Save the file
                 workSheet.SaveAs(saveFileDialog.FileName);
-
                 // Close Excel application
                 excelApp.Quit();
-
                 MessageBox.Show("Data Exported Successfully", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
-
         private void button1_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
-
-
                 string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
                 string filename = @"\\dbr1\Data\WareHouse\2025\WHsearcher\" + fileTimeStamp + "_AVL" + ".html";
                 using (StreamWriter writer = new StreamWriter(filename))
@@ -3259,7 +3126,6 @@ namespace WH_Panel
                     //       : "";
                     //}
                     writer.WriteLine("<td>" + comboBox3.SelectedItem.ToString() + " AVL UPDATED " + fileTimeStamp + " selected " + dataGridView2.RowCount + " items</td>");
-
                     writer.WriteLine("</tr>");
                     writer.WriteLine("<tr style='text-align:center'>");
                     // Set column order and autosize mode
@@ -3313,55 +3179,42 @@ namespace WH_Panel
                     UseShellExecute = true
                 };
                 process.Start();
-
             }
         }
-
         private void label15_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             try
             {
-
                 txtbFiltAVLbyDESCR.Text = textBox5.Text;
                 textBox1.Clear();
-
             }
             catch (Exception)
             {
                 MessageBox.Show("Incorrect search pattern, remove invalid character and try again!");
             }
         }
-
         //private void button5_Click(object sender, EventArgs e)
         //{
         //    string MFPNtosearchInApi = textBox4.Text;
-
         //    // Configure ChromeDriver options
         //    ChromeOptions options = new ChromeOptions();
         //   options.AddArgument("--start-maximized"); // Start the browser maximized
-
         //    // Configure ChromeDriver service
         //    ChromeDriverService service = ChromeDriverService.CreateDefaultService();
         //    service.HideCommandPromptWindow = true; // Hide the command prompt window
-
         //    // Initialize the ChromeDriver with options and service
         //    IWebDriver driver = new ChromeDriver(service,options);
-
         //    try
         //    {
         //        // Navigate to the web app
         //        driver.Navigate().GoToUrl("http://192.168.69.37/");
-
         //        // Wait for the page to load completely
         //        WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
         //        wait.Until(d => d.FindElement(By.Id("searchText")));
-
         //        // Find the search field element by its ID
         //        IWebElement searchField = driver.FindElement(By.Id("searchText"));
-
         //        // Enter the MFPNtosearchInApi value into the search field
         //        searchField.SendKeys(MFPNtosearchInApi);
-
         //        // Press ENTER
         //        searchField.SendKeys(OpenQA.Selenium.Keys.Enter);
         //    }
@@ -3387,33 +3240,25 @@ namespace WH_Panel
                 {
                     // Left-click functionality
                     string MFPNtosearchInApi = textBox4.Text;
-
                     // Configure ChromeDriver options
                     ChromeOptions options = new ChromeOptions();
                     options.AddArgument("--start-maximized"); // Start the browser maximized
-
                     // Configure ChromeDriver service
                     ChromeDriverService service = ChromeDriverService.CreateDefaultService();
                     service.HideCommandPromptWindow = true; // Hide the command prompt window
-
                     // Initialize the ChromeDriver with options and service
                     IWebDriver driver = new ChromeDriver(service, options);
-
                     try
                     {
                         // Navigate to the web app
                         driver.Navigate().GoToUrl("http://192.168.69.37/");
-
                         // Wait for the page to load completely
                         WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
                         wait.Until(d => d.FindElement(By.Id("searchText")));
-
                         // Find the search field element by its ID
                         IWebElement searchField = driver.FindElement(By.Id("searchText"));
-
                         // Enter the MFPNtosearchInApi value into the search field
                         searchField.SendKeys(MFPNtosearchInApi);
-
                         // Press ENTER
                         searchField.SendKeys(OpenQA.Selenium.Keys.Enter);
                     }
@@ -3439,19 +3284,16 @@ namespace WH_Panel
                 }
             }
         }
-
         //private async void UpdateManufacturerByMFPN(string mfpn)
         //{
         //    try
         //    {
         //        // Call Digikey API to get the manufacturer
         //        string manufacturer = await GetManufacturerFromDigikeyAPI(mfpn);
-
         //        if (!string.IsNullOrEmpty(manufacturer))
         //        {
         //            // Ask user to update the Manufacturer property if it is missing in the AVL
         //            DialogResult result = MessageBox.Show($"Manufacturer found: {manufacturer}\nDo you want to update the Manufacturer property?", "Update Manufacturer", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
         //            if (result == DialogResult.Yes)
         //            {
         //                // Update the Manufacturer property in the AVL
@@ -3468,14 +3310,12 @@ namespace WH_Panel
         //        MessageBox.Show($"An error occurred while updating the manufacturer: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         //    }
         //}
-
         private async Task<string> GetManufacturerFromDigikeyAPI(string mfpn)
         {
             string apiUrl = "https://api.digikey.com/products/v4/search/keyword";
             string clientId = "1V0C9rxhmIcEf28EC6ADmF9avL74IDF0"; // Replace with your actual client ID
             string clientSecret = "bbNRuLqxaxjN87AQ"; // Replace with your actual client secret
             string keyword = mfpn; // Use the MFPN as the keyword
-
             string accessTokenReceived = string.Empty;
             try
             {
@@ -3486,7 +3326,6 @@ namespace WH_Panel
                 MessageBox.Show($"Error obtaining access token: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return string.Empty;
             }
-
             var requestData = new
             {
                 Keywords = keyword,
@@ -3514,15 +3353,12 @@ namespace WH_Panel
                     SortOrder = "Ascending"
                 }
             };
-
             var jsonRequest = System.Text.Json.JsonSerializer.Serialize(requestData);
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
-
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessTokenReceived);
                 client.DefaultRequestHeaders.Add("X-DIGIKEY-Client-Id", clientId);
-
                 HttpResponseMessage response = null;
                 try
                 {
@@ -3535,7 +3371,6 @@ namespace WH_Panel
                     MessageBox.Show($"Error sending search request: {ex.Message}\nResponse Content: {errorContent}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return string.Empty;
                 }
-
                 string jsonResponse;
                 try
                 {
@@ -3546,7 +3381,6 @@ namespace WH_Panel
                     MessageBox.Show($"Error reading response: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return string.Empty;
                 }
-
                 KeywordResponse keywordResponse;
                 try
                 {
@@ -3557,7 +3391,6 @@ namespace WH_Panel
                     MessageBox.Show($"Error deserializing response: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return string.Empty;
                 }
-
                 // Map to simplified products
                 var simplifiedProducts = keywordResponse.ExactMatches.Select(p => new SimplifiedProduct
                 {
@@ -3572,12 +3405,10 @@ namespace WH_Panel
                 {
                     //MessageBox.Show("MFPN not found on Digikey");                   
                 }
-               
                 // Return the manufacturer of the first product if available
                 return simplifiedProducts.FirstOrDefault()?.Manufacturer ?? string.Empty;
             }
         }
-
         private async Task<string> GetAccessTokenAsync(string clientId, string clientSecret)
         {
             string tokenUrl = "https://api.digikey.com/v1/oauth2/token";
@@ -3587,72 +3418,59 @@ namespace WH_Panel
         { "client_secret", clientSecret },
         { "grant_type", "client_credentials" }
     };
-
             using (HttpClient client = new HttpClient())
             {
                 var requestContent = new FormUrlEncodedContent(requestBody);
                 HttpResponseMessage response = await client.PostAsync(tokenUrl, requestContent);
                 response.EnsureSuccessStatusCode();
-
                 string responseBody = await response.Content.ReadAsStringAsync();
                 var tokenResponse = System.Text.Json.JsonSerializer.Deserialize<TokenResponse>(responseBody);
                 return tokenResponse.access_token;
             }
         }
-
         public class KeywordResponse
         {
             public List<Product> ExactMatches { get; set; }
         }
-
         public class Product
         {
             public Description Description { get; set; }
             public Manufacturer Manufacturer { get; set; }
         }
-
         public class Description
         {
             public string ProductDescription { get; set; }
             public string DetailedDescription { get; set; }
         }
-
         public class Manufacturer
         {
             public string Name { get; set; }
         }
-
         public class SimplifiedProduct
         {
             public string Description { get; set; }
             public string Manufacturer { get; set; }
         }
-
         public class TokenResponse
         {
             public string access_token { get; set; }
             public int expires_in { get; set; }
             public string token_type { get; set; }
         }
-
-
         private async void UpdateManufacturerByMFPN(string mfpn)
         {
             try
             {
                 // Call Digikey API to get the manufacturer
                 string manufacturer = await GetManufacturerFromDigikeyAPI(mfpn);
-
                 if (!string.IsNullOrEmpty(manufacturer))
                 {
                     // Ask user to update the Manufacturer property if it is missing in the AVL
                     DialogResult result = MessageBox.Show($"Manufacturer found: {manufacturer}\nDo you want to update the Manufacturer property?", "Update Manufacturer", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
                     if (result == DialogResult.Yes)
                     {
                         // First, perform a select query to test the connection and ensure the record exists
                         //SelectManufacturerInAVL(mfpn, manufacturer, avlFile);
-
                         // If the record exists, update the Manufacturer property in the AVL
                         UpdateManufacturerInAVL(mfpn, manufacturer, avlFile);
                     }
@@ -3681,13 +3499,11 @@ namespace WH_Panel
                     command.Parameters.AddWithValue("@IPN", textBox3.Text);
                     command.Parameters.AddWithValue("@MFPN", textBox4.Text);
                     command.Parameters.AddWithValue("@Description", textBox5.Text);
-
                     int rowsAffected = command.ExecuteNonQuery();
                     if (rowsAffected > 0)
                     {
                         MessageBox.Show($"Manufacturer for IPN {textBox3.Text} , MFPN {mfpn} updated to {manufacturer.ToUpper()} in the AVL.", "Update Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         button2.PerformClick();
-
                     }
                     else
                     {
@@ -3700,7 +3516,6 @@ namespace WH_Panel
                 MessageBox.Show($"Error updating record: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         private void SelectManufacturerInAVL(string mfpn, string manufacturer, string _avlFile)
         {
             string connectionString = _avlFile;
@@ -3714,7 +3529,6 @@ namespace WH_Panel
                     command.Parameters.AddWithValue("@IPN", textBox3.Text);
                     command.Parameters.AddWithValue("@MFPN", textBox4.Text);
                     command.Parameters.AddWithValue("@Description", textBox5.Text);
-
                     SqlDataReader reader = command.ExecuteReader();
                     if (reader.HasRows)
                     {
@@ -3732,42 +3546,31 @@ namespace WH_Panel
                 MessageBox.Show($"Error selecting record: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-
-
         private void button5_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
                 // Left-click functionality
                 string MFPNtosearchInApi = textBox4.Text;
-
                 // Configure ChromeDriver options
                 ChromeOptions options = new ChromeOptions();
                 options.AddArgument("--start-maximized"); // Start the browser maximized
-
                 // Configure ChromeDriver service
                 ChromeDriverService service = ChromeDriverService.CreateDefaultService();
                 service.HideCommandPromptWindow = true; // Hide the command prompt window
-
                 // Initialize the ChromeDriver with options and service
                 IWebDriver driver = new ChromeDriver(service, options);
-
                 try
                 {
                     // Navigate to the web app
                     driver.Navigate().GoToUrl("http://192.168.69.37/");
-
                     // Wait for the page to load completely
                     WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
                     wait.Until(d => d.FindElement(By.Id("searchText")));
-
                     // Find the search field element by its ID
                     IWebElement searchField = driver.FindElement(By.Id("searchText"));
-
                     // Enter the MFPNtosearchInApi value into the search field
                     searchField.SendKeys(MFPNtosearchInApi);
-
                     // Press ENTER
                     searchField.SendKeys(OpenQA.Selenium.Keys.Enter);
                 }

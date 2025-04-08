@@ -2881,13 +2881,13 @@ namespace WH_Panel
             if (MouseButtons == MouseButtons.Right)
             {
                 btnGetMFNs.Text = "GET ALTs";
-                FetchAltsForAllRows();
+                await FetchAltsForAllRows();
                 await (Task.Delay(1000));
                 btnGetMFNs.Text = "GET MFNPs";
             }
             else if (MouseButtons == MouseButtons.Left)
             {
-                FetchMFPNsForAllRows();
+                await FetchMFPNsForAllRows();
             }
         }
         private List<DataGridViewRow> originalRows = new List<DataGridViewRow>();

@@ -26,6 +26,7 @@ namespace WH_Panel
         private DataView dataView;
         private List<Warehouse> loadedWareHouses = new List<Warehouse>();
         public AppSettings settings;
+        public string baseUrl = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522";
         public FrmPriorityPanDbSearch()
         {
             InitializeComponent();
@@ -193,7 +194,7 @@ namespace WH_Panel
         private async Task LoadWarehouseData()
         {
             AddLogRow("Loading warehouse data...", Color.Orange);
-            string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$select=WARHSNAME,WARHSDES,WARHS";
+            string url = $"{baseUrl}/WAREHOUSES?$select=WARHSNAME,WARHSDES,WARHS";
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -236,7 +237,7 @@ namespace WH_Panel
             foreach (var warehouse in loadedWareHouses)
             {
                 AddLogRow($"Loading data for warehouse: {warehouse.WARHSNAME}", Color.Orange);
-                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{warehouse.WARHSNAME}'&$expand=WARHSBAL_SUBFORM";
+                string url = $"{baseUrl}/WAREHOUSES?$filter=WARHSNAME eq '{warehouse.WARHSNAME}'&$expand=WARHSBAL_SUBFORM";
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -351,7 +352,7 @@ namespace WH_Panel
                 var selectedRow = dgwALLDATA.Rows[e.RowIndex];
                 await ExtractMFPNForRow(selectedRow);
                 var partName = selectedRow.Cells["PARTNAME"].Value.ToString();
-                string logPartUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART?$filter=PARTNAME eq '{partName}'&$expand=PARTTRANSLAST2_SUBFORM";
+                string logPartUrl = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{partName}'&$expand=PARTTRANSLAST2_SUBFORM";
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -637,7 +638,7 @@ namespace WH_Panel
         {
             var partId = (int)row.Cells["PART"].Value;
             var partName = row.Cells["PARTNAME"].Value.ToString();
-            string partUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PART eq {partId}";
+            string partUrl = $"{baseUrl}/PARTMNFONE?$filter=PART eq {partId}";
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -688,30 +689,30 @@ namespace WH_Panel
             if (logDocNo.StartsWith("GR"))
             {
                 // Handle GR documents
-                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM";
+                url = $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM";
             }
             else if (logDocNo.StartsWith("WR"))
             {
                 // Handle GR documents
-                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_T?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_T_SUBFORM";
+                url = $"{baseUrl}/DOCUMENTS_T?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_T_SUBFORM";
             }
             else if (logDocNo.StartsWith("SH"))
             {
                 // Handle GR documents
-                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_D?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_D_SUBFORM";
+                url = $"{baseUrl}/DOCUMENTS_D?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_D_SUBFORM";
             }
             else if (logDocNo.StartsWith("ROB"))
             {
-                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{logDocNo}'";
+                url = $"{baseUrl}/SERIAL?$filter=SERIALNAME eq '{logDocNo}'";
             }
             else if (logDocNo.StartsWith("IC"))
             {
-                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_C?$filter=DOCNO eq '{logDocNo}'";
+                url = $"{baseUrl}/DOCUMENTS_C?$filter=DOCNO eq '{logDocNo}'";
             }
             else
             {
                 // Handle other document types if needed
-                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM";
+                url = $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM";
             }
             results = await FetchPackCodeFromUrlAsync(url, logDocNo, partName, quant, logDocNo.StartsWith("ROB"));
             return results;
@@ -831,7 +832,7 @@ namespace WH_Panel
             if (docNo.StartsWith("ROB"))
             {
                 // Fetch UDATE from SERIAL
-                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{docNo}'";
+                string url = $"{baseUrl}/SERIAL?$filter=SERIALNAME eq '{docNo}'";
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -885,7 +886,7 @@ namespace WH_Panel
             else if (docNo.StartsWith("GR"))
             {
                 // Fetch UDATE from DOCUMENTS_P
-                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{docNo}'";
+                string url = $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{docNo}'";
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -926,7 +927,7 @@ namespace WH_Panel
             else if (docNo.StartsWith("WR"))
             {
                 // Fetch UDATE from DOCUMENTS_P
-                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_T?$filter=DOCNO eq '{docNo}'";
+                string url = $"{baseUrl}/DOCUMENTS_T?$filter=DOCNO eq '{docNo}'";
                 using (HttpClient client = new HttpClient())
                 {
                     try

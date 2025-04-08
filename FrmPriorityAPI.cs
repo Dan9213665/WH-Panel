@@ -31,10 +31,11 @@ namespace WH_Panel
         private DataView dataView;
         private ContextMenuStrip contextMenuStrip;
         private DataGridViewRow selectedRowForContextMenu; // Class-level variable to store the selected row
-        private System.Windows.Forms.Timer breathingTimer;
-        private int opacityStep = 5;
-        private int currentOpacity = 100;
-        private bool increasing = false;
+        //private System.Windows.Forms.Timer breathingTimer;
+        //private int opacityStep = 5;
+        //private int currentOpacity = 100;
+        //private bool increasing = false;
+        public static string baseUrl = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522";
         //private DataTable dataTable;
         //private DataView dataView;
         public FrmPriorityAPI()
@@ -320,9 +321,11 @@ namespace WH_Panel
                 }
             }
         }
+
+        
         public async Task PopulatePackCombobox()
         {
-            string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PACK";
+            string url = $"{baseUrl}/PACK";
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -361,7 +364,7 @@ namespace WH_Panel
         }
         public class WarehouseService
         {
-            private static readonly string baseUrl = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522";
+           // private static readonly string baseUrl = $"{baseUrl}";
             public static async Task InsertDocumentAsync(Document document, FrmPriorityAPI formInstance, AppSettings settings)
             {
                 using (HttpClient client = new HttpClient())
@@ -658,7 +661,7 @@ namespace WH_Panel
             if (e.KeyCode == Keys.Enter)
             {
                 string partName = txtbInputIPN.Text;
-                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PARTNAME eq '{partName}'";
+                string url = $"{baseUrl}/PARTMNFONE?$filter=PARTNAME eq '{partName}'";
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -834,7 +837,7 @@ namespace WH_Panel
                 lastUserInput = lastInput;
                 string mnfPartName = txtbInputMFPN.Text;
                 string encodedMnfPartName = Uri.EscapeDataString(mnfPartName); // URL-encode the MNFPARTNAME
-                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=MNFPARTNAME eq '{encodedMnfPartName}'";
+                string url = $"{baseUrl}/PARTMNFONE?$filter=MNFPARTNAME eq '{encodedMnfPartName}'";
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -902,7 +905,7 @@ namespace WH_Panel
         private async Task LoadWarehouseData()
         {
             txtLog.AppendText($"Loading warehouses list...\n");
-            string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$select=WARHSNAME,WARHSDES,WARHS";
+            string url = $"{baseUrl}/WAREHOUSES?$select=WARHSNAME,WARHSDES,WARHS";
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -960,7 +963,7 @@ namespace WH_Panel
         //        txtLog.AppendText($"Loading {cmbWarehouseList.SelectedItem} stock data ...\n");
         //        string selectedWarehouse = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
         //        string selectedWarehouseDesc = cmbWarehouseList.SelectedItem.ToString().Substring(selectedWarehouse.Length).Trim();
-        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouse}'&$expand=WARHSBAL_SUBFORM";
+        //        string url = $"{baseUrl}/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouse}'&$expand=WARHSBAL_SUBFORM";
         //        using (HttpClient client = new HttpClient())
         //        {
         //            try
@@ -1041,8 +1044,8 @@ namespace WH_Panel
                 txtLog.AppendText($"Loading {cmbWarehouseList.SelectedItem} stock data ...\n");
                 string selectedWarehouse = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
                 string selectedWarehouseDesc = cmbWarehouseList.SelectedItem.ToString().Substring(selectedWarehouse.Length).Trim();
-                string avlUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PARTNAME eq '{selectedWarehouse}_*'";
-                string balanceUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouse}'&$expand=WARHSBAL_SUBFORM";
+                string avlUrl = $"{baseUrl}/PARTMNFONE?$filter=PARTNAME eq '{selectedWarehouse}_*'";
+                string balanceUrl = $"{baseUrl}/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouse}'&$expand=WARHSBAL_SUBFORM";
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -1133,7 +1136,7 @@ namespace WH_Panel
         {
             var partId = (int)row.Cells["PART"].Value;
             var partName = row.Cells["PARTNAME"].Value.ToString();
-            string partUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PART eq {partId}";
+            string partUrl = $"{baseUrl}/PARTMNFONE?$filter=PART eq {partId}";
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -1184,7 +1187,7 @@ namespace WH_Panel
                 var selectedRow = dataGridView1.Rows[e.RowIndex];
                 await ExtractMFPNForRow(selectedRow);
                 var partName = selectedRow.Cells["PARTNAME"].Value.ToString();
-                string logPartUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART?$filter=PARTNAME eq '{partName}'&$expand=PARTTRANSLAST2_SUBFORM";
+                string logPartUrl = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{partName}'&$expand=PARTTRANSLAST2_SUBFORM";
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -1346,30 +1349,30 @@ namespace WH_Panel
             if (logDocNo.StartsWith("GR"))
             {
                 // Handle GR documents
-                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM";
+                url = $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM";
             }
             else if (logDocNo.StartsWith("WR"))
             {
                 // Handle GR documents
-                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_T?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_T_SUBFORM";
+                url = $"{baseUrl}/DOCUMENTS_T?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_T_SUBFORM";
             }
             else if (logDocNo.StartsWith("SH"))
             {
                 // Handle GR documents
-                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_D?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_D_SUBFORM";
+                url = $"{baseUrl}/DOCUMENTS_D?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_D_SUBFORM";
             }
             else if (logDocNo.StartsWith("ROB"))
             {
-                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{logDocNo}'";
+                url = $"{baseUrl}/SERIAL?$filter=SERIALNAME eq '{logDocNo}'";
             }
             else if (logDocNo.StartsWith("IC"))
             {
-                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_C?$filter=DOCNO eq '{logDocNo}'";
+                url = $"{baseUrl}/DOCUMENTS_C?$filter=DOCNO eq '{logDocNo}'";
             }
             else
             {
                 // Handle other document types if needed
-                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM";
+                url = $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM";
             }
             results = await FetchPackCodeFromUrlAsync(url, logDocNo, partName, quant, logDocNo.StartsWith("ROB"));
             return results;
@@ -1489,7 +1492,7 @@ namespace WH_Panel
             if (docNo.StartsWith("ROB"))
             {
                 // Fetch UDATE from SERIAL
-                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{docNo}'";
+                string url = $"{baseUrl}/SERIAL?$filter=SERIALNAME eq '{docNo}'";
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -1543,7 +1546,7 @@ namespace WH_Panel
             else if (docNo.StartsWith("GR"))
             {
                 // Fetch UDATE from DOCUMENTS_P
-                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{docNo}'";
+                string url = $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{docNo}'";
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -1584,7 +1587,7 @@ namespace WH_Panel
             else if (docNo.StartsWith("WR"))
             {
                 // Fetch UDATE from DOCUMENTS_P
-                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_T?$filter=DOCNO eq '{docNo}'";
+                string url = $"{baseUrl}/DOCUMENTS_T?$filter=DOCNO eq '{docNo}'";
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -1771,7 +1774,7 @@ namespace WH_Panel
         private string statusUrl { get; set; }
         private async Task UpdatePackage(string docNo, string docType, string partName, string packCode)
         {
-            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{docNo}' and TYPE eq '{docType}'&$expand=TRANSORDER_P_SUBFORM($filter=PARTNAME eq '{partName}')";
+            string url = $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{docNo}' and TYPE eq '{docType}'&$expand=TRANSORDER_P_SUBFORM($filter=PARTNAME eq '{partName}')";
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -1813,7 +1816,7 @@ namespace WH_Panel
                     string kline = transOrder["KLINE"].ToString();
                     string type = transOrder["TYPE"].ToString();
                     string trans = transOrder["TRANS"].ToString();
-                    string transOrderUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P(DOCNO='{docNo}',TYPE='{docType}')/TRANSORDER_P_SUBFORM(KLINE={kline},TYPE='{type}',TRANS={trans})";
+                    string transOrderUrl = $"{baseUrl}/DOCUMENTS_P(DOCNO='{docNo}',TYPE='{docType}')/TRANSORDER_P_SUBFORM(KLINE={kline},TYPE='{type}',TRANS={trans})";
                     txtLog.AppendText($"PATCH URL: {transOrderUrl}\n"); // Log the PATCH URL
                     // Check if the document is finalized
                     string originalStatus = document["STATDES"]?.ToString();
@@ -1823,7 +1826,7 @@ namespace WH_Panel
                         var updateStatusPayload = new { STATDES = "טיוטא" };
                         string statusPayload = JsonConvert.SerializeObject(updateStatusPayload);
                         var statusContent = new StringContent(statusPayload, Encoding.UTF8, "application/json");
-                        string statusUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P(DOCNO='{docNo}',TYPE='{docType}')";
+                        string statusUrl = $"{baseUrl}/DOCUMENTS_P(DOCNO='{docNo}',TYPE='{docType}')";
                         HttpResponseMessage statusResponse = await client.PatchAsync(statusUrl, statusContent);
                         if (!statusResponse.IsSuccessStatusCode)
                         {
@@ -1923,10 +1926,12 @@ namespace WH_Panel
                     contextMenuStrip.Show(Cursor.Position);
                 }
             }
+
+            await Task.Delay(10); // Optional delay to allow the context menu to show
         }
         private async void ShowSerialDetails(string serialName)
         {
-            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{serialName}'";
+            string url = $"{baseUrl}/SERIAL?$filter=SERIALNAME eq '{serialName}'";
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -2074,7 +2079,7 @@ namespace WH_Panel
         }
         private async Task<int> CheckIfIPNExists(string partName)
         {
-            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART?$filter=PARTNAME eq '{partName}'";
+            string url = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{partName}'";
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Accept.Clear();
@@ -2095,7 +2100,7 @@ namespace WH_Panel
         }
         private async Task<bool> CheckIfMFPNIsDifferent(int partId, string partMFPN)
         {
-            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PART eq {partId}";
+            string url = $"{baseUrl}/PARTMNFONE?$filter=PART eq {partId}";
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Accept.Clear();
@@ -2118,7 +2123,7 @@ namespace WH_Panel
                 MNFPARTNAME = partMFPN,
                 MNFPARTDES = partDes
             };
-            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE";
+            string url = $"{baseUrl}/PARTMNFONE";
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Accept.Clear();
@@ -2139,7 +2144,7 @@ namespace WH_Panel
                 PARTDES = partDes,
                 TYPE = "R"
             };
-            string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART";
+            string url = $"{baseUrl}/LOGPART";
             using (HttpClient client = new HttpClient())
             {
                 // Set the request headers
@@ -2164,7 +2169,7 @@ namespace WH_Panel
         }
         private async Task<int> GetOrInsertManufacturer(string partMNFName, string partMNFDes)
         {
-            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/MNFCTR?$filter=MNFNAME eq '{partMNFName}'";
+            string url = $"{baseUrl}/MNFCTR?$filter=MNFNAME eq '{partMNFName}'";
             using (HttpClient client = new HttpClient())
             {
                 // Set the request headers
@@ -2194,7 +2199,7 @@ namespace WH_Panel
                         MNFNAME = partMNFName,
                         MNFDES = partMNFDes
                     };
-                    string insertUrl = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/MNFCTR";
+                    string insertUrl = $"{baseUrl}/MNFCTR";
                     string jsonMnfData = JsonConvert.SerializeObject(mnfData);
                     var content = new StringContent(jsonMnfData, Encoding.UTF8, "application/json");
                     HttpResponseMessage insertResponse = await client.PostAsync(insertUrl, content);
@@ -2215,7 +2220,7 @@ namespace WH_Panel
                 MNFPARTDES = partDes,
                 MNF = mnfId
             };
-            string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE";
+            string url = $"{baseUrl}/PARTMNFONE";
             using (HttpClient client = new HttpClient())
             {
                 // Set the request headers
@@ -2236,7 +2241,7 @@ namespace WH_Panel
         }
         private async Task DisplayInsertedData(int partId)
         {
-            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PART eq {partId}";
+            string url = $"{baseUrl}/PARTMNFONE?$filter=PART eq {partId}";
             using (HttpClient client = new HttpClient())
             {
                 // Set the request headers
@@ -2609,7 +2614,7 @@ namespace WH_Panel
                         {
                             // Log the extracted values
                             txtLog.SelectionColor = Color.Red; // Set the color to acid green
-                            txtLog.AppendText($"Row {row}: Part Name = {partName}, Part Description = {partDes}, Manufacturer Part Number = {partMFPN}, Manufacturer Description = {partMNFDes}\n");
+                            txtLog.AppendText($"Row {row}: Part Name = {partName}, Part Description = {partDes}, Manufacturer Part Number = {partMFPN}, Manufacturer Description = {partMNFDes} , Exception = {ex.Message}\n");
                             txtLog.ScrollToCaret();
                             //MessageBox.Show($"Row {row}: Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
@@ -2617,7 +2622,7 @@ namespace WH_Panel
                         {
                             // Log the extracted values
                             txtLog.SelectionColor = Color.Red; // Set the color to acid green
-                            txtLog.AppendText($"Row {row}: Part Name = {partName}, Part Description = {partDes}, Manufacturer Part Number = {partMFPN}, Manufacturer Description = {partMNFDes}\n");
+                            txtLog.AppendText($"Row {row}: Part Name = {partName}, Part Description = {partDes}, Manufacturer Part Number = {partMFPN}, Manufacturer Description = {partMNFDes}, Exception = {ex.Message}\n");
                             txtLog.ScrollToCaret();
                             // MessageBox.Show($"Row {row}: An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
@@ -3101,7 +3106,7 @@ namespace WH_Panel
                 var currentStockRows = new List<DataGridViewRow>();
                 foreach (DataGridViewRow row in dataGridView.Rows)
                 {
-                    if (row.Cells["DOCDES"].Value == "קיזוז אוטומטי")
+                    if (row.Cells["DOCDES"].Value.ToString() == "קיזוז אוטומטי")
                     {
                         continue;
                     }
@@ -3379,7 +3384,7 @@ namespace WH_Panel
             // Change the button text to include the prefix
             btnAVL.Text = $"{selectedPrefix} AVL";
             // Make the API call to fetch the data
-            string apiUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PARTNAME eq '{selectedPrefix}_*'";
+            string apiUrl = $"{baseUrl}/PARTMNFONE?$filter=PARTNAME eq '{selectedPrefix}_*'";
             List<PartMnfOne> partMnfOnes = new List<PartMnfOne>();
             using (HttpClient client = new HttpClient())
             {

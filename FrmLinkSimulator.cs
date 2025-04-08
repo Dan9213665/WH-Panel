@@ -1590,7 +1590,7 @@ var myPieChart = new Chart(ctx, {
             SetSelectedBoms();
             foreach (ClientWarehouse w in warehouses)
             {
-                if (comboBox6.SelectedItem == w.clName)
+                if (comboBox6.SelectedItem.ToString() == w.clName)
                 {
                     if (w.sqlStock != null)
                     {
@@ -2244,7 +2244,7 @@ var myPieChart = new Chart(ctx, {
             string connectionString = string.Empty;
             foreach (ClientWarehouse w in warehouses)
             {
-                if (comboBox6.SelectedItem == w.clName)
+                if (comboBox6.SelectedItem.ToString() == w.clName)
                 {
                     if (w.sqlStock != null)
                     {
