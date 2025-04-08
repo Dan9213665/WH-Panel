@@ -209,7 +209,7 @@ namespace WH_Panel
                     if (apiResponse.value != null && apiResponse.value.Count > 0)
                     {
                         loadedWareHouses.Clear();
-                        var excludedWarehouses = new HashSet<string> { "666", "400", "450", "500", "Flr", "Main" };
+                        var excludedWarehouses = new HashSet<string> { "666", "400", "450", "500","501","550","600","650", "Flr", "Main","MRB","Outl","Trn" };
                         var filteredWarehouses = apiResponse.value.Where(warehouse => !excludedWarehouses.Contains(warehouse.WARHSNAME)).ToList();
                         loadedWareHouses.AddRange(filteredWarehouses);
                         countOFWHs += filteredWarehouses.Count;

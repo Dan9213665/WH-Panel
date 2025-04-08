@@ -70,7 +70,6 @@ namespace WH_Panel
             public string SERIALNAME { get; set; }
             public string PARENTIPN { get; set; }
             public string SERIALDES { get; set; }
-
             public string REVNUM { get; set; }
         }
         private void SetDarkModeColors(Control parentControl)
@@ -162,101 +161,6 @@ namespace WH_Panel
                 }
             }
         }
-        //private async void txtbSearchIPN_KeyDown(object sender, KeyEventArgs e)
-        //{
-        //    if (e.KeyCode == Keys.Enter)
-        //    {
-        //        txtbSearchIMFPN.Clear();
-        //        string partName = txtbSearchIPN.Text.Trim();
-        //        if (string.IsNullOrEmpty(partName))
-        //        {
-        //            MessageBox.Show("Please enter a valid IPN.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //            return;
-        //        }
-        //        dgwSerials.Rows.Clear();
-        //        string partUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART?$filter=PARTNAME eq '{partName}'&$expand=PARTPARENT_SUBFORM";
-        //        using (HttpClient client = new HttpClient())
-        //        {
-        //            try
-        //            {
-        //                // Set the request headers
-        //                client.DefaultRequestHeaders.Accept.Clear();
-        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //                // Make the HTTP GET request for part details
-        //                HttpResponseMessage partResponse = await client.GetAsync(partUrl);
-        //                partResponse.EnsureSuccessStatusCode();
-        //                string partResponseBody = await partResponse.Content.ReadAsStringAsync();
-        //                var partApiResponse = JsonConvert.DeserializeObject<JObject>(partResponseBody);
-        //                if (partApiResponse == null)
-        //                {
-        //                    txtbLog.SelectionColor = Color.Red;
-        //                    txtbLog.AppendText("partApiResponse is null\n");
-        //                    txtbLog.ScrollToCaret();
-        //                    return;
-        //                }
-        //                if (partApiResponse["value"] == null)
-        //                {
-        //                    txtbLog.SelectionColor = Color.Red;
-        //                    txtbLog.AppendText("partApiResponse[\"value\"] is null\n");
-        //                    txtbLog.ScrollToCaret();
-        //                    return;
-        //                }
-        //                if (!partApiResponse["value"].Any())
-        //                {
-        //                    txtbLog.SelectionColor = Color.Red;
-        //                    txtbLog.AppendText("partApiResponse[\"value\"] is empty\n");
-        //                    txtbLog.ScrollToCaret();
-        //                    return;
-        //                }
-        //                var part = partApiResponse["value"].FirstOrDefault();
-        //                if (part == null)
-        //                {
-        //                    txtbLog.SelectionColor = Color.Red;
-        //                    txtbLog.AppendText("part is null\n");
-        //                    txtbLog.ScrollToCaret();
-        //                    return;
-        //                }
-        //                txtbLog.AppendText($"IPN: {partName}\n");
-        //                txtbLog.ScrollToCaret();
-        //                var partParentSubform = part["PARTPARENT_SUBFORM"]?.FirstOrDefault();
-        //                if (partParentSubform == null)
-        //                {
-        //                    txtbLog.SelectionColor = Color.Red;
-        //                    txtbLog.AppendText("partParentSubform is null\n");
-        //                    txtbLog.ScrollToCaret();
-        //                    return;
-        //                }
-        //                string parentName = partParentSubform["PARENTNAME"]?.ToString();
-        //                if (parentName == null)
-        //                {
-        //                    txtbLog.SelectionColor = Color.Red;
-        //                    txtbLog.AppendText("parentName is null\n");
-        //                    txtbLog.ScrollToCaret();
-        //                    return;
-        //                }
-        //                txtbLog.AppendText($"Parent IPN: {parentName}\n");
-        //                txtbLog.ScrollToCaret();
-        //                await FetchAndDisplaySerials(parentName);
-        //            }
-        //            catch (HttpRequestException ex)
-        //            {
-        //                txtbLog.SelectionColor = Color.Red;
-        //                txtbLog.AppendText($"HttpRequestException txtbSearchIPN_KeyDown error: {ex.Message}\n");
-        //                txtbLog.ScrollToCaret();
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                txtbLog.SelectionColor = Color.Red;
-        //                txtbLog.AppendText($"Exception txtbSearchIPN_KeyDown error: {ex.Message}\n");
-        //                txtbLog.AppendText($"Stack Trace: {ex.StackTrace}\n");
-        //                txtbLog.ScrollToCaret();
-        //            }
-        //        }
-        //    }
-        //}
-
         private async void txtbSearchIPN_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -354,7 +258,6 @@ namespace WH_Panel
                 }
             }
         }
-
         private async Task FetchAndDisplaySerials(string parentName)
         {
             string serialUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=PARTNAME eq '{parentName}'";
@@ -392,7 +295,6 @@ namespace WH_Panel
                                 REVNUM = s["REVNUM"]?.ToString()
                             })
                           .ToList();
-
                         if (serials.Count == 0)
                         {
                             txtbLog.SelectionColor = Color.Red;
@@ -430,13 +332,10 @@ namespace WH_Panel
                 }
             }
         }
-
         private void DisplaySerials(List<SerialInfo> serials)
         {
             try
             {
-               
-
                 // Add rows
                 foreach (var serial in serials)
                 {
@@ -451,7 +350,6 @@ namespace WH_Panel
                 txtbLog.ScrollToCaret();
             }
         }
-
         private void OpenFrmPriorityBom(string serialName)
         {
             try
@@ -504,8 +402,6 @@ namespace WH_Panel
         }
         private void txtbSearchIPN_Enter(object sender, EventArgs e)
         {
-            //    txtbSearchIPN.BackColor = Color.LightGreen;
-            //    txtbSearchIPN.ForeColor = Color.Black;
             OnEnterColorGreen(sender, e);
         }
         private void txtbSearchIPN_Leave(object sender, EventArgs e)
@@ -556,18 +452,6 @@ namespace WH_Panel
                 }
                 else
                 {
-                    //for (int i = 0; i < ipns.Count; i++)
-                    //{
-                    //    txtbSearchIPN.Clear();
-                    //    txtbSearchIPN.Text = ipns[i].ToString();
-                    //    // Simulate pressing the Enter key
-                    //    txtbSearchIPN.Focus();
-                    //    SendKeys.Send("{ENTER}");
-                    //}
-
-
-
-                    // Loop through the retrieved IPNs and fetch their parent names
                     foreach (string ipn in ipns)
                     {
                         txtbLog.SelectionColor = Color.Yellow;
@@ -584,7 +468,6 @@ namespace WH_Panel
                         }
                     }
                 }
-                    
             }
         }
         private async Task<string> RetrieveParentName(string partName)
