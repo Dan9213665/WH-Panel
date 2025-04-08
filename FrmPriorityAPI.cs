@@ -2945,38 +2945,6 @@ namespace WH_Panel
                 writer.WriteLine("</tr>");
 
 
-
-
-                //// Add table rows
-                //foreach (DataGridViewRow row in dataGridView.Rows)
-                //{
-                //    writer.WriteLine("<tr>");
-                //    foreach (DataGridViewCell cell in row.Cells)
-                //    {
-                //        string cellValue = cell.Value?.ToString() ?? string.Empty;
-                //        string cellClass = string.Empty;
-
-                //        if (cell.OwningColumn.Name == "BALANCE" && int.TryParse(cellValue, out int balanceValue))
-                //        {
-                //            if (balanceValue > 0)
-                //            {
-                //                cellClass = "green";
-                //            }
-                //            else if (balanceValue == 0)
-                //            {
-                //                cellClass = "zero";
-                //            }
-                //            else
-                //            {
-                //                cellClass = "negative";
-                //            }
-                //        }
-
-                //        writer.WriteLine($"<td class='{cellClass}'>{cellValue}</td>");
-                //    }
-                //    writer.WriteLine("</tr>");
-                //}
-
                 // Order the rows by BALANCE column values in descending order
                 var orderedRows = dataGridView.Rows.Cast<DataGridViewRow>()
                     .OrderByDescending(r => Convert.ToInt32(r.Cells["BALANCE"].Value))
