@@ -231,13 +231,77 @@ namespace WH_Panel
             }
         }
         int countOFWHs = 0;
+
+        private async Task LoadMFPNsfromApi(string warehouseName)
+        {
+            if(loadedWareHouses.Count == 0)
+            {
+                AddLogRow("No warehouses loaded. Please load warehouse data first.", Color.Red);
+                return;
+            }
+            else
+            {
+
+            }
+        }
+
+        //private async Task LoadDataIntoDataTable()
+        //{
+        //    int currentWH = 0;
+        //    foreach (var warehouse in loadedWareHouses)
+        //    {
+        //        AddLogRow($"Loading data for warehouse: {warehouse.WARHSNAME}", Color.Orange);
+        //        string url = $"{baseUrl}/WAREHOUSES?$filter=WARHSNAME eq '{warehouse.WARHSNAME}'&$expand=WARHSBAL_SUBFORM";
+        //        using (HttpClient client = new HttpClient())
+        //        {
+        //            try
+        //            {
+        //                client.DefaultRequestHeaders.Accept.Clear();
+        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+        //                HttpResponseMessage response = await client.GetAsync(url);
+        //                response.EnsureSuccessStatusCode();
+        //                string responseBody = await response.Content.ReadAsStringAsync();
+        //                var apiResponse = JsonConvert.DeserializeObject<WarehouseApiResponse>(responseBody);
+        //                if (apiResponse.value != null && apiResponse.value.Count > 0)
+        //                {
+        //                    var warehouseBalances = apiResponse.value.SelectMany(w => w.WARHSBAL_SUBFORM).ToList();
+        //                    foreach (var balance in warehouseBalances)
+        //                    {
+        //                        dataTable.Rows.Add(warehouse.WARHSNAME, balance.PARTNAME, balance.MNFPARTNAME, balance.PARTDES, balance.BALANCE, balance.CDATE.Substring(0,10), balance.PART);
+        //                    }
+        //                }
+        //            }
+        //            catch (HttpRequestException ex)
+        //            {
+        //                AddLogRow($"LoadDataIntoDataTable: Request error: {ex.Message}\n{ex.StackTrace}", Color.Red);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                AddLogRow($"LoadDataIntoDataTable: An error occurred: {ex.Message}\n{ex.StackTrace}", Color.Red);
+        //            }
+        //        }
+        //        currentWH++;
+        //        AddLogRow($"Data loaded for warehouse: {warehouse.WARHSNAME} ({currentWH}/{countOFWHs})", Color.Green);
+        //    }
+        //    dataView = new DataView(dataTable);
+        //    dgwALLDATA.DataSource = dataView;
+        //}
+
+
         private async Task LoadDataIntoDataTable()
         {
             int currentWH = 0;
+
             foreach (var warehouse in loadedWareHouses)
             {
                 AddLogRow($"Loading data for warehouse: {warehouse.WARHSNAME}", Color.Orange);
-                string url = $"{baseUrl}/WAREHOUSES?$filter=WARHSNAME eq '{warehouse.WARHSNAME}'&$expand=WARHSBAL_SUBFORM";
+
+                // Step 1: Load balances for the warehouse
+                string balanceUrl = $"{baseUrl}/WAREHOUSES?$filter=WARHSNAME eq '{warehouse.WARHSNAME}'&$expand=WARHSBAL_SUBFORM";
+                List<WarehouseBalance> warehouseBalances = new List<WarehouseBalance>();
+
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -246,34 +310,81 @@ namespace WH_Panel
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                         string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-                        HttpResponseMessage response = await client.GetAsync(url);
+
+                        HttpResponseMessage response = await client.GetAsync(balanceUrl);
                         response.EnsureSuccessStatusCode();
                         string responseBody = await response.Content.ReadAsStringAsync();
                         var apiResponse = JsonConvert.DeserializeObject<WarehouseApiResponse>(responseBody);
+
                         if (apiResponse.value != null && apiResponse.value.Count > 0)
                         {
-                            var warehouseBalances = apiResponse.value.SelectMany(w => w.WARHSBAL_SUBFORM).ToList();
-                            foreach (var balance in warehouseBalances)
-                            {
-                                dataTable.Rows.Add(warehouse.WARHSNAME, balance.PARTNAME, balance.MNFPARTNAME, balance.PARTDES, balance.BALANCE, balance.CDATE.Substring(0,10), balance.PART);
-                            }
+                            warehouseBalances = apiResponse.value.SelectMany(w => w.WARHSBAL_SUBFORM).ToList();
                         }
                     }
                     catch (HttpRequestException ex)
                     {
                         AddLogRow($"LoadDataIntoDataTable: Request error: {ex.Message}\n{ex.StackTrace}", Color.Red);
+                        continue;
                     }
                     catch (Exception ex)
                     {
                         AddLogRow($"LoadDataIntoDataTable: An error occurred: {ex.Message}\n{ex.StackTrace}", Color.Red);
+                        continue;
                     }
                 }
+
+                // Step 2: Load MFPNs for the warehouse
+                string mfpnUrl = $"{baseUrl}/PARTMNFONE?$filter=PARTNAME eq '{warehouse.WARHSNAME}_*'";
+                Dictionary<string, string> partToMfpnMap = new Dictionary<string, string>();
+
+                using (HttpClient client = new HttpClient())
+                {
+                    try
+                    {
+                        client.DefaultRequestHeaders.Accept.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                        HttpResponseMessage response = await client.GetAsync(mfpnUrl);
+                        response.EnsureSuccessStatusCode();
+                        string responseBody = await response.Content.ReadAsStringAsync();
+                        var apiResponse = JsonConvert.DeserializeObject<PartMnfOneApiResponse>(responseBody);
+
+                        if (apiResponse.value != null && apiResponse.value.Count > 0)
+                        {
+                            partToMfpnMap = apiResponse.value
+                                .GroupBy(p => p.PARTNAME) // Group by PARTNAME to handle duplicates
+                                .ToDictionary(g => g.Key, g => g.FirstOrDefault()?.MNFPARTNAME); // Use FirstOrDefault for duplicates
+                        }
+                    }
+                    catch (HttpRequestException ex)
+                    {
+                        AddLogRow($"LoadDataIntoDataTable: Request error: {ex.Message}\n{ex.StackTrace}", Color.Red);
+                        continue;
+                    }
+                    catch (Exception ex)
+                    {
+                        AddLogRow($"LoadDataIntoDataTable: An error occurred: {ex.Message}\n{ex.StackTrace}", Color.Red);
+                        continue;
+                    }
+                }
+
+                // Step 3: Merge balances and MFPNs into the dataTable
+                foreach (var balance in warehouseBalances)
+                {
+                    string mfpn = partToMfpnMap.ContainsKey(balance.PARTNAME) ? partToMfpnMap[balance.PARTNAME] : string.Empty;
+                    dataTable.Rows.Add(warehouse.WARHSNAME, balance.PARTNAME, mfpn, balance.PARTDES, balance.BALANCE, balance.CDATE.Substring(0, 10), balance.PART);
+                }
+
                 currentWH++;
                 AddLogRow($"Data loaded for warehouse: {warehouse.WARHSNAME} ({currentWH}/{countOFWHs})", Color.Green);
             }
+
             dataView = new DataView(dataTable);
             dgwALLDATA.DataSource = dataView;
         }
+
         private void InitializeDataTable()
         {
             dataTable = new DataTable();
