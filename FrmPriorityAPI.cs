@@ -2502,7 +2502,9 @@ namespace WH_Panel
             {
                 btnMFG.Text = "MFG";
                 btnMFG.Update();
+                txtbOUT.Text = string.Empty;
                 txtbOUT.ReadOnly = true;
+                txtbINdoc.Text = string.Empty;
                 txtbINdoc.ReadOnly = true;
             }
             else
