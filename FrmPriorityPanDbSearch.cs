@@ -34,7 +34,7 @@ namespace WH_Panel
             InitializeDataTable(); // Initialize the DataTable after loading data
             this.Load += FrmPriorityPanDbSearch_Load; // Attach the Load event
             dgwALLDATA.CellFormatting += DataGridView1_CellFormatting; // Attach the CellFormatting event
-                                                                          // Attach the TextChanged event for filtering
+                                                                       // Attach the TextChanged event for filtering
             txtbWH.TextChanged += FilterData;
             txtbIPN.TextChanged += FilterData;
             txtbMFPN.TextChanged += FilterData;
@@ -210,7 +210,7 @@ namespace WH_Panel
                     if (apiResponse.value != null && apiResponse.value.Count > 0)
                     {
                         loadedWareHouses.Clear();
-                        var excludedWarehouses = new HashSet<string> { "666", "400", "450", "500","501","550","600","650", "Flr", "Main","MRB","Outl","Trn" };
+                        var excludedWarehouses = new HashSet<string> { "666", "400", "450", "500", "501", "550", "600", "650", "Flr", "Main", "MRB", "Outl", "Trn" };
                         var filteredWarehouses = apiResponse.value.Where(warehouse => !excludedWarehouses.Contains(warehouse.WARHSNAME)).ToList();
                         loadedWareHouses.AddRange(filteredWarehouses);
                         countOFWHs += filteredWarehouses.Count;
@@ -234,7 +234,7 @@ namespace WH_Panel
 
         private async Task LoadMFPNsfromApi(string warehouseName)
         {
-            if(loadedWareHouses.Count == 0)
+            if (loadedWareHouses.Count == 0)
             {
                 AddLogRow("No warehouses loaded. Please load warehouse data first.", Color.Red);
                 return;
@@ -623,103 +623,103 @@ namespace WH_Panel
         }
         private async Task PopulateInStockData(string partName, int zeroOrHero)
         {
-            if(zeroOrHero > 0)
+            if (zeroOrHero > 0)
             {
-            // Separate data into ROB and notRob lists
-            var robList = new List<DataGridViewRow>();
-            var notRobList = new List<DataGridViewRow>();
-            foreach (DataGridViewRow row in dgwTRANSACTIONS.Rows)
-            {
-                if (row.Cells["LOGDOCNO"].Value != null && row.Cells["UDATE"].Value != null && DateTime.TryParse(row.Cells["UDATE"].Value.ToString(), out _))
+                // Separate data into ROB and notRob lists
+                var robList = new List<DataGridViewRow>();
+                var notRobList = new List<DataGridViewRow>();
+                foreach (DataGridViewRow row in dgwTRANSACTIONS.Rows)
                 {
-                    string docNo = row.Cells["LOGDOCNO"].Value.ToString();
-                    if (docNo.StartsWith("ROB") || docNo.StartsWith("IC")|| docNo.StartsWith("WR")||docNo.StartsWith("SH"))
+                    if (row.Cells["LOGDOCNO"].Value != null && row.Cells["UDATE"].Value != null && DateTime.TryParse(row.Cells["UDATE"].Value.ToString(), out _))
                     {
-                        // Handle IC documents by converting the quantity to a positive value
-                        if (docNo.StartsWith("IC"))
+                        string docNo = row.Cells["LOGDOCNO"].Value.ToString();
+                        if (docNo.StartsWith("ROB") || docNo.StartsWith("IC") || docNo.StartsWith("WR") || docNo.StartsWith("SH"))
                         {
-                            row.Cells["TQUANT"].Value = Math.Abs(Convert.ToInt32(row.Cells["TQUANT"].Value));
+                            // Handle IC documents by converting the quantity to a positive value
+                            if (docNo.StartsWith("IC"))
+                            {
+                                row.Cells["TQUANT"].Value = Math.Abs(Convert.ToInt32(row.Cells["TQUANT"].Value));
+                            }
+                            robList.Add(row);
                         }
-                        robList.Add(row);
-                    }
-                    else
-                    {
-                        notRobList.Add(row);
+                        else
+                        {
+                            notRobList.Add(row);
+                        }
                     }
                 }
-            }
-            // Sort both lists by transaction date
-            robList = robList.OrderBy(row => DateTime.Parse(row.Cells["UDATE"].Value.ToString())).ToList();
-            notRobList = notRobList.OrderBy(row => DateTime.Parse(row.Cells["UDATE"].Value.ToString())).ToList();
-            // Filter out matching pairs
-            var filteredNotRobList = new List<DataGridViewRow>(notRobList);
-            foreach (var notRobRow in notRobList)
-            {
-                if (robList.Count == 0) break;
-                int notRobQty = Convert.ToInt32(notRobRow.Cells["TQUANT"].Value);
-                var matchingRobRow = robList.FirstOrDefault(robRow => Convert.ToInt32(robRow.Cells["TQUANT"].Value) == notRobQty);
-                if (matchingRobRow != null)
+                // Sort both lists by transaction date
+                robList = robList.OrderBy(row => DateTime.Parse(row.Cells["UDATE"].Value.ToString())).ToList();
+                notRobList = notRobList.OrderBy(row => DateTime.Parse(row.Cells["UDATE"].Value.ToString())).ToList();
+                // Filter out matching pairs
+                var filteredNotRobList = new List<DataGridViewRow>(notRobList);
+                foreach (var notRobRow in notRobList)
                 {
-                    filteredNotRobList.Remove(notRobRow);
-                    robList.Remove(matchingRobRow);
+                    if (robList.Count == 0) break;
+                    int notRobQty = Convert.ToInt32(notRobRow.Cells["TQUANT"].Value);
+                    var matchingRobRow = robList.FirstOrDefault(robRow => Convert.ToInt32(robRow.Cells["TQUANT"].Value) == notRobQty);
+                    if (matchingRobRow != null)
+                    {
+                        filteredNotRobList.Remove(notRobRow);
+                        robList.Remove(matchingRobRow);
+                    }
                 }
-            }
-            // Populate the dgwINSTOCK DataGridView with the remaining items from the notRob list
-            dgwINSTOCK.AutoGenerateColumns = false;
-            dgwINSTOCK.Columns.Clear();
-            // Define the columns you want to display
-            var curDateColumn = new DataGridViewTextBoxColumn
-            {
-                DataPropertyName = "UDATE",
-                HeaderText = "Transaction Date",
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                Name = "UDATE"
-            };
-            var logDocNoColumn = new DataGridViewTextBoxColumn
-            {
-                DataPropertyName = "LOGDOCNO",
-                HeaderText = "Document Number",
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                Name = "LOGDOCNO"
-            };
-            var logDOCDESColumn = new DataGridViewTextBoxColumn
-            {
-                DataPropertyName = "DOCDES",
-                HeaderText = "DOCDES",
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                Name = "DOCDES"
-            };
-            var SUPCUSTNAMEColumn = new DataGridViewTextBoxColumn
-            {
-                DataPropertyName = "SUPCUSTNAME",
-                HeaderText = "Source_Requester",
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                Name = "SUPCUSTNAME"
-            };
-            var tQuantColumn = new DataGridViewTextBoxColumn
-            {
-                DataPropertyName = "TQUANT",
-                HeaderText = "QTY",
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                Name = "TQUANT"
-            };
-            var tPACKNAMEColumn = new DataGridViewTextBoxColumn
-            {
-                DataPropertyName = "PACKNAME",
-                HeaderText = "PACK",
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                Name = "PACKNAME"
-            };
-            var DocBOOKNUMColumn = new DataGridViewTextBoxColumn
-            {
-                DataPropertyName = "BOOKNUM",
-                HeaderText = "Client`s Document",
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                Name = "BOOKNUM"
-            };
-            // Add columns to the DataGridView
-            dgwINSTOCK.Columns.AddRange(new DataGridViewColumn[]
-            {
+                // Populate the dgwINSTOCK DataGridView with the remaining items from the notRob list
+                dgwINSTOCK.AutoGenerateColumns = false;
+                dgwINSTOCK.Columns.Clear();
+                // Define the columns you want to display
+                var curDateColumn = new DataGridViewTextBoxColumn
+                {
+                    DataPropertyName = "UDATE",
+                    HeaderText = "Transaction Date",
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                    Name = "UDATE"
+                };
+                var logDocNoColumn = new DataGridViewTextBoxColumn
+                {
+                    DataPropertyName = "LOGDOCNO",
+                    HeaderText = "Document Number",
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                    Name = "LOGDOCNO"
+                };
+                var logDOCDESColumn = new DataGridViewTextBoxColumn
+                {
+                    DataPropertyName = "DOCDES",
+                    HeaderText = "DOCDES",
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                    Name = "DOCDES"
+                };
+                var SUPCUSTNAMEColumn = new DataGridViewTextBoxColumn
+                {
+                    DataPropertyName = "SUPCUSTNAME",
+                    HeaderText = "Source_Requester",
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                    Name = "SUPCUSTNAME"
+                };
+                var tQuantColumn = new DataGridViewTextBoxColumn
+                {
+                    DataPropertyName = "TQUANT",
+                    HeaderText = "QTY",
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                    Name = "TQUANT"
+                };
+                var tPACKNAMEColumn = new DataGridViewTextBoxColumn
+                {
+                    DataPropertyName = "PACKNAME",
+                    HeaderText = "PACK",
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                    Name = "PACKNAME"
+                };
+                var DocBOOKNUMColumn = new DataGridViewTextBoxColumn
+                {
+                    DataPropertyName = "BOOKNUM",
+                    HeaderText = "Client`s Document",
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                    Name = "BOOKNUM"
+                };
+                // Add columns to the DataGridView
+                dgwINSTOCK.Columns.AddRange(new DataGridViewColumn[]
+                {
         curDateColumn,
         logDocNoColumn,
         logDOCDESColumn,
@@ -727,22 +727,22 @@ namespace WH_Panel
         DocBOOKNUMColumn,
         tQuantColumn,
         tPACKNAMEColumn
-            });
-            // Populate the DataGridView with the data
-            dgwINSTOCK.Rows.Clear();
-            foreach (var row in filteredNotRobList)
-            {
-                dgwINSTOCK.Rows.Add(
-                    row.Cells["UDATE"].Value,
-                    row.Cells["LOGDOCNO"].Value,
-                    row.Cells["DOCDES"].Value,
-                    row.Cells["SUPCUSTNAME"].Value,
-                    row.Cells["BOOKNUM"].Value,
-                    row.Cells["TQUANT"].Value,
-                    row.Cells["PACKNAME"].Value
-                );
-            }
-            dgwINSTOCK.Sort(dgwINSTOCK.Columns[0], ListSortDirection.Descending);
+                });
+                // Populate the DataGridView with the data
+                dgwINSTOCK.Rows.Clear();
+                foreach (var row in filteredNotRobList)
+                {
+                    dgwINSTOCK.Rows.Add(
+                        row.Cells["UDATE"].Value,
+                        row.Cells["LOGDOCNO"].Value,
+                        row.Cells["DOCDES"].Value,
+                        row.Cells["SUPCUSTNAME"].Value,
+                        row.Cells["BOOKNUM"].Value,
+                        row.Cells["TQUANT"].Value,
+                        row.Cells["PACKNAME"].Value
+                    );
+                }
+                dgwINSTOCK.Sort(dgwINSTOCK.Columns[0], ListSortDirection.Descending);
             }
         }
         private async Task ExtractMFPNForRow(DataGridViewRow row)
@@ -1092,12 +1092,23 @@ namespace WH_Panel
         }
         private async Task FetchMFPNsForAllRows()
         {
-            AddLogRow("Fetching MFPNs for all rows\n",Color.Yellow);
+            AddLogRow("Fetching MFPNs for all rows\n", Color.Yellow);
             foreach (DataGridViewRow row in dgwALLDATA.Rows)
             {
                 await ExtractMFPNForRow(row);
             }
             AddLogRow("MFPN fetching completed\n", Color.Green);
+        }
+
+        private void btnClearAllFilters_Click(object sender, EventArgs e)
+        {
+            txtbDESC.Clear();
+            txtbIPN.Clear();
+            txtbMFPN.Clear();
+            txtbWH.Clear();
+            dataView.RowFilter = string.Empty;
+            dgwALLDATA.ClearSelection();
+
         }
     }
 }
