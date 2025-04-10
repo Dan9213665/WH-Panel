@@ -1257,6 +1257,7 @@ namespace WH_Panel
                         //UDateColumn
                             });
                             dgwIPNmoves.Rows.Clear();
+                            dgwINSTOCK.Rows.Clear();
                             foreach (var logPart in logPartApiResponse.value)
                             {
                                 foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
@@ -1265,15 +1266,18 @@ namespace WH_Panel
                                     var row = dgwIPNmoves.Rows[rowIndex];
                                     // Fetch the PACK code and UDATE asynchronously
                                     _ = FetchAndSetPackCodeAndUDateAsync(row, trans.LOGDOCNO, partName, trans.TQUANT);
-                                    await Task.Delay(400); // 300 milliseconds delay
+                                    await Task.Delay(200); // 300 milliseconds delay
                                 }
                             }
                             gbxIPNstockMovements.Text = $"Stock Movements for {partName}";
                             ColorTheRows(dgwIPNmoves);
                             SortIPNMovesByDate();
+                           
                             // Fetch MFPN for the selected row
                             await FetchMFPNForRow(selectedRow);
                             await FetchAltForRow(selectedRow);
+
+                            LoadDataAndFilterInStock();
                         }
                         else
                         {
@@ -2908,7 +2912,7 @@ namespace WH_Panel
                     if (row.Cells["LOGDOCNO"].Value != null && row.Cells["UDATE"].Value != null && DateTime.TryParse(row.Cells["UDATE"].Value.ToString(), out _))
                     {
                         string docNo = row.Cells["LOGDOCNO"].Value.ToString();
-                        if (docNo.StartsWith("ROB") || docNo.StartsWith("IC"))
+                        if (docNo.StartsWith("ROB") || docNo.StartsWith("IC") || docNo.StartsWith("WR"))
                         {
                             // Handle IC documents by converting the quantity to a positive value
                             if (docNo.StartsWith("IC"))
@@ -2963,5 +2967,86 @@ namespace WH_Panel
         {
 
         }
+
+        private void LoadDataAndFilterInStock()
+        {
+            // Step 1: Initialize dgwINSTOCK columns
+            InitializeInStockDataGridView();
+
+            // Step 2: Separate data into ROB and notRob lists
+            var robList = new List<DataGridViewRow>();
+            var notRobList = new List<DataGridViewRow>();
+
+            foreach (DataGridViewRow row in dgwIPNmoves.Rows)
+            {
+                if (row.Cells["LOGDOCNO"].Value != null && row.Cells["UDATE"].Value != null && DateTime.TryParse(row.Cells["UDATE"].Value.ToString(), out _))
+                {
+                    string docNo = row.Cells["LOGDOCNO"].Value.ToString();
+                    if (docNo.StartsWith("ROB") || docNo.StartsWith("IC") || docNo.StartsWith("WR"))
+                    {
+                        // Handle IC documents by converting the quantity to a positive value
+                        if (docNo.StartsWith("IC"))
+                        {
+                            row.Cells["TQUANT"].Value = Math.Abs(Convert.ToInt32(row.Cells["TQUANT"].Value));
+                        }
+                        robList.Add(row);
+                    }
+                    else
+                    {
+                        notRobList.Add(row);
+                    }
+                }
+            }
+
+            // Step 3: Sort both lists by transaction date
+            robList = robList.OrderBy(row => DateTime.Parse(row.Cells["UDATE"].Value.ToString())).ToList();
+            notRobList = notRobList.OrderBy(row => DateTime.Parse(row.Cells["UDATE"].Value.ToString())).ToList();
+
+            // Step 4: Filter out matching pairs
+            var filteredNotRobList = new List<DataGridViewRow>(notRobList);
+            foreach (var notRobRow in notRobList)
+            {
+                if (robList.Count == 0) break;
+                int notRobQty = Convert.ToInt32(notRobRow.Cells["TQUANT"].Value);
+                var matchingRobRow = robList.FirstOrDefault(robRow => Convert.ToInt32(robRow.Cells["TQUANT"].Value) == notRobQty);
+                if (matchingRobRow != null)
+                {
+                    filteredNotRobList.Remove(notRobRow);
+                    robList.Remove(matchingRobRow);
+                }
+            }
+
+            // Step 5: Display the filtered INSTOCK items in dgwINSTOCK
+            dgwINSTOCK.Rows.Clear();
+            foreach (var row in filteredNotRobList)
+            {
+                var newRow = (DataGridViewRow)row.Clone();
+                foreach (DataGridViewCell cell in row.Cells)
+                {
+                    newRow.Cells[cell.ColumnIndex].Value = cell.Value;
+                }
+                dgwINSTOCK.Rows.Add(newRow);
+            }
+
+            // Step 6: Update the UI
+            dgwINSTOCK.Refresh();
+        }
+
+
+        private void InitializeInStockDataGridView()
+        {
+            dgwINSTOCK.Columns.Clear();
+            dgwINSTOCK.Columns.Add("LOGDOCNO", "Document Number");
+            dgwINSTOCK.Columns.Add("UDATE", "Transaction Date");
+            dgwINSTOCK.Columns.Add("DOCDES", "DOCDES");
+            dgwINSTOCK.Columns.Add("SUPCUSTNAME", "Source/Requester");
+            dgwINSTOCK.Columns.Add("BOOKNUM", "Client's Document");
+            dgwINSTOCK.Columns.Add("TQUANT", "Qty");
+            dgwINSTOCK.Columns.Add("PACK", "Pack");
+
+            dgwINSTOCK.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            dgwINSTOCK.AllowUserToAddRows = false; // Optional: Prevent manual row addition
+        }
+
     }
 }
