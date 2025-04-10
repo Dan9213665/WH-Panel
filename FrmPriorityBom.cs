@@ -1405,6 +1405,10 @@ namespace WH_Panel
             {
                 url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_C?$filter=DOCNO eq '{logDocNo}'";
             }
+            else if (logDocNo.StartsWith("WR"))
+            {
+                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_T?$filter=DOCNO eq '{logDocNo}'";
+            }
             else if (logDocNo.StartsWith("ROB"))
             {
                 // Handle ROB documents
@@ -1456,6 +1460,12 @@ namespace WH_Panel
                         results.Add((packCode, bookNum, date));
                     }
                     else if (logDocNo.StartsWith("IC"))
+                    {
+                        // Handle IC document logic
+                        string date = document["UDATE"]?.ToString();
+                        results.Add((null, null, date));
+                    }
+                    else if (logDocNo.StartsWith("WR"))
                     {
                         // Handle IC document logic
                         string date = document["UDATE"]?.ToString();
