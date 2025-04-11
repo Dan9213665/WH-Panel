@@ -36,7 +36,7 @@ namespace WH_Panel
         List<string> typesNamesList = new List<string>
 {
     "ANT", "BUZ", "CAP", "CON","CRY", "DID","DIO", "FER", "FIL", "FUS", "ICT","ICA" ,"ICC", "IND",
-    "LED", "MAG", "MOS","MEC","MOD", "OPT", "OSC", "PCB", "PWR", "RES", "RLY", "SWT",
+    "LED", "MAG", "MOS","MEC","MOD", "OPT", "OSC", "PCB", "PWR", "RES", "RLY","SHL", "SWT",
     "TER", "TRN" ,"VAR"
 };
 
