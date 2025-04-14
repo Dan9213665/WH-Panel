@@ -27,6 +27,7 @@ using QRCoder;
 using Point = System.Drawing.Point;
 using Font = System.Drawing.Font;
 using System.Diagnostics;
+#pragma warning disable CS0618
 namespace WH_Panel
 {
     public partial class FrmStockCounter : Form

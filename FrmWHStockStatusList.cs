@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+#pragma warning disable CS0618
 namespace WH_Panel
 {
     public partial class FrmWHStockStatusList : Form
@@ -93,7 +94,7 @@ namespace WH_Panel
             }
             catch (Exception ex)
             {
-                // MessageBox.Show($"Error loading STOCK table: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                 MessageBox.Show($"Error loading STOCK table: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private void GenerateFilteredReport()

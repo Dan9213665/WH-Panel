@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+#pragma warning disable CS0618
 namespace WH_Panel
 {
     public partial class FrmMFPNsearcher : Form

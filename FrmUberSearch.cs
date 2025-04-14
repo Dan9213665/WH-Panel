@@ -26,7 +26,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolBar;
 using ToolTip = System.Windows.Forms.ToolTip;
 using System.Data.SqlClient;
 using Action = System.Action;
-
+#pragma warning disable CS0618
 namespace WH_Panel
 {
     public partial class FrmUberSearch : Form

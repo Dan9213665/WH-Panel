@@ -8,6 +8,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <PackageIcon>dbsearch.ico</PackageIcon>
     <ApplicationIcon>dbsearch.ico</ApplicationIcon>
+	<NoWarn>CS0618</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="appsettings.json" />

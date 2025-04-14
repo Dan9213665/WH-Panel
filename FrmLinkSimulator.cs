@@ -34,8 +34,10 @@ using Label = System.Windows.Forms.Label;
 using ListBox = System.Windows.Forms.ListBox;
 using Point = System.Drawing.Point;
 using TextBox = System.Windows.Forms.TextBox;
+#pragma warning disable CS0618
 namespace WH_Panel
 {
+
     public partial class FrmLinkSimulator : Form
     {
         //List<ClientWarehouse> warehouses = new List<ClientWarehouse>();
@@ -565,6 +567,7 @@ namespace WH_Panel
                     }
                     catch (Exception e)
                     {
+                        MessageBox.Show(e.Message);
                         string er = fp;
                         conn.Dispose();
                         conn.Close();
@@ -598,7 +601,7 @@ namespace WH_Panel
         {
             foreach (ClientWarehouse w in warehouses)
             {
-                if (comboBox6.SelectedItem == w.clName)
+                if (comboBox6.SelectedItem.ToString() == w.clName)
                 {
                     if (w.sqlStock != null)
                     {
@@ -741,6 +744,7 @@ namespace WH_Panel
                 }
                 dataGridView.Rows.Add(row);
             }
+            await Task.Delay(10); // Simulate some delay for async operation
         }
         private void GenerateHtmlReportWithKitSeparation()
         {
@@ -1078,7 +1082,7 @@ var myPieChart = new Chart(ctx, {
                     }
                     catch (Exception ex)
                     {
-                        // MessageBox.Show($"Error loading STOCK table: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                         MessageBox.Show($"Error loading STOCK table: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
                 else
@@ -1404,7 +1408,7 @@ var myPieChart = new Chart(ctx, {
             // Step 1: Load stock data based on the selected warehouse
             foreach (ClientWarehouse w in warehouses)
             {
-                if (comboBox6.SelectedItem == w.clName)
+                if (comboBox6.SelectedItem.ToString() == w.clName)
                 {
                     isSql = true;
                     StockViewDataLoader(w.sqlStock, "STOCK");
@@ -1438,7 +1442,7 @@ var myPieChart = new Chart(ctx, {
                         var stockItem = stockItems
                             .Where(s => s.IPN == kitItem.IPN)
                             .Sum(s => s.Stock);
-                        if (stockItem != null && stockItem >= Math.Abs((decimal)kitItem.Delta))
+                        if ( stockItem >= Math.Abs((decimal)kitItem.Delta))
                         {
                             fullyStockedItemsAfter++;
                         }
@@ -1491,89 +1495,89 @@ var myPieChart = new Chart(ctx, {
             kitsForm.Controls.Add(dataGridView);
             kitsForm.ShowDialog();
         }
-        private void OptimizeBOMOrder()
-        {
-            if (selectedBOMs.Count >= 2)
-            {
-                // Step 2: Create a new list to store kits with their completion status
-                var kitCompletionStatus = new List<Tuple<BOMList, int, int, int, int>>(); // BOMList, fullyStockedItemsBefore, totalItems, fullyStockedItemsAfter
-                foreach (var bom in selectedBOMs)
-                {
-                    int totalItems = bom.Items.Count;
-                    int fullyStockedItemsBefore = 0;   // Fully stocked items before simulation
-                    int fullyStockedItemsAfter = 0; // Total fully stocked items after simulation
-                    // Count items already in the kit
-                    foreach (var kitItem in bom.Items)
-                    {
-                        if (kitItem.Delta >= 0) // Count fully stocked items
-                        {
-                            fullyStockedItemsBefore++;
-                        }
-                        else if (kitItem.Delta < 0)
-                        {
-                            //var stockItem = stockItems.Sum().(s => s.IPN == kitItem.IPN);
-                            var stockItem = stockItems
-    .Where(s => s.IPN == kitItem.IPN) // Filter based on the condition
-    .Sum(s => s.Stock);
-                            // Count items already in kit and available from stock
-                            if (stockItem != null && stockItem >= Math.Abs((decimal)kitItem.Delta)) // Check if stock is available
-                            {
-                                // Add the stock available to the count, up to what is needed
-                                fullyStockedItemsAfter++; // Use ?? to ensure it's a non-null value
-                            }
-                        }
-                    }
-                    // Add the kit and its statuses to the list
-                    kitCompletionStatus.Add(new Tuple<BOMList, int, int, int, int>(
-                        bom,                              // BOMList
-                        fullyStockedItemsBefore,         // Fully stocked items before simulation
-                        totalItems,                       // Total items
-                        fullyStockedItemsAfter,          // Fully stocked items after simulation
-                        0)); // Add a default value for item5 (you need to replace this with actual logic if needed)
-                }
-                // Step 5: Create a sortable table to display the kits and their statuses
-                Form kitsForm = new Form
-                {
-                    Text = "Kits Sorted by Completion",
-                    Height = 600,
-                    Width = 1500,
-                    StartPosition = FormStartPosition.CenterScreen, // Ensure you're using the correct enum type
-                };
-                DataGridView dataGridView = new DataGridView
-                {
-                    Dock = DockStyle.Fill,
-                    AutoGenerateColumns = false
-                };
-                // Add columns to the DataGridView
-                dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Kit Name", DataPropertyName = "KitName" });
-                dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Total Items", DataPropertyName = "TotalItems" });
-                dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "In kit", DataPropertyName = "FullyStockedBefore" });
-                dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "In warehouse", DataPropertyName = "FullyStockedAfter" });
-                dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Simulated Completion %", DataPropertyName = "CompletionPercentage" });
-                var dataSource = kitCompletionStatus.Select(k =>
-       new
-       {
-           KitName = k.Item1.Name,
-           FullyStockedBefore = k.Item2, // Fully stocked before simulation
-           TotalItems = k.Item3, // Total items
-           FullyStockedAfter = k.Item4, // Fully stocked after simulation
-           CompletionPercentage = k.Item3 > 0 ? $"{((double)(k.Item2 + k.Item4) / k.Item3) * 100:F2}%" : "0.00%" // Avoid division by zero
-       })
-       .OrderByDescending(x => x.CompletionPercentage) // Specify how to order by the CompletionPercentage
-       .ToList();
-                dataGridView.DataSource = dataSource;
-                // Enable sorting and auto-sizing to fit contents
-                foreach (DataGridViewColumn column in dataGridView.Columns)
-                {
-                    column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells; // Fit to all cell contents
-                }
-                // Step 7: Display the DataGridView in the form
-                kitsForm.Controls.Add(dataGridView);
-                kitsForm.ShowDialog();
-                // Sort by CompletionPercentage in descending order
-                //dataGridView.Sort(dataGridView.Columns["CompletionPercentage"], System.ComponentModel.ListSortDirection.Descending);
-            }
-        }
+    //    private void OptimizeBOMOrder()
+    //    {
+    //        if (selectedBOMs.Count >= 2)
+    //        {
+    //            // Step 2: Create a new list to store kits with their completion status
+    //            var kitCompletionStatus = new List<Tuple<BOMList, int, int, int, int>>(); // BOMList, fullyStockedItemsBefore, totalItems, fullyStockedItemsAfter
+    //            foreach (var bom in selectedBOMs)
+    //            {
+    //                int totalItems = bom.Items.Count;
+    //                int fullyStockedItemsBefore = 0;   // Fully stocked items before simulation
+    //                int fullyStockedItemsAfter = 0; // Total fully stocked items after simulation
+    //                // Count items already in the kit
+    //                foreach (var kitItem in bom.Items)
+    //                {
+    //                    if (kitItem.Delta >= 0) // Count fully stocked items
+    //                    {
+    //                        fullyStockedItemsBefore++;
+    //                    }
+    //                    else if (kitItem.Delta < 0)
+    //                    {
+    //                        //var stockItem = stockItems.Sum().(s => s.IPN == kitItem.IPN);
+    //                        var stockItem = stockItems
+    //.Where(s => s.IPN == kitItem.IPN) // Filter based on the condition
+    //.Sum(s => s.Stock);
+    //                        // Count items already in kit and available from stock
+    //                        if (stockItem != null && stockItem >= Math.Abs((decimal)kitItem.Delta)) // Check if stock is available
+    //                        {
+    //                            // Add the stock available to the count, up to what is needed
+    //                            fullyStockedItemsAfter++; // Use ?? to ensure it's a non-null value
+    //                        }
+    //                    }
+    //                }
+    //                // Add the kit and its statuses to the list
+    //                kitCompletionStatus.Add(new Tuple<BOMList, int, int, int, int>(
+    //                    bom,                              // BOMList
+    //                    fullyStockedItemsBefore,         // Fully stocked items before simulation
+    //                    totalItems,                       // Total items
+    //                    fullyStockedItemsAfter,          // Fully stocked items after simulation
+    //                    0)); // Add a default value for item5 (you need to replace this with actual logic if needed)
+    //            }
+    //            // Step 5: Create a sortable table to display the kits and their statuses
+    //            Form kitsForm = new Form
+    //            {
+    //                Text = "Kits Sorted by Completion",
+    //                Height = 600,
+    //                Width = 1500,
+    //                StartPosition = FormStartPosition.CenterScreen, // Ensure you're using the correct enum type
+    //            };
+    //            DataGridView dataGridView = new DataGridView
+    //            {
+    //                Dock = DockStyle.Fill,
+    //                AutoGenerateColumns = false
+    //            };
+    //            // Add columns to the DataGridView
+    //            dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Kit Name", DataPropertyName = "KitName" });
+    //            dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Total Items", DataPropertyName = "TotalItems" });
+    //            dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "In kit", DataPropertyName = "FullyStockedBefore" });
+    //            dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "In warehouse", DataPropertyName = "FullyStockedAfter" });
+    //            dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Simulated Completion %", DataPropertyName = "CompletionPercentage" });
+    //            var dataSource = kitCompletionStatus.Select(k =>
+    //   new
+    //   {
+    //       KitName = k.Item1.Name,
+    //       FullyStockedBefore = k.Item2, // Fully stocked before simulation
+    //       TotalItems = k.Item3, // Total items
+    //       FullyStockedAfter = k.Item4, // Fully stocked after simulation
+    //       CompletionPercentage = k.Item3 > 0 ? $"{((double)(k.Item2 + k.Item4) / k.Item3) * 100:F2}%" : "0.00%" // Avoid division by zero
+    //   })
+    //   .OrderByDescending(x => x.CompletionPercentage) // Specify how to order by the CompletionPercentage
+    //   .ToList();
+    //            dataGridView.DataSource = dataSource;
+    //            // Enable sorting and auto-sizing to fit contents
+    //            foreach (DataGridViewColumn column in dataGridView.Columns)
+    //            {
+    //                column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells; // Fit to all cell contents
+    //            }
+    //            // Step 7: Display the DataGridView in the form
+    //            kitsForm.Controls.Add(dataGridView);
+    //            kitsForm.ShowDialog();
+    //            // Sort by CompletionPercentage in descending order
+    //            //dataGridView.Sort(dataGridView.Columns["CompletionPercentage"], System.ComponentModel.ListSortDirection.Descending);
+    //        }
+    //    }
         private void button4_Click(object sender, EventArgs e)
         {
             //foreach (ClientWarehouse w in warehouses)

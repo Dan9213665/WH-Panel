@@ -21,12 +21,11 @@ using TextBox = System.Windows.Forms.TextBox;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
-using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using Exception = System.Exception;
-
+#pragma warning disable CS0618
 namespace WH_Panel
 {
     public partial class FrmIPNgenerator : Form
@@ -261,6 +260,7 @@ namespace WH_Panel
             {
                 // Handle the case where the selected type does not exist
                 // You can display a message or take appropriate action here
+                MessageBox.Show(ex.Message);
                 textBox1.Text = "0001";
             }
 
@@ -312,6 +312,7 @@ namespace WH_Panel
                 MessageBox.Show("Please populate all the required fields before proceeding.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
         private void DataInserter(WHitem wHitem)
         {
             try

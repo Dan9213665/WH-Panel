@@ -20,7 +20,7 @@ public static class SettingsManager
         }
         catch (Exception ex)
         {
-            //MessageBox.Show($"Failed to save settings: {ex.Message}");
+            MessageBox.Show($"Failed to save settings: {ex.Message}");
         }
     }
 

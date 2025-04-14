@@ -52,7 +52,7 @@ using OfficeOpenXml.Drawing.Slicer.Style;
 using System.Security.Cryptography.Pkcs;
 using static QRCoder.PayloadGenerator;
 using OfficeOpenXml.Style;
-
+#pragma warning disable CS0618
 namespace WH_Panel
 {
     public partial class FrmBOM : Form
@@ -1582,7 +1582,7 @@ namespace WH_Panel
                 }
                 catch (Exception e)
                 {
-                    //MessageBox.Show(e.Message);
+                    MessageBox.Show(e.Message);
                 }
             }
 
@@ -2089,7 +2089,7 @@ namespace WH_Panel
                 foreach (ClientWarehouse w in warehouses)
                 {
                     //if (currentIPN.StartsWith(w.clPrefix))
-                    if (comboBox1.SelectedItem == w.clName)
+                    if (comboBox1.SelectedItem.ToString() == w.clName)
                     {
                         //MessageBox.Show(w.clName);
                         if (File.Exists(w.clLogo))

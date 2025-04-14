@@ -17,7 +17,7 @@ using DataTable = System.Data.DataTable;
 using GroupBox = System.Windows.Forms.GroupBox;
 using Label = System.Windows.Forms.Label;
 using TextBox = System.Windows.Forms.TextBox;
-
+#pragma warning disable CS0618
 namespace WH_Panel
 {
     public partial class FrmSQLWHDB : Form
@@ -284,8 +284,9 @@ namespace WH_Panel
             }
             catch (Exception ex)
             {
+                
+                MessageBox.Show($"Error updating Warehouse Balance label: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 label15.Text = $"Balance: {0}";
-                //MessageBox.Show($"Error updating Warehouse Balance label: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -678,7 +679,7 @@ namespace WH_Panel
 
         private void btnMove_Click(object sender, EventArgs e)
         {
-            int qty = 0;
+            //int qty = 0;
             string sourceReq = string.Empty;
 
             if (radioButton1.Checked)

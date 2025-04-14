@@ -78,7 +78,7 @@ namespace WH_Panel
     {
         private ToolTip toolTip;
         public string SelectedSerialName { get; set; }
-        private bool isProgrammaticChange = false;
+        //private bool isProgrammaticChange = false;
         private List<Serial> originalSerials; // List to store the original work orders
         private AppSettings settings;
         //private List<WarehouseBalance> warehouseBalances;
@@ -906,7 +906,7 @@ namespace WH_Panel
         private async Task FetchMFPNForRow(DataGridViewRow row)
         {
             //MessageBox.Show("Test");
-            if (row.Cells["PARTNAME"].Value != null && (row.Cells["MFPN"].Value == string.Empty || row.Cells["MFPN"].Value == null))
+            if (row.Cells["PARTNAME"].Value != null && (row.Cells["MFPN"].Value.ToString() == string.Empty || row.Cells["MFPN"].Value == null))
             //if (row.Cells["PARTNAME"].Value != null) //&& (string.IsNullOrEmpty(row.Cells["MFPN"].Value?.ToString())|| row.Cells["MFPN"].Value=="")
             {
                 string partName = row.Cells["PARTNAME"].Value.ToString();
@@ -1315,7 +1315,7 @@ namespace WH_Panel
         }
         private async Task FetchAltForRow(DataGridViewRow row)
         {
-            if (row.Cells["PARTNAME"].Value != null && (row.Cells["ALT"].Value == string.Empty || row.Cells["ALT"].Value == null))
+            if (row.Cells["PARTNAME"].Value != null && (row.Cells["ALT"].Value.ToString() == string.Empty || row.Cells["ALT"].Value == null))
             {
                 string partName = row.Cells["PARTNAME"].Value.ToString();
                 string partUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART?$filter=PARTNAME eq '{partName}'&$expand=PARTALT_SUBFORM";
@@ -1493,16 +1493,16 @@ namespace WH_Panel
                 }
                 catch (HttpRequestException ex)
                 {
-                    //txtLog.SelectionColor = Color.Red; // Set the color to red
-                    //txtLog.AppendText($"Request error: {ex.Message}\n");
-                    //txtLog.ScrollToCaret();
+                    txtbLog.SelectionColor = Color.Red; // Set the color to red
+                    txtbLog.AppendText($"Request error: {ex.Message}\n");
+                    txtbLog.ScrollToCaret();
                     return new List<(string PackCode, string BookNum, string Date)>();
                 }
                 catch (Exception ex)
                 {
-                    //txtLog.SelectionColor = Color.Red; // Set the color to red
-                    //txtLog.AppendText($"Request error: {ex.Message}\n");
-                    //txtLog.ScrollToCaret();
+                    txtbLog.SelectionColor = Color.Red; // Set the color to red
+                    txtbLog.AppendText($"Request error: {ex.Message}\n");
+                    txtbLog.ScrollToCaret();
                     return new List<(string PackCode, string BookNum, string Date)>();
                 }
             }
@@ -1556,15 +1556,15 @@ namespace WH_Panel
                     }
                     catch (HttpRequestException ex)
                     {
-                        //txtLog.SelectionColor = Color.Red; // Set the color to red
-                        //txtLog.AppendText($"Request error: {ex.Message}\n");
-                        //txtLog.ScrollToCaret();
+                        txtbLog.SelectionColor = Color.Red; // Set the color to red
+                        txtbLog.AppendText($"Request error: {ex.Message}\n");
+                        txtbLog.ScrollToCaret();
                     }
                     catch (Exception ex)
                     {
-                        //txtLog.SelectionColor = Color.Red; // Set the color to red
-                        //txtLog.AppendText($"Request error: {ex.Message}\n");
-                        //txtLog.ScrollToCaret();
+                        txtbLog.SelectionColor = Color.Red; // Set the color to red
+                        txtbLog.AppendText($"Request error: {ex.Message}\n");
+                        txtbLog.ScrollToCaret();
                     }
                 }
             }
@@ -1597,15 +1597,15 @@ namespace WH_Panel
                     }
                     catch (HttpRequestException ex)
                     {
-                        //txtLog.SelectionColor = Color.Red; // Set the color to red
-                        //txtLog.AppendText($"Request error: {ex.Message}\n");
-                        //txtLog.ScrollToCaret();
+                        txtbLog.SelectionColor = Color.Red; // Set the color to red
+                        txtbLog.AppendText($"Request error: {ex.Message}\n");
+                        txtbLog.ScrollToCaret();
                     }
                     catch (Exception ex)
                     {
-                        //txtLog.SelectionColor = Color.Red; // Set the color to red
-                        //txtLog.AppendText($"Request error: {ex.Message}\n");
-                        //txtLog.ScrollToCaret();
+                        txtbLog.SelectionColor = Color.Red; // Set the color to red
+                        txtbLog.AppendText($"Request error: {ex.Message}\n");
+                        txtbLog.ScrollToCaret();
                     }
                 }
             }

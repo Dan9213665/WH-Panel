@@ -22,6 +22,7 @@ using System.Security.Principal; // Add this using directive if not already pres
 using System.IO;
 using OfficeOpenXml;
 using OfficeOpenXml.Drawing.Slicer.Style; // Add the EPPlus NuGet package for reading Excel files
+#pragma warning disable CS0618
 namespace WH_Panel
 {
     public partial class FrmPriorityAPI : Form
@@ -1763,7 +1764,7 @@ namespace WH_Panel
                 if (result == DialogResult.Yes)
                 {
                     //txtLog.AppendText($"Updating package to '{selectedPackCode}' for part '{partName}'\n");
-                    string docType = "P";
+                    //string docType = "P";
                     //await UpdatePackage(docNo, docType, partName, selectedPackCode);
                     txtLog.SelectionColor = Color.Red; // Set the color to green
                     txtLog.AppendText($"Only through web interface! ☹️\n");
@@ -2486,6 +2487,7 @@ namespace WH_Panel
                 btnMFG.Text = "OUTGOING";
                 btnMFG.Update();
                 txtbOUT.ReadOnly = false;
+                txtbINdoc.Text = string.Empty;
                 cbmOUT.DroppedDown = true;
                 txtbOUT.Focus();
             }
@@ -2766,21 +2768,55 @@ namespace WH_Panel
                 chkbNoSticker.BackColor = Color.IndianRed;
             }
         }
+        //private void cbmOUT_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    if(cbmOUT.SelectedItem.Equals("SENT TO"))
+        //    {
+        //        string clientName = cmbWarehouseList.SelectedItem.ToString().Substring(10).Trim();
+        //        txtbOUT.Text = cbmOUT.SelectedItem + " "+ clientName;
+
+        //    }
+        //    else
+        //    {
+        //        txtbOUT.Text = cbmOUT.SelectedItem.ToString();
+        //    }
+
+        //    txtbInputIPN.Focus();
+        //}
+
         private void cbmOUT_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(cbmOUT.SelectedItem.Equals("SENT TO"))
+            if (cbmOUT.SelectedItem.Equals("SENT TO"))
             {
-                string clientName = cmbWarehouseList.SelectedItem.ToString().Substring(10).Trim();
-                txtbOUT.Text = cbmOUT.SelectedItem + " "+ clientName;
-               
+                // Open the provided link in the default browser
+                string url = "https://p.priority-connect.online/webui/openmail.htm?tenant=zad51&priority:priform@DOCUMENTS_D:NEW:a020522:tabzad51.ini:1";
+                try
+                {
+                    var process = new Process
+                    {
+                        StartInfo = new ProcessStartInfo
+                        {
+                            FileName = url,
+                            UseShellExecute = true // Ensures the URL is opened in the default browser
+                        }
+                    };
+                    process.Start();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to open the link: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
             else
             {
                 txtbOUT.Text = cbmOUT.SelectedItem.ToString();
             }
-                
+
             txtbInputIPN.Focus();
         }
+
+
+
         private void txtbInputMFPN_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)

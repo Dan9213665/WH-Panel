@@ -23,6 +23,7 @@ using Exception = System.Exception;
 using GroupBox = System.Windows.Forms.GroupBox;
 using String = System.String;
 using TextBox = System.Windows.Forms.TextBox;
+#pragma warning disable CS0618
 namespace WH_Panel
 {
     public partial class FrmBomWHS : Form
@@ -1045,7 +1046,7 @@ namespace WH_Panel
                     sb.Append("</tr>");
                     if (cell.ColumnIndex == dataGridView.Columns["IPN"].Index)
                     {
-                        filteredByIPN = stockItems.Where(n => n.IPN == cell.Value).ToList();
+                        filteredByIPN = stockItems.Where(n => n.IPN == cell.Value.ToString()).ToList();
                         if (filteredByIPN.Count > 0)
                         {
                             List<WHitem> negativeStockWHItems = filteredByIPN.Where(item => item.Stock < 0).ToList();

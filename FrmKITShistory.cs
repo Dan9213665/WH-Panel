@@ -436,6 +436,7 @@ namespace WH_Panel
             }
             catch (System.IO.IOException ex)
             {
+                MessageBox.Show(ex.Message);
                 blnReturn = true;
             }
             return blnReturn;

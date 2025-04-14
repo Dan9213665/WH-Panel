@@ -48,6 +48,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Exception = System.Exception;
 using static WH_Panel.FrmPriorityAPI;
+#pragma warning disable CS0618
 namespace WH_Panel
 {
     public partial class FrmClientAgnosticWH : Form
@@ -1051,33 +1052,33 @@ namespace WH_Panel
                 MessageBox.Show("Sticker printing failed : " + e.Message);
             }
         }
-        private static void printStickerAPI(WHitem wHitem)
-        {
-            try
-            {
-                using (Engine btengine = new Engine(true))
-                {
-                    //Mutex m = new Mutex(false, "MyMutex");
-                    btengine.Start();
-                    btengine.Window.Visible = true;
-                    Messages messages = null;
-                    LabelFormatDocument labelFormat =
-                        btengine.Documents.Open(@"C:\1\PN_STICKER_2022.btw");
-                    labelFormat.SubStrings["Date"].Value = wHitem.Updated_on;
-                    labelFormat.SubStrings["DESC"].Value = wHitem.Description;
-                    labelFormat.SubStrings["MFPN"].Value = wHitem.MFPN;
-                    labelFormat.SubStrings["PN"].Value = wHitem.IPN;
-                    labelFormat.SubStrings["QTY"].Value = wHitem.Stock.ToString();
-                    labelFormat.Print();
-                    btengine.Stop();
-                }
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message);
-                throw;
-            }
-        }
+        //private static void printStickerAPI(WHitem wHitem)
+        //{
+        //    try
+        //    {
+        //        using (Engine btengine = new Engine(true))
+        //        {
+        //            //Mutex m = new Mutex(false, "MyMutex");
+        //            btengine.Start();
+        //            btengine.Window.Visible = true;
+        //            Messages messages = null;
+        //            LabelFormatDocument labelFormat =
+        //                btengine.Documents.Open(@"C:\1\PN_STICKER_2022.btw");
+        //            labelFormat.SubStrings["Date"].Value = wHitem.Updated_on;
+        //            labelFormat.SubStrings["DESC"].Value = wHitem.Description;
+        //            labelFormat.SubStrings["MFPN"].Value = wHitem.MFPN;
+        //            labelFormat.SubStrings["PN"].Value = wHitem.IPN;
+        //            labelFormat.SubStrings["QTY"].Value = wHitem.Stock.ToString();
+        //            labelFormat.Print();
+        //            btengine.Stop();
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        MessageBox.Show(e.Message);
+        //        throw;
+        //    }
+        //}
         private void textBox8_KeyDown_1(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
