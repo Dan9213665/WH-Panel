@@ -589,7 +589,7 @@ namespace WH_Panel
         {
             foreach (ClientWarehouse warehouse in warehouses)
             {
-                if (firstIPN.StartsWith(warehouse.clPrefix))
+                if (firstIPN.StartsWith(warehouse.clPrefix)&&!warehouseSelected)
                 {
                         comboBox6.SelectedItem = warehouse.clName;
                         warehouseSelected = true; // Mark as selected to break after the first match
