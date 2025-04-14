@@ -255,6 +255,7 @@
             btnGETMFPN.Size = new Size(156, 134);
             btnGETMFPN.TabIndex = 9;
             btnGETMFPN.UseVisualStyleBackColor = true;
+            btnGETMFPN.Visible = false;
             btnGETMFPN.Click += btnGETMFPN_Click;
             // 
             // btnClearAllFilters
