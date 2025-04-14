@@ -17,7 +17,6 @@ namespace WH_Panel
         public int? QtyPerUnit { get; set; }
         public string? Calc { get; set; }
         public string? Alts { get; set; }
-
         public string? filePath { get; set; }
     }
 }

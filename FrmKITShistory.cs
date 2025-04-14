@@ -33,7 +33,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
-
 namespace WH_Panel
 {
     public partial class FrmKITShistory : Form
@@ -53,12 +52,9 @@ namespace WH_Panel
         public FrmKITShistory()
         {
             InitializeComponent();
-
             UpdateControlColors(this);
-
             LoadCachedData();
         }
-
         public List<KitHistoryItem> LoadCachedData()
         {
             try
@@ -68,11 +64,9 @@ namespace WH_Panel
                 {
                     MessageBox.Show("Base directory does not exist.");
                 }
-
                 // Get today's file name
                 string fileName = DateTime.Now.ToString("yyyyMMdd") + ".xml";
                 string filePath = Path.Combine(BaseDirectory, fileName);
-
                 // Check if today's file exists
                 if (File.Exists(filePath))
                 {
@@ -90,7 +84,6 @@ namespace WH_Panel
                         Array.Sort(xmlFiles);
                         Array.Reverse(xmlFiles);
                         string latestFile = xmlFiles[0];
-
                         // Prompt user to load the latest file
                         DialogResult result = MessageBox.Show($"Do you want to load the {latestFile} ?", "Load Latest File", MessageBoxButtons.YesNo);
                         if (result == DialogResult.Yes)
@@ -109,11 +102,9 @@ namespace WH_Panel
             {
                 MessageBox.Show("Error loading cached data: " + ex.Message);
             }
-
             cachedDataLoaded = true;
             return KitHistoryItemsList;
         }
-
         private void OrganizeDisplay()
         {
             stopWatch.Reset();
@@ -124,13 +115,10 @@ namespace WH_Panel
             TimeSpan ts = stopWatch.Elapsed;
             label12.Text = "Loaded " + KitHistoryItemsList.Count.ToString() + " Rows from cache. In " + string.Format("{00:00}.{1:000} Seconds", ts.Seconds, ts.Milliseconds);
             label12.Update();
-
         }
-
         private List<KitHistoryItem> LoadDataFromFile(string filePath)
         {
             List<KitHistoryItem> kitHistoryItemsList = new List<KitHistoryItem>();
-
             try
             {
                 // Deserialize XML file
@@ -144,10 +132,8 @@ namespace WH_Panel
             {
                 MessageBox.Show("Error loading data from file: " + ex.Message);
             }
-
             return kitHistoryItemsList;
         }
-
         private void UpdateControlColors(Control parentControl)
         {
             foreach (Control control in parentControl.Controls)
@@ -244,7 +230,6 @@ namespace WH_Panel
             SetColumsOrder();
             textBox1.Focus();
         }
-
         //private async void button1_Click(object sender, EventArgs e)
         //{
         //    stopWatch.Reset();
@@ -253,7 +238,6 @@ namespace WH_Panel
         //    SetColumsOrder();
         //    textBox1.Focus();
         //}
-
         private void ResetViews()
         {
             listBox1.Items.Clear();
@@ -315,20 +299,16 @@ namespace WH_Panel
                     }
                 }
             }
-
             cachedDataLoaded = false;
             PopulateGridView();
             SetColumsOrder();
             stopWatch.Stop();
             SaveToCachedXML(KitHistoryItemsList);
         }
-
-
         //private async Task StartUpLogicAsync(int timeSpan)
         //{
         //    stopWatch.Start();
         //    label12.BackColor = Color.IndianRed;
-
         //    // Aggregate list of paths based on timeSpan
         //    listOfPaths = timeSpan switch
         //    {
@@ -337,18 +317,15 @@ namespace WH_Panel
         //        12 => listOfPathsAggregator(11),
         //        _ => listOfPathsAggregator(timeSpan)
         //    };
-
         //    // Enumerate and process files asynchronously
         //    foreach (string path in listOfPaths)
         //    {
         //        var files = Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories);
-
         //        foreach (string file in files)
         //        {
         //            countLoadedFIles++;
         //            string Litem = Path.GetFileName(file);
         //            string fileName = Path.GetFileName(file);
-
         //            // Check if file is locked and process accordingly
         //            if (FileIsLocked(Litem))
         //            {
@@ -362,18 +339,13 @@ namespace WH_Panel
         //            }
         //        }
         //    }
-
         //    cachedDataLoaded = false;
         //    PopulateGridView();
         //    SetColumsOrder();
         //    stopWatch.Stop();
-
         //    // Save to cached XML asynchronously
         //    await Task.Run(() => SaveToCachedXML(KitHistoryItemsList));
         //}
-
-
-
         private List<string> listOfPathsAggregator(int numMonths)
         {
             List<string> list = new List<string>();
@@ -532,12 +504,7 @@ namespace WH_Panel
             dataGridView1.DataSource = UDtable;
             SetColumsOrder();
             label12.BackColor = Color.LightGreen;
-
         }
-
-
-
-
         public void SaveToCachedXML(List<KitHistoryItem> list)
         {
             try
@@ -548,19 +515,15 @@ namespace WH_Panel
                     Directory.CreateDirectory(BaseDirectory);
                 }
                 string fileName = DateTime.Now.ToString("yyyyMMdd") + ".xml";
-
                 // Create the XML file path
                 string filePath = Path.Combine(BaseDirectory, fileName);
-
                 // Create XmlSerializer for KitHistoryItem list
                 XmlSerializer serializer = new XmlSerializer(typeof(List<KitHistoryItem>));
-
                 // Serialize the list to XML
                 using (StreamWriter writer = new StreamWriter(filePath))
                 {
                     serializer.Serialize(writer, list);
                 }
-
                 Console.WriteLine("Data saved to: " + filePath);
             }
             catch (Exception ex)
@@ -568,7 +531,6 @@ namespace WH_Panel
                 Console.WriteLine("Error saving data: " + ex.Message);
             }
         }
-
         private void SetColumsOrder()
         {
             dataGridView1.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -776,7 +738,6 @@ namespace WH_Panel
                     }
                 }
             }
-
         }
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
@@ -969,7 +930,6 @@ namespace WH_Panel
         //    SetColumsOrder();
         //    textBox1.Focus();
         //}
-
         //private async void button3_Click(object sender, EventArgs e)
         //{
         //    stopWatch.Reset();
@@ -978,9 +938,6 @@ namespace WH_Panel
         //    SetColumsOrder();
         //    textBox1.Focus();
         //}
-
-
-
         private void textBox11_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
@@ -1095,11 +1052,9 @@ namespace WH_Panel
                             frmBOM.ReloadLogic();
                         }
                     }
-
                 }
                 else
                 {
-
                     int rowindex = dataGridView1.CurrentCell.RowIndex;
                     int columnindex = dataGridView1.CurrentCell.ColumnIndex;
                     string fp = dataGridView1.Rows[rowindex].Cells["ProjectName"].Value.ToString();
@@ -1133,9 +1088,7 @@ namespace WH_Panel
                             }
                         }
                     }
-
                 }
-
             }
         }
         private void button4_Click(object sender, EventArgs e)
@@ -1303,19 +1256,16 @@ namespace WH_Panel
                 //MessageBox.Show("Operation canceled by user.");
             }
         }
-
         //private async void button5_Click(object sender, EventArgs e)
         //{
         //    stopWatch.Reset();
         //    ResetViews();
-
         //    // Get the current date
         //    DateTime currentDate = DateTime.Now;
         //    // Set the reference date to September 2022
         //    DateTime referenceDate = new DateTime(2022, 9, 1);
         //    // Calculate the difference in months
         //    int numMonths = CalculateMonthsDifference(referenceDate, currentDate);
-
         //    // Display a YES/NO question to the user
         //    DialogResult result = MessageBox.Show(
         //        $"Are you sure you want to load the last {numMonths} months passed since 2022.09?",
@@ -1323,7 +1273,6 @@ namespace WH_Panel
         //        MessageBoxButtons.YesNo,
         //        MessageBoxIcon.Warning
         //    );
-
         //    // Check the user's response
         //    if (result == DialogResult.Yes)
         //    {
@@ -1337,7 +1286,6 @@ namespace WH_Panel
         //        // User clicked NO, handle accordingly if needed
         //    }
         //}
-
         static int CalculateMonthsDifference(DateTime startDate, DateTime endDate)
         {
             int monthsApart = (endDate.Year - startDate.Year) * 12 + endDate.Month - startDate.Month;

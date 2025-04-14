@@ -509,8 +509,6 @@ namespace WH_Panel
         //        }
         //    }
         //}
-
-
         private async Task LoadBomDetails(string serialName)
         {
             txtbLog.AppendText($"Fetching warehouse balances...\n");
@@ -588,7 +586,6 @@ namespace WH_Panel
                             txtbInputIPN.PlaceholderText = $"Filter by IPN ({aggregatedDetails.Count})";
                             // Fetch warehouse balances
                             await FetchWarehouseBalances();
-
                             // Fetch MFPNs in a single API call
                             await FetchMFPNsForAllRowsInSinglePull();
                         }
@@ -614,18 +611,15 @@ namespace WH_Panel
                 }
             }
         }
-
         private async Task FetchMFPNsForAllRowsInSinglePull()
         {
             txtbLog.AppendText("Fetching MFPNs for all rows in a single API call...\n");
-
             // Ensure there are rows in the DataGridView
             if (dgwBom.Rows.Count == 0)
             {
                 txtbLog.AppendText("No rows found in the DataGridView to fetch MFPNs.\n");
                 return;
             }
-
             // Get the warehouse name from the first 3 characters of the first PARTNAME
             string selectedWarehouse = dgwBom.Rows[0].Cells["PARTNAME"].Value?.ToString()?.Substring(0, 3);
             if (string.IsNullOrEmpty(selectedWarehouse))
@@ -633,11 +627,9 @@ namespace WH_Panel
                 txtbLog.AppendText("Unable to determine the warehouse from the first PARTNAME.\n");
                 return;
             }
-
             // Construct the API URL using the warehouse name
             string avlUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PARTNAME eq '{selectedWarehouse}_*'";
            // txtbLog.AppendText($"API URL: {avlUrl}\n");
-
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -647,25 +639,20 @@ namespace WH_Panel
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                     // Make the HTTP GET request
                     HttpResponseMessage response = await client.GetAsync(avlUrl);
                     response.EnsureSuccessStatusCode();
-
                     // Read the response content
                     string responseBody = await response.Content.ReadAsStringAsync();
                    // txtbLog.AppendText($"API Response: {responseBody}\n");
-
                     // Parse the JSON response
                     var apiResponseWrapper = JsonConvert.DeserializeObject<ApiMFPNResponseWrapper>(responseBody);
-
                     // Validate the API response
                     if (apiResponseWrapper?.Value == null || !apiResponseWrapper.Value.Any())
                     {
                         txtbLog.AppendText("No data returned from the API.\n");
                         return;
                     }
-
                     // Map the MFPNs to the DataGridView rows
                     foreach (DataGridViewRow row in dgwBom.Rows)
                     {
@@ -683,7 +670,6 @@ namespace WH_Panel
                             }
                         }
                     }
-
                     txtbLog.AppendText("MFPN fetching completed.\n");
                 }
                 catch (HttpRequestException ex)
@@ -699,20 +685,15 @@ namespace WH_Panel
                     txtbLog.ScrollToCaret();
                 }
             }
-
             dgwBom.Update();
         }
-
-
         public class ApiMFPNResponseWrapper
         {
             [JsonProperty("@odata.context")]
             public string ODataContext { get; set; }
-
             [JsonProperty("value")]
             public List<ApiMFPNResponse> Value { get; set; }
         }
-
         public class ApiMFPNResponse
         {
             public string PARTNAME { get; set; }
@@ -721,8 +702,6 @@ namespace WH_Panel
             public string MNFNAME { get; set; }
             public string MNFDES { get; set; }
         }
-
-
         private async Task<int> FetchIPNcountFromBom(string partName)
         {
             txtbLog.AppendText($"Fetching IPN count for {partName}\n");
@@ -875,14 +854,11 @@ namespace WH_Panel
             //    int kitQuantity = row.Cells["QUANT"].Value != null ? Convert.ToInt32(row.Cells["QUANT"].Value) : 0;
             //    return (whQuantity + kitQuantity) >= Math.Abs(delta);
             //});
-
             //int delta = Convert.ToInt32(row.Cells["DELTA"].Value);
             //int whQuantity = row.Cells["TBALANCE"].Value != null ? Convert.ToInt32(row.Cells["TBALANCE"].Value) : 0;
             //int kitQuantity = row.Cells["QUANT"].Value != null ? Convert.ToInt32(row.Cells["QUANT"].Value) : 0;
             //int requiredQuantity = row.Cells["CQUANT"].Value != null ? Convert.ToInt32(row.Cells["CQUANT"].Value) : 0;
             //int leftovers = (whQuantity + kitQuantity) - requiredQuantity;
-
-
             int coveredItems = dgwBom.Rows.Cast<DataGridViewRow>().Count(row =>
             {
                 int delta = Convert.ToInt32(row.Cells["DELTA"].Value);
@@ -892,7 +868,6 @@ namespace WH_Panel
                 int leftovers = (whQuantity + kitQuantity) - requiredQuantity;
                 return (leftovers>=0);
             });
-
             if (totalItems > 0 && coveredItems > 0)
             {
                 int simPercentage = (coveredItems * 100) / totalItems;
@@ -1272,11 +1247,9 @@ namespace WH_Panel
                             gbxIPNstockMovements.Text = $"Stock Movements for {partName}";
                             ColorTheRows(dgwIPNmoves);
                             SortIPNMovesByDate();
-                           
                             // Fetch MFPN for the selected row
                             await FetchMFPNForRow(selectedRow);
                             await FetchAltForRow(selectedRow);
-
                             LoadDataAndFilterInStock();
                         }
                         else
@@ -2469,9 +2442,6 @@ namespace WH_Panel
                 DialogResult = DialogResult.OK;
             }
         }
-    
-
-
         private void btnReport_Click(object sender, EventArgs e)
         {
             // Sort the DataGridView by the DELTA column in ascending order
@@ -2577,7 +2547,6 @@ namespace WH_Panel
                 writer.WriteLine("}");
                 writer.WriteLine("window.addEventListener('beforeprint', function() { changeFontColor('black'); });");
                 writer.WriteLine("window.addEventListener('afterprint', function() { changeFontColor(''); });");
-
                 // Add JavaScript for the SIM QTY button
                 writer.WriteLine("function openSimQtyPopup() {");
                 writer.WriteLine("  var currentQty = document.getElementById('currentQty').innerText;");
@@ -2736,8 +2705,6 @@ namespace WH_Panel
             };
             p.Start();
         }
-
-
         private async void btnGetWHstock_Click(object sender, EventArgs e)
         {
             await FetchWarehouseBalances();
@@ -2906,8 +2873,6 @@ namespace WH_Panel
         }
         private List<DataGridViewRow> originalRows = new List<DataGridViewRow>();
         private bool isFiltered = false;
-
-
         private void btnInStock_Click(object sender, EventArgs e)
         {
             if (!isFiltered)
@@ -2972,21 +2937,16 @@ namespace WH_Panel
                 isFiltered = false;
             }
         }
-
         private void btnGetMFNs_Click(object sender, EventArgs e)
         {
-
         }
-
         private void LoadDataAndFilterInStock()
         {
             // Step 1: Initialize dgwINSTOCK columns
             InitializeInStockDataGridView();
-
             // Step 2: Separate data into ROB and notRob lists
             var robList = new List<DataGridViewRow>();
             var notRobList = new List<DataGridViewRow>();
-
             foreach (DataGridViewRow row in dgwIPNmoves.Rows)
             {
                 if (row.Cells["LOGDOCNO"].Value != null && row.Cells["UDATE"].Value != null && DateTime.TryParse(row.Cells["UDATE"].Value.ToString(), out _))
@@ -3007,11 +2967,9 @@ namespace WH_Panel
                     }
                 }
             }
-
             // Step 3: Sort both lists by transaction date
             robList = robList.OrderBy(row => DateTime.Parse(row.Cells["UDATE"].Value.ToString())).ToList();
             notRobList = notRobList.OrderBy(row => DateTime.Parse(row.Cells["UDATE"].Value.ToString())).ToList();
-
             // Step 4: Filter out matching pairs
             var filteredNotRobList = new List<DataGridViewRow>(notRobList);
             foreach (var notRobRow in notRobList)
@@ -3025,7 +2983,6 @@ namespace WH_Panel
                     robList.Remove(matchingRobRow);
                 }
             }
-
             // Step 5: Display the filtered INSTOCK items in dgwINSTOCK
             dgwINSTOCK.Rows.Clear();
             foreach (var row in filteredNotRobList)
@@ -3037,12 +2994,9 @@ namespace WH_Panel
                 }
                 dgwINSTOCK.Rows.Add(newRow);
             }
-
             // Step 6: Update the UI
             dgwINSTOCK.Refresh();
         }
-
-
         private void InitializeInStockDataGridView()
         {
             dgwINSTOCK.Columns.Clear();
@@ -3053,10 +3007,8 @@ namespace WH_Panel
             dgwINSTOCK.Columns.Add("BOOKNUM", "Client's Document");
             dgwINSTOCK.Columns.Add("TQUANT", "Qty");
             dgwINSTOCK.Columns.Add("PACK", "Pack");
-
             dgwINSTOCK.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dgwINSTOCK.AllowUserToAddRows = false; // Optional: Prevent manual row addition
         }
-
     }
 }

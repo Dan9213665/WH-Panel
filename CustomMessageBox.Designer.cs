@@ -7,15 +7,12 @@
         private Button btnUncount;
         private Button btnDelete;
         private Button btnCancel;
-
         public DialogResult Result { get; private set; }
-
         public CustomMessageBox(string message)
         {
             InitializeComponent();
             messageLabel.Text = message;
         }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -24,9 +21,7 @@
             }
             base.Dispose(disposing);
         }
-
         #region Windows Form Designer generated code
-
         private void InitializeComponent()
         {
             messageLabel = new Label();
@@ -164,33 +159,27 @@
             ResumeLayout(false);
             PerformLayout();
         }
-
         #endregion
-
         private void btnUncount_Click(object sender, EventArgs e)
         {
             Result = DialogResult.Yes; // Custom action for UNCOUNT
             this.Close();
         }
-
         private void btnDelete_Click(object sender, EventArgs e)
         {
             Result = DialogResult.No; // Custom action for DELETE
             this.Close();
         }
-
         private void btnCancel_Click(object sender, EventArgs e)
         {
             Result = DialogResult.Cancel; // Action for CANCEL
             this.Close();
         }
-
         private void btnSeven_Click(object sender, EventArgs e)
         {
             Result = DialogResult.OK; // Action for CANCEL
             this.Close();
         }
-
         private void btnBag_Click(object sender, EventArgs e)
         {
             Result = DialogResult.Abort; // Action for CANCEL
@@ -206,19 +195,16 @@
             Result = DialogResult.Continue; // Action for CANCEL
             this.Close();
         }
-
         private void btnStick_Click(object sender, EventArgs e)
         {
             Result = DialogResult.Ignore; // Action for CANCEL
             this.Close();
         }
-
         private void btnTray_Click(object sender, EventArgs e)
         {
             Result = DialogResult.Retry; // Action for CANCEL
             this.Close();
         }
-
         private Button btnSeven;
         private Button btnBag;
         private Button btn13;

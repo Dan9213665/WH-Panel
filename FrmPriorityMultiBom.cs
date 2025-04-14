@@ -146,7 +146,6 @@ namespace WH_Panel
                 }
             }
         }
-
         private void SortDataGridViewByStatus()
         {
             dgvBomsList.Sort(dgvBomsList.Columns["SerialStatusDes"], ListSortDirection.Ascending);
@@ -395,10 +394,6 @@ namespace WH_Panel
             {
                 MessageBox.Show("Please select at least one work order. \n");
             }
-
-
-
-
         }
         private string GetSelectedWarehouseName()
         {
@@ -806,8 +801,6 @@ namespace WH_Panel
             {
                 MessageBox.Show("Please select at least one work order.", "No Work Orders Selected", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-
-
         }
         private async Task<Dictionary<string, int>> GetWarehouseStock()
         {
@@ -1033,8 +1026,6 @@ namespace WH_Panel
             {
                 MessageBox.Show("Please select at least one work order to simulate", "No work orders selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-
-               
         }
         private async Task<(Dictionary<string, List<(string ipn, int quant, int cquant, int balance, int delta)>> kitDeficits, Dictionary<string, HashSet<string>> allIPNs)> SimByBoms(List<Serial> selectedWorkOrders, Dictionary<string, int> warehouseStock)
         {

@@ -35,19 +35,14 @@ namespace WH_Panel
             if (textBox1.Lines.Length > 0)
             {
                 string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-
                 if (isSql)
                 {
                     StockViewDataLoaderSql(selectedWH.sqlStock);
-
                 }
                 else
                 {
-
                     StockViewDataLoader(selectedWH.clStockFile, "STOCK");
                 }
-
-
                 GenerateFilteredReport();
             }
             else
@@ -61,19 +56,14 @@ namespace WH_Panel
             stockItems.Clear();
             // Connection string for SQL Server Express
             string connectionString = sqlStock;
-
             try
             {
                 // Load STOCK table into dataGridView1
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-
-
                     SqlDataAdapter adapterStock = new SqlDataAdapter("SELECT * FROM STOCK", connection);
-
                     DataTable stockTable = new DataTable();
                     adapterStock.Fill(stockTable);
-
                     foreach (DataRow row in stockTable.Rows)
                     {
                         WHitem item = new WHitem
@@ -87,7 +77,6 @@ namespace WH_Panel
                             Comments = row["Comments"].ToString(),
                             Source_Requester = row["Source_Requester"].ToString()
                         };
-
                         stockItems.Add(item);
                     }
                 }
@@ -107,9 +96,6 @@ namespace WH_Panel
                 .Where(item => filterValues.Contains(item.IPN))
                 .GroupBy(item => item.IPN).OrderBy(item => item.Key)
             .ToList();
-
-
-
             //groupedByIPN.OrderBy(item => item.Key);
             // Generate and display the HTML report using the grouped list
             GenerateHTMLReport(groupedByIPN);
@@ -125,7 +111,6 @@ namespace WH_Panel
                 writer.WriteLine("<head>");
                 writer.WriteLine("<title>Listed items to search for</title>");
                 writer.WriteLine("</head>");
-
                 writer.WriteLine("<button onclick='toggleDisplay()'>FILTER for PRINTOUT</button>");
                 writer.WriteLine("<div id='rowsCount'>Total Rows Loaded : </div>");
                 writer.WriteLine("<script>");
@@ -162,11 +147,7 @@ namespace WH_Panel
                 foreach (var group in groupedByIPN)
                 {
                     group.OrderBy(item => item.Updated_on);
-
                     var orderedGroup = group.OrderByDescending(item => DateTime.Parse(item.Updated_on)).ToList();
-
-
-
                     //writer.WriteLine("<h2>IPN: " + group.Key + "</h2>");
                     writer.WriteLine("<table border='1'>");
                     // Table headers
@@ -183,7 +164,6 @@ namespace WH_Panel
                     writer.WriteLine("<h2>" + group.Key + " - Warehouse Balance: " + group.Sum(item => item.Stock) + "</h2>");
                     foreach (var item in orderedGroup)
                     {
-
                         writer.WriteLine("<tr>");
                         writer.WriteLine("<td style='text-align: center;'>" + item.IPN + "</td>");
                         writer.WriteLine("<td style='text-align: center;'>" + item.Manufacturer + "</td>");
@@ -338,14 +318,12 @@ namespace WH_Panel
                 MessageBox.Show("Error");
             }
         }
-
         // Field to track the current state
         private bool replaceHyphensWithUnderscores = true;
         private void button3_Click(object sender, EventArgs e)
         {
             // Get the text from textBox1
             string text = textBox1.Text;
-
             if (replaceHyphensWithUnderscores)
             {
                 // Replace hyphens with underscores
@@ -356,10 +334,8 @@ namespace WH_Panel
                 // Replace underscores with hyphens
                 text = text.Replace('_', '-');
             }
-
             // Set the modified text back to textBox1
             textBox1.Text = text;
-
             // Toggle the state
             replaceHyphensWithUnderscores = !replaceHyphensWithUnderscores;
         }

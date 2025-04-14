@@ -17,33 +17,21 @@ namespace WH_Panel
         public FrmMFPNsearcher()
         {
             InitializeComponent();
-
-
-
-
         }
-
         public static string connectionString = "Data Source=DBR3\\SQLEXPRESS;Integrated Security=True;";
-
         public List<string> databases = GetUserDatabases(connectionString);
-
         public List<DataTable> results = new List<DataTable>();
-
         public static List<WHitem> stockItems = new List<WHitem>();
-
-
         static DataTable SearchInDatabase(string connectionString, string dbName, string[] filterValues)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 string query = BuildSearchQuery(dbName, filterValues);
-
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     SqlDataAdapter adapter = new SqlDataAdapter(command);
                     DataTable resultTable = new DataTable();
-
                     try
                     {
                         adapter.Fill(resultTable);
@@ -57,14 +45,11 @@ namespace WH_Panel
                 }
             }
         }
-
-
         static string BuildSearchQuery(string dbName, string[] filterValues)
         {
             StringBuilder queryBuilder = new StringBuilder();
             queryBuilder.AppendLine($"USE [{dbName}];");
             queryBuilder.AppendLine("SELECT * FROM dbo.STOCK WHERE");
-
             for (int i = 0; i < filterValues.Length; i++)
             {
                 if (i > 0)
@@ -73,19 +58,15 @@ namespace WH_Panel
                 }
                 queryBuilder.Append($"MFPN LIKE '%{filterValues[i]}%'");
             }
-
             return queryBuilder.ToString();
         }
-
         static List<string> GetUserDatabases(string connectionString)
         {
             List<string> databases = new List<string>();
-
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 string query = "SELECT name FROM sys.databases WHERE database_id > 4";
-
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     using (SqlDataReader reader = command.ExecuteReader())
@@ -97,10 +78,8 @@ namespace WH_Panel
                     }
                 }
             }
-
             return databases;
         }
-
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             try
@@ -133,7 +112,6 @@ namespace WH_Panel
             int rowCount = lines.Length;
             label1.Text = "Total rows to search for: " + rowCount;
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
             if (textBox1.Lines.Length > 0)
@@ -146,43 +124,29 @@ namespace WH_Panel
                 textBox1.Focus();
             }
         }
-
-        
-
         //string sqlStock = "";
         private void GenerateFilteredReport()
         {
-
             string[] filterValues = textBox1.Lines
                 .Select(line => line.Trim())
                 .Where(line => !string.IsNullOrWhiteSpace(line))
                 .ToArray();
-
-
             foreach (string dbName in databases)
             {
                 DataTable result = SearchInDatabase(connectionString, dbName, filterValues);
                 if (result != null)
                 {
-
                     PopulateStockItems(result);
                 }
             }
-
-
-
             var groupedByMFPN = stockItems
                 .Where(item => filterValues.Contains(item.MFPN))
                 .GroupBy(item => item.MFPN).OrderBy(item => item.Key)
             .ToList();
-
-
-
             //groupedByIPN.OrderBy(item => item.Key);
             // Generate and display the HTML report using the grouped list
             GenerateHTMLReport(groupedByMFPN);
         }
-
         static void PopulateStockItems(DataTable resultTable)
         {
             foreach (DataRow row in resultTable.Rows)
@@ -198,12 +162,10 @@ namespace WH_Panel
                     Comments = row["Comments"].ToString(),
                     Source_Requester = row["Source_Requester"].ToString()
                 };
-
                 stockItems.Add(item);
             }
             stockItems.OrderBy(x => x.Updated_on);
         }
-
         private void GenerateHTMLReport(List<IGrouping<string?, WHitem>> groupedByIPN)
         {
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmmss");
@@ -247,17 +209,11 @@ namespace WH_Panel
                 writer.WriteLine("  document.getElementById('rowsCount').innerHTML = 'Total Rows Loaded : ' + totalRows;");
                 writer.WriteLine("}");
                 writer.WriteLine("</script>");
-
-              
-
                 foreach (var group in groupedByIPN)
                 {
                     //group.OrderBy(item => item.Updated_on);
-
-
                     // Order the items by Updated_on
                     var orderedItems = group.OrderBy(item => item.Updated_on);
-
                     //writer.WriteLine("<h2>IPN: " + group.Key + "</h2>");
                     writer.WriteLine("<table border='1'>");
                     // Table headers

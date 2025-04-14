@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace WH_Panel
 {
-
     public class WarehouseBalance
     {
         public string LOCNAME { get; set; }
@@ -19,7 +17,6 @@ namespace WH_Panel
         public string PROJDES { get; set; }
         public string ACTNAME { get; set; }
         public string CUSTNAME { get; set; }
-
         public int TBALANCE { get; set; }
         public string TUNITNAME { get; set; }
         public string SUPNAME { get; set; }

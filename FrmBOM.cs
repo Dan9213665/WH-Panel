@@ -78,7 +78,6 @@ namespace WH_Panel
         public string theExcelFilePath = string.Empty;
         public bool isSql = false;
         public string ipnToUpdate { get; set; }
-
         public FrmBOM()
         {
             InitializeComponent();
@@ -289,7 +288,6 @@ namespace WH_Panel
             SufficientItemsList.Clear();
             MissingItemsList.Clear();
             dataGridView1.Update();
-
             TimeSpan ts = stopWatch.Elapsed;
             try
             {
@@ -638,7 +636,6 @@ namespace WH_Panel
                 throw;
             }
         }
-
         private void FilterTheMissingDataGridViewFullIpnOnly()
         {
             try
@@ -758,7 +755,6 @@ namespace WH_Panel
             if (e.KeyCode == Keys.Enter)
             {
                 e.SuppressKeyPress = true;
-
                 if (dataGridView1.Rows.Count == 1)
                 {
                     txtbQtyToAdd.Focus();
@@ -826,14 +822,9 @@ namespace WH_Panel
             //}
             //validQty = 0;
             //bool qtyOK = int.TryParse(inputQty, out validQty);
-
             //if (qtyOK)
             //{
-
-
             //    transferFromDatabaseToKit(w, validQty, theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));
-
-
             //    if (checkBox1.Checked)
             //    {
             //        WHitem itemToPrint = new WHitem();
@@ -846,18 +837,13 @@ namespace WH_Panel
             //    }
             //}
         }
-
-
         private void updateQtyInBomFile(KitHistoryItem w, int? qtyToAdd)
         {
             //KitHistoryItem itemToUpdate = MissingItemsList.FirstOrDefault(r => r.IPN == w.IPN && r.QtyPerUnit == w.QtyPerUnit);
-
             KitHistoryItem itemToUpdate = MissingItemsList.FirstOrDefault(r =>
     (r.IPN.Equals(w.IPN, StringComparison.OrdinalIgnoreCase) ||
      r.Alts.Equals(w.IPN, StringComparison.OrdinalIgnoreCase)) &&
     r.QtyPerUnit == w.QtyPerUnit);
-
-
             if (itemToUpdate != null)
             {
                 if (itemToUpdate.QtyInKit > 0 && itemToUpdate.Calc == string.Empty)
@@ -891,10 +877,7 @@ namespace WH_Panel
                 else
                 {
                     PopulateMissingGridView();
-
                     ipnToUpdate = itemToUpdate.IPN; // The IPN value to match
-
-
                     foreach (DataGridViewRow row in dataGridView1.Rows)
                     {
                         // Check if the value in the IPN column matches the IPN to update (case-insensitive)
@@ -902,18 +885,13 @@ namespace WH_Panel
                         {
                             // Color the entire row orange
                             row.DefaultCellStyle.BackColor = Color.Orange;
-
                             // Set the focus to the current row by selecting the first cell in the row
                             dataGridView1.CurrentCell = row.Cells[0]; // You can change the column index if needed
-
                             // Optionally, select the entire row
                             row.Cells["IPN"].Selected = true;
-
                             break; // Exit the loop if you only want to focus on the first matching row
                         }
                     }
-
-
                     UpdateKitHistoryItem(fileName, itemToUpdate);
                 }
             }
@@ -921,7 +899,6 @@ namespace WH_Panel
             {
             }
         }
-
         bool AltTransaction = false;
         private void txtbQtyToAdd_KeyDown(object sender, KeyEventArgs e)
         {
@@ -930,44 +907,32 @@ namespace WH_Panel
                 e.SuppressKeyPress = true;
                 // Check if the entered IPN or Alt exists in the MissingItemsList
                 //KitHistoryItem w = MissingItemsList.FirstOrDefault(r => r.IPN == (textBox1.Text) || r.Alts == (textBox9.Text));
-
-
                 // Retrieve textBox values and trim any excess whitespace
                 string ipnText = textBox1.Text.Trim();
                 string altText = textBox9.Text.Trim();
-
                 // Check if MissingItemsList contains an item with either IPN or Alt matching the respective textBox input
                 KitHistoryItem w = MissingItemsList.FirstOrDefault(r =>
                     (!string.IsNullOrEmpty(ipnText) && r.IPN.Equals(ipnText, StringComparison.OrdinalIgnoreCase)) ||
                     (!string.IsNullOrEmpty(altText) && r.Alts.Equals(altText, StringComparison.OrdinalIgnoreCase))
                 );
-
-
                 //MessageBox.Show(w.IPN);
-
                 if (w == null)
                 {
                     MessageBox.Show("Item not found in MissingItemsList.");
                     textBox1.Focus();
                     return;
                 }
-
-
-
                 // Validate the quantity input
                 string inputQty = txtbQtyToAdd.Text;
                 if (inputQty.StartsWith("Q"))
                 {
                     inputQty = txtbQtyToAdd.Text.Substring(1);
                 }
-
                 validQty = 0;
                 bool qtyOK = int.TryParse(inputQty, out validQty);
-
                 if (qtyOK)
                 {
                     // Execute the transfer based on the Alt, highlighting the associated IPN
-
                     if (textBox9.Text != string.Empty)
                     {
                         AltTransaction = true;
@@ -979,7 +944,6 @@ namespace WH_Panel
                         transferFromDatabaseToKit(w, validQty, theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));
                     }
                     //transferFromDatabaseToKit(w, validQty, theExcelFilePath.Substring(0, theExcelFilePath.Length - 5));
-
                     // Optionally, print the sticker
                     if (checkBox1.Checked)
                     {
@@ -993,16 +957,13 @@ namespace WH_Panel
                         };
                         printSticker(itemToPrint);
                     }
-
                     // Clear and refocus textboxes
                     txtbQtyToAdd.Clear();
                     clearAllTextBoxesOnDoubleClick();
                     lastTxtbInputFromUser.Clear();
                     lastTxtbInputFromUser.Focus();
-
                     // Highlight the IPN row in dataGridView1
                     ipnToUpdate = w.IPN;
-
                     foreach (DataGridViewRow row in dataGridView1.Rows)
                     {
                         if (row.Cells["IPN"].Value != null && row.Cells["IPN"].Value.ToString().Equals(ipnToUpdate, StringComparison.OrdinalIgnoreCase))
@@ -1022,7 +983,6 @@ namespace WH_Panel
                 }
             }
         }
-
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox1.Checked)
@@ -1085,7 +1045,6 @@ namespace WH_Panel
             txtb.Text = string.Empty;
             l.BackColor = Color.LightGreen;
             txtb.Focus();
-
         }
         private void label2_DoubleClick(object sender, EventArgs e)
         {
@@ -1146,7 +1105,6 @@ namespace WH_Panel
         {
             txtbQtyToAdd.Focus();
         }
-
         public bool excelUpdated { get; set; }
         private void UpdateKitHistoryItem(string fp, KitHistoryItem itemToUpdate)
         {
@@ -1181,7 +1139,6 @@ namespace WH_Panel
                     {
                         excelUpdated = false;
                         MessageBox.Show("No rows were updated.");
-
                     }
                 }
             }
@@ -1295,8 +1252,6 @@ namespace WH_Panel
             {
                 WHitem itemToTransfer = new WHitem()
                 {
-
-
                     //IPN = w.IPN,
                     IPN = AltTransaction ? w.Alts : w.IPN,
                     Manufacturer = "",
@@ -1313,7 +1268,6 @@ namespace WH_Panel
                 //MessageBox.Show(itemToTransfer.Manufacturer.ToString());
                 itemToTransfer.Comments = getTheCommentsFromTheStock(warehouseSelectorBasedOnItem(w), itemToTransfer);
                 //MessageBox.Show(itemToTransfer.Comments.ToString());
-
                 if (checkBalance(warehouseSelectorBasedOnItem(w), itemToTransfer))
                 {
                     updateQtyInBomFile(w, validQty);
@@ -1325,13 +1279,10 @@ namespace WH_Panel
                     {
                         MessageBox.Show("Excel file update failed ! no Database transactions made . Check the excel file !");
                     }
-
-
                 }
                 else
                 {
                     MessageBox.Show("No actions take due to Overdraft ! Check WH balance !");
-
                 }
                 //}
             }
@@ -1341,33 +1292,25 @@ namespace WH_Panel
                 throw;
             }
         }
-
-
-
         private static bool checkBalance(string selectedWarehouseConStr, WHitem wHitem)
         {
             int balance = 0;
-
             try
             {
                 using (SqlConnection conn = new SqlConnection(selectedWarehouseConStr))
                 {
                     conn.Open();
-
                     // Calculate the sum of Stock where IPN = wHitem.IPN, converting Stock to int
                     string sumQuery = "SELECT SUM(CAST(Stock AS INT)) FROM STOCK WHERE IPN = @IPN";
                     //int totalStock = 0;
-
                     using (SqlCommand sumCommand = new SqlCommand(sumQuery, conn))
                     {
                         sumCommand.Parameters.AddWithValue("@IPN", wHitem.IPN);
-
                         // If there are no matching records, the result could be null, so handle that case.
                         object result = sumCommand.ExecuteScalar();
                         balance = result != DBNull.Value ? Convert.ToInt32(result) : 0;
                         balance += wHitem.Stock;
                     }
-
                     if (balance >= 0)
                     {
                         //MessageBox.Show("balance:" + balance);
@@ -1377,11 +1320,8 @@ namespace WH_Panel
                     {
                         // MessageBox.Show("Calculated overdraft for " + wHitem.IPN + " : " + balance);
                         ShowCustomMessage(wHitem.IPN + "\n Calculated overdraft : \n" + balance, "Red", "White");
-
-
                         return false;
                     }
-
                 }
             }
             catch (Exception ec)
@@ -1390,15 +1330,12 @@ namespace WH_Panel
                 return false;
             }
         }
-
-
         public static void ShowCustomMessage(string message, string ctype, string ftype)
         {
             // Create a new form
             Form customForm = new Form();
             customForm.StartPosition = FormStartPosition.CenterScreen;
             customForm.FormBorderStyle = FormBorderStyle.None;
-
             // Set background color dynamically
             try
             {
@@ -1408,14 +1345,11 @@ namespace WH_Panel
             {
                 customForm.BackColor = Color.Red; // Default to Red if color name is invalid
             }
-
             customForm.Width = 700;
             customForm.Height = 300;
-
             // Create and style the message label
             Label messageLabel = new Label();
             messageLabel.Text = message;
-
             // Set font color dynamically
             try
             {
@@ -1425,12 +1359,10 @@ namespace WH_Panel
             {
                 messageLabel.ForeColor = Color.White; // Default to White if color name is invalid
             }
-
             messageLabel.Font = new Font("Arial", 40, FontStyle.Bold);
             messageLabel.Dock = DockStyle.Fill;
             messageLabel.TextAlign = ContentAlignment.MiddleCenter;
             customForm.Controls.Add(messageLabel);
-
             // Create and style the OK button
             Button okButton = new Button();
             okButton.Text = "OK";
@@ -1441,17 +1373,12 @@ namespace WH_Panel
             okButton.Dock = DockStyle.Bottom;
             okButton.Click += (sender, e) => customForm.Close();
             customForm.Controls.Add(okButton);
-
             // Display the form as a dialog
             customForm.ShowDialog();
         }
-
-
-
         private string getTheManufacturerFromTheStock(string fp, WHitem itemTolookby)
         {
             string manufacturerFromStock = string.Empty;
-
             if (isSql)
             {
                 try
@@ -1464,7 +1391,6 @@ namespace WH_Panel
                         command.Parameters.AddWithValue("@IPN", itemTolookby.IPN);
                         command.Parameters.AddWithValue("@MFPN", itemTolookby.MFPN);
                         command.Parameters.AddWithValue("@Stock", Math.Abs(itemTolookby.Stock));
-
                         //MessageBox.Show(itemTolookby.IPN + " " + itemTolookby.MFPN + " " + itemTolookby.Stock);
                         using (SqlDataReader reader = command.ExecuteReader())
                         {
@@ -1483,7 +1409,6 @@ namespace WH_Panel
                     MessageBox.Show(e.Message);
                 }
             }
-
             else
             {
                 try
@@ -1513,19 +1438,11 @@ namespace WH_Panel
                     MessageBox.Show(e.Message);
                 }
             }
-
-
             return manufacturerFromStock;
         }
-
-
-
-
         private string getTheCommentsFromTheStock(string fp, WHitem itemTolookby)
         {
             string CommentsFromStock = string.Empty;
-
-
             if (isSql)
             {
                 try
@@ -1555,7 +1472,6 @@ namespace WH_Panel
                     MessageBox.Show(e.Message);
                 }
             }
-
             else
             {
                 try
@@ -1585,8 +1501,6 @@ namespace WH_Panel
                     MessageBox.Show(e.Message);
                 }
             }
-
-
             return CommentsFromStock;
         }
         private string ConvertStockFileFormat(string originalStockFile)
@@ -1613,7 +1527,6 @@ namespace WH_Panel
                         {
                             selection = wh.clStockFile;
                         }
-
                         break;
                     }
                 }
@@ -1624,16 +1537,11 @@ namespace WH_Panel
             }
             return selection;
         }
-
         private void DataInserter(string fp, string thesheetName, WHitem wHitem)
         {
-
             Cursor.Current = Cursors.WaitCursor;
-
             try
             {
-
-
                 if (isSql)
                 {
                     try
@@ -1664,7 +1572,6 @@ namespace WH_Panel
                         MessageBox.Show(e.Message);
                         throw;
                     }
-
                 }
                 else
                 {
@@ -1688,8 +1595,6 @@ namespace WH_Panel
                         }
                     }
                 }
-
-
                 txtbQtyToAdd.Clear();
                 lastTxtbInputFromUser.Clear();
                 label2.BackColor = Color.LightGreen;
@@ -1698,12 +1603,10 @@ namespace WH_Panel
                 AutoClosingMessageBox.Show($"{wHitem.IPN} Transferred to {wHitem.Source_Requester}", $"Item Transferred to {wHitem.Source_Requester}", 1000);
                 // Reset the cursor after the database operation
                 Cursor.Current = Cursors.Default;
-
             }
             catch (IOException ex)
             {
                 MessageBox.Show($"Error: {ex.Message}");
-
             }
             finally
             {
@@ -1723,7 +1626,6 @@ namespace WH_Panel
                     null, timeout, System.Threading.Timeout.Infinite);
                 using (_timeoutTimer)
                     MessageBox.Show(text, caption, MessageBoxButtons.OK, MessageBoxIcon.Information);
-
             }
             public static void Show(string text, string caption, int timeout)
             {
@@ -1784,7 +1686,6 @@ namespace WH_Panel
             if (e.KeyCode == Keys.Enter)
             {
                 e.SuppressKeyPress = true;
-
                 string inputStr = textBox12.Text;
                 string startStr = comboBox4.Text.ToString();
                 string endStr = comboBox5.Text.ToString();
@@ -1912,35 +1813,24 @@ namespace WH_Panel
         {
             textBox14.Clear();
         }
-
         private void btnPrintKitLabel_MouseDown(object sender, MouseEventArgs e)
         {
             // Check if the right mouse button was clicked
             if (e.Button == MouseButtons.Left && theExcelFilePath != string.Empty)
             {
                 string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-
-
                 string windowTitle = this.Text; // 'this' refers to the current Form
-
                 // Find the index of ".xlsm" in the window title
                 int index = windowTitle.IndexOf(".xlsm");
-
                 // Extract the project name, including ".xlsm"
                 string fullProjectName = index >= 0 ? windowTitle.Substring(0, index + 5) : windowTitle;
-
                 // Extract only the last part of the project name
                 string projectName = fullProjectName.Split('\\').Last();
-
-
-
                 using (CustomPrintDialog customDialog = new CustomPrintDialog())
                 {
                     // Show the custom dialog
                     DialogResult result = customDialog.ShowDialog();
-
                     int copiesToPrint = 0;
-
                     // Determine the number of copies based on the user's selection
                     switch (result)
                     {
@@ -1954,10 +1844,8 @@ namespace WH_Panel
                             copiesToPrint = 3;
                             break;
                         case DialogResult.Ignore:
-
                             string modifiedProjectName = projectName.Substring(0, projectName.Length - 5);
                             string[] splitParts = modifiedProjectName.Split('_');
-
                             WHitem itemToPrint = new WHitem();
                             itemToPrint.IPN = "קיט מלא";
                             itemToPrint.MFPN = splitParts[1];
@@ -1965,14 +1853,10 @@ namespace WH_Panel
                             itemToPrint.Stock = int.Parse(splitParts[2].Substring(0, splitParts[2].Length - 3));
                             itemToPrint.Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
                             printStickerFullKit(itemToPrint);
-
                             break;
-
                         case DialogResult.Abort:
-
                             string modifiedProjectName2 = projectName.Substring(0, projectName.Length - 5);
                             string[] splitParts2 = modifiedProjectName2.Split('_');
-
                             WHitem itemToPrint2 = new WHitem();
                             itemToPrint2.IPN = "רכיבים בגלילה";
                             itemToPrint2.MFPN = splitParts2[1];
@@ -1980,13 +1864,9 @@ namespace WH_Panel
                             itemToPrint2.Stock = int.Parse(splitParts2[2].Substring(0, splitParts2[2].Length - 3));
                             itemToPrint2.Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
                             printStickerFullKit(itemToPrint2);
-
-
                             break;
                         case DialogResult.Cancel:
-
                             SendEmail();
-
                             break;
                     }
                     if (result != DialogResult.Ignore && result != DialogResult.Abort && result != DialogResult.Cancel)
@@ -1994,18 +1874,15 @@ namespace WH_Panel
                         GenerateHTMLkitBoxLabel(copiesToPrint);
                     }
                     // Call the method with the chosen number of copies
-
                 }
             }
         }
-
         private void printStickerFullKit(WHitem wHitem)
         {
             try
             {
                 string userName = Environment.UserName;
                 string fpst = @"C:\\Users\\" + userName + "\\Desktop\\Print_Stickers.xlsx";
-
                 string thesheetName = "Sheet1";
                 string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fpst + "; Extended Properties=\"Excel 12.0;HDR=YES;IMEX=0\"";
                 OleDbConnection conn = new OleDbConnection(constr);
@@ -2013,64 +1890,43 @@ namespace WH_Panel
                 cmd.Connection = conn;
                 cmd.CommandType = CommandType.Text;
                 cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @Updated_on";
-
                 cmd.Parameters.AddWithValue("@PN", wHitem.IPN);
                 cmd.Parameters.AddWithValue("@MFPN", wHitem.MFPN);
                 cmd.Parameters.AddWithValue("@ItemDesc", wHitem.Description);
                 cmd.Parameters.AddWithValue("@QTY", wHitem.Stock);
                 cmd.Parameters.AddWithValue("@Updated_on", wHitem.Updated_on);
-
                 conn.Open();
                 cmd.ExecuteNonQuery();
                 conn.Close();
-
                 Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
                 SendKeys.SendWait("^p");
                 SendKeys.SendWait("{Enter}");
                 //ComeBackFromPrint();
                 Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
-
             }
             catch (Exception e)
             {
                 MessageBox.Show("Sticker printing failed : " + e.Message);
             }
         }
-
         public string projectName = string.Empty;
         private void GenerateHTMLkitBoxLabel(int qtyToPrint)
         {
-
-
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-
             // Get the title of the current window (Form)
-
             string windowTitle = this.Text; // 'this' refers to the current Form
-
             // Find the index of ".xlsm" in the window title
             int index = windowTitle.IndexOf(".xlsm");
-
             // Extract the project name, including ".xlsm"
             string fullProjectName = index >= 0 ? windowTitle.Substring(0, index + 5) : windowTitle;
-
             // Extract only the last part of the project name
             string projectName = fullProjectName.Split('\\').Last();
-
-
             // Display the extracted project name for debugging
             //MessageBox.Show(projectName);
-
             // Construct the filename
             string filename = "\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\" +
                 _fileTimeStamp + "_box label for_" + projectName + ".html";
-
             //MessageBox.Show(filename); // Display the constructed filename for debugging
-
-
-
-
-
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.WriteLine("<html style='text-align:center'>");
@@ -2112,22 +1968,16 @@ namespace WH_Panel
                     writer.WriteLine("<col style='width: 25%; background: url(" + backgroundImageUrl + ") no-repeat center center; background-size: 100% 100%;'>");
                     writer.WriteLine("<col style='width: 75%;'>"); // 75% width for the text column
                     writer.WriteLine("<tr>");
-
                     //writer.WriteLine("<td  style='vertical-align: middle;'><img id='logoImage' src='" + imageUrl + "' alt='" + altText + "' style='height: 100%; width: 100%;'></td>"); // Image column
-
                     writer.WriteLine("<td style='position: relative; vertical-align: middle;'>");
                     writer.WriteLine("    <img id='logoImage' src='" + imageUrl + "' alt='" + altText + "' style='height: 100%; width: 100%;'>");
                     writer.WriteLine("    <div style='position: absolute; top: 1%; left: 5%; transform: translate(-1%, -1%); color: white; font-size: 15px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);'>");
                     // Get the current date and time
                     string currentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-
                     // Write the current date and time to the output
                     writer.WriteLine(currentDateTime);
                     writer.WriteLine("    </div>");
                     writer.WriteLine("</td>");
-
-
-
                     writer.WriteLine("<td style='text-align: center; background: rgba(255, 255, 255, 0.1) url(" + backgroundImageUrl + ") no-repeat center center; background-size: 111% 111%; vertical-align: middle; transform: scaleX(-1);'>");
                     foreach (string part in parts)
                     {
@@ -2157,45 +2007,29 @@ namespace WH_Panel
                 //SendEmail();
             }
         }
-
-
-
-
-
-
-
         private void SendEmail()
         {
             string windowTitle = this.Text; // 'this' refers to the current Form
-
             // Find the index of ".xlsm" in the window title
             int index = windowTitle.IndexOf(".xlsm");
-
             // Extract the project name, including ".xlsm"
             string fullProjectName = index >= 0 ? windowTitle.Substring(0, index + 5) : windowTitle;
-
             // Extract only the last part of the project name
             string projectName = fullProjectName.Split('\\').Last();
-
             //string fileName = openFileDialog1.FileName;
             string fileName = fullProjectName;
             //MessageBox.Show(fileName);
-
-
             var excelApp = new Microsoft.Office.Interop.Excel.Application();
             Microsoft.Office.Interop.Excel.Workbook workbook = excelApp.Workbooks.Open(fileName);
             Microsoft.Office.Interop.Excel.Worksheet worksheet = (Microsoft.Office.Interop.Excel.Worksheet)workbook.Sheets[1]; // First sheet (index 1 in Interop)
-
             // Find the "Alts" and "DELTA" column indices
             int altsColumnIndex = -1;
             int deltaColumnIndex = -1;
             Microsoft.Office.Interop.Excel.Range headerRow = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[1];
-
             for (int i = 1; i <= headerRow.Columns.Count; i++)
             {
                 var cell = (Microsoft.Office.Interop.Excel.Range)headerRow.Cells[1, i];
                 string columnHeader = cell.Value?.ToString();
-
                 if (columnHeader == "Alts")
                 {
                     altsColumnIndex = i;
@@ -2204,13 +2038,11 @@ namespace WH_Panel
                 {
                     deltaColumnIndex = i;
                 }
-
                 if (altsColumnIndex != -1 && deltaColumnIndex != -1)
                 {
                     break;
                 }
             }
-
             if (deltaColumnIndex == -1)
             {
                 MessageBox.Show("Could not find the 'DELTA' column.");
@@ -2219,11 +2051,9 @@ namespace WH_Panel
                 Marshal.ReleaseComObject(excelApp);
                 return;
             }
-
             // Build HTML table from Excel data
             StringBuilder htmlTable = new StringBuilder();
             htmlTable.Append("<table border='1' style='border-collapse:collapse;'>");
-
             // Add header row
             htmlTable.Append("<tr>");
             for (int col = 1; col <= altsColumnIndex; col++)
@@ -2232,7 +2062,6 @@ namespace WH_Panel
                 htmlTable.AppendFormat("<th>{0}</th>", header ?? string.Empty);
             }
             htmlTable.Append("</tr>");
-
             // Add data rows with conditional formatting for "DELTA" values
             int row = 2;
             while (((Microsoft.Office.Interop.Excel.Range)worksheet.Cells[row, 1]).Value != null)
@@ -2242,7 +2071,6 @@ namespace WH_Panel
                 {
                     var cell = (Microsoft.Office.Interop.Excel.Range)worksheet.Cells[row, col];
                     string cellValue = cell.Value?.ToString() ?? string.Empty;
-
                     if (col == deltaColumnIndex && double.TryParse(cellValue, out double deltaValue))
                     {
                         string color = deltaValue < 0 ? "IndianRed" : "LightGreen";
@@ -2257,19 +2085,14 @@ namespace WH_Panel
                 row++;
             }
             htmlTable.Append("</table>");
-
             workbook.Close(false);
             Marshal.ReleaseComObject(workbook);
             Marshal.ReleaseComObject(excelApp);
-
             var outlookApp = new Outlook.Application();
             Outlook.MailItem mailItem = (Outlook.MailItem)outlookApp.CreateItem(Outlook.OlItemType.olMailItem);
-
             mailItem.Subject = projectName.Substring(0, projectName.Length - 5).ToString() + "_UPDATED_" + DateAndTime.Now.ToString("yyyyMMddHHmm");
-
             // Set CC field
             mailItem.CC = "lgt@robotron.co.il";
-
             // Hardcoded in-house email addresses
             List<string> inhouseEmails = new List<string>
     {
@@ -2278,43 +2101,34 @@ namespace WH_Panel
         "rehesh@robotron.co.il",
         "vlad@robotron.co.il"
     };
-
             // Extract client domain from project name
             string clientDomain = projectName.Split('_')[0].ToLower();
-
             // Get emails from the client's domain
             List<string> clientEmails = GetUniqueClientEmails(clientDomain);//GetEmailsFromDomain(outlookApp, clientDomain); 
-
             // Display a form with checkboxes for all recipients
             RecipientSelectionForm selectionForm = new RecipientSelectionForm(inhouseEmails, clientEmails);
             if (selectionForm.ShowDialog() == DialogResult.OK)
             {
                 // Combine selected emails into the "To" field
                 mailItem.To = string.Join(";", selectionForm.SelectedEmails);
-
                 // Embed the HTML table in the email body
                 mailItem.HTMLBody = "<html><body>" + htmlTable.ToString() + "</body></html>";
-
                 // Send the email
                 mailItem.Send();
                 MessageBox.Show("Email sent successfully.");
             }
-
             Marshal.ReleaseComObject(mailItem);
             Marshal.ReleaseComObject(outlookApp);
         }
-
         //// Helper method to retrieve emails from the client's domain
         //private List<string> GetEmailsFromDomain(Outlook.Application outlookApp, string clientDomain)
         //{
         //    List<string> emails = new List<string>();
         //    Outlook.Folder inboxFolder = (Outlook.Folder)outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox);
-
         //    foreach (Outlook.MailItem mail in inboxFolder.Items)
         //    {
         //        string senderEmailLower = mail.SenderEmailAddress.ToLower();
         //        string clientDomainLower = clientDomain.ToLower();
-
         //        if (senderEmailLower.Contains(clientDomainLower))
         //        {
         //            string contactInfo = $"{mail.SenderName} ({mail.SenderEmailAddress})";
@@ -2324,7 +2138,6 @@ namespace WH_Panel
         //    }
         //    return emails;
         //}
-
         //public partial class LoadingForm : Form
         //{
         //    public LoadingForm()
@@ -2335,41 +2148,32 @@ namespace WH_Panel
         //        this.ControlBox = false; // Disable close button
         //    }
         //}
-
         public partial class LoadingForm : Form
         {
             private Label lblLoading;
-
             public LoadingForm()
             {
                 //InitializeComponent();
-
                 // Set form properties
                 this.StartPosition = FormStartPosition.CenterScreen;
                 this.ControlBox = false; // Disable close button
                 this.Size = new Size(300, 150); // Set form size (adjust as needed)
-
                 // Create and configure the label to display loading text
                 lblLoading = new Label();
                 lblLoading.Text = "Loading email contacts...";  // The text you want to display
                 lblLoading.AutoSize = true;  // Automatically adjust size based on text
                 lblLoading.Location = new Point(50, 50);  // Adjust the location as needed
                 lblLoading.Font = new Font("Arial", 12, FontStyle.Bold);  // Adjust font size and style
-
                 // Add the label to the form's controls
                 this.Controls.Add(lblLoading);
             }
         }
-
-
         //public List<string> GetUniqueClientEmails(string clientDomain)
         //{
         //    var emails = new HashSet<string>(); // Using HashSet to ensure uniqueness
         //    var outlookApp = new Outlook.Application();
-
         //    Outlook.Folder inboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox) as Outlook.Folder;
         //    Outlook.Folder outboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderSentMail) as Outlook.Folder;
-
         //    // Helper function to add unique emails from a folder
         //    void AddEmailsFromFolder(Outlook.Folder folder)
         //    {
@@ -2380,7 +2184,6 @@ namespace WH_Panel
         //            {
         //                string senderEmailLower = mail.SenderEmailAddress.ToLower();
         //                string clientDomainLower = clientDomain.ToLower();
-
         //                // Check if the sender's email contains the client domain
         //                if (senderEmailLower.Contains(clientDomainLower))
         //                {
@@ -2391,26 +2194,20 @@ namespace WH_Panel
         //            }
         //        }
         //    }
-
         //    // Add emails from both Inbox and Outbox folders
         //    AddEmailsFromFolder(inboxFolder);
         //    AddEmailsFromFolder(outboxFolder);
-
         //    return emails.ToList(); // Convert HashSet to List for use in selection form
         //}
-
         //public List<string> GetUniqueClientEmails(string clientDomain)
         //{
         //    var emails = new HashSet<string>();
         //    var outlookApp = new Outlook.Application();
-
         //    // Display the loading form in a new thread
         //    LoadingForm loadingForm = new LoadingForm();
         //    Task.Run(() => loadingForm.ShowDialog());
-
         //    Outlook.Folder inboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox) as Outlook.Folder;
         //    Outlook.Folder outboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderSentMail) as Outlook.Folder;
-
         //    // Helper function to add unique emails from a folder
         //    void AddEmailsFromFolder(Outlook.Folder folder)
         //    {
@@ -2420,7 +2217,6 @@ namespace WH_Panel
         //            {
         //                string senderEmailLower = mail.SenderEmailAddress.ToLower();
         //                string clientDomainLower = clientDomain.ToLower();
-
         //                if (senderEmailLower.Contains(clientDomainLower))
         //                {
         //                    string contactInfo = $"{mail.SenderName} ({mail.SenderEmailAddress})";
@@ -2429,35 +2225,27 @@ namespace WH_Panel
         //            }
         //        }
         //    }
-
         //    // Add emails from both Inbox and Outbox folders
         //    AddEmailsFromFolder(inboxFolder);
         //    AddEmailsFromFolder(outboxFolder);
-
         //    // Close the loading form after the job is done
         //    loadingForm.Invoke(new Action(() => loadingForm.Close()));
-
         //    return emails.ToList();
         //}
-
         //public List<string> GetUniqueClientEmails(string clientDomain)
         //{
         //    var emails = new HashSet<string>();
         //    var outlookApp = new Outlook.Application();
-
         //    // Initialize and show the loading form
         //    LoadingForm loadingForm = new LoadingForm();
-
         //    // Display the loading form on a new thread to avoid blocking
         //    var loadingThread = new Thread(() =>
         //    {
         //        loadingForm.ShowDialog();
         //    });
         //    loadingThread.Start();
-
         //    Outlook.Folder inboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox) as Outlook.Folder;
         //    Outlook.Folder outboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderSentMail) as Outlook.Folder;
-
         //    // Helper function to add unique emails from a folder
         //    void AddEmailsFromFolder(Outlook.Folder folder)
         //    {
@@ -2467,28 +2255,21 @@ namespace WH_Panel
         //            {
         //                string senderEmailLower = mail.SenderEmailAddress.ToLower();
         //                string clientDomainLower = clientDomain.ToLower();
-
         //                if (senderEmailLower.Contains(clientDomainLower))
         //                {
         //                    string contactInfo = $"{mail.SenderName} ({mail.SenderEmailAddress})";
         //                    emails.Add(contactInfo); // HashSet prevents duplicate entries
         //                }
-
-
         //            }
         //        }
         //    }
-
         //    if (emails.Count==0)
         //    {
         //        string clientDomainLower = "Robotron";
-
         //    }
-
         //    // Add emails from both Inbox and Outbox folders
         //    AddEmailsFromFolder(inboxFolder);
         //    AddEmailsFromFolder(outboxFolder);
-
         //    // Close the loading form once processing is complete
         //    if (loadingForm.InvokeRequired)
         //    {
@@ -2498,28 +2279,22 @@ namespace WH_Panel
         //    {
         //        loadingForm.Close();
         //    }
-
         //    return emails.ToList();
         //}
-
         //public List<string> GetUniqueClientEmails(string clientDomain)
         //{
         //    var emails = new HashSet<string>();
         //    var outlookApp = new Outlook.Application();
-
         //    // Initialize and show the loading form
         //    LoadingForm loadingForm = new LoadingForm();
-
         //    // Display the loading form on a new thread to avoid blocking
         //    var loadingThread = new Thread(() =>
         //    {
         //        loadingForm.ShowDialog();
         //    });
         //    loadingThread.Start();
-
         //    Outlook.Folder inboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox) as Outlook.Folder;
         //    Outlook.Folder outboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderSentMail) as Outlook.Folder;
-
         //    // Helper function to add unique emails from a folder
         //    void AddEmailsFromFolder(Outlook.Folder folder, string domain)
         //    {
@@ -2529,7 +2304,6 @@ namespace WH_Panel
         //            {
         //                string senderEmailLower = mail.SenderEmailAddress.ToLower();
         //                string domainLower = domain.ToLower();
-
         //                if (senderEmailLower.Contains(domainLower))
         //                {
         //                    string contactInfo = $"{mail.SenderName} ({mail.SenderEmailAddress})";
@@ -2538,11 +2312,9 @@ namespace WH_Panel
         //            }
         //        }
         //    }
-
         //    // Add emails for the given client domain from both Inbox and Outbox folders
         //    AddEmailsFromFolder(inboxFolder, clientDomain);
         //    AddEmailsFromFolder(outboxFolder, clientDomain);
-
         //    // If no emails found for the client domain, fallback to local domain
         //    if (emails.Count == 0)
         //    {
@@ -2550,7 +2322,6 @@ namespace WH_Panel
         //        AddEmailsFromFolder(inboxFolder, localDomain);
         //        AddEmailsFromFolder(outboxFolder, localDomain);
         //    }
-
         //    // Close the loading form once processing is complete
         //    if (loadingForm.InvokeRequired)
         //    {
@@ -2560,29 +2331,24 @@ namespace WH_Panel
         //    {
         //        loadingForm.Close();
         //    }
-
         //    return emails.ToList();
         //}
         public List<string> GetUniqueClientEmails(string clientDomain)
         {
             var emails = new HashSet<string>();
             var outlookApp = new Outlook.Application();
-
             // Initialize and show the loading form
             LoadingForm loadingForm = new LoadingForm();
-
             // Display the loading form on a new thread to avoid blocking
             var loadingThread = new Thread(() =>
             {
                 loadingForm.ShowDialog();
             });
             loadingThread.Start();
-
             try
             {
                 Outlook.Folder inboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox) as Outlook.Folder;
                 Outlook.Folder outboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderSentMail) as Outlook.Folder;
-
                 // Helper function to add unique emails from a folder
                 void AddEmailsFromFolder(Outlook.Folder folder, string domain)
                 {
@@ -2592,7 +2358,6 @@ namespace WH_Panel
                         {
                             string senderEmailLower = mail.SenderEmailAddress.ToLower();
                             string domainLower = domain.ToLower();
-
                             if (senderEmailLower.Contains(domainLower))
                             {
                                 string contactInfo = $"{mail.SenderName} ({mail.SenderEmailAddress})";
@@ -2601,11 +2366,9 @@ namespace WH_Panel
                         }
                     }
                 }
-
                 // Add emails for the given client domain from both Inbox and Outbox folders
                 AddEmailsFromFolder(inboxFolder, clientDomain);
                 AddEmailsFromFolder(outboxFolder, clientDomain);
-
                 // If no emails found for the client domain, fallback to local domain
                 if (emails.Count == 0)
                 {
@@ -2631,68 +2394,55 @@ namespace WH_Panel
                     loadingForm.Close();
                 }
             }
-
             return emails.ToList();
         }
-
-
-
         public class RecipientSelectionForm : Form
         {
             private CheckedListBox checkedListBox;
             private Button sendButton;
             private Button cancelButton;
             public List<string> SelectedEmails { get; private set; }
-
             public RecipientSelectionForm(List<string> inhouseEmails, List<string> clientEmails)
             {
                 SelectedEmails = new List<string>();
-
                 checkedListBox = new CheckedListBox
                 {
                     Dock = DockStyle.Top,
                     Height = 200,
                     CheckOnClick = true
                 };
-
                 // Add in-house emails to the list with a label for clarity
                 checkedListBox.Items.Add("In-House Emails:", false);
                 foreach (var email in inhouseEmails)
                 {
                     checkedListBox.Items.Add(email, false);
                 }
-
                 // Add client emails to the list with a label for clarity
                 checkedListBox.Items.Add("Client Emails:", false);
                 foreach (var email in clientEmails)
                 {
                     checkedListBox.Items.Add(email, false);
                 }
-
                 sendButton = new Button
                 {
                     Text = "Send",
                     Dock = DockStyle.Bottom
                 };
                 sendButton.Click += SendButton_Click;
-
                 cancelButton = new Button
                 {
                     Text = "Cancel",
                     Dock = DockStyle.Bottom
                 };
                 cancelButton.Click += (s, e) => DialogResult = DialogResult.Cancel;
-
                 Controls.Add(checkedListBox);
                 Controls.Add(sendButton);
                 Controls.Add(cancelButton);
-
                 Text = "Select Recipients";
                 Height = 300;
                 Width = 300;
                 StartPosition = FormStartPosition.CenterScreen;
             }
-
             private void SendButton_Click(object sender, EventArgs e)
             {
                 // Collect selected emails from the CheckedListBox
@@ -2703,23 +2453,14 @@ namespace WH_Panel
                         SelectedEmails.Add(item.ToString());
                     }
                 }
-
                 //if (SelectedEmails.Count == 0)
                 //{
                 //    MessageBox.Show("Please select at least one recipient.");
                 //    return;
                 //}
-
                 DialogResult = DialogResult.OK;
             }
         }
-
-
-
-
-
-
-
         public bool fullIPNonly = true;
         private void label1_MouseClick(object sender, MouseEventArgs e)
         {
@@ -2735,11 +2476,8 @@ namespace WH_Panel
                     fullIPNonly = true;
                     label1.Text = "IPN (full)";
                 }
-
             }
         }
-
-
         private void dataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right && e.ColumnIndex == dataGridView1.Columns["ALTs"].Index && e.RowIndex >= 0)
@@ -2747,40 +2485,32 @@ namespace WH_Panel
                 var row = dataGridView1.Rows[e.RowIndex];
                 var ipnCell = row.Cells["IPN"];
                 var altsCell = row.Cells["ALTs"];
-
                 // Check if ALTs cell has a non-empty value
                 if (altsCell.Value == null || string.IsNullOrWhiteSpace(altsCell.Value.ToString()))
                 {
                     return; // Exit if ALTs cell is empty
                 }
-
                 // Get the IPN and ALT values and trim spaces
                 string ipnValue = (ipnCell.Value?.ToString() ?? "").Replace(" ", "");
                 string altValue = (altsCell.Value?.ToString() ?? "").Replace(" ", "");
-
                 // Extract the prefix from the IPN
                 string[] ipnParts = ipnValue.Split('_');
-
                 if (ipnParts.Length >= 2)
                 {
                     string prefix = ipnParts[0];
-
                     // Check if ALTs already contains the prefix
                     if (!altValue.StartsWith(prefix + "_"))
                     {
                         altValue = prefix + "_" + altValue; // Add prefix if missing
                     }
-
                     // Swap the values
                     altsCell.Value = ipnValue;
                     ipnCell.Value = altValue;
                 }
             }
         }
-
         private void label10_MouseDown(object sender, MouseEventArgs e)
         {
-
         }
     }
 }

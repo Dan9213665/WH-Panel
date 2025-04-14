@@ -33,9 +33,7 @@ namespace WH_Panel
             UpdateControlColors(this);
             comboBox1.SelectedIndex = 1;
             comboBox3.SelectedIndex = 0;
-
         }
-
         public TextBox LastInputFromUser = new TextBox();
         public WHitem wHitemToSplit = new WHitem();
         public DataTable dtAVL = new DataTable();
@@ -43,45 +41,34 @@ namespace WH_Panel
         {
             // Get the selected database name
             selectedDatabase = comboBox3.SelectedItem as string;
-
             // Load the tables into the DataGridViews
             LoadAVLTable();
         }
-
         private void LoadAVLTable()
         {
             if (string.IsNullOrEmpty(selectedDatabase))
                 return; // No selected database
-
             // Connection string for SQL Server Express
             string connectionString = $"Data Source=RT12\\SQLEXPRESS;Initial Catalog={selectedDatabase};Integrated Security=True;";
-
             try
             {
-
                 // Load AVL table into dataGridView2
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     dtAVL.Clear();
-
                     SqlDataAdapter adapterAVL = new SqlDataAdapter("SELECT * FROM AVL", connection);
-
                     adapterAVL.Fill(dtAVL);
                     dataGridView2.DataSource = dtAVL;
                     // Hide the "Id" column
                     dataGridView2.Columns["Id"].Visible = false;
                     // Autosize columns to fill the available width
                     dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
                     // Display the number of rows loaded in label
                     label1.Text = $"{dtAVL.Rows.Count} rows loaded";
                     label1.BackColor = Color.LightGreen;
-
                 }
-
                 textBox1.Focus();
                 LastInputFromUser = textBox1;
-
             }
             catch (Exception ex)
             {
@@ -90,39 +77,31 @@ namespace WH_Panel
         }
         private void button2_Click(object sender, EventArgs e)
         {
-
         }
-
         private void LoadDatabases()
         {
             // Connection string for SQL Server Express
             string connectionString = "Data Source=RT12\\SQLEXPRESS;Integrated Security=True;";
-
             // Clear existing items in ComboBox
             comboBox3.Items.Clear();
-
             try
             {
                 // Establish connection
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-
                     // Retrieve the list of databases
                     DataTable databases = connection.GetSchema("Databases");
-
                     // Add each database name to the ComboBox, excluding system databases
                     foreach (DataRow database in databases.Rows)
                     {
                         string dbName = database.Field<string>("database_name");
-
                         // Exclude system databases
                         if (!IsSystemDatabase(dbName))
                         {
                             comboBox3.Items.Add(dbName);
                         }
                     }
-
                     // Close the connection
                     connection.Close();
                 }
@@ -228,68 +207,53 @@ namespace WH_Panel
                 }
             }
         }
-
         private void dataGridView2_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             textBox6.Focus();
             // Set MultiSelect property to false in your form's constructor or Load event
             dataGridView2.MultiSelect = false;
-
             // Check if the clicked cell is not a header cell
             if (e.RowIndex >= 0)
             {
                 // Get the selected row
                 DataGridViewRow selectedRow = dataGridView2.Rows[e.RowIndex];
-
                 // Access the value of the "IPN" column in the selected row
                 string selectedIPN = selectedRow.Cells["IPN"].Value.ToString();
-
                 // Load data into dataGridView1 based on the selected IPN
                 LoadDataIntoDataGridView1(selectedIPN);
             }
-
         }
-
-
         private void UpdateWarehouseBalanceLabel(string selectedIPN)
         {
             // Connection string for SQL Server Express
             string connectionString = $"Data Source=RT12\\SQLEXPRESS;Initial Catalog={selectedDatabase};Integrated Security=True;";
-
             try
             {
                 // Calculate the sum of the STOCK column values for the selected IPN
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-
                     // Use a parameterized query to prevent SQL injection
                     string query = "SELECT SUM(STOCK) AS WarehouseBalance FROM STOCK WHERE IPN = @SelectedIPN";
-
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
                         // Add parameter to the query
                         command.Parameters.AddWithValue("@SelectedIPN", selectedIPN);
-
                         // Execute the query and get the sum value
                         object sumValue = command.ExecuteScalar();
-
                         // Update label15 with the sum value
                         label15.Text = $"Balance: {sumValue ?? 0}"; // Default to 0 if sumValue is null
                                                                     // Set background color based on the sum value
                         label15.BackColor = (sumValue != null && Convert.ToInt32(sumValue) > 0) ? Color.LightGreen : Color.IndianRed;
-
                     }
                 }
             }
             catch (Exception ex)
             {
-                
                 MessageBox.Show($"Error updating Warehouse Balance label: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 label15.Text = $"Balance: {0}";
             }
         }
-
         private void SetSTOCKiewColumsOrder()
         {
             dataGridView1.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -313,7 +277,6 @@ namespace WH_Panel
         {
             // Connection string for SQL Server Express
             string connectionString = $"Data Source=RT12\\SQLEXPRESS;Initial Catalog={selectedDatabase};Integrated Security=True;";
-
             try
             {
                 // Load data into dataGridView1 based on the selected IPN
@@ -321,32 +284,23 @@ namespace WH_Panel
                 {
                     // Use a parameterized query to prevent SQL injection
                     string query = "SELECT * FROM STOCK WHERE IPN = @SelectedIPN ORDER BY Updated_On DESC";
-
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
                         // Add parameter to the query
                         command.Parameters.AddWithValue("@SelectedIPN", selectedIPN);
-
                         SqlDataAdapter adapterStock = new SqlDataAdapter(command);
                         DataTable dtStock = new DataTable();
                         adapterStock.Fill(dtStock);
-
                         // Bind the data to dataGridView1
                         dataGridView1.DataSource = dtStock;
-
-
                         // Hide the "Id" column
                         dataGridView1.Columns["Id"].Visible = false;
-
                         SetSTOCKiewColumsOrder();
-
                         // Optionally, you can autosize columns in dataGridView1
                         //dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
                         // Update label15 with the warehouse balance for the selected IPN
                         UpdateWarehouseBalanceLabel(selectedIPN);
                         isFiltered = false;
-
                     }
                 }
             }
@@ -355,7 +309,6 @@ namespace WH_Panel
                 MessageBox.Show($"Error loading data into dataGridView1: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         private bool isFiltered = false;
         private void button4_Click(object sender, EventArgs e)
         {
@@ -371,7 +324,6 @@ namespace WH_Panel
             {
                 // Get the selected row
                 DataGridViewRow selectedRow = dataGridView2.Rows[dataGridView2.SelectedCells[0].RowIndex];
-
                 // Access the value of the "IPN" column in the selected row
                 string selectedIPN = selectedRow.Cells["IPN"].Value.ToString();
                 LoadDataIntoDataGridView1(selectedIPN);
@@ -379,13 +331,10 @@ namespace WH_Panel
                 isFiltered = false;
                 button4.Text = "FIlter Current WH stock ONLY(UNFILTERED)";
             }
-
         }
-
         private void FilterActualItemsOnly()
         {
             List<WHitem> inWHstock = new List<WHitem>();
-
             // Convert dataGridView1 data to List<WHitem>
             for (int i = 0; i < dataGridView1.RowCount; i++)
             {
@@ -413,11 +362,9 @@ namespace WH_Panel
                 };
                 inWHstock.Add(wHitemABC);
             }
-
             // Apply logic to filter out negative quantities
             List<WHitem> negativeQTYs = inWHstock.Where(item => item.Stock < 0).ToList();
             List<WHitem> positiveInWH = inWHstock.Where(item => item.Stock > 0).ToList();
-
             // Remove matching pairs (positive and negative quantities)
             for (int i = 0; i < negativeQTYs.Count; i++)
             {
@@ -430,7 +377,6 @@ namespace WH_Panel
                     }
                 }
             }
-
             // Update dataGridView1 with filtered data
             IEnumerable<WHitem> WHdata = positiveInWH;
             DataTable filteredData = new DataTable();
@@ -438,20 +384,17 @@ namespace WH_Panel
             {
                 filteredData.Load(reader);
             }
-
             // Display filtered data in dataGridView1
             DataView dv = filteredData.DefaultView;
             dataGridView1.DataSource = dv;
             SetSTOCKiewColumsOrder();
             dataGridView1.Update();
         }
-
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             label2.BackColor = Color.IndianRed;
             FilterAVLDataGridView();
         }
-
         private void FilterAVLDataGridView()
         {
             string searchByIPN = textBox1.Text;
@@ -495,20 +438,17 @@ namespace WH_Panel
                 throw;
             }
         }
-
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             label3.BackColor = Color.IndianRed;
             FilterAVLDataGridView();
         }
-
         private void label2_Click(object sender, EventArgs e)
         {
             textBox1.Text = string.Empty;
             textBox1.Focus();
             label2.BackColor = Color.LightGreen;
         }
-
         private void label3_Click(object sender, EventArgs e)
         {
             textBox2.Text = string.Empty;
@@ -524,29 +464,24 @@ namespace WH_Panel
             txtbFiltAVLbyDESCR.Text = string.Empty;
             label16.BackColor = Color.LightGreen;
         }
-
         private void label2_DoubleClick(object sender, EventArgs e)
         {
             AvlClearFilters();
         }
-
         private void label3_DoubleClick(object sender, EventArgs e)
         {
             AvlClearFilters();
         }
-
         private void label16_Click(object sender, EventArgs e)
         {
             txtbFiltAVLbyDESCR.Text = string.Empty;
             txtbFiltAVLbyDESCR.Focus();
             label16.BackColor = Color.LightGreen;
         }
-
         private void label16_DoubleClick(object sender, EventArgs e)
         {
             AvlClearFilters();
         }
-
         private void textBox1_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
@@ -557,7 +492,6 @@ namespace WH_Panel
             TextBox? tb = (TextBox)sender;
             tb.BackColor = Color.LightGreen;
         }
-
         private void textBox1_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(sender);
@@ -568,37 +502,31 @@ namespace WH_Panel
             TextBox? tb = sender as TextBox;
             tb.BackColor = Color.LightGray;
         }
-
         private void textBox2_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
             label3.BackColor = Color.LightGreen;
         }
-
         private void textBox2_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(sender);
             label3.BackColor = Color.Gray;
         }
-
         private void txtbFiltAVLbyDESCR_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(sender);
             label16.BackColor = Color.Gray;
         }
-
         private void txtbFiltAVLbyDESCR_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
             label16.BackColor = Color.LightGreen;
         }
-
         private void txtbFiltAVLbyDESCR_TextChanged(object sender, EventArgs e)
         {
             label16.BackColor = Color.IndianRed;
             FilterAVLDataGridView();
         }
-
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
             MoveByRadioColor(sender);
@@ -622,7 +550,6 @@ namespace WH_Panel
                 btnMove.BackColor = Color.IndianRed;
             }
         }
-
         private void radioButton2_CheckedChanged(object sender, EventArgs e)
         {
             MoveByRadioColor(sender);
@@ -635,7 +562,6 @@ namespace WH_Panel
                 textBox8.Focus();
             }
         }
-
         private void radioButton4_CheckedChanged(object sender, EventArgs e)
         {
             MoveByRadioColor(sender);
@@ -661,14 +587,12 @@ namespace WH_Panel
                 textBox8.ReadOnly = false;
             }
         }
-
         private void lblRWK_Click(object sender, EventArgs e)
         {
             lblRWK.Text = string.Empty;
             lblRWK.Text += "requested by ";
             textBox9.Text = lblRWK.Text + comboBox6.SelectedItem.ToString() + " on " + DateTime.Now.ToString("yyyy-MM-dd");
         }
-
         private void lblSendTo_Click(object sender, EventArgs e)
         {
             lblSendTo.Text = string.Empty;
@@ -676,29 +600,24 @@ namespace WH_Panel
             lblSendTo.Text += comboBox3.Text.ToString() + " on " + DateTime.Now.ToString("yyyy-MM-dd");
             textBox9.Text = lblSendTo.Text;
         }
-
         private void btnMove_Click(object sender, EventArgs e)
         {
             //int qty = 0;
             string sourceReq = string.Empty;
-
             if (radioButton1.Checked)
             {
                 bool toPrintMFG = true;
                 sourceReq = "MFG";
-
                 if (!string.IsNullOrEmpty(textBox6.Text))
                 {
                     try
                     {
                         string inputQty = textBox6.Text.Trim();
                         int parsedQty;
-
                         if (inputQty.StartsWith("Q"))
                         {
                             inputQty = inputQty.Substring(1);
                         }
-
                         if (int.TryParse(inputQty, out parsedQty) && parsedQty > 0 && parsedQty < 50001)
                         {
                             MoveIntoDATABASE(parsedQty, sourceReq, toPrintMFG);
@@ -723,12 +642,10 @@ namespace WH_Panel
             else if (radioButton2.Checked)
             {
                 bool toPrintGILT = true;
-
                 if (!string.IsNullOrEmpty(textBox8.Text))
                 {
                     sourceReq = comboBox2.Text + textBox8.Text;
                     int parsedQty;
-
                     if (textBox6.Text.StartsWith("Q") && int.TryParse(textBox6.Text.Substring(1), out parsedQty)
                         || textBox6.Text.Contains(",") && int.TryParse(textBox6.Text.Replace(",", ""), out parsedQty)
                         || int.TryParse(textBox6.Text, out parsedQty))
@@ -757,12 +674,10 @@ namespace WH_Panel
             else if (radioButton4.Checked)
             {
                 bool toPrintWO = false;
-
                 if (!string.IsNullOrEmpty(textBox9.Text))
                 {
                     string woValue = textBox9.Text.Contains("_") ? textBox9.Text.Split("_")[1] + "_" + textBox9.Text.Split("_")[2] : textBox9.Text;
                     int parsedQty;
-
                     if (int.TryParse(textBox6.Text, out parsedQty) && parsedQty > 0 && parsedQty < 50001)
                     {
                         int negQty = parsedQty * (-1);
@@ -781,13 +696,11 @@ namespace WH_Panel
                 }
             }
         }
-
         private void ShowErrorMessage(string message)
         {
             //////////////MessageBox.Show(message);
             ResetTextBoxAndFocus(textBox6);
         }
-
         private void ResetTextBoxAndFocus(TextBox textBox)
         {
             textBox.Text = string.Empty;
@@ -817,16 +730,12 @@ namespace WH_Panel
             bool toPrint = toPrintOrNotToPrint;
             try
             {
-
                 // Connection string for SQL Server Express
                 string connectionString = $"Data Source=RT12\\SQLEXPRESS;Initial Catalog={selectedDatabase};Integrated Security=True;";
-
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-
                     SqlCommand command = new SqlCommand("INSERT INTO [STOCK] (IPN, Manufacturer, MFPN, Description, Stock, Updated_on, Comments, Source_Requester) VALUES (@IPN, @Manufacturer, @MFPN, @Description, @Stock, @Updated_on, @Comments, @Source_Requester)", conn);
-
                     // Assuming wHitem is an instance of some class with properties like IPN, Manufacturer, etc.
                     command.Parameters.AddWithValue("@IPN", wHitem.IPN);
                     command.Parameters.AddWithValue("@Manufacturer", wHitem.Manufacturer);
@@ -836,9 +745,7 @@ namespace WH_Panel
                     command.Parameters.AddWithValue("@Updated_on", wHitem.Updated_on);
                     command.Parameters.AddWithValue("@Comments", wHitem.Comments);
                     command.Parameters.AddWithValue("@Source_Requester", wHitem.Source_Requester);
-
                     command.ExecuteNonQuery();
-
                     conn.Close();
                 }
                 textBox6.Clear();
@@ -864,7 +771,6 @@ namespace WH_Panel
                 MessageBox.Show("Error");
             }
         }
-
         private void printSticker(WHitem wHitem)
         {
             try
@@ -928,7 +834,6 @@ namespace WH_Panel
             [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Auto)]
             static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
         }
-
         private void dataGridView2_SelectionChanged(object sender, EventArgs e)
         {
             if (dataGridView2.SelectedCells.Count > 0)
@@ -944,7 +849,6 @@ namespace WH_Panel
                 LoadDataIntoDataGridView1(textBox3.Text);
             }
         }
-
         private void textBox6_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -952,27 +856,22 @@ namespace WH_Panel
                 btnMove_Click(this, new EventArgs());
             }
         }
-
         private void textBox6_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
         }
-
         private void textBox6_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(sender);
         }
-
         private void textBox8_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
         }
-
         private void textBox8_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(sender);
         }
-
         private void textBox8_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -988,7 +887,6 @@ namespace WH_Panel
                 }
             }
         }
-
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboBox2.SelectedItem.ToString() == "FTK2400")
@@ -999,7 +897,6 @@ namespace WH_Panel
             }
             textBox8.Focus();
         }
-
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
             LastInputFromUser = (TextBox)sender;
@@ -1013,12 +910,9 @@ namespace WH_Panel
                 dataGridView2.Focus();
             }
         }
-
         private void dataGridView1_MouseDown(object sender, MouseEventArgs e)
         {
-
         }
-
         private void dataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right && e.RowIndex >= 0)
@@ -1066,7 +960,6 @@ namespace WH_Panel
             {
                 // Connection string for SQL Server Express
                 string connectionString = $"Data Source=RT12\\SQLEXPRESS;Initial Catalog={selectedDatabase};Integrated Security=True;";
-
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
@@ -1090,7 +983,6 @@ namespace WH_Panel
                 MessageBox.Show("Error");
             }
         }
-
         private void textBox13_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -1191,7 +1083,6 @@ namespace WH_Panel
                 //textBox6_KeyPress(sender, new KeyPressEventArgs((char)Keys.Enter));
             }
         }
-
         private void textBox2_KeyDown(object sender, KeyEventArgs e)
         {
             LastInputFromUser = (TextBox)sender;
@@ -1205,23 +1096,18 @@ namespace WH_Panel
                 dataGridView2.Focus();
             }
         }
-
         private void textBox13_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
             textBox13.Clear();
         }
-
         private void textBox13_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(sender);
         }
-
         private void checkBox1_CheckStateChanged(object sender, EventArgs e)
         {
-
         }
-
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox1.Checked)
@@ -1234,7 +1120,6 @@ namespace WH_Panel
                 checkBox1.BackColor = Color.LightGray;
             }
         }
-
         private void textBox11_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -1257,18 +1142,15 @@ namespace WH_Panel
                 }
             }
         }
-
         private void textBox11_Enter(object sender, EventArgs e)
         {
             txtbColorGreenOnEnter(sender);
             textBox11.Clear();
         }
-
         private void textBox11_Leave(object sender, EventArgs e)
         {
             txtbColorWhiteOnLeave(sender);
         }
-
         private void button23_Click(object sender, EventArgs e)
         {
             using (FrmSplit fs = new FrmSplit())
@@ -1286,7 +1168,6 @@ namespace WH_Panel
                 fs.ShowDialog();
             }
         }
-
         private void SubForm_AdjustmentCompleted(object sender, AdjustmentEventArgs e)
         {
             e.OriginalItem.Source_Requester = "SPLIT";
@@ -1303,16 +1184,13 @@ namespace WH_Panel
             //stockItems.Add(e.AdjustedItemB);
             LoadDataIntoDataGridView1(e.OriginalItem.IPN);
         }
-
         private void DataInserterSplitter(string fp, string thesheetName, WHitem wHitem, bool toPrintOrNotToPrint)
         {
             bool toPrint = toPrintOrNotToPrint;
             try
             {
-
                 // Connection string for SQL Server Express
                 string connectionString = $"Data Source=RT12\\SQLEXPRESS;Initial Catalog={selectedDatabase};Integrated Security=True;";
-
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
@@ -1351,7 +1229,6 @@ namespace WH_Panel
                 //conn.Open();
                 //cmd.ExecuteNonQuery();
                 //conn.Close();
-
                 string userName = Environment.UserName;
                 string fp = @"C:\\Users\\" + userName + "\\Desktop\\Print_Stickers.xlsx"; // //////Print_StickersWH.xlsm
                 //string fp = @"C:\\Users\\lgt\\Desktop";
@@ -1370,7 +1247,6 @@ namespace WH_Panel
                 conn.Open();
                 cmd.ExecuteNonQuery();
                 conn.Close();
-
                 Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
                 Thread.Sleep(500);
                 SendKeys.SendWait("^p");
@@ -1383,7 +1259,6 @@ namespace WH_Panel
                 MessageBox.Show("Sticker printing failed : " + e.Message);
             }
         }
-
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             button23.Enabled = true;

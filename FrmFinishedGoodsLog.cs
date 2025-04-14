@@ -312,19 +312,15 @@ namespace WH_Panel
             }
             return true;
         }
-
         private void button2_Click(object sender, EventArgs e)
         {
             // Prompt user for confirmation
             DialogResult result = MessageBox.Show("Are you sure you want to close the shipment?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-
             // If user confirms, proceed with logic
             if (result == DialogResult.Yes)
             {
                 // Order the list by the serialNumber column in the dataGridView1
                 dataGridView1.Sort(dataGridView1.Columns["serialNumber"], ListSortDirection.Ascending);
-
-
                 string saveToPath = string.Empty;
                 if (comboBox3.SelectedIndex != -1)
                 {
@@ -334,7 +330,6 @@ namespace WH_Panel
                 {
                     saveToPath = initialPath + comboBox1.SelectedItem.ToString() + "\\" + comboBox2.SelectedItem.ToString();
                 }
-
                 //if (Environment.MachineName == "RT12")
                 //{
                 SaveToHTML(saveToPath, comboBox1.SelectedItem.ToString(), comboBox2.SelectedItem.ToString(), comboBox3.SelectedItem.ToString(), txtbComments.Text, txtbSetLimit.Text);
@@ -344,13 +339,11 @@ namespace WH_Panel
                 //    EXCELinserter(PackedItemsList, saveToPath);
                 //}
             }
-
         }
         private void SaveToHTML(string saveToPath, string customer, string project, string revision, string po, string qty)
         {
             // Create HTML content
             string htmlContent = "<html><head><title>Packed Serials List</title></head><body>";
-
             htmlContent += "<H1>Packed Serials List</H1>";
             // Write additional information table with headers from DataGridView
             htmlContent += "<table border='1'  width='100%' style='text-align: center;'>";
@@ -360,7 +353,6 @@ namespace WH_Panel
             htmlContent += "<tr><th>PO:</th><td>" + po + "</td></tr>";
             htmlContent += "<tr><th>Qty:</th><td>" + limit + "</td></tr>";
             htmlContent += "</table>";
-
             // Write DataGridView contents
             htmlContent += "<table border='1' width='100%' style='text-align: center;'>";
             // Add table headers
@@ -382,16 +374,12 @@ namespace WH_Panel
                 htmlContent += "</tr>";
             }
             htmlContent += "</tbody></table>";
-
-
             // Save HTML content to file
             string filePath = saveToPath + "\\" + po + "_" + DateTime.Now.ToString("yyyyMMddHHmm") + "_" + dataGridView1.Rows.Count + "of" + limit + "_packed_Serials.html";
-
             File.WriteAllText(filePath, htmlContent);
             // Get the directory of the file
             // Get the directory of the file
             string directory = Path.GetDirectoryName(filePath);
-
             // Open containing folder
             Process.Start("explorer.exe", directory);
         }
@@ -531,34 +519,28 @@ namespace WH_Panel
                 txtbSetLimit.Focus();
             }
         }
-
         private void txtbComments_Enter(object sender, EventArgs e)
         {
             // Move the cursor to the end of the text
             txtbComments.SelectionStart = txtbComments.Text.Length;
             txtbComments.BackColor = Color.LightGreen;
         }
-
         private void txtbComments_Leave(object sender, EventArgs e)
         {
             txtbComments.BackColor = Color.White;
         }
-
         private void txtbSN_Enter(object sender, EventArgs e)
         {
             txtbSN.BackColor = Color.LightGreen;
         }
-
         private void txtbSN_Leave(object sender, EventArgs e)
         {
             txtbSN.BackColor = Color.White;
         }
-
         private void txtbSetLimit_Enter(object sender, EventArgs e)
         {
             txtbSetLimit.BackColor = Color.LightGreen;
         }
-
         private void txtbSetLimit_Leave(object sender, EventArgs e)
         {
             txtbSetLimit.BackColor = Color.White;

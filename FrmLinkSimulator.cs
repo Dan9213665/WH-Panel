@@ -37,7 +37,6 @@ using TextBox = System.Windows.Forms.TextBox;
 #pragma warning disable CS0618
 namespace WH_Panel
 {
-
     public partial class FrmLinkSimulator : Form
     {
         //List<ClientWarehouse> warehouses = new List<ClientWarehouse>();
@@ -263,9 +262,6 @@ namespace WH_Panel
             projectCheckBoxColumn.ReadOnly = false; // Enable editing
             dataGridView1.Columns.Add(projectCheckBoxColumn);
             // Add CellContentClick event handler to the DataGridView
-
-           
-
             DataGridViewTextBoxColumn projectColumn = new DataGridViewTextBoxColumn();
             projectColumn.HeaderText = "Project";
             projectColumn.ReadOnly = true;
@@ -283,12 +279,10 @@ namespace WH_Panel
             folderColumn.Name = "Folder";
             folderColumn.ReadOnly = true;
             dataGridView1.Columns.Add(folderColumn);
-
             DataGridViewTextBoxColumn priorityColumn = new DataGridViewTextBoxColumn();
             priorityColumn.HeaderText = "Priority"; // Header text of the checkbox column
             priorityColumn.ReadOnly = false; // Enable editing
             dataGridView1.Columns.Add(priorityColumn);
-
             dataGridView1.EditMode = DataGridViewEditMode.EditOnKeystrokeOrF2; // E
             foreach (var bom in loadedBOMs)
             {
@@ -358,7 +352,6 @@ namespace WH_Panel
                 column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
         }
-
         private void DataGridView1_SortCompare(object sender, DataGridViewSortCompareEventArgs e)
         {
             // Check if the column being sorted is the "Priority" column
@@ -367,22 +360,16 @@ namespace WH_Panel
                 // Parse the cell values as integers for comparison
                 int value1 = int.TryParse(e.CellValue1?.ToString(), out int result1) ? result1 : int.MinValue;
                 int value2 = int.TryParse(e.CellValue2?.ToString(), out int result2) ? result2 : int.MinValue;
-
                 // Compare the integer values
                 e.SortResult = value1.CompareTo(value2);
-
                 // If the values are equal, use the row indices to maintain the original order
                 if (e.SortResult == 0)
                 {
                     e.SortResult = e.RowIndex1.CompareTo(e.RowIndex2);
                 }
-
                 e.Handled = true; // Indicate that the event is handled
             }
         }
-
-
-
         private void DataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             if (IsCalculateColumn(e.ColumnIndex) && e.RowIndex >= 0)
@@ -448,8 +435,6 @@ namespace WH_Panel
                 }
             }
         }
-
-
         private void button7_Click(object sender, EventArgs e)
         {
             // Iterate through each column in the DataGridView
@@ -728,7 +713,6 @@ namespace WH_Panel
                                 row.Cells[dataGridView.Columns[displayName].Index].Style.BackColor = Color.LightGreen;
                                 row.Cells[dataGridView.Columns[displayName].Index].Style.ForeColor = Color.Black;
                             }
-
                             else if (delta < 0)
                             {
                                 row.Cells[dataGridView.Columns[displayName].Index].Style.BackColor = Color.IndianRed;
@@ -1262,18 +1246,13 @@ var myPieChart = new Chart(ctx, {
             foreach (var item in stockData)
             {
                 //var rowColorClass = item.StockQuantity + item.TotalRequired < 0 ? "lightcoral" : "lightgreen";
-
                 var rowColorClass = item.StockQuantity + item.TotalRequired < 0 ? "lightcoral" : ((item.StockQuantity + item.TotalRequired >= 0) && (item.StockQuantity + item.TotalRequired < 10) ? "orange" : "lightgreen");
-
                 htmlContent += $"<tr class='{rowColorClass}'>";
                 htmlContent += $"<td class='wrap-content;white-space: nowrap;'>{item.IPN}</td>";
                 htmlContent += $"<td class='wrap-content'>{item.MFPN}</td>";
                 htmlContent += $"<td class='wrap-content'>{item.Description}</td>";
                 htmlContent += $"<td>{item.StockQuantity}</td>";
-                
                 htmlContent += $"<td style='background-color: {(item.TotalRequired < 0 ? "lightcoral" : "lightgreen")}'>{item.TotalRequired}</td>";
-             
-
                 htmlContent += $"<td>{item.StockQuantity + item.TotalRequired}</td>";
                 htmlContent += "</tr>";
             }
@@ -1281,7 +1260,6 @@ var myPieChart = new Chart(ctx, {
             htmlContent += @"<script>
     window.onload = function() {
      CalculateCompletion();
-     
     };
     function sortTable(columnIndex) {
         var table, rows, switching, i, x, y, shouldSwitch;

@@ -15,6 +15,5 @@ namespace WH_Panel
         public string? claccDBfile { get; set; }
         public string? sqlAvl { get; set; }
         public string? sqlStock { get; set; }
-
     }
 }

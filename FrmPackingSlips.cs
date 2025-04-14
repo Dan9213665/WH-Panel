@@ -93,9 +93,6 @@ namespace WH_Panel
             SetColumsOrderPS();
             stopWatch.Stop();
         }
-
-
-
         private void SetColumsOrderPS()
         {
             dataGridView1.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -122,8 +119,6 @@ namespace WH_Panel
             SetColumsOrderPS();
             label12.BackColor = Color.LightGreen;
         }
-
-
         private void DataLoader(string fp, string excelFIleName)
         {
             TimeSpan ts = stopWatch.Elapsed;
@@ -167,7 +162,6 @@ namespace WH_Panel
                             {
                                 if (j >= 10)
                                 {
-
                                     int qty = 0;
                                     bool parseOk = int.TryParse(reader[3].ToString(), out qty);
                                     if (!parseOk)
@@ -261,7 +255,6 @@ namespace WH_Panel
                 throw;
             }
         }
-
         private void textBox10_TextChanged(object sender, EventArgs e)
         {
             label10.BackColor = Color.IndianRed;
@@ -309,7 +302,6 @@ namespace WH_Panel
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
         }
-
         private void button2_Click(object sender, EventArgs e)
         {
             listOfPaths.Clear();
@@ -317,10 +309,8 @@ namespace WH_Panel
             string thisMonth = DateTime.Now.Month.ToString("00");
             string prevMonth = (DateTime.Now.Month == 1 ? 12 : DateTime.Now.Month - 1).ToString("00");
             string prevYear = DateTime.Now.Month == 1 ? (DateTime.Now.Year - 1).ToString() : thisYear;
-
             listOfPaths.Add($"\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\2025\\{thisYear}.{thisMonth}");
             listOfPaths.Add($"\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\2025\\{prevYear}.{prevMonth}");
-
             stopWatch.Start();
             label12.BackColor = Color.IndianRed;
             foreach (string path in listOfPaths)
@@ -343,19 +333,12 @@ namespace WH_Panel
             SetColumsOrderPS();
             stopWatch.Stop();
         }
-
-
-
-
         private void label10_Click(object sender, EventArgs e)
         {
             Label? lbl = sender as Label;
             textBox10.Clear();
             lbl.BackColor = Color.LightGreen;
         }
-
-
-
         //private async void button2_Click(object sender, EventArgs e)
         //{
         //    listOfPaths.Clear();
@@ -364,12 +347,9 @@ namespace WH_Panel
         //    string PrevMonth = (DateTime.Now.Month - 1).ToString();
         //    listOfPaths.Add("\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\2025\\" + thisYear + "." + thisMonth);
         //    listOfPaths.Add("\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\2025\\" + thisYear + "." + PrevMonth);
-
         //    stopWatch.Start();
         //    label12.BackColor = Color.IndianRed;
-
         //    var tasks = new List<Task>(); // List to collect all async tasks
-
         //    foreach (string path in listOfPaths)
         //    {
         //        foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
@@ -379,15 +359,12 @@ namespace WH_Panel
         //            tasks.Add(DataLoaderAsync(file, Litem));  // Add DataLoaderAsync to the task list
         //        }
         //    }
-
         //    // Await all tasks to finish
         //    await Task.WhenAll(tasks);
-
         //    PopulateGridView(); // Populate the grid after all files are loaded
         //    SetColumsOrderPS();  // Set column order if necessary
         //    stopWatch.Stop();
         //}
-
         //private async void button2_Click(object sender, EventArgs e)
         //{
         //    listOfPaths.Clear();
@@ -396,12 +373,9 @@ namespace WH_Panel
         //    string PrevMonth = (DateTime.Now.Month - 1).ToString();
         //    listOfPaths.Add("\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\2025\\" + thisYear + "." + thisMonth);
         //    listOfPaths.Add("\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\2025\\" + thisYear + "." + PrevMonth);
-
         //    stopWatch.Start();
         //    label12.BackColor = Color.IndianRed;
-
         //    var tasks = new List<Task>(); // List to collect all async tasks
-
         //    foreach (string path in listOfPaths)
         //    {
         //        foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
@@ -411,10 +385,8 @@ namespace WH_Panel
         //            tasks.Add(DataLoaderAsync(file, Litem));  // Add DataLoaderAsync to the task list
         //        }
         //    }
-
         //    // Await all tasks to finish
         //    await Task.WhenAll(tasks);
-
         //    // Ensure UI updates happen on the UI thread
         //    if (InvokeRequired)
         //    {
@@ -432,7 +404,6 @@ namespace WH_Panel
         //        stopWatch.Stop();
         //    }
         //}
-
         //private async void button2_Click(object sender, EventArgs e)
         //{
         //    listOfPaths.Clear();
@@ -441,12 +412,9 @@ namespace WH_Panel
         //    string PrevMonth = (DateTime.Now.Month - 1).ToString();
         //    listOfPaths.Add("\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\2025\\" + thisYear + "." + thisMonth);
         //    listOfPaths.Add("\\\\dbr1\\Data\\WareHouse\\PACKING_SLIPS\\2025\\" + thisYear + "." + PrevMonth);
-
         //    stopWatch.Start();
         //    label12.BackColor = Color.IndianRed;
-
         //    List<Task> tasks = new List<Task>();
-
         //    foreach (string path in listOfPaths)
         //    {
         //        foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
@@ -457,14 +425,11 @@ namespace WH_Panel
         //            tasks.Add(DataLoaderAsync(file, Litem));
         //        }
         //    }
-
         //    // Wait for all tasks to complete before moving on
         //    await Task.WhenAll(tasks);
-
         //    PopulateGridView();
         //    SetColumsOrderPS();
         //    stopWatch.Stop();
         //}
-
     }
 }

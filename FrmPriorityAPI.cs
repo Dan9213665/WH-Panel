@@ -322,8 +322,6 @@ namespace WH_Panel
                 }
             }
         }
-
-        
         public async Task PopulatePackCombobox()
         {
             string url = $"{baseUrl}/PACK";
@@ -1927,7 +1925,6 @@ namespace WH_Panel
                     contextMenuStrip.Show(Cursor.Position);
                 }
             }
-
             await Task.Delay(10); // Optional delay to allow the context menu to show
         }
         private async void ShowSerialDetails(string serialName)
@@ -2774,16 +2771,13 @@ namespace WH_Panel
         //    {
         //        string clientName = cmbWarehouseList.SelectedItem.ToString().Substring(10).Trim();
         //        txtbOUT.Text = cbmOUT.SelectedItem + " "+ clientName;
-
         //    }
         //    else
         //    {
         //        txtbOUT.Text = cbmOUT.SelectedItem.ToString();
         //    }
-
         //    txtbInputIPN.Focus();
         //}
-
         private void cbmOUT_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cbmOUT.SelectedItem.Equals("SENT TO"))
@@ -2811,12 +2805,8 @@ namespace WH_Panel
             {
                 txtbOUT.Text = cbmOUT.SelectedItem.ToString();
             }
-
             txtbInputIPN.Focus();
         }
-
-
-
         private void txtbInputMFPN_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)

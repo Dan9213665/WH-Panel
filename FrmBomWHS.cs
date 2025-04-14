@@ -273,7 +273,6 @@ namespace WH_Panel
                 dgw.Columns["Delta"].DisplayIndex = 3;
                 dgw.Columns["MFPN"].DisplayIndex = 4;
                 dgw.Columns["Description"].DisplayIndex = 5;
-
                 //dgw.Columns["QtyPerUnit"].DisplayIndex = 7;
                 dgw.Columns["QtyPerUnit"].Visible = false;
                 dgw.Columns["Calc"].DisplayIndex = 6;
@@ -281,7 +280,6 @@ namespace WH_Panel
                 dgw.Sort(dgw.Columns["IPN"], ListSortDirection.Ascending);
                 // Attach CellFormatting event handler
                 dgw.CellFormatting += Dgw_CellFormatting;
-
             }
             else
             {
@@ -305,7 +303,6 @@ namespace WH_Panel
                 dgw.Columns["Delta"].DisplayIndex = 3;
                 dgw.Columns["MFPN"].DisplayIndex = 4;
                 dgw.Columns["Description"].DisplayIndex = 5;
-
                 //dgw.Columns["QtyPerUnit"].DisplayIndex = 7;
                 dgw.Columns["QtyPerUnit"].Visible = false;
                 dgw.Columns["Calc"].DisplayIndex = 6;
@@ -341,7 +338,6 @@ namespace WH_Panel
             }
         }
         public bool isSql = false;
-
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             // Ensure clList is not null and not empty
@@ -360,20 +356,17 @@ namespace WH_Panel
                 }
             }
         }
-
         private void MasterReload(string stockParamSql, string stockParamExl)
         {
             if (stockParamSql != string.Empty)
             {
                 isSql = true;
                 stockFile = stockParamSql;
-
             }
             else
             {
                 isSql = false;
                 stockFile = stockParamExl;
-
             }
             label1.BackColor = Color.LightGreen;
             button3_Click(this, new EventArgs());
@@ -427,17 +420,12 @@ namespace WH_Panel
         private void StockViewDataLoaderSql(string fp)
         {
             stockItems.Clear();
-
             try
             {
                 string constr = fp;
-
-
                 SqlDataAdapter adapterStock = new SqlDataAdapter("SELECT * FROM STOCK", constr);
-
                 DataTable stockTablesql = new DataTable();
                 adapterStock.Fill(stockTablesql);
-
                 foreach (DataRow row in stockTablesql.Rows)
                 {
                     WHitem item = new WHitem
@@ -451,18 +439,14 @@ namespace WH_Panel
                         Comments = row["Comments"].ToString(),
                         Source_Requester = row["Source_Requester"].ToString()
                     };
-
                     stockItems.Add(item);
                 }
-
             }
             catch (IOException)
             {
                 MessageBox.Show("Error");
             }
         }
-
-
         private void StockViewDataLoader(string fp, string thesheetName)
         {
             //stockItems.Clear();
@@ -560,7 +544,6 @@ namespace WH_Panel
                 dataGridView2.Columns["MFPN"].DisplayIndex = 5;
                 dataGridView2.Columns["Manufacturer"].DisplayIndex = 6;
                 dataGridView2.Columns["Description"].DisplayIndex = 7;
-
                 //dataGridView2.Sort(dataGridView2.Columns["Updated_on"], ListSortDirection.Descending);
                 dataGridView2.Sort(dataGridView2.Columns["Stock"], ListSortDirection.Ascending);
             }
@@ -582,14 +565,9 @@ namespace WH_Panel
                 dataGridView2.Columns["Updated_on"].DisplayIndex = 5;
                 dataGridView2.Columns["Comments"].DisplayIndex = 6;
                 dataGridView2.Columns["Source_Requester"].DisplayIndex = 7;
-
-
-
                 dataGridView2.Sort(dataGridView2.Columns["Updated_on"], ListSortDirection.Descending);
                 //dataGridView2.Sort(dataGridView2.Columns["Stock"], ListSortDirection.Ascending);
             }
-
-
         }
         private void FilterStockDataGridView(string IPN)
         {
@@ -638,34 +616,27 @@ namespace WH_Panel
         //        }
         //    }
         //}
-
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0) // Make sure a valid row index is clicked
             {
                 // Clear previous selections
                 dataGridView1.ClearSelection();
-
                 // Select the entire row of the clicked cell
                 dataGridView1.Rows[e.RowIndex].Selected = true;
-
                 // Optionally, you can also set the row's appearance
                 // dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.Yellow;
-
                 // Get the value of the clicked cell in the "IPN" column
                 string cellValue = dataGridView1.Rows[e.RowIndex].Cells["IPN"].Value.ToString();
                 textBox10.Text = cellValue;
-
                 // Perform actions based on the clicked cell
                 FilterStockDataGridView(cellValue);
-
                 if (chkBlockInWHonly.Checked)
                 {
                     FilterInStockItemsOnly();
                 }
             }
         }
-
         private bool dataGridViewIsBound = false;
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
@@ -703,7 +674,6 @@ namespace WH_Panel
                 StockViewDataLoader(stockFile, "STOCK");
                 PopulateStockView();
             }
-
         }
         private void button4_Click(object sender, EventArgs e)
         {
@@ -803,11 +773,8 @@ namespace WH_Panel
             string selMFPN = dataGridView1.Rows[rowindex].Cells["MFPN"].Value.ToString();
             misBOMItemsLST.Remove(misBOMItemsLST.Find(r => r.IPN == selIPN && r.MFPN == selMFPN));
             PopulateMissingGridView();
-
             // Manually trigger the CellClick event
             dataGridView1_CellClick(dataGridView1, new DataGridViewCellEventArgs(columnindex, rowindex));
-
-
         }
         private void button1_Click(object sender, EventArgs e)
         {
@@ -1282,7 +1249,6 @@ namespace WH_Panel
         private void GenerateHTMLsim()
         {
             //dataGridView1.Sort(dataGridView1.Columns["Delta"], ListSortDirection.Ascending);
-
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
             string filename = "\\\\dbr1\\Data\\WareHouse\\2025\\WHsim\\" + _fileTimeStamp + "_" + projectName.Substring(0, projectName.Length - 5) + ".html";
             using (StreamWriter writer = new StreamWriter(filename))
@@ -1320,8 +1286,6 @@ namespace WH_Panel
                         columnIndexMap[columnName] = column.Index;
                     }
                 }
-
-                
                 // Write the rows and data
                 foreach (DataGridViewRow row in dataGridView1.Rows)
                 {
@@ -1426,20 +1390,12 @@ namespace WH_Panel
             jsContent.AppendLine("var whBalanceCell = table.rows[i].cells[3];");
             jsContent.AppendLine("var deltaValue = parseInt(deltaCell.textContent);");
             jsContent.AppendLine("var whBalanceValue = parseInt(whBalanceCell.textContent);");
-
-
             jsContent.AppendLine("var delta = (whBalanceValue-Math.abs(deltaValue)); if (delta>10) {");
             jsContent.AppendLine("table.rows[i].style.backgroundColor = 'lightgreen';");
-
             jsContent.AppendLine("} else if ( delta >= 0 && delta <= 10){");
             jsContent.AppendLine("table.rows[i].style.backgroundColor = 'orange';");
-
             jsContent.AppendLine("} else if (delta<0){");
             jsContent.AppendLine("table.rows[i].style.backgroundColor = 'lightcoral';");
-
-
-
-
             jsContent.AppendLine("}");
             jsContent.AppendLine("}");
             jsContent.AppendLine("}");
@@ -1476,7 +1432,6 @@ namespace WH_Panel
                         h.MasterReload(cw.clAvlFile, cw.clStockFile);
                         h.Show();
                     }
-
                 }
             }
         }

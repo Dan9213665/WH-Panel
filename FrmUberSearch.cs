@@ -68,7 +68,6 @@ namespace WH_Panel
             // Ordering the warehouses list by clName
             warehouses = warehouses.OrderBy(warehouse => warehouse.clName).ToList();
         }
-
         //private async Task startUpLogicAsync()
         //{
         //    List<Label> _seachableFieldsLabels = new List<Label> { label2, label4, label5, label9 };
@@ -76,19 +75,15 @@ namespace WH_Panel
         //    {
         //        l.BackColor = Color.LightGreen;
         //    }
-
         //    List<TextBox> _searchableFieldsTextBoxes = new List<TextBox> { textBox2, textBox4, textBox5, textBox9 };
         //    foreach (TextBox textBox in _searchableFieldsTextBoxes)
         //    {
         //        textBox.Enter += TextBox_Enter;
         //        textBox.Leave += TextBox_Leave;
         //    }
-
         //    label1.BackColor = Color.IndianRed;
-
         //    // Parallelize data loading for warehouses
         //    List<Task> dataLoadingTasks = new List<Task>();
-
         //    foreach (ClientWarehouse warehouse in warehouses)
         //    {
         //        if (warehouse.sqlStock != null)
@@ -101,11 +96,8 @@ namespace WH_Panel
         //            dataLoadingTasks.Add(Task.Run(() => DataLoader(warehouse.clStockFile, "STOCK")));
         //        }
         //    }
-
         //    await Task.WhenAll(dataLoadingTasks); // Wait for all data loading tasks to complete
-
         //    PopulateGridView();
-
         //    // Create and add buttons to the FlowLayoutPanel
         //    List<Button> buttons = new List<Button>();
         //    for (int i = 0; i < warehouses.Count; i++)
@@ -113,11 +105,9 @@ namespace WH_Panel
         //        string warehousePath = warehouses[i].sqlStock;
         //        string warehouseName = warehouses[i].clName;
         //        Button button = new Button { Tag = warehouseName, AutoSize = false, Size = new Size(90, 40) };
-
         //        ToolTip toolTip = new ToolTip();
         //        toolTip.SetToolTip(button, warehouseName);
         //        button.Click += Button_Click;
-
         //        if (File.Exists(warehouses[i].clLogo))
         //        {
         //            try
@@ -133,18 +123,15 @@ namespace WH_Panel
         //        }
         //        buttons.Add(button);
         //    }
-
         //    flowLayoutPanel1.Controls.Clear();
         //    foreach (Button button in buttons)
         //    {
         //        flowLayoutPanel1.Controls.Add(button);
         //    }
         //}
-
         //private async Task DataLoaderSql(string fp)
         //{
         //    string connectionString = fp;
-
         //    try
         //    {
         //        using (SqlConnection connection = new SqlConnection(connectionString))
@@ -152,7 +139,6 @@ namespace WH_Panel
         //            SqlDataAdapter adapterStock = new SqlDataAdapter("SELECT * FROM STOCK", connection);
         //            DataTable stockTable = new DataTable();
         //            await Task.Run(() => adapterStock.Fill(stockTable)); // Load data asynchronously
-
         //            foreach (DataRow row in stockTable.Rows)
         //            {
         //                WHitem item = new WHitem
@@ -166,7 +152,6 @@ namespace WH_Panel
         //                    Comments = row["Comments"].ToString(),
         //                    Source_Requester = row["Source_Requester"].ToString()
         //                };
-
         //                if (i > 0)
         //                {
         //                    countItems = i;
@@ -187,35 +172,27 @@ namespace WH_Panel
         //        Console.WriteLine($"Error loading STOCK table: {ex.Message}");
         //    }
         //}
-
         private async Task startUpLogicAsync()
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-
             int initialThreadCount = 0;
             int finalThreadCount = 0;
-
             ThreadPool.GetAvailableThreads(out initialThreadCount, out _);
-
             List<Label> _seachableFieldsLabels = new List<Label> { label2, label4, label5, label9 };
             foreach (Label l in _seachableFieldsLabels)
             {
                 l.BackColor = Color.LightGreen;
             }
-
             List<TextBox> _searchableFieldsTextBoxes = new List<TextBox> { textBox2, textBox4, textBox5, textBox9 };
             foreach (TextBox textBox in _searchableFieldsTextBoxes)
             {
                 textBox.Enter += TextBox_Enter;
                 textBox.Leave += TextBox_Leave;
             }
-
             label1.BackColor = Color.IndianRed;
-
             // Parallelize data loading for warehouses
             List<Task> dataLoadingTasks = new List<Task>();
-
             foreach (ClientWarehouse warehouse in warehouses)
             {
                 if (warehouse.sqlStock != null)
@@ -228,11 +205,8 @@ namespace WH_Panel
                     dataLoadingTasks.Add(Task.Run(() => DataLoader(warehouse.clStockFile, "STOCK")));
                 }
             }
-
             await Task.WhenAll(dataLoadingTasks); // Wait for all data loading tasks to complete
-
             PopulateGridView();
-
             // Create and add buttons to the FlowLayoutPanel
             List<Button> buttons = new List<Button>();
             for (int i = 0; i < warehouses.Count; i++)
@@ -240,11 +214,9 @@ namespace WH_Panel
                 string warehousePath = warehouses[i].sqlStock;
                 string warehouseName = warehouses[i].clName;
                 Button button = new Button { Tag = warehouseName, AutoSize = false, Size = new Size(90, 40) };
-
                 ToolTip toolTip = new ToolTip();
                 toolTip.SetToolTip(button, warehouseName);
                 button.Click += Button_Click;
-
                 if (File.Exists(warehouses[i].clLogo))
                 {
                     try
@@ -260,25 +232,20 @@ namespace WH_Panel
                 }
                 buttons.Add(button);
             }
-
             flowLayoutPanel1.Controls.Clear();
             foreach (Button button in buttons)
             {
                 flowLayoutPanel1.Controls.Add(button);
             }
-
             stopwatch.Stop();
             ThreadPool.GetAvailableThreads(out finalThreadCount, out _);
-
             // Update the form's title with time taken and threads used
             TimeSpan ts = stopwatch.Elapsed;
             this.Text = $"App Title (Time: {ts.Seconds}.{ts.Milliseconds:000} s, Threads used: {finalThreadCount})";
         }
-
         private async Task DataLoaderSql(string fp)
         {
             string connectionString = fp;
-
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
@@ -286,7 +253,6 @@ namespace WH_Panel
                     SqlDataAdapter adapterStock = new SqlDataAdapter("SELECT * FROM STOCK", connection);
                     DataTable stockTable = new DataTable();
                     await Task.Run(() => adapterStock.Fill(stockTable)); // Load data asynchronously
-
                     foreach (DataRow row in stockTable.Rows)
                     {
                         WHitem item = new WHitem
@@ -300,7 +266,6 @@ namespace WH_Panel
                             Comments = row["Comments"].ToString(),
                             Source_Requester = row["Source_Requester"].ToString()
                         };
-
                         if (i > 0)
                         {
                             countItems = i;
@@ -321,37 +286,28 @@ namespace WH_Panel
                 Console.WriteLine($"Error loading STOCK table: {ex.Message}");
             }
         }
-
-
         //private async Task startUpLogicAsync()
         //{
         //    Stopwatch stopwatch = new Stopwatch();
         //    stopwatch.Start();
-
         //    int initialThreadCount, finalThreadCount;
         //    ThreadPool.GetAvailableThreads(out initialThreadCount, out _);
-
         //    // Track the number of tasks (threads) executed
         //    int taskCount = 0;
-
         //    List<Label> _seachableFieldsLabels = new List<Label> { label2, label4, label5, label9 };
         //    foreach (Label l in _seachableFieldsLabels)
         //    {
         //        l.BackColor = Color.LightGreen;
         //    }
-
         //    List<TextBox> _searchableFieldsTextBoxes = new List<TextBox> { textBox2, textBox4, textBox5, textBox9 };
         //    foreach (TextBox textBox in _searchableFieldsTextBoxes)
         //    {
         //        textBox.Enter += TextBox_Enter;
         //        textBox.Leave += TextBox_Leave;
         //    }
-
         //    label1.BackColor = Color.IndianRed;
-
         //    // Parallelize data loading for warehouses
         //    List<Task> dataLoadingTasks = new List<Task>();
-
         //    foreach (ClientWarehouse warehouse in warehouses)
         //    {
         //        if (warehouse.sqlStock != null)
@@ -372,11 +328,8 @@ namespace WH_Panel
         //            }));
         //        }
         //    }
-
         //    await Task.WhenAll(dataLoadingTasks); // Wait for all data loading tasks to complete
-
         //    PopulateGridView();
-
         //    // Create and add buttons to the FlowLayoutPanel
         //    List<Button> buttons = new List<Button>();
         //    for (int i = 0; i < warehouses.Count; i++)
@@ -384,11 +337,9 @@ namespace WH_Panel
         //        string warehousePath = warehouses[i].sqlStock;
         //        string warehouseName = warehouses[i].clName;
         //        Button button = new Button { Tag = warehouseName, AutoSize = false, Size = new Size(90, 40) };
-
         //        ToolTip toolTip = new ToolTip();
         //        toolTip.SetToolTip(button, warehouseName);
         //        button.Click += Button_Click;
-
         //        if (File.Exists(warehouses[i].clLogo))
         //        {
         //            try
@@ -404,25 +355,20 @@ namespace WH_Panel
         //        }
         //        buttons.Add(button);
         //    }
-
         //    flowLayoutPanel1.Controls.Clear();
         //    foreach (Button button in buttons)
         //    {
         //        flowLayoutPanel1.Controls.Add(button);
         //    }
-
         //    stopwatch.Stop();
         //    ThreadPool.GetAvailableThreads(out finalThreadCount, out _);
-
         //    // Update the form's title with time taken and task count
         //    TimeSpan ts = stopwatch.Elapsed;
         //    this.Text = $"App Title (Time: {ts.Seconds}.{ts.Milliseconds:000} s, Tasks used: {taskCount})";
         //}
-
         //private async Task DataLoaderSql(string fp)
         //{
         //    string connectionString = fp;
-
         //    try
         //    {
         //        using (SqlConnection connection = new SqlConnection(connectionString))
@@ -430,7 +376,6 @@ namespace WH_Panel
         //            SqlDataAdapter adapterStock = new SqlDataAdapter("SELECT * FROM STOCK", connection);
         //            DataTable stockTable = new DataTable();
         //            await Task.Run(() => adapterStock.Fill(stockTable)); // Load data asynchronously
-
         //            foreach (DataRow row in stockTable.Rows)
         //            {
         //                WHitem item = new WHitem
@@ -444,7 +389,6 @@ namespace WH_Panel
         //                    Comments = row["Comments"].ToString(),
         //                    Source_Requester = row["Source_Requester"].ToString()
         //                };
-
         //                if (i > 0)
         //                {
         //                    countItems = i;
@@ -464,7 +408,6 @@ namespace WH_Panel
         //        Console.WriteLine($"Error loading STOCK table: {ex.Message}");
         //    }
         //}
-
         private void startUpLogic()
         {
             List<Label> _seachableFieldsLabels = new List<Label>();
@@ -497,10 +440,8 @@ namespace WH_Panel
                 {
                     DataLoader(warehouse.clStockFile, "STOCK");
                 }
-
             }
             PopulateGridView();
-
             // Create a list to hold the buttons
             List<Button> buttons = new List<Button>();
             for (int i = 0; i < warehouses.Count; i++)
@@ -535,14 +476,12 @@ namespace WH_Panel
                 }
                 buttons.Add(button); // Add the button to the list
             }
-
             flowLayoutPanel1.Controls.Clear();
             // Add the sorted buttons to the flowLayoutPanel1 control
             foreach (Button button in buttons)
             {
                 flowLayoutPanel1.Controls.Add(button); // Add the button to the FlowLayoutPanel
             }
-
         }
         private void Button_Click(object sender, EventArgs e)
         {
@@ -560,19 +499,14 @@ namespace WH_Panel
         //private void DataLoaderSql (string fp)
         //{
         //    string connectionString = fp;
-
         //    try
         //    {
         //        // Load STOCK table into dataGridView1
         //        using (SqlConnection connection = new SqlConnection(connectionString))
         //        {
-
-
         //            SqlDataAdapter adapterStock = new SqlDataAdapter("SELECT * FROM STOCK", connection);
-
         //            DataTable stockTable = new DataTable();
         //            adapterStock.Fill(stockTable);
-
         //            foreach (DataRow row in stockTable.Rows)
         //            {
         //                WHitem item = new WHitem
@@ -691,7 +625,6 @@ namespace WH_Panel
             //ResetViews();
             //LoadDataFromFile();
             //PopulateGW();
-
             UpdateControlColors(this);
             //startUpLogic();
             await startUpLogicAsync();
@@ -950,19 +883,15 @@ namespace WH_Panel
         {
             txtbColorWhiteOnLeave(sender);
         }
-
         private void label7_Click(object sender, EventArgs e)
         {
             textBox7.Text = "";
             label7.BackColor = Color.LightGreen;
         }
-
         private void label7_DoubleClick(object sender, EventArgs e)
         {
             clearAllsearchTextboxes();
         }
-
-
         //private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         //{
         //    MessageBox.Show(e.ColumnIndex.ToString());
