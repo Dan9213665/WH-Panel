@@ -121,11 +121,7 @@ namespace WH_Panel
         }
         private void button14_Click(object sender, EventArgs e)
         {
-            //FrmClientAgnosticWH cl = new FrmClientAgnosticWH();
-            ////List<ClientWarehouse> warehouses = InitializeWarehouses();
-            //List<ClientWarehouse> warehouses = PopulateWarehouses();
-            //cl.InitializeGlobalWarehouses(warehouses);
-            //cl.Show();
+     
         }
         private void button3_Click(object sender, EventArgs e)
         {

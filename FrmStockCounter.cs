@@ -38,14 +38,7 @@ namespace WH_Panel
         {
             InitializeComponent();
             UpdateControlColors(this);
-            // Add this to your form's constructor or initialization method
-            //ContextMenuStrip contextMenuStrip = new ContextMenuStrip();
-            //ToolStripMenuItem uncountMenuItem = new ToolStripMenuItem("UNCOUNT");
-            //ToolStripMenuItem deleteMenuItem = new ToolStripMenuItem("DELETE from STOCK");
-            //contextMenuStrip.Items.AddRange(new ToolStripItem[] { uncountMenuItem, deleteMenuItem });
-            //// Subscribe to the click events for the menu items
-            //uncountMenuItem.Click += (sender, e) => UncountSelectedRow();
-            //deleteMenuItem.Click += (sender, e) => DeleteFromStockTableSelectedRow();
+    
         }
         public class whItemStockCounter : WHitem
         {
@@ -1118,95 +1111,11 @@ namespace WH_Panel
         {
             if (e.Button == MouseButtons.Left)
             {
-                //// Left-click logic: Select an existing XML file
-                //if (comboBox3.SelectedItem == null)
-                //{
-                //    MessageBox.Show("Please select a valid item from the dropdown.");
-                //    return;
-                //}
-                //// Get the currently selected item from comboBox3
-                //string selectedFolder = comboBox3.SelectedItem.ToString();
-                //// Build the start folder path using the selected item
-                //string startFolder = $@"\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\{selectedFolder}";
-                //// Create and configure OpenFileDialog
-                //OpenFileDialog openFileDialog1 = new OpenFileDialog
-                //{
-                //    InitialDirectory = startFolder,
-                //    Filter = "XML files (*.xml)|*.xml",
-                //    Title = "Select an XML File"
-                //};
-                //// Show the dialog and check if the user selected a file
-                //if (openFileDialog1.ShowDialog() == DialogResult.OK)
-                //{
-                //    string selectedFilePath = openFileDialog1.FileName;
-                //    //MessageBox.Show($"You selected: {selectedFilePath}");
-                //    button1.Text = selectedFilePath;
-                //    button1.BackColor = Color.LightGreen;
-                //    selectedXmlFilePath = openFileDialog1.FileName;
-                //    // You can now process the selected file path further as needed
-                //}
-                //textBox1.Focus();
+               
             }
             else if (e.Button == MouseButtons.Right)
             {
-                //uploadXMLdataIntoSQLdataBase();
-                //// Right-click logic: Prompt to create a new XML file
-                //if (comboBox3.SelectedItem == null)
-                //{
-                //    MessageBox.Show("Please select a valid item from the dropdown.");
-                //    return;
-                //}
-                //// Get the currently selected item from comboBox3
-                //string selectedItem = comboBox3.SelectedItem.ToString();
-                //// Generate the filename based on the current date and selected item
-                //string currentDate = DateTime.Now.ToString("yyyyMMdd");
-                //string newFileName = $"{currentDate}_{selectedItem}_count.xml";
-                //// Build the folder path using the selected item
-                //string startFolder = $@"\\dbr1\Data\WareHouse\STOCK_CUSTOMERS\{selectedItem}";
-                //// Create and configure SaveFileDialog
-                //SaveFileDialog saveFileDialog1 = new SaveFileDialog
-                //{
-                //    InitialDirectory = startFolder,
-                //    FileName = newFileName, // Pre-fill the file name
-                //    Filter = "XML files (*.xml)|*.xml",
-                //    Title = "Create a new XML File for Counting"
-                //};
-                //// Show the dialog and check if the user selected a file
-                //if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-                //{
-                //    string newFilePath = saveFileDialog1.FileName;
-                //    try
-                //    {
-                //        var testItem = new
-                //        {
-                //            Id = 1,
-                //            Counted = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), // Current date and time
-                //            User = Environment.UserName // Current logged-in Windows user
-                //        };
-                //        // Create the XML file and write the test object
-                //        using (XmlWriter writer = XmlWriter.Create(newFilePath))
-                //        {
-                //            writer.WriteStartDocument();
-                //            writer.WriteStartElement("CountedItems"); // Root element for your data
-                //            writer.WriteStartElement("Item"); // Individual item element
-                //            writer.WriteElementString("Id", testItem.Id.ToString());
-                //            writer.WriteElementString("Counted", testItem.Counted);
-                //            writer.WriteElementString("User", testItem.User);
-                //            writer.WriteEndElement(); // Close Item
-                //            writer.WriteEndElement(); // Close CountedItems
-                //            writer.WriteEndDocument();
-                //        }
-                //        MessageBox.Show($"New file created: {newFilePath}");
-                //        // Set this as the file for further saving
-                //        selectedXmlFilePath = newFilePath;
-                //        button1.Text = newFilePath;
-                //    }
-                //    catch (Exception ex)
-                //    {
-                //        MessageBox.Show($"An error occurred while creating the file: {ex.Message}");
-                //    }
-                //}
-                //textBox1.Focus();
+              
             }
         }
         private void ShowMatchSelectionForm(List<DataGridViewRow> matchingRows)
@@ -1793,49 +1702,6 @@ namespace WH_Panel
                 }
             }
         }
-        //private void dataGridView1_MouseDown(object sender, MouseEventArgs e)
-        //{
-        //    // Check if it is a right-click
-        //    if (e.Button == MouseButtons.Right)
-        //    {
-        //        // Get the clicked row using HitTest
-        //        var hitTestInfo = dataGridView1.HitTest(e.X, e.Y);
-        //        if (hitTestInfo.RowIndex >= 0) // Ensure a row was clicked
-        //        {
-        //            // Select the clicked row
-        //            dataGridView1.ClearSelection();
-        //            dataGridView1.Rows[hitTestInfo.RowIndex].Selected = true;
-        //            // Retrieve the selected row
-        //            DataGridViewRow selectedRow = dataGridView1.Rows[hitTestInfo.RowIndex];
-        //            // Get the Id and other properties from the selected row
-        //            int id = Convert.ToInt32(selectedRow.Cells["Id"].Value);
-        //            string ipn = selectedRow.Cells["IPN"].Value?.ToString();
-        //            string manufacturer = selectedRow.Cells["Manufacturer"].Value?.ToString();
-        //            string description = selectedRow.Cells["Description"].Value?.ToString();
-        //            int stock = Convert.ToInt32(selectedRow.Cells["Stock"].Value);
-        //            string updatedOn = selectedRow.Cells["Updated_on"].Value?.ToString();
-        //            string comments = selectedRow.Cells["Comments"].Value?.ToString();
-        //            string user = selectedRow.Cells["User"].Value?.ToString();
-        //            // Prepare the confirmation message with item details
-        //            string message = $"Are you sure you want to UNCOUNT the item:\n\n" +
-        //                             $"Id: {id}\n" +
-        //                             $"IPN: {ipn}\n" +
-        //                             $"Manufacturer: {manufacturer}\n" +
-        //                             $"Description: {description}\n" +
-        //                             $"Stock: {stock}\n" +
-        //                             $"Updated On: {updatedOn}\n" +
-        //                             $"Comments: {comments}\n" +
-        //                             $"User: {user}";
-        //            // Ask for user confirmation
-        //            DialogResult dialogResult = MessageBox.Show(message, "Confirm UNCOUNT", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-        //            if (dialogResult == DialogResult.Yes)
-        //            {
-        //                // If user confirms, delete the row from the COUNT table
-        //                DeleteFromCountTable(id);
-        //            }
-        //        }
-        //    }
-        //}
         private void dataGridView1_MouseDown(object sender, MouseEventArgs e)
         {
             // Check if it is a right-click
@@ -1919,41 +1785,6 @@ namespace WH_Panel
                 }
             }
         }
-        //private void dataGridView1_MouseDown(object sender, MouseEventArgs e)
-        //{
-        //    if (e.Button == MouseButtons.Right)
-        //    {
-        //        var hitTestInfo = dataGridView1.HitTest(e.X, e.Y);
-        //        if (hitTestInfo.RowIndex >= 0)
-        //        {
-        //            dataGridView1.ClearSelection();
-        //            dataGridView1.Rows[hitTestInfo.RowIndex].Selected = true;
-        //            DataGridViewRow selectedRow = dataGridView1.Rows[hitTestInfo.RowIndex];
-        //            int id = Convert.ToInt32(selectedRow.Cells["Id"].Value);
-        //            // Define comment options (modify as needed to pull options dynamically)
-        //            List<string> commentOptions = new List<string> { "Comment 1", "Comment 2", "Comment 3" };
-        //            // Prepare and show the custom message box
-        //            string message = $"Select an action for the item:\n\n" +
-        //                             $"Id: {id}\n";
-        //            using (CustomMessageBox customMessageBox = new CustomMessageBox(message, commentOptions))
-        //            {
-        //                customMessageBox.ShowDialog();
-        //                if (customMessageBox.Result == DialogResult.Yes)
-        //                {
-        //                    DeleteFromCountTable(id);
-        //                }
-        //                else if (customMessageBox.Result == DialogResult.No)
-        //                {
-        //                    DeleteFromSqlDataBase(id);
-        //                }
-        //                else if (customMessageBox.Result == DialogResult.OK)
-        //                {
-        //                    UpdatePackage(id, customMessageBox.SelectedComment); // Update comments in the database
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
         private void UpdatePackage(int id, string newComment)
         {
             // Prepare the confirmation message
