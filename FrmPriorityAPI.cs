@@ -2768,7 +2768,17 @@ namespace WH_Panel
         }
         private void cbmOUT_SelectedIndexChanged(object sender, EventArgs e)
         {
-            txtbOUT.Text = cbmOUT.SelectedItem.ToString();
+            if(cbmOUT.SelectedItem.Equals("SENT TO"))
+            {
+                string clientName = cmbWarehouseList.SelectedItem.ToString().Substring(10).Trim();
+                txtbOUT.Text = cbmOUT.SelectedItem + " "+ clientName;
+               
+            }
+            else
+            {
+                txtbOUT.Text = cbmOUT.SelectedItem.ToString();
+            }
+                
             txtbInputIPN.Focus();
         }
         private void txtbInputMFPN_KeyDown(object sender, KeyEventArgs e)

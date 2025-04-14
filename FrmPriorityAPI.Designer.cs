@@ -559,7 +559,7 @@
             cbmOUT.DropDownStyle = ComboBoxStyle.DropDownList;
             cbmOUT.Font = new Font("Segoe UI", 12F);
             cbmOUT.FormattingEnabled = true;
-            cbmOUT.Items.AddRange(new object[] { "Yuri", "RWK", "TH", "QC", "SMT" });
+            cbmOUT.Items.AddRange(new object[] { "Yuri", "RWK", "TH", "QC", "SMT", "SENT TO" });
             cbmOUT.Location = new Point(403, 129);
             cbmOUT.Name = "cbmOUT";
             cbmOUT.Size = new Size(196, 29);
