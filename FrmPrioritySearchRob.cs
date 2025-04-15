@@ -13,6 +13,7 @@ namespace WH_Panel
     public partial class FrmPrioritySearchRob : Form
     {
         private AppSettings settings;
+        string baseUrl = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/";
         public FrmPrioritySearchRob()
         {
             InitializeComponent();
@@ -173,7 +174,7 @@ namespace WH_Panel
                     return;
                 }
                 dgwSerials.Rows.Clear();
-                string partUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART?$filter=PARTNAME eq '{partName}'&$expand=PARTPARENT_SUBFORM";
+                string partUrl = $"{baseUrl}PART?$filter=PARTNAME eq '{partName}'&$expand=PARTPARENT_SUBFORM";
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -260,7 +261,7 @@ namespace WH_Panel
         }
         private async Task FetchAndDisplaySerials(string parentName)
         {
-            string serialUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=PARTNAME eq '{parentName}'";
+            string serialUrl = $"{baseUrl}SERIAL?$filter=PARTNAME eq '{parentName}'";
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -307,7 +308,7 @@ namespace WH_Panel
                             txtbLog.AppendText($"Found {serials.Count} open Work Orders for parent IPN: {parentName}\n");
                             txtbLog.ScrollToCaret();
                             DisplaySerials(serials);
-                           // DisplaySerialsInMessageBox(serials);
+                            // DisplaySerialsInMessageBox(serials);
                         }
                     }
                     else
@@ -472,7 +473,7 @@ namespace WH_Panel
         }
         private async Task<string> RetrieveParentName(string partName)
         {
-            string partUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART?$filter=PARTNAME eq '{partName}'&$expand=PARTPARENT_SUBFORM";
+            string partUrl = $"{baseUrl}PART?$filter=PARTNAME eq '{partName}'&$expand=PARTPARENT_SUBFORM";
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -528,7 +529,7 @@ namespace WH_Panel
         }
         private async Task<List<string>> RetrieveIPNs(string mfpn)
         {
-            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=MNFPARTNAME eq '{mfpn}'";
+            string url = $"{baseUrl}PARTMNFONE?$filter=MNFPARTNAME eq '{mfpn}'";
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -585,6 +586,12 @@ namespace WH_Panel
         private void txtbSearchIMFPN_DoubleClick(object sender, EventArgs e)
         {
             txtbSearchIPN.Clear();
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            txtbSearchIMFPN.Text = string.Empty;
+            txtbSearchIPN.Text = string.Empty;
         }
     }
 }

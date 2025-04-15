@@ -35,6 +35,7 @@
             dgwSerials = new DataGridView();
             gbxMFPN = new GroupBox();
             txtbSearchIMFPN = new TextBox();
+            btnClear = new Button();
             tableLayoutPanel1.SuspendLayout();
             gbxIPN.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -51,15 +52,17 @@
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
             tableLayoutPanel1.Controls.Add(gbxIPN, 0, 0);
             tableLayoutPanel1.Controls.Add(groupBox2, 1, 0);
-            tableLayoutPanel1.Controls.Add(groupBox3, 0, 2);
+            tableLayoutPanel1.Controls.Add(groupBox3, 0, 3);
             tableLayoutPanel1.Controls.Add(gbxMFPN, 0, 1);
+            tableLayoutPanel1.Controls.Add(btnClear, 0, 2);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 3;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 15F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 15F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 70F));
+            tableLayoutPanel1.RowCount = 4;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 22.2222214F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 22.2222214F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 22.2222214F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel1.Size = new Size(816, 546);
             tableLayoutPanel1.TabIndex = 0;
             // 
@@ -70,7 +73,7 @@
             gbxIPN.ForeColor = Color.White;
             gbxIPN.Location = new Point(3, 3);
             gbxIPN.Name = "gbxIPN";
-            gbxIPN.Size = new Size(320, 75);
+            gbxIPN.Size = new Size(320, 115);
             gbxIPN.TabIndex = 0;
             gbxIPN.TabStop = false;
             gbxIPN.Text = "Search IPN";
@@ -98,8 +101,8 @@
             groupBox2.ForeColor = Color.White;
             groupBox2.Location = new Point(329, 3);
             groupBox2.Name = "groupBox2";
-            tableLayoutPanel1.SetRowSpan(groupBox2, 2);
-            groupBox2.Size = new Size(484, 156);
+            tableLayoutPanel1.SetRowSpan(groupBox2, 3);
+            groupBox2.Size = new Size(484, 357);
             groupBox2.TabIndex = 1;
             groupBox2.TabStop = false;
             groupBox2.Text = "Log";
@@ -109,7 +112,7 @@
             txtbLog.Dock = DockStyle.Fill;
             txtbLog.Location = new Point(3, 19);
             txtbLog.Name = "txtbLog";
-            txtbLog.Size = new Size(478, 134);
+            txtbLog.Size = new Size(478, 335);
             txtbLog.TabIndex = 0;
             txtbLog.Text = "";
             // 
@@ -119,9 +122,9 @@
             groupBox3.Controls.Add(dgwSerials);
             groupBox3.Dock = DockStyle.Fill;
             groupBox3.ForeColor = Color.White;
-            groupBox3.Location = new Point(3, 165);
+            groupBox3.Location = new Point(3, 366);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(810, 378);
+            groupBox3.Size = new Size(810, 177);
             groupBox3.TabIndex = 3;
             groupBox3.TabStop = false;
             groupBox3.Text = "ROB work orders found";
@@ -135,8 +138,7 @@
             dgwSerials.Location = new Point(3, 19);
             dgwSerials.Name = "dgwSerials";
             dgwSerials.ReadOnly = true;
-            dgwSerials.RowTemplate.Height = 25;
-            dgwSerials.Size = new Size(804, 356);
+            dgwSerials.Size = new Size(804, 155);
             dgwSerials.TabIndex = 2;
             dgwSerials.CellClick += dgwSerials_CellClick;
             // 
@@ -145,9 +147,9 @@
             gbxMFPN.Controls.Add(txtbSearchIMFPN);
             gbxMFPN.Dock = DockStyle.Fill;
             gbxMFPN.ForeColor = Color.White;
-            gbxMFPN.Location = new Point(3, 84);
+            gbxMFPN.Location = new Point(3, 124);
             gbxMFPN.Name = "gbxMFPN";
-            gbxMFPN.Size = new Size(320, 75);
+            gbxMFPN.Size = new Size(320, 115);
             gbxMFPN.TabIndex = 4;
             gbxMFPN.TabStop = false;
             gbxMFPN.Text = "Search MFPN";
@@ -166,6 +168,18 @@
             txtbSearchIMFPN.Enter += txtbSearchIMFPN_Enter;
             txtbSearchIMFPN.KeyDown += txtbSearchIMFPN_KeyDown;
             txtbSearchIMFPN.Leave += txtbSearchIMFPN_Leave;
+            // 
+            // btnClear
+            // 
+            btnClear.BackgroundImage = (Image)resources.GetObject("btnClear.BackgroundImage");
+            btnClear.BackgroundImageLayout = ImageLayout.Stretch;
+            btnClear.Dock = DockStyle.Fill;
+            btnClear.Location = new Point(3, 245);
+            btnClear.Name = "btnClear";
+            btnClear.Size = new Size(320, 115);
+            btnClear.TabIndex = 5;
+            btnClear.UseVisualStyleBackColor = true;
+            btnClear.Click += btnClear_Click;
             // 
             // FrmPrioritySearchRob
             // 
@@ -201,5 +215,6 @@
         private GroupBox groupBox3;
         private GroupBox gbxMFPN;
         private TextBox txtbSearchIMFPN;
+        private Button btnClear;
     }
 }

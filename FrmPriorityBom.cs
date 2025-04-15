@@ -747,18 +747,7 @@ namespace WH_Panel
         private void UpdateSimulationLabel()
         {
             int totalItems = dgwBom.Rows.Count;
-            //int coveredItems = dgwBom.Rows.Cast<DataGridViewRow>().Count(row =>
-            //{
-            //    int delta = Convert.ToInt32(row.Cells["DELTA"].Value);
-            //    int whQuantity = row.Cells["TBALANCE"].Value != null ? Convert.ToInt32(row.Cells["TBALANCE"].Value) : 0;
-            //    int kitQuantity = row.Cells["QUANT"].Value != null ? Convert.ToInt32(row.Cells["QUANT"].Value) : 0;
-            //    return (whQuantity + kitQuantity) >= Math.Abs(delta);
-            //});
-            //int delta = Convert.ToInt32(row.Cells["DELTA"].Value);
-            //int whQuantity = row.Cells["TBALANCE"].Value != null ? Convert.ToInt32(row.Cells["TBALANCE"].Value) : 0;
-            //int kitQuantity = row.Cells["QUANT"].Value != null ? Convert.ToInt32(row.Cells["QUANT"].Value) : 0;
-            //int requiredQuantity = row.Cells["CQUANT"].Value != null ? Convert.ToInt32(row.Cells["CQUANT"].Value) : 0;
-            //int leftovers = (whQuantity + kitQuantity) - requiredQuantity;
+        
             int coveredItems = dgwBom.Rows.Cast<DataGridViewRow>().Count(row =>
             {
                 int delta = Convert.ToInt32(row.Cells["DELTA"].Value);
@@ -1006,10 +995,7 @@ namespace WH_Panel
             {
                 int req = Convert.ToInt32(dgwBom.Rows[e.RowIndex].Cells["CQUANT"].Value);
                 int kitValue = Convert.ToInt32(dgwBom.Rows[e.RowIndex].Cells["QUANT"].Value);
-                //if (kitValue > 0)
-                //{
-                //   // MessageBox.Show(kitValue.ToString());
-                //}
+            
                 if (e.Value != null && int.TryParse(e.Value.ToString(), out kitValue))
                 {
                     if (kitValue >= req && kitValue != 0)
@@ -1278,6 +1264,10 @@ namespace WH_Panel
             {
                 url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_C?$filter=DOCNO eq '{logDocNo}'";
             }
+            else if (logDocNo.StartsWith("SH"))
+            {
+                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_D?$filter=DOCNO eq '{logDocNo}'";
+            }
             else if (logDocNo.StartsWith("WR"))
             {
                 url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_T?$filter=DOCNO eq '{logDocNo}'";
@@ -1333,6 +1323,12 @@ namespace WH_Panel
                         results.Add((packCode, bookNum, date));
                     }
                     else if (logDocNo.StartsWith("IC"))
+                    {
+                        // Handle IC document logic
+                        string date = document["UDATE"]?.ToString();
+                        results.Add((null, null, date));
+                    }
+                    else if (logDocNo.StartsWith("SH"))
                     {
                         // Handle IC document logic
                         string date = document["UDATE"]?.ToString();
@@ -1576,6 +1572,10 @@ namespace WH_Panel
                             else if (docDesValue.Contains("העברה"))
                             {
                                 cell.Style.BackColor = Color.IndianRed;
+                            }
+                            else if (docDesValue.Contains("ללקוח"))
+                            {
+                                cell.Style.BackColor = Color.DarkViolet;
                             }
                         }
                     }
@@ -2787,7 +2787,7 @@ namespace WH_Panel
                     if (row.Cells["LOGDOCNO"].Value != null && row.Cells["UDATE"].Value != null && DateTime.TryParse(row.Cells["UDATE"].Value.ToString(), out _))
                     {
                         string docNo = row.Cells["LOGDOCNO"].Value.ToString();
-                        if (docNo.StartsWith("ROB") || docNo.StartsWith("IC") || docNo.StartsWith("WR"))
+                        if (docNo.StartsWith("ROB") || docNo.StartsWith("IC") || docNo.StartsWith("WR") || docNo.StartsWith("SH"))
                         {
                             // Handle IC documents by converting the quantity to a positive value
                             if (docNo.StartsWith("IC"))
@@ -2852,7 +2852,7 @@ namespace WH_Panel
                 if (row.Cells["LOGDOCNO"].Value != null && row.Cells["UDATE"].Value != null && DateTime.TryParse(row.Cells["UDATE"].Value.ToString(), out _))
                 {
                     string docNo = row.Cells["LOGDOCNO"].Value.ToString();
-                    if (docNo.StartsWith("ROB") || docNo.StartsWith("IC") || docNo.StartsWith("WR"))
+                    if (docNo.StartsWith("ROB") || docNo.StartsWith("IC") || docNo.StartsWith("WR") || docNo.StartsWith("SH"))
                     {
                         // Handle IC documents by converting the quantity to a positive value
                         if (docNo.StartsWith("IC"))

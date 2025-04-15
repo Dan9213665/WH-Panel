@@ -254,18 +254,7 @@ namespace WH_Panel
         }
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            //// Close any open file streams
-            //if (fileStream != null)
-            //{
-            //    fileStream.Close();
-            //    fileStream.Dispose();
-            //}
-            //// Close any open database connections
-            //if (dbConnection != null)
-            //{
-            //    dbConnection.Close();
-            //    dbConnection.Dispose();
-            //}
+   
         }
         private void button12_Click(object sender, EventArgs e)
         {
