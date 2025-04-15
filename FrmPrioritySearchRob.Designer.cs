@@ -34,7 +34,7 @@
             groupBox3 = new GroupBox();
             dgwSerials = new DataGridView();
             gbxMFPN = new GroupBox();
-            txtbSearchIMFPN = new TextBox();
+            txtbSearchMFPN = new TextBox();
             btnClear = new Button();
             tableLayoutPanel1.SuspendLayout();
             gbxIPN.SuspendLayout();
@@ -144,7 +144,7 @@
             // 
             // gbxMFPN
             // 
-            gbxMFPN.Controls.Add(txtbSearchIMFPN);
+            gbxMFPN.Controls.Add(txtbSearchMFPN);
             gbxMFPN.Dock = DockStyle.Fill;
             gbxMFPN.ForeColor = Color.White;
             gbxMFPN.Location = new Point(3, 124);
@@ -156,18 +156,18 @@
             // 
             // txtbSearchIMFPN
             // 
-            txtbSearchIMFPN.Dock = DockStyle.Fill;
-            txtbSearchIMFPN.Font = new Font("Segoe UI", 18F);
-            txtbSearchIMFPN.Location = new Point(3, 19);
-            txtbSearchIMFPN.Name = "txtbSearchIMFPN";
-            txtbSearchIMFPN.PlaceholderText = "Input MFPN to search...";
-            txtbSearchIMFPN.Size = new Size(314, 39);
-            txtbSearchIMFPN.TabIndex = 1;
-            txtbSearchIMFPN.TextAlign = HorizontalAlignment.Center;
-            txtbSearchIMFPN.DoubleClick += txtbSearchIMFPN_DoubleClick;
-            txtbSearchIMFPN.Enter += txtbSearchIMFPN_Enter;
-            txtbSearchIMFPN.KeyDown += txtbSearchIMFPN_KeyDown;
-            txtbSearchIMFPN.Leave += txtbSearchIMFPN_Leave;
+            txtbSearchMFPN.Dock = DockStyle.Fill;
+            txtbSearchMFPN.Font = new Font("Segoe UI", 18F);
+            txtbSearchMFPN.Location = new Point(3, 19);
+            txtbSearchMFPN.Name = "txtbSearchIMFPN";
+            txtbSearchMFPN.PlaceholderText = "Input MFPN to search...";
+            txtbSearchMFPN.Size = new Size(314, 39);
+            txtbSearchMFPN.TabIndex = 1;
+            txtbSearchMFPN.TextAlign = HorizontalAlignment.Center;
+            txtbSearchMFPN.DoubleClick += txtbSearchIMFPN_DoubleClick;
+            txtbSearchMFPN.Enter += txtbSearchIMFPN_Enter;
+            txtbSearchMFPN.KeyDown += txtbSearchMFPN_KeyDown;
+            txtbSearchMFPN.Leave += txtbSearchIMFPN_Leave;
             // 
             // btnClear
             // 
@@ -214,7 +214,7 @@
         private DataGridView dgwSerials;
         private GroupBox groupBox3;
         private GroupBox gbxMFPN;
-        private TextBox txtbSearchIMFPN;
+        private TextBox txtbSearchMFPN;
         private Button btnClear;
     }
 }

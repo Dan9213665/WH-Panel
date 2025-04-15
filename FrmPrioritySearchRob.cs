@@ -39,13 +39,21 @@ namespace WH_Panel
             // Add columns if not already added
             if (dgwSerials.Columns.Count == 0)
             {
+                var IpnColumn = new DataGridViewTextBoxColumn
+                {
+                    Name = "IPN",
+                    HeaderText = "IPN",
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                    FillWeight = 25f // Set the fill weight to 33.33%
+                };
+                dgwSerials.Columns.Add(IpnColumn);
                 var serialNameColumn = new DataGridViewButtonColumn
                 {
                     Name = "SERIALNAME",
                     HeaderText = "ROB work order",
                     UseColumnTextForButtonValue = false, // Set to false to use cell value as button text
                     AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
-                    FillWeight = 33.33f // Set the fill weight to 33.33%
+                    FillWeight = 25f // Set the fill weight to 33.33%
                 };
                 dgwSerials.Columns.Add(serialNameColumn);
                 var parentIpnColumn = new DataGridViewTextBoxColumn
@@ -53,7 +61,7 @@ namespace WH_Panel
                     Name = "PARENTIPN",
                     HeaderText = "Parent IPN",
                     AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
-                    FillWeight = 33.33f // Set the fill weight to 33.33%
+                    FillWeight = 25f // Set the fill weight to 33.33%
                 };
                 dgwSerials.Columns.Add(parentIpnColumn);
                 var serialDesColumn = new DataGridViewTextBoxColumn
@@ -61,13 +69,14 @@ namespace WH_Panel
                     Name = "SERIALDES",
                     HeaderText = "Description",
                     AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
-                    FillWeight = 33.33f // Set the fill weight to 33.33%
+                    FillWeight = 25f // Set the fill weight to 33.33%
                 };
                 dgwSerials.Columns.Add(serialDesColumn);
             }
         }
         public class SerialInfo
         {
+            public string IPN { get; set; }
             public string SERIALNAME { get; set; }
             public string PARENTIPN { get; set; }
             public string SERIALDES { get; set; }
@@ -166,7 +175,7 @@ namespace WH_Panel
         {
             if (e.KeyCode == Keys.Enter)
             {
-                txtbSearchIMFPN.Clear();
+                txtbSearchMFPN.Clear();
                 string partName = txtbSearchIPN.Text.Trim();
                 if (string.IsNullOrEmpty(partName))
                 {
@@ -240,7 +249,7 @@ namespace WH_Panel
                             }
                             txtbLog.AppendText($"Parent IPN: {parentName}\n");
                             txtbLog.ScrollToCaret();
-                            await FetchAndDisplaySerials(parentName);
+                            await FetchAndDisplaySerials(parentName, partName);
                         }
                     }
                     catch (HttpRequestException ex)
@@ -259,7 +268,82 @@ namespace WH_Panel
                 }
             }
         }
-        private async Task FetchAndDisplaySerials(string parentName)
+        //private async Task FetchAndDisplaySerials(string parentName)
+        //{
+        //    string serialUrl = $"{baseUrl}SERIAL?$filter=PARTNAME eq '{parentName}'";
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        try
+        //        {
+        //            // Log the start of the method
+        //            txtbLog.SelectionColor = Color.Yellow;
+        //            txtbLog.AppendText($"Fetching serials for parent: {parentName}\n");
+        //            txtbLog.ScrollToCaret();
+        //            // Set the request headers
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+        //            // Make the HTTP GET request for serial details
+        //            HttpResponseMessage serialResponse = await client.GetAsync(serialUrl);
+        //            serialResponse.EnsureSuccessStatusCode();
+        //            string serialResponseBody = await serialResponse.Content.ReadAsStringAsync();
+        //            var serialApiResponse = JsonConvert.DeserializeObject<JObject>(serialResponseBody);
+        //            // Log the response
+        //            txtbLog.SelectionColor = Color.Yellow;
+        //            txtbLog.AppendText($"Received response for parent : {parentName}\n");
+        //            txtbLog.ScrollToCaret();
+        //            if (serialApiResponse["value"] != null && serialApiResponse["value"].Any())
+        //            {
+        //                var serials = serialApiResponse["value"]
+        //                    .Where(s => s["SERIALSTATUSDES"]?.ToString() != "נסגרה" && s["SERIALSTATUSDES"]?.ToString() != "קיט מלא" && s["SERIALSTATUSDES"] != null && s["REVNUM"] != null)
+        //                    .Select(s => new SerialInfo
+        //                    {
+        //                        SERIALNAME = s["SERIALNAME"]?.ToString(),
+        //                        PARENTIPN = parentName,
+        //                        SERIALDES = s["SERIALDES"]?.ToString(),
+        //                        REVNUM = s["REVNUM"]?.ToString()
+        //                    })
+        //                  .ToList();
+        //                if (serials.Count == 0)
+        //                {
+        //                    txtbLog.SelectionColor = Color.Red;
+        //                    txtbLog.AppendText("No open Work Orders found!\n");
+        //                    txtbLog.ScrollToCaret();
+        //                }
+        //                else
+        //                {
+        //                    txtbLog.SelectionColor = Color.Green;
+        //                    txtbLog.AppendText($"Found {serials.Count} open Work Orders for parent IPN: {parentName}\n");
+        //                    txtbLog.ScrollToCaret();
+        //                    DisplaySerials(serials);
+        //                    // DisplaySerialsInMessageBox(serials);
+        //                }
+        //            }
+        //            else
+        //            {
+        //                txtbLog.SelectionColor = Color.Red;
+        //                txtbLog.AppendText($"No Work Orders found for the IPN: {parentName}.\n");
+        //                txtbLog.ScrollToCaret();
+        //            }
+        //        }
+        //        catch (HttpRequestException ex)
+        //        {
+        //            txtbLog.SelectionColor = Color.Red;
+        //            txtbLog.AppendText($"HttpRequestException FetchAndDisplaySerials error: {ex.Message}\n");
+        //            txtbLog.ScrollToCaret();
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            txtbLog.SelectionColor = Color.Red;
+        //            txtbLog.AppendText($"Exception FetchAndDisplaySerials error: {ex.Message}\n");
+        //            txtbLog.AppendText($"Stack Trace: {ex.StackTrace}\n");
+        //            txtbLog.ScrollToCaret();
+        //        }
+        //    }
+        //}
+
+        private async Task FetchAndDisplaySerials(string parentName,string originIPN)
         {
             string serialUrl = $"{baseUrl}SERIAL?$filter=PARTNAME eq '{parentName}'";
             using (HttpClient client = new HttpClient())
@@ -270,32 +354,63 @@ namespace WH_Panel
                     txtbLog.SelectionColor = Color.Yellow;
                     txtbLog.AppendText($"Fetching serials for parent: {parentName}\n");
                     txtbLog.ScrollToCaret();
+
                     // Set the request headers
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
                     // Make the HTTP GET request for serial details
                     HttpResponseMessage serialResponse = await client.GetAsync(serialUrl);
+
+                    // Check for 429 Too Many Requests
+                    if (serialResponse.StatusCode == (System.Net.HttpStatusCode)429)
+                    {
+                        txtbLog.SelectionColor = Color.Red;
+                        txtbLog.AppendText("Error: Too Many Requests (429). The server is rate-limiting requests.\n");
+
+                        // Check if the Retry-After header is present
+                        if (serialResponse.Headers.TryGetValues("Retry-After", out var retryAfterValues))
+                        {
+                            string retryAfter = retryAfterValues.FirstOrDefault();
+                            txtbLog.AppendText($"Retry-After: {retryAfter} seconds\n");
+                        }
+                        else
+                        {
+                            txtbLog.AppendText("Retry-After header not provided by the server.\n");
+                        }
+
+                        txtbLog.ScrollToCaret();
+                        return;
+                    }
+
+                    // Ensure the response is successful
                     serialResponse.EnsureSuccessStatusCode();
+
+                    // Read and process the response
                     string serialResponseBody = await serialResponse.Content.ReadAsStringAsync();
                     var serialApiResponse = JsonConvert.DeserializeObject<JObject>(serialResponseBody);
+
                     // Log the response
                     txtbLog.SelectionColor = Color.Yellow;
-                    txtbLog.AppendText($"Received response for parent : {parentName}\n");
+                    txtbLog.AppendText($"Received response for parent: {parentName}\n");
                     txtbLog.ScrollToCaret();
+
                     if (serialApiResponse["value"] != null && serialApiResponse["value"].Any())
                     {
                         var serials = serialApiResponse["value"]
                             .Where(s => s["SERIALSTATUSDES"]?.ToString() != "נסגרה" && s["SERIALSTATUSDES"]?.ToString() != "קיט מלא" && s["SERIALSTATUSDES"] != null && s["REVNUM"] != null)
                             .Select(s => new SerialInfo
                             {
+                                IPN = originIPN,
                                 SERIALNAME = s["SERIALNAME"]?.ToString(),
                                 PARENTIPN = parentName,
                                 SERIALDES = s["SERIALDES"]?.ToString(),
                                 REVNUM = s["REVNUM"]?.ToString()
                             })
-                          .ToList();
+                            .ToList();
+
                         if (serials.Count == 0)
                         {
                             txtbLog.SelectionColor = Color.Red;
@@ -308,7 +423,6 @@ namespace WH_Panel
                             txtbLog.AppendText($"Found {serials.Count} open Work Orders for parent IPN: {parentName}\n");
                             txtbLog.ScrollToCaret();
                             DisplaySerials(serials);
-                            // DisplaySerialsInMessageBox(serials);
                         }
                     }
                     else
@@ -333,6 +447,7 @@ namespace WH_Panel
                 }
             }
         }
+
         private void DisplaySerials(List<SerialInfo> serials)
         {
             try
@@ -340,7 +455,7 @@ namespace WH_Panel
                 // Add rows
                 foreach (var serial in serials)
                 {
-                    int rowIndex = dgwSerials.Rows.Add(serial.SERIALNAME, serial.PARENTIPN, serial.SERIALDES);
+                    int rowIndex = dgwSerials.Rows.Add(serial.IPN,serial.SERIALNAME, serial.PARENTIPN, serial.SERIALDES);
                     dgwSerials.Rows[rowIndex].Cells["SERIALNAME"].Value = $"{serial.SERIALNAME} ({serial.REVNUM})"; // Set the button text to SERIALNAME with REVNUM
                 }
             }
@@ -429,19 +544,62 @@ namespace WH_Panel
             TextBox txtb = (TextBox)sender;
             txtb.BackColor = Color.Gray;
         }
-        private async void txtbSearchIMFPN_KeyDown(object sender, KeyEventArgs e)
+        //private async void txtbSearchMFPN_KeyDown(object sender, KeyEventArgs e)
+        //{
+        //    if (e.KeyCode == Keys.Enter)
+        //    {
+        //        txtbSearchIPN.Clear();
+        //        // Clear existing rows
+        //        dgwSerials.Rows.Clear();
+        //        string mfpn = txtbSearchMFPN.Text.Trim();
+        //        if (string.IsNullOrEmpty(mfpn))
+        //        {
+        //            MessageBox.Show("Please enter a valid MFPN.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            return;
+        //        }
+        //        // Retrieve IPNs based on the MFPN
+        //        var ipns = await RetrieveIPNs(mfpn);
+        //        if (ipns.Count == 0)
+        //        {
+        //            txtbLog.SelectionColor = Color.Red;
+        //            txtbLog.AppendText("No IPNs found for the provided MFPN.\n");
+        //            txtbLog.ScrollToCaret();
+        //            return;
+        //        }
+        //        else
+        //        {
+        //            foreach (string ipn in ipns)
+        //            {
+        //                txtbLog.SelectionColor = Color.Yellow;
+        //                txtbLog.AppendText($"Fetching parent name for IPN: {ipn}\n");
+        //                txtbLog.ScrollToCaret();
+        //                string parentName = await RetrieveParentName(ipn);
+        //                if (!string.IsNullOrEmpty(parentName))
+        //                {
+        //                    txtbLog.SelectionColor = Color.Yellow;
+        //                    txtbLog.AppendText($"Fetching details for parent : {parentName}\n");
+        //                    txtbLog.ScrollToCaret();
+        //                    // Fetch and display serials for each parent IPN
+        //                    await FetchAndDisplaySerials(parentName);
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+
+        private async void txtbSearchMFPN_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
                 txtbSearchIPN.Clear();
-                // Clear existing rows
                 dgwSerials.Rows.Clear();
-                string mfpn = txtbSearchIMFPN.Text.Trim();
+                string mfpn = txtbSearchMFPN.Text.Trim();
                 if (string.IsNullOrEmpty(mfpn))
                 {
                     MessageBox.Show("Please enter a valid MFPN.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
+
                 // Retrieve IPNs based on the MFPN
                 var ipns = await RetrieveIPNs(mfpn);
                 if (ipns.Count == 0)
@@ -451,26 +609,38 @@ namespace WH_Panel
                     txtbLog.ScrollToCaret();
                     return;
                 }
-                else
+
+                foreach (string ipn in ipns)
                 {
-                    foreach (string ipn in ipns)
+                    txtbLog.SelectionColor = Color.Yellow;
+                    txtbLog.AppendText($"Fetching parent names for IPN: {ipn}\n");
+                    txtbLog.ScrollToCaret();
+
+                    // Retrieve all parent names for the IPN
+                    var parentNames = await RetrieveParentNames(ipn);
+                    if (parentNames.Count == 0)
+                    {
+                        txtbLog.SelectionColor = Color.Red;
+                        txtbLog.AppendText($"No parent names found for IPN: {ipn}\n");
+                        txtbLog.ScrollToCaret();
+                        continue;
+                    }
+
+                    foreach (string parentName in parentNames)
                     {
                         txtbLog.SelectionColor = Color.Yellow;
-                        txtbLog.AppendText($"Fetching parent name for IPN: {ipn}\n");
+                        txtbLog.AppendText($"Fetching details for parent: {parentName}\n");
                         txtbLog.ScrollToCaret();
-                        string parentName = await RetrieveParentName(ipn);
-                        if (!string.IsNullOrEmpty(parentName))
-                        {
-                            txtbLog.SelectionColor = Color.Yellow;
-                            txtbLog.AppendText($"Fetching details for parent : {parentName}\n");
-                            txtbLog.ScrollToCaret();
-                            // Fetch and display serials for each parent IPN
-                            await FetchAndDisplaySerials(parentName);
-                        }
+
+                        // Fetch and display serials for each parent IPN
+                        await FetchAndDisplaySerials(parentName, ipn);
+                        // Add a delay to avoid overloading the API
+                        await Task.Delay(100); // 500 milliseconds delay
                     }
                 }
             }
         }
+
         private async Task<string> RetrieveParentName(string partName)
         {
             string partUrl = $"{baseUrl}PART?$filter=PARTNAME eq '{partName}'&$expand=PARTPARENT_SUBFORM";
@@ -527,9 +697,79 @@ namespace WH_Panel
                 }
             }
         }
+
+        private async Task<List<string>> RetrieveParentNames(string partName)
+        {
+            string partUrl = $"{baseUrl}PART?$filter=PARTNAME eq '{partName}'&$expand=PARTPARENT_SUBFORM";
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    // Set the request headers
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                    // Make the HTTP GET request for part details
+                    HttpResponseMessage partResponse = await client.GetAsync(partUrl);
+                    partResponse.EnsureSuccessStatusCode();
+                    string partResponseBody = await partResponse.Content.ReadAsStringAsync();
+                    var partApiResponse = JsonConvert.DeserializeObject<JObject>(partResponseBody);
+
+                    if (partApiResponse == null || partApiResponse["value"] == null || !partApiResponse["value"].Any())
+                    {
+                        txtbLog.SelectionColor = Color.Red;
+                        txtbLog.AppendText($"No parent names found for IPN: {partName}\n");
+                        txtbLog.ScrollToCaret();
+                        return new List<string>();
+                    }
+
+                    var part = partApiResponse["value"].FirstOrDefault();
+                    var partParentSubform = part["PARTPARENT_SUBFORM"];
+                    if (partParentSubform == null || !partParentSubform.Any())
+                    {
+                        txtbLog.SelectionColor = Color.Red;
+                        txtbLog.AppendText($"No parent names found for IPN: {partName}\n");
+                        txtbLog.ScrollToCaret();
+                        return new List<string>();
+                    }
+
+                    // Extract all parent names
+                    var parentNames = partParentSubform
+                        .Select(p => p["PARENTNAME"]?.ToString())
+                        .Where(pn => !string.IsNullOrEmpty(pn))
+                        .ToList();
+
+                    txtbLog.SelectionColor = Color.Green;
+                    txtbLog.AppendText($"Found parent names for IPN {partName}: {string.Join(", ", parentNames)}\n");
+                    txtbLog.ScrollToCaret();
+
+                    return parentNames;
+                }
+                catch (HttpRequestException ex)
+                {
+                    txtbLog.SelectionColor = Color.Red;
+                    txtbLog.AppendText($"HttpRequestException RetrieveParentNames error: {ex.Message}\n");
+                    txtbLog.ScrollToCaret();
+                    return new List<string>();
+                }
+                catch (Exception ex)
+                {
+                    txtbLog.SelectionColor = Color.Red;
+                    txtbLog.AppendText($"Exception RetrieveParentNames error: {ex.Message}\n");
+                    txtbLog.AppendText($"Stack Trace: {ex.StackTrace}\n");
+                    txtbLog.ScrollToCaret();
+                    return new List<string>();
+                }
+            }
+        }
+
         private async Task<List<string>> RetrieveIPNs(string mfpn)
         {
-            string url = $"{baseUrl}PARTMNFONE?$filter=MNFPARTNAME eq '{mfpn}'";
+            // URL-encode the MFPN to handle special characters
+            string encodedMfpn = Uri.EscapeDataString(mfpn);
+            string url = $"{baseUrl}PARTMNFONE?$filter=MNFPARTNAME eq '{encodedMfpn}'";
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -590,7 +830,7 @@ namespace WH_Panel
 
         private void btnClear_Click(object sender, EventArgs e)
         {
-            txtbSearchIMFPN.Text = string.Empty;
+            txtbSearchMFPN.Text = string.Empty;
             txtbSearchIPN.Text = string.Empty;
         }
     }
