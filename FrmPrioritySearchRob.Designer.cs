@@ -63,7 +63,7 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 22.2222214F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 22.2222214F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel1.Size = new Size(816, 546);
+            tableLayoutPanel1.Size = new Size(1007, 590);
             tableLayoutPanel1.TabIndex = 0;
             // 
             // gbxIPN
@@ -73,7 +73,7 @@
             gbxIPN.ForeColor = Color.White;
             gbxIPN.Location = new Point(3, 3);
             gbxIPN.Name = "gbxIPN";
-            gbxIPN.Size = new Size(320, 115);
+            gbxIPN.Size = new Size(396, 125);
             gbxIPN.TabIndex = 0;
             gbxIPN.TabStop = false;
             gbxIPN.Text = "Search IPN";
@@ -85,7 +85,7 @@
             txtbSearchIPN.Location = new Point(3, 19);
             txtbSearchIPN.Name = "txtbSearchIPN";
             txtbSearchIPN.PlaceholderText = "Input IPN to search...";
-            txtbSearchIPN.Size = new Size(314, 39);
+            txtbSearchIPN.Size = new Size(390, 39);
             txtbSearchIPN.TabIndex = 0;
             txtbSearchIPN.TextAlign = HorizontalAlignment.Center;
             txtbSearchIPN.DoubleClick += txtbSearchIPN_DoubleClick;
@@ -99,10 +99,10 @@
             groupBox2.Controls.Add(txtbLog);
             groupBox2.Dock = DockStyle.Fill;
             groupBox2.ForeColor = Color.White;
-            groupBox2.Location = new Point(329, 3);
+            groupBox2.Location = new Point(405, 3);
             groupBox2.Name = "groupBox2";
             tableLayoutPanel1.SetRowSpan(groupBox2, 3);
-            groupBox2.Size = new Size(484, 357);
+            groupBox2.Size = new Size(599, 387);
             groupBox2.TabIndex = 1;
             groupBox2.TabStop = false;
             groupBox2.Text = "Log";
@@ -112,7 +112,7 @@
             txtbLog.Dock = DockStyle.Fill;
             txtbLog.Location = new Point(3, 19);
             txtbLog.Name = "txtbLog";
-            txtbLog.Size = new Size(478, 335);
+            txtbLog.Size = new Size(593, 365);
             txtbLog.TabIndex = 0;
             txtbLog.Text = "";
             // 
@@ -122,9 +122,9 @@
             groupBox3.Controls.Add(dgwSerials);
             groupBox3.Dock = DockStyle.Fill;
             groupBox3.ForeColor = Color.White;
-            groupBox3.Location = new Point(3, 366);
+            groupBox3.Location = new Point(3, 396);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(810, 177);
+            groupBox3.Size = new Size(1001, 191);
             groupBox3.TabIndex = 3;
             groupBox3.TabStop = false;
             groupBox3.Text = "ROB work orders found";
@@ -138,7 +138,7 @@
             dgwSerials.Location = new Point(3, 19);
             dgwSerials.Name = "dgwSerials";
             dgwSerials.ReadOnly = true;
-            dgwSerials.Size = new Size(804, 155);
+            dgwSerials.Size = new Size(995, 169);
             dgwSerials.TabIndex = 2;
             dgwSerials.CellClick += dgwSerials_CellClick;
             // 
@@ -147,21 +147,21 @@
             gbxMFPN.Controls.Add(txtbSearchMFPN);
             gbxMFPN.Dock = DockStyle.Fill;
             gbxMFPN.ForeColor = Color.White;
-            gbxMFPN.Location = new Point(3, 124);
+            gbxMFPN.Location = new Point(3, 134);
             gbxMFPN.Name = "gbxMFPN";
-            gbxMFPN.Size = new Size(320, 115);
+            gbxMFPN.Size = new Size(396, 125);
             gbxMFPN.TabIndex = 4;
             gbxMFPN.TabStop = false;
             gbxMFPN.Text = "Search MFPN";
             // 
-            // txtbSearchIMFPN
+            // txtbSearchMFPN
             // 
             txtbSearchMFPN.Dock = DockStyle.Fill;
             txtbSearchMFPN.Font = new Font("Segoe UI", 18F);
             txtbSearchMFPN.Location = new Point(3, 19);
-            txtbSearchMFPN.Name = "txtbSearchIMFPN";
+            txtbSearchMFPN.Name = "txtbSearchMFPN";
             txtbSearchMFPN.PlaceholderText = "Input MFPN to search...";
-            txtbSearchMFPN.Size = new Size(314, 39);
+            txtbSearchMFPN.Size = new Size(390, 39);
             txtbSearchMFPN.TabIndex = 1;
             txtbSearchMFPN.TextAlign = HorizontalAlignment.Center;
             txtbSearchMFPN.DoubleClick += txtbSearchIMFPN_DoubleClick;
@@ -174,9 +174,9 @@
             btnClear.BackgroundImage = (Image)resources.GetObject("btnClear.BackgroundImage");
             btnClear.BackgroundImageLayout = ImageLayout.Stretch;
             btnClear.Dock = DockStyle.Fill;
-            btnClear.Location = new Point(3, 245);
+            btnClear.Location = new Point(3, 265);
             btnClear.Name = "btnClear";
-            btnClear.Size = new Size(320, 115);
+            btnClear.Size = new Size(396, 125);
             btnClear.TabIndex = 5;
             btnClear.UseVisualStyleBackColor = true;
             btnClear.Click += btnClear_Click;
@@ -187,7 +187,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ActiveCaptionText;
             BackgroundImageLayout = ImageLayout.Stretch;
-            ClientSize = new Size(816, 546);
+            ClientSize = new Size(1007, 590);
             Controls.Add(tableLayoutPanel1);
             DoubleBuffered = true;
             Icon = (Icon)resources.GetObject("$this.Icon");
