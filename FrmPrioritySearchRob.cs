@@ -268,8 +268,6 @@ namespace WH_Panel
                 }
             }
         }
-
-
         private async Task FetchAndDisplaySerials(string parentName,string originIPN)
         {
             string serialUrl = $"{baseUrl}SERIAL?$filter=PARTNAME eq '{parentName}'";
@@ -281,22 +279,18 @@ namespace WH_Panel
                     txtbLog.SelectionColor = Color.Yellow;
                     txtbLog.AppendText($"Fetching serials for parent: {parentName}\n");
                     txtbLog.ScrollToCaret();
-
                     // Set the request headers
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                     // Make the HTTP GET request for serial details
                     HttpResponseMessage serialResponse = await client.GetAsync(serialUrl);
-
                     // Check for 429 Too Many Requests
                     if (serialResponse.StatusCode == (System.Net.HttpStatusCode)429)
                     {
                         txtbLog.SelectionColor = Color.Red;
                         txtbLog.AppendText("Error: Too Many Requests (429). The server is rate-limiting requests.\n");
-
                         // Check if the Retry-After header is present
                         if (serialResponse.Headers.TryGetValues("Retry-After", out var retryAfterValues))
                         {
@@ -307,23 +301,18 @@ namespace WH_Panel
                         {
                             txtbLog.AppendText("Retry-After header not provided by the server.\n");
                         }
-
                         txtbLog.ScrollToCaret();
                         return;
                     }
-
                     // Ensure the response is successful
                     serialResponse.EnsureSuccessStatusCode();
-
                     // Read and process the response
                     string serialResponseBody = await serialResponse.Content.ReadAsStringAsync();
                     var serialApiResponse = JsonConvert.DeserializeObject<JObject>(serialResponseBody);
-
                     // Log the response
                     txtbLog.SelectionColor = Color.Yellow;
                     txtbLog.AppendText($"Received response for parent: {parentName}\n");
                     txtbLog.ScrollToCaret();
-
                     if (serialApiResponse["value"] != null && serialApiResponse["value"].Any())
                     {
                         var serials = serialApiResponse["value"]
@@ -337,7 +326,6 @@ namespace WH_Panel
                                 REVNUM = s["REVNUM"]?.ToString()
                             })
                             .ToList();
-
                         if (serials.Count == 0)
                         {
                             txtbLog.SelectionColor = Color.Red;
@@ -374,7 +362,6 @@ namespace WH_Panel
                 }
             }
         }
-
         private void DisplaySerials(List<SerialInfo> serials)
         {
             try
@@ -471,10 +458,6 @@ namespace WH_Panel
             TextBox txtb = (TextBox)sender;
             txtb.BackColor = Color.Gray;
         }
-
-  
-
-
         private async void txtbSearchMFPN_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -487,7 +470,6 @@ namespace WH_Panel
                     MessageBox.Show("Please enter a valid MFPN.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-
                 // Retrieve IPNs based on the MFPN
                 var ipns = await RetrieveIPNs(mfpn);
                 if (ipns.Count == 0)
@@ -497,13 +479,11 @@ namespace WH_Panel
                     txtbLog.ScrollToCaret();
                     return;
                 }
-
                 foreach (string ipn in ipns)
                 {
                     txtbLog.SelectionColor = Color.Yellow;
                     txtbLog.AppendText($"Fetching parent names for IPN: {ipn}\n");
                     txtbLog.ScrollToCaret();
-
                     // Retrieve all parent names for the IPN
                     var parentNames = await RetrieveParentNames(ipn);
                     if (parentNames.Count == 0)
@@ -511,13 +491,11 @@ namespace WH_Panel
                         // Removed duplicate logging here
                         continue;
                     }
-
                     foreach (string parentName in parentNames)
                     {
                         txtbLog.SelectionColor = Color.Yellow;
                         txtbLog.AppendText($"Fetching details for parent: {parentName}\n");
                         txtbLog.ScrollToCaret();
-
                         // Fetch and display serials for each parent IPN
                         await FetchAndDisplaySerials(parentName, ipn);
                         // Add a delay to avoid overloading the API
@@ -526,7 +504,6 @@ namespace WH_Panel
                 }
             }
         }
-
         private async Task<string> RetrieveParentName(string partName)
         {
             string partUrl = $"{baseUrl}PART?$filter=PARTNAME eq '{partName}'&$expand=PARTPARENT_SUBFORM";
@@ -583,9 +560,6 @@ namespace WH_Panel
                 }
             }
         }
-
- 
-
         private async Task<List<string>> RetrieveParentNames(string partName)
         {
             string partUrl = $"{baseUrl}PART?$filter=PARTNAME eq '{partName}'&$expand=PARTPARENT_SUBFORM";
@@ -598,20 +572,17 @@ namespace WH_Panel
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                     // Make the HTTP GET request for part details
                     HttpResponseMessage partResponse = await client.GetAsync(partUrl);
                     partResponse.EnsureSuccessStatusCode();
                     string partResponseBody = await partResponse.Content.ReadAsStringAsync();
                     var partApiResponse = JsonConvert.DeserializeObject<JObject>(partResponseBody);
-
                     // Check if the response or required data is null or empty
                     if (partApiResponse?["value"] == null || !partApiResponse["value"].Any())
                     {
                         LogErrorOnce($"No parent names found for IPN: {partName}");
                         return new List<string>();
                     }
-
                     var part = partApiResponse["value"].FirstOrDefault();
                     var partParentSubform = part?["PARTPARENT_SUBFORM"];
                     if (partParentSubform == null || !partParentSubform.Any())
@@ -619,13 +590,11 @@ namespace WH_Panel
                         LogErrorOnce($"No parent names found for IPN: {partName}");
                         return new List<string>();
                     }
-
                     // Extract all parent names
                     var parentNames = partParentSubform
                         .Select(p => p["PARENTNAME"]?.ToString())
                         .Where(pn => !string.IsNullOrEmpty(pn))
                         .ToList();
-
                     LogSuccess($"Found parent names for IPN {partName}:", parentNames);
                     return parentNames;
                 }
@@ -641,9 +610,7 @@ namespace WH_Panel
                 }
             }
         }
-
         private readonly HashSet<string> loggedErrors = new HashSet<string>();
-
         private void LogErrorOnce(string message)
         {
             if (!loggedErrors.Contains(message))
@@ -654,8 +621,6 @@ namespace WH_Panel
                 txtbLog.ScrollToCaret();
             }
         }
-
-
         private void LogSuccess(string message, List<string> parentNames)
         {
             txtbLog.SelectionColor = Color.Green;
@@ -666,10 +631,6 @@ namespace WH_Panel
             }
             txtbLog.ScrollToCaret();
         }
-
-
-
-
         private async Task<List<string>> RetrieveIPNs(string mfpn)
         {
             // URL-encode the MFPN to handle special characters
@@ -732,7 +693,6 @@ namespace WH_Panel
         {
             txtbSearchIPN.Clear();
         }
-
         private void btnClear_Click(object sender, EventArgs e)
         {
             txtbSearchMFPN.Text = string.Empty;
