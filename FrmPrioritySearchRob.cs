@@ -587,6 +587,61 @@ namespace WH_Panel
         //    }
         //}
 
+        //private async void txtbSearchMFPN_KeyDown(object sender, KeyEventArgs e)
+        //{
+        //    if (e.KeyCode == Keys.Enter)
+        //    {
+        //        txtbSearchIPN.Clear();
+        //        dgwSerials.Rows.Clear();
+        //        string mfpn = txtbSearchMFPN.Text.Trim();
+        //        if (string.IsNullOrEmpty(mfpn))
+        //        {
+        //            MessageBox.Show("Please enter a valid MFPN.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            return;
+        //        }
+
+        //        // Retrieve IPNs based on the MFPN
+        //        var ipns = await RetrieveIPNs(mfpn);
+        //        if (ipns.Count == 0)
+        //        {
+        //            txtbLog.SelectionColor = Color.Red;
+        //            txtbLog.AppendText("No IPNs found for the provided MFPN.\n");
+        //            txtbLog.ScrollToCaret();
+        //            return;
+        //        }
+
+        //        foreach (string ipn in ipns)
+        //        {
+        //            txtbLog.SelectionColor = Color.Yellow;
+        //            txtbLog.AppendText($"Fetching parent names for IPN: {ipn}\n");
+        //            txtbLog.ScrollToCaret();
+
+        //            // Retrieve all parent names for the IPN
+        //            var parentNames = await RetrieveParentNames(ipn);
+        //            if (parentNames.Count == 0)
+        //            {
+        //                txtbLog.SelectionColor = Color.Red;
+        //                txtbLog.AppendText($"No parent names found for IPN: {ipn}\n");
+        //                txtbLog.ScrollToCaret();
+        //                continue;
+        //            }
+
+        //            foreach (string parentName in parentNames)
+        //            {
+        //                txtbLog.SelectionColor = Color.Yellow;
+        //                txtbLog.AppendText($"Fetching details for parent: {parentName}\n");
+        //                txtbLog.ScrollToCaret();
+
+        //                // Fetch and display serials for each parent IPN
+        //                await FetchAndDisplaySerials(parentName, ipn);
+        //                // Add a delay to avoid overloading the API
+        //                await Task.Delay(100); // 500 milliseconds delay
+        //            }
+        //        }
+        //    }
+        //}
+
+
         private async void txtbSearchMFPN_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -620,9 +675,7 @@ namespace WH_Panel
                     var parentNames = await RetrieveParentNames(ipn);
                     if (parentNames.Count == 0)
                     {
-                        txtbLog.SelectionColor = Color.Red;
-                        txtbLog.AppendText($"No parent names found for IPN: {ipn}\n");
-                        txtbLog.ScrollToCaret();
+                        // Removed duplicate logging here
                         continue;
                     }
 
@@ -698,6 +751,78 @@ namespace WH_Panel
             }
         }
 
+        //private async Task<List<string>> RetrieveParentNames(string partName)
+        //{
+        //    string partUrl = $"{baseUrl}PART?$filter=PARTNAME eq '{partName}'&$expand=PARTPARENT_SUBFORM";
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        try
+        //        {
+        //            // Set the request headers
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+        //            // Make the HTTP GET request for part details
+        //            HttpResponseMessage partResponse = await client.GetAsync(partUrl);
+        //            partResponse.EnsureSuccessStatusCode();
+        //            string partResponseBody = await partResponse.Content.ReadAsStringAsync();
+        //            var partApiResponse = JsonConvert.DeserializeObject<JObject>(partResponseBody);
+
+        //            if (partApiResponse == null || partApiResponse["value"] == null || !partApiResponse["value"].Any())
+        //            {
+        //                txtbLog.SelectionColor = Color.Red;
+        //                txtbLog.AppendText($"No parent names found for IPN: {partName}\n");
+        //                txtbLog.ScrollToCaret();
+        //                return new List<string>();
+        //            }
+
+        //            var part = partApiResponse["value"].FirstOrDefault();
+        //            var partParentSubform = part["PARTPARENT_SUBFORM"];
+        //            if (partParentSubform == null || !partParentSubform.Any())
+        //            {
+        //                txtbLog.SelectionColor = Color.Red;
+        //                txtbLog.AppendText($"No parent names found for IPN: {partName}\n");
+        //                txtbLog.ScrollToCaret();
+        //                return new List<string>();
+        //            }
+
+        //            // Extract all parent names
+        //            var parentNames = partParentSubform
+        //                .Select(p => p["PARENTNAME"]?.ToString())
+        //                .Where(pn => !string.IsNullOrEmpty(pn))
+        //                .ToList();
+
+        //            txtbLog.SelectionColor = Color.Green;
+        //            txtbLog.AppendText($"Found parent names for IPN {partName}: \n");
+
+        //            foreach(var parentName in parentNames)
+        //            {
+        //                txtbLog.AppendText($"- {parentName}\n");
+        //            }
+        //            txtbLog.ScrollToCaret();
+
+        //            return parentNames;
+        //        }
+        //        catch (HttpRequestException ex)
+        //        {
+        //            txtbLog.SelectionColor = Color.Red;
+        //            txtbLog.AppendText($"HttpRequestException RetrieveParentNames error: {ex.Message}\n");
+        //            txtbLog.ScrollToCaret();
+        //            return new List<string>();
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            txtbLog.SelectionColor = Color.Red;
+        //            txtbLog.AppendText($"Exception RetrieveParentNames error: {ex.Message}\n");
+        //            txtbLog.AppendText($"Stack Trace: {ex.StackTrace}\n");
+        //            txtbLog.ScrollToCaret();
+        //            return new List<string>();
+        //        }
+        //    }
+        //}
+
         private async Task<List<string>> RetrieveParentNames(string partName)
         {
             string partUrl = $"{baseUrl}PART?$filter=PARTNAME eq '{partName}'&$expand=PARTPARENT_SUBFORM";
@@ -717,21 +842,18 @@ namespace WH_Panel
                     string partResponseBody = await partResponse.Content.ReadAsStringAsync();
                     var partApiResponse = JsonConvert.DeserializeObject<JObject>(partResponseBody);
 
-                    if (partApiResponse == null || partApiResponse["value"] == null || !partApiResponse["value"].Any())
+                    // Check if the response or required data is null or empty
+                    if (partApiResponse?["value"] == null || !partApiResponse["value"].Any())
                     {
-                        txtbLog.SelectionColor = Color.Red;
-                        txtbLog.AppendText($"No parent names found for IPN: {partName}\n");
-                        txtbLog.ScrollToCaret();
+                        LogErrorOnce($"No parent names found for IPN: {partName}");
                         return new List<string>();
                     }
 
                     var part = partApiResponse["value"].FirstOrDefault();
-                    var partParentSubform = part["PARTPARENT_SUBFORM"];
+                    var partParentSubform = part?["PARTPARENT_SUBFORM"];
                     if (partParentSubform == null || !partParentSubform.Any())
                     {
-                        txtbLog.SelectionColor = Color.Red;
-                        txtbLog.AppendText($"No parent names found for IPN: {partName}\n");
-                        txtbLog.ScrollToCaret();
+                        LogErrorOnce($"No parent names found for IPN: {partName}");
                         return new List<string>();
                     }
 
@@ -741,29 +863,49 @@ namespace WH_Panel
                         .Where(pn => !string.IsNullOrEmpty(pn))
                         .ToList();
 
-                    txtbLog.SelectionColor = Color.Green;
-                    txtbLog.AppendText($"Found parent names for IPN {partName}: {string.Join(", ", parentNames)}\n");
-                    txtbLog.ScrollToCaret();
-
+                    LogSuccess($"Found parent names for IPN {partName}:", parentNames);
                     return parentNames;
                 }
                 catch (HttpRequestException ex)
                 {
-                    txtbLog.SelectionColor = Color.Red;
-                    txtbLog.AppendText($"HttpRequestException RetrieveParentNames error: {ex.Message}\n");
-                    txtbLog.ScrollToCaret();
+                    LogErrorOnce($"HttpRequestException RetrieveParentNames error: {ex.Message}");
                     return new List<string>();
                 }
                 catch (Exception ex)
                 {
-                    txtbLog.SelectionColor = Color.Red;
-                    txtbLog.AppendText($"Exception RetrieveParentNames error: {ex.Message}\n");
-                    txtbLog.AppendText($"Stack Trace: {ex.StackTrace}\n");
-                    txtbLog.ScrollToCaret();
+                    LogErrorOnce($"Exception RetrieveParentNames error: {ex.Message}\nStack Trace: {ex.StackTrace}");
                     return new List<string>();
                 }
             }
         }
+
+        private readonly HashSet<string> loggedErrors = new HashSet<string>();
+
+        private void LogErrorOnce(string message)
+        {
+            if (!loggedErrors.Contains(message))
+            {
+                loggedErrors.Add(message);
+                txtbLog.SelectionColor = Color.Red;
+                txtbLog.AppendText(message + "\n");
+                txtbLog.ScrollToCaret();
+            }
+        }
+
+
+        private void LogSuccess(string message, List<string> parentNames)
+        {
+            txtbLog.SelectionColor = Color.Green;
+            txtbLog.AppendText(message + "\n");
+            foreach (var parentName in parentNames)
+            {
+                txtbLog.AppendText($"- {parentName}\n");
+            }
+            txtbLog.ScrollToCaret();
+        }
+
+
+
 
         private async Task<List<string>> RetrieveIPNs(string mfpn)
         {
