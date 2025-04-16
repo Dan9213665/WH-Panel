@@ -490,7 +490,11 @@ namespace WH_Panel
                             {
                                 foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
                                 {
-                                    dgwTRANSACTIONS.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "");
+                                    if(trans.DOCDES!= "קיזוז אוטומטי")
+                                    {
+                                        dgwTRANSACTIONS.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "");
+                                    }
+                                       
                                 }
                             }
                             groupBox6.Text = $"TRANSACTIONS for {partName}";

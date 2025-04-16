@@ -2590,57 +2590,61 @@ namespace WH_Panel
                 var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseBody);
                 // Create a new form to display the data
 
-                // Calculate the height of the popup window
-                int rowCount = apiResponse.value.Count;
-                int rowHeight = 41; // Height per row
-                int headerHeight = 41; // Height for the header row
-                int calculatedHeight = (rowCount * rowHeight) + headerHeight;
+                if(apiResponse!=null)
+                {
+                    // Calculate the height of the popup window
+                    int rowCount = apiResponse.value.Count;
+                    int rowHeight = 41; // Height per row
+                    int headerHeight = 41; // Height for the header row
+                    int calculatedHeight = (rowCount * rowHeight) + headerHeight;
 
-                // Create a new form to display the data
-                Form popupForm = new Form
-                {
-                    Text = "Inserted Data",
-                    Size = new Size(1500, Math.Min(calculatedHeight, 600)), // Limit the height to 600 pixels for usability
-                    StartPosition = FormStartPosition.CenterScreen,
-                    BackColor = Color.FromArgb(60, 60, 60),
-                    ForeColor = Color.FromArgb(220, 220, 220),
-                    AutoScroll = true // Enable scrolling if the content exceeds the window size
-                };
+                    // Create a new form to display the data
+                    Form popupForm = new Form
+                    {
+                        Text = "Inserted Data",
+                        Size = new Size(1500, Math.Min(calculatedHeight, 600)), // Limit the height to 600 pixels for usability
+                        StartPosition = FormStartPosition.CenterScreen,
+                        BackColor = Color.FromArgb(60, 60, 60),
+                        ForeColor = Color.FromArgb(220, 220, 220),
+                        AutoScroll = true // Enable scrolling if the content exceeds the window size
+                    };
 
-                DataGridView dataGridView = new DataGridView
-                {
-                    Dock = DockStyle.Fill,
-                    AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-                    BackgroundColor = Color.FromArgb(50, 50, 50),
-                    ForeColor = Color.FromArgb(220, 220, 220),
-                    ColumnHeadersDefaultCellStyle = new DataGridViewCellStyle
+                    DataGridView dataGridView = new DataGridView
                     {
-                        BackColor = Color.FromArgb(50, 50, 50),
-                        ForeColor = Color.FromArgb(220, 220, 220)
-                    },
-                    DefaultCellStyle = new DataGridViewCellStyle
+                        Dock = DockStyle.Fill,
+                        AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                        BackgroundColor = Color.FromArgb(50, 50, 50),
+                        ForeColor = Color.FromArgb(220, 220, 220),
+                        ColumnHeadersDefaultCellStyle = new DataGridViewCellStyle
+                        {
+                            BackColor = Color.FromArgb(50, 50, 50),
+                            ForeColor = Color.FromArgb(220, 220, 220)
+                        },
+                        DefaultCellStyle = new DataGridViewCellStyle
+                        {
+                            BackColor = Color.FromArgb(50, 50, 50),
+                            ForeColor = Color.FromArgb(220, 220, 220)
+                        },
+                        EnableHeadersVisualStyles = false,
+                        RowHeadersVisible = false,
+                        AllowUserToAddRows = false,
+                        AllowUserToDeleteRows = false,
+                        ReadOnly = true
+                    };
+                    dataGridView.Columns.Add("PARTNAME", "PARTNAME");
+                    dataGridView.Columns.Add("PARTDES", "PARTDES");
+                    dataGridView.Columns.Add("MNFPARTNAME", "MNFPARTNAME");
+                    dataGridView.Columns.Add("MNFPARTDES", "MNFPARTDES");
+                    dataGridView.Columns.Add("MNFNAME", "MNFNAME");
+                    dataGridView.Columns.Add("MNFDES", "MNFDES");
+                    foreach (var part in apiResponse.value)
                     {
-                        BackColor = Color.FromArgb(50, 50, 50),
-                        ForeColor = Color.FromArgb(220, 220, 220)
-                    },
-                    EnableHeadersVisualStyles = false,
-                    RowHeadersVisible = false,
-                    AllowUserToAddRows = false,
-                    AllowUserToDeleteRows = false,
-                    ReadOnly = true
-                };
-                dataGridView.Columns.Add("PARTNAME", "PARTNAME");
-                dataGridView.Columns.Add("PARTDES", "PARTDES");
-                dataGridView.Columns.Add("MNFPARTNAME", "MNFPARTNAME");
-                dataGridView.Columns.Add("MNFPARTDES", "MNFPARTDES");
-                dataGridView.Columns.Add("MNFNAME", "MNFNAME");
-                dataGridView.Columns.Add("MNFDES", "MNFDES");
-                foreach (var part in apiResponse.value)
-                {
-                    dataGridView.Rows.Add(part.PARTNAME, part.PARTDES, part.MNFPARTNAME, part.MNFPARTDES, part.MNFNAME, part.MNFDES);
+                        dataGridView.Rows.Add(part.PARTNAME, part.PARTDES, part.MNFPARTNAME, part.MNFPARTDES, part.MNFNAME, part.MNFDES);
+                    }
+                    popupForm.Controls.Add(dataGridView);
+                    popupForm.Show();
                 }
-                popupForm.Controls.Add(dataGridView);
-                popupForm.Show();
+                
             }
         }
         private void UpdatePing(long elapsedMilliseconds)
