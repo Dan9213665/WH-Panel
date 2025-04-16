@@ -2592,8 +2592,8 @@ namespace WH_Panel
 
                 // Calculate the height of the popup window
                 int rowCount = apiResponse.value.Count;
-                int rowHeight = 40; // Height per row
-                int headerHeight = 40; // Height for the header row
+                int rowHeight = 41; // Height per row
+                int headerHeight = 41; // Height for the header row
                 int calculatedHeight = (rowCount * rowHeight) + headerHeight;
 
                 // Create a new form to display the data
