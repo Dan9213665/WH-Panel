@@ -1128,11 +1128,15 @@ namespace WH_Panel
                             {
                                 foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
                                 {
-                                    var rowIndex = dgwIPNmoves.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "", "");
-                                    var row = dgwIPNmoves.Rows[rowIndex];
-                                    // Fetch the PACK code and UDATE asynchronously
-                                    _ = FetchAndSetPackCodeAndUDateAsync(row, trans.LOGDOCNO, partName, trans.TQUANT);
-                                    await Task.Delay(200); // 300 milliseconds delay
+                                    if(trans.DOCDES!= "קיזוז אוטומטי")
+                                    {
+                                        var rowIndex = dgwIPNmoves.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "", "");
+                                        var row = dgwIPNmoves.Rows[rowIndex];
+                                        // Fetch the PACK code and UDATE asynchronously
+                                        _ = FetchAndSetPackCodeAndUDateAsync(row, trans.LOGDOCNO, partName, trans.TQUANT);
+                                        await Task.Delay(200); // 300 milliseconds delay
+                                    }
+                                  
                                 }
                             }
                             gbxIPNstockMovements.Text = $"Stock Movements for {partName}";
