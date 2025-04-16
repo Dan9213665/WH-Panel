@@ -1957,48 +1957,12 @@ namespace WH_Panel
                 int existingPartId = await CheckIfIPNExists(partName);
                 if (existingPartId > 0)
                 {
-                    // IPN exists, check if the MFPN is different
-                    //bool isMFPNDifferent = await CheckIfMFPNIsDifferent(existingPartId, partMFPN);
-                    //if (isMFPNDifferent)
-                    //{
-                    //    // Patch the existing IPN to add the new MFPN
-                    //   // await PatchExistingIPN(existingPartId, partMFPN, partDes);
-                    //    MessageBox.Show("MFPN added to the existing IPN.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    //}
-                    //else
-                    //{
-                        MessageBox.Show("IPN and MFPN already exist.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                   // }
+                   //MessageBox.Show("IPN already exists.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    // IPN exists, add the new MFPN
+                    await AddingAltMFPNtoIPN(existingPartId, partMFPN, partDes, partMNFName, partMNFDes);
+                    await DisplayInsertedData(existingPartId);
+
                 }
-
-                //if (existingPartId > 0)
-                //{
-                //    // IPN exists, check if the MFPN is different
-                //    bool isMFPNDifferent = await CheckIfMFPNIsDifferent(existingPartId, partMFPN);
-                //    if (isMFPNDifferent)
-                //    {
-                //        // Retrieve the manufacturer ID
-                //        int? mnfId = await GetManufacturerId(existingPartId, partMNFName);
-                //        if (mnfId.HasValue)
-                //        {
-                //            // Patch the existing IPN with the new MFPN
-                //            //await PatchExistingIPN(existingPartId, mnfId.Value, partMFPN, partDes);
-
-                //            await AddToPartMnfSubform(existingPartId, partMFPN, partDes, partMNFName, partMNFDes);
-                //            MessageBox.Show("MFPN added to the existing IPN.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                //        }
-                //        else
-                //        {
-                //            MessageBox.Show($"Manufacturer ID not found for {partMNFName}.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-                //        }
-                //    }
-                //    else
-                //    {
-                //        MessageBox.Show("IPN and MFPN already exist.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                //    }
-                //}
-
                 else
                 {
                     // Insert into LOGPART and get the generated PART ID
@@ -2024,6 +1988,66 @@ namespace WH_Panel
                 MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        private async Task AddingAltMFPNtoIPN(int partId, string partMFPN, string partDes, string mnfName, string mnfDes)
+        {
+            try
+            {
+                // Ensure the manufacturer name is unique
+                string uniqueMnfName = await GetUniqueManufacturerName(mnfName);
+
+                // Check if the manufacturer exists, if not, create it
+                int mnfId = await GetOrInsertManufacturer(uniqueMnfName, mnfDes);
+
+                // Construct the payload for the new PARTMNF_SUBFORM item
+                var newPartMnfSubformItem = new
+                {
+                    PART = partId,
+                    MNFPARTNAME = partMFPN,
+                    MNFPARTDES = partDes,
+                    MNFNAME = uniqueMnfName,
+                    MNFDES = mnfDes
+                };
+
+                // Construct the URL for the PARTMNFONE endpoint
+                string url = $"{baseUrl}/PARTMNFONE";
+
+                using (HttpClient client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                    // Serialize the payload to JSON
+                    string jsonPayload = JsonConvert.SerializeObject(newPartMnfSubformItem);
+                    var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+                    // Send the POST request
+                    HttpResponseMessage response = await client.PostAsync(url, content);
+
+                    // Handle the response
+                    if (response.IsSuccessStatusCode)
+                    {
+                        MessageBox.Show("New MFPN added successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
+                    {
+                        MessageBox.Show("Manufacturer name must be unique for this IPN. Please try again with a different name.", "Conflict Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    else
+                    {
+                        string errorContent = await response.Content.ReadAsStringAsync();
+                        throw new HttpRequestException($"Error adding new MFPN: {response.StatusCode}\n{errorContent}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while adding the new MFPN: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
 
         //private async void btnINSERTlogpart_Click(object sender, EventArgs e)
         //{
@@ -2565,14 +2589,24 @@ namespace WH_Panel
                 string responseBody = await response.Content.ReadAsStringAsync();
                 var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseBody);
                 // Create a new form to display the data
+
+                // Calculate the height of the popup window
+                int rowCount = apiResponse.value.Count;
+                int rowHeight = 40; // Height per row
+                int headerHeight = 40; // Height for the header row
+                int calculatedHeight = (rowCount * rowHeight) + headerHeight;
+
+                // Create a new form to display the data
                 Form popupForm = new Form
                 {
                     Text = "Inserted Data",
-                    Size = new Size(1500, 100),
+                    Size = new Size(1500, Math.Min(calculatedHeight, 600)), // Limit the height to 600 pixels for usability
                     StartPosition = FormStartPosition.CenterScreen,
                     BackColor = Color.FromArgb(60, 60, 60),
-                    ForeColor = Color.FromArgb(220, 220, 220)
+                    ForeColor = Color.FromArgb(220, 220, 220),
+                    AutoScroll = true // Enable scrolling if the content exceeds the window size
                 };
+
                 DataGridView dataGridView = new DataGridView
                 {
                     Dock = DockStyle.Fill,
