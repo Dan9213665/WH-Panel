@@ -399,9 +399,6 @@ namespace WH_Panel
                             formInstance.txtbManufacturer.Clear();
                             formInstance.txtbInputQty.Clear();
                             formInstance.txtbPART.Clear();
-                            // Update the document status
-                            //await WarehouseService.UpdateDocumentStatusAsync(docNo, "סופית", "Y", formInstance);
-                            //MessageBox.Show("Item successfully inserted.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             formInstance.txtLog.AppendText($"{insertedIpn} successfully inserted. Document number: {docNo}\n");
                             formInstance.txtLog.ScrollToCaret();
                         }
@@ -438,8 +435,6 @@ namespace WH_Panel
                         // Set the request headers
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
-                        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                         string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                         // Construct the API URL
@@ -466,9 +461,6 @@ namespace WH_Panel
                             formInstance.txtbManufacturer.Clear();
                             formInstance.txtbInputQty.Clear();
                             formInstance.txtbPART.Clear();
-                            // Update the document status
-                            //await WarehouseService.UpdateDocumentStatusAsync(docNo, "סופית", "Y", formInstance);
-                            //MessageBox.Show("Item successfully inserted.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             formInstance.txtLog.AppendText($"{insertedIpn} successfully transferred. Document number: {docNo}\n");
                             formInstance.txtLog.ScrollToCaret();
                         }
@@ -505,8 +497,6 @@ namespace WH_Panel
                         // Set the request headers
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
-                        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                         string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                         // Construct the API URL
@@ -1793,29 +1783,6 @@ namespace WH_Panel
                 }
             }
         }
-        //private async void dataGridView2_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
-        //{
-        //    if (e.Button == MouseButtons.Right && e.RowIndex >= 0 && e.ColumnIndex >= 0) // Ensure the row and column indices are valid and right mouse button is clicked
-        //    {
-        //        var selectedRow = dataGridView2.Rows[e.RowIndex];
-        //        var clickedCell = selectedRow.Cells[e.ColumnIndex];
-        //        // Check if the clicked cell is in the DOCDES column
-        //        if (clickedCell.OwningColumn.Name == "DOCDES")
-        //        {
-        //            var docDesCell = clickedCell;
-        //            var serialNameCell = selectedRow.Cells.Cast<DataGridViewCell>().FirstOrDefault(c => c.OwningColumn.Name == "LOGDOCNO");
-        //            if (docDesCell != null && docDesCell.Value != null && docDesCell.Value.ToString().Contains("נפוק"))
-        //            {
-        //                if (serialNameCell != null && serialNameCell.Value != null)
-        //                {
-        //                    string serialName = serialNameCell.Value.ToString();
-        //                    //MessageBox.Show(serialName);
-        //                    ShowSerialDetails(serialName);
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
         private async void dataGridView2_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right && e.RowIndex >= 0 && e.ColumnIndex >= 0) // Ensure the row and column indices are valid and right mouse button is clicked
@@ -1961,7 +1928,6 @@ namespace WH_Panel
                     // IPN exists, add the new MFPN
                     await AddingAltMFPNtoIPN(existingPartId, partMFPN, partDes, partMNFName, partMNFDes);
                     await DisplayInsertedData(existingPartId);
-
                 }
                 else
                 {
@@ -1988,76 +1954,14 @@ namespace WH_Panel
                 MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-        //private async Task AddingAltMFPNtoIPN(int partId, string partMFPN, string partDes, string mnfName, string mnfDes)
-        //{
-        //    try
-        //    {
-        //        // Ensure the manufacturer name is unique
-        //        string uniqueMnfName = await GetUniqueManufacturerName(mnfName);
-
-        //        // Check if the manufacturer exists, if not, create it
-        //        int mnfId = await GetOrInsertManufacturer(uniqueMnfName, mnfDes);
-
-        //        // Construct the payload for the new PARTMNF_SUBFORM item
-        //        var newPartMnfSubformItem = new
-        //        {
-        //            PART = partId,
-        //            MNFPARTNAME = partMFPN,
-        //            MNFPARTDES = partDes,
-        //            MNFNAME = uniqueMnfName,
-        //            MNFDES = mnfDes
-        //        };
-
-        //        // Construct the URL for the PARTMNFONE endpoint
-        //        string url = $"{baseUrl}/PARTMNFONE";
-
-        //        using (HttpClient client = new HttpClient())
-        //        {
-        //            client.DefaultRequestHeaders.Accept.Clear();
-        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-        //            // Serialize the payload to JSON
-        //            string jsonPayload = JsonConvert.SerializeObject(newPartMnfSubformItem);
-        //            var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-
-        //            // Send the POST request
-        //            HttpResponseMessage response = await client.PostAsync(url, content);
-
-        //            // Handle the response
-        //            if (response.IsSuccessStatusCode)
-        //            {
-        //                MessageBox.Show("New MFPN added successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        //            }
-        //            else if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
-        //            {
-        //                MessageBox.Show("Manufacturer name must be unique for this IPN. Please try again with a different name.", "Conflict Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //            }
-        //            else
-        //            {
-        //                string errorContent = await response.Content.ReadAsStringAsync();
-        //                throw new HttpRequestException($"Error adding new MFPN: {response.StatusCode}\n{errorContent}");
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show($"An error occurred while adding the new MFPN: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //    }
-        //}
-
         private async Task AddingAltMFPNtoIPN(int partId, string partMFPN, string partDes, string mnfName, string mnfDes)
         {
             try
             {
                 // Ensure the manufacturer name is not already used in the list of approved MFPNs for the IPN
                 string uniqueMnfName = await GetUnusedManufacturerName(partId, mnfName);
-
                 // Check if the manufacturer exists, if not, create it
                 int mnfId = await GetOrInsertManufacturer(uniqueMnfName, mnfDes);
-
                 // Construct the payload for the new PARTMNF_SUBFORM item
                 var newPartMnfSubformItem = new
                 {
@@ -2067,24 +1971,19 @@ namespace WH_Panel
                     MNFNAME = uniqueMnfName,
                     MNFDES = mnfDes
                 };
-
                 // Construct the URL for the PARTMNFONE endpoint
                 string url = $"{baseUrl}/PARTMNFONE";
-
                 using (HttpClient client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                     // Serialize the payload to JSON
                     string jsonPayload = JsonConvert.SerializeObject(newPartMnfSubformItem);
                     var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-
                     // Send the POST request
                     HttpResponseMessage response = await client.PostAsync(url, content);
-
                     // Handle the response
                     if (response.IsSuccessStatusCode)
                     {
@@ -2106,182 +2005,46 @@ namespace WH_Panel
                 MessageBox.Show($"An error occurred while adding the new MFPN: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         private async Task<string> GetUnusedManufacturerName(int partId, string baseMnfName)
         {
             string url = $"{baseUrl}/PART?$filter=PART eq {partId}&$expand=PARTMNF_SUBFORM";
-
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                 HttpResponseMessage response = await client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync();
-
                 var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
                 var part = apiResponse["value"]?.FirstOrDefault();
-
                 if (part != null)
                 {
                     var usedMnfNames = part["PARTMNF_SUBFORM"]?
                         .Select(m => m["MNFNAME"]?.ToString())
                         .Where(name => !string.IsNullOrEmpty(name))
                         .ToHashSet();
-
                     // Generate a unique manufacturer name
                     string uniqueMnfName = baseMnfName;
                     int counter = 1;
-
                     while (usedMnfNames != null && usedMnfNames.Contains(uniqueMnfName))
                     {
                         uniqueMnfName = $"{baseMnfName}{counter}";
                         counter++;
                     }
-
                     return uniqueMnfName;
                 }
-
                 // If no PARTMNF_SUBFORM is found, return the base name
                 return baseMnfName;
             }
         }
-
-
-
-
-        //private async void btnINSERTlogpart_Click(object sender, EventArgs e)
-        //{
-        //    string partName = txtbIPN.Text.Trim();
-        //    string partDes = txtbDESC.Text.Trim();
-        //    string partMFPN = txtbMFPN.Text.Trim().ToUpper();
-        //    string partMNFDes = txtbMNF.Text.Trim().ToUpper();
-
-        //    // Validate the required fields
-        //    if (string.IsNullOrEmpty(partName) || string.IsNullOrEmpty(partDes) || string.IsNullOrEmpty(partMFPN) || string.IsNullOrEmpty(partMNFDes))
-        //    {
-        //        MessageBox.Show("Please ensure all fields are filled in before inserting.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //        return;
-        //    }
-
-        //    // Truncate MNFDES to fit within the 32-character limit
-        //    if (partMNFDes.Length > 32)
-        //    {
-        //        partMNFDes = partMNFDes.Substring(0, 32);
-        //    }
-
-        //    // Generate MNFNAME by truncating MNFDES to fit within the 10-character limit
-        //    string partMNFName = partMNFDes.Length > 10 ? partMNFDes.Substring(0, 10) : partMNFDes;
-
-        //    try
-        //    {
-        //        // Measure the time taken for the HTTP POST request
-        //        var stopwatch = Stopwatch.StartNew();
-
-        //        // Check if the IPN already exists
-        //        int existingPartId = await CheckIfIPNExists(partName);
-
-        //        if (existingPartId > 0)
-        //        {
-        //            // IPN exists, check if the MFPN is different
-        //            bool isMFPNDifferent = await CheckIfMFPNIsDifferent(existingPartId, partMFPN);
-        //            if (isMFPNDifferent)
-        //            {
-        //                // Retrieve or insert the manufacturer ID
-        //                //int mnfId = await GetOrInsertManufacturer(partMNFName, partMNFDes);
-
-        //                // Add the new MFPN to the existing IPN
-        //                await AddToPartMnfSubform(existingPartId, partMFPN, partDes, partMNFName, partMNFDes);
-        //                MessageBox.Show("MFPN added to the existing IPN.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        //            }
-        //            else
-        //            {
-        //                MessageBox.Show("IPN and MFPN already exist.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        //            }
-        //        }
-        //        else
-        //        {
-        //            // Insert into LOGPART and get the generated PART ID
-        //            int partId = await InsertLogPart(partName, partDes);
-
-        //            // Retrieve or insert the manufacturer ID
-        //            int mnfId = await GetOrInsertManufacturer(partMNFName, partMNFDes);
-
-        //            // Insert into PARTMNFONE
-        //            await InsertPartMnfOne(partId, partMFPN, mnfId, partDes);
-
-        //            // Fetch and display the inserted data
-        //            await DisplayInsertedData(partId);
-        //        }
-
-        //        stopwatch.Stop();
-
-        //        // Update the ping label
-        //        UpdatePing(stopwatch.ElapsedMilliseconds);
-
-        //        // Clear the form
-        //        btnClear.PerformClick();
-        //    }
-        //    catch (HttpRequestException ex)
-        //    {
-        //        MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //    }
-        //}
-
-
-        //private async Task AddToPartMnfSubform(int partId, string partMFPN, string partDes, string mnfName, string mnfDes)
-        //{
-        //    // Construct the payload for the new PARTMNF_SUBFORM item
-        //    var newPartMnfSubformItem = new
-        //    {
-        //        PART = partId,
-        //        MNFPARTNAME = partMFPN,
-        //        MNFPARTDES = partDes,
-        //        MNFNAME = mnfName,
-        //        MNFDES = mnfDes
-        //    };
-
-        //    // Construct the URL for the PARTMNFONE endpoint
-        //    string url = $"{baseUrl}/PARTMNFONE";
-
-        //    using (HttpClient client = new HttpClient())
-        //    {
-        //        client.DefaultRequestHeaders.Accept.Clear();
-        //        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-        //        // Serialize the payload to JSON
-        //        string jsonPayload = JsonConvert.SerializeObject(newPartMnfSubformItem);
-        //        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-
-        //        // Send the POST request
-        //        HttpResponseMessage response = await client.PostAsync(url, content);
-
-        //        // Handle the response
-        //        if (!response.IsSuccessStatusCode)
-        //        {
-        //            string errorContent = await response.Content.ReadAsStringAsync();
-        //            throw new HttpRequestException($"Error adding to PARTMNF_SUBFORM: {response.StatusCode}\n{errorContent}");
-        //        }
-        //    }
-        //}
-
         private async Task AddToPartMnfSubform(int partId, string partMFPN, string partDes, string mnfName, string mnfDes)
         {
             // Ensure the manufacturer name is unique
             string uniqueMnfName = await GetUniqueManufacturerName(mnfName);
-
             // Check if the manufacturer exists, if not, create it
             int mnfId = await EnsureManufacturerExists(uniqueMnfName, mnfDes);
-
             // Construct the payload for the new PARTMNF_SUBFORM item
             var newPartMnfSubformItem = new
             {
@@ -2290,24 +2053,19 @@ namespace WH_Panel
                 MNFPARTDES = partDes,
                 MNF = mnfId // Use the manufacturer ID
             };
-
             // Construct the URL for the PARTMNFONE endpoint
             string url = $"{baseUrl}/PARTMNFONE";
-
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                 // Serialize the payload to JSON
                 string jsonPayload = JsonConvert.SerializeObject(newPartMnfSubformItem);
                 var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-
                 // Send the POST request
                 HttpResponseMessage response = await client.PostAsync(url, content);
-
                 // Handle the response
                 if (!response.IsSuccessStatusCode)
                 {
@@ -2316,12 +2074,10 @@ namespace WH_Panel
                 }
             }
         }
-
         private async Task<string> GetUniqueManufacturerName(string baseMnfName)
         {
             string uniqueMnfName = baseMnfName;
             int counter = 1;
-
             while (true)
             {
                 // Check if the manufacturer exists
@@ -2332,25 +2088,21 @@ namespace WH_Panel
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                     HttpResponseMessage response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
                     string responseBody = await response.Content.ReadAsStringAsync();
                     var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-
                     // If no manufacturer is found, return the unique name
                     if (!apiResponse["value"].Any())
                     {
                         return uniqueMnfName;
                     }
                 }
-
                 // If the manufacturer exists, append a number and try again
                 uniqueMnfName = $"{baseMnfName}{counter}";
                 counter++;
             }
         }
-
         private async Task<int> EnsureManufacturerExists(string mnfName, string mnfDes)
         {
             // Check if the manufacturer exists
@@ -2361,12 +2113,10 @@ namespace WH_Panel
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                 HttpResponseMessage response = await client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync();
                 var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-
                 var manufacturer = apiResponse["value"].FirstOrDefault();
                 if (manufacturer != null)
                 {
@@ -2374,7 +2124,6 @@ namespace WH_Panel
                     return manufacturer["MNF"].Value<int>();
                 }
             }
-
             // If the manufacturer does not exist, create it
             var mnfData = new
             {
@@ -2390,18 +2139,14 @@ namespace WH_Panel
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                 HttpResponseMessage response = await client.PostAsync(insertUrl, content);
                 response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync();
                 var responseData = JsonConvert.DeserializeObject<JObject>(responseBody);
-
                 // Return the newly created manufacturer ID
                 return responseData["MNF"].Value<int>();
             }
         }
-
-
         private async Task<int> CheckIfIPNExists(string partName)
         {
             string url = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{partName}'";
@@ -2440,136 +2185,38 @@ namespace WH_Panel
                 return mfpn == null;
             }
         }
-        //private async Task PatchExistingIPN(int partId, string partMFPN, string partDes)
-        //{
-        //    var partMnfOneData = new
-        //    {
-        //        PART = partId,
-        //        MNFPARTNAME = partMFPN,
-        //        MNFPARTDES = partDes
-        //    };
-        //    string url = $"{baseUrl}/PARTMNFONE";
-        //    using (HttpClient client = new HttpClient())
-        //    {
-        //        client.DefaultRequestHeaders.Accept.Clear();
-        //        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //        string jsonPartMnfOneData = JsonConvert.SerializeObject(partMnfOneData);
-        //        var content = new StringContent(jsonPartMnfOneData, Encoding.UTF8, "application/json");
-        //        HttpResponseMessage response = await client.PatchAsync(url, content);
-        //        response.EnsureSuccessStatusCode();
-        //    }
-        //}
-        //private async Task PatchExistingIPN(int partId, string partMFPN, string partDes)
-        //{
-        //    // Construct the URL for the specific PARTMNFONE resource
-        //    string url = $"{baseUrl}/PARTMNFONE(PART={partId},MNFPARTNAME='{partMFPN}')";
-
-        //    // Construct the payload for the PATCH request
-        //    var partMnfOneData = new
-        //    {
-        //        MNFPARTDES = partDes // Update only the description for the existing MFPN
-        //    };
-
-        //    using (HttpClient client = new HttpClient())
-        //    {
-        //        client.DefaultRequestHeaders.Accept.Clear();
-        //        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-        //        // Serialize the payload to JSON
-        //        string jsonPartMnfOneData = JsonConvert.SerializeObject(partMnfOneData);
-        //        var content = new StringContent(jsonPartMnfOneData, Encoding.UTF8, "application/json");
-
-        //        // Send the PATCH request
-        //        HttpResponseMessage response = await client.PatchAsync(url, content);
-
-        //        // Handle the response
-        //        if (!response.IsSuccessStatusCode)
-        //        {
-        //            string errorContent = await response.Content.ReadAsStringAsync();
-        //            throw new HttpRequestException($"Error updating IPN: {response.StatusCode}\n{errorContent}");
-        //        }
-        //    }
-        //}
-
-        //private async Task PatchExistingIPN(int partId, int mnfId, string partMFPN, string partDes)
-        //{
-        //    // Construct the URL for the specific PARTMNFONE resource
-        //    string url = $"{baseUrl}/PARTMNFONE(PART={partId},MNF={mnfId})";
-
-        //    // Construct the payload for the PATCH request
-        //    var partMnfOneData = new
-        //    {
-        //        MNFPARTNAME = partMFPN, // Update the MFPN if needed
-        //        MNFPARTDES = partDes    // Update the description
-        //    };
-
-        //    using (HttpClient client = new HttpClient())
-        //    {
-        //        client.DefaultRequestHeaders.Accept.Clear();
-        //        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-        //        // Serialize the payload to JSON
-        //        string jsonPartMnfOneData = JsonConvert.SerializeObject(partMnfOneData);
-        //        var content = new StringContent(jsonPartMnfOneData, Encoding.UTF8, "application/json");
-
-        //        // Send the PATCH request
-        //        HttpResponseMessage response = await client.PatchAsync(url, content);
-
-        //        // Handle the response
-        //        if (!response.IsSuccessStatusCode)
-        //        {
-        //            string errorContent = await response.Content.ReadAsStringAsync();
-        //            throw new HttpRequestException($"Error updating IPN: {response.StatusCode}\n{errorContent}");
-        //        }
-        //    }
-        //}
         private async Task<int?> GetManufacturerId(int partid, string partMFPN)
         {
             // Construct the URL to query the PART entity and expand the PARTMNF_SUBFORM
             string url = $"{baseUrl}/PART?$filter=PART eq '{partid}'&$expand=PARTMNF_SUBFORM";
-
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                 // Send the GET request
                 HttpResponseMessage response = await client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync();
-
                 // Parse the JSON response
                 var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
                 var part = apiResponse["value"]?.FirstOrDefault();
-
                 if (part != null)
                 {
                     // Look for the matching MFPN in the PARTMNF_SUBFORM
                     var manufacturer = part["PARTMNF_SUBFORM"]?
                         .FirstOrDefault(m => m["MNFPARTNAME"]?.ToString() == partMFPN);
-
                     if (manufacturer != null)
                     {
                         // Return the MNF (manufacturer ID)
                         return manufacturer["MNF"]?.Value<int>();
                     }
                 }
-
                 // Return null if no matching manufacturer is found
                 return null;
             }
         }
-
-
-
         private async Task<int> InsertLogPart(string partName, string partDes)
         {
             var logPartData = new
@@ -2682,8 +2329,6 @@ namespace WH_Panel
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 // Set the Authorization header
-                //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
-                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                 string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                 // Make the HTTP GET request
@@ -2693,7 +2338,6 @@ namespace WH_Panel
                 string responseBody = await response.Content.ReadAsStringAsync();
                 var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseBody);
                 // Create a new form to display the data
-
                 if(apiResponse!=null)
                 {
                     // Calculate the height of the popup window
@@ -2701,7 +2345,6 @@ namespace WH_Panel
                     int rowHeight = 41; // Height per row
                     int headerHeight = 41; // Height for the header row
                     int calculatedHeight = (rowCount * rowHeight) + headerHeight;
-
                     // Create a new form to display the data
                     Form popupForm = new Form
                     {
@@ -2712,7 +2355,6 @@ namespace WH_Panel
                         ForeColor = Color.FromArgb(220, 220, 220),
                         AutoScroll = true // Enable scrolling if the content exceeds the window size
                     };
-
                     DataGridView dataGridView = new DataGridView
                     {
                         Dock = DockStyle.Fill,
@@ -2748,7 +2390,6 @@ namespace WH_Panel
                     popupForm.Controls.Add(dataGridView);
                     popupForm.Show();
                 }
-                
             }
         }
         private void UpdatePing(long elapsedMilliseconds)
