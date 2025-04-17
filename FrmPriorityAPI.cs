@@ -1989,12 +1989,71 @@ namespace WH_Panel
             }
         }
 
+        //private async Task AddingAltMFPNtoIPN(int partId, string partMFPN, string partDes, string mnfName, string mnfDes)
+        //{
+        //    try
+        //    {
+        //        // Ensure the manufacturer name is unique
+        //        string uniqueMnfName = await GetUniqueManufacturerName(mnfName);
+
+        //        // Check if the manufacturer exists, if not, create it
+        //        int mnfId = await GetOrInsertManufacturer(uniqueMnfName, mnfDes);
+
+        //        // Construct the payload for the new PARTMNF_SUBFORM item
+        //        var newPartMnfSubformItem = new
+        //        {
+        //            PART = partId,
+        //            MNFPARTNAME = partMFPN,
+        //            MNFPARTDES = partDes,
+        //            MNFNAME = uniqueMnfName,
+        //            MNFDES = mnfDes
+        //        };
+
+        //        // Construct the URL for the PARTMNFONE endpoint
+        //        string url = $"{baseUrl}/PARTMNFONE";
+
+        //        using (HttpClient client = new HttpClient())
+        //        {
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+        //            // Serialize the payload to JSON
+        //            string jsonPayload = JsonConvert.SerializeObject(newPartMnfSubformItem);
+        //            var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+        //            // Send the POST request
+        //            HttpResponseMessage response = await client.PostAsync(url, content);
+
+        //            // Handle the response
+        //            if (response.IsSuccessStatusCode)
+        //            {
+        //                MessageBox.Show("New MFPN added successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //            }
+        //            else if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
+        //            {
+        //                MessageBox.Show("Manufacturer name must be unique for this IPN. Please try again with a different name.", "Conflict Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            }
+        //            else
+        //            {
+        //                string errorContent = await response.Content.ReadAsStringAsync();
+        //                throw new HttpRequestException($"Error adding new MFPN: {response.StatusCode}\n{errorContent}");
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show($"An error occurred while adding the new MFPN: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //    }
+        //}
+
         private async Task AddingAltMFPNtoIPN(int partId, string partMFPN, string partDes, string mnfName, string mnfDes)
         {
             try
             {
-                // Ensure the manufacturer name is unique
-                string uniqueMnfName = await GetUniqueManufacturerName(mnfName);
+                // Ensure the manufacturer name is not already used in the list of approved MFPNs for the IPN
+                string uniqueMnfName = await GetUnusedManufacturerName(partId, mnfName);
 
                 // Check if the manufacturer exists, if not, create it
                 int mnfId = await GetOrInsertManufacturer(uniqueMnfName, mnfDes);
@@ -2047,6 +2106,51 @@ namespace WH_Panel
                 MessageBox.Show($"An error occurred while adding the new MFPN: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        private async Task<string> GetUnusedManufacturerName(int partId, string baseMnfName)
+        {
+            string url = $"{baseUrl}/PART?$filter=PART eq {partId}&$expand=PARTMNF_SUBFORM";
+
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                HttpResponseMessage response = await client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+                string responseBody = await response.Content.ReadAsStringAsync();
+
+                var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+                var part = apiResponse["value"]?.FirstOrDefault();
+
+                if (part != null)
+                {
+                    var usedMnfNames = part["PARTMNF_SUBFORM"]?
+                        .Select(m => m["MNFNAME"]?.ToString())
+                        .Where(name => !string.IsNullOrEmpty(name))
+                        .ToHashSet();
+
+                    // Generate a unique manufacturer name
+                    string uniqueMnfName = baseMnfName;
+                    int counter = 1;
+
+                    while (usedMnfNames != null && usedMnfNames.Contains(uniqueMnfName))
+                    {
+                        uniqueMnfName = $"{baseMnfName}{counter}";
+                        counter++;
+                    }
+
+                    return uniqueMnfName;
+                }
+
+                // If no PARTMNF_SUBFORM is found, return the base name
+                return baseMnfName;
+            }
+        }
+
+
 
 
         //private async void btnINSERTlogpart_Click(object sender, EventArgs e)
