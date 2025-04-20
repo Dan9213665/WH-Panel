@@ -812,6 +812,7 @@
             btnPrintIPNmoves.BackgroundImageLayout = ImageLayout.Stretch;
             btnPrintIPNmoves.Cursor = Cursors.Hand;
             btnPrintIPNmoves.Dock = DockStyle.Fill;
+            btnPrintIPNmoves.FlatAppearance.MouseOverBackColor = SystemColors.ActiveBorder;
             btnPrintIPNmoves.Location = new Point(637, 3);
             btnPrintIPNmoves.Name = "btnPrintIPNmoves";
             tableLayoutPanel3.SetRowSpan(btnPrintIPNmoves, 2);

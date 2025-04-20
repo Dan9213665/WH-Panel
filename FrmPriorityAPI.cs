@@ -1094,7 +1094,7 @@ namespace WH_Panel
             if (e.RowIndex >= 0) // Ensure the row index is valid
             {
                 var selectedRow = dataGridView1.Rows[e.RowIndex];
-                await ExtractMFPNForRow(selectedRow);
+                //await ExtractMFPNForRow(selectedRow);
                 var partName = selectedRow.Cells["PARTNAME"].Value.ToString();
                 string logPartUrl = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{partName}'&$expand=PARTTRANSLAST2_SUBFORM";
                 using (HttpClient client = new HttpClient())
@@ -3238,32 +3238,86 @@ namespace WH_Panel
                 }
                 writer.WriteLine("</tr>");
                 // Add table rows for current stock
+                //            var currentStockRows = new List<DataGridViewRow>();
+                //            foreach (DataGridViewRow row in dataGridView.Rows)
+                //            {
+                //                if (row.Cells["DOCDES"].Value.ToString() == "קיזוז אוטומטי")
+                //                {
+                //                    continue;
+                //                }
+                //                else
+                //                {
+                //                    string rowDocType = row.Cells["LOGDOCNO"].Value?.ToString() ?? string.Empty;
+                //                    if (rowDocType.StartsWith("GR") && int.TryParse(row.Cells["TQUANT"].Value?.ToString(), out int balanceValue) && balanceValue > 0)
+                //                    {
+                //                        bool hasOutgoingMovement = dataGridView.Rows.Cast<DataGridViewRow>().Any(r =>
+                //    (r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("ROB") == true ||
+                //     r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("RD") == true ||
+                //     r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("SH") == true ||
+                //     r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("WR") == true ||
+                //     r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("IC") == true) &&
+                //    (r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("IC") == true
+                //        ? Math.Abs(Convert.ToInt32(r.Cells["TQUANT"].Value)) == Math.Abs(Convert.ToInt32(row.Cells["TQUANT"].Value))
+                //        : r.Cells["TQUANT"].Value?.ToString() == row.Cells["TQUANT"].Value?.ToString())
+                //);
+                //                        if (!hasOutgoingMovement)
+                //                        {
+                //                            currentStockRows.Add(row);
+                //                        }
+                //                    }
+                //                }
+                //            }
+
                 var currentStockRows = new List<DataGridViewRow>();
+                var processedRows = new HashSet<DataGridViewRow>(); // To track rows that have been matched
+
                 foreach (DataGridViewRow row in dataGridView.Rows)
                 {
                     if (row.Cells["DOCDES"].Value.ToString() == "קיזוז אוטומטי")
                     {
                         continue;
                     }
-                    else
+
+                    string rowDocType = row.Cells["LOGDOCNO"].Value?.ToString() ?? string.Empty;
+
+                    if (rowDocType.StartsWith("GR") && int.TryParse(row.Cells["TQUANT"].Value?.ToString(), out int balanceValue) && balanceValue > 0)
                     {
-                        string rowDocType = row.Cells["LOGDOCNO"].Value?.ToString() ?? string.Empty;
-                        if (rowDocType.StartsWith("GR") && int.TryParse(row.Cells["TQUANT"].Value?.ToString(), out int balanceValue) && balanceValue > 0)
+                        // Check if this row has a matching outgoing movement
+                        bool hasOutgoingMovement = false;
+
+                        foreach (DataGridViewRow potentialMatch in dataGridView.Rows)
                         {
-                            bool hasOutgoingMovement = dataGridView.Rows.Cast<DataGridViewRow>().Any(r =>
-        (r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("ROB") == true ||
-         r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("RD") == true ||
-         r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("SH") == true ||
-         r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("WR") == true ||
-         r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("IC") == true) &&
-        (r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("IC") == true
-            ? Math.Abs(Convert.ToInt32(r.Cells["TQUANT"].Value)) == Math.Abs(Convert.ToInt32(row.Cells["TQUANT"].Value))
-            : r.Cells["TQUANT"].Value?.ToString() == row.Cells["TQUANT"].Value?.ToString())
-    );
-                            if (!hasOutgoingMovement)
+                            if (processedRows.Contains(potentialMatch)) continue; // Skip already processed rows
+
+                            string potentialDocType = potentialMatch.Cells["LOGDOCNO"].Value?.ToString() ?? string.Empty;
+
+                            if ((potentialDocType.StartsWith("ROB") || potentialDocType.StartsWith("RD") || potentialDocType.StartsWith("SH") ||
+                                 potentialDocType.StartsWith("WR") || potentialDocType.StartsWith("IC")) &&
+                                int.TryParse(potentialMatch.Cells["TQUANT"].Value?.ToString(), out int potentialBalanceValue))
                             {
-                                currentStockRows.Add(row);
+                                // Special handling for "IC" type
+                                if (potentialDocType.StartsWith("IC") &&
+                                    Math.Abs(potentialBalanceValue) == Math.Abs(balanceValue))
+                                {
+                                    hasOutgoingMovement = true;
+                                    processedRows.Add(potentialMatch); // Mark as processed
+                                    break;
+                                }
+                                else if (potentialBalanceValue == balanceValue)
+                                {
+                                    hasOutgoingMovement = true;
+                                    processedRows.Add(potentialMatch); // Mark as processed
+                                    break;
+                                }
                             }
+                        }
+                        if (!hasOutgoingMovement)
+                        {
+                            currentStockRows.Add(row);
+                        }
+                        else
+                        {
+                            processedRows.Add(row); // Mark the current row as processed
                         }
                     }
                 }

@@ -131,7 +131,7 @@
             // 
             dateTimePicker1.Dock = DockStyle.Fill;
             dateTimePicker1.Enabled = false;
-            dateTimePicker1.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            dateTimePicker1.Font = new Font("Segoe UI", 9F);
             dateTimePicker1.Location = new Point(678, 18);
             dateTimePicker1.Name = "dateTimePicker1";
             dateTimePicker1.Size = new Size(129, 23);
@@ -174,7 +174,7 @@
             // 
             label15.AutoSize = true;
             label15.Dock = DockStyle.Fill;
-            label15.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point);
+            label15.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold);
             label15.Location = new Point(307, 0);
             label15.Name = "label15";
             label15.Size = new Size(298, 39);
@@ -185,7 +185,7 @@
             // textBox10
             // 
             textBox10.Dock = DockStyle.Fill;
-            textBox10.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point);
+            textBox10.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold);
             textBox10.Location = new Point(3, 3);
             textBox10.Name = "textBox10";
             textBox10.ReadOnly = true;
@@ -320,7 +320,6 @@
             dataGridView1.Location = new Point(3, 19);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
-            dataGridView1.RowTemplate.Height = 25;
             dataGridView1.Size = new Size(1347, 184);
             dataGridView1.TabIndex = 0;
             dataGridView1.CellClick += dataGridView1_CellClick;
@@ -373,7 +372,7 @@
             // 
             comboBox1.Dock = DockStyle.Fill;
             comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBox1.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            comboBox1.Font = new Font("Segoe UI", 18F);
             comboBox1.FormattingEnabled = true;
             comboBox1.Items.AddRange(new object[] { "5\"", "7\"", "10\"", "13\"", "15\"", "Bag", "Box", "Stick", "Stick_in_a_bag", "Tray" });
             comboBox1.Location = new Point(813, 18);
@@ -480,7 +479,7 @@
             dataGridView2.AllowUserToDeleteRows = false;
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = SystemColors.ControlDark;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
             dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
             dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
             dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
@@ -493,7 +492,6 @@
             dataGridView2.Name = "dataGridView2";
             dataGridView2.ReadOnly = true;
             dataGridView2.RowTemplate.DefaultCellStyle.ForeColor = Color.FromArgb(224, 224, 224);
-            dataGridView2.RowTemplate.Height = 25;
             dataGridView2.Size = new Size(1359, 214);
             dataGridView2.TabIndex = 0;
             dataGridView2.CellClick += dataGridView2_CellClick;
@@ -937,7 +935,7 @@
             // 
             textBox6.Cursor = Cursors.Cross;
             textBox6.Dock = DockStyle.Fill;
-            textBox6.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
+            textBox6.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             textBox6.Location = new Point(543, 18);
             textBox6.Name = "textBox6";
             textBox6.Size = new Size(129, 39);
@@ -1095,7 +1093,7 @@
             comboBox3.BackColor = Color.DarkOrange;
             comboBox3.Cursor = Cursors.Hand;
             comboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBox3.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
+            comboBox3.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             comboBox3.ForeColor = Color.White;
             comboBox3.FormattingEnabled = true;
             comboBox3.Location = new Point(150, 0);
