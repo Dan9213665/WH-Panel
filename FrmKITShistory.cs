@@ -46,7 +46,7 @@ namespace WH_Panel
         public static Stopwatch stopWatch = new Stopwatch();
         public int colIpnFoundIndex;
         public int colMFPNFoundIndex;
-        List<string> listOfPaths = new List<string>() { };
+        List<string> listOfPaths { get; set; }
         private const string BaseDirectory = @"\\dbr1\Data\WareHouse\2025\ExcelRipperCache\";
         bool cachedDataLoaded = false;
         public FrmKITShistory()
@@ -260,10 +260,79 @@ namespace WH_Panel
             dataGridView1.DataSource = null;
             dataGridView1.Refresh();
         }
+        //private void startUpLogic(int timeSpan)
+        //{
+
+        //    listOfPaths = new List<string>();
+
+        //    stopWatch.Start();
+        //    label12.BackColor = Color.IndianRed;
+        //    if (timeSpan == 2)
+        //    {
+        //        listOfPaths = listOfPathsAggregator(1);
+
+        //        //MessageBox.Show(listOfPaths.Count.ToString());
+        //    }
+        //    else if (timeSpan == 6)
+        //    {
+        //        listOfPaths = listOfPathsAggregator(5);
+        //    }
+        //    else if (timeSpan == 12)
+        //    {
+        //        listOfPaths = listOfPathsAggregator(11);
+        //    }
+        //    else if (timeSpan != 12 && timeSpan != 6 && timeSpan != 2)
+        //    {
+        //        listOfPaths = listOfPathsAggregator(timeSpan);
+        //    }
+        //    if(listOfPaths.Count != 0)
+        //    {
+        //        foreach (string path in listOfPaths)
+        //        {
+        //            //MessageBox.Show(path.ToString());
+
+        //            foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
+        //            {
+        //                MessageBox.Show("path loaded from run :", path);
+        //                countLoadedFIles++;
+        //                string Litem = Path.GetFileName(file);
+        //                string fileName = Path.GetFileName(file);
+        //                if (FileIsLocked(Litem))
+        //                {
+        //                    string copyFilePath = CreateCopyOfFile(file);
+        //                    DataLoader(copyFilePath, fileName);
+        //                    DeleteFile(copyFilePath);
+        //                    AddErrorousFilesToListOfErrors(Litem);
+        //                }
+        //                else
+        //                {
+        //                    DataLoader(file, fileName);
+
+        //                }
+        //            }
+        //        }
+        //        cachedDataLoaded = false;
+        //        PopulateGridView();
+        //        SetColumsOrder();
+        //        stopWatch.Stop();
+        //        SaveToCachedXML(KitHistoryItemsList);
+        //    }
+        //    else
+        //    {
+        //        MessageBox.Show("No files found in the specified directories.");
+        //    }
+
+        //}
+
+
         private void startUpLogic(int timeSpan)
         {
+            listOfPaths = new List<string>();
+
             stopWatch.Start();
             label12.BackColor = Color.IndianRed;
+
+            // Generate paths based on timeSpan
             if (timeSpan == 2)
             {
                 listOfPaths = listOfPathsAggregator(1);
@@ -276,76 +345,62 @@ namespace WH_Panel
             {
                 listOfPaths = listOfPathsAggregator(11);
             }
-            else if (timeSpan != 12 && timeSpan != 6 && timeSpan != 2)
+            else
             {
                 listOfPaths = listOfPathsAggregator(timeSpan);
             }
-            foreach (string path in listOfPaths)
+
+            // Validate and process paths
+            if (listOfPaths.Count != 0)
             {
-                foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
+                foreach (string path in listOfPaths)
                 {
-                    countLoadedFIles++;
-                    string Litem = Path.GetFileName(file);
-                    string fileName = Path.GetFileName(file);
-                    if (FileIsLocked(Litem))
+                    if (string.IsNullOrWhiteSpace(path))
                     {
-                        string copyFilePath = CreateCopyOfFile(file);
-                        DataLoader(copyFilePath, fileName);
-                        DeleteFile(copyFilePath);
+                        MessageBox.Show("Path is null or empty. Skipping...");
+                        continue;
                     }
-                    else
+
+                    if (!Directory.Exists(path))
                     {
-                        AddErrorousFilesToListOfErrors(Litem);
+                        MessageBox.Show($"Path does not exist: {path}");
+                        continue;
+                    }
+
+                    foreach (string file in Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories))
+                    {
+                        //MessageBox.Show($"File found: {file}");
+                        countLoadedFIles++;
+                        string Litem = Path.GetFileName(file);
+                        string fileName = Path.GetFileName(file);
+
+                        if (FileIsLocked(file)) // Pass the full file path
+                        {
+                            string copyFilePath = CreateCopyOfFile(file);
+                            DataLoader(copyFilePath, fileName);
+                            DeleteFile(copyFilePath);
+                            AddErrorousFilesToListOfErrors(file);
+                        }
+                        else
+                        {
+                            DataLoader(file, fileName);
+                        }
                     }
                 }
+
+                cachedDataLoaded = false;
+                PopulateGridView();
+                SetColumsOrder();
+                stopWatch.Stop();
+                SaveToCachedXML(KitHistoryItemsList);
             }
-            cachedDataLoaded = false;
-            PopulateGridView();
-            SetColumsOrder();
-            stopWatch.Stop();
-            SaveToCachedXML(KitHistoryItemsList);
+            else
+            {
+                MessageBox.Show("No files found in the specified directories.");
+            }
         }
-        //private async Task StartUpLogicAsync(int timeSpan)
-        //{
-        //    stopWatch.Start();
-        //    label12.BackColor = Color.IndianRed;
-        //    // Aggregate list of paths based on timeSpan
-        //    listOfPaths = timeSpan switch
-        //    {
-        //        2 => listOfPathsAggregator(1),
-        //        6 => listOfPathsAggregator(5),
-        //        12 => listOfPathsAggregator(11),
-        //        _ => listOfPathsAggregator(timeSpan)
-        //    };
-        //    // Enumerate and process files asynchronously
-        //    foreach (string path in listOfPaths)
-        //    {
-        //        var files = Directory.EnumerateFiles(path, "*.xlsm", SearchOption.AllDirectories);
-        //        foreach (string file in files)
-        //        {
-        //            countLoadedFIles++;
-        //            string Litem = Path.GetFileName(file);
-        //            string fileName = Path.GetFileName(file);
-        //            // Check if file is locked and process accordingly
-        //            if (FileIsLocked(Litem))
-        //            {
-        //                string copyFilePath = await Task.Run(() => CreateCopyOfFile(file));
-        //                await Task.Run(() => DataLoader(copyFilePath, fileName));
-        //                await Task.Run(() => DeleteFile(copyFilePath));
-        //            }
-        //            else
-        //            {
-        //                AddErrorousFilesToListOfErrors(Litem);
-        //            }
-        //        }
-        //    }
-        //    cachedDataLoaded = false;
-        //    PopulateGridView();
-        //    SetColumsOrder();
-        //    stopWatch.Stop();
-        //    // Save to cached XML asynchronously
-        //    await Task.Run(() => SaveToCachedXML(KitHistoryItemsList));
-        //}
+
+
         private List<string> listOfPathsAggregator(int numMonths)
         {
             List<string> list = new List<string>();
@@ -354,7 +409,10 @@ namespace WH_Panel
             string cyear = d.Year.ToString("D4");
             int cmonth = d.Month;
             string currentMonthPath = $"{main}{cyear}\\{cmonth:D2}.{cyear}";
+
             list.Add(currentMonthPath);
+            //MessageBox.Show($"Generated path: {currentMonthPath}");
+
             for (int i = 0; i < numMonths; i++)
             {
                 string year = d.Year.ToString("D4");
@@ -373,6 +431,11 @@ namespace WH_Panel
                 d = d.AddMonths(-1); // Move to the previous month
             }
             list.Reverse(); // Since we're adding paths in reverse order, reverse the list
+
+            //foreach (string path in list)
+            //{
+            //    MessageBox.Show($"Generated path: {path}");
+            //}
             return list;
         }
         private string CreateCopyOfFile(string filePath)

@@ -103,7 +103,7 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 65F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 80F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-            tableLayoutPanel1.Size = new Size(1182, 752);
+            tableLayoutPanel1.Size = new Size(1168, 659);
             tableLayoutPanel1.TabIndex = 0;
             // 
             // groupBox1
@@ -112,7 +112,7 @@
             groupBox1.Dock = DockStyle.Fill;
             groupBox1.Location = new Point(3, 3);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(703, 64);
+            groupBox1.Size = new Size(694, 64);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Select ROB******  WO";
@@ -135,7 +135,7 @@
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 1;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel2.Size = new Size(697, 42);
+            tableLayoutPanel2.Size = new Size(688, 42);
             tableLayoutPanel2.TabIndex = 2;
             // 
             // lblLoading
@@ -144,7 +144,7 @@
             lblLoading.BackColor = Color.IndianRed;
             lblLoading.Dock = DockStyle.Fill;
             lblLoading.ForeColor = Color.White;
-            lblLoading.Location = new Point(573, 0);
+            lblLoading.Location = new Point(566, 0);
             lblLoading.Name = "lblLoading";
             lblLoading.Size = new Size(35, 42);
             lblLoading.TabIndex = 1;
@@ -159,7 +159,7 @@
             cmbROBxList.FormattingEnabled = true;
             cmbROBxList.Location = new Point(3, 3);
             cmbROBxList.Name = "cmbROBxList";
-            cmbROBxList.Size = new Size(523, 29);
+            cmbROBxList.Size = new Size(516, 29);
             cmbROBxList.TabIndex = 0;
             cmbROBxList.SelectedIndexChanged += cmbROBxList_SelectedIndexChanged;
             // 
@@ -168,7 +168,7 @@
             btnKitLabel.BackgroundImage = Properties.Resources.kitLabelPrint;
             btnKitLabel.BackgroundImageLayout = ImageLayout.Stretch;
             btnKitLabel.Dock = DockStyle.Fill;
-            btnKitLabel.Location = new Point(614, 3);
+            btnKitLabel.Location = new Point(607, 3);
             btnKitLabel.Name = "btnKitLabel";
             btnKitLabel.Size = new Size(35, 36);
             btnKitLabel.TabIndex = 2;
@@ -181,9 +181,9 @@
             btnReport.BackgroundImage = Properties.Resources.sendtoprinter;
             btnReport.BackgroundImageLayout = ImageLayout.Center;
             btnReport.Dock = DockStyle.Fill;
-            btnReport.Location = new Point(655, 3);
+            btnReport.Location = new Point(648, 3);
             btnReport.Name = "btnReport";
-            btnReport.Size = new Size(39, 36);
+            btnReport.Size = new Size(37, 36);
             btnReport.TabIndex = 3;
             btnReport.UseVisualStyleBackColor = true;
             btnReport.Click += btnReport_Click;
@@ -193,7 +193,7 @@
             cnkbClosed.AutoSize = true;
             cnkbClosed.CheckAlign = ContentAlignment.MiddleCenter;
             cnkbClosed.Dock = DockStyle.Fill;
-            cnkbClosed.Location = new Point(532, 3);
+            cnkbClosed.Location = new Point(525, 3);
             cnkbClosed.Name = "cnkbClosed";
             cnkbClosed.Size = new Size(35, 36);
             cnkbClosed.TabIndex = 4;
@@ -207,7 +207,7 @@
             gbxLoadedWo.Dock = DockStyle.Fill;
             gbxLoadedWo.Location = new Point(3, 73);
             gbxLoadedWo.Name = "gbxLoadedWo";
-            gbxLoadedWo.Size = new Size(703, 104);
+            gbxLoadedWo.Size = new Size(694, 104);
             gbxLoadedWo.TabIndex = 2;
             gbxLoadedWo.TabStop = false;
             gbxLoadedWo.Text = "Loaded WO";
@@ -242,7 +242,7 @@
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333359F));
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333359F));
-            tableLayoutPanel3.Size = new Size(697, 82);
+            tableLayoutPanel3.Size = new Size(688, 82);
             tableLayoutPanel3.TabIndex = 0;
             // 
             // txtbRob
@@ -251,37 +251,37 @@
             txtbRob.Location = new Point(3, 3);
             txtbRob.Name = "txtbRob";
             txtbRob.ReadOnly = true;
-            txtbRob.Size = new Size(133, 23);
+            txtbRob.Size = new Size(131, 23);
             txtbRob.TabIndex = 0;
             txtbRob.TextAlign = HorizontalAlignment.Center;
             // 
             // txtbName
             // 
             txtbName.Dock = DockStyle.Fill;
-            txtbName.Location = new Point(142, 3);
+            txtbName.Location = new Point(140, 3);
             txtbName.Name = "txtbName";
             txtbName.ReadOnly = true;
-            txtbName.Size = new Size(133, 23);
+            txtbName.Size = new Size(131, 23);
             txtbName.TabIndex = 1;
             txtbName.TextAlign = HorizontalAlignment.Center;
             // 
             // txtbQty
             // 
             txtbQty.Dock = DockStyle.Fill;
-            txtbQty.Location = new Point(420, 3);
+            txtbQty.Location = new Point(414, 3);
             txtbQty.Name = "txtbQty";
             txtbQty.ReadOnly = true;
-            txtbQty.Size = new Size(133, 23);
+            txtbQty.Size = new Size(131, 23);
             txtbQty.TabIndex = 2;
             txtbQty.TextAlign = HorizontalAlignment.Center;
             // 
             // txtbStatus
             // 
             txtbStatus.Dock = DockStyle.Fill;
-            txtbStatus.Location = new Point(559, 3);
+            txtbStatus.Location = new Point(551, 3);
             txtbStatus.Name = "txtbStatus";
             txtbStatus.ReadOnly = true;
-            txtbStatus.Size = new Size(135, 23);
+            txtbStatus.Size = new Size(134, 23);
             txtbStatus.TabIndex = 3;
             txtbStatus.TextAlign = HorizontalAlignment.Center;
             // 
@@ -292,7 +292,7 @@
             txtbInputIPN.Location = new Point(3, 30);
             txtbInputIPN.Name = "txtbInputIPN";
             txtbInputIPN.PlaceholderText = "Filter by IPN";
-            txtbInputIPN.Size = new Size(133, 23);
+            txtbInputIPN.Size = new Size(131, 23);
             txtbInputIPN.TabIndex = 4;
             txtbInputIPN.TextAlign = HorizontalAlignment.Center;
             txtbInputIPN.KeyDown += txtbInputIPN_KeyDown;
@@ -300,40 +300,40 @@
             // textBox2
             // 
             textBox2.Dock = DockStyle.Fill;
-            textBox2.Location = new Point(142, 30);
+            textBox2.Location = new Point(140, 30);
             textBox2.Name = "textBox2";
             textBox2.PlaceholderText = "Filter by MFPN";
-            textBox2.Size = new Size(133, 23);
+            textBox2.Size = new Size(131, 23);
             textBox2.TabIndex = 4;
             textBox2.TextAlign = HorizontalAlignment.Center;
             // 
             // textBox3
             // 
             textBox3.Dock = DockStyle.Fill;
-            textBox3.Location = new Point(281, 30);
+            textBox3.Location = new Point(277, 30);
             textBox3.Name = "textBox3";
             textBox3.PlaceholderText = "Filter by Description";
-            textBox3.Size = new Size(133, 23);
+            textBox3.Size = new Size(131, 23);
             textBox3.TabIndex = 4;
             textBox3.TextAlign = HorizontalAlignment.Center;
             // 
             // textBox4
             // 
             textBox4.Dock = DockStyle.Fill;
-            textBox4.Location = new Point(420, 30);
+            textBox4.Location = new Point(414, 30);
             textBox4.Name = "textBox4";
             textBox4.PlaceholderText = "Filter by ALT";
-            textBox4.Size = new Size(133, 23);
+            textBox4.Size = new Size(131, 23);
             textBox4.TabIndex = 4;
             textBox4.TextAlign = HorizontalAlignment.Center;
             // 
             // txtbRev
             // 
             txtbRev.Dock = DockStyle.Fill;
-            txtbRev.Location = new Point(281, 3);
+            txtbRev.Location = new Point(277, 3);
             txtbRev.Name = "txtbRev";
             txtbRev.ReadOnly = true;
-            txtbRev.Size = new Size(133, 23);
+            txtbRev.Size = new Size(131, 23);
             txtbRev.TabIndex = 5;
             txtbRev.TextAlign = HorizontalAlignment.Center;
             // 
@@ -343,7 +343,7 @@
             txtbINPUTqty.Location = new Point(3, 57);
             txtbINPUTqty.Name = "txtbINPUTqty";
             txtbINPUTqty.PlaceholderText = "Input Qty";
-            txtbINPUTqty.Size = new Size(133, 23);
+            txtbINPUTqty.Size = new Size(131, 23);
             txtbINPUTqty.TabIndex = 6;
             txtbINPUTqty.TextAlign = HorizontalAlignment.Center;
             txtbINPUTqty.KeyDown += txtbINPUTqty_KeyDown;
@@ -353,9 +353,9 @@
             // 
             btnGetMFNs.Dock = DockStyle.Fill;
             btnGetMFNs.Font = new Font("Segoe UI", 7F);
-            btnGetMFNs.Location = new Point(142, 57);
+            btnGetMFNs.Location = new Point(140, 57);
             btnGetMFNs.Name = "btnGetMFNs";
-            btnGetMFNs.Size = new Size(133, 22);
+            btnGetMFNs.Size = new Size(131, 22);
             btnGetMFNs.TabIndex = 7;
             btnGetMFNs.Text = "GET MFPNs";
             btnGetMFNs.UseVisualStyleBackColor = true;
@@ -365,18 +365,18 @@
             // progressBar1
             // 
             progressBar1.Dock = DockStyle.Fill;
-            progressBar1.Location = new Point(559, 30);
+            progressBar1.Location = new Point(551, 30);
             progressBar1.Name = "progressBar1";
-            progressBar1.Size = new Size(135, 21);
+            progressBar1.Size = new Size(134, 21);
             progressBar1.TabIndex = 8;
             // 
             // lblProgress
             // 
             lblProgress.AutoSize = true;
             lblProgress.Dock = DockStyle.Fill;
-            lblProgress.Location = new Point(559, 54);
+            lblProgress.Location = new Point(551, 54);
             lblProgress.Name = "lblProgress";
-            lblProgress.Size = new Size(135, 28);
+            lblProgress.Size = new Size(134, 28);
             lblProgress.TabIndex = 9;
             lblProgress.TextAlign = ContentAlignment.MiddleCenter;
             // 
@@ -384,9 +384,9 @@
             // 
             lblSim.AutoSize = true;
             lblSim.Dock = DockStyle.Fill;
-            lblSim.Location = new Point(420, 54);
+            lblSim.Location = new Point(414, 54);
             lblSim.Name = "lblSim";
-            lblSim.Size = new Size(133, 28);
+            lblSim.Size = new Size(131, 28);
             lblSim.TabIndex = 10;
             lblSim.TextAlign = ContentAlignment.MiddleCenter;
             // 
@@ -394,9 +394,9 @@
             // 
             btnGetWHstock.Dock = DockStyle.Fill;
             btnGetWHstock.Font = new Font("Segoe UI", 7F);
-            btnGetWHstock.Location = new Point(281, 57);
+            btnGetWHstock.Location = new Point(277, 57);
             btnGetWHstock.Name = "btnGetWHstock";
-            btnGetWHstock.Size = new Size(133, 22);
+            btnGetWHstock.Size = new Size(131, 22);
             btnGetWHstock.TabIndex = 11;
             btnGetWHstock.Text = "GET WH stock";
             btnGetWHstock.UseVisualStyleBackColor = true;
@@ -412,7 +412,7 @@
             dgwBom.Name = "dgwBom";
             dgwBom.ReadOnly = true;
             tableLayoutPanel1.SetRowSpan(dgwBom, 3);
-            dgwBom.Size = new Size(703, 566);
+            dgwBom.Size = new Size(694, 473);
             dgwBom.TabIndex = 3;
             dgwBom.CellClick += dgwBom_CellClick;
             // 
@@ -426,7 +426,7 @@
             tableLayoutPanel4.Controls.Add(txtbLog, 0, 1);
             tableLayoutPanel4.Controls.Add(btnInStock, 0, 0);
             tableLayoutPanel4.Dock = DockStyle.Fill;
-            tableLayoutPanel4.Location = new Point(712, 3);
+            tableLayoutPanel4.Location = new Point(703, 3);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 2;
             tableLayoutPanel1.SetRowSpan(tableLayoutPanel4, 3);
@@ -434,16 +434,16 @@
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 81.60919F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Absolute, 31F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel4.Size = new Size(467, 239);
+            tableLayoutPanel4.Size = new Size(462, 239);
             tableLayoutPanel4.TabIndex = 6;
             // 
             // lblPing
             // 
             lblPing.AutoSize = true;
             lblPing.Dock = DockStyle.Fill;
-            lblPing.Location = new Point(236, 0);
+            lblPing.Location = new Point(234, 0);
             lblPing.Name = "lblPing";
-            lblPing.Size = new Size(228, 43);
+            lblPing.Size = new Size(225, 43);
             lblPing.TabIndex = 5;
             lblPing.Text = "tProc";
             lblPing.TextAlign = ContentAlignment.MiddleCenter;
@@ -454,7 +454,7 @@
             txtbLog.Dock = DockStyle.Fill;
             txtbLog.Location = new Point(3, 46);
             txtbLog.Name = "txtbLog";
-            txtbLog.Size = new Size(461, 190);
+            txtbLog.Size = new Size(456, 190);
             txtbLog.TabIndex = 6;
             txtbLog.Text = "";
             // 
@@ -463,7 +463,7 @@
             btnInStock.Dock = DockStyle.Fill;
             btnInStock.Location = new Point(3, 3);
             btnInStock.Name = "btnInStock";
-            btnInStock.Size = new Size(227, 37);
+            btnInStock.Size = new Size(225, 37);
             btnInStock.TabIndex = 7;
             btnInStock.Text = "IN STOCK";
             btnInStock.UseVisualStyleBackColor = true;
@@ -475,9 +475,9 @@
             tableLayoutPanel1.SetColumnSpan(groupBox2, 2);
             groupBox2.Controls.Add(tableLayoutPanel5);
             groupBox2.Dock = DockStyle.Fill;
-            groupBox2.Location = new Point(712, 653);
+            groupBox2.Location = new Point(703, 579);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(467, 96);
+            groupBox2.Size = new Size(462, 77);
             groupBox2.TabIndex = 7;
             groupBox2.TabStop = false;
             groupBox2.Text = "Comments";
@@ -496,7 +496,7 @@
             tableLayoutPanel5.RowCount = 2;
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel5.Size = new Size(461, 74);
+            tableLayoutPanel5.Size = new Size(456, 55);
             tableLayoutPanel5.TabIndex = 0;
             // 
             // rtxtbComments
@@ -505,7 +505,7 @@
             rtxtbComments.Location = new Point(3, 3);
             rtxtbComments.Name = "rtxtbComments";
             tableLayoutPanel5.SetRowSpan(rtxtbComments, 2);
-            rtxtbComments.Size = new Size(327, 68);
+            rtxtbComments.Size = new Size(323, 49);
             rtxtbComments.TabIndex = 0;
             rtxtbComments.Text = "";
             rtxtbComments.Enter += rtxtbComments_Enter;
@@ -514,9 +514,9 @@
             // btnSaveComments
             // 
             btnSaveComments.Dock = DockStyle.Fill;
-            btnSaveComments.Location = new Point(336, 40);
+            btnSaveComments.Location = new Point(332, 30);
             btnSaveComments.Name = "btnSaveComments";
-            btnSaveComments.Size = new Size(122, 31);
+            btnSaveComments.Size = new Size(121, 22);
             btnSaveComments.TabIndex = 1;
             btnSaveComments.Text = "SET Comments";
             btnSaveComments.UseVisualStyleBackColor = true;
@@ -525,9 +525,9 @@
             // btnGetComms
             // 
             btnGetComms.Dock = DockStyle.Fill;
-            btnGetComms.Location = new Point(336, 3);
+            btnGetComms.Location = new Point(332, 3);
             btnGetComms.Name = "btnGetComms";
-            btnGetComms.Size = new Size(122, 31);
+            btnGetComms.Size = new Size(121, 21);
             btnGetComms.TabIndex = 2;
             btnGetComms.Text = "GET Comments";
             btnGetComms.UseVisualStyleBackColor = true;
@@ -541,12 +541,12 @@
             tableLayoutPanel6.Controls.Add(gbxIPNstockMovements, 0, 1);
             tableLayoutPanel6.Controls.Add(groupBox3, 0, 0);
             tableLayoutPanel6.Dock = DockStyle.Fill;
-            tableLayoutPanel6.Location = new Point(712, 248);
+            tableLayoutPanel6.Location = new Point(703, 248);
             tableLayoutPanel6.Name = "tableLayoutPanel6";
             tableLayoutPanel6.RowCount = 2;
             tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 40F));
             tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 60F));
-            tableLayoutPanel6.Size = new Size(467, 399);
+            tableLayoutPanel6.Size = new Size(462, 325);
             tableLayoutPanel6.TabIndex = 8;
             // 
             // gbxIPNstockMovements
@@ -555,9 +555,9 @@
             tableLayoutPanel6.SetColumnSpan(gbxIPNstockMovements, 2);
             gbxIPNstockMovements.Controls.Add(dgwIPNmoves);
             gbxIPNstockMovements.Dock = DockStyle.Fill;
-            gbxIPNstockMovements.Location = new Point(3, 162);
+            gbxIPNstockMovements.Location = new Point(3, 133);
             gbxIPNstockMovements.Name = "gbxIPNstockMovements";
-            gbxIPNstockMovements.Size = new Size(461, 234);
+            gbxIPNstockMovements.Size = new Size(456, 189);
             gbxIPNstockMovements.TabIndex = 4;
             gbxIPNstockMovements.TabStop = false;
             gbxIPNstockMovements.Text = "Stock Movements";
@@ -571,7 +571,7 @@
             dgwIPNmoves.Location = new Point(3, 19);
             dgwIPNmoves.Name = "dgwIPNmoves";
             dgwIPNmoves.ReadOnly = true;
-            dgwIPNmoves.Size = new Size(455, 212);
+            dgwIPNmoves.Size = new Size(450, 167);
             dgwIPNmoves.TabIndex = 0;
             // 
             // groupBox3
@@ -580,7 +580,7 @@
             groupBox3.Dock = DockStyle.Fill;
             groupBox3.Location = new Point(3, 3);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(461, 153);
+            groupBox3.Size = new Size(456, 124);
             groupBox3.TabIndex = 5;
             groupBox3.TabStop = false;
             groupBox3.Text = "IN STOCK";
@@ -594,14 +594,14 @@
             dgwINSTOCK.Location = new Point(3, 19);
             dgwINSTOCK.Name = "dgwINSTOCK";
             dgwINSTOCK.ReadOnly = true;
-            dgwINSTOCK.Size = new Size(455, 131);
+            dgwINSTOCK.Size = new Size(450, 102);
             dgwINSTOCK.TabIndex = 0;
             // 
             // FrmPriorityBom
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1182, 752);
+            ClientSize = new Size(1168, 659);
             Controls.Add(tableLayoutPanel1);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FrmPriorityBom";

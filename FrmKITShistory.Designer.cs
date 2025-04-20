@@ -639,14 +639,14 @@
             dataGridView1.AllowUserToAddRows = false;
             dataGridView1.AllowUserToDeleteRows = false;
             dataGridViewCellStyle1.BackColor = Color.DarkGray;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             dataGridViewCellStyle1.ForeColor = Color.White;
             dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             dataGridView1.BackgroundColor = SystemColors.ControlDarkDark;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = Color.DarkGray;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             dataGridViewCellStyle2.ForeColor = Color.White;
             dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
             dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
@@ -657,7 +657,6 @@
             dataGridView1.MultiSelect = false;
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
-            dataGridView1.RowTemplate.Height = 25;
             dataGridView1.Size = new Size(1239, 115);
             dataGridView1.TabIndex = 0;
             dataGridView1.CellClick += dataGridView1_CellClick;
@@ -713,7 +712,6 @@
             // 
             btnPrintSticker.AutoSize = true;
             btnPrintSticker.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            btnPrintSticker.BackgroundImage = (Image)resources.GetObject("btnPrintSticker.BackgroundImage");
             btnPrintSticker.BackgroundImageLayout = ImageLayout.Stretch;
             btnPrintSticker.Dock = DockStyle.Fill;
             btnPrintSticker.Location = new Point(978, 3);
@@ -759,7 +757,7 @@
             // txtbQty
             // 
             txtbQty.Dock = DockStyle.Fill;
-            txtbQty.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
+            txtbQty.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             txtbQty.Location = new Point(588, 18);
             txtbQty.Name = "txtbQty";
             txtbQty.PlaceholderText = "Input QTY";

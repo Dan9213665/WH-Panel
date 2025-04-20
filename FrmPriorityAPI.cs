@@ -1195,7 +1195,13 @@ namespace WH_Panel
                             {
                                 foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
                                 {
-                                    dataGridView2.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "");
+                                    if (trans.DOCDES != "קיזוז אוטומטי") 
+                                    {
+                                        dataGridView2.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "");
+                                    }
+                                        
+
+                                    
                                 }
                             }
                             groupBox4.Text = $"Stock Movements for {partName}";
@@ -3248,6 +3254,7 @@ namespace WH_Panel
         (r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("ROB") == true ||
          r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("RD") == true ||
          r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("SH") == true ||
+         r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("WR") == true ||
          r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("IC") == true) &&
         (r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("IC") == true
             ? Math.Abs(Convert.ToInt32(r.Cells["TQUANT"].Value)) == Math.Abs(Convert.ToInt32(row.Cells["TQUANT"].Value))
