@@ -3268,10 +3268,93 @@ namespace WH_Panel
                 //                }
                 //            }
 
+                //var currentStockRows = new List<DataGridViewRow>();
+                //var processedRows = new HashSet<DataGridViewRow>(); // To track rows that have been matched
+
+                //foreach (DataGridViewRow row in dataGridView.Rows)
+                //{
+                //    if (row.Cells["DOCDES"].Value.ToString() == "קיזוז אוטומטי")
+                //    {
+                //        continue;
+                //    }
+
+                //    string rowDocType = row.Cells["LOGDOCNO"].Value?.ToString() ?? string.Empty;
+
+                //    if (rowDocType.StartsWith("GR") && int.TryParse(row.Cells["TQUANT"].Value?.ToString(), out int balanceValue) && balanceValue > 0)
+                //    {
+                //        // Check if this row has a matching outgoing movement
+                //        bool hasOutgoingMovement = false;
+
+                //        foreach (DataGridViewRow potentialMatch in dataGridView.Rows)
+                //        {
+                //            if (processedRows.Contains(potentialMatch)) continue; // Skip already processed rows
+
+                //            string potentialDocType = potentialMatch.Cells["LOGDOCNO"].Value?.ToString() ?? string.Empty;
+
+                //            if ((potentialDocType.StartsWith("ROB") || potentialDocType.StartsWith("RD") || potentialDocType.StartsWith("SH") ||
+                //                 potentialDocType.StartsWith("WR") || potentialDocType.StartsWith("IC")) &&
+                //                int.TryParse(potentialMatch.Cells["TQUANT"].Value?.ToString(), out int potentialBalanceValue))
+                //            {
+                //                // Special handling for "IC" type
+                //                if (potentialDocType.StartsWith("IC") &&
+                //                    Math.Abs(potentialBalanceValue) == Math.Abs(balanceValue))
+                //                {
+                //                    hasOutgoingMovement = true;
+                //                    processedRows.Add(potentialMatch); // Mark as processed
+                //                    break;
+                //                }
+                //                else if (potentialBalanceValue == balanceValue)
+                //                {
+                //                    hasOutgoingMovement = true;
+                //                    processedRows.Add(potentialMatch); // Mark as processed
+                //                    break;
+                //                }
+                //            }
+                //        }
+                //        if (!hasOutgoingMovement)
+                //        {
+                //            currentStockRows.Add(row);
+                //        }
+                //        else
+                //        {
+                //            processedRows.Add(row); // Mark the current row as processed
+                //        }
+                //    }
+                //}
+
+
+
+
                 var currentStockRows = new List<DataGridViewRow>();
                 var processedRows = new HashSet<DataGridViewRow>(); // To track rows that have been matched
 
-                foreach (DataGridViewRow row in dataGridView.Rows)
+                // Step 1: Order rows by date
+                var sortedRows = dataGridView.Rows.Cast<DataGridViewRow>()
+                    .OrderBy(row => DateTime.Parse(row.Cells["UDATE"].Value?.ToString() ?? DateTime.MinValue.ToString()))
+                    .ToList();
+
+                // Step 2: Find the "IC" document and filter out rows before its date
+                DateTime? icDate = null;
+                foreach (var row in sortedRows)
+                {
+                    string rowDocType = row.Cells["LOGDOCNO"].Value?.ToString() ?? string.Empty;
+                    if (rowDocType.StartsWith("IC"))
+                    {
+                        icDate = DateTime.Parse(row.Cells["UDATE"].Value?.ToString() ?? DateTime.MinValue.ToString());
+                        break; // Only consider the first "IC" document
+                    }
+                }
+
+                // Filter out rows that occurred before the "IC" document
+                if (icDate.HasValue)
+                {
+                    sortedRows = sortedRows
+                        .Where(row => DateTime.Parse(row.Cells["UDATE"].Value?.ToString() ?? DateTime.MinValue.ToString()) >= icDate.Value)
+                        .ToList();
+                }
+
+                // Step 3: Process the remaining rows
+                foreach (var row in sortedRows)
                 {
                     if (row.Cells["DOCDES"].Value.ToString() == "קיזוז אוטומטי")
                     {
@@ -3285,7 +3368,7 @@ namespace WH_Panel
                         // Check if this row has a matching outgoing movement
                         bool hasOutgoingMovement = false;
 
-                        foreach (DataGridViewRow potentialMatch in dataGridView.Rows)
+                        foreach (var potentialMatch in sortedRows)
                         {
                             if (processedRows.Contains(potentialMatch)) continue; // Skip already processed rows
 
@@ -3321,6 +3404,11 @@ namespace WH_Panel
                         }
                     }
                 }
+
+
+
+
+
                 foreach (var row in currentStockRows)
                 {
                     if (row.Cells["DOCDES"].Value.ToString() == "קיזוז אוטומטי")
