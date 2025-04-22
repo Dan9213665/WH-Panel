@@ -1635,8 +1635,10 @@ namespace WH_Panel
             }
 
             // Generate the SerialName (SIM00000xx format)
+            string simCount = DateTime.Now.ToString("yyMMddHHmmss");
             int rowCount = dgvBomsList.Rows.Count + 1;
-            string serialName = $"SIM{rowCount.ToString("D2")}";
+            //string serialName = $"SIM{rowCount.ToString("D2")}";
+            string serialName = $"SIM{simCount}";
 
             // Add a new row to the DataGridView
             dgvBomsList.Rows.Add(
