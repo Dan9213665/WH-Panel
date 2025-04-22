@@ -31,6 +31,10 @@
             groupBox2 = new GroupBox();
             txtbLog = new RichTextBox();
             lblLoading = new Label();
+            btnGetBOMs = new Button();
+            cmbBom = new ComboBox();
+            cmbRev = new ComboBox();
+            btnAddBom = new Button();
             tableLayoutPanel3 = new TableLayoutPanel();
             groupBox1 = new GroupBox();
             dgvBomsList = new DataGridView();
@@ -75,33 +79,35 @@
             // 
             // tableLayoutPanel2
             // 
-            tableLayoutPanel2.ColumnCount = 2;
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel2.Controls.Add(groupBox2, 0, 1);
+            tableLayoutPanel2.ColumnCount = 3;
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33333F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333359F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333359F));
+            tableLayoutPanel2.Controls.Add(groupBox2, 0, 2);
             tableLayoutPanel2.Controls.Add(lblLoading, 0, 0);
+            tableLayoutPanel2.Controls.Add(btnGetBOMs, 1, 0);
+            tableLayoutPanel2.Controls.Add(cmbBom, 2, 0);
+            tableLayoutPanel2.Controls.Add(cmbRev, 2, 1);
+            tableLayoutPanel2.Controls.Add(btnAddBom, 1, 1);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.Location = new Point(429, 3);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
-            tableLayoutPanel2.RowCount = 2;
+            tableLayoutPanel2.RowCount = 3;
             tableLayoutPanel1.SetRowSpan(tableLayoutPanel2, 2);
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 6.9730587F));
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 93.02694F));
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 5F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 5F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 90F));
             tableLayoutPanel2.Size = new Size(420, 631);
             tableLayoutPanel2.TabIndex = 3;
             // 
             // groupBox2
             // 
-            tableLayoutPanel2.SetColumnSpan(groupBox2, 2);
+            tableLayoutPanel2.SetColumnSpan(groupBox2, 3);
             groupBox2.Controls.Add(txtbLog);
             groupBox2.Dock = DockStyle.Fill;
-            groupBox2.Location = new Point(3, 47);
+            groupBox2.Location = new Point(3, 65);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(414, 581);
+            groupBox2.Size = new Size(414, 563);
             groupBox2.TabIndex = 2;
             groupBox2.TabStop = false;
             groupBox2.Text = "Log";
@@ -112,7 +118,7 @@
             txtbLog.Font = new Font("Segoe UI", 12F);
             txtbLog.Location = new Point(3, 19);
             txtbLog.Name = "txtbLog";
-            txtbLog.Size = new Size(408, 559);
+            txtbLog.Size = new Size(408, 541);
             txtbLog.TabIndex = 1;
             txtbLog.Text = "";
             // 
@@ -122,10 +128,52 @@
             lblLoading.Dock = DockStyle.Fill;
             lblLoading.Location = new Point(3, 0);
             lblLoading.Name = "lblLoading";
-            lblLoading.Size = new Size(204, 44);
+            tableLayoutPanel2.SetRowSpan(lblLoading, 2);
+            lblLoading.Size = new Size(133, 62);
             lblLoading.TabIndex = 3;
             lblLoading.Text = "Loading";
             lblLoading.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // btnGetBOMs
+            // 
+            btnGetBOMs.Dock = DockStyle.Fill;
+            btnGetBOMs.Location = new Point(142, 3);
+            btnGetBOMs.Name = "btnGetBOMs";
+            btnGetBOMs.Size = new Size(134, 25);
+            btnGetBOMs.TabIndex = 4;
+            btnGetBOMs.Text = "GET BOMS";
+            btnGetBOMs.UseVisualStyleBackColor = true;
+            btnGetBOMs.Click += btnGetBOMs_Click;
+            // 
+            // cmbBom
+            // 
+            cmbBom.Dock = DockStyle.Fill;
+            cmbBom.FormattingEnabled = true;
+            cmbBom.Location = new Point(282, 3);
+            cmbBom.Name = "cmbBom";
+            cmbBom.Size = new Size(135, 23);
+            cmbBom.TabIndex = 5;
+            cmbBom.SelectedIndexChanged += cmbBom_SelectedIndexChanged;
+            // 
+            // cmbRev
+            // 
+            cmbRev.Dock = DockStyle.Fill;
+            cmbRev.FormattingEnabled = true;
+            cmbRev.Location = new Point(282, 34);
+            cmbRev.Name = "cmbRev";
+            cmbRev.Size = new Size(135, 23);
+            cmbRev.TabIndex = 6;
+            // 
+            // btnAddBom
+            // 
+            btnAddBom.Dock = DockStyle.Fill;
+            btnAddBom.Location = new Point(142, 34);
+            btnAddBom.Name = "btnAddBom";
+            btnAddBom.Size = new Size(134, 25);
+            btnAddBom.TabIndex = 7;
+            btnAddBom.Text = "Add Bom to Sim";
+            btnAddBom.UseVisualStyleBackColor = true;
+            btnAddBom.Click += btnAddBom_Click;
             // 
             // tableLayoutPanel3
             // 
@@ -166,7 +214,6 @@
             dgvBomsList.MultiSelect = false;
             dgvBomsList.Name = "dgvBomsList";
             dgvBomsList.ReadOnly = true;
-            dgvBomsList.RowTemplate.Height = 25;
             dgvBomsList.Size = new Size(408, 477);
             dgvBomsList.TabIndex = 0;
             // 
@@ -376,5 +423,9 @@
         private Button btnByKit;
         private Button btnAwaitingComp;
         private Button btnNotSentYet;
+        private Button btnGetBOMs;
+        private ComboBox cmbBom;
+        private ComboBox cmbRev;
+        private Button btnAddBom;
     }
 }

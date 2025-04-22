@@ -155,7 +155,7 @@ namespace WH_Panel
             txtbLog.SelectionStart = txtbLog.TextLength;
             txtbLog.SelectionLength = 0;
             txtbLog.SelectionColor = color;
-            txtbLog.AppendText(message);
+            txtbLog.AppendText(message + "\n");
             txtbLog.SelectionColor = txtbLog.ForeColor; // Reset the color to default
             txtbLog.ScrollToCaret();
         }
@@ -503,44 +503,107 @@ namespace WH_Panel
             }
             foreach (var workOrder in selectedWorkOrders)
             {
-                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{workOrder.SERIALNAME}'&$expand=TRANSORDER_K_SUBFORM";
-                using (HttpClient client = new HttpClient())
+                if (workOrder.SERIALNAME.StartsWith("ROB"))
                 {
-                    try
+
+                    string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{workOrder.SERIALNAME}'&$expand=TRANSORDER_K_SUBFORM";
+                    using (HttpClient client = new HttpClient())
                     {
-                        AppendLogMessage($"Retrieving data for {workOrder.SERIALNAME} \n", Color.Yellow);
-                        client.DefaultRequestHeaders.Accept.Clear();
-                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-                        HttpResponseMessage response = await client.GetAsync(url);
-                        response.EnsureSuccessStatusCode();
-                        string responseBody = await response.Content.ReadAsStringAsync();
-                        var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-                        var transOrders = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
-                        foreach (var transOrder in transOrders)
+                        try
                         {
-                            if (ipnQuantities.ContainsKey(transOrder.PARTNAME))
+                            AppendLogMessage($"Retrieving data for {workOrder.SERIALNAME} \n", Color.Yellow);
+                            client.DefaultRequestHeaders.Accept.Clear();
+                            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                            HttpResponseMessage response = await client.GetAsync(url);
+                            response.EnsureSuccessStatusCode();
+                            string responseBody = await response.Content.ReadAsStringAsync();
+                            var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+                            var transOrders = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
+                            foreach (var transOrder in transOrders)
                             {
-                                ipnQuantities[transOrder.PARTNAME] += transOrder.QUANT;
+                                if (ipnQuantities.ContainsKey(transOrder.PARTNAME))
+                                {
+                                    ipnQuantities[transOrder.PARTNAME] += transOrder.QUANT;
+                                }
+                                else
+                                {
+                                    ipnQuantities[transOrder.PARTNAME] = transOrder.QUANT;
+                                    ipnCQuantities[transOrder.PARTNAME] = transOrder.CQUANT;
+                                }
                             }
-                            else
-                            {
-                                ipnQuantities[transOrder.PARTNAME] = transOrder.QUANT;
-                                ipnCQuantities[transOrder.PARTNAME] = transOrder.CQUANT;
-                            }
+                            AppendLogMessage($"Loaded data for {workOrder.SERIALNAME} \n", Color.Green);
                         }
-                        AppendLogMessage($"Loaded data for {workOrder.SERIALNAME} \n", Color.Green);
-                    }
-                    catch (HttpRequestException ex)
-                    {
-                        AppendLogMessage($"Request error: {ex.Message} \n", Color.Red);
-                    }
-                    catch (Exception ex)
-                    {
-                        AppendLogMessage($"Request error: {ex.Message}\n", Color.Red);
+                        catch (HttpRequestException ex)
+                        {
+                            AppendLogMessage($"Request error: {ex.Message} \n", Color.Red);
+                        }
+                        catch (Exception ex)
+                        {
+                            AppendLogMessage($"Request error: {ex.Message}\n", Color.Red);
+                        }
                     }
                 }
+                else if (workOrder.SERIALNAME.StartsWith("SIM"))
+                {
+                    // Construct the API URL for the SIM work order
+                    string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART('{workOrder.PARTNAME}')/REVISIONS_SUBFORM?$filter=REVNUM eq '{workOrder.REVNUM}'&$expand=REVPARTARC_SUBFORM";
+
+                    using (HttpClient client = new HttpClient())
+                    {
+                        try
+                        {
+                            AppendLogMessage($"Retrieving BOM data for SIM work order '{workOrder.SERIALNAME}' \n", Color.Yellow);
+
+                            // Set the request headers
+                            client.DefaultRequestHeaders.Accept.Clear();
+                            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                            // Make the HTTP GET request
+                            HttpResponseMessage response = await client.GetAsync(url);
+                            response.EnsureSuccessStatusCode();
+
+                            // Read the response content
+                            string responseBody = await response.Content.ReadAsStringAsync();
+
+                            // Parse the JSON response
+                            var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+                            var bomItems = apiResponse["value"].First["REVPARTARC_SUBFORM"].ToObject<List<JObject>>();
+
+                            // Process each BOM item
+                            foreach (var item in bomItems)
+                            {
+                                string partName = item["SONNAME"].ToString();
+                                double sonQuant = item["SONQUANT"].ToObject<double>();
+                                int totalRequired = (int)(sonQuant * workOrder.QUANT); // Multiply SONQUANT by the Quant column value
+
+                                if (ipnQuantities.ContainsKey(partName))
+                                {
+                                    ipnQuantities[partName] -= totalRequired;
+                                }
+                                else
+                                {
+                                    ipnQuantities[partName] = 0;
+                                    ipnCQuantities[partName] = totalRequired; // Initialize consumed quantity as 0
+                                }
+                            }
+
+                            AppendLogMessage($"Loaded BOM data for SIM work order '{workOrder.SERIALNAME}' \n", Color.Green);
+                        }
+                        catch (HttpRequestException ex)
+                        {
+                            AppendLogMessage($"Request error for SIM work order '{workOrder.SERIALNAME}': {ex.Message} \n", Color.Red);
+                        }
+                        catch (Exception ex)
+                        {
+                            AppendLogMessage($"Error processing SIM work order '{workOrder.SERIALNAME}': {ex.Message} \n", Color.Red);
+                        }
+                    }
+                }
+
             }
             // Calculate the balance for each PARTNAME
             var ipnBalances = new Dictionary<string, int>();
@@ -1238,5 +1301,175 @@ namespace WH_Panel
                 button.BackColor = color;
             }
         }
+
+        private async void btnGetBOMs_Click(object sender, EventArgs e)
+        {
+            cmbBom.Items.Clear();
+
+            if (cmbWarehouses.SelectedItem == null)
+            {
+                AppendLogMessage("Please select a warehouse first.", Color.Red);
+                return;
+            }
+
+            // Extract the first 3 characters of the selected warehouse name
+            string warehousePrefix = cmbWarehouses.SelectedItem.ToString().Substring(0, 3);
+
+            // Construct the API URL
+            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART?$filter=PARTNAME eq '{warehousePrefix}*' AND TYPE eq 'P'";
+
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    // Set the request headers
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                    // Make the HTTP GET request
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
+
+                    // Read the response content
+                    string responseBody = await response.Content.ReadAsStringAsync();
+
+                    // Parse the JSON response
+                    var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+                    var boms = apiResponse["value"].Select(b => b["PARTNAME"].ToString()).ToList();
+
+                    // Populate the ComboBox with the BOMs
+                    cmbBom.Items.Clear();
+                    foreach (var bom in boms)
+                    {
+                        cmbBom.Items.Add(bom);
+                    }
+
+                    if (boms.Count > 0)
+                    {
+                        cmbBom.DroppedDown = true; // Open the dropdown for user selection
+                        AppendLogMessage($"{boms.Count} BOMs loaded successfully.", Color.Green);
+                    }
+                    else
+                    {
+                        AppendLogMessage("No BOMs found for the selected warehouse.", Color.Orange);
+                    }
+                }
+                catch (HttpRequestException ex)
+                {
+                    AppendLogMessage($"Request error: {ex.Message}", Color.Red);
+                }
+                catch (Exception ex)
+                {
+                    AppendLogMessage($"An error occurred: {ex.Message}", Color.Red);
+                }
+            }
+        }
+
+        private async void cmbBom_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            cmbRev.Items.Clear(); // Clear previous revisions
+
+            if (cmbBom.SelectedItem == null)
+            {
+                AppendLogMessage("Please select a BOM first.", Color.Red);
+                return;
+            }
+
+            // Get the selected BOM
+            string selectedBom = cmbBom.SelectedItem.ToString();
+
+            // Construct the API URL
+            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART('{selectedBom}')/REVISIONS_SUBFORM?$filter=REVNUM eq '*'";
+
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    // Set the request headers
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                    // Make the HTTP GET request
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
+
+                    // Read the response content
+                    string responseBody = await response.Content.ReadAsStringAsync();
+
+                    // Parse the JSON response
+                    var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+                    var revisions = apiResponse["value"].Select(r => r["REVNUM"].ToString()).ToList();
+
+                    // Populate the ComboBox with the revisions
+                    foreach (var revision in revisions)
+                    {
+                        cmbRev.Items.Add(revision);
+                    }
+
+                    if (revisions.Count > 0)
+                    {
+                        cmbRev.DroppedDown = true; // Open the dropdown for user selection
+                        AppendLogMessage($"{revisions.Count} revisions loaded for BOM '{selectedBom}'.", Color.Green);
+                    }
+                    else
+                    {
+                        AppendLogMessage($"No revisions found for BOM '{selectedBom}'.", Color.Orange);
+                    }
+                }
+                catch (HttpRequestException ex)
+                {
+                    AppendLogMessage($"Request error: {ex.Message}", Color.Red);
+                }
+                catch (Exception ex)
+                {
+                    AppendLogMessage($"An error occurred: {ex.Message}", Color.Red);
+                }
+            }
+        }
+
+        private void btnAddBom_Click(object sender, EventArgs e)
+        {
+            if (cmbBom.SelectedItem == null)
+            {
+                AppendLogMessage("Please select a BOM before adding.", Color.Red);
+                return;
+            }
+
+            if (cmbRev.SelectedItem == null)
+            {
+                AppendLogMessage("Please select a revision before adding.", Color.Red);
+                return;
+            }
+
+            // Prompt the user for quantity
+            string inputQty = Microsoft.VisualBasic.Interaction.InputBox("Enter quantity for the BOM:", "Quantity Input", "1");
+            if (!int.TryParse(inputQty, out int quantity) || quantity <= 0)
+            {
+                AppendLogMessage("Invalid quantity entered. Please enter a positive number.", Color.Red);
+                return;
+            }
+
+            // Generate the SerialName (SIM00000xx format)
+            int rowCount = dgvBomsList.Rows.Count + 1;
+            string serialName = $"SIM{rowCount.ToString("D8")}";
+
+            // Add a new row to the DataGridView
+            dgvBomsList.Rows.Add(
+                false, // Selected
+                serialName, // SerialName
+                cmbBom.SelectedItem.ToString(), // PartName
+                "סימולציה", // SerialStatusDes
+                quantity, // Quant
+                cmbRev.SelectedItem.ToString(), // RevNum
+                string.Empty // Priority (can be set later if needed)
+            );
+
+            AppendLogMessage($"Added BOM '{cmbBom.SelectedItem}' with revision '{cmbRev.SelectedItem}' and quantity {quantity}.", Color.Green);
+        }
+
     }
 }
