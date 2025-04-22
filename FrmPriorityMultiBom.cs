@@ -117,7 +117,7 @@ namespace WH_Panel
                     int notClosedCount = serials.Count(serial => serial.SERIALSTATUSDES != "נסגרה");
                     if (serials.Count == 0)
                     {
-                        AppendLogMessage($"No data found for {warehouseName} - {warehouseDesc} \n", Color.Red);
+                        AppendLogMessage($"No work order data found for {warehouseName} - {warehouseDesc}", Color.Red);
                         return;
                     }
                     else
@@ -139,11 +139,11 @@ namespace WH_Panel
                 }
                 catch (HttpRequestException ex)
                 {
-                    AppendLogMessage($"Request error: {ex.Message} \n", Color.Red);
+                    AppendLogMessage($"Request error: {ex.Message}", Color.Red);
                 }
                 catch (Exception ex)
                 {
-                    AppendLogMessage($"Request error: {ex.Message}\n", Color.Red);
+                    AppendLogMessage($"Request error: {ex.Message}", Color.Red);
                 }
             }
         }
@@ -153,10 +153,11 @@ namespace WH_Panel
         }
         private void AppendLogMessage(string message, Color color)
         {
+            string datestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             txtbLog.SelectionStart = txtbLog.TextLength;
             txtbLog.SelectionLength = 0;
             txtbLog.SelectionColor = color;
-            txtbLog.AppendText(message + "\n");
+            txtbLog.AppendText(datestamp+"..."+message + "\n");
             txtbLog.SelectionColor = txtbLog.ForeColor; // Reset the color to default
             txtbLog.ScrollToCaret();
         }
@@ -378,7 +379,7 @@ namespace WH_Panel
                 int totalUniqueIPNs = tableData.Count;
                 int sufficientIPNs = tableData.Count(ipn => ipn.Value.simulation >= 0);
                 double completionPercentage = (double)sufficientIPNs / totalUniqueIPNs * 100;
-                AppendLogMessage($"Generating HTML report \n", Color.Yellow);
+                AppendLogMessage($"Generating HTML report", Color.Yellow);
                 // Generate HTML report
                 string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
                 string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\MultiKitsStatusReport_{_fileTimeStamp}.html";
@@ -476,7 +477,7 @@ namespace WH_Panel
                 {
                     try
                     {
-                        AppendLogMessage($"Retrieving data for {selectedWarehouseName} \n", Color.Yellow);
+                        AppendLogMessage($"Retrieving data for {selectedWarehouseName}", Color.Yellow);
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                         string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
@@ -490,15 +491,15 @@ namespace WH_Panel
                         {
                             warehouseStock[balance.PARTNAME] = balance.BALANCE;
                         }
-                        AppendLogMessage($"Loaded data for {selectedWarehouseName} \n", Color.Green);
+                        AppendLogMessage($"Loaded data for {selectedWarehouseName}", Color.Green);
                     }
                     catch (HttpRequestException ex)
                     {
-                        AppendLogMessage($"Request error: {ex.Message} \n", Color.Red);
+                        AppendLogMessage($"Request error: {ex.Message}", Color.Red);
                     }
                     catch (Exception ex)
                     {
-                        AppendLogMessage($"Request error: {ex.Message}\n", Color.Red);
+                        AppendLogMessage($"Request error: {ex.Message}", Color.Red);
                     }
                 }
             }
@@ -534,15 +535,15 @@ namespace WH_Panel
                                     ipnCQuantities[transOrder.PARTNAME] = transOrder.CQUANT;
                                 }
                             }
-                            AppendLogMessage($"Loaded data for {workOrder.SERIALNAME} \n", Color.Green);
+                            AppendLogMessage($"Loaded data for {workOrder.SERIALNAME}", Color.Green);
                         }
                         catch (HttpRequestException ex)
                         {
-                            AppendLogMessage($"Request error: {ex.Message} \n", Color.Red);
+                            AppendLogMessage($"Request error: {ex.Message}", Color.Red);
                         }
                         catch (Exception ex)
                         {
-                            AppendLogMessage($"Request error: {ex.Message}\n", Color.Red);
+                            AppendLogMessage($"Request error: {ex.Message}", Color.Red);
                         }
                     }
                 }
@@ -555,7 +556,7 @@ namespace WH_Panel
                     {
                         try
                         {
-                            AppendLogMessage($"Retrieving BOM data for SIM work order '{workOrder.SERIALNAME}' \n", Color.Yellow);
+                            AppendLogMessage($"Retrieving BOM data for SIM work order '{workOrder.SERIALNAME}'", Color.Yellow);
 
                             // Set the request headers
                             client.DefaultRequestHeaders.Accept.Clear();
@@ -592,15 +593,15 @@ namespace WH_Panel
                                 }
                             }
 
-                            AppendLogMessage($"Loaded BOM data for SIM work order '{workOrder.SERIALNAME}' \n", Color.Green);
+                            AppendLogMessage($"Loaded BOM data for SIM work order '{workOrder.SERIALNAME}'", Color.Green);
                         }
                         catch (HttpRequestException ex)
                         {
-                            AppendLogMessage($"Request error for SIM work order '{workOrder.SERIALNAME}': {ex.Message} \n", Color.Red);
+                            AppendLogMessage($"Request error for SIM work order '{workOrder.SERIALNAME}': {ex.Message}", Color.Red);
                         }
                         catch (Exception ex)
                         {
-                            AppendLogMessage($"Error processing SIM work order '{workOrder.SERIALNAME}': {ex.Message} \n", Color.Red);
+                            AppendLogMessage($"Error processing SIM work order '{workOrder.SERIALNAME}': {ex.Message}", Color.Red);
                         }
                     }
                 }
@@ -636,7 +637,7 @@ namespace WH_Panel
                 {
                     try
                     {
-                        AppendLogMessage($"Retrieving data for {selectedWarehouseName} \n", Color.Yellow);
+                        AppendLogMessage($"Retrieving data for {selectedWarehouseName}", Color.Yellow);
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                         string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
@@ -650,15 +651,15 @@ namespace WH_Panel
                         {
                             warehouseStock[balance.PARTNAME] = balance.BALANCE;
                         }
-                        AppendLogMessage($"Loaded data for {selectedWarehouseName} \n", Color.Green);
+                        AppendLogMessage($"Loaded data for {selectedWarehouseName}", Color.Green);
                     }
                     catch (HttpRequestException ex)
                     {
-                        AppendLogMessage($"Request error: {ex.Message} \n", Color.Red);
+                        AppendLogMessage($"Request error: {ex.Message}", Color.Red);
                     }
                     catch (Exception ex)
                     {
-                        AppendLogMessage($"Request error: {ex.Message}\n", Color.Red);
+                        AppendLogMessage($"Request error: {ex.Message}", Color.Red);
                     }
                 }
             }
@@ -669,7 +670,7 @@ namespace WH_Panel
                 {
                     try
                     {
-                        AppendLogMessage($"Retrieving data for {workOrder.SERIALNAME} \n", Color.Yellow);
+                        AppendLogMessage($"Retrieving data for {workOrder.SERIALNAME}", Color.Yellow);
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                         string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
@@ -704,15 +705,15 @@ namespace WH_Panel
                             }
                             ipnToSerials[part.Key].Add((workOrder, quant, cquant, balance, simulation));
                         }
-                        AppendLogMessage($"Loaded data for {workOrder.SERIALNAME} \n", Color.Green);
+                        AppendLogMessage($"Loaded data for {workOrder.SERIALNAME}", Color.Green);
                     }
                     catch (HttpRequestException ex)
                     {
-                        AppendLogMessage($"Request error: {ex.Message} \n", Color.Red);
+                        AppendLogMessage($"Request error: {ex.Message}", Color.Red);
                     }
                     catch (Exception ex)
                     {
-                        AppendLogMessage($"Request error: {ex.Message}\n", Color.Red);
+                        AppendLogMessage($"Request error: {ex.Message}", Color.Red);
                     }
                 }
             }
@@ -804,7 +805,7 @@ namespace WH_Panel
                 writer.WriteLine($"<h1>{reportTitle}</h1>");
                 foreach (var item in selectedWorkOrders)
                 {
-                    writer.WriteLine($"<h2>{item.SERIALNAME} - {item.PARTNAME} - {item.QUANT}PCS - {item.SERIALSTATUSDES}</h2>");
+                    writer.WriteLine($"<h2>{item.SERIALNAME} - {item.PARTNAME}_REV({item.REVNUM})_{item.QUANT}PCS - {item.SERIALSTATUSDES}</h2>");
                 }
                 int ipnsWithPositiveSimulation = tableData.Count(ipn => ipn.Value.simulation >= 0);
                 writer.WriteLine($"<h2>Unique IPNs: {ipnsWithPositiveSimulation} / {tableData.Count} ({completionPercentage:F2}%)</h2>");
