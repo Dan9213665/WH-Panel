@@ -17,6 +17,7 @@ using System.Data.SqlClient;
 using Button = System.Windows.Forms.Button;
 using Microsoft.Office.Interop.Outlook;
 using Exception = System.Exception;
+using ComboBox = System.Windows.Forms.ComboBox;
 namespace WH_Panel
 {
     public partial class FrmPriorityMultiBom : Form
@@ -1302,6 +1303,70 @@ namespace WH_Panel
             }
         }
 
+        //private async void btnGetBOMs_Click(object sender, EventArgs e)
+        //{
+        //    cmbBom.Items.Clear();
+
+        //    if (cmbWarehouses.SelectedItem == null)
+        //    {
+        //        AppendLogMessage("Please select a warehouse first.", Color.Red);
+        //        return;
+        //    }
+
+        //    // Extract the first 3 characters of the selected warehouse name
+        //    string warehousePrefix = cmbWarehouses.SelectedItem.ToString().Substring(0, 3);
+
+        //    // Construct the API URL
+        //    string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART?$filter=PARTNAME eq '{warehousePrefix}*' AND TYPE eq 'P'";
+
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        try
+        //        {
+        //            // Set the request headers
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+        //            // Make the HTTP GET request
+        //            HttpResponseMessage response = await client.GetAsync(url);
+        //            response.EnsureSuccessStatusCode();
+
+        //            // Read the response content
+        //            string responseBody = await response.Content.ReadAsStringAsync();
+
+        //            // Parse the JSON response
+        //            var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+        //            var boms = apiResponse["value"].Select(b => b["PARTNAME"].ToString()).ToList();
+
+        //            // Populate the ComboBox with the BOMs
+        //            cmbBom.Items.Clear();
+        //            foreach (var bom in boms)
+        //            {
+        //                cmbBom.Items.Add(bom);
+        //            }
+
+        //            if (boms.Count > 0)
+        //            {
+        //                cmbBom.DroppedDown = true; // Open the dropdown for user selection
+        //                AppendLogMessage($"{boms.Count} BOMs loaded successfully.", Color.Green);
+        //            }
+        //            else
+        //            {
+        //                AppendLogMessage("No BOMs found for the selected warehouse.", Color.Orange);
+        //            }
+        //        }
+        //        catch (HttpRequestException ex)
+        //        {
+        //            AppendLogMessage($"Request error: {ex.Message}", Color.Red);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            AppendLogMessage($"An error occurred: {ex.Message}", Color.Red);
+        //        }
+        //    }
+        //}
         private async void btnGetBOMs_Click(object sender, EventArgs e)
         {
             cmbBom.Items.Clear();
@@ -1346,6 +1411,13 @@ namespace WH_Panel
                         cmbBom.Items.Add(bom);
                     }
 
+                    // Enable autocomplete
+                    cmbBom.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                    cmbBom.AutoCompleteSource = AutoCompleteSource.CustomSource;
+                    var autoCompleteCollection = new AutoCompleteStringCollection();
+                    autoCompleteCollection.AddRange(boms.ToArray());
+                    cmbBom.AutoCompleteCustomSource = autoCompleteCollection;
+
                     if (boms.Count > 0)
                     {
                         cmbBom.DroppedDown = true; // Open the dropdown for user selection
@@ -1366,6 +1438,115 @@ namespace WH_Panel
                 }
             }
         }
+
+
+        //private async void btnGetBOMs_Click(object sender, EventArgs e)
+        //{
+        //    cmbBom.Items.Clear();
+
+        //    if (cmbWarehouses.SelectedItem == null)
+        //    {
+        //        AppendLogMessage("Please select a warehouse first.", Color.Red);
+        //        return;
+        //    }
+
+        //    // Extract the first 3 characters of the selected warehouse name
+        //    string warehousePrefix = cmbWarehouses.SelectedItem.ToString().Substring(0, 3);
+
+        //    // Construct the API URL
+        //    string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART?$filter=PARTNAME eq '{warehousePrefix}*' AND TYPE eq 'P'";
+
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        try
+        //        {
+        //            // Set the request headers
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+        //            // Make the HTTP GET request
+        //            HttpResponseMessage response = await client.GetAsync(url);
+        //            response.EnsureSuccessStatusCode();
+
+        //            // Read the response content
+        //            string responseBody = await response.Content.ReadAsStringAsync();
+
+        //            // Parse the JSON response
+        //            var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+        //            var boms = apiResponse["value"].Select(b => b["PARTNAME"].ToString()).ToList();
+
+        //            // Populate the ComboBox with the BOMs
+        //            cmbBom.Items.Clear();
+        //            cmbBom.Items.AddRange(boms.ToArray());
+
+        //            // Enable partial match autocomplete
+        //            EnablePartialMatchAutocomplete(cmbBom, boms);
+
+        //            if (boms.Count > 0)
+        //            {
+        //                AppendLogMessage($"{boms.Count} BOMs loaded successfully.", Color.Green);
+        //            }
+        //            else
+        //            {
+        //                AppendLogMessage("No BOMs found for the selected warehouse.", Color.Orange);
+        //            }
+        //        }
+        //        catch (HttpRequestException ex)
+        //        {
+        //            AppendLogMessage($"Request error: {ex.Message}", Color.Red);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            AppendLogMessage($"An error occurred: {ex.Message}", Color.Red);
+        //        }
+        //    }
+        //}
+
+        //private void EnablePartialMatchAutocomplete(ComboBox comboBox, List<string> items)
+        //{
+        //    EventHandler textChangedHandler = null; // Declare the handler variable
+
+        //    textChangedHandler = (sender, e) =>
+        //    {
+        //        string searchText = comboBox.Text;
+        //        if (!string.IsNullOrEmpty(searchText))
+        //        {
+        //            // Filter items that contain the search text
+        //            var filteredItems = items.Where(item => item.Contains(searchText, StringComparison.OrdinalIgnoreCase)).ToList();
+
+        //            // Temporarily disable the event to avoid recursion
+        //            comboBox.TextChanged -= textChangedHandler;
+
+        //            // Clear and re-add all items
+        //            comboBox.Items.Clear();
+        //            comboBox.Items.AddRange(items.ToArray());
+
+        //            // Highlight the filtered items
+        //            if (filteredItems.Count > 0)
+        //            {
+        //                comboBox.DroppedDown = true;
+        //                comboBox.Items.Clear();
+        //                comboBox.Items.AddRange(filteredItems.ToArray());
+        //                comboBox.SelectionStart = searchText.Length;
+        //                comboBox.SelectionLength = 0;
+        //            }
+        //            else
+        //            {
+        //                comboBox.DroppedDown = false;
+        //            }
+
+        //            // Re-enable the event
+        //            comboBox.TextChanged += textChangedHandler;
+        //        }
+        //    };
+
+        //    comboBox.TextChanged += textChangedHandler; // Attach the event handler
+        //}
+
+
+
 
         private async void cmbBom_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -1455,7 +1636,7 @@ namespace WH_Panel
 
             // Generate the SerialName (SIM00000xx format)
             int rowCount = dgvBomsList.Rows.Count + 1;
-            string serialName = $"SIM{rowCount.ToString("D8")}";
+            string serialName = $"SIM{rowCount.ToString("D2")}";
 
             // Add a new row to the DataGridView
             dgvBomsList.Rows.Add(

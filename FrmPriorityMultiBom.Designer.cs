@@ -147,6 +147,8 @@
             // 
             // cmbBom
             // 
+            cmbBom.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            cmbBom.AutoCompleteSource = AutoCompleteSource.ListItems;
             cmbBom.Dock = DockStyle.Fill;
             cmbBom.FormattingEnabled = true;
             cmbBom.Location = new Point(282, 3);
