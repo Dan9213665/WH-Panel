@@ -133,7 +133,7 @@ namespace WH_Panel
                         lblLoading.BackColor = Color.Green;
                         lblLoading.Text = "Data Loaded";
                         UpdateSelectedLabel();
-                        AppendLogMessage($"{notClosedCount} not closed Work Orders loaded for {warehouseName} - {warehouseDesc} \n", Color.Green);
+                        AppendLogMessage($"{notClosedCount} not closed Work Orders loaded for {warehouseName} - {warehouseDesc}", Color.Green);
                         SortDataGridViewByStatus();
                     }
                 }
@@ -391,6 +391,7 @@ namespace WH_Panel
                     UseShellExecute = true
                 };
                 p.Start();
+                AppendLogMessage($"Displaying HTML report in browser", Color.Green);
             }
             else
             {
@@ -746,6 +747,8 @@ namespace WH_Panel
                 writer.WriteLine(".green { background-color: green; color: white; }");
                 writer.WriteLine(".red { background-color: indianred; color: white; }");
                 writer.WriteLine(".red-balance { background-color: indianred; color: white; }");
+                writer.WriteLine(".orange { background-color: #DD571C; color: white; }");
+                writer.WriteLine(".orange-balance { background-color: #DD571C; color: white; }");
                 writer.WriteLine(".header-table td { font-size: 2em; font-weight: bold; }");
                 writer.WriteLine("</style>");
                 writer.WriteLine("<script>");
@@ -819,8 +822,19 @@ namespace WH_Panel
                 foreach (var ipn in tableData.OrderBy(x => x.Value.simulation))
                 {
                     var (balance, stock, simulation) = ipn.Value;
-                    string rowClass = simulation >= 0 ? "green" : "red";
-                    string balanceClass = balance < 0 ? "red-balance" : "";
+                    //string rowClass = simulation >= 0 ? "green" : "red";
+                    string rowClass = "red";
+                    if (simulation >= 0 && simulation <11)
+                    {
+                        rowClass = "orange";
+                    }
+                    else if (simulation >= 11)
+                    {
+                        rowClass = "green";
+                    }
+
+
+                        string balanceClass = balance < 0 ? "red-balance" : "";
                     writer.WriteLine($"<tr class='{rowClass}'>");
                     writer.WriteLine($"<td>{ipn.Key}</td>");
                     writer.WriteLine($"<td>{stock}</td>");
