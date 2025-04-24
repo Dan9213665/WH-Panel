@@ -954,7 +954,7 @@ namespace WH_Panel
                 string selectedWarehouse = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
                 string selectedWarehouseDesc = cmbWarehouseList.SelectedItem.ToString().Substring(selectedWarehouse.Length).Trim();
                 string avlUrl = $"{baseUrl}/PARTMNFONE?$filter=PARTNAME eq '{selectedWarehouse}_*'";
-                string balanceUrl = $"{baseUrl}/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouse}'&$expand=WARHSBAL_SUBFORM";
+                string balanceUrl = $"{baseUrl}/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouse}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{selectedWarehouse}*')";
                 using (HttpClient client = new HttpClient())
                 {
                     try
