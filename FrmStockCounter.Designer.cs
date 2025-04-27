@@ -255,7 +255,6 @@
             btnLoadReport.Size = new Size(246, 51);
             btnLoadReport.TabIndex = 18;
             btnLoadReport.UseVisualStyleBackColor = false;
-            btnLoadReport.Click += btnLoadReport_Click;
             btnLoadReport.MouseDown += button1_MouseDown;
             // 
             // button2

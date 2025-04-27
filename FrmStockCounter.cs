@@ -899,7 +899,9 @@ namespace WH_Panel
             // Set the correct column order for STOCK view
             SetSTOCKiewColumsOrder();
         }
-        private async void btnLoadReport_Click(object sender, EventArgs e)
+      
+
+        private async void generateReport()
         {
             // Get the current warehouse name from comboBox3
             string currentWarehouseName = comboBox3.SelectedItem?.ToString();
@@ -1111,13 +1113,51 @@ namespace WH_Panel
         {
             if (e.Button == MouseButtons.Left)
             {
-               
+               generateReport();
             }
             else if (e.Button == MouseButtons.Right)
             {
-              
+                displayCOUNTdatabase();
             }
         }
+
+        private async void displayCOUNTdatabase()
+        {
+            string currentWarehouseName = comboBox3.SelectedItem?.ToString();
+            if (string.IsNullOrEmpty(currentWarehouseName))
+            {
+                MessageBox.Show("Please select a warehouse.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Define the SQL query
+            string query = $@"
+    SELECT * 
+    FROM [{currentWarehouseName}].dbo.COUNT";
+
+            try
+            {
+                // Execute the SQL query and get the data
+                DataTable dataTable = await ExecuteSqlQueryAsync(query, currentWarehouseName);
+
+                // Generate the HTML content from the data
+                string htmlContent = GenerateHtmlReport(dataTable, $"{currentWarehouseName} COUNT Report");
+
+                // Save the HTML content to a file
+                string fileName = $"{currentWarehouseName}_COUNT_Report_{DateTime.Now:yyyyMMddHHmm}.html";
+                string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), fileName);
+                File.WriteAllText(filePath, htmlContent);
+
+                // Open the HTML file in the default browser
+                Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
         private void ShowMatchSelectionForm(List<DataGridViewRow> matchingRows)
         {
             int heightMultiplier = 160;
