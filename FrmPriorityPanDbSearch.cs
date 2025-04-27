@@ -234,6 +234,10 @@ namespace WH_Panel
         private async Task LoadDataIntoDataTable()
         {
             int currentWH = 0;
+            progressBar1.Minimum = 0;
+            progressBar1.Maximum = countOFWHs;
+            progressBar1.Value = 0;
+
             foreach (var warehouse in loadedWareHouses)
             {
                 AddLogRow($"Loading data for warehouse: {warehouse.WARHSNAME}", Color.Orange);
@@ -308,10 +312,17 @@ namespace WH_Panel
                     dataTable.Rows.Add(warehouse.WARHSNAME, balance.PARTNAME, mfpn, balance.PARTDES, balance.BALANCE, balance.CDATE.Substring(0, 10), balance.PART);
                 }
                 currentWH++;
+                progressBar1.Value = currentWH; // Update progress bar
+                                                // Calculate and display percentage
+                int percentage = (int)((currentWH / (double)countOFWHs) * 100);
+                lblProgressPercentage.Text = $"{percentage}%";
+                lblProgressPercentage.ForeColor = Color.Red;
+
                 AddLogRow($"Data loaded for warehouse: {warehouse.WARHSNAME} ({currentWH}/{countOFWHs})", Color.Green);
             }
             dataView = new DataView(dataTable);
             dgwALLDATA.DataSource = dataView;
+            lblProgressPercentage.ForeColor = Color.Green;
         }
         private void InitializeDataTable()
         {
@@ -1018,10 +1029,10 @@ namespace WH_Panel
             }
             return uDate;
         }
-        private async void btnGETMFPN_Click(object sender, EventArgs e)
-        {
-            await FetchMFPNsForAllRows();
-        }
+        //private async void btnGETMFPN_Click(object sender, EventArgs e)
+        //{
+        //    await FetchMFPNsForAllRows();
+        //}
         private async Task FetchMFPNsForAllRows()
         {
             AddLogRow("Fetching MFPNs for all rows\n", Color.Yellow);

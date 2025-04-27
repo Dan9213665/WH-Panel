@@ -41,8 +41,9 @@
             dgwINSTOCK = new DataGridView();
             groupBox6 = new GroupBox();
             dgwTRANSACTIONS = new DataGridView();
-            btnGETMFPN = new Button();
             btnClearAllFilters = new Button();
+            progressBar1 = new ProgressBar();
+            lblProgressPercentage = new Label();
             tableLayoutPanel1.SuspendLayout();
             groupBox4.SuspendLayout();
             groupBox3.SuspendLayout();
@@ -73,8 +74,9 @@
             tableLayoutPanel1.Controls.Add(txtLog, 4, 0);
             tableLayoutPanel1.Controls.Add(groupBox5, 4, 2);
             tableLayoutPanel1.Controls.Add(groupBox6, 4, 3);
-            tableLayoutPanel1.Controls.Add(btnGETMFPN, 3, 0);
             tableLayoutPanel1.Controls.Add(btnClearAllFilters, 2, 0);
+            tableLayoutPanel1.Controls.Add(progressBar1, 3, 0);
+            tableLayoutPanel1.Controls.Add(lblProgressPercentage, 3, 1);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -241,20 +243,6 @@
             dgwTRANSACTIONS.Size = new Size(478, 353);
             dgwTRANSACTIONS.TabIndex = 1;
             // 
-            // btnGETMFPN
-            // 
-            btnGETMFPN.BackgroundImage = (Image)resources.GetObject("btnGETMFPN.BackgroundImage");
-            btnGETMFPN.BackgroundImageLayout = ImageLayout.Stretch;
-            btnGETMFPN.Dock = DockStyle.Fill;
-            btnGETMFPN.Location = new Point(489, 3);
-            btnGETMFPN.Name = "btnGETMFPN";
-            tableLayoutPanel1.SetRowSpan(btnGETMFPN, 2);
-            btnGETMFPN.Size = new Size(156, 134);
-            btnGETMFPN.TabIndex = 9;
-            btnGETMFPN.UseVisualStyleBackColor = true;
-            btnGETMFPN.Visible = false;
-            btnGETMFPN.Click += btnGETMFPN_Click;
-            // 
             // btnClearAllFilters
             // 
             btnClearAllFilters.BackgroundImage = (Image)resources.GetObject("btnClearAllFilters.BackgroundImage");
@@ -268,6 +256,27 @@
             btnClearAllFilters.UseVisualStyleBackColor = true;
             btnClearAllFilters.Click += btnClearAllFilters_Click;
             // 
+            // progressBar1
+            // 
+            progressBar1.Dock = DockStyle.Fill;
+            progressBar1.Location = new Point(489, 3);
+            progressBar1.Name = "progressBar1";
+            progressBar1.Size = new Size(156, 64);
+            progressBar1.TabIndex = 11;
+            // 
+            // lblProgressPercentage
+            // 
+            lblProgressPercentage.AutoSize = true;
+            lblProgressPercentage.Dock = DockStyle.Fill;
+            lblProgressPercentage.Font = new Font("Papyrus", 27.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblProgressPercentage.ForeColor = Color.Red;
+            lblProgressPercentage.Location = new Point(489, 70);
+            lblProgressPercentage.Name = "lblProgressPercentage";
+            lblProgressPercentage.Size = new Size(156, 70);
+            lblProgressPercentage.TabIndex = 12;
+            lblProgressPercentage.Text = "Loading";
+            lblProgressPercentage.TextAlign = ContentAlignment.MiddleCenter;
+            // 
             // FrmPriorityPanDbSearch
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -280,6 +289,7 @@
             Text = "FrmPriorityPanDbSearch";
             WindowState = FormWindowState.Maximized;
             tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
             groupBox4.ResumeLayout(false);
             groupBox4.PerformLayout();
             groupBox3.ResumeLayout(false);
@@ -310,8 +320,9 @@
         private TextBox txtbIPN;
         private GroupBox groupBox5;
         private GroupBox groupBox6;
-        private Button btnGETMFPN;
         private DataGridView dgwINSTOCK;
         private Button btnClearAllFilters;
+        private ProgressBar progressBar1;
+        private Label lblProgressPercentage;
     }
 }
