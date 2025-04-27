@@ -363,7 +363,7 @@ namespace WH_Panel
         }
         public class WarehouseService
         {
-           // private static readonly string baseUrl = $"{baseUrl}";
+            // private static readonly string baseUrl = $"{baseUrl}";
             public static async Task InsertDocumentAsync(Document document, FrmPriorityAPI formInstance, AppSettings settings)
             {
                 using (HttpClient client = new HttpClient())
@@ -980,7 +980,7 @@ namespace WH_Panel
                             else
                             {
                                 // Handle duplicate keys (e.g., log a warning or update the value)
-                               // txtLog.AppendText($"Duplicate PARTNAME found: {part.PARTNAME}. Skipping...\n");
+                                // txtLog.AppendText($"Duplicate PARTNAME found: {part.PARTNAME}. Skipping...\n");
                             }
                         }
                         // Make the HTTP GET request for warehouse balance
@@ -1195,13 +1195,13 @@ namespace WH_Panel
                             {
                                 foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
                                 {
-                                    if (trans.DOCDES != "קיזוז אוטומטי") 
+                                    if (trans.DOCDES != "קיזוז אוטומטי")
                                     {
                                         dataGridView2.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "");
                                     }
-                                        
 
-                                    
+
+
                                 }
                             }
                             groupBox4.Text = $"Stock Movements for {partName}";
@@ -1930,7 +1930,7 @@ namespace WH_Panel
                 int existingPartId = await CheckIfIPNExists(partName);
                 if (existingPartId > 0)
                 {
-                   //MessageBox.Show("IPN already exists.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    //MessageBox.Show("IPN already exists.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     // IPN exists, add the new MFPN
                     await AddingAltMFPNtoIPN(existingPartId, partMFPN, partDes, partMNFName, partMNFDes);
                     await DisplayInsertedData(existingPartId);
@@ -2344,7 +2344,7 @@ namespace WH_Panel
                 string responseBody = await response.Content.ReadAsStringAsync();
                 var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseBody);
                 // Create a new form to display the data
-                if(apiResponse!=null)
+                if (apiResponse != null)
                 {
                     // Calculate the height of the popup window
                     int rowCount = apiResponse.value.Count;
@@ -3652,7 +3652,7 @@ namespace WH_Panel
         private async void btnAVL_Click(object sender, EventArgs e)
         {
             string selectedPrefix = txtbPrefix.Text.Trim();
-            var prefixExceptions = new List<string> { "Flr", "666", "400", "450", "500", "501", "550", "600", "650", "Main", "Outl", "Trn","MRB" };
+            var prefixExceptions = new List<string> { "Flr", "666", "400", "450", "500", "501", "550", "600", "650", "Main", "Outl", "Trn", "MRB" };
             // Check if the selected prefix is valid
             if (prefixExceptions.Contains(selectedPrefix))
             {
@@ -3837,16 +3837,876 @@ namespace WH_Panel
         private void txtbPrefix_TextChanged(object sender, EventArgs e)
         {
             string selectedPrefix = txtbPrefix.Text.Trim();
-            var prefixExceptions = new List<string> { "Flr", "666", "400", "450", "500", "501", "550", "600", "650", "Main", "Outl", "Trn" ,"MRB"};
+            var prefixExceptions = new List<string> { "Flr", "666", "400", "450", "500", "501", "550", "600", "650", "Main", "Outl", "Trn", "MRB" };
             // Check if the selected prefix is valid
             if (prefixExceptions.Contains(selectedPrefix))
             {
                 btnAVL.Text = "AVL";
             }
-            else {
+            else
+            {
                 // Change the button text to include the prefix
                 btnAVL.Text = $"{selectedPrefix} AVL";
             }
         }
+
+        //private async void btnSPLIT_Click(object sender, EventArgs e)
+        //{
+        //    // Ensure a row is selected in dataGridView2
+        //    if (dataGridView2.SelectedRows.Count == 0)
+        //    {
+        //        MessageBox.Show("Please select a row to split.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        return;
+        //    }
+
+        //    var selectedRow = dataGridView2.SelectedRows[0];
+        //    int originalQty = int.Parse(selectedRow.Cells["TQUANT"].Value.ToString());
+        //    string docNo = selectedRow.Cells["LOGDOCNO"].Value.ToString();
+
+        //    // Ensure the quantity is valid and the document type is not ROB, SH, or WR
+        //    if (originalQty <= 0 || docNo.StartsWith("ROB") || docNo.StartsWith("SH") || docNo.StartsWith("WR"))
+        //    {
+        //        MessageBox.Show("Invalid selection. Ensure the quantity is greater than 0 and the document type is not ROB, SH, or WR.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        return;
+        //    }
+
+        //    // Create a procedurally generated window for user input
+        //    Form splitForm = new Form
+        //    {
+        //        Text = "Split Quantity",
+        //        Size = new Size(400, 300),
+        //        StartPosition = FormStartPosition.CenterParent
+        //    };
+
+        //    Label lblQty = new Label { Text = "Enter quantity to split:", Dock = DockStyle.Top, TextAlign = ContentAlignment.MiddleCenter };
+        //    TextBox txtQty = new TextBox { Dock = DockStyle.Top, TextAlign = HorizontalAlignment.Center };
+        //    Label lblPack = new Label { Text = "Select package:", Dock = DockStyle.Top, TextAlign = ContentAlignment.MiddleCenter };
+        //    ComboBox cmbPack = new ComboBox { Dock = DockStyle.Top, DropDownStyle = ComboBoxStyle.DropDownList };
+        //    Button btnConfirm = new Button { Text = "Confirm", Dock = DockStyle.Bottom };
+
+        //    // Populate the ComboBox with package options
+        //    foreach (var item in cmbPackCode.Items)
+        //    {
+        //        cmbPack.Items.Add(item.ToString());
+        //    }
+        //    cmbPack.SelectedItem = "Bag"; // Default to "Bag"
+
+        //    splitForm.Controls.Add(btnConfirm);
+        //    splitForm.Controls.Add(cmbPack);
+        //    splitForm.Controls.Add(lblPack);
+        //    splitForm.Controls.Add(txtQty);
+        //    splitForm.Controls.Add(lblQty);
+
+        //    int splitQty = 0;
+        //    string selectedPack = "Bag";
+
+        //    btnConfirm.Click += (s, args) =>
+        //    {
+        //        if (!int.TryParse(txtQty.Text, out splitQty) || splitQty <= 0 || splitQty >= originalQty)
+        //        {
+        //            MessageBox.Show("Invalid quantity. Ensure it is a positive number less than the original quantity.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            return;
+        //        }
+        //        selectedPack = cmbPack.SelectedItem.ToString();
+        //        splitForm.DialogResult = DialogResult.OK;
+        //        splitForm.Close();
+        //    };
+
+        //    if (splitForm.ShowDialog() != DialogResult.OK)
+        //    {
+        //        return; // User canceled the operation
+        //    }
+
+        //    int leftoverQty = originalQty - splitQty;
+
+        //    // Create the outgoing transaction for the original item
+        //    TDocument outgoingTransaction = new TDocument
+        //    {
+        //        USERLOGIN = Environment.UserName,
+        //        TYPE = "T",
+        //        CURDATE = DateTimeOffset.UtcNow,
+        //        WARHSNAME = "Flr",
+        //        BOOKNUM = docNo,
+        //        TOWARHSNAME = "Flr",
+        //        TRANSORDER_T_SUBFORM = new List<TransOrder>
+        //{
+        //    new TransOrder
+        //    {
+        //        PARTNAME = selectedRow.Cells["PARTNAME"].Value.ToString(),
+        //        QUANT = originalQty,
+        //        PACKCODE = selectedRow.Cells["PACKNAME"].Value?.ToString() ?? "Bag",
+        //        UNITNAME = "יח'"
+        //    }
+        //}
+        //    };
+        //    await WarehouseService.TransfertDocumentAsync(outgoingTransaction, this, settings);
+
+        //    // Create the first incoming transaction for the split quantity
+        //    Document incomingTransactionSplit = new Document
+        //    {
+        //        USERLOGIN = Environment.UserName,
+        //        TYPE = "P",
+        //        CURDATE = DateTimeOffset.UtcNow,
+        //        SUPNAME = "MFG",
+        //        BOOKNUM = "MFG",
+        //        TOWARHSNAME = "Flr",
+        //        TRANSORDER_P_SUBFORM = new List<TransOrder>
+        //{
+        //    new TransOrder
+        //    {
+        //        PARTNAME = selectedRow.Cells["PARTNAME"].Value.ToString(),
+        //        QUANT = splitQty,
+        //        PACKCODE = selectedPack,
+        //        UNITNAME = "יח'"
+        //    }
+        //}
+        //    };
+        //    await WarehouseService.InsertDocumentAsync(incomingTransactionSplit, this, settings);
+
+        //    // Create the second incoming transaction for the leftover quantity
+        //    Document incomingTransactionLeftover = new Document
+        //    {
+        //        USERLOGIN = Environment.UserName,
+        //        TYPE = "P",
+        //        CURDATE = DateTimeOffset.UtcNow,
+        //        SUPNAME = "MFG",
+        //        BOOKNUM = "MFG",
+        //        TOWARHSNAME = "Flr",
+        //        TRANSORDER_P_SUBFORM = new List<TransOrder>
+        //{
+        //    new TransOrder
+        //    {
+        //        PARTNAME = selectedRow.Cells["PARTNAME"].Value.ToString(),
+        //        QUANT = leftoverQty,
+        //        PACKCODE = selectedRow.Cells["PACKNAME"].Value?.ToString() ?? "Bag",
+        //        UNITNAME = "יח'"
+        //    }
+        //}
+        //    };
+        //    await WarehouseService.InsertDocumentAsync(incomingTransactionLeftover, this, settings);
+
+
+        //    // After inserting the split item
+        //    PrintStickersForSplitItems(splitPartName, splitMnfPartName, splitPartDes, splitQty);
+
+        //    // After inserting the leftover item
+        //    PrintStickersForSplitItems(leftoverPartName, leftoverMnfPartName, leftoverPartDes, leftoverQty);
+
+        //    MessageBox.Show("Split operation completed successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //}
+
+
+        //private async void PrintStickersForSplitItems(string partName, string mnfPartName, string partDes, int qty)
+        //{
+        //    try
+        //    {
+        //        // Retrieve MNFNAME using the API
+        //        string mnfName = await GetManufacturerNameAsync(mnfPartName);
+
+        //        if (string.IsNullOrEmpty(mnfName))
+        //        {
+        //            MessageBox.Show($"Failed to retrieve manufacturer name for MNFPARTNAME: {mnfPartName}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            return;
+        //        }
+
+        //        // Create a PR_PART object for the item
+        //        PR_PART part = new PR_PART
+        //        {
+        //            PARTNAME = partName,
+        //            MNFPARTNAME = mnfPartName,
+        //            PARTDES = partDes,
+        //            MNFNAME = mnfName,
+        //            QTY = qty
+        //        };
+
+        //        // Call the printSticker method
+        //        printSticker(part);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show($"An error occurred while printing stickers: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //    }
+        //}
+
+        //private async Task<string> GetManufacturerNameAsync(string mnfPartName)
+        //{
+        //    string url = $"{baseUrl}/PARTMNFONE?$filter=MNFPARTNAME eq '{mnfPartName}'";
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        try
+        //        {
+        //            // Set the request headers
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+        //            // Make the HTTP GET request
+        //            HttpResponseMessage response = await client.GetAsync(url);
+        //            response.EnsureSuccessStatusCode();
+
+        //            // Read the response content
+        //            string responseBody = await response.Content.ReadAsStringAsync();
+        //            var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+
+        //            // Extract MNFNAME from the response
+        //            var part = apiResponse["value"]?.FirstOrDefault();
+        //            return part?["MNFNAME"]?.ToString();
+        //        }
+        //        catch (HttpRequestException ex)
+        //        {
+        //            MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            return null;
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            return null;
+        //        }
+        //    }
+        //}
+
+        //private async void btnSPLIT_Click(object sender, EventArgs e)
+        //{
+        //    // Ensure a row is selected in dataGridView2
+        //    if (dataGridView2.SelectedRows.Count == 0)
+        //    {
+        //        MessageBox.Show("Please select a row to split.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        return;
+        //    }
+
+        //    var selectedRow = dataGridView2.SelectedRows[0];
+        //    int originalQty = int.Parse(selectedRow.Cells["TQUANT"].Value.ToString());
+        //    string docNo = selectedRow.Cells["LOGDOCNO"].Value.ToString();
+
+        //    // Ensure the quantity is valid and the document type is not ROB, SH, or WR
+        //    if (originalQty <= 0 || docNo.StartsWith("ROB") || docNo.StartsWith("SH") || docNo.StartsWith("WR"))
+        //    {
+        //        MessageBox.Show("Invalid selection. Ensure the quantity is greater than 0 and the document type is not ROB, SH, or WR.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        return;
+        //    }
+
+        //    // Create a procedurally generated window for user input
+        //    Form splitForm = new Form
+        //    {
+        //        Text = "Split Quantity",
+        //        Size = new Size(400, 200),
+        //        StartPosition = FormStartPosition.CenterParent
+        //    };
+
+        //    Label lblQty = new Label { Text = "Enter quantity to split:", Dock = DockStyle.Top, TextAlign = ContentAlignment.MiddleCenter };
+        //    TextBox txtQty = new TextBox { Dock = DockStyle.Top, TextAlign = HorizontalAlignment.Center };
+        //    Label lblPack = new Label { Text = "Select package:", Dock = DockStyle.Top, TextAlign = ContentAlignment.MiddleCenter };
+        //    ComboBox cmbPack = new ComboBox { Dock = DockStyle.Top, DropDownStyle = ComboBoxStyle.DropDownList };
+        //    Button btnConfirm = new Button { Text = "Confirm", Dock = DockStyle.Bottom };
+
+        //    // Populate the ComboBox with package options
+        //    foreach (var item in cmbPackCode.Items)
+        //    {
+        //        cmbPack.Items.Add(item.ToString());
+        //    }
+        //    cmbPack.SelectedItem = "BAG"; // Default to "Bag"
+
+        //    splitForm.Controls.Add(btnConfirm);
+        //    splitForm.Controls.Add(cmbPack);
+        //    splitForm.Controls.Add(lblPack);
+        //    splitForm.Controls.Add(txtQty);
+        //    splitForm.Controls.Add(lblQty);
+
+        //    // Set focus to txtQty when the form is shown
+        //    splitForm.Shown += (s, args) => txtQty.Focus();
+
+        //    int splitQty = 0;
+        //    string selectedPack = "BAG";
+
+        //    btnConfirm.Click += (s, args) =>
+        //    {
+        //        if (!int.TryParse(txtQty.Text, out splitQty) || splitQty <= 0 || splitQty >= originalQty)
+        //        {
+        //            MessageBox.Show("Invalid quantity. Ensure it is a positive number less than the original quantity.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            return;
+        //        }
+        //        selectedPack = cmbPack.SelectedItem.ToString();
+        //        splitForm.DialogResult = DialogResult.OK;
+        //        splitForm.Close();
+        //    };
+
+        //    if (splitForm.ShowDialog() != DialogResult.OK)
+        //    {
+        //        return; // User canceled the operation
+        //    }
+
+        //    int leftoverQty = originalQty - splitQty;
+
+        //    var selectedRowDW1 = dataGridView1.SelectedRows[0]; // Use dataGridView1 instead of dataGridView2
+        //    string partName = selectedRowDW1.Cells["PARTNAME"].Value.ToString();
+        //    string mnfPartName = selectedRowDW1.Cells["MNFPARTNAME"].Value.ToString();
+        //    string partDes = selectedRowDW1.Cells["PARTDES"].Value.ToString();
+
+        //    // Create the outgoing transaction for the original item
+        //    TDocument outgoingTransaction = new TDocument
+        //    {
+        //        USERLOGIN = Environment.UserName,
+        //        TYPE = "T",
+        //        CURDATE = DateTimeOffset.UtcNow,
+        //        WARHSNAME = cmbWarehouseList.SelectedItem.ToString().Substring(0, 3),
+        //        BOOKNUM = "SPLIT",
+        //        TOWARHSNAME = "Flr",
+        //        TRANSORDER_T_SUBFORM = new List<TransOrder>
+        //{
+        //    new TransOrder
+        //    {
+        //        PARTNAME = partName,
+        //        QUANT = originalQty,
+        //        PACKCODE = selectedRow.Cells["PACKNAME"].Value?.ToString() ?? "Bag",
+        //        UNITNAME = "יח'"
+        //    }
+        //}
+        //    };
+        //    await WarehouseService.TransfertDocumentAsync(outgoingTransaction, this, settings);
+
+        //    // Create the first incoming transaction for the split quantity
+        //    Document incomingTransactionSplit = new Document
+        //    {
+        //        USERLOGIN = Environment.UserName,
+        //        TYPE = "P",
+        //        CURDATE = DateTimeOffset.UtcNow,
+        //        SUPNAME = "MFG",
+        //        BOOKNUM = "MFG",
+        //        TOWARHSNAME = cmbWarehouseList.SelectedItem.ToString().Substring(0,3),
+        //        TRANSORDER_P_SUBFORM = new List<TransOrder>
+        //{
+        //    new TransOrder
+        //    {
+        //        PARTNAME = partName,
+        //        QUANT = splitQty,
+        //        PACKCODE = selectedPack,
+        //        UNITNAME = "יח'"
+        //    }
+        //}
+        //    };
+        //    await WarehouseService.InsertDocumentAsync(incomingTransactionSplit, this, settings);
+
+        //    // Create the second incoming transaction for the leftover quantity
+        //    Document incomingTransactionLeftover = new Document
+        //    {
+        //        USERLOGIN = Environment.UserName,
+        //        TYPE = "P",
+        //        CURDATE = DateTimeOffset.UtcNow,
+        //        SUPNAME = "MFG",
+        //        BOOKNUM = "MFG",
+        //        TOWARHSNAME = cmbWarehouseList.SelectedItem.ToString().Substring(0, 3),
+        //        TRANSORDER_P_SUBFORM = new List<TransOrder>
+        //{
+        //    new TransOrder
+        //    {
+        //        PARTNAME = partName,
+        //        QUANT = leftoverQty,
+        //        PACKCODE = selectedRow.Cells["PACKNAME"].Value?.ToString() ?? "BAG",
+        //        UNITNAME = "יח'"
+        //    }
+        //}
+        //    };
+        //    await WarehouseService.InsertDocumentAsync(incomingTransactionLeftover, this, settings);
+
+        //    // Print stickers for both split and leftover items
+        //    await PrintStickersForSplitItems(partName, mnfPartName, partDes, splitQty);
+        //    Thread.Sleep(1000); // Optional delay between print jobs
+        //    await PrintStickersForSplitItems(partName, mnfPartName, partDes, leftoverQty);
+
+        //    MessageBox.Show("Split operation completed successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+
+        //}
+
+
+        //private async void btnSPLIT_Click(object sender, EventArgs e)
+        //{
+        //    // Ensure a row is selected in dataGridView2
+        //    if (dataGridView2.SelectedRows.Count == 0)
+        //    {
+        //        MessageBox.Show("Please select a row to split.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        return;
+        //    }
+
+        //    var selectedRow = dataGridView2.SelectedRows[0];
+        //    int originalQty = int.Parse(selectedRow.Cells["TQUANT"].Value.ToString());
+        //    string docNo = selectedRow.Cells["LOGDOCNO"].Value.ToString();
+
+        //    // Ensure the quantity is valid and the document type is not ROB, SH, or WR
+        //    if (originalQty <= 0 || docNo.StartsWith("ROB") || docNo.StartsWith("SH") || docNo.StartsWith("WR"))
+        //    {
+        //        MessageBox.Show("Invalid selection. Ensure the quantity is greater than 0 and the document type is not ROB, SH, or WR.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        return;
+        //    }
+
+        //    // Create a procedurally generated window for user input
+        //    Form splitForm = new Form
+        //    {
+        //        Text = "Split Quantity",
+        //        Size = new Size(400, 300),
+        //        StartPosition = FormStartPosition.CenterParent
+        //    };
+
+        //    Label lblQty = new Label { Text = "Enter quantity to split:", Dock = DockStyle.Top, TextAlign = ContentAlignment.MiddleCenter };
+        //    TextBox txtQty = new TextBox { Dock = DockStyle.Top, TextAlign = HorizontalAlignment.Center };
+        //    Label lblLeftoverQty = new Label { Text = "Leftover quantity:", Dock = DockStyle.Top, TextAlign = ContentAlignment.MiddleCenter };
+        //    TextBox txtLeftoverQty = new TextBox { Dock = DockStyle.Top, TextAlign = HorizontalAlignment.Center, ReadOnly = true };
+        //    Label lblPack = new Label { Text = "Select package for split:", Dock = DockStyle.Top, TextAlign = ContentAlignment.MiddleCenter };
+        //    ComboBox cmbPack = new ComboBox { Dock = DockStyle.Top, DropDownStyle = ComboBoxStyle.DropDownList };
+        //    Label lblLeftoverPack = new Label { Text = "Select package for leftovers:", Dock = DockStyle.Top, TextAlign = ContentAlignment.MiddleCenter };
+        //    ComboBox cmbLeftoverPack = new ComboBox { Dock = DockStyle.Top, DropDownStyle = ComboBoxStyle.DropDownList };
+        //    Button btnConfirm = new Button { Text = "Confirm", Dock = DockStyle.Bottom };
+
+        //    // Populate the ComboBoxes with package options
+        //    foreach (var item in cmbPackCode.Items)
+        //    {
+        //        cmbPack.Items.Add(item.ToString());
+        //        cmbLeftoverPack.Items.Add(item.ToString());
+        //    }
+        //    cmbPack.SelectedItem = "BAG"; // Default to "Bag"
+        //    cmbLeftoverPack.SelectedItem = "BAG"; // Default to "Bag"
+
+        //    // Add controls to the form
+        //    splitForm.Controls.Add(btnConfirm);
+        //    splitForm.Controls.Add(cmbLeftoverPack);
+        //    splitForm.Controls.Add(lblLeftoverPack);
+        //    splitForm.Controls.Add(cmbPack);
+        //    splitForm.Controls.Add(lblPack);
+        //    splitForm.Controls.Add(txtLeftoverQty);
+        //    splitForm.Controls.Add(lblLeftoverQty);
+        //    splitForm.Controls.Add(txtQty);
+        //    splitForm.Controls.Add(lblQty);
+
+        //    // Set focus to txtQty when the form is shown
+        //    splitForm.Shown += (s, args) => txtQty.Focus();
+
+        //    // Disable non-numeric input in txtQty
+        //    txtQty.KeyPress += (s, args) =>
+        //    {
+        //        if (!char.IsControl(args.KeyChar) && !char.IsDigit(args.KeyChar))
+        //        {
+        //            args.Handled = true;
+        //        }
+        //    };
+
+        //    // Update leftover quantity dynamically based on user input
+        //    txtQty.TextChanged += (s, args) =>
+        //    {
+        //        if (int.TryParse(txtQty.Text, out int splitQty) && splitQty > 0 && splitQty < originalQty)
+        //        {
+        //            txtLeftoverQty.Text = (originalQty - splitQty).ToString();
+        //        }
+        //        else
+        //        {
+        //            txtLeftoverQty.Text = originalQty.ToString();
+        //        }
+        //    };
+
+        //    int splitQty = 0;
+        //    string selectedPack = "BAG";
+        //    string leftoverPack = "BAG";
+
+        //    btnConfirm.Click += (s, args) =>
+        //    {
+        //        if (!int.TryParse(txtQty.Text, out splitQty) || splitQty <= 0 || splitQty >= originalQty)
+        //        {
+        //            MessageBox.Show("Invalid quantity. Ensure it is a positive number less than the original quantity.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            return;
+        //        }
+        //        selectedPack = cmbPack.SelectedItem.ToString();
+        //        leftoverPack = cmbLeftoverPack.SelectedItem.ToString();
+        //        splitForm.DialogResult = DialogResult.OK;
+        //        splitForm.Close();
+        //    };
+
+        //    if (splitForm.ShowDialog() != DialogResult.OK)
+        //    {
+        //        return; // User canceled the operation
+        //    }
+
+        //    int leftoverQty = originalQty - splitQty;
+
+        //    var selectedRowDW1 = dataGridView1.SelectedRows[0]; // Use dataGridView1 instead of dataGridView2
+        //    string partName = selectedRowDW1.Cells["PARTNAME"].Value.ToString();
+        //    string mnfPartName = selectedRowDW1.Cells["MNFPARTNAME"].Value.ToString();
+        //    string partDes = selectedRowDW1.Cells["PARTDES"].Value.ToString();
+
+        //    // Create the outgoing transaction for the original item
+        //    TDocument outgoingTransaction = new TDocument
+        //    {
+        //        USERLOGIN = Environment.UserName,
+        //        TYPE = "T",
+        //        CURDATE = DateTimeOffset.UtcNow,
+        //        WARHSNAME = cmbWarehouseList.SelectedItem.ToString().Substring(0, 3),
+        //        BOOKNUM = "SPLIT",
+        //        TOWARHSNAME = "Flr",
+        //        TRANSORDER_T_SUBFORM = new List<TransOrder>
+        //{
+        //    new TransOrder
+        //    {
+        //        PARTNAME = partName,
+        //        QUANT = originalQty,
+        //        PACKCODE = selectedRow.Cells["PACKNAME"].Value?.ToString() ?? "Bag",
+        //        UNITNAME = "יח'"
+        //    }
+        //}
+        //    };
+        //    await WarehouseService.TransfertDocumentAsync(outgoingTransaction, this, settings);
+
+        //    // Create the first incoming transaction for the split quantity
+        //    Document incomingTransactionSplit = new Document
+        //    {
+        //        USERLOGIN = Environment.UserName,
+        //        TYPE = "P",
+        //        CURDATE = DateTimeOffset.UtcNow,
+        //        SUPNAME = "MFG",
+        //        BOOKNUM = "MFG",
+        //        TOWARHSNAME = cmbWarehouseList.SelectedItem.ToString().Substring(0, 3),
+        //        TRANSORDER_P_SUBFORM = new List<TransOrder>
+        //{
+        //    new TransOrder
+        //    {
+        //        PARTNAME = partName,
+        //        QUANT = splitQty,
+        //        PACKCODE = selectedPack,
+        //        UNITNAME = "יח'"
+        //    }
+        //}
+        //    };
+        //    await WarehouseService.InsertDocumentAsync(incomingTransactionSplit, this, settings);
+
+        //    // Create the second incoming transaction for the leftover quantity
+        //    Document incomingTransactionLeftover = new Document
+        //    {
+        //        USERLOGIN = Environment.UserName,
+        //        TYPE = "P",
+        //        CURDATE = DateTimeOffset.UtcNow,
+        //        SUPNAME = "MFG",
+        //        BOOKNUM = "MFG",
+        //        TOWARHSNAME = cmbWarehouseList.SelectedItem.ToString().Substring(0, 3),
+        //        TRANSORDER_P_SUBFORM = new List<TransOrder>
+        //{
+        //    new TransOrder
+        //    {
+        //        PARTNAME = partName,
+        //        QUANT = leftoverQty,
+        //        PACKCODE = leftoverPack,
+        //        UNITNAME = "יח'"
+        //    }
+        //}
+        //    };
+        //    await WarehouseService.InsertDocumentAsync(incomingTransactionLeftover, this, settings);
+
+        //    // Print stickers for both split and leftover items
+        //    await PrintStickersForSplitItems(partName, mnfPartName, partDes, splitQty);
+        //    Thread.Sleep(1000); // Optional delay between print jobs
+        //    await PrintStickersForSplitItems(partName, mnfPartName, partDes, leftoverQty);
+
+        //    MessageBox.Show("Split operation completed successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //}
+
+        private async void btnSPLIT_Click(object sender, EventArgs e)
+        {
+            // Ensure a row is selected in dataGridView2
+            if (dataGridView2.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select a row to split.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            var selectedRow = dataGridView2.SelectedRows[0];
+            int originalQty = int.Parse(selectedRow.Cells["TQUANT"].Value.ToString());
+            string docNo = selectedRow.Cells["LOGDOCNO"].Value.ToString();
+
+            // Ensure the quantity is valid and the document type is not ROB, SH, or WR
+            if (originalQty <= 0 || docNo.StartsWith("ROB") || docNo.StartsWith("SH") || docNo.StartsWith("WR"))
+            {
+                MessageBox.Show("Invalid selection. Ensure the quantity is greater than 0 and the document type is not ROB, SH, or WR.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Create a procedurally generated window for user input
+            Form splitForm = new Form
+            {
+                Text = "Split Quantity",
+                Size = new Size(400, 300),
+                StartPosition = FormStartPosition.CenterParent
+            };
+
+            Label lblQty = new Label { Text = "Enter quantity to split:", Dock = DockStyle.Top, TextAlign = ContentAlignment.MiddleCenter };
+            TextBox txtQty = new TextBox { Dock = DockStyle.Top, TextAlign = HorizontalAlignment.Center };
+            Label lblLeftoverQty = new Label { Text = "Leftover quantity:", Dock = DockStyle.Top, TextAlign = ContentAlignment.MiddleCenter };
+            TextBox txtLeftoverQty = new TextBox { Dock = DockStyle.Top, TextAlign = HorizontalAlignment.Center, ReadOnly = true };
+            Label lblPack = new Label { Text = "Select package for split:", Dock = DockStyle.Top, TextAlign = ContentAlignment.MiddleCenter };
+            ComboBox cmbPack = new ComboBox { Dock = DockStyle.Top, DropDownStyle = ComboBoxStyle.DropDownList };
+            Label lblLeftoverPack = new Label { Text = "Select package for leftovers:", Dock = DockStyle.Top, TextAlign = ContentAlignment.MiddleCenter };
+            ComboBox cmbLeftoverPack = new ComboBox { Dock = DockStyle.Top, DropDownStyle = ComboBoxStyle.DropDownList };
+            Button btnConfirm = new Button { Text = "Confirm", Dock = DockStyle.Bottom };
+
+            // Populate the ComboBoxes with package options
+            foreach (var item in cmbPackCode.Items)
+            {
+                cmbPack.Items.Add(item.ToString());
+                cmbLeftoverPack.Items.Add(item.ToString());
+            }
+            cmbPack.SelectedItem = "BAG"; // Default to "Bag"
+            cmbLeftoverPack.SelectedItem = selectedRow.Cells["PACKNAME"].Value.ToString();  // Default to "Bag"
+
+            // Add controls to the form
+            splitForm.Controls.Add(btnConfirm);
+            splitForm.Controls.Add(cmbLeftoverPack);
+            splitForm.Controls.Add(lblLeftoverPack);
+            splitForm.Controls.Add(cmbPack);
+            splitForm.Controls.Add(lblPack);
+            splitForm.Controls.Add(txtLeftoverQty);
+            splitForm.Controls.Add(lblLeftoverQty);
+            splitForm.Controls.Add(txtQty);
+            splitForm.Controls.Add(lblQty);
+
+            // Set focus to txtQty when the form is shown
+            splitForm.Shown += (s, args) => txtQty.Focus();
+
+            // Disable non-numeric input in txtQty
+            txtQty.KeyPress += (s, args) =>
+            {
+                if (!char.IsControl(args.KeyChar) && !char.IsDigit(args.KeyChar))
+                {
+                    args.Handled = true;
+                }
+            };
+
+            // Update leftover quantity dynamically based on user input
+            txtQty.TextChanged += (s, args) =>
+            {
+                if (int.TryParse(txtQty.Text, out int splitQty) && splitQty > 0 && splitQty < originalQty)
+                {
+                    txtLeftoverQty.Text = (originalQty - splitQty).ToString();
+                }
+                else
+                {
+                    txtLeftoverQty.Text = originalQty.ToString();
+                }
+            };
+
+            // Allow pressing ENTER to confirm
+            splitForm.KeyPreview = true;
+            splitForm.KeyDown += (s, args) =>
+            {
+                if (args.KeyCode == Keys.Enter)
+                {
+                    btnConfirm.PerformClick();
+                    args.Handled = true;
+                }
+            };
+
+            int splitQty = 0;
+            string selectedPack = "BAG";
+            string leftoverPack = selectedRow.Cells["PACKNAME"].Value.ToString();
+
+            btnConfirm.Click += (s, args) =>
+            {
+                if (!int.TryParse(txtQty.Text, out splitQty) || splitQty <= 0 || splitQty >= originalQty)
+                {
+                    MessageBox.Show("Invalid quantity. Ensure it is a positive number less than the original quantity.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                selectedPack = cmbPack.SelectedItem.ToString();
+                leftoverPack = cmbLeftoverPack.SelectedItem.ToString();
+
+                // Confirm selected packages
+                var result = MessageBox.Show($"Confirm selected packages?\nSplit Package: {selectedPack}\nLeftover Package: {leftoverPack}",
+                    "Confirm Packages", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+
+                if (result == DialogResult.OK)
+                {
+                    splitForm.DialogResult = DialogResult.OK;
+                    splitForm.Close();
+                }
+            };
+
+            if (splitForm.ShowDialog() != DialogResult.OK)
+            {
+                return; // User canceled the operation
+            }
+
+            int leftoverQty = originalQty - splitQty;
+
+            var selectedRowDW1 = dataGridView1.SelectedRows[0]; // Use dataGridView1 instead of dataGridView2
+            string partName = selectedRowDW1.Cells["PARTNAME"].Value.ToString();
+            string mnfPartName = selectedRowDW1.Cells["MNFPARTNAME"].Value.ToString();
+            string partDes = selectedRowDW1.Cells["PARTDES"].Value.ToString();
+
+            // Create the outgoing transaction for the original item
+            TDocument outgoingTransaction = new TDocument
+            {
+                USERLOGIN = Environment.UserName,
+                TYPE = "T",
+                CURDATE = DateTimeOffset.UtcNow,
+                WARHSNAME = cmbWarehouseList.SelectedItem.ToString().Substring(0, 3),
+                BOOKNUM = "SPLIT",
+                TOWARHSNAME = "Flr",
+                TRANSORDER_T_SUBFORM = new List<TransOrder>
+        {
+            new TransOrder
+            {
+                PARTNAME = partName,
+                QUANT = originalQty,
+                PACKCODE = selectedRow.Cells["PACKNAME"].Value?.ToString() ?? "BAG",
+                UNITNAME = "יח'"
+            }
+        }
+            };
+            await WarehouseService.TransfertDocumentAsync(outgoingTransaction, this, settings);
+
+            // Create the first incoming transaction for the split quantity
+            Document incomingTransactionSplit = new Document
+            {
+                USERLOGIN = Environment.UserName,
+                TYPE = "P",
+                CURDATE = DateTimeOffset.UtcNow,
+                SUPNAME = "MFG",
+                BOOKNUM = "MFG",
+                TOWARHSNAME = cmbWarehouseList.SelectedItem.ToString().Substring(0, 3),
+                TRANSORDER_P_SUBFORM = new List<TransOrder>
+        {
+            new TransOrder
+            {
+                PARTNAME = partName,
+                QUANT = splitQty,
+                PACKCODE = selectedPack,
+                UNITNAME = "יח'"
+            }
+        }
+            };
+            await WarehouseService.InsertDocumentAsync(incomingTransactionSplit, this, settings);
+
+            // Create the second incoming transaction for the leftover quantity
+            Document incomingTransactionLeftover = new Document
+            {
+                USERLOGIN = Environment.UserName,
+                TYPE = "P",
+                CURDATE = DateTimeOffset.UtcNow,
+                SUPNAME = "MFG",
+                BOOKNUM = "MFG",
+                TOWARHSNAME = cmbWarehouseList.SelectedItem.ToString().Substring(0, 3),
+                TRANSORDER_P_SUBFORM = new List<TransOrder>
+        {
+            new TransOrder
+            {
+                PARTNAME = partName,
+                QUANT = leftoverQty,
+                PACKCODE = leftoverPack,
+                UNITNAME = "יח'"
+            }
+        }
+            };
+            await WarehouseService.InsertDocumentAsync(incomingTransactionLeftover, this, settings);
+
+            // Print stickers for both split and leftover items
+            await PrintStickersForSplitItems(partName, mnfPartName, partDes, splitQty);
+
+            Thread.Sleep(2000); // Optional delay between print jobs
+
+
+            await PrintStickersForSplitItems(partName, mnfPartName, partDes, leftoverQty);
+
+
+            string targetPartName = partName; // Replace with the actual partName value you want to select
+
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                if (row.Cells["PARTNAME"].Value?.ToString() == targetPartName)
+                {
+                    dataGridView1.ClearSelection(); // Clear any existing selection
+                    row.Selected = true; // Select the matching row
+                                         //dataGridView1.CurrentCell = row.Cells[0]; // Optionally set focus to the first cell of the row
+
+                    int rowIndex = row.Index;
+                    // Create a new DataGridViewCellEventArgs with the selected row index and a valid column index (e.g., 0)
+                    var eventArgs = new DataGridViewCellEventArgs(0, rowIndex);
+
+                    // Call the dataGridView1_CellClick method
+                    dataGridView1_CellClick(dataGridView1, eventArgs);
+                    break; // Exit the loop once the row is found
+                }
+            }
+
+            MessageBox.Show("Split operation completed successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+
+        private async Task PrintStickersForSplitItems(string partName, string mnfPartName, string partDes, int qty)
+        {
+            try
+            {
+                // Retrieve MNFNAME using the API
+                string mnfName = await GetManufacturerNameAsync(mnfPartName);
+
+                if (string.IsNullOrEmpty(mnfName))
+                {
+                    MessageBox.Show($"Failed to retrieve manufacturer name for MNFPARTNAME: {mnfPartName}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // Create a PR_PART object for the item
+                PR_PART part = new PR_PART
+                {
+                    PARTNAME = partName,
+                    MNFPARTNAME = mnfPartName,
+                    PARTDES = partDes,
+                    MNFNAME = mnfName,
+                    QTY = qty
+                };
+
+                // Call the printSticker method
+                printSticker(part);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while printing stickers: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async Task<string> GetManufacturerNameAsync(string mnfPartName)
+        {
+            string url = $"{baseUrl}/PARTMNFONE?$filter=MNFPARTNAME eq '{mnfPartName}'";
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    // Set the request headers
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                    // Make the HTTP GET request
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
+
+                    // Read the response content
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+
+                    // Extract MNFNAME from the response
+                    var part = apiResponse["value"]?.FirstOrDefault();
+                    return part?["MNFNAME"]?.ToString();
+                }
+                catch (HttpRequestException ex)
+                {
+                    MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return null;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return null;
+                }
+            }
+        }
+
+
+
     }
 }

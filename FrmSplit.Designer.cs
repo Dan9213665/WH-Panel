@@ -100,7 +100,6 @@
             dataGridView1.Location = new Point(3, 19);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
-            dataGridView1.RowTemplate.Height = 25;
             dataGridView1.Size = new Size(997, 79);
             dataGridView1.TabIndex = 0;
             // 
@@ -133,7 +132,7 @@
             // textBox1
             // 
             textBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            textBox1.Font = new Font("Segoe UI", 27.75F, FontStyle.Bold, GraphicsUnit.Point);
+            textBox1.Font = new Font("Segoe UI", 27.75F, FontStyle.Bold);
             textBox1.Location = new Point(3, 3);
             textBox1.Name = "textBox1";
             textBox1.PlaceholderText = "Input qty";
@@ -147,7 +146,7 @@
             // 
             comboBox1.Dock = DockStyle.Fill;
             comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBox1.Font = new Font("Segoe UI", 27.75F, FontStyle.Regular, GraphicsUnit.Point);
+            comboBox1.Font = new Font("Segoe UI", 27.75F);
             comboBox1.FormattingEnabled = true;
             comboBox1.Items.AddRange(new object[] { "5\"", "7\"", "10\"", "13\"", "15\"", "Bag", "Box", "Stick", "Stick_in_a_bag", "Tray" });
             comboBox1.Location = new Point(249, 3);
@@ -184,7 +183,7 @@
             // textBox2
             // 
             textBox2.Dock = DockStyle.Fill;
-            textBox2.Font = new Font("Segoe UI", 27.75F, FontStyle.Bold, GraphicsUnit.Point);
+            textBox2.Font = new Font("Segoe UI", 27.75F, FontStyle.Bold);
             textBox2.Location = new Point(3, 3);
             textBox2.Name = "textBox2";
             textBox2.PlaceholderText = "Auto Calc";
@@ -197,7 +196,7 @@
             // 
             comboBox2.Dock = DockStyle.Fill;
             comboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBox2.Font = new Font("Segoe UI", 27.75F, FontStyle.Regular, GraphicsUnit.Point);
+            comboBox2.Font = new Font("Segoe UI", 27.75F);
             comboBox2.FormattingEnabled = true;
             comboBox2.Items.AddRange(new object[] { "5\"", "7\"", "10\"", "13\"", "15\"", "Bag", "Box", "Stick", "Stick_in_a_bag", "Tray" });
             comboBox2.Location = new Point(249, 3);
