@@ -533,8 +533,12 @@ namespace WH_Panel
                 return;
             }
             // Construct the API URL using the warehouse name
-            string avlUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PARTNAME eq '{selectedWarehouse}_*'";
-           // txtbLog.AppendText($"API URL: {avlUrl}\n");
+            //string avlUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PARTNAME eq '{selectedWarehouse}_*'";
+
+            string avlUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PARTNAME eq '{selectedWarehouse}_*'&$select=PARTNAME,MNFPARTNAME,PARTDES,MNFNAME,MNFDES";
+
+
+            // txtbLog.AppendText($"API URL: {avlUrl}\n");
             using (HttpClient client = new HttpClient())
             {
                 try
