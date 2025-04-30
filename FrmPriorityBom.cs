@@ -284,12 +284,12 @@ namespace WH_Panel
             else if (serial.SERIALSTATUSDES == "הרכבה בחוסר")
             {
                 e.Graphics.FillRectangle(Brushes.DarkViolet, e.Bounds);
-                e.Graphics.DrawString(serial.ToString(), e.Font, Brushes.Black, e.Bounds);
+                e.Graphics.DrawString(serial.ToString(), e.Font, Brushes.White, e.Bounds);
             }
             else if (serial.SERIALSTATUSDES == "טרם נשלח קיט")
             {
                 e.Graphics.FillRectangle(Brushes.DarkSlateGray, e.Bounds);
-                e.Graphics.DrawString(serial.ToString(), e.Font, Brushes.Black, e.Bounds);
+                e.Graphics.DrawString(serial.ToString(), e.Font, Brushes.White, e.Bounds);
             }
             else if (serial.SERIALSTATUSDES == "הוקפאה")
             {
