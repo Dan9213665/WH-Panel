@@ -211,7 +211,6 @@
             dataGridView2.ReadOnly = true;
             dataGridViewCellStyle1.BackColor = Color.LightGreen;
             dataGridView2.RowsDefaultCellStyle = dataGridViewCellStyle1;
-            dataGridView2.RowTemplate.Height = 25;
             dataGridView2.Size = new Size(1299, 72);
             dataGridView2.TabIndex = 0;
             dataGridView2.CellDoubleClick += dataGridView2_CellDoubleClick;
@@ -809,7 +808,6 @@
             dataGridViewCellStyle6.BackColor = Color.Gray;
             dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle6;
             dataGridView1.RowTemplate.DefaultCellStyle.ForeColor = Color.White;
-            dataGridView1.RowTemplate.Height = 25;
             dataGridView1.Size = new Size(1299, 287);
             dataGridView1.TabIndex = 0;
             dataGridView1.CellClick += dataGridView1_CellClick;

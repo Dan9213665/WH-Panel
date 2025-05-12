@@ -493,6 +493,8 @@ namespace WH_Panel
                             await FetchWarehouseBalances();
                             // Fetch MFPNs in a single API call
                             await FetchMFPNsForAllRowsInSinglePull();
+
+                            await FetchAltsForAllRows();
                         }
                         else
                         {
@@ -1176,15 +1178,108 @@ namespace WH_Panel
                 }
             }
         }
+        //private async Task FetchAltsForAllRows()
+        //{
+        //    txtbLog.AppendText("Fetching alts for all rows...\n");
+        //    foreach (DataGridViewRow row in dgwBom.Rows)
+        //    {
+        //        await FetchAltForRow(row);
+        //    }
+        //    txtbLog.AppendText("ALTs fetching complete.\n");
+        //}
+
+
         private async Task FetchAltsForAllRows()
         {
-            txtbLog.AppendText("Fetching alts for all rows...\n");
-            foreach (DataGridViewRow row in dgwBom.Rows)
+            txtbLog.AppendText("Fetching alts for all rows in batches of 25...\n");
+
+            // Get all rows that need ALT fetching
+            var rowsToProcess = dgwBom.Rows.Cast<DataGridViewRow>()
+                .Where(row => row.Cells["PARTNAME"].Value != null &&
+                              (row.Cells["ALT"].Value == null || string.IsNullOrEmpty(row.Cells["ALT"].Value.ToString())))
+                .ToList();
+
+            // Process rows in batches of 25
+            const int batchSize = 25;
+            for (int i = 0; i < rowsToProcess.Count; i += batchSize)
             {
-                await FetchAltForRow(row);
+                var batch = rowsToProcess.Skip(i).Take(batchSize).ToList();
+                await FetchAltsForBatch(batch);
             }
+
             txtbLog.AppendText("ALTs fetching complete.\n");
         }
+
+        private async Task FetchAltsForBatch(List<DataGridViewRow> batch)
+        {
+            // Construct the filter for the batch
+            var partNames = batch
+                .Select(row => $"PARTNAME eq '{row.Cells["PARTNAME"].Value}'")
+                .ToList();
+            string filter = string.Join(" or ", partNames);
+
+            // Construct the API URL
+            string batchUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART?$filter={filter}&$expand=PARTALT_SUBFORM";
+
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    // Set the request headers
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                    // Make the HTTP GET request
+                    HttpResponseMessage response = await client.GetAsync(batchUrl);
+                    response.EnsureSuccessStatusCode();
+
+                    // Read the response content
+                    string responseBody = await response.Content.ReadAsStringAsync();
+
+                    // Parse the JSON response
+                    var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+
+                    // Map the ALT data to the corresponding rows
+                    if (apiResponse["value"] != null && apiResponse["value"].Any())
+                    {
+                        foreach (var part in apiResponse["value"])
+                        {
+                            string partName = part["PARTNAME"]?.ToString();
+                            var partAltSubform = part["PARTALT_SUBFORM"]?.FirstOrDefault();
+                            if (partAltSubform != null)
+                            {
+                                string altName = partAltSubform["ALTNAME"]?.ToString();
+
+                                // Find the corresponding row and update the ALT column
+                                var matchingRow = batch.FirstOrDefault(row => row.Cells["PARTNAME"].Value.ToString() == partName);
+                                if (matchingRow != null)
+                                {
+                                    matchingRow.Cells["ALT"].Value = altName;
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (HttpRequestException ex)
+                {
+                    txtbLog.ForeColor = Color.Red;
+                    txtbLog.AppendText($"Request error: {ex.Message}\n");
+                    txtbLog.ScrollToCaret();
+                }
+                catch (Exception ex)
+                {
+                    txtbLog.ForeColor = Color.Red;
+                    txtbLog.AppendText($"Request error: {ex.Message}\n");
+                    txtbLog.ScrollToCaret();
+                }
+            }
+
+            // Optional: Add a delay between batches to avoid overwhelming the server
+            await Task.Delay(1);
+        }
+
         private async Task FetchAltForRow(DataGridViewRow row)
         {
             if (row.Cells["PARTNAME"].Value != null && (row.Cells["ALT"].Value.ToString() == string.Empty || row.Cells["ALT"].Value == null))
