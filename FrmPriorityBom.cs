@@ -2300,6 +2300,7 @@ namespace WH_Panel
             {
                 "production@robotron.co.il",
                 "avishay@robotron.co.il",
+                "ran@robotron.co.il",
                 "rehesh@robotron.co.il",
                 "vlad@robotron.co.il"
             };
