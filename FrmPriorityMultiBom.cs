@@ -383,15 +383,31 @@ namespace WH_Panel
                 // Generate HTML report
                 string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
                 string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\MultiKitsStatusReport_{_fileTimeStamp}.html";
-                GenerateHTMLaggregated(filename, tableData, $"Multiple Kits Simulation Report {_fileTimeStamp}", selectedWorkOrders, completionPercentage);
+                await GenerateHTMLaggregated(filename, tableData, $"Multiple Kits Simulation Report {_fileTimeStamp}", selectedWorkOrders, completionPercentage);
                 // Open the file in default browser
-                var p = new Process();
-                p.StartInfo = new ProcessStartInfo(filename)
+                //var p = new Process();
+                //p.StartInfo = new ProcessStartInfo(filename)
+                //{
+                //    UseShellExecute = true
+                //};
+                //p.Start();
+                //AppendLogMessage($"Displaying HTML report in browser", Color.Green);
+
+                if (File.Exists(filename))
                 {
-                    UseShellExecute = true
-                };
-                p.Start();
-                AppendLogMessage($"Displaying HTML report in browser", Color.Green);
+                    var p = new Process();
+                    p.StartInfo = new ProcessStartInfo(filename)
+                    {
+                        UseShellExecute = true
+                    };
+                    p.Start();
+                    AppendLogMessage($"Displaying HTML report in browser", Color.Green);
+                }
+                else
+                {
+                    AppendLogMessage($"Failed to create report file: {filename}", Color.Red);
+                    MessageBox.Show($"Report file was not created: {filename}", "File Not Found", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
             else
             {
@@ -464,10 +480,189 @@ namespace WH_Panel
             }
             UpdateSelectedLabel();
         }
-        private async Task<Dictionary<string, (int balance, int stock, int simulation)>> AggregatedSim(List<Serial> selectedWorkOrders)
+        //private async Task<Dictionary<string, (int balance, int stock, int simulation)>> AggregatedSim(List<Serial> selectedWorkOrders)
+        //{
+        //    var ipnQuantities = new Dictionary<string, int>();
+        //    var ipnCQuantities = new Dictionary<string, int>();
+        //    // Fetch warehouse stock levels once
+        //    var warehouseStock = new Dictionary<string, int>();
+        //    string selectedWarehouseName = GetSelectedWarehouseName();
+        //    if (selectedWarehouseName != null)
+        //    {
+        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouseName}'&$expand=WARHSBAL_SUBFORM";
+        //        using (HttpClient client = new HttpClient())
+        //        {
+        //            try
+        //            {
+        //                AppendLogMessage($"Retrieving data for {selectedWarehouseName}", Color.Yellow);
+        //                client.DefaultRequestHeaders.Accept.Clear();
+        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+        //                HttpResponseMessage response = await client.GetAsync(url);
+        //                response.EnsureSuccessStatusCode();
+        //                string responseBody = await response.Content.ReadAsStringAsync();
+        //                var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+        //                var warehouseBalances = apiResponse["value"].First["WARHSBAL_SUBFORM"].ToObject<List<WarehouseBalance>>();
+        //                foreach (var balance in warehouseBalances)
+        //                {
+        //                    warehouseStock[balance.PARTNAME] = balance.BALANCE;
+        //                }
+        //                AppendLogMessage($"Loaded data for {selectedWarehouseName}", Color.Green);
+        //            }
+        //            catch (HttpRequestException ex)
+        //            {
+        //                AppendLogMessage($"Request error: {ex.Message}", Color.Red);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                AppendLogMessage($"Request error: {ex.Message}", Color.Red);
+        //            }
+        //        }
+        //    }
+        //    foreach (var workOrder in selectedWorkOrders)
+        //    {
+        //        if (workOrder.SERIALNAME.StartsWith("ROB"))
+        //        {
+
+        //            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{workOrder.SERIALNAME}'&$expand=TRANSORDER_K_SUBFORM";
+        //            using (HttpClient client = new HttpClient())
+        //            {
+        //                try
+        //                {
+        //                    AppendLogMessage($"Retrieving data for {workOrder.SERIALNAME} \n", Color.Yellow);
+        //                    client.DefaultRequestHeaders.Accept.Clear();
+        //                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+        //                    HttpResponseMessage response = await client.GetAsync(url);
+        //                    response.EnsureSuccessStatusCode();
+        //                    string responseBody = await response.Content.ReadAsStringAsync();
+        //                    var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+        //                    var transOrders = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
+        //                    foreach (var transOrder in transOrders)
+        //                    {
+        //                        if (ipnQuantities.ContainsKey(transOrder.PARTNAME))
+        //                        {
+        //                            ipnQuantities[transOrder.PARTNAME] += transOrder.QUANT;
+        //                        }
+        //                        else
+        //                        {
+        //                            ipnQuantities[transOrder.PARTNAME] = transOrder.QUANT;
+
+
+        //                        }
+
+        //                        if (ipnCQuantities.TryGetValue(transOrder.PARTNAME, out int existingCQuant))
+        //                        {
+        //                            ipnCQuantities[transOrder.PARTNAME] = Math.Max(existingCQuant, transOrder.CQUANT);
+        //                        }
+        //                        else
+        //                        {
+        //                            ipnCQuantities[transOrder.PARTNAME] = transOrder.CQUANT;
+        //                        }
+        //                    }
+
+
+
+        //                    AppendLogMessage($"Loaded data for {workOrder.SERIALNAME}", Color.Green);
+        //                }
+        //                catch (HttpRequestException ex)
+        //                {
+        //                    AppendLogMessage($"Request error: {ex.Message}", Color.Red);
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    AppendLogMessage($"Request error: {ex.Message}", Color.Red);
+        //                }
+        //            }
+        //        }
+        //        else if (workOrder.SERIALNAME.StartsWith("SIM"))
+        //        {
+        //            // Construct the API URL for the SIM work order
+        //            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART('{workOrder.PARTNAME}')/REVISIONS_SUBFORM?$filter=REVNUM eq '{workOrder.REVNUM}'&$expand=REVPARTARC_SUBFORM";
+
+        //            using (HttpClient client = new HttpClient())
+        //            {
+        //                try
+        //                {
+        //                    AppendLogMessage($"Retrieving BOM data for SIM work order '{workOrder.SERIALNAME}'", Color.Yellow);
+
+        //                    // Set the request headers
+        //                    client.DefaultRequestHeaders.Accept.Clear();
+        //                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+        //                    // Make the HTTP GET request
+        //                    HttpResponseMessage response = await client.GetAsync(url);
+        //                    response.EnsureSuccessStatusCode();
+
+        //                    // Read the response content
+        //                    string responseBody = await response.Content.ReadAsStringAsync();
+
+        //                    // Parse the JSON response
+        //                    var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+        //                    var bomItems = apiResponse["value"].First["REVPARTARC_SUBFORM"].ToObject<List<JObject>>();
+
+        //                    // Process each BOM item
+        //                    foreach (var item in bomItems)
+        //                    {
+        //                        string partName = item["SONNAME"].ToString();
+        //                        double sonQuant = item["SONQUANT"].ToObject<double>();
+        //                        int totalRequired = (int)(sonQuant * workOrder.QUANT); // Multiply SONQUANT by the Quant column value
+
+        //                        if (ipnQuantities.ContainsKey(partName))
+        //                        {
+        //                            ipnQuantities[partName] -= totalRequired;
+        //                        }
+        //                        else
+        //                        {
+        //                            ipnQuantities[partName] = 0;
+        //                            ipnCQuantities[partName] = totalRequired; // Initialize consumed quantity as 0
+        //                        }
+        //                    }
+
+        //                    AppendLogMessage($"Loaded BOM data for SIM work order '{workOrder.SERIALNAME}'", Color.Green);
+        //                }
+        //                catch (HttpRequestException ex)
+        //                {
+        //                    AppendLogMessage($"Request error for SIM work order '{workOrder.SERIALNAME}': {ex.Message}", Color.Red);
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    AppendLogMessage($"Error processing SIM work order '{workOrder.SERIALNAME}': {ex.Message}", Color.Red);
+        //                }
+        //            }
+        //        }
+
+        //    }
+        //    // Calculate the balance for each PARTNAME
+        //    var ipnBalances = new Dictionary<string, int>();
+        //    foreach (var partName in ipnQuantities.Keys)
+        //    {
+        //        ipnBalances[partName] = ipnQuantities[partName] - ipnCQuantities[partName];
+        //    }
+        //    // Calculate the required values
+        //    var result = new Dictionary<string, (int balance, int stock, int simulation)>();
+        //    foreach (var ipn in ipnBalances.Keys)
+        //    {
+        //        int balance = ipnBalances[ipn];
+        //        int stock = warehouseStock.ContainsKey(ipn) ? warehouseStock[ipn] : 0;
+        //        int simulation = stock + balance;
+        //        result[ipn] = (balance, stock, simulation);
+        //    }
+        //    return result;
+        //}
+
+
+
+        private async Task<Dictionary<string, (int kitBalance, int stock, int simulation)>> AggregatedSim(List<Serial> selectedWorkOrders)
         {
-            var ipnQuantities = new Dictionary<string, int>();
-            var ipnCQuantities = new Dictionary<string, int>();
+            // For each IPN, keep a list of max CQUANT per kit and sum of QUANT per kit
+            var ipnToMaxCQuantPerKit = new Dictionary<string, List<int>>();
+            var ipnToTotalQuant = new Dictionary<string, int>();
+
             // Fetch warehouse stock levels once
             var warehouseStock = new Dictionary<string, int>();
             string selectedWarehouseName = GetSelectedWarehouseName();
@@ -504,11 +699,12 @@ namespace WH_Panel
                     }
                 }
             }
+
+            // For each kit (work order), collect max CQUANT and sum QUANT for each IPN
             foreach (var workOrder in selectedWorkOrders)
             {
                 if (workOrder.SERIALNAME.StartsWith("ROB"))
                 {
-
                     string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{workOrder.SERIALNAME}'&$expand=TRANSORDER_K_SUBFORM";
                     using (HttpClient client = new HttpClient())
                     {
@@ -524,18 +720,41 @@ namespace WH_Panel
                             string responseBody = await response.Content.ReadAsStringAsync();
                             var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
                             var transOrders = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
+
+                            // For this kit, track max CQUANT and sum QUANT for each IPN
+                            var kitMaxCQuant = new Dictionary<string, int>();
+                            var kitSumQuant = new Dictionary<string, int>();
+
                             foreach (var transOrder in transOrders)
                             {
-                                if (ipnQuantities.ContainsKey(transOrder.PARTNAME))
-                                {
-                                    ipnQuantities[transOrder.PARTNAME] += transOrder.QUANT;
-                                }
+                                // Max CQUANT per IPN in this kit
+                                if (kitMaxCQuant.TryGetValue(transOrder.PARTNAME, out int existingCQuant))
+                                    kitMaxCQuant[transOrder.PARTNAME] = (Math.Max(existingCQuant, transOrder.CQUANT));
                                 else
-                                {
-                                    ipnQuantities[transOrder.PARTNAME] = transOrder.QUANT;
-                                    ipnCQuantities[transOrder.PARTNAME] = transOrder.CQUANT;
-                                }
+                                    kitMaxCQuant[transOrder.PARTNAME] = (Math.Max(existingCQuant, transOrder.CQUANT));
+
+                                // Sum QUANT per IPN in this kit
+                                if (kitSumQuant.ContainsKey(transOrder.PARTNAME))
+                                    kitSumQuant[transOrder.PARTNAME] += transOrder.QUANT;
+                                else
+                                    kitSumQuant[transOrder.PARTNAME] = transOrder.QUANT;
                             }
+
+                            // Add this kit's max CQUANT and sum QUANT to the global dictionaries
+                            foreach (var ipn in kitMaxCQuant.Keys)
+                            {
+                                if (!ipnToMaxCQuantPerKit.ContainsKey(ipn))
+                                    ipnToMaxCQuantPerKit[ipn] = new List<int>();
+                                ipnToMaxCQuantPerKit[ipn].Add((kitMaxCQuant[ipn]));
+                            }
+                            foreach (var ipn in kitSumQuant.Keys)
+                            {
+                                if (ipnToTotalQuant.ContainsKey(ipn))
+                                    ipnToTotalQuant[ipn] += kitSumQuant[ipn];
+                                else
+                                    ipnToTotalQuant[ipn] = kitSumQuant[ipn];
+                            }
+
                             AppendLogMessage($"Loaded data for {workOrder.SERIALNAME}", Color.Green);
                         }
                         catch (HttpRequestException ex)
@@ -548,52 +767,45 @@ namespace WH_Panel
                         }
                     }
                 }
+
+
                 else if (workOrder.SERIALNAME.StartsWith("SIM"))
                 {
-                    // Construct the API URL for the SIM work order
+                    // SIM logic: fetch BOM and add required quantities
                     string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART('{workOrder.PARTNAME}')/REVISIONS_SUBFORM?$filter=REVNUM eq '{workOrder.REVNUM}'&$expand=REVPARTARC_SUBFORM";
-
                     using (HttpClient client = new HttpClient())
                     {
                         try
                         {
                             AppendLogMessage($"Retrieving BOM data for SIM work order '{workOrder.SERIALNAME}'", Color.Yellow);
-
-                            // Set the request headers
                             client.DefaultRequestHeaders.Accept.Clear();
                             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                             string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-                            // Make the HTTP GET request
                             HttpResponseMessage response = await client.GetAsync(url);
                             response.EnsureSuccessStatusCode();
-
-                            // Read the response content
                             string responseBody = await response.Content.ReadAsStringAsync();
-
-                            // Parse the JSON response
                             var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
                             var bomItems = apiResponse["value"].First["REVPARTARC_SUBFORM"].ToObject<List<JObject>>();
 
-                            // Process each BOM item
                             foreach (var item in bomItems)
                             {
                                 string partName = item["SONNAME"].ToString();
                                 double sonQuant = item["SONQUANT"].ToObject<double>();
-                                int totalRequired = (int)(sonQuant * workOrder.QUANT); // Multiply SONQUANT by the Quant column value
+                                int totalRequired = (int)(sonQuant * workOrder.QUANT);
 
-                                if (ipnQuantities.ContainsKey(partName))
-                                {
-                                    ipnQuantities[partName] -= totalRequired;
-                                }
+                                // For SIM, add to required (as if it's a kit to be simulated)
+                                if (!ipnToMaxCQuantPerKit.ContainsKey(partName))
+                                    ipnToMaxCQuantPerKit[partName] = new List<int>();
+                                ipnToMaxCQuantPerKit[partName].Add(totalRequired);
+
+                                // Optionally, you can also add to ipnToTotalQuant if you want to show the simulated kit as "in kits"
+                                // If not, comment out the next two lines:
+                                if (ipnToTotalQuant.ContainsKey(partName))
+                                    ipnToTotalQuant[partName] += 0;
                                 else
-                                {
-                                    ipnQuantities[partName] = 0;
-                                    ipnCQuantities[partName] = totalRequired; // Initialize consumed quantity as 0
-                                }
+                                    ipnToTotalQuant[partName] = 0;
                             }
-
                             AppendLogMessage($"Loaded BOM data for SIM work order '{workOrder.SERIALNAME}'", Color.Green);
                         }
                         catch (HttpRequestException ex)
@@ -607,24 +819,25 @@ namespace WH_Panel
                     }
                 }
 
+
             }
-            // Calculate the balance for each PARTNAME
-            var ipnBalances = new Dictionary<string, int>();
-            foreach (var partName in ipnQuantities.Keys)
+
+            // Now, for each IPN, calculate totals and simulation
+            var result = new Dictionary<string, (int kitBalance, int stock, int simulation)>();
+            var allIpns = new HashSet<string>(ipnToMaxCQuantPerKit.Keys.Concat(ipnToTotalQuant.Keys));
+            foreach (var ipn in allIpns)
             {
-                ipnBalances[partName] = ipnQuantities[partName] - ipnCQuantities[partName];
-            }
-            // Calculate the required values
-            var result = new Dictionary<string, (int balance, int stock, int simulation)>();
-            foreach (var ipn in ipnBalances.Keys)
-            {
-                int balance = ipnBalances[ipn];
+                int totalRequired = ipnToMaxCQuantPerKit.ContainsKey(ipn) ? ipnToMaxCQuantPerKit[ipn].Sum() : 0;
+                int totalInKits = ipnToTotalQuant.ContainsKey(ipn) ? ipnToTotalQuant[ipn] : 0;
+                int kitBalance =  totalInKits - totalRequired;
                 int stock = warehouseStock.ContainsKey(ipn) ? warehouseStock[ipn] : 0;
-                int simulation = stock + balance;
-                result[ipn] = (balance, stock, simulation);
+                int simulation = stock + kitBalance;
+                result[ipn] = (kitBalance, stock, simulation);
             }
             return result;
         }
+
+
         private async Task<Dictionary<string, List<(Serial serial, int quant, int cquant, int balance, int simulation)>>> SimByIPN(List<Serial> selectedWorkOrders)
         {
             var ipnToSerials = new Dictionary<string, List<(Serial serial, int quant, int cquant, int balance, int simulation)>>();
@@ -732,9 +945,71 @@ namespace WH_Panel
             }
             return ipnToSerials;
         }
-        private void GenerateHTMLaggregated(string filename, Dictionary<string, (int balance, int stock, int simulation)> tableData, string reportTitle, List<Serial> selectedWorkOrders, double completionPercentage)
+
+        private async Task<Dictionary<string, string>> GetMfpnForIpnsAsync(IEnumerable<string> ipns)
+        {
+            var ipnToMfpn = new Dictionary<string, string>();
+            var ipnList = ipns.Distinct().ToList();
+            int batchSize = 5; // Adjust as needed for API limits
+
+            for (int i = 0; i < ipnList.Count; i += batchSize)
+            {
+                var batch = ipnList.Skip(i).Take(batchSize).ToList();
+                // Build OData filter: PARTNAME eq 'IPN1' or PARTNAME eq 'IPN2' ...
+                var filter = string.Join(" or ", batch.Select(ipn => $"PARTNAME eq '{ipn}'"));
+                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter={filter}&$select=PARTNAME,MNFPARTNAME";
+
+                using (HttpClient client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                    try
+                    {
+                        HttpResponseMessage response = await client.GetAsync(url);
+                        response.EnsureSuccessStatusCode();
+                        string responseBody = await response.Content.ReadAsStringAsync();
+                        var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+
+                        foreach (var item in apiResponse["value"])
+                        {
+                            string partName = item["PARTNAME"]?.ToString();
+                            string mfpn = item["MNFPARTNAME"]?.ToString();
+                            if (!string.IsNullOrEmpty(partName))
+                                ipnToMfpn[partName] = string.IsNullOrEmpty(mfpn) ? "-" : mfpn;
+                        }
+
+                        // For IPNs not returned, set as "-"
+                        foreach (var ipn in batch)
+                        {
+                            if (!ipnToMfpn.ContainsKey(ipn))
+                                ipnToMfpn[ipn] = "-";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        foreach (var ipn in batch)
+                            ipnToMfpn[ipn] = "-";
+                        AppendLogMessage($"Error fetching MFPNs: {ex.Message}", Color.Red);
+                    }
+                }
+            }
+
+            return ipnToMfpn;
+        }
+
+
+
+        private async Task GenerateHTMLaggregated(string filename, Dictionary<string, (int balance, int stock, int simulation)> tableData, string reportTitle, List<Serial> selectedWorkOrders, double completionPercentage)
         {
             tableData.OrderBy(x => x.Key == "simulation");
+
+            // 1. Fetch MFPNs for all IPNs in tableData
+            var ipns = tableData.Keys.ToList();
+            var ipnToMfpn = await GetMfpnForIpnsAsync(ipns);
+
             using (StreamWriter writer = new StreamWriter(filename))
             {
                 writer.WriteLine("<html style='text-align:center;background-color:gray;color:white;'>");
@@ -815,13 +1090,15 @@ namespace WH_Panel
                 writer.WriteLine("<table id='kitsTable'>");
                 writer.WriteLine("<tr>");
                 writer.WriteLine("<th onclick='sortTable(0)'>IPN</th>");
+                writer.WriteLine("<th onclick='sortTable(1)'>MFPN</th>");
                 writer.WriteLine("<th onclick='sortTable(2)'>WH Stock</th>");
-                writer.WriteLine("<th onclick='sortTable(1)'>Kit Balance</th>");
-                writer.WriteLine("<th onclick='sortTable(3)'>Simulation</th>");
+                writer.WriteLine("<th onclick='sortTable(3)'>Kit Balance</th>");
+                writer.WriteLine("<th onclick='sortTable(4)'>Simulation</th>");
                 writer.WriteLine("</tr>");
                 foreach (var ipn in tableData.OrderBy(x => x.Value.simulation))
                 {
                     var (balance, stock, simulation) = ipn.Value;
+                    string mfpn = ipnToMfpn.TryGetValue(ipn.Key, out var mf) ? mf : "-";
                     //string rowClass = simulation >= 0 ? "green" : "red";
                     string rowClass = "red";
                     if (simulation >= 0 && simulation <11)
@@ -837,6 +1114,7 @@ namespace WH_Panel
                         string balanceClass = balance < 0 ? "red-balance" : "";
                     writer.WriteLine($"<tr class='{rowClass}'>");
                     writer.WriteLine($"<td>{ipn.Key}</td>");
+                    writer.WriteLine($"<td>{mfpn}</td>"); // New column
                     writer.WriteLine($"<td>{stock}</td>");
                     writer.WriteLine($"<td class='{balanceClass}'>{balance}</td>");
                     writer.WriteLine($"<td>{simulation}</td>");
@@ -847,6 +1125,8 @@ namespace WH_Panel
                 writer.WriteLine("</html>");
             }
         }
+
+
         private async void btnByIPN_Click(object sender, EventArgs e)
         {
             if (dgvBomsList.Rows.Cast<DataGridViewRow>().Any(row => Convert.ToBoolean(row.Cells["Selected"].Value)))
