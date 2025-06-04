@@ -245,7 +245,7 @@ namespace WH_Panel
         }
         static void OpenWebAppInBroser()
         {
-            string url = "http://192.168.69.37:81/"; // Change this to the desired web address
+            string url = "http://192.168.69.21/"; // Change this to the desired web address
             Process.Start(new ProcessStartInfo
             {
                 FileName = url,
