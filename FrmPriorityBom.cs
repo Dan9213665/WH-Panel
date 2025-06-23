@@ -3016,7 +3016,7 @@ namespace WH_Panel
 
         private async Task RemoveRowsWithTowarhsname666Async()
         {
-            txtbLog.AppendText("RemoveRowsWithTowarhsname666Async: Start\n");
+          //  txtbLog.AppendText("RemoveRowsWithTowarhsname666Async: Start\n");
             var rowsToRemove = new List<DataGridViewRow>();
             var rows = dgwINSTOCK.Rows.Cast<DataGridViewRow>().ToList();
 
@@ -3030,7 +3030,7 @@ namespace WH_Panel
                 }
 
                 string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{docNo}'&$select=TOWARHSNAME";
-                txtbLog.AppendText($"Checking TOWARHSNAME for DOCNO: {docNo}\n");
+                //txtbLog.AppendText($"Checking TOWARHSNAME for DOCNO: {docNo}\n");
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -3048,11 +3048,11 @@ namespace WH_Panel
                         if (value != null)
                         {
                             string toWarhsName = value["TOWARHSNAME"]?.ToString();
-                            txtbLog.AppendText($"DOCNO: {docNo}, TOWARHSNAME: {toWarhsName}\n");
+                           // txtbLog.AppendText($"DOCNO: {docNo}, TOWARHSNAME: {toWarhsName}\n");
                             if (toWarhsName == "666")
                             {
                                 rowsToRemove.Add(row);
-                                txtbLog.AppendText($"Marked for removal: DOCNO {docNo} (TOWARHSNAME=666)\n");
+                               // txtbLog.AppendText($"Marked for removal: DOCNO {docNo} (TOWARHSNAME=666)\n");
                             }
                         }
                         else
@@ -3069,16 +3069,16 @@ namespace WH_Panel
 
 
 
-            txtbLog.AppendText($"Rows to remove (TOWARHSNAME=666): {rowsToRemove.Count}\n");
+           // txtbLog.AppendText($"Rows to remove (TOWARHSNAME=666): {rowsToRemove.Count}\n");
             foreach (var row in rowsToRemove)
             {
                 var logDocNo = row.Cells["LOGDOCNO"].Value?.ToString(); // Capture before removal
                 dgwINSTOCK.Rows.Remove(row);
-                txtbLog.AppendText($"Removed row with DOCNO: {logDocNo}\n");
+               // txtbLog.AppendText($"Removed row with DOCNO: {logDocNo}\n");
             }
 
             dgwINSTOCK.Refresh();
-            txtbLog.AppendText("RemoveRowsWithTowarhsname666Async: End\n");
+           // txtbLog.AppendText("RemoveRowsWithTowarhsname666Async: End\n");
 
 
             dgwINSTOCK.Visible = true; // Show grid after filtering
