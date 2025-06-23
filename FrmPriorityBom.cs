@@ -1151,7 +1151,7 @@ namespace WH_Panel
                             // Fetch MFPN for the selected row
                             await FetchMFPNForRow(selectedRow);
                             await FetchAltForRow(selectedRow);
-                            LoadDataAndFilterInStock();
+                            await LoadDataAndFilterInStock();
                         }
                         else
                         {
@@ -2949,7 +2949,9 @@ namespace WH_Panel
         private void btnGetMFNs_Click(object sender, EventArgs e)
         {
         }
-        private void LoadDataAndFilterInStock()
+
+
+        private async Task  LoadDataAndFilterInStock()
         {
             // Step 1: Initialize dgwINSTOCK columns
             InitializeInStockDataGridView();
@@ -3003,14 +3005,93 @@ namespace WH_Panel
                 }
                 dgwINSTOCK.Rows.Add(newRow);
             }
-            // Step 6: Update the UI
-            dgwINSTOCK.Refresh();
+
+            dgwINSTOCK.Visible = false; // Hide grid before loading
+            // Additional check: Remove rows where TOWARHSNAME == "666"
+            await RemoveRowsWithTowarhsname666Async();
+
+
+            
         }
+
+        private async Task RemoveRowsWithTowarhsname666Async()
+        {
+            txtbLog.AppendText("RemoveRowsWithTowarhsname666Async: Start\n");
+            var rowsToRemove = new List<DataGridViewRow>();
+            var rows = dgwINSTOCK.Rows.Cast<DataGridViewRow>().ToList();
+
+            foreach (var row in rows)
+            {
+                var docNo = row.Cells["LOGDOCNO"].Value?.ToString();
+                if (string.IsNullOrEmpty(docNo))
+                {
+                    txtbLog.AppendText("Skipping row with empty LOGDOCNO\n");
+                    continue;
+                }
+
+                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{docNo}'&$select=TOWARHSNAME";
+                txtbLog.AppendText($"Checking TOWARHSNAME for DOCNO: {docNo}\n");
+                using (HttpClient client = new HttpClient())
+                {
+                    try
+                    {
+                        client.DefaultRequestHeaders.Accept.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                        HttpResponseMessage response = await client.GetAsync(url);
+                        response.EnsureSuccessStatusCode();
+                        string responseBody = await response.Content.ReadAsStringAsync();
+                        var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+                        var value = apiResponse["value"]?.FirstOrDefault();
+                        if (value != null)
+                        {
+                            string toWarhsName = value["TOWARHSNAME"]?.ToString();
+                            txtbLog.AppendText($"DOCNO: {docNo}, TOWARHSNAME: {toWarhsName}\n");
+                            if (toWarhsName == "666")
+                            {
+                                rowsToRemove.Add(row);
+                                txtbLog.AppendText($"Marked for removal: DOCNO {docNo} (TOWARHSNAME=666)\n");
+                            }
+                        }
+                        else
+                        {
+                            txtbLog.AppendText($"No value found for DOCNO: {docNo}\n");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        txtbLog.AppendText($"Error checking DOCNO {docNo}: {ex.Message}\n");
+                    }
+                }
+            }
+
+
+
+            txtbLog.AppendText($"Rows to remove (TOWARHSNAME=666): {rowsToRemove.Count}\n");
+            foreach (var row in rowsToRemove)
+            {
+                var logDocNo = row.Cells["LOGDOCNO"].Value?.ToString(); // Capture before removal
+                dgwINSTOCK.Rows.Remove(row);
+                txtbLog.AppendText($"Removed row with DOCNO: {logDocNo}\n");
+            }
+
+            dgwINSTOCK.Refresh();
+            txtbLog.AppendText("RemoveRowsWithTowarhsname666Async: End\n");
+
+
+            dgwINSTOCK.Visible = true; // Show grid after filtering
+        }
+
+
+
         private void InitializeInStockDataGridView()
         {
             dgwINSTOCK.Columns.Clear();
-            dgwINSTOCK.Columns.Add("LOGDOCNO", "Document Number");
+           
             dgwINSTOCK.Columns.Add("UDATE", "Transaction Date");
+            dgwINSTOCK.Columns.Add("LOGDOCNO", "Document Number");
             dgwINSTOCK.Columns.Add("DOCDES", "DOCDES");
             dgwINSTOCK.Columns.Add("SUPCUSTNAME", "Source/Requester");
             dgwINSTOCK.Columns.Add("BOOKNUM", "Client's Document");
