@@ -62,6 +62,7 @@
             tableLayoutPanel9 = new TableLayoutPanel();
             btnPrinSticker = new Button();
             button2 = new Button();
+            txtbUberAvlDecoder = new TextBox();
             groupBox2 = new GroupBox();
             tableLayoutPanel3 = new TableLayoutPanel();
             cmbWarehouseList = new ComboBox();
@@ -180,6 +181,7 @@
             tableLayoutPanel2.Controls.Add(chkbNoSticker, 1, 6);
             tableLayoutPanel2.Controls.Add(cbmOUT, 2, 6);
             tableLayoutPanel2.Controls.Add(tableLayoutPanel9, 2, 0);
+            tableLayoutPanel2.Controls.Add(txtbUberAvlDecoder, 1, 5);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.Location = new Point(3, 19);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -605,6 +607,18 @@
             button2.TabIndex = 11;
             button2.UseVisualStyleBackColor = true;
             button2.Click += btnClearFields_Click;
+            // 
+            // txtbUberAvlDecoder
+            // 
+            txtbUberAvlDecoder.Dock = DockStyle.Fill;
+            txtbUberAvlDecoder.Location = new Point(203, 108);
+            txtbUberAvlDecoder.Name = "txtbUberAvlDecoder";
+            txtbUberAvlDecoder.PlaceholderText = "UBER AVL DECODER";
+            txtbUberAvlDecoder.Size = new Size(194, 23);
+            txtbUberAvlDecoder.TabIndex = 27;
+            txtbUberAvlDecoder.TextAlign = HorizontalAlignment.Center;
+            txtbUberAvlDecoder.Enter += txtbUberAvlDecoder_Enter;
+            txtbUberAvlDecoder.KeyDown += txtbUberAvlDecoder_KeyDown;
             // 
             // groupBox2
             // 
@@ -1224,5 +1238,6 @@
         private Button btnDIGIAPI;
         private Button btnAVL;
         private Button btnSPLIT;
+        private TextBox txtbUberAvlDecoder;
     }
 }

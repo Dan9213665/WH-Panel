@@ -4151,6 +4151,82 @@ namespace WH_Panel
             }
         }
 
+        private void txtbUberAvlDecoder_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                string input = txtbUberAvlDecoder.Text;
+                if (avlMfpns.Count == 0)
+                {
+                    MessageBox.Show("AVL not loaded or empty.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                var found = avlMfpns.FirstOrDefault(mfpn => !string.IsNullOrEmpty(mfpn) && input.Contains(mfpn, StringComparison.OrdinalIgnoreCase));
+                if (!string.IsNullOrEmpty(found))
+                {
+                    txtbInputMFPN.Text = found;
+                    txtbInputMFPN.Focus();
+                    txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter), txtbUberAvlDecoder);
+                    txtbUberAvlDecoder.Clear();
+                }
+                else
+                {
+                    MessageBox.Show("No MFPN from AVL found in the scanned string.", "Not Found", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            else if (e.KeyCode == Keys.Escape)
+            {
+                txtbUberAvlDecoder.Clear();
+            }
+        }
+
+        private HashSet<string> avlMfpns = new();
+        private bool avlLoaded = false;
+        private string lastAvlPrefix = "";
+
+        private async void txtbUberAvlDecoder_Enter(object sender, EventArgs e)
+        {
+            string selectedPrefix = txtbPrefix.Text.Trim();
+            if (!avlLoaded || lastAvlPrefix != selectedPrefix)
+            {
+                avlMfpns.Clear();
+                var prefixExceptions = new List<string> { "Flr", "666", "400", "450", "500", "501", "550", "600", "650", "Main", "Outl", "Trn", "MRB" };
+                if (prefixExceptions.Contains(selectedPrefix))
+                {
+                    MessageBox.Show($"The prefix '{selectedPrefix}' is not valid for AVL.", "Invalid Prefix", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    avlLoaded = false;
+                    return;
+                }
+                string apiUrl = $"{baseUrl}/PARTMNFONE?$filter=PARTNAME eq '{selectedPrefix}_*'&$select= MNFPARTNAME";
+                using (HttpClient client = new HttpClient())
+                {
+                    try
+                    {
+                        client.DefaultRequestHeaders.Accept.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                        HttpResponseMessage response = await client.GetAsync(apiUrl);
+                        response.EnsureSuccessStatusCode();
+                        string responseBody = await response.Content.ReadAsStringAsync();
+                        var apiResponse = JsonConvert.DeserializeObject<PartMnfOneApiResponse>(responseBody);
+                        foreach (var part in apiResponse.value)
+                        {
+                            if (!string.IsNullOrWhiteSpace(part.MNFPARTNAME))
+                                avlMfpns.Add(part.MNFPARTNAME);
+                        }
+                        avlLoaded = true;
+                        lastAvlPrefix = selectedPrefix;
+                        txtLog.AppendText($"AVL loaded for prefix {selectedPrefix} ({avlMfpns.Count} MFPNs)\n");
+                    }
+                    catch (Exception ex)
+                    {
+                        txtLog.AppendText($"AVL load error: {ex.Message}\n");
+                        avlLoaded = false;
+                    }
+                }
+            }
+        }
 
 
     }
