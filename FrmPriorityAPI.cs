@@ -763,10 +763,43 @@ namespace WH_Panel
                 MessageBox.Show("Sticker printing failed: " + e.Message);
             }
         }
+        //private void txtbInputQty_KeyDown(object sender, KeyEventArgs e)
+        //{
+        //    if (e.KeyCode == Keys.Enter)
+        //    {
+        //        // Call the button1_Click method programmatically
+        //        if (chkbNoSticker.Checked)
+        //        {
+        //            btnMFG_Click(sender, e);
+        //        }
+        //        else
+        //        {
+        //            btnMFG_Click(sender, e);
+        //            if (!tbtOUT.Checked)
+        //            {
+        //                btnPrintSticker_Click(sender, e);
+        //            }
+        //        }
+        //    }
+        //}
+
         private void txtbInputQty_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
+                string ipn = txtbInputIPN.Text.Trim();
+                string prefix = txtbPrefix.Text.Trim();
+
+                // Validate: check only the first 3 characters of IPN
+                if (ipn.Length < 3 || !ipn.Substring(0, 3).Equals(prefix, StringComparison.OrdinalIgnoreCase))
+                 {
+                    MessageBox.Show($"IPN must start with '{prefix}'.\n Current IPN: '{ipn}' \n Incorrect WAREHOUSE selected !", "Incorrect WAREHOUSE selected !", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    btnClearFields_Click(sender,e);
+                    cmbWarehouseList.DroppedDown = true;
+                    return;
+                }
+
                 // Call the button1_Click method programmatically
                 if (chkbNoSticker.Checked)
                 {
