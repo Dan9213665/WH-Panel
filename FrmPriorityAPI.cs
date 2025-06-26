@@ -650,7 +650,7 @@ namespace WH_Panel
             if (e.KeyCode == Keys.Enter)
             {
                 string partName = txtbInputIPN.Text;
-                string url = $"{baseUrl}/PARTMNFONE?$filter=PARTNAME eq '{partName}'";
+                string url = $"{baseUrl}/PARTMNFONE?$filter=PARTNAME eq '{partName}'&$select=MNFPARTNAME,PARTDES,MNFNAME,PART";
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -763,25 +763,7 @@ namespace WH_Panel
                 MessageBox.Show("Sticker printing failed: " + e.Message);
             }
         }
-        //private void txtbInputQty_KeyDown(object sender, KeyEventArgs e)
-        //{
-        //    if (e.KeyCode == Keys.Enter)
-        //    {
-        //        // Call the button1_Click method programmatically
-        //        if (chkbNoSticker.Checked)
-        //        {
-        //            btnMFG_Click(sender, e);
-        //        }
-        //        else
-        //        {
-        //            btnMFG_Click(sender, e);
-        //            if (!tbtOUT.Checked)
-        //            {
-        //                btnPrintSticker_Click(sender, e);
-        //            }
-        //        }
-        //    }
-        //}
+
 
         private void txtbInputQty_KeyDown(object sender, KeyEventArgs e)
         {
@@ -859,7 +841,7 @@ namespace WH_Panel
                 lastUserInput = lastInput;
                 string mnfPartName = txtbInputMFPN.Text;
                 string encodedMnfPartName = Uri.EscapeDataString(mnfPartName); // URL-encode the MNFPARTNAME
-                string url = $"{baseUrl}/PARTMNFONE?$filter=MNFPARTNAME eq '{encodedMnfPartName}'";
+                string url = $"{baseUrl}/PARTMNFONE?$filter=MNFPARTNAME eq '{encodedMnfPartName}'&$select=PARTNAME,PARTDES,MNFNAME";
                 using (HttpClient client = new HttpClient())
                 {
                     try
