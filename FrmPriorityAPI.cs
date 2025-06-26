@@ -1155,7 +1155,7 @@ namespace WH_Panel
         {
             var partId = (int)row.Cells["PART"].Value;
             var partName = row.Cells["PARTNAME"].Value.ToString();
-            string partUrl = $"{baseUrl}/PARTMNFONE?$filter=PART eq {partId}";
+            string partUrl = $"{baseUrl}/PARTMNFONE?$filter=PART eq {partId}&$select=MNFPARTNAME";
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -1930,32 +1930,110 @@ namespace WH_Panel
             }
             await Task.Delay(10); // Optional delay to allow the context menu to show
         }
+        //private async void ShowSerialDetails(string serialName)
+        //{
+        //    string url = $"{baseUrl}/SERIAL?$filter=SERIALNAME eq '{serialName}'";
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        try
+        //        {
+        //            // Set the request headers if needed
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            // Set the Authorization header
+        //            //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+        //            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+        //            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+        //            // Make the HTTP GET request
+        //            HttpResponseMessage response = await client.GetAsync(url);
+        //            response.EnsureSuccessStatusCode();
+        //            // Read the response content
+        //            string responseBody = await response.Content.ReadAsStringAsync();
+        //            // Parse the JSON response
+        //            var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+        //            var serialDetails = apiResponse["value"].FirstOrDefault();
+        //            if (serialDetails != null)
+        //            {
+        //                // Create a new form to display the data
+        //                Form popupForm = new Form
+        //                {
+        //                    Text = $"{serialName} Details",
+        //                    Size = new Size(500, 300),
+        //                    StartPosition = FormStartPosition.CenterScreen,
+        //                    BackColor = Color.FromArgb(50, 50, 50),
+        //                    ForeColor = Color.FromArgb(220, 220, 220)
+        //                };
+        //                DataGridView dataGridView = new DataGridView
+        //                {
+        //                    Dock = DockStyle.Fill,
+        //                    AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+        //                    BackgroundColor = Color.FromArgb(50, 50, 50),
+        //                    ForeColor = Color.FromArgb(220, 220, 220),
+        //                    ColumnHeadersDefaultCellStyle = new DataGridViewCellStyle
+        //                    {
+        //                        BackColor = Color.FromArgb(50, 50, 50),
+        //                        ForeColor = Color.FromArgb(220, 220, 220)
+        //                    },
+        //                    DefaultCellStyle = new DataGridViewCellStyle
+        //                    {
+        //                        BackColor = Color.FromArgb(50, 50, 50),
+        //                        ForeColor = Color.FromArgb(220, 220, 220)
+        //                    },
+        //                    EnableHeadersVisualStyles = false,
+        //                    RowHeadersVisible = false,
+        //                    ColumnCount = 2,
+        //                    AllowUserToAddRows = false,
+        //                    AllowUserToDeleteRows = false,
+        //                    ReadOnly = true
+        //                };
+        //                dataGridView.Columns[0].Name = "Field";
+        //                dataGridView.Columns[1].Name = "Value";
+        //                // Add rows to the DataGridView
+        //                dataGridView.Rows.Add("PARTNAME", serialDetails["PARTNAME"].ToString());
+        //                dataGridView.Rows.Add("PARTDES", serialDetails["PARTDES"].ToString());
+        //                dataGridView.Rows.Add("SERIALNAME", serialDetails["SERIALNAME"].ToString());
+        //                dataGridView.Rows.Add("REVNAME", serialDetails["REVNAME"]?.ToString());
+        //                dataGridView.Rows.Add("REVNUM", serialDetails["REVNUM"].ToString());
+        //                dataGridView.Rows.Add("SERIALSTATUSDES", serialDetails["SERIALSTATUSDES"].ToString());
+        //                dataGridView.Rows.Add("OWNERLOGIN", serialDetails["OWNERLOGIN"].ToString());
+        //                dataGridView.Rows.Add("ORDNAME", serialDetails["ORDNAME"]?.ToString());
+        //                dataGridView.Rows.Add("QUANT", serialDetails["QUANT"].ToString());
+        //                popupForm.Controls.Add(dataGridView);
+        //                popupForm.Show();
+        //            }
+        //        }
+        //        catch (HttpRequestException ex)
+        //        {
+        //            MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        }
+        //    }
+        //}
+
+
+
         private async void ShowSerialDetails(string serialName)
         {
-            string url = $"{baseUrl}/SERIAL?$filter=SERIALNAME eq '{serialName}'";
+            string url = $"{baseUrl}/SERIAL?$filter=SERIALNAME eq '{serialName}'&$select=PARTNAME,PARTDES,SERIALNAME,REVNAME,REVNUM,SERIALSTATUSDES,OWNERLOGIN,ORDNAME,QUANT";
             using (HttpClient client = new HttpClient())
             {
                 try
                 {
-                    // Set the request headers if needed
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    // Set the Authorization header
-                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
-                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-                    // Make the HTTP GET request
                     HttpResponseMessage response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
-                    // Read the response content
                     string responseBody = await response.Content.ReadAsStringAsync();
-                    // Parse the JSON response
                     var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
                     var serialDetails = apiResponse["value"].FirstOrDefault();
                     if (serialDetails != null)
                     {
-                        // Create a new form to display the data
                         Form popupForm = new Form
                         {
                             Text = $"{serialName} Details",
@@ -1989,16 +2067,15 @@ namespace WH_Panel
                         };
                         dataGridView.Columns[0].Name = "Field";
                         dataGridView.Columns[1].Name = "Value";
-                        // Add rows to the DataGridView
-                        dataGridView.Rows.Add("PARTNAME", serialDetails["PARTNAME"].ToString());
-                        dataGridView.Rows.Add("PARTDES", serialDetails["PARTDES"].ToString());
-                        dataGridView.Rows.Add("SERIALNAME", serialDetails["SERIALNAME"].ToString());
+                        dataGridView.Rows.Add("PARTNAME", serialDetails["PARTNAME"]?.ToString());
+                        dataGridView.Rows.Add("PARTDES", serialDetails["PARTDES"]?.ToString());
+                        dataGridView.Rows.Add("SERIALNAME", serialDetails["SERIALNAME"]?.ToString());
                         dataGridView.Rows.Add("REVNAME", serialDetails["REVNAME"]?.ToString());
-                        dataGridView.Rows.Add("REVNUM", serialDetails["REVNUM"].ToString());
-                        dataGridView.Rows.Add("SERIALSTATUSDES", serialDetails["SERIALSTATUSDES"].ToString());
-                        dataGridView.Rows.Add("OWNERLOGIN", serialDetails["OWNERLOGIN"].ToString());
+                        dataGridView.Rows.Add("REVNUM", serialDetails["REVNUM"]?.ToString());
+                        dataGridView.Rows.Add("SERIALSTATUSDES", serialDetails["SERIALSTATUSDES"]?.ToString());
+                        dataGridView.Rows.Add("OWNERLOGIN", serialDetails["OWNERLOGIN"]?.ToString());
                         dataGridView.Rows.Add("ORDNAME", serialDetails["ORDNAME"]?.ToString());
-                        dataGridView.Rows.Add("QUANT", serialDetails["QUANT"].ToString());
+                        dataGridView.Rows.Add("QUANT", serialDetails["QUANT"]?.ToString());
                         popupForm.Controls.Add(dataGridView);
                         popupForm.Show();
                     }
@@ -2013,6 +2090,11 @@ namespace WH_Panel
                 }
             }
         }
+
+
+
+
+
         private async void btnINSERTlogpart_Click(object sender, EventArgs e)
         {
             string partName = txtbIPN.Text.Trim();
