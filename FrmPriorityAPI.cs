@@ -2520,7 +2520,8 @@ namespace WH_Panel
         }
         private async Task DisplayInsertedData(int partId)
         {
-            string url = $"{baseUrl}/PARTMNFONE?$filter=PART eq {partId}";
+           // string url = $"{baseUrl}/PARTMNFONE?$filter=PART eq {partId}";
+            string url = $"{baseUrl}/PARTMNFONE?$filter=PART eq {partId}&$select=PARTNAME,PARTDES,MNFPARTNAME,MNFPARTDES,MNFNAME,MNFDES";
             using (HttpClient client = new HttpClient())
             {
                 // Set the request headers

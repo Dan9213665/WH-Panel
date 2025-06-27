@@ -422,7 +422,9 @@ namespace WH_Panel
                 progressBar1.Value = 0;
                 progressBar1.Update();
                 int completedItems = 0;
-                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{serialName}'&$expand=TRANSORDER_K_SUBFORM";
+                //string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{serialName}'&$expand=TRANSORDER_K_SUBFORM";
+                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{serialName}'&$expand=TRANSORDER_K_SUBFORM($select=PARTNAME,PARTDES,CQUANT,QUANT,KLINE,TRANS)";
+
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -692,7 +694,9 @@ namespace WH_Panel
             // Construct the filter string for the API call
             string partNamesFilter = string.Join(" or ", partNames.Select(p => $"PARTNAME eq '{p}'"));
             string warehouseName = partNames.First().Substring(0, 3); // Assuming all parts belong to the same warehouse
-            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{warehouseName}'&$expand=WARHSBAL_SUBFORM";
+            //string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{warehouseName}'&$expand=WARHSBAL_SUBFORM";
+            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{warehouseName}'&$expand=WARHSBAL_SUBFORM($select=PARTNAME,TBALANCE)";
+
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -786,7 +790,9 @@ namespace WH_Panel
             {
                 string partName = row.Cells["PARTNAME"].Value.ToString();
                 //MessageBox.Show("partName:"+partName);
-                string partUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PARTNAME eq '{partName}'";
+                //string partUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PARTNAME eq '{partName}'";
+                string partUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PARTNAME eq '{partName}'&$select=PARTNAME,MNFPARTNAME";
+
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -1037,6 +1043,8 @@ namespace WH_Panel
                 var selectedRow = dgwBom.Rows[e.RowIndex];
                 var partName = selectedRow.Cells["PARTNAME"].Value.ToString();
                 string logPartUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART?$filter=PARTNAME eq '{partName}'&$expand=PARTTRANSLAST2_SUBFORM";
+
+
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -1219,7 +1227,10 @@ namespace WH_Panel
             string filter = string.Join(" or ", partNames);
 
             // Construct the API URL
-            string batchUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART?$filter={filter}&$expand=PARTALT_SUBFORM";
+            //string batchUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART?$filter={filter}&$expand=PARTALT_SUBFORM";
+            string batchUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART?$filter={filter}&$select=PARTNAME&$expand=PARTALT_SUBFORM($select=ALTNAME)";
+
+
 
             using (HttpClient client = new HttpClient())
             {
@@ -1285,7 +1296,8 @@ namespace WH_Panel
             if (row.Cells["PARTNAME"].Value != null && (row.Cells["ALT"].Value.ToString() == string.Empty || row.Cells["ALT"].Value == null))
             {
                 string partName = row.Cells["PARTNAME"].Value.ToString();
-                string partUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART?$filter=PARTNAME eq '{partName}'&$expand=PARTALT_SUBFORM";
+                //string partUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART?$filter=PARTNAME eq '{partName}'&$expand=PARTALT_SUBFORM";
+                string partUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART?$filter= PARTNAME eq '{partName}'&$expand=PARTALT_SUBFORM($select=ALTNAME)";
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -2300,7 +2312,6 @@ namespace WH_Panel
             {
                 "production@robotron.co.il",
                 "avishay@robotron.co.il",
-                "ran@robotron.co.il",
                 "rehesh@robotron.co.il",
                 "vlad@robotron.co.il"
             };

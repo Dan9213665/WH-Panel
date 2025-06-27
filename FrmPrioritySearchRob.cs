@@ -183,7 +183,9 @@ namespace WH_Panel
                     return;
                 }
                 dgwSerials.Rows.Clear();
-                string partUrl = $"{baseUrl}PART?$filter=PARTNAME eq '{partName}'&$expand=PARTPARENT_SUBFORM";
+                //string partUrl = $"{baseUrl}PART?$filter=PARTNAME eq '{partName}'&$expand=PARTPARENT_SUBFORM";
+                string partUrl = $"{baseUrl}PART?$filter=PARTNAME eq '{partName}'&$select=PARTNAME&$expand=PARTPARENT_SUBFORM($select=PARENTNAME)";
+
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -270,7 +272,9 @@ namespace WH_Panel
         }
         private async Task FetchAndDisplaySerials(string parentName,string originIPN)
         {
-            string serialUrl = $"{baseUrl}SERIAL?$filter=PARTNAME eq '{parentName}'";
+            //string serialUrl = $"{baseUrl}SERIAL?$filter=PARTNAME eq '{parentName}'";
+            string serialUrl = $"{baseUrl}SERIAL?$filter=PARTNAME eq '{parentName}'&$select=SERIALNAME,SERIALDES,SERIALSTATUSDES,REVNUM";
+
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -562,7 +566,9 @@ namespace WH_Panel
         }
         private async Task<List<string>> RetrieveParentNames(string partName)
         {
-            string partUrl = $"{baseUrl}PART?$filter=PARTNAME eq '{partName}'&$expand=PARTPARENT_SUBFORM";
+            //string partUrl = $"{baseUrl}PART?$filter=PARTNAME eq '{partName}'&$expand=PARTPARENT_SUBFORM";
+            string partUrl = $"{baseUrl}PART?$filter=PARTNAME eq '{partName}'&$select=PARTNAME&$expand=PARTPARENT_SUBFORM($select=PARENTNAME)";
+
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -635,7 +641,9 @@ namespace WH_Panel
         {
             // URL-encode the MFPN to handle special characters
             string encodedMfpn = Uri.EscapeDataString(mfpn);
-            string url = $"{baseUrl}PARTMNFONE?$filter=MNFPARTNAME eq '{encodedMfpn}'";
+            //string url = $"{baseUrl}PARTMNFONE?$filter=MNFPARTNAME eq '{encodedMfpn}'";
+            string url = $"{baseUrl}PARTMNFONE?$filter=MNFPARTNAME eq '{encodedMfpn}'&$select=PARTNAME";
+
             using (HttpClient client = new HttpClient())
             {
                 try

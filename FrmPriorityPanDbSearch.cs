@@ -242,7 +242,9 @@ namespace WH_Panel
             {
                 AddLogRow($"Loading data for warehouse: {warehouse.WARHSNAME}", Color.Orange);
                 // Step 1: Load balances for the warehouse
-                string balanceUrl = $"{baseUrl}/WAREHOUSES?$filter=WARHSNAME eq '{warehouse.WARHSNAME}'&$expand=WARHSBAL_SUBFORM";
+                //string balanceUrl = $"{baseUrl}/WAREHOUSES?$filter=WARHSNAME eq '{warehouse.WARHSNAME}'&$expand=WARHSBAL_SUBFORM";
+                string balanceUrl = $"{baseUrl}/WAREHOUSES?$filter=WARHSNAME eq '{warehouse.WARHSNAME}'&$expand=WARHSBAL_SUBFORM($select=PARTNAME,PARTDES,BALANCE,CDATE,PART)";
+
                 List<WarehouseBalance> warehouseBalances = new List<WarehouseBalance>();
                 using (HttpClient client = new HttpClient())
                 {
@@ -273,7 +275,9 @@ namespace WH_Panel
                     }
                 }
                 // Step 2: Load MFPNs for the warehouse
-                string mfpnUrl = $"{baseUrl}/PARTMNFONE?$filter=PARTNAME eq '{warehouse.WARHSNAME}_*'";
+                //string mfpnUrl = $"{baseUrl}/PARTMNFONE?$filter=PARTNAME eq '{warehouse.WARHSNAME}_*'";
+                string mfpnUrl = $"{baseUrl}/PARTMNFONE?$filter=PARTNAME eq '{warehouse.WARHSNAME}_*'&$select=PARTNAME,MNFPARTNAME";
+
                 Dictionary<string, string> partToMfpnMap = new Dictionary<string, string>();
                 using (HttpClient client = new HttpClient())
                 {
@@ -886,7 +890,9 @@ namespace WH_Panel
             if (docNo.StartsWith("ROB"))
             {
                 // Fetch UDATE from SERIAL
-                string url = $"{baseUrl}/SERIAL?$filter=SERIALNAME eq '{docNo}'";
+                //string url = $"{baseUrl}/SERIAL?$filter=SERIALNAME eq '{docNo}'";
+                string url = $"{baseUrl}/SERIAL?$filter=SERIALNAME eq '{docNo}'&$select=UDATE";
+
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -940,7 +946,9 @@ namespace WH_Panel
             else if (docNo.StartsWith("GR"))
             {
                 // Fetch UDATE from DOCUMENTS_P
-                string url = $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{docNo}'";
+                //string url = $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{docNo}'";
+                string url = $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{docNo}'&$select=UDATE";
+
                 using (HttpClient client = new HttpClient())
                 {
                     try
