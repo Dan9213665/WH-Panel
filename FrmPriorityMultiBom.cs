@@ -99,7 +99,9 @@ namespace WH_Panel
         }
         private async void GetGetRobWosList(string warehouseName, string warehouseDesc)
         {
-            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=PARTNAME eq '{warehouseName}*'";
+            //string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=PARTNAME eq '{warehouseName}*'";
+            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=PARTNAME eq '{warehouseName}*'&$select=SERIALNAME,PARTNAME,SERIALSTATUSDES,QUANT,REVNUM";
+
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -1167,7 +1169,9 @@ namespace WH_Panel
             string selectedWarehouseName = GetSelectedWarehouseName();
             if (selectedWarehouseName != null)
             {
-                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouseName}'&$expand=WARHSBAL_SUBFORM";
+                //string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouseName}'&$expand=WARHSBAL_SUBFORM";
+                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouseName}'&$select=WARHSNAME&$expand=WARHSBAL_SUBFORM($select=PARTNAME,BALANCE)";
+
                 using (HttpClient client = new HttpClient())
                 {
                     try
