@@ -1148,7 +1148,12 @@ namespace WH_Panel
                     }
                 }
             }
-            txtbPrefix.Text = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
+            if(cmbWarehouseList.SelectedItem != null)
+            {
+                txtbPrefix.Text = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
+            }
+
+            
         }
 
         private async Task ExtractMFPNForRow(DataGridViewRow row)
