@@ -1148,10 +1148,20 @@ namespace WH_Panel
                     }
                 }
             }
-            if(cmbWarehouseList.SelectedItem != null)
+            try
             {
-                txtbPrefix.Text = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
+                if (cmbWarehouseList.SelectedItem != null)
+                {
+                    txtbPrefix.Text = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
+                }
             }
+            catch (Exception ex)
+            {
+
+                txtLog.AppendText($"An error occurred: {ex.Message}\n");
+            }
+           
+           
 
             
         }
