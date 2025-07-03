@@ -4359,6 +4359,36 @@ namespace WH_Panel
             }
         }
 
+        //private void txtbUberAvlDecoder_KeyDown(object sender, KeyEventArgs e)
+        //{
+        //    if (e.KeyCode == Keys.Enter)
+        //    {
+        //        string input = txtbUberAvlDecoder.Text;
+        //        if (avlMfpns.Count == 0)
+        //        {
+        //            MessageBox.Show("AVL not loaded or empty.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        //            return;
+        //        }
+        //        var found = avlMfpns.FirstOrDefault(mfpn => !string.IsNullOrEmpty(mfpn) && input.Contains(mfpn, StringComparison.OrdinalIgnoreCase));
+        //        if (!string.IsNullOrEmpty(found))
+        //        {
+        //            txtbInputMFPN.Text = found;
+        //            txtbInputMFPN.Focus();
+        //            txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter), txtbUberAvlDecoder);
+        //            txtbUberAvlDecoder.Clear();
+        //        }
+        //        else
+        //        {
+        //            MessageBox.Show("No MFPN from AVL found in the scanned string.", "Not Found", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //        }
+        //    }
+        //    else if (e.KeyCode == Keys.Escape)
+        //    {
+        //        txtbUberAvlDecoder.Clear();
+        //    }
+        //}
+
+
         private void txtbUberAvlDecoder_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -4369,17 +4399,71 @@ namespace WH_Panel
                     MessageBox.Show("AVL not loaded or empty.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
-                var found = avlMfpns.FirstOrDefault(mfpn => !string.IsNullOrEmpty(mfpn) && input.Contains(mfpn, StringComparison.OrdinalIgnoreCase));
-                if (!string.IsNullOrEmpty(found))
+
+                // Find all MFPNs contained in the input
+                //var foundMfpns = avlMfpns
+                //    .Where(mfpn => !string.IsNullOrEmpty(mfpn) && input.Contains(mfpn, StringComparison.OrdinalIgnoreCase))
+                //    .ToList();
+
+                var foundMfpns = avlMfpns
+    .Where(mfpn => !string.IsNullOrEmpty(mfpn) &&
+                   string.Equals(input.Trim(), mfpn, StringComparison.OrdinalIgnoreCase))
+    .ToList();
+
+
+                if (foundMfpns.Count == 0)
                 {
-                    txtbInputMFPN.Text = found;
+                    MessageBox.Show("No MFPN from AVL found in the scanned string.", "Not Found", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+                else if (foundMfpns.Count == 1)
+                {
+                    // Only one found, proceed as before
+                    txtbInputMFPN.Text = foundMfpns[0];
                     txtbInputMFPN.Focus();
                     txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter), txtbUberAvlDecoder);
                     txtbUberAvlDecoder.Clear();
                 }
                 else
                 {
-                    MessageBox.Show("No MFPN from AVL found in the scanned string.", "Not Found", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    // Multiple found, show selection dialog
+                    using (Form selectionForm = new Form())
+                    {
+                        selectionForm.Text = "Select MFPN";
+                        selectionForm.Size = new Size(400, 300);
+                        selectionForm.StartPosition = FormStartPosition.CenterParent;
+                        selectionForm.BackColor = Color.FromArgb(60, 60, 60);
+                        selectionForm.ForeColor = Color.FromArgb(220, 220, 220);
+
+                        ListBox listBox = new ListBox
+                        {
+                            Dock = DockStyle.Fill,
+                            Font = new Font("Segoe UI", 12),
+                            BackColor = Color.FromArgb(50, 50, 50),
+                            ForeColor = Color.FromArgb(220, 220, 220)
+                        };
+                        listBox.Items.AddRange(foundMfpns.ToArray());
+                        listBox.DoubleClick += (s, args) => { selectionForm.DialogResult = DialogResult.OK; selectionForm.Close(); };
+
+                        Button btnOk = new Button
+                        {
+                            Text = "OK",
+                            Dock = DockStyle.Bottom,
+                            DialogResult = DialogResult.OK
+                        };
+                        selectionForm.AcceptButton = btnOk;
+
+                        selectionForm.Controls.Add(listBox);
+                        selectionForm.Controls.Add(btnOk);
+
+                        if (selectionForm.ShowDialog() == DialogResult.OK && listBox.SelectedItem != null)
+                        {
+                            txtbInputMFPN.Text = listBox.SelectedItem.ToString();
+                            txtbInputMFPN.Focus();
+                            txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter), txtbUberAvlDecoder);
+                            txtbUberAvlDecoder.Clear();
+                        }
+                    }
                 }
             }
             else if (e.KeyCode == Keys.Escape)
@@ -4387,6 +4471,7 @@ namespace WH_Panel
                 txtbUberAvlDecoder.Clear();
             }
         }
+
 
         private HashSet<string> avlMfpns = new();
         private bool avlLoaded = false;
