@@ -12,7 +12,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static WH_Panel.FrmPriorityAPI;
+using static WH_Panel.FrmPriorityBom;
 using Action = System.Action;
+using ApiResponse = WH_Panel.FrmPriorityAPI.ApiResponse;
 using Button = System.Windows.Forms.Button;
 using DataTable = System.Data.DataTable;
 using GroupBox = System.Windows.Forms.GroupBox;
@@ -237,6 +239,7 @@ namespace WH_Panel
             progressBar1.Minimum = 0;
             progressBar1.Maximum = countOFWHs;
             progressBar1.Value = 0;
+            int totalRowsLoaded = 0;
 
             foreach (var warehouse in loadedWareHouses)
             {
@@ -309,11 +312,14 @@ namespace WH_Panel
                         continue;
                     }
                 }
+
+                int rowsPerWarehouse = 0;
                 // Step 3: Merge balances and MFPNs into the dataTable
                 foreach (var balance in warehouseBalances)
                 {
                     string mfpn = partToMfpnMap.ContainsKey(balance.PARTNAME) ? partToMfpnMap[balance.PARTNAME] : string.Empty;
                     dataTable.Rows.Add(warehouse.WARHSNAME, balance.PARTNAME, mfpn, balance.PARTDES, balance.BALANCE, balance.CDATE.Substring(0, 10), balance.PART);
+                    rowsPerWarehouse++;
                 }
                 currentWH++;
                 progressBar1.Value = currentWH; // Update progress bar
@@ -322,11 +328,13 @@ namespace WH_Panel
                 lblProgressPercentage.Text = $"{percentage}%";
                 lblProgressPercentage.ForeColor = Color.Red;
 
-                AddLogRow($"Data loaded for warehouse: {warehouse.WARHSNAME} ({currentWH}/{countOFWHs})", Color.Green);
+                AddLogRow($"Data loaded for warehouse: {warehouse.WARHSNAME} ({currentWH}/{countOFWHs}) {rowsPerWarehouse} Rows Loaded", Color.Green);
+                totalRowsLoaded += rowsPerWarehouse;
             }
             dataView = new DataView(dataTable);
             dgwALLDATA.DataSource = dataView;
             lblProgressPercentage.ForeColor = Color.Green;
+            AddLogRow($"Total Rows Loaded : {totalRowsLoaded}", Color.Green);
         }
         private void InitializeDataTable()
         {
