@@ -201,6 +201,7 @@ namespace WH_Panel
             public string BOOKNUM { get; set; }
             public int TQUANT { get; set; }
             public string DOCDES { get; set; }
+            public string TOWARHSNAME { get; set; }
         }
         public class WarehouseBalanceApiResponse
         {
@@ -1320,12 +1321,10 @@ namespace WH_Panel
                             {
                                 foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
                                 {
-                                    if (trans.DOCDES != "קיזוז אוטומטי")
+                                    if (trans.DOCDES != "קיזוז אוטומטי" && trans.TOWARHSNAME!="666")
                                     {
                                         dataGridView2.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "");
                                     }
-
-
 
                                 }
                             }
