@@ -620,6 +620,7 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "FrmPriorityBom";
             WindowState = FormWindowState.Maximized;
+            FormClosing += FrmPriorityBom_FormClosing;
             Load += FrmPriorityBom_Load;
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();

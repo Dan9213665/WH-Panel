@@ -557,7 +557,7 @@ namespace WH_Panel
                     response.EnsureSuccessStatusCode();
                     // Read the response content
                     string responseBody = await response.Content.ReadAsStringAsync();
-                   // txtbLog.AppendText($"API Response: {responseBody}\n");
+                    // txtbLog.AppendText($"API Response: {responseBody}\n");
                     // Parse the JSON response
                     var apiResponseWrapper = JsonConvert.DeserializeObject<ApiMFPNResponseWrapper>(responseBody);
                     // Validate the API response
@@ -762,7 +762,7 @@ namespace WH_Panel
         private void UpdateSimulationLabel()
         {
             int totalItems = dgwBom.Rows.Count;
-        
+
             int coveredItems = dgwBom.Rows.Cast<DataGridViewRow>().Count(row =>
             {
                 int delta = Convert.ToInt32(row.Cells["DELTA"].Value);
@@ -770,7 +770,7 @@ namespace WH_Panel
                 int kitQuantity = row.Cells["QUANT"].Value != null ? Convert.ToInt32(row.Cells["QUANT"].Value) : 0;
                 int requiredQuantity = row.Cells["CQUANT"].Value != null ? Convert.ToInt32(row.Cells["CQUANT"].Value) : 0;
                 int leftovers = (whQuantity + kitQuantity) - requiredQuantity;
-                return (leftovers>=0);
+                return (leftovers >= 0);
             });
             if (totalItems > 0 && coveredItems > 0)
             {
@@ -1012,7 +1012,7 @@ namespace WH_Panel
             {
                 int req = Convert.ToInt32(dgwBom.Rows[e.RowIndex].Cells["CQUANT"].Value);
                 int kitValue = Convert.ToInt32(dgwBom.Rows[e.RowIndex].Cells["QUANT"].Value);
-            
+
                 if (e.Value != null && int.TryParse(e.Value.ToString(), out kitValue))
                 {
                     if (kitValue >= req && kitValue != 0)
@@ -1173,7 +1173,7 @@ namespace WH_Panel
                                         var rowIndex = dgwIPNmoves.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "", "");
                                         var row = dgwIPNmoves.Rows[rowIndex];
                                         _ = FetchAndSetPackCodeAndUDateAsync(row, trans.LOGDOCNO, partName, trans.TQUANT);
-                                        await Task.Delay(200); // Optional delay
+                                        await Task.Delay(100); // Optional delay
                                     }
 
                                 }
@@ -1945,7 +1945,7 @@ namespace WH_Panel
             }
         }
 
-
+        bool isItemAddedToKit = false;
 
         private async Task AddItemToKit(string partName, string serialName, int cQuant, int qty, DataGridViewRow filteredRow, string wh)
         {
@@ -2056,7 +2056,7 @@ namespace WH_Panel
                 }
             }
             string partNameWH = dgwBom.Rows[0].Cells["PARTNAME"].Value.ToString();
-            string warehouseName = partNameWH.Substring(0, 3); // Get the first 3 characters of the PARTNAME
+            //string warehouseName = partNameWH.Substring(0, 3); // Get the first 3 characters of the PARTNAME
             // Construct the PATCH request URL
             string patchUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM(TYPE='K',KLINE={kline})";
             using (HttpClient client = new HttpClient())
@@ -2072,7 +2072,7 @@ namespace WH_Panel
                     var payload = new
                     {
                         QUANT = qty,
-                        WARHSNAME = warehouseName,//"ENE",
+                        WARHSNAME = wh, // warehouse to make transfer from
                         TOWARHSNAME = "Flr",
                         PACKCODE = package
                     };
@@ -2082,6 +2082,7 @@ namespace WH_Panel
                     string patchResponseBody = await patchResponse.Content.ReadAsStringAsync();
                     patchResponse.EnsureSuccessStatusCode();
                     AutoClosingMessageBox.Show($"{partName} - {qty} PCS moved to {serialName}", 1000, Color.Green); // Show message for 2 seconds
+                    isItemAddedToKit = true;
                     // Make another GET request to update the WH cell
                     HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
                     string checkResponseBody = await checkResponse.Content.ReadAsStringAsync();
@@ -2338,7 +2339,7 @@ namespace WH_Panel
                 stat = txtbStatus.Text;
             }
             htmlTable.AppendFormat("<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td><td>{5}</td></tr>",
-                txtbRob.Text, txtbName.Text, txtbQty.Text, stat, lblProgress.Text,rtxtbComments.Text);
+                txtbRob.Text, txtbName.Text, txtbQty.Text, stat, lblProgress.Text, rtxtbComments.Text);
             htmlTable.Append("</table>");
             // Add the main data table
             htmlTable.Append("<table border='1' style='border-collapse:collapse;'>");
@@ -3249,7 +3250,7 @@ namespace WH_Panel
 
         private async Task RemoveRowsWithTowarhsname666Async()
         {
-          //  txtbLog.AppendText("RemoveRowsWithTowarhsname666Async: Start\n");
+            //  txtbLog.AppendText("RemoveRowsWithTowarhsname666Async: Start\n");
             var rowsToRemove = new List<DataGridViewRow>();
             var rows = dgwINSTOCK.Rows.Cast<DataGridViewRow>().ToList();
 
@@ -3281,11 +3282,11 @@ namespace WH_Panel
                         if (value != null)
                         {
                             string toWarhsName = value["TOWARHSNAME"]?.ToString();
-                           // txtbLog.AppendText($"DOCNO: {docNo}, TOWARHSNAME: {toWarhsName}\n");
+                            // txtbLog.AppendText($"DOCNO: {docNo}, TOWARHSNAME: {toWarhsName}\n");
                             if (toWarhsName == "666")
                             {
                                 rowsToRemove.Add(row);
-                               // txtbLog.AppendText($"Marked for removal: DOCNO {docNo} (TOWARHSNAME=666)\n");
+                                // txtbLog.AppendText($"Marked for removal: DOCNO {docNo} (TOWARHSNAME=666)\n");
                             }
                         }
                         else
@@ -3302,16 +3303,16 @@ namespace WH_Panel
 
 
 
-           // txtbLog.AppendText($"Rows to remove (TOWARHSNAME=666): {rowsToRemove.Count}\n");
+            // txtbLog.AppendText($"Rows to remove (TOWARHSNAME=666): {rowsToRemove.Count}\n");
             foreach (var row in rowsToRemove)
             {
                 var logDocNo = row.Cells["LOGDOCNO"].Value?.ToString(); // Capture before removal
                 dgwINSTOCK.Rows.Remove(row);
-               // txtbLog.AppendText($"Removed row with DOCNO: {logDocNo}\n");
+                // txtbLog.AppendText($"Removed row with DOCNO: {logDocNo}\n");
             }
 
             dgwINSTOCK.Refresh();
-           // txtbLog.AppendText("RemoveRowsWithTowarhsname666Async: End\n");
+            // txtbLog.AppendText("RemoveRowsWithTowarhsname666Async: End\n");
 
 
             dgwINSTOCK.Visible = true; // Show grid after filtering
@@ -3322,7 +3323,7 @@ namespace WH_Panel
         private void InitializeInStockDataGridView()
         {
             dgwINSTOCK.Columns.Clear();
-           
+
             dgwINSTOCK.Columns.Add("UDATE", "Transaction Date");
             dgwINSTOCK.Columns.Add("LOGDOCNO", "Document Number");
             dgwINSTOCK.Columns.Add("DOCDES", "DOCDES");
@@ -3333,5 +3334,58 @@ namespace WH_Panel
             dgwINSTOCK.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dgwINSTOCK.AllowUserToAddRows = false; // Optional: Prevent manual row addition
         }
+
+        private async void FrmPriorityBom_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            string robSerial = txtbRob.Text.Trim();
+
+            if (!string.IsNullOrEmpty(robSerial)&& isItemAddedToKit)
+            {
+                try
+                {
+                    await PatchUpdateUdateAsync(robSerial);
+                    txtbLog.AppendText($"[✓] UDATE updated for ROB: {robSerial} on form close.\n");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"[X] Failed to update UDATE for {robSerial}:\n{ex.Message}",
+                                    "Update Error",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Warning);
+                    txtbLog.AppendText($"[!] Error updating UDATE for {robSerial}: {ex.Message}\n");
+                }
+            }
+        }
+
+        private async Task PatchUpdateUdateAsync(string serialName)
+        {
+            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')";
+
+            var patchData = new
+            {
+                UDATE = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")
+            };
+
+            using (HttpClient client = new HttpClient())
+            {
+                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                var json = JsonConvert.SerializeObject(patchData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var request = new HttpRequestMessage(HttpMethod.Patch, url)
+                {
+                    Content = content
+                };
+
+                HttpResponseMessage response = await client.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+            }
+        }
+
+
     }
 }
