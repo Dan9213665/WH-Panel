@@ -81,6 +81,7 @@ namespace WH_Panel
         //private bool isProgrammaticChange = false;
         private List<Serial> originalSerials; // List to store the original work orders
         private AppSettings settings;
+        bool isItemAddedToKit = false;
         //private List<WarehouseBalance> warehouseBalances;
         public FrmPriorityBom()
         {
@@ -242,6 +243,7 @@ namespace WH_Panel
         {
             if (cmbROBxList.SelectedItem is Serial selectedSerial)
             {
+                isItemAddedToKit = false;
                 //dgwBom.Rows.Clear();
                 gbxLoadedWo.Text = selectedSerial.SERIALNAME + " status";
                 txtbName.Text = selectedSerial.PARTNAME;
@@ -1945,7 +1947,7 @@ namespace WH_Panel
             }
         }
 
-        bool isItemAddedToKit = false;
+       
 
         private async Task AddItemToKit(string partName, string serialName, int cQuant, int qty, DataGridViewRow filteredRow, string wh)
         {
