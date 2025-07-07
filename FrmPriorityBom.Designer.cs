@@ -56,6 +56,7 @@
             lblPing = new Label();
             txtbLog = new RichTextBox();
             btnInStock = new Button();
+            tpmProgressBar = new ProgressBar();
             groupBox2 = new GroupBox();
             tableLayoutPanel5 = new TableLayoutPanel();
             rtxtbComments = new RichTextBox();
@@ -425,13 +426,15 @@
             tableLayoutPanel4.Controls.Add(lblPing, 1, 0);
             tableLayoutPanel4.Controls.Add(txtbLog, 0, 1);
             tableLayoutPanel4.Controls.Add(btnInStock, 0, 0);
+            tableLayoutPanel4.Controls.Add(tpmProgressBar, 0, 2);
             tableLayoutPanel4.Dock = DockStyle.Fill;
             tableLayoutPanel4.Location = new Point(703, 3);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
-            tableLayoutPanel4.RowCount = 2;
+            tableLayoutPanel4.RowCount = 3;
             tableLayoutPanel1.SetRowSpan(tableLayoutPanel4, 3);
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 18.3908043F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 81.60919F));
+            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Absolute, 31F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
             tableLayoutPanel4.Size = new Size(462, 239);
@@ -443,7 +446,7 @@
             lblPing.Dock = DockStyle.Fill;
             lblPing.Location = new Point(234, 0);
             lblPing.Name = "lblPing";
-            lblPing.Size = new Size(225, 43);
+            lblPing.Size = new Size(225, 40);
             lblPing.TabIndex = 5;
             lblPing.Text = "tProc";
             lblPing.TextAlign = ContentAlignment.MiddleCenter;
@@ -452,9 +455,9 @@
             // 
             tableLayoutPanel4.SetColumnSpan(txtbLog, 2);
             txtbLog.Dock = DockStyle.Fill;
-            txtbLog.Location = new Point(3, 46);
+            txtbLog.Location = new Point(3, 43);
             txtbLog.Name = "txtbLog";
-            txtbLog.Size = new Size(456, 190);
+            txtbLog.Size = new Size(456, 172);
             txtbLog.TabIndex = 6;
             txtbLog.Text = "";
             // 
@@ -463,12 +466,21 @@
             btnInStock.Dock = DockStyle.Fill;
             btnInStock.Location = new Point(3, 3);
             btnInStock.Name = "btnInStock";
-            btnInStock.Size = new Size(225, 37);
+            btnInStock.Size = new Size(225, 34);
             btnInStock.TabIndex = 7;
             btnInStock.Text = "IN STOCK";
             btnInStock.UseVisualStyleBackColor = true;
             btnInStock.Visible = false;
             btnInStock.Click += btnInStock_Click;
+            // 
+            // tpmProgressBar
+            // 
+            tableLayoutPanel4.SetColumnSpan(tpmProgressBar, 2);
+            tpmProgressBar.Dock = DockStyle.Fill;
+            tpmProgressBar.Location = new Point(3, 221);
+            tpmProgressBar.Name = "tpmProgressBar";
+            tpmProgressBar.Size = new Size(456, 15);
+            tpmProgressBar.TabIndex = 8;
             // 
             // groupBox2
             // 
@@ -671,5 +683,6 @@
         private TableLayoutPanel tableLayoutPanel6;
         private GroupBox groupBox3;
         private DataGridView dgwINSTOCK;
+        private ProgressBar tpmProgressBar;
     }
 }

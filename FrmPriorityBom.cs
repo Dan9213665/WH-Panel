@@ -1787,6 +1787,93 @@ namespace WH_Panel
                 //
             }
         }
+        //private async void txtbINPUTqty_KeyDown(object sender, KeyEventArgs e)
+        //{
+        //    // Count only the visible rows
+        //    int visibleRowCount = dgwBom.Rows.Cast<DataGridViewRow>().Count(row => row.Visible);
+        //    if (visibleRowCount == 1)
+        //    {
+        //        if (e.KeyCode == Keys.Enter)
+        //        {
+        //            if (int.TryParse(txtbINPUTqty.Text, out int qty) && qty > 0)
+        //            {
+        //                var filteredRow = dgwBom.Rows.Cast<DataGridViewRow>().FirstOrDefault(row => row.Visible);
+        //                if (filteredRow != null)
+        //                {
+        //                    string wh = filteredRow.Cells["PARTNAME"].Value.ToString().Substring(0, 3);
+        //                    string partName = filteredRow.Cells["PARTNAME"].Value.ToString();
+        //                    string serialName = txtbRob.Text; // Assuming txtbRob contains the SERIALNAME
+        //                    int cQuant = int.Parse(filteredRow.Cells["CQUANT"].Value.ToString()); // Get the CQUANT value
+        //                    int inKit = int.Parse(filteredRow.Cells["QUANT"].Value.ToString()); // Get the QUANT value
+        //                    int neededQty = cQuant - inKit;
+        //                    await AddItemToKit(partName, serialName, neededQty, qty, filteredRow, wh);
+        //                    txtbINPUTqty.Clear();
+        //                    txtbInputIPN.Clear();
+        //                    txtbInputIPN.Focus();
+        //                    // Update the progress label
+        //                    UpdateProgressLabel();
+        //                    UpdateSimulationLabel();
+        //                }
+        //            }
+        //            else
+        //            {
+        //                MessageBox.Show("Please enter a valid quantity", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                txtbINPUTqty.Clear();
+        //                txtbINPUTqty.Focus();
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        MessageBox.Show("Please enter a valid IPN", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        txtbInputIPN.Clear();
+        //        txtbInputIPN.Focus();
+        //    }
+        //}
+
+
+        // At class level:
+        private readonly Queue<DateTime> transactionTimestamps = new Queue<DateTime>();
+        private const int maxTpm = 90; // Max allowed transactions per minute
+
+        private bool CanProceedWithTransaction()
+        {
+            DateTime now = DateTime.Now;
+
+            // Remove timestamps older than 60 seconds
+            while (transactionTimestamps.Count > 0 && (now - transactionTimestamps.Peek()).TotalSeconds > 60)
+            {
+                transactionTimestamps.Dequeue();
+            }
+
+            return transactionTimestamps.Count < maxTpm;
+        }
+
+        private void RegisterTransaction()
+        {
+            transactionTimestamps.Enqueue(DateTime.Now);
+            UpdateTpmIndicator();
+        }
+
+        private void UpdateTpmIndicator()
+        {
+            int currentTpm = transactionTimestamps.Count;
+
+            // Assuming you have a ProgressBar control named tpmProgressBar:
+            tpmProgressBar.Maximum = maxTpm;
+            tpmProgressBar.Value = Math.Min(currentTpm, maxTpm);
+
+            // Color coding the ProgressBar - requires some custom drawing or using a third-party control
+            // For simplicity, you might change its ForeColor or BackColor here
+            if (currentTpm < maxTpm * 0.7)
+                tpmProgressBar.ForeColor = Color.Green;
+            else if (currentTpm < maxTpm * 0.9)
+                tpmProgressBar.ForeColor = Color.Orange;
+            else
+                tpmProgressBar.ForeColor = Color.Red;
+        }
+
+        // Updated event handler:
         private async void txtbINPUTqty_KeyDown(object sender, KeyEventArgs e)
         {
             // Count only the visible rows
@@ -1795,6 +1882,12 @@ namespace WH_Panel
             {
                 if (e.KeyCode == Keys.Enter)
                 {
+                    if (!CanProceedWithTransaction())
+                    {
+                        MessageBox.Show("Transaction rate limit exceeded. Please slow down.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
                     if (int.TryParse(txtbINPUTqty.Text, out int qty) && qty > 0)
                     {
                         var filteredRow = dgwBom.Rows.Cast<DataGridViewRow>().FirstOrDefault(row => row.Visible);
@@ -1806,10 +1899,15 @@ namespace WH_Panel
                             int cQuant = int.Parse(filteredRow.Cells["CQUANT"].Value.ToString()); // Get the CQUANT value
                             int inKit = int.Parse(filteredRow.Cells["QUANT"].Value.ToString()); // Get the QUANT value
                             int neededQty = cQuant - inKit;
+
                             await AddItemToKit(partName, serialName, neededQty, qty, filteredRow, wh);
+
+                            RegisterTransaction(); // Log this transaction timestamp
+
                             txtbINPUTqty.Clear();
                             txtbInputIPN.Clear();
                             txtbInputIPN.Focus();
+
                             // Update the progress label
                             UpdateProgressLabel();
                             UpdateSimulationLabel();
@@ -1830,6 +1928,9 @@ namespace WH_Panel
                 txtbInputIPN.Focus();
             }
         }
+
+
+
         private async Task AddItemToKit(string partName, string serialName, int cQuant, int qty, DataGridViewRow filteredRow, string wh)
         {
             // Check quantity availability in the warehouse
