@@ -4399,14 +4399,20 @@ namespace WH_Panel
                     return;
                 }
 
-                // Find all MFPNs contained in the input
+                ////Find all MFPNs contained in the input
                 //var foundMfpns = avlMfpns
                 //    .Where(mfpn => !string.IsNullOrEmpty(mfpn) && input.Contains(mfpn, StringComparison.OrdinalIgnoreCase))
                 //    .ToList();
 
+    //            var foundMfpns = avlMfpns
+    //.Where(mfpn => !string.IsNullOrEmpty(mfpn) &&
+    //               string.Equals(input.Trim(), mfpn, StringComparison.OrdinalIgnoreCase))
+    //.ToList();
+
+
                 var foundMfpns = avlMfpns
-    .Where(mfpn => !string.IsNullOrEmpty(mfpn) &&
-                   string.Equals(input.Trim(), mfpn, StringComparison.OrdinalIgnoreCase))
+    .Where(mfpn => !string.IsNullOrWhiteSpace(mfpn) &&
+                   input.IndexOf(mfpn, StringComparison.OrdinalIgnoreCase) >= 0)
     .ToList();
 
 

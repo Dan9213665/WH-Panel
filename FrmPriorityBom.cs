@@ -1036,6 +1036,21 @@ namespace WH_Panel
                 }
             }
         }
+
+        // Define these once (class-level or at the top of your method)
+        private static readonly HashSet<string> ExcludedDocDescriptions = new HashSet<string>
+{
+    "ספירות מלאי",
+    "קיזוז אוטומטי"
+};
+
+        private static readonly HashSet<string> ExcludedSupCustNames = new HashSet<string>
+{
+    "200052",
+    "200048","200085","200009"
+};
+
+
         private async void dgwBom_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0) // Ensure the row index is valid
@@ -1142,15 +1157,25 @@ namespace WH_Panel
                             {
                                 foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
                                 {
-                                    if(trans.DOCDES!= "קיזוז אוטומטי")
+                                    //if(trans.DOCDES != "ספירות מלאי" && trans.DOCDES!= "קיזוז אוטומטי" && trans.SUPCUSTNAME!= "200052" && trans.SUPCUSTNAME!= "200048")
+                                    //{
+                                    //    var rowIndex = dgwIPNmoves.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "", "");
+                                    //    var row = dgwIPNmoves.Rows[rowIndex];
+                                    //    // Fetch the PACK code and UDATE asynchronously
+                                    //    _ = FetchAndSetPackCodeAndUDateAsync(row, trans.LOGDOCNO, partName, trans.TQUANT);
+                                    //    await Task.Delay(200); // 300 milliseconds delay
+                                    //}
+
+                                    // Inside your loop:
+                                    if (!ExcludedDocDescriptions.Contains(trans.DOCDES) &&
+                                        !ExcludedSupCustNames.Contains(trans.SUPCUSTNAME))
                                     {
                                         var rowIndex = dgwIPNmoves.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "", "");
                                         var row = dgwIPNmoves.Rows[rowIndex];
-                                        // Fetch the PACK code and UDATE asynchronously
                                         _ = FetchAndSetPackCodeAndUDateAsync(row, trans.LOGDOCNO, partName, trans.TQUANT);
-                                        await Task.Delay(200); // 300 milliseconds delay
+                                        await Task.Delay(200); // Optional delay
                                     }
-                                  
+
                                 }
                             }
                             gbxIPNstockMovements.Text = $"Stock Movements for {partName}";
@@ -1186,15 +1211,6 @@ namespace WH_Panel
                 }
             }
         }
-        //private async Task FetchAltsForAllRows()
-        //{
-        //    txtbLog.AppendText("Fetching alts for all rows...\n");
-        //    foreach (DataGridViewRow row in dgwBom.Rows)
-        //    {
-        //        await FetchAltForRow(row);
-        //    }
-        //    txtbLog.AppendText("ALTs fetching complete.\n");
-        //}
 
 
         private async Task FetchAltsForAllRows()
@@ -3057,27 +3073,99 @@ namespace WH_Panel
                 }
                 isFiltered = false;
             }
+            dgwIPNmoves.Update();
         }
         private void btnGetMFNs_Click(object sender, EventArgs e)
         {
+
         }
 
 
-        private async Task  LoadDataAndFilterInStock()
+        //private async Task  LoadDataAndFilterInStock()
+        //{
+        //    // Step 1: Initialize dgwINSTOCK columns
+        //    InitializeInStockDataGridView();
+        //    // Step 2: Separate data into ROB and notRob lists
+        //    var robList = new List<DataGridViewRow>();
+        //    var notRobList = new List<DataGridViewRow>();
+        //    foreach (DataGridViewRow row in dgwIPNmoves.Rows)
+        //    {
+        //        if (row.Cells["LOGDOCNO"].Value != null && row.Cells["UDATE"].Value != null && DateTime.TryParse(row.Cells["UDATE"].Value.ToString(), out _))
+        //        {
+        //            string docNo = row.Cells["LOGDOCNO"].Value.ToString();
+        //            if (docNo.StartsWith("ROB") || docNo.StartsWith("IC") || docNo.StartsWith("WR") || docNo.StartsWith("SH"))
+        //            {
+        //                // Handle IC documents by converting the quantity to a positive value
+        //                if (docNo.StartsWith("IC"))
+        //                {
+        //                    row.Cells["TQUANT"].Value = Math.Abs(Convert.ToInt32(row.Cells["TQUANT"].Value));
+        //                }
+        //                robList.Add(row);
+        //            }
+        //            else
+        //            {
+        //                notRobList.Add(row);
+        //            }
+        //        }
+        //    }
+        //    // Step 3: Sort both lists by transaction date
+        //    robList = robList.OrderBy(row => DateTime.Parse(row.Cells["UDATE"].Value.ToString())).ToList();
+        //    notRobList = notRobList.OrderBy(row => DateTime.Parse(row.Cells["UDATE"].Value.ToString())).ToList();
+        //    // Step 4: Filter out matching pairs
+        //    var filteredNotRobList = new List<DataGridViewRow>(notRobList);
+        //    foreach (var notRobRow in notRobList)
+        //    {
+        //        if (robList.Count == 0) break;
+        //        int notRobQty = Convert.ToInt32(notRobRow.Cells["TQUANT"].Value);
+        //        var matchingRobRow = robList.FirstOrDefault(robRow => Convert.ToInt32(robRow.Cells["TQUANT"].Value) == notRobQty);
+        //        if (matchingRobRow != null)
+        //        {
+        //            filteredNotRobList.Remove(notRobRow);
+        //            robList.Remove(matchingRobRow);
+        //        }
+        //    }
+        //    // Step 5: Display the filtered INSTOCK items in dgwINSTOCK
+        //    dgwINSTOCK.Rows.Clear();
+        //    foreach (var row in filteredNotRobList)
+        //    {
+        //        var newRow = (DataGridViewRow)row.Clone();
+        //        foreach (DataGridViewCell cell in row.Cells)
+        //        {
+        //            newRow.Cells[cell.ColumnIndex].Value = cell.Value;
+        //        }
+        //        dgwINSTOCK.Rows.Add(newRow);
+        //    }
+
+        //    dgwINSTOCK.Visible = false; // Hide grid before loading
+        //    // Additional check: Remove rows where TOWARHSNAME == "666"
+        //    await RemoveRowsWithTowarhsname666Async();
+        //    dgwINSTOCK.Update();
+        //    dgwINSTOCK.Visible = true; // Show grid after filtering
+
+
+
+
+        //}
+
+
+
+        private async Task LoadDataAndFilterInStock()
         {
-            // Step 1: Initialize dgwINSTOCK columns
             InitializeInStockDataGridView();
-            // Step 2: Separate data into ROB and notRob lists
+
             var robList = new List<DataGridViewRow>();
             var notRobList = new List<DataGridViewRow>();
+
+            // Split rows into rob and non-rob
             foreach (DataGridViewRow row in dgwIPNmoves.Rows)
             {
-                if (row.Cells["LOGDOCNO"].Value != null && row.Cells["UDATE"].Value != null && DateTime.TryParse(row.Cells["UDATE"].Value.ToString(), out _))
+                if (row.Cells["LOGDOCNO"].Value != null &&
+                    row.Cells["UDATE"].Value != null &&
+                    DateTime.TryParse(row.Cells["UDATE"].Value.ToString(), out _))
                 {
                     string docNo = row.Cells["LOGDOCNO"].Value.ToString();
                     if (docNo.StartsWith("ROB") || docNo.StartsWith("IC") || docNo.StartsWith("WR") || docNo.StartsWith("SH"))
                     {
-                        // Handle IC documents by converting the quantity to a positive value
                         if (docNo.StartsWith("IC"))
                         {
                             row.Cells["TQUANT"].Value = Math.Abs(Convert.ToInt32(row.Cells["TQUANT"].Value));
@@ -3090,41 +3178,74 @@ namespace WH_Panel
                     }
                 }
             }
-            // Step 3: Sort both lists by transaction date
-            robList = robList.OrderBy(row => DateTime.Parse(row.Cells["UDATE"].Value.ToString())).ToList();
-            notRobList = notRobList.OrderBy(row => DateTime.Parse(row.Cells["UDATE"].Value.ToString())).ToList();
-            // Step 4: Filter out matching pairs
+
+            // Sort by transaction date
+            robList = robList.OrderBy(r => DateTime.Parse(r.Cells["UDATE"].Value.ToString())).ToList();
+            notRobList = notRobList.OrderBy(r => DateTime.Parse(r.Cells["UDATE"].Value.ToString())).ToList();
+
+            // Filter out matching pairs
             var filteredNotRobList = new List<DataGridViewRow>(notRobList);
             foreach (var notRobRow in notRobList)
             {
                 if (robList.Count == 0) break;
+
                 int notRobQty = Convert.ToInt32(notRobRow.Cells["TQUANT"].Value);
-                var matchingRobRow = robList.FirstOrDefault(robRow => Convert.ToInt32(robRow.Cells["TQUANT"].Value) == notRobQty);
-                if (matchingRobRow != null)
+                var match = robList.FirstOrDefault(robRow => Convert.ToInt32(robRow.Cells["TQUANT"].Value) == notRobQty);
+
+                if (match != null)
                 {
                     filteredNotRobList.Remove(notRobRow);
-                    robList.Remove(matchingRobRow);
+                    robList.Remove(match);
                 }
             }
-            // Step 5: Display the filtered INSTOCK items in dgwINSTOCK
+
+            // Prepare HttpClient once
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
             dgwINSTOCK.Rows.Clear();
+            dgwINSTOCK.Visible = false;
+
+            // Final filtering while adding to dgwINSTOCK
             foreach (var row in filteredNotRobList)
             {
-                var newRow = (DataGridViewRow)row.Clone();
-                foreach (DataGridViewCell cell in row.Cells)
+                string docNo = row.Cells["LOGDOCNO"].Value?.ToString();
+                if (string.IsNullOrWhiteSpace(docNo)) continue;
+
+                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{docNo}'&$select=TOWARHSNAME";
+
+                try
                 {
-                    newRow.Cells[cell.ColumnIndex].Value = cell.Value;
+                    var response = await client.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
+
+                    var body = await response.Content.ReadAsStringAsync();
+                    var json = JsonConvert.DeserializeObject<JObject>(body);
+                    string warhs = json["value"]?.FirstOrDefault()?["TOWARHSNAME"]?.ToString()?.Trim();
+
+                    if (warhs != "666") // Add only if not 666
+                    {
+                        var newRow = (DataGridViewRow)row.Clone();
+                        foreach (DataGridViewCell cell in row.Cells)
+                        {
+                            newRow.Cells[cell.ColumnIndex].Value = cell.Value;
+                        }
+                        dgwINSTOCK.Rows.Add(newRow);
+                    }
                 }
-                dgwINSTOCK.Rows.Add(newRow);
+                catch (Exception ex)
+                {
+                    txtbLog.AppendText($"Error checking DOCNO {docNo}: {ex.Message}\n");
+                }
             }
 
-            dgwINSTOCK.Visible = false; // Hide grid before loading
-            // Additional check: Remove rows where TOWARHSNAME == "666"
-            await RemoveRowsWithTowarhsname666Async();
-
-
-            
+            dgwINSTOCK.Update();
+            dgwINSTOCK.Visible = true;
         }
+
 
         private async Task RemoveRowsWithTowarhsname666Async()
         {
