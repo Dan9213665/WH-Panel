@@ -650,6 +650,7 @@ namespace WH_Panel
         {
             if (e.KeyCode == Keys.Enter)
             {
+                lastUserInput = (TextBox)sender; // Store the last input TextBox
                 string partName = txtbInputIPN.Text;
                 string url = $"{baseUrl}/PARTMNFONE?$filter=PARTNAME eq '{partName}'&$select=MNFPARTNAME,PARTDES,MNFNAME,PART";
                 using (HttpClient client = new HttpClient())
