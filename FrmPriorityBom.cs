@@ -1984,6 +1984,7 @@ namespace WH_Panel
                     txtbLog.ForeColor = Color.Red;
                     txtbLog.AppendText($"Request error: {ex.Message} \n");
                     txtbLog.ScrollToCaret();
+                    txtbLog.ForeColor = Color.Green;
                     return;
                 }
                 catch (Exception ex)
@@ -1992,6 +1993,7 @@ namespace WH_Panel
                     txtbLog.ForeColor = Color.Red;
                     txtbLog.AppendText($"Request error: {ex.Message} \n");
                     txtbLog.ScrollToCaret();
+                    txtbLog.ForeColor = Color.Green;
                     return;
                 }
             }
@@ -2046,14 +2048,20 @@ namespace WH_Panel
                     txtbLog.ForeColor = Color.Red;
                     txtbLog.AppendText($"Request error: {ex.Message} \n");
                     txtbLog.ScrollToCaret();
+                    txtbLog.ForeColor = Color.Green;
                     return;
                 }
                 catch (Exception ex)
                 {
                     //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     txtbLog.ForeColor = Color.Red;
-                    txtbLog.AppendText($"Request error: {ex.Message}");
+                    txtbLog.AppendText($"Request error: {ex.Message}\n");
                     txtbLog.ScrollToCaret();
+                    txtbLog.ForeColor = Color.Green;
+                    if(ex.Message.Contains("429"))
+                    {
+                        MessageBox.Show("! נא להמתין דקה !  חגירת כמות קריאות  ליחידת זמן ", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                     return;
                 }
             }
@@ -2138,6 +2146,7 @@ namespace WH_Panel
                     txtbLog.ForeColor = Color.Red;
                     txtbLog.AppendText($"Request error: {ex.Message}\n");
                     txtbLog.ScrollToCaret();
+                    txtbLog.ForeColor = Color.Green;
                 }
                 catch (Exception ex)
                 {
@@ -2145,6 +2154,7 @@ namespace WH_Panel
                     txtbLog.ForeColor = Color.Red;
                     txtbLog.AppendText($"Request error: {ex.Message}\n");
                     txtbLog.ScrollToCaret();
+                    txtbLog.ForeColor = Color.Green;
                 }
             }
         }
