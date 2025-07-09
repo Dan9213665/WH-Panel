@@ -2060,7 +2060,7 @@ namespace WH_Panel
                     txtbLog.ForeColor = Color.Green;
                     if(ex.Message.Contains("429"))
                     {
-                        MessageBox.Show("! נא להמתין דקה !  חגירת כמות קריאות  ליחידת זמן ", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("! נא להמתין דקה !  חריגת כמות קריאות ליחידת זמן ", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     return;
                 }
