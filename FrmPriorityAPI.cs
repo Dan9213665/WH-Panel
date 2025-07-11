@@ -199,7 +199,7 @@ namespace WH_Panel
             public DateTimeOffset UDATE { get; set; }
             public string SUPCUSTNAME { get; set; }
             public string BOOKNUM { get; set; }
-            public int TQUANT { get; set; }
+            public double TQUANT { get; set; }
             public string DOCDES { get; set; }
             public string TOWARHSNAME { get; set; }
         }

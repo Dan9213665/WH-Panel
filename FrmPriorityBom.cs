@@ -1174,7 +1174,7 @@ namespace WH_Panel
                                     {
                                         var rowIndex = dgwIPNmoves.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "", "");
                                         var row = dgwIPNmoves.Rows[rowIndex];
-                                        _ = FetchAndSetPackCodeAndUDateAsync(row, trans.LOGDOCNO, partName, trans.TQUANT);
+                                        _ = FetchAndSetPackCodeAndUDateAsync(row, trans.LOGDOCNO, partName,  (int)trans.TQUANT);
                                         await Task.Delay(100); // Optional delay
                                     }
 
