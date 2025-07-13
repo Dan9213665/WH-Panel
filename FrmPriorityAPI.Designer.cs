@@ -81,6 +81,10 @@
             btnPandatabaseSearch = new Button();
             btnAVL = new Button();
             btnSPLIT = new Button();
+            gpbxRequested = new GroupBox();
+            tableLayoutPanel11 = new TableLayoutPanel();
+            chkBSearchKits = new CheckBox();
+            flpSerials = new FlowLayoutPanel();
             tableLayoutPanel4 = new TableLayoutPanel();
             gbxINSERT = new GroupBox();
             tableLayoutPanel5 = new TableLayoutPanel();
@@ -114,6 +118,8 @@
             groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
             tableLayoutPanel10.SuspendLayout();
+            gpbxRequested.SuspendLayout();
+            tableLayoutPanel11.SuspendLayout();
             tableLayoutPanel4.SuspendLayout();
             gbxINSERT.SuspendLayout();
             tableLayoutPanel5.SuspendLayout();
@@ -654,6 +660,7 @@
             tableLayoutPanel3.Controls.Add(btnPandatabaseSearch, 3, 0);
             tableLayoutPanel3.Controls.Add(btnAVL, 2, 0);
             tableLayoutPanel3.Controls.Add(btnSPLIT, 5, 0);
+            tableLayoutPanel3.Controls.Add(gpbxRequested, 2, 2);
             tableLayoutPanel3.Dock = DockStyle.Fill;
             tableLayoutPanel3.Location = new Point(3, 19);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -677,12 +684,12 @@
             // 
             // groupBox3
             // 
-            tableLayoutPanel3.SetColumnSpan(groupBox3, 4);
+            tableLayoutPanel3.SetColumnSpan(groupBox3, 2);
             groupBox3.Controls.Add(dataGridView1);
             groupBox3.Dock = DockStyle.Fill;
             groupBox3.Location = new Point(3, 79);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(716, 307);
+            groupBox3.Size = new Size(532, 307);
             groupBox3.TabIndex = 2;
             groupBox3.TabStop = false;
             groupBox3.Text = "WH";
@@ -700,7 +707,7 @@
             dataGridView1.Location = new Point(3, 19);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
-            dataGridView1.Size = new Size(710, 285);
+            dataGridView1.Size = new Size(526, 285);
             dataGridView1.TabIndex = 0;
             dataGridView1.CellClick += dataGridView1_CellClick;
             dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
@@ -881,6 +888,54 @@
             btnSPLIT.TabIndex = 18;
             btnSPLIT.UseVisualStyleBackColor = true;
             btnSPLIT.Click += btnSPLIT_Click;
+            // 
+            // gpbxRequested
+            // 
+            tableLayoutPanel3.SetColumnSpan(gpbxRequested, 2);
+            gpbxRequested.Controls.Add(tableLayoutPanel11);
+            gpbxRequested.Dock = DockStyle.Fill;
+            gpbxRequested.Location = new Point(541, 79);
+            gpbxRequested.Name = "gpbxRequested";
+            gpbxRequested.Size = new Size(178, 307);
+            gpbxRequested.TabIndex = 19;
+            gpbxRequested.TabStop = false;
+            gpbxRequested.Text = "Requested in kits";
+            // 
+            // tableLayoutPanel11
+            // 
+            tableLayoutPanel11.ColumnCount = 1;
+            tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel11.Controls.Add(chkBSearchKits, 0, 0);
+            tableLayoutPanel11.Controls.Add(flpSerials, 0, 1);
+            tableLayoutPanel11.Dock = DockStyle.Fill;
+            tableLayoutPanel11.Location = new Point(3, 19);
+            tableLayoutPanel11.Name = "tableLayoutPanel11";
+            tableLayoutPanel11.RowCount = 2;
+            tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Percent, 14.0350876F));
+            tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Percent, 85.96491F));
+            tableLayoutPanel11.Size = new Size(172, 285);
+            tableLayoutPanel11.TabIndex = 0;
+            // 
+            // chkBSearchKits
+            // 
+            chkBSearchKits.AutoSize = true;
+            chkBSearchKits.Dock = DockStyle.Fill;
+            chkBSearchKits.Location = new Point(3, 3);
+            chkBSearchKits.Name = "chkBSearchKits";
+            chkBSearchKits.Size = new Size(166, 34);
+            chkBSearchKits.TabIndex = 0;
+            chkBSearchKits.Text = "Search in kits";
+            chkBSearchKits.UseVisualStyleBackColor = true;
+            // 
+            // flpSerials
+            // 
+            flpSerials.BackColor = Color.Black;
+            flpSerials.Dock = DockStyle.Fill;
+            flpSerials.FlowDirection = FlowDirection.TopDown;
+            flpSerials.Location = new Point(3, 43);
+            flpSerials.Name = "flpSerials";
+            flpSerials.Size = new Size(166, 239);
+            flpSerials.TabIndex = 1;
             // 
             // tableLayoutPanel4
             // 
@@ -1156,6 +1211,9 @@
             groupBox4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
             tableLayoutPanel10.ResumeLayout(false);
+            gpbxRequested.ResumeLayout(false);
+            tableLayoutPanel11.ResumeLayout(false);
+            tableLayoutPanel11.PerformLayout();
             tableLayoutPanel4.ResumeLayout(false);
             gbxINSERT.ResumeLayout(false);
             tableLayoutPanel5.ResumeLayout(false);
@@ -1239,5 +1297,9 @@
         private Button btnAVL;
         private Button btnSPLIT;
         private TextBox txtbUberAvlDecoder;
+        private GroupBox gpbxRequested;
+        private TableLayoutPanel tableLayoutPanel11;
+        private CheckBox chkBSearchKits;
+        private FlowLayoutPanel flpSerials;
     }
 }

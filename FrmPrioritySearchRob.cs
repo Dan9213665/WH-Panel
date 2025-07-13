@@ -275,6 +275,8 @@ namespace WH_Panel
             //string serialUrl = $"{baseUrl}SERIAL?$filter=PARTNAME eq '{parentName}'";
             string serialUrl = $"{baseUrl}SERIAL?$filter=PARTNAME eq '{parentName}'&$select=SERIALNAME,SERIALDES,SERIALSTATUSDES,REVNUM";
 
+  
+
             using (HttpClient client = new HttpClient())
             {
                 try
