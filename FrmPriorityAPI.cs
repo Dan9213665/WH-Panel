@@ -731,7 +731,8 @@ namespace WH_Panel
                 return;
             }
 
-            string encodedPartName = Uri.EscapeDataString(partName);
+            //string encodedPartName = Uri.EscapeDataString(partName);
+            string encodedPartName = Uri.EscapeDataString(partName.Replace("'", "''"));
 
             try
             {
@@ -759,9 +760,10 @@ namespace WH_Panel
                 }
                 else
                 {
-                    txtLog.SelectionColor = Color.Yellow;
+                   
                     foreach (var parent in parents)
                     {
+                        txtLog.SelectionColor = Color.Yellow;
                         txtLog.AppendText($"Found parent: {parent}\n");
                     }
                 }
@@ -771,7 +773,8 @@ namespace WH_Panel
                 // === Stage 2+3: For each parent get active work orders + needed kit lines for the part ===
                 foreach (var parentName in parents)
                 {
-                    string encodedParent = Uri.EscapeDataString(parentName);
+                    //string encodedParent = Uri.EscapeDataString(parentName);
+                    string encodedParent = Uri.EscapeDataString(parentName.Replace("'", "''"));
 
                     string serialUrl = $"{baseUrl}/SERIAL?$filter=PARTNAME eq '{encodedParent}' and SERIALSTATUSDES ne 'נסגרה' and SERIALSTATUSDES ne 'קיט מלא'&$select=SERIALNAME,SERIALDES&$expand=TRANSORDER_K_SUBFORM($filter=PARTNAME eq '{encodedPartName}' and QUANT eq 0;$select=CQUANT)";
 
@@ -826,57 +829,32 @@ namespace WH_Panel
 
                         foreach (var kit in kitLines)
                         {
-                            string cquant = kit["CQUANT"]?.ToString() ?? "0";
+                            string cquantRaw = kit["CQUANT"]?.ToString() ?? "0";
 
-                            if( int.Parse(cquant)>0 )
+                            if (int.TryParse(cquantRaw, out int cquant))
                             {
                                 var lblQty = new Label
                                 {
-                                    Text = $"-{cquant}",
+                                    Text = cquant > 0 ? $"-{cquant}" : $"{-cquant}",
                                     AutoSize = true,
                                     Location = new Point(currentLeft, 8),
                                     Font = new Font("Segoe UI", 9, FontStyle.Bold),
                                     ForeColor = Color.White,
-                                    BackColor = Color.IndianRed,
+                                    BackColor = cquant > 0 ? Color.IndianRed : Color.DarkGreen,
                                     Height = 30,
                                 };
+
                                 panel.Controls.Add(lblQty);
+                                currentLeft += lblQty.Width + 10;
                             }
-                            else{
-
-                                var lblQty = new Label
-                                {
-                                    Text = $"{int.Parse(cquant)*(-1)}",
-                                    AutoSize = true,
-                                    Location = new Point(currentLeft, 8),
-                                    Font = new Font("Segoe UI", 9, FontStyle.Bold),
-                                    ForeColor = Color.White,
-                                    BackColor = Color.DarkGreen,
-                                    Height = 30,
-                                };
-                                panel.Controls.Add(lblQty);
-
-
+                            else
+                            {
+                                txtLog.SelectionColor = Color.Red;
+                                txtLog.AppendText($"Invalid CQUANT value: '{cquantRaw}'\n");
+                                txtLog.ScrollToCaret();
                             }
-                           
                         }
 
-                       
-
-                        //var lblDesc = new Label
-                        //{
-                        //    Text = serialDesc,
-                        //    AutoSize = true,
-                        //    Location = new Point(currentLeft, 8),
-                        //    Font = new Font("Segoe UI", 9)
-                        //};
-                        //panel.Controls.Add(lblDesc);
-
-                        //currentLeft += lblDesc.Width + 10;
-
-
-
-                     
 
                         flpSerials.Controls.Add(panel);
                     }
