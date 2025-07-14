@@ -386,15 +386,7 @@ namespace WH_Panel
                 string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
                 string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\MultiKitsStatusReport_{_fileTimeStamp}.html";
                 await GenerateHTMLaggregated(filename, tableData, $"Multiple Kits Simulation Report {_fileTimeStamp}", selectedWorkOrders, completionPercentage);
-                // Open the file in default browser
-                //var p = new Process();
-                //p.StartInfo = new ProcessStartInfo(filename)
-                //{
-                //    UseShellExecute = true
-                //};
-                //p.Start();
-                //AppendLogMessage($"Displaying HTML report in browser", Color.Green);
-
+           
                 if (File.Exists(filename))
                 {
                     var p = new Process();
@@ -659,7 +651,7 @@ namespace WH_Panel
 
 
 
-        private async Task<Dictionary<string, (int kitBalance, int stock, int simulation)>> AggregatedSim(List<Serial> selectedWorkOrders)
+        private async Task<Dictionary<string, (int kitBalance, int stock, int simulation,int inHowManyKitsUsed)>> AggregatedSim(List<Serial> selectedWorkOrders)
         {
             // For each IPN, keep a list of max CQUANT per kit and sum of QUANT per kit
             var ipnToMaxCQuantPerKit = new Dictionary<string, List<int>>();
@@ -825,16 +817,17 @@ namespace WH_Panel
             }
 
             // Now, for each IPN, calculate totals and simulation
-            var result = new Dictionary<string, (int kitBalance, int stock, int simulation)>();
+            var result = new Dictionary<string, (int kitBalance, int stock, int simulation, int inHowManyKitsUsed)>();
             var allIpns = new HashSet<string>(ipnToMaxCQuantPerKit.Keys.Concat(ipnToTotalQuant.Keys));
             foreach (var ipn in allIpns)
             {
                 int totalRequired = ipnToMaxCQuantPerKit.ContainsKey(ipn) ? ipnToMaxCQuantPerKit[ipn].Sum() : 0;
+                int inHowManyKitsUsed = ipnToMaxCQuantPerKit.ContainsKey(ipn) ? ipnToMaxCQuantPerKit[ipn].Count : 0;
                 int totalInKits = ipnToTotalQuant.ContainsKey(ipn) ? ipnToTotalQuant[ipn] : 0;
                 int kitBalance =  totalInKits - totalRequired;
                 int stock = warehouseStock.ContainsKey(ipn) ? warehouseStock[ipn] : 0;
                 int simulation = stock + kitBalance;
-                result[ipn] = (kitBalance, stock, simulation);
+                result[ipn] = (kitBalance, stock, simulation, inHowManyKitsUsed);
             }
             return result;
         }
@@ -897,30 +890,65 @@ namespace WH_Panel
                         var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
                         var transOrders = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
                         var partQuantities = new Dictionary<string, int>();
-                        int cquant = 0;
+                        var partCQuants = new Dictionary<string, int>();
+
+                        //foreach (var transOrder in transOrders)
+                        //{
+                        //    if (partQuantities.ContainsKey(transOrder.PARTNAME))
+                        //    {
+                        //        partQuantities[transOrder.PARTNAME] += transOrder.QUANT;
+                        //        cquant = transOrder.CQUANT;
+                        //        txtbLog.AppendText(transOrder.PARTNAME +":"+ transOrder.CQUANT);
+                        //    }
+                        //    else
+                        //    {
+                        //        partQuantities[transOrder.PARTNAME] = transOrder.QUANT;
+                        //        // Assuming cquant is the same for all parts in the kit
+                        //        cquant = transOrder.CQUANT;
+                        //    }
+
+                        //}
                         foreach (var transOrder in transOrders)
                         {
                             if (partQuantities.ContainsKey(transOrder.PARTNAME))
-                            {
                                 partQuantities[transOrder.PARTNAME] += transOrder.QUANT;
-                            }
                             else
-                            {
                                 partQuantities[transOrder.PARTNAME] = transOrder.QUANT;
-                                cquant = transOrder.CQUANT; // Assuming cquant is the same for all parts in the kit
-                            }
+
+                            //// Always override — CQUANT should be the same for the part
+                            //partCQuants[transOrder.PARTNAME] = transOrder.CQUANT;
+                            // Only set cquant if it wasn't already stored
+                            if (!partCQuants.ContainsKey(transOrder.PARTNAME))
+                                partCQuants[transOrder.PARTNAME] = transOrder.CQUANT;
+
+                            txtbLog.AppendText(transOrder.PARTNAME + ":" + transOrder.CQUANT+"\n");
                         }
+
+                        //foreach (var part in partQuantities)
+                        //{
+                        //    int quant = part.Value;
+                        //    int balance =    quant - cquant;
+                        //    int simulation = balance; // This will be updated later with warehouse stock
+                        //    if (!ipnToSerials.ContainsKey(part.Key))
+                        //    {
+                        //        ipnToSerials[part.Key] = new List<(Serial serial, int quant, int cquant, int balance, int simulation)>();
+                        //    }
+                        //    ipnToSerials[part.Key].Add((workOrder, quant, cquant, balance, simulation));
+                        //}
+
                         foreach (var part in partQuantities)
                         {
                             int quant = part.Value;
-                            int balance = quant - cquant;
-                            int simulation = balance; // This will be updated later with warehouse stock
+                            int cquant = partCQuants[part.Key];
+                            int balance = cquant - quant;
+                            int simulation = balance; // updated later
+
                             if (!ipnToSerials.ContainsKey(part.Key))
-                            {
-                                ipnToSerials[part.Key] = new List<(Serial serial, int quant, int cquant, int balance, int simulation)>();
-                            }
+                                ipnToSerials[part.Key] = new List<(Serial, int, int, int, int)>();
+
                             ipnToSerials[part.Key].Add((workOrder, quant, cquant, balance, simulation));
                         }
+
                         AppendLogMessage($"Loaded data for {workOrder.SERIALNAME}", Color.Green);
                     }
                     catch (HttpRequestException ex)
@@ -940,7 +968,7 @@ namespace WH_Panel
                 var updatedList = new List<(Serial serial, int quant, int cquant, int balance, int simulation)>();
                 foreach (var (serial, quant, cquant, balance, simulation) in ipnToSerials[ipn])
                 {
-                    int updatedSimulation = stock - balance;
+                    int updatedSimulation = stock + balance;
                     updatedList.Add((serial, quant, cquant, balance, updatedSimulation));
                 }
                 ipnToSerials[ipn] = updatedList;
@@ -1004,7 +1032,7 @@ namespace WH_Panel
 
 
 
-        private async Task GenerateHTMLaggregated(string filename, Dictionary<string, (int balance, int stock, int simulation)> tableData, string reportTitle, List<Serial> selectedWorkOrders, double completionPercentage)
+        private async Task GenerateHTMLaggregated(string filename, Dictionary<string, (int balance, int stock, int simulation,int inHowManyKitsUsed)> tableData, string reportTitle, List<Serial> selectedWorkOrders, double completionPercentage)
         {
             tableData.OrderBy(x => x.Key == "simulation");
 
@@ -1096,10 +1124,11 @@ namespace WH_Panel
                 writer.WriteLine("<th onclick='sortTable(2)'>WH Stock</th>");
                 writer.WriteLine("<th onclick='sortTable(3)'>Kit Balance</th>");
                 writer.WriteLine("<th onclick='sortTable(4)'>Simulation</th>");
+                writer.WriteLine("<th onclick='sortTable(5)'>Used in n Kits</th>");
                 writer.WriteLine("</tr>");
                 foreach (var ipn in tableData.OrderBy(x => x.Value.simulation))
                 {
-                    var (balance, stock, simulation) = ipn.Value;
+                    var (balance, stock, simulation,inHowManyKitsUse) = ipn.Value;
                     string mfpn = ipnToMfpn.TryGetValue(ipn.Key, out var mf) ? mf : "-";
                     //string rowClass = simulation >= 0 ? "green" : "red";
                     string rowClass = "red";
@@ -1120,6 +1149,7 @@ namespace WH_Panel
                     writer.WriteLine($"<td>{stock}</td>");
                     writer.WriteLine($"<td class='{balanceClass}'>{balance}</td>");
                     writer.WriteLine($"<td>{simulation}</td>");
+                    writer.WriteLine($"<td>{inHowManyKitsUse}</td>");
                     writer.WriteLine("</tr>");
                 }
                 writer.WriteLine("</table>");
@@ -1301,9 +1331,9 @@ namespace WH_Panel
                     var serials = ipnToSerials[ipn];
                     int totalQuant = serials.Sum(s => s.quant);
                     int totalCQuant = serials.Sum(s => s.cquant);
-                    int totalBalance = serials.Sum(s => s.balance);
+                    int totalBalance = totalQuant- totalCQuant;
                     int warehouseBalance = warehouseStock.ContainsKey(ipn) ? warehouseStock[ipn] : 0;
-                    int totalSimulation = warehouseBalance + totalBalance;
+                    int totalSimulation = warehouseBalance + totalQuant - totalCQuant;
                     string totalSimulationClass = totalSimulation > 0 ? "green" : "red";
                     writer.WriteLine("<div class='ipn-section'>");
                     writer.WriteLine($"<h2>IPN: {ipn}</h2>");
@@ -1335,7 +1365,7 @@ namespace WH_Panel
                     int currentWarehouseBalance = warehouseBalance;
                     foreach (var (serial, quant, cquant, balance, simulation) in serials)
                     {
-                        int serialBalance = quant - cquant;
+                        int serialBalance = quant-cquant;
                         int serialSimulation = currentWarehouseBalance + serialBalance;
                         currentWarehouseBalance += serialBalance;
                         string serialBalanceClass = serialBalance > 0 ? "green" : "red";
@@ -1343,6 +1373,7 @@ namespace WH_Panel
                         writer.WriteLine("<tr>");
                         writer.WriteLine($"<td>{serial.SERIALNAME}</td>");
                         writer.WriteLine($"<td>{serial.PARTNAME}</td>");
+                       
                         writer.WriteLine($"<td>{quant}</td>");
                         writer.WriteLine($"<td>{cquant}</td>");
                         writer.WriteLine($"<td class='{serialBalanceClass}'>{serialBalance}</td>");
