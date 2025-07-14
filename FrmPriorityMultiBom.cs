@@ -921,7 +921,7 @@ namespace WH_Panel
                             if (!partCQuants.ContainsKey(transOrder.PARTNAME))
                                 partCQuants[transOrder.PARTNAME] = transOrder.CQUANT;
 
-                            txtbLog.AppendText(transOrder.PARTNAME + ":" + transOrder.CQUANT+"\n");
+                           // txtbLog.AppendText(transOrder.PARTNAME + ":" + transOrder.CQUANT+"\n");
                         }
 
                         //foreach (var part in partQuantities)
