@@ -841,7 +841,7 @@ namespace WH_Panel
             string selectedWarehouseName = GetSelectedWarehouseName();
             if (selectedWarehouseName != null)
             {
-                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouseName}'&$expand=WARHSBAL_SUBFORM";
+                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouseName}'&$expand=WARHSBAL_SUBFORM($select=PARTNAME,BALANCE)";
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -864,11 +864,11 @@ namespace WH_Panel
                     }
                     catch (HttpRequestException ex)
                     {
-                        AppendLogMessage($"Request error: {ex.Message}", Color.Red);
+                        AppendLogMessage($"Request error WH: {ex.Message}", Color.Red);
                     }
                     catch (Exception ex)
                     {
-                        AppendLogMessage($"Request error: {ex.Message}", Color.Red);
+                        AppendLogMessage($"Request error WH: {ex.Message}", Color.Red);
                     }
                 }
             }
@@ -953,11 +953,11 @@ namespace WH_Panel
                     }
                     catch (HttpRequestException ex)
                     {
-                        AppendLogMessage($"Request error: {ex.Message}", Color.Red);
+                        AppendLogMessage($"Request error TRANSORDER: {ex.Message}", Color.Red);
                     }
                     catch (Exception ex)
                     {
-                        AppendLogMessage($"Request error: {ex.Message}", Color.Red);
+                        AppendLogMessage($"Request error TRANSORDER:  {ex.Message}", Color.Red);
                     }
                 }
             }
@@ -1199,8 +1199,7 @@ namespace WH_Panel
             string selectedWarehouseName = GetSelectedWarehouseName();
             if (selectedWarehouseName != null)
             {
-                //string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouseName}'&$expand=WARHSBAL_SUBFORM";
-                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouseName}'&$select=WARHSNAME&$expand=WARHSBAL_SUBFORM($select=PARTNAME,BALANCE)";
+                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouseName}'&$expand=WARHSBAL_SUBFORM";
 
                 using (HttpClient client = new HttpClient())
                 {
@@ -1224,11 +1223,11 @@ namespace WH_Panel
                     }
                     catch (HttpRequestException ex)
                     {
-                        AppendLogMessage($"Request error: {ex.Message} \n", Color.Red);
+                        AppendLogMessage($"Request error GETWH: {ex.Message} \n", Color.Red);
                     }
                     catch (Exception ex)
                     {
-                        AppendLogMessage($"Request error: {ex.Message}\n", Color.Red);
+                        AppendLogMessage($"Request error GETWH: {ex.Message}\n", Color.Red);
                     }
                 }
             }
