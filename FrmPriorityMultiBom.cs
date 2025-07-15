@@ -20,6 +20,7 @@ using Exception = System.Exception;
 using ComboBox = System.Windows.Forms.ComboBox;
 namespace WH_Panel
 {
+   
     public partial class FrmPriorityMultiBom : Form
     {
         private AppSettings settings;
@@ -662,7 +663,9 @@ namespace WH_Panel
             string selectedWarehouseName = GetSelectedWarehouseName();
             if (selectedWarehouseName != null)
             {
-                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouseName}'&$expand=WARHSBAL_SUBFORM";
+                //string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouseName}'&$expand=WARHSBAL_SUBFORM";
+                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouseName}'&$expand=WARHSBAL_SUBFORM($select=PARTNAME,BALANCE)";
+
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -676,7 +679,7 @@ namespace WH_Panel
                         response.EnsureSuccessStatusCode();
                         string responseBody = await response.Content.ReadAsStringAsync();
                         var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-                        var warehouseBalances = apiResponse["value"].First["WARHSBAL_SUBFORM"].ToObject<List<WarehouseBalance>>();
+                        var warehouseBalances = apiResponse["value"].First["WARHSBAL_SUBFORM"].ToObject<List<WarehouseBalanceCutDown>>();   //WarehouseBalanceCutDown //WarehouseBalance
                         foreach (var balance in warehouseBalances)
                         {
                             warehouseStock[balance.PARTNAME] = balance.BALANCE;
