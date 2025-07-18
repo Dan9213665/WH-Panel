@@ -416,6 +416,7 @@
             dgwBom.Size = new Size(694, 473);
             dgwBom.TabIndex = 3;
             dgwBom.CellClick += dgwBom_CellClick;
+            dgwBom.MouseDown += dgwBom_MouseDown;
             // 
             // tableLayoutPanel4
             // 

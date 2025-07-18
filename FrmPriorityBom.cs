@@ -72,6 +72,10 @@ using static WH_Panel.FrmPriorityBom;
 using Rectangle = System.Drawing.Rectangle;
 using ComboBox = System.Windows.Forms.ComboBox;
 using ToolTip = System.Windows.Forms.ToolTip;
+using Seagull.Framework.Yaml;
+using System.Runtime;
+using OfficeOpenXml.FormulaParsing.LexicalAnalysis;
+using Seagull.Framework.Utility;
 namespace WH_Panel
 {
     public partial class FrmPriorityBom : Form
@@ -83,6 +87,8 @@ namespace WH_Panel
         private AppSettings settings;
         bool isItemAddedToKit = false;
         //private List<WarehouseBalance> warehouseBalances;
+        // Define this at class level
+        private ContextMenuStrip contextMenuSwitchToAlt;
         public FrmPriorityBom()
         {
             InitializeComponent();
@@ -104,6 +110,11 @@ namespace WH_Panel
             // Handle the CellFormatting event
             dgwBom.CellFormatting += dgwBom_CellFormatting;
             AttachTextBoxEvents(this);
+
+            contextMenuSwitchToAlt = new ContextMenuStrip();
+            var switchToAltItem = new ToolStripMenuItem("SWITCH TO ALT");
+            switchToAltItem.Click += SwitchToAltItem_Click;
+            contextMenuSwitchToAlt.Items.Add(switchToAltItem);
         }
         private void FrmPriorityBom_Load(object sender, EventArgs e)
         {
@@ -1174,7 +1185,7 @@ namespace WH_Panel
                                     {
                                         var rowIndex = dgwIPNmoves.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "", "");
                                         var row = dgwIPNmoves.Rows[rowIndex];
-                                        _ = FetchAndSetPackCodeAndUDateAsync(row, trans.LOGDOCNO, partName,  (int)trans.TQUANT);
+                                        _ = FetchAndSetPackCodeAndUDateAsync(row, trans.LOGDOCNO, partName, (int)trans.TQUANT);
                                         await Task.Delay(100); // Optional delay
                                     }
 
@@ -1947,7 +1958,7 @@ namespace WH_Panel
             }
         }
 
-       
+
 
         private async Task AddItemToKit(string partName, string serialName, int cQuant, int qty, DataGridViewRow filteredRow, string wh)
         {
@@ -2058,7 +2069,7 @@ namespace WH_Panel
                     txtbLog.AppendText($"Request error: {ex.Message}\n");
                     txtbLog.ScrollToCaret();
                     txtbLog.ForeColor = Color.Green;
-                    if(ex.Message.Contains("429"))
+                    if (ex.Message.Contains("429"))
                     {
                         MessageBox.Show("! נא להמתין דקה !  חריגת כמות קריאות ליחידת זמן ", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
@@ -3351,7 +3362,7 @@ namespace WH_Panel
         {
             string robSerial = txtbRob.Text.Trim();
 
-            if (!string.IsNullOrEmpty(robSerial)&& isItemAddedToKit)
+            if (!string.IsNullOrEmpty(robSerial) && isItemAddedToKit)
             {
                 try
                 {
@@ -3397,6 +3408,283 @@ namespace WH_Panel
                 response.EnsureSuccessStatusCode();
             }
         }
+
+        private void dgwBom_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                var hit = dgwBom.HitTest(e.X, e.Y);
+                int altColumnIndex =8;
+
+                if (hit.Type == DataGridViewHitTestType.Cell && hit.ColumnIndex == altColumnIndex)
+                {
+                    var altCellValue = dgwBom.Rows[hit.RowIndex].Cells[altColumnIndex].Value;
+                    if (altCellValue != null && !string.IsNullOrEmpty(altCellValue.ToString()))
+                    {
+                        dgwBom.ClearSelection();
+                        dgwBom.Rows[hit.RowIndex].Cells[hit.ColumnIndex].Selected = true;
+
+                        contextMenuSwitchToAlt.Show(dgwBom, e.Location);
+                    }
+                }
+            }
+        }
+
+        //private void SwitchToAltItem_Click(object sender, EventArgs e)
+        //{
+        //    if (dgwBom.SelectedCells.Count > 0)
+        //    {
+        //        var cell = dgwBom.SelectedCells[0];
+        //        int rowIndex = cell.RowIndex;
+
+        //        int altColumnIndex = 8;
+        //        int ipnColumnIndex = 0;
+
+        //        var altCell = dgwBom.Rows[rowIndex].Cells[altColumnIndex];
+        //        var ipnCell = dgwBom.Rows[rowIndex].Cells[ipnColumnIndex];
+
+        //        // Swap values
+        //        var temp = altCell.Value;
+        //        altCell.Value = ipnCell.Value;
+        //        ipnCell.Value = temp;
+        //    }
+        //}
+
+      
+
+// Make your event handler async
+        private async void SwitchToAltItem_Click(object sender, EventArgs e)
+    {
+        if (dgwBom.SelectedCells.Count > 0)
+        {
+            int rowIndex = dgwBom.SelectedCells[0].RowIndex;
+
+            int altColumnIndex = 8;
+            int ipnColumnIndex = 0;
+            int whColumnIndex = 3;
+
+            var altCell = dgwBom.Rows[rowIndex].Cells[altColumnIndex];
+            var ipnCell = dgwBom.Rows[rowIndex].Cells[ipnColumnIndex];
+            var whCell = dgwBom.Rows[rowIndex].Cells[whColumnIndex];
+
+            // Swap IPN and ALT values
+            var temp = altCell.Value;
+            string altIPN = altCell.Value?.ToString()?.Trim();
+            string originalIPN = ipnCell.Value?.ToString()?.Trim();
+                altCell.Value = ipnCell.Value;
+            ipnCell.Value = temp;
+
+            // Now the IPN cell contains the new partName to check stock for
+            string partName = ipnCell.Value?.ToString();
+            if (string.IsNullOrEmpty(partName))
+            {
+                whCell.Value = "N/A";
+                return;
+            }
+
+                string selectedWarehouse = dgwBom.Rows[0].Cells["PARTNAME"].Value?.ToString()?.Substring(0, 3);
+
+                string checkUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouse}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{partName}';$select=TBALANCE)";
+
+            int availableQty = 0;
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                    HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
+                    checkResponse.EnsureSuccessStatusCode();
+
+                    string checkResponseBody = await checkResponse.Content.ReadAsStringAsync();
+                    var checkApiResponse = JObject.Parse(checkResponseBody);
+
+                    var warehouse = checkApiResponse["value"]?.FirstOrDefault();
+                    if (warehouse != null)
+                    {
+                        var balance = warehouse["WARHSBAL_SUBFORM"]?.FirstOrDefault();
+                        if (balance != null)
+                        {
+                            availableQty = balance["TBALANCE"].Value<int>();
+                                if (availableQty > 0)
+                                {
+                                    string serialName = txtbRob.Text;
+                                    int qtyDelta = Convert.ToInt32(dgwBom.Rows[rowIndex].Cells["DELTA"].Value);
+
+                                    if (qtyDelta < 0)
+                                    {
+                                        await postAltItemRowIntoKit(altIPN, (qtyDelta*(-1)), serialName);
+                                        await nullyfyTheOriginalIPN(originalIPN, serialName);
+                                    }
+                                }
+                            }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle error, optionally show a message or log
+                whCell.Value = "Error";
+                Console.WriteLine($"Error fetching stock: {ex.Message}");
+                return;
+            }
+
+            // Update WH column with the fetched available quantity
+            whCell.Value = availableQty;
+        }
+
+        
+
+    }
+        //private async Task postAltItemRowIntoKit(string altIpnToAddToKit,int theQtyToInsert, string robWoToInsertInto)
+        //{
+        //    using (var client = new HttpClient())
+        //    {
+
+        //        client.DefaultRequestHeaders.Accept.Clear();
+        //        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+
+        //        // Set the base Priority OData endpoint and target work order
+        //        string requestUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/{robWoToInsertInto}/KITITEMS_SUBFORM";
+
+        //        // Construct JSON payload
+        //        var payload = new
+        //        {
+        //            PARTNAME = altIpnToAddToKit,
+        //            QUANT = theQtyToInsert,             // Or parameterize if needed
+        //            ACTNAME = "Prod"
+        //        };
+
+        //        var jsonPayload = JsonConvert.SerializeObject(payload);
+        //        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+        //        try
+        //        {
+        //            var response = await client.PostAsync(requestUrl, content);
+        //            if (response.IsSuccessStatusCode)
+        //            {
+        //               txtbLog.AppendText($"✅ Successfully added ALT {altIpnToAddToKit} to {robWoToInsertInto} kit.");
+        //            }
+        //            else
+        //            {
+        //                var responseBody = await response.Content.ReadAsStringAsync();
+        //                txtbLog.AppendText($"❌ Failed to add ALT item {altIpnToAddToKit} to kit: {response.StatusCode} - {responseBody}");
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            txtbLog.AppendText($"🔥 Exception in postAltItemRowIntoKit: {ex.Message}");
+        //        }
+        //    }
+        //}
+        private async Task postAltItemRowIntoKit(string altIpnToAddToKit, int theQtyToInsert, string robWoToInsertInto)
+        {
+            if (string.IsNullOrWhiteSpace(altIpnToAddToKit) || string.IsNullOrWhiteSpace(robWoToInsertInto))
+            {
+                txtbLog.AppendText("⚠️ Missing input parameters for posting ALT item.\n");
+                return;
+            }
+
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                string requestUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{robWoToInsertInto}')/KITITEMS_SUBFORM";
+
+                var payload = new
+                {
+                    PARTNAME = altIpnToAddToKit,
+                    QUANT = theQtyToInsert,
+                    ACTNAME = "Prod"
+                };
+
+                var jsonPayload = JsonConvert.SerializeObject(payload);
+                var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+                try
+                {
+                    var response = await client.PostAsync(requestUrl, content);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        txtbLog.AppendText($"✅ Successfully added ALT {altIpnToAddToKit} to {robWoToInsertInto} kit.\n");
+                    }
+                    else
+                    {
+                        var responseBody = await response.Content.ReadAsStringAsync();
+                        txtbLog.AppendText($"❌ Failed to add ALT item {altIpnToAddToKit} to kit: {response.StatusCode} - {responseBody}\n");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    txtbLog.AppendText($"🔥 Exception in postAltItemRowIntoKit: {ex.Message}\n{ex.InnerException?.Message}\n");
+                }
+            }
+        }
+
+
+        private async Task nullyfyTheOriginalIPN(string originalIPN, string serialName)
+        {
+            string baseUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/KITITEMS_SUBFORM";
+            string escapedOriginalIPN = originalIPN.Replace("'", "''");
+            string filterUrl = $"{baseUrl}?$filter=PARTNAME eq '{escapedOriginalIPN}'";
+
+            using HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
+                Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}")));
+
+            try
+            {
+                var getResponse = await client.GetAsync(filterUrl);
+                getResponse.EnsureSuccessStatusCode();
+
+                var json = await getResponse.Content.ReadAsStringAsync();
+                var data = JObject.Parse(json);
+
+                var items = data["value"];
+                if (items == null || !items.Any())
+                {
+                    txtbLog.AppendText($"No kit items found for original IPN '{originalIPN}'");
+                    return;
+                }
+
+                foreach (var item in items)
+                {
+                    int kline = item["KLINE"].Value<int>();
+                    string patchUrl = $"{baseUrl}({kline})";
+
+                    var patchPayload = new { QUANT = 0 };
+                    var content = new StringContent(JsonConvert.SerializeObject(patchPayload), Encoding.UTF8, "application/json");
+
+                    var patchRequest = new HttpRequestMessage(new HttpMethod("PATCH"), patchUrl)
+                    {
+                        Content = content
+                    };
+
+                    var patchResponse = await client.SendAsync(patchRequest);
+                    if (patchResponse.IsSuccessStatusCode)
+                        txtbLog.AppendText($"Successfully nulled QUANT for {originalIPN} at KLINE {kline}");
+                    else
+                        txtbLog.AppendText($"Failed to patch KLINE {kline} - Status: {patchResponse.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                txtbLog.AppendText($"Error in nullyfyTheOriginalIPN: {ex.Message}");
+            }
+        }
+
+
+
 
 
     }
