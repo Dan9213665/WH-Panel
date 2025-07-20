@@ -682,7 +682,7 @@ namespace WH_Panel
                             txtbManufacturer.Text = part.MNFNAME;
                             txtbPART.Text = part.PART.ToString();
                             txtbInputQty.Focus();
-                            if(chkBSearchKits.Checked)
+                            if (chkBSearchKits.Checked)
                             {
                                 string thepart = txtbInputIPN.Text.Trim();
                                 if (!string.IsNullOrWhiteSpace(thepart))
@@ -721,7 +721,7 @@ namespace WH_Panel
         private async Task DisplayWorkOrdersByPart(string partName, HttpClient client)
         {
             flpSerials.Controls.Clear();
-           
+
 
             if (string.IsNullOrWhiteSpace(partName))
             {
@@ -760,7 +760,7 @@ namespace WH_Panel
                 }
                 else
                 {
-                   
+
                     foreach (var parent in parents)
                     {
                         txtLog.SelectionColor = Color.Yellow;
@@ -768,7 +768,7 @@ namespace WH_Panel
                     }
                 }
 
-                    bool foundAny = false;
+                bool foundAny = false;
 
                 // === Stage 2+3: For each parent get active work orders + needed kit lines for the part ===
                 foreach (var parentName in parents)
@@ -951,10 +951,10 @@ namespace WH_Panel
 
                 // Validate: check only the first 3 characters of IPN
                 if (ipn.Length < 3 || !ipn.Substring(0, 3).Equals(prefix, StringComparison.OrdinalIgnoreCase))
-                 {
+                {
                     MessageBox.Show($"IPN must start with '{prefix}'.\n Current IPN: '{ipn}' \n Incorrect WAREHOUSE selected !", "Incorrect WAREHOUSE selected !", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-                    btnClearFields_Click(sender,e);
+                    btnClearFields_Click(sender, e);
                     cmbWarehouseList.DroppedDown = true;
                     return;
                 }
@@ -1085,6 +1085,8 @@ namespace WH_Panel
             txtbPartDescription.Clear();
             txtbManufacturer.Clear();
             txtbPART.Clear();
+            txtbMouse.Clear();
+            txtbUberAvlDecoder.Clear();
         }
         List<Warehouse> loadedWareHouses = new List<Warehouse>();
         private async void button3_Click(object sender, EventArgs e)
@@ -1345,10 +1347,10 @@ namespace WH_Panel
 
                 txtLog.AppendText($"An error occurred: {ex.Message}\n");
             }
-           
-           
 
-            
+
+
+
         }
 
         private async Task ExtractMFPNForRow(DataGridViewRow row)
@@ -1505,7 +1507,7 @@ namespace WH_Panel
                             {
                                 foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
                                 {
-                                    if (trans.DOCDES != "קיזוז אוטומטי" && trans.TOWARHSNAME!="666")
+                                    if (trans.DOCDES != "קיזוז אוטומטי" && trans.TOWARHSNAME != "666")
                                     {
                                         dataGridView2.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "");
                                     }
@@ -2718,7 +2720,7 @@ namespace WH_Panel
         }
         private async Task DisplayInsertedData(int partId)
         {
-           // string url = $"{baseUrl}/PARTMNFONE?$filter=PART eq {partId}";
+            // string url = $"{baseUrl}/PARTMNFONE?$filter=PART eq {partId}";
             string url = $"{baseUrl}/PARTMNFONE?$filter=PART eq {partId}&$select=PARTNAME,PARTDES,MNFPARTNAME,MNFPARTDES,MNFNAME,MNFDES";
             using (HttpClient client = new HttpClient())
             {
@@ -4588,10 +4590,10 @@ namespace WH_Panel
                 //    .Where(mfpn => !string.IsNullOrEmpty(mfpn) && input.Contains(mfpn, StringComparison.OrdinalIgnoreCase))
                 //    .ToList();
 
-    //            var foundMfpns = avlMfpns
-    //.Where(mfpn => !string.IsNullOrEmpty(mfpn) &&
-    //               string.Equals(input.Trim(), mfpn, StringComparison.OrdinalIgnoreCase))
-    //.ToList();
+                //            var foundMfpns = avlMfpns
+                //.Where(mfpn => !string.IsNullOrEmpty(mfpn) &&
+                //               string.Equals(input.Trim(), mfpn, StringComparison.OrdinalIgnoreCase))
+                //.ToList();
 
 
                 var foundMfpns = avlMfpns
@@ -4710,6 +4712,77 @@ namespace WH_Panel
             }
         }
 
+        private async void txtbMouse_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                string keyword = txtbMouse.Text.Trim();
+                if (string.IsNullOrEmpty(keyword))
+                    return;
 
+                // Read MouserApiKey from settings
+                string apiKey = settings?.GetType().GetProperty("MouserApiKey")?.GetValue(settings)?.ToString();
+                if (string.IsNullOrEmpty(apiKey))
+                {
+                    MessageBox.Show("Mouser API key not found in settings.");
+                    return;
+                }
+
+                txtLog.AppendText($"Querying Mouser API for: {keyword}\n");
+
+                string url = $"https://api.mouser.com/api/v1/search/keyword?apiKey={apiKey}";
+                var requestBody = new
+                {
+                    SearchByKeywordRequest = new
+                    {
+                        keyword = keyword,
+                        records = 0,
+                        startingRecord = 0,
+                        searchOptions = "",
+                        searchWithYourSignUpLanguage = false
+                    }
+                };
+
+                try
+                {
+                    using (var client = new HttpClient())
+                    {
+                        var json = Newtonsoft.Json.JsonConvert.SerializeObject(requestBody);
+                        var content = new StringContent(json, Encoding.UTF8, "application/json");
+                        var response = await client.PostAsync(url, content);
+                        response.EnsureSuccessStatusCode();
+                        var responseString = await response.Content.ReadAsStringAsync();
+
+                        var jObj = Newtonsoft.Json.Linq.JObject.Parse(responseString);
+                        var mfpn = jObj["SearchResults"]?["Parts"]?.FirstOrDefault()?["ManufacturerPartNumber"]?.ToString();
+
+                        txtLog.AppendText($"Mouser data received \n");
+
+                        if (!string.IsNullOrEmpty(mfpn))
+                        {
+                            txtbInputMFPN.Text = mfpn;
+                            // Simulate Enter key press in txtbInputMFPN
+                            txtbInputMFPN.Focus();
+                            SendKeys.Send("{ENTER}");
+                        }
+                        else
+                        {
+                            MessageBox.Show("Manufacturer Part Number not found in Mouser response.");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error querying Mouser API: " + ex.Message);
+                }
+
+                txtbMouse.Clear();
+            }
+            else if (e.KeyCode == Keys.Escape)
+            {
+                txtbMouse.Clear();
+
+            }
+        }
     }
 }

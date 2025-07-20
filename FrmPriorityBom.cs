@@ -3367,7 +3367,7 @@ namespace WH_Panel
                 try
                 {
                     await PatchUpdateUdateAsync(robSerial);
-                    txtbLog.AppendText($"[✓] UDATE updated for ROB: {robSerial} on form close.\n");
+                    MessageBox.Show($"[✓] UDATE updated for ROB: {robSerial} on form close.\n");
                 }
                 catch (Exception ex)
                 {
@@ -3375,7 +3375,7 @@ namespace WH_Panel
                                     "Update Error",
                                     MessageBoxButtons.OK,
                                     MessageBoxIcon.Warning);
-                    txtbLog.AppendText($"[!] Error updating UDATE for {robSerial}: {ex.Message}\n");
+                    MessageBox.Show($"[!] Error updating UDATE for {robSerial}: {ex.Message}\n");
                 }
             }
         }
@@ -3430,29 +3430,7 @@ namespace WH_Panel
             }
         }
 
-        //private void SwitchToAltItem_Click(object sender, EventArgs e)
-        //{
-        //    if (dgwBom.SelectedCells.Count > 0)
-        //    {
-        //        var cell = dgwBom.SelectedCells[0];
-        //        int rowIndex = cell.RowIndex;
-
-        //        int altColumnIndex = 8;
-        //        int ipnColumnIndex = 0;
-
-        //        var altCell = dgwBom.Rows[rowIndex].Cells[altColumnIndex];
-        //        var ipnCell = dgwBom.Rows[rowIndex].Cells[ipnColumnIndex];
-
-        //        // Swap values
-        //        var temp = altCell.Value;
-        //        altCell.Value = ipnCell.Value;
-        //        ipnCell.Value = temp;
-        //    }
-        //}
-
-      
-
-// Make your event handler async
+   
         private async void SwitchToAltItem_Click(object sender, EventArgs e)
     {
         if (dgwBom.SelectedCells.Count > 0)
@@ -3539,51 +3517,7 @@ namespace WH_Panel
         
 
     }
-        //private async Task postAltItemRowIntoKit(string altIpnToAddToKit,int theQtyToInsert, string robWoToInsertInto)
-        //{
-        //    using (var client = new HttpClient())
-        //    {
-
-        //        client.DefaultRequestHeaders.Accept.Clear();
-        //        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-
-
-        //        // Set the base Priority OData endpoint and target work order
-        //        string requestUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/{robWoToInsertInto}/KITITEMS_SUBFORM";
-
-        //        // Construct JSON payload
-        //        var payload = new
-        //        {
-        //            PARTNAME = altIpnToAddToKit,
-        //            QUANT = theQtyToInsert,             // Or parameterize if needed
-        //            ACTNAME = "Prod"
-        //        };
-
-        //        var jsonPayload = JsonConvert.SerializeObject(payload);
-        //        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-
-        //        try
-        //        {
-        //            var response = await client.PostAsync(requestUrl, content);
-        //            if (response.IsSuccessStatusCode)
-        //            {
-        //               txtbLog.AppendText($"✅ Successfully added ALT {altIpnToAddToKit} to {robWoToInsertInto} kit.");
-        //            }
-        //            else
-        //            {
-        //                var responseBody = await response.Content.ReadAsStringAsync();
-        //                txtbLog.AppendText($"❌ Failed to add ALT item {altIpnToAddToKit} to kit: {response.StatusCode} - {responseBody}");
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            txtbLog.AppendText($"🔥 Exception in postAltItemRowIntoKit: {ex.Message}");
-        //        }
-        //    }
-        //}
+     
         private async Task postAltItemRowIntoKit(string altIpnToAddToKit, int theQtyToInsert, string robWoToInsertInto)
         {
             if (string.IsNullOrWhiteSpace(altIpnToAddToKit) || string.IsNullOrWhiteSpace(robWoToInsertInto))

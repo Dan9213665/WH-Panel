@@ -57,12 +57,13 @@
             txtbPrefix = new TextBox();
             txtbDecodeIPN = new TextBox();
             lblIPNdecoder = new Label();
-            chkbNoSticker = new CheckBox();
             cbmOUT = new ComboBox();
             tableLayoutPanel9 = new TableLayoutPanel();
             btnPrinSticker = new Button();
             button2 = new Button();
             txtbUberAvlDecoder = new TextBox();
+            chkbNoSticker = new CheckBox();
+            txtbMouse = new TextBox();
             groupBox2 = new GroupBox();
             tableLayoutPanel3 = new TableLayoutPanel();
             cmbWarehouseList = new ComboBox();
@@ -184,10 +185,11 @@
             tableLayoutPanel2.Controls.Add(lblMFPNdecoder, 1, 2);
             tableLayoutPanel2.Controls.Add(tableLayoutPanel8, 1, 1);
             tableLayoutPanel2.Controls.Add(lblIPNdecoder, 1, 0);
-            tableLayoutPanel2.Controls.Add(chkbNoSticker, 1, 6);
             tableLayoutPanel2.Controls.Add(cbmOUT, 2, 6);
             tableLayoutPanel2.Controls.Add(tableLayoutPanel9, 2, 0);
-            tableLayoutPanel2.Controls.Add(txtbUberAvlDecoder, 1, 5);
+            tableLayoutPanel2.Controls.Add(txtbUberAvlDecoder, 1, 6);
+            tableLayoutPanel2.Controls.Add(chkbNoSticker, 1, 8);
+            tableLayoutPanel2.Controls.Add(txtbMouse, 1, 5);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.Location = new Point(3, 19);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -548,17 +550,6 @@
             lblIPNdecoder.Text = "IPN Decoder";
             lblIPNdecoder.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // chkbNoSticker
-            // 
-            chkbNoSticker.AutoSize = true;
-            chkbNoSticker.Location = new Point(203, 129);
-            chkbNoSticker.Name = "chkbNoSticker";
-            chkbNoSticker.Size = new Size(81, 15);
-            chkbNoSticker.TabIndex = 24;
-            chkbNoSticker.Text = "NO sticker";
-            chkbNoSticker.UseVisualStyleBackColor = true;
-            chkbNoSticker.CheckedChanged += chkbNoSticker_CheckedChanged;
-            // 
             // cbmOUT
             // 
             cbmOUT.Dock = DockStyle.Fill;
@@ -617,7 +608,7 @@
             // txtbUberAvlDecoder
             // 
             txtbUberAvlDecoder.Dock = DockStyle.Fill;
-            txtbUberAvlDecoder.Location = new Point(203, 108);
+            txtbUberAvlDecoder.Location = new Point(203, 129);
             txtbUberAvlDecoder.Name = "txtbUberAvlDecoder";
             txtbUberAvlDecoder.PlaceholderText = "UBER AVL DECODER";
             txtbUberAvlDecoder.Size = new Size(194, 23);
@@ -625,6 +616,28 @@
             txtbUberAvlDecoder.TextAlign = HorizontalAlignment.Center;
             txtbUberAvlDecoder.Enter += txtbUberAvlDecoder_Enter;
             txtbUberAvlDecoder.KeyDown += txtbUberAvlDecoder_KeyDown;
+            // 
+            // chkbNoSticker
+            // 
+            chkbNoSticker.AutoSize = true;
+            chkbNoSticker.Location = new Point(203, 171);
+            chkbNoSticker.Name = "chkbNoSticker";
+            chkbNoSticker.Size = new Size(81, 15);
+            chkbNoSticker.TabIndex = 24;
+            chkbNoSticker.Text = "NO sticker";
+            chkbNoSticker.UseVisualStyleBackColor = true;
+            chkbNoSticker.CheckedChanged += chkbNoSticker_CheckedChanged;
+            // 
+            // txtbMouse
+            // 
+            txtbMouse.Dock = DockStyle.Fill;
+            txtbMouse.Location = new Point(203, 108);
+            txtbMouse.Name = "txtbMouse";
+            txtbMouse.PlaceholderText = "Mouser xxx-xxxxx MFPN Decoder";
+            txtbMouse.Size = new Size(194, 23);
+            txtbMouse.TabIndex = 28;
+            txtbMouse.TextAlign = HorizontalAlignment.Center;
+            txtbMouse.KeyDown += txtbMouse_KeyDown;
             // 
             // groupBox2
             // 
@@ -1301,5 +1314,6 @@
         private TableLayoutPanel tableLayoutPanel11;
         private CheckBox chkBSearchKits;
         private FlowLayoutPanel flpSerials;
+        private TextBox txtbMouse;
     }
 }
