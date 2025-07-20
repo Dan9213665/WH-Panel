@@ -1507,7 +1507,7 @@ namespace WH_Panel
                             {
                                 foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
                                 {
-                                    if (trans.DOCDES != "קיזוז אוטומטי" && trans.TOWARHSNAME != "666")
+                                    if (trans.DOCDES != "קיזוז אוטומטי" && trans.DOCDES!= "חשבוניות מס" && trans.TOWARHSNAME != "666" )
                                     {
                                         dataGridView2.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "");
                                     }
