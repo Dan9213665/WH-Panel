@@ -89,7 +89,7 @@
             tableLayoutPanel1.Controls.Add(lblCounter, 1, 0);
             tableLayoutPanel1.Controls.Add(tableLayoutPanel2, 0, 8);
             tableLayoutPanel1.Dock = DockStyle.Fill;
-            tableLayoutPanel1.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
+            tableLayoutPanel1.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             tableLayoutPanel1.Location = new Point(3, 19);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 12;
@@ -112,7 +112,7 @@
             // 
             label3.AutoSize = true;
             label3.Dock = DockStyle.Fill;
-            label3.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
+            label3.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             label3.Location = new Point(3, 468);
             label3.Name = "label3";
             label3.Size = new Size(241, 52);
@@ -123,7 +123,7 @@
             // txtbSN
             // 
             txtbSN.Dock = DockStyle.Fill;
-            txtbSN.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
+            txtbSN.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             txtbSN.Location = new Point(3, 523);
             txtbSN.Name = "txtbSN";
             txtbSN.Size = new Size(241, 39);
@@ -136,7 +136,7 @@
             // comboBox2
             // 
             comboBox2.Dock = DockStyle.Fill;
-            comboBox2.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
+            comboBox2.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             comboBox2.FormattingEnabled = true;
             comboBox2.Location = new Point(3, 159);
             comboBox2.Name = "comboBox2";
@@ -148,7 +148,7 @@
             // comboBox1
             // 
             comboBox1.Dock = DockStyle.Fill;
-            comboBox1.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
+            comboBox1.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             comboBox1.FormattingEnabled = true;
             comboBox1.Location = new Point(3, 55);
             comboBox1.Name = "comboBox1";
@@ -162,7 +162,7 @@
             button1.BackgroundImage = (Image)resources.GetObject("button1.BackgroundImage");
             button1.BackgroundImageLayout = ImageLayout.Zoom;
             button1.Dock = DockStyle.Fill;
-            button1.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
+            button1.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             button1.Location = new Point(3, 575);
             button1.Name = "button1";
             button1.Size = new Size(241, 57);
@@ -185,7 +185,7 @@
             // checkBox1
             // 
             checkBox1.AutoSize = true;
-            checkBox1.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            checkBox1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             checkBox1.Location = new Point(3, 3);
             checkBox1.Name = "checkBox1";
             checkBox1.Size = new Size(108, 19);
@@ -197,7 +197,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
+            label1.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             label1.Location = new Point(3, 25);
             label1.Name = "label1";
             label1.Size = new Size(149, 32);
@@ -219,7 +219,7 @@
             // checkBox2
             // 
             checkBox2.AutoSize = true;
-            checkBox2.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            checkBox2.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             checkBox2.Location = new Point(3, 3);
             checkBox2.Name = "checkBox2";
             checkBox2.Size = new Size(95, 19);
@@ -231,7 +231,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
+            label2.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             label2.Location = new Point(104, 0);
             label2.Name = "label2";
             label2.Size = new Size(123, 32);
@@ -264,7 +264,7 @@
             // checkBox3
             // 
             checkBox3.AutoSize = true;
-            checkBox3.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            checkBox3.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             checkBox3.Location = new Point(3, 3);
             checkBox3.Name = "checkBox3";
             checkBox3.Size = new Size(102, 19);
@@ -303,7 +303,7 @@
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle1.BackColor = SystemColors.Window;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
             dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
             dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
@@ -313,7 +313,6 @@
             dataGridView1.Location = new Point(3, 35);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
-            dataGridView1.RowTemplate.Height = 25;
             dataGridView1.Size = new Size(977, 476);
             dataGridView1.TabIndex = 0;
             dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
@@ -339,7 +338,7 @@
             groupBox3.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             groupBox3.Controls.Add(flowLayoutPanel4);
             groupBox3.Dock = DockStyle.Fill;
-            groupBox3.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            groupBox3.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             groupBox3.Location = new Point(3, 315);
             groupBox3.Name = "groupBox3";
             tableLayoutPanel1.SetRowSpan(groupBox3, 2);
@@ -372,7 +371,7 @@
             // txtbComments
             // 
             txtbComments.Dock = DockStyle.Fill;
-            txtbComments.Font = new Font("Segoe UI Black", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            txtbComments.Font = new Font("Segoe UI Black", 12F, FontStyle.Bold);
             txtbComments.Location = new Point(3, 28);
             txtbComments.Name = "txtbComments";
             txtbComments.Size = new Size(229, 29);
@@ -439,7 +438,7 @@
             // checkBox5
             // 
             checkBox5.AutoSize = true;
-            checkBox5.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            checkBox5.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             checkBox5.Location = new Point(3, 3);
             checkBox5.Name = "checkBox5";
             checkBox5.Size = new Size(83, 17);
