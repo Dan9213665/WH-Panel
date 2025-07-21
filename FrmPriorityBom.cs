@@ -2218,14 +2218,19 @@ namespace WH_Panel
                             itemToPrint2.Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
                             printStickerFullKit(itemToPrint2);
                             break;
-                        case DialogResult.Cancel:
+                        case DialogResult.Continue:
                             dgwBom.Sort(dgwBom.Columns["DELTA"], ListSortDirection.Ascending);
                             SendEmail();
                             break;
                     }
-                    if (result != DialogResult.Ignore && result != DialogResult.Abort && result != DialogResult.Cancel)
+                    if (result != DialogResult.Ignore && result != DialogResult.Abort && result != DialogResult.Cancel && result != DialogResult.Continue)
                     {
                         GenerateHTMLkitBoxLabel(copiesToPrint);
+                    }
+                    else
+                    {
+                                               // If the user clicked Cancel, do nothing
+                        return;
                     }
                     // Call the method with the chosen number of copies
                 }
@@ -2475,43 +2480,107 @@ namespace WH_Panel
             Marshal.ReleaseComObject(mailItem);
             Marshal.ReleaseComObject(outlookApp);
         }
+        //public List<string> GetUniqueClientEmails(string clientDomain)
+        //{
+        //    var emails = new HashSet<string>();
+        //    var outlookApp = new Outlook.Application();
+        //    // Initialize and show the loading form
+        //    LoadingForm loadingForm = new LoadingForm();
+        //    // Display the loading form on a new thread to avoid blocking
+        //    var loadingThread = new Thread(() =>
+        //    {
+        //        loadingForm.ShowDialog();
+        //    });
+        //    loadingThread.Start();
+        //    try
+        //    {
+        //        Outlook.Folder inboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox) as Outlook.Folder;
+        //        Outlook.Folder outboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderSentMail) as Outlook.Folder;
+        //        // Helper function to add unique emails from a folder
+        //        void AddEmailsFromFolder(Outlook.Folder folder, string domain)
+        //        {
+        //            foreach (var item in folder.Items)
+        //            {
+        //                if (item is Outlook.MailItem mail && !string.IsNullOrEmpty(mail.SenderEmailAddress))
+        //                {
+        //                    string senderEmailLower = mail.SenderEmailAddress.ToLower();
+        //                    string domainLower = domain.ToLower();
+        //                    if (senderEmailLower.Contains(domainLower))
+        //                    {
+        //                        string contactInfo = $"{mail.SenderName} ({mail.SenderEmailAddress})";
+        //                        emails.Add(contactInfo); // HashSet prevents duplicate entries
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        // Add emails for the given client domain from both Inbox and Outbox folders
+        //        AddEmailsFromFolder(inboxFolder, clientDomain);
+        //        AddEmailsFromFolder(outboxFolder, clientDomain);
+        //        // If no emails found for the client domain, fallback to local domain
+        //        if (emails.Count == 0)
+        //        {
+        //            string localDomain = "robotron";
+        //            AddEmailsFromFolder(inboxFolder, localDomain);
+        //            AddEmailsFromFolder(outboxFolder, localDomain);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Log the exception or handle it as necessary
+        //        Console.WriteLine($"An error occurred: {ex.Message}");
+        //    }
+        //    finally
+        //    {
+        //        // Close the loading form once processing is complete
+        //        if (loadingForm.InvokeRequired)
+        //        {
+        //            loadingForm.Invoke(new Action(() => loadingForm.Close()));
+        //        }
+        //        else
+        //        {
+        //            loadingForm.Close();
+        //        }
+        //    }
+        //    return emails.ToList();
+        //}
+
         public List<string> GetUniqueClientEmails(string clientDomain)
         {
             var emails = new HashSet<string>();
             var outlookApp = new Outlook.Application();
-            // Initialize and show the loading form
             LoadingForm loadingForm = new LoadingForm();
-            // Display the loading form on a new thread to avoid blocking
-            var loadingThread = new Thread(() =>
-            {
-                loadingForm.ShowDialog();
-            });
+            var loadingThread = new Thread(() => loadingForm.ShowDialog());
             loadingThread.Start();
             try
             {
                 Outlook.Folder inboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox) as Outlook.Folder;
                 Outlook.Folder outboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderSentMail) as Outlook.Folder;
-                // Helper function to add unique emails from a folder
+
                 void AddEmailsFromFolder(Outlook.Folder folder, string domain)
                 {
-                    foreach (var item in folder.Items)
+                    var items = folder.Items;
+                    items.Sort("[ReceivedTime]", true); // Sort descending by date
+                    int count = 0;
+                    var enumerator = items.GetEnumerator();
+                    while (enumerator.MoveNext() && count < 100)
                     {
-                        if (item is Outlook.MailItem mail && !string.IsNullOrEmpty(mail.SenderEmailAddress))
+                        if (enumerator.Current is Outlook.MailItem mail && !string.IsNullOrEmpty(mail.SenderEmailAddress))
                         {
                             string senderEmailLower = mail.SenderEmailAddress.ToLower();
                             string domainLower = domain.ToLower();
                             if (senderEmailLower.Contains(domainLower))
                             {
                                 string contactInfo = $"{mail.SenderName} ({mail.SenderEmailAddress})";
-                                emails.Add(contactInfo); // HashSet prevents duplicate entries
+                                emails.Add(contactInfo);
                             }
                         }
+                        count++;
                     }
                 }
-                // Add emails for the given client domain from both Inbox and Outbox folders
+
                 AddEmailsFromFolder(inboxFolder, clientDomain);
                 AddEmailsFromFolder(outboxFolder, clientDomain);
-                // If no emails found for the client domain, fallback to local domain
+
                 if (emails.Count == 0)
                 {
                     string localDomain = "robotron";
@@ -2521,12 +2590,10 @@ namespace WH_Panel
             }
             catch (Exception ex)
             {
-                // Log the exception or handle it as necessary
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
             finally
             {
-                // Close the loading form once processing is complete
                 if (loadingForm.InvokeRequired)
                 {
                     loadingForm.Invoke(new Action(() => loadingForm.Close()));
@@ -2538,6 +2605,8 @@ namespace WH_Panel
             }
             return emails.ToList();
         }
+
+
         public class RecipientSelectionForm : Form
         {
             private CheckedListBox checkedListBox;
