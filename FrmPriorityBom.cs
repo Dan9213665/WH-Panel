@@ -1775,49 +1775,7 @@ namespace WH_Panel
                 //
             }
         }
-        //private async void txtbINPUTqty_KeyDown(object sender, KeyEventArgs e)
-        //{
-        //    // Count only the visible rows
-        //    int visibleRowCount = dgwBom.Rows.Cast<DataGridViewRow>().Count(row => row.Visible);
-        //    if (visibleRowCount == 1)
-        //    {
-        //        if (e.KeyCode == Keys.Enter)
-        //        {
-        //            if (int.TryParse(txtbINPUTqty.Text, out int qty) && qty > 0)
-        //            {
-        //                var filteredRow = dgwBom.Rows.Cast<DataGridViewRow>().FirstOrDefault(row => row.Visible);
-        //                if (filteredRow != null)
-        //                {
-        //                    string wh = filteredRow.Cells["PARTNAME"].Value.ToString().Substring(0, 3);
-        //                    string partName = filteredRow.Cells["PARTNAME"].Value.ToString();
-        //                    string serialName = txtbRob.Text; // Assuming txtbRob contains the SERIALNAME
-        //                    int cQuant = int.Parse(filteredRow.Cells["CQUANT"].Value.ToString()); // Get the CQUANT value
-        //                    int inKit = int.Parse(filteredRow.Cells["QUANT"].Value.ToString()); // Get the QUANT value
-        //                    int neededQty = cQuant - inKit;
-        //                    await AddItemToKit(partName, serialName, neededQty, qty, filteredRow, wh);
-        //                    txtbINPUTqty.Clear();
-        //                    txtbInputIPN.Clear();
-        //                    txtbInputIPN.Focus();
-        //                    // Update the progress label
-        //                    UpdateProgressLabel();
-        //                    UpdateSimulationLabel();
-        //                }
-        //            }
-        //            else
-        //            {
-        //                MessageBox.Show("Please enter a valid quantity", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //                txtbINPUTqty.Clear();
-        //                txtbINPUTqty.Focus();
-        //            }
-        //        }
-        //    }
-        //    else
-        //    {
-        //        MessageBox.Show("Please enter a valid IPN", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //        txtbInputIPN.Clear();
-        //        txtbInputIPN.Focus();
-        //    }
-        //}
+  
 
 
         // At class level:
@@ -2431,69 +2389,7 @@ namespace WH_Panel
             Marshal.ReleaseComObject(mailItem);
             Marshal.ReleaseComObject(outlookApp);
         }
-        //public List<string> GetUniqueClientEmails(string clientDomain)
-        //{
-        //    var emails = new HashSet<string>();
-        //    var outlookApp = new Outlook.Application();
-        //    // Initialize and show the loading form
-        //    LoadingForm loadingForm = new LoadingForm();
-        //    // Display the loading form on a new thread to avoid blocking
-        //    var loadingThread = new Thread(() =>
-        //    {
-        //        loadingForm.ShowDialog();
-        //    });
-        //    loadingThread.Start();
-        //    try
-        //    {
-        //        Outlook.Folder inboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox) as Outlook.Folder;
-        //        Outlook.Folder outboxFolder = outlookApp.Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderSentMail) as Outlook.Folder;
-        //        // Helper function to add unique emails from a folder
-        //        void AddEmailsFromFolder(Outlook.Folder folder, string domain)
-        //        {
-        //            foreach (var item in folder.Items)
-        //            {
-        //                if (item is Outlook.MailItem mail && !string.IsNullOrEmpty(mail.SenderEmailAddress))
-        //                {
-        //                    string senderEmailLower = mail.SenderEmailAddress.ToLower();
-        //                    string domainLower = domain.ToLower();
-        //                    if (senderEmailLower.Contains(domainLower))
-        //                    {
-        //                        string contactInfo = $"{mail.SenderName} ({mail.SenderEmailAddress})";
-        //                        emails.Add(contactInfo); // HashSet prevents duplicate entries
-        //                    }
-        //                }
-        //            }
-        //        }
-        //        // Add emails for the given client domain from both Inbox and Outbox folders
-        //        AddEmailsFromFolder(inboxFolder, clientDomain);
-        //        AddEmailsFromFolder(outboxFolder, clientDomain);
-        //        // If no emails found for the client domain, fallback to local domain
-        //        if (emails.Count == 0)
-        //        {
-        //            string localDomain = "robotron";
-        //            AddEmailsFromFolder(inboxFolder, localDomain);
-        //            AddEmailsFromFolder(outboxFolder, localDomain);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Log the exception or handle it as necessary
-        //        Console.WriteLine($"An error occurred: {ex.Message}");
-        //    }
-        //    finally
-        //    {
-        //        // Close the loading form once processing is complete
-        //        if (loadingForm.InvokeRequired)
-        //        {
-        //            loadingForm.Invoke(new Action(() => loadingForm.Close()));
-        //        }
-        //        else
-        //        {
-        //            loadingForm.Close();
-        //        }
-        //    }
-        //    return emails.ToList();
-        //}
+ 
 
         public List<string> GetUniqueClientEmails(string clientDomain)
         {
@@ -3119,73 +3015,6 @@ namespace WH_Panel
         {
 
         }
-
-
-        //private async Task  LoadDataAndFilterInStock()
-        //{
-        //    // Step 1: Initialize dgwINSTOCK columns
-        //    InitializeInStockDataGridView();
-        //    // Step 2: Separate data into ROB and notRob lists
-        //    var robList = new List<DataGridViewRow>();
-        //    var notRobList = new List<DataGridViewRow>();
-        //    foreach (DataGridViewRow row in dgwIPNmoves.Rows)
-        //    {
-        //        if (row.Cells["LOGDOCNO"].Value != null && row.Cells["UDATE"].Value != null && DateTime.TryParse(row.Cells["UDATE"].Value.ToString(), out _))
-        //        {
-        //            string docNo = row.Cells["LOGDOCNO"].Value.ToString();
-        //            if (docNo.StartsWith("ROB") || docNo.StartsWith("IC") || docNo.StartsWith("WR") || docNo.StartsWith("SH"))
-        //            {
-        //                // Handle IC documents by converting the quantity to a positive value
-        //                if (docNo.StartsWith("IC"))
-        //                {
-        //                    row.Cells["TQUANT"].Value = Math.Abs(Convert.ToInt32(row.Cells["TQUANT"].Value));
-        //                }
-        //                robList.Add(row);
-        //            }
-        //            else
-        //            {
-        //                notRobList.Add(row);
-        //            }
-        //        }
-        //    }
-        //    // Step 3: Sort both lists by transaction date
-        //    robList = robList.OrderBy(row => DateTime.Parse(row.Cells["UDATE"].Value.ToString())).ToList();
-        //    notRobList = notRobList.OrderBy(row => DateTime.Parse(row.Cells["UDATE"].Value.ToString())).ToList();
-        //    // Step 4: Filter out matching pairs
-        //    var filteredNotRobList = new List<DataGridViewRow>(notRobList);
-        //    foreach (var notRobRow in notRobList)
-        //    {
-        //        if (robList.Count == 0) break;
-        //        int notRobQty = Convert.ToInt32(notRobRow.Cells["TQUANT"].Value);
-        //        var matchingRobRow = robList.FirstOrDefault(robRow => Convert.ToInt32(robRow.Cells["TQUANT"].Value) == notRobQty);
-        //        if (matchingRobRow != null)
-        //        {
-        //            filteredNotRobList.Remove(notRobRow);
-        //            robList.Remove(matchingRobRow);
-        //        }
-        //    }
-        //    // Step 5: Display the filtered INSTOCK items in dgwINSTOCK
-        //    dgwINSTOCK.Rows.Clear();
-        //    foreach (var row in filteredNotRobList)
-        //    {
-        //        var newRow = (DataGridViewRow)row.Clone();
-        //        foreach (DataGridViewCell cell in row.Cells)
-        //        {
-        //            newRow.Cells[cell.ColumnIndex].Value = cell.Value;
-        //        }
-        //        dgwINSTOCK.Rows.Add(newRow);
-        //    }
-
-        //    dgwINSTOCK.Visible = false; // Hide grid before loading
-        //    // Additional check: Remove rows where TOWARHSNAME == "666"
-        //    await RemoveRowsWithTowarhsname666Async();
-        //    dgwINSTOCK.Update();
-        //    dgwINSTOCK.Visible = true; // Show grid after filtering
-
-
-
-
-        //}
 
 
 
