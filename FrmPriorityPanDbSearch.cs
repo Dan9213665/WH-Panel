@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Net.Http.Headers;
@@ -20,6 +21,7 @@ using DataTable = System.Data.DataTable;
 using GroupBox = System.Windows.Forms.GroupBox;
 using Label = System.Windows.Forms.Label;
 using TextBox = System.Windows.Forms.TextBox;
+using Timer = System.Threading.Timer;
 namespace WH_Panel
 {
     public partial class FrmPriorityPanDbSearch : Form
@@ -235,6 +237,7 @@ namespace WH_Panel
         int countOFWHs = 0;
         private async Task LoadDataIntoDataTable()
         {
+            var stopwatch = Stopwatch.StartNew();
             int currentWH = 0;
             progressBar1.Minimum = 0;
             progressBar1.Maximum = countOFWHs;
@@ -331,10 +334,12 @@ namespace WH_Panel
                 AddLogRow($"Data loaded for warehouse: {warehouse.WARHSNAME} ({currentWH}/{countOFWHs}) {rowsPerWarehouse} Rows Loaded", Color.Green);
                 totalRowsLoaded += rowsPerWarehouse;
             }
+            stopwatch.Stop();
             dataView = new DataView(dataTable);
             dgwALLDATA.DataSource = dataView;
             lblProgressPercentage.ForeColor = Color.Green;
-            AddLogRow($"Total Rows Loaded : {totalRowsLoaded}", Color.Green);
+            //AddLogRow($"Total Rows Loaded : {totalRowsLoaded}", Color.Green);
+            AddLogRow($"Total Rows Loaded : {totalRowsLoaded} in {stopwatch.Elapsed.TotalSeconds:F1} seconds", Color.Green);
         }
         private void InitializeDataTable()
         {

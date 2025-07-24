@@ -4544,34 +4544,7 @@ namespace WH_Panel
             }
         }
 
-        //private void txtbUberAvlDecoder_KeyDown(object sender, KeyEventArgs e)
-        //{
-        //    if (e.KeyCode == Keys.Enter)
-        //    {
-        //        string input = txtbUberAvlDecoder.Text;
-        //        if (avlMfpns.Count == 0)
-        //        {
-        //            MessageBox.Show("AVL not loaded or empty.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        //            return;
-        //        }
-        //        var found = avlMfpns.FirstOrDefault(mfpn => !string.IsNullOrEmpty(mfpn) && input.Contains(mfpn, StringComparison.OrdinalIgnoreCase));
-        //        if (!string.IsNullOrEmpty(found))
-        //        {
-        //            txtbInputMFPN.Text = found;
-        //            txtbInputMFPN.Focus();
-        //            txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter), txtbUberAvlDecoder);
-        //            txtbUberAvlDecoder.Clear();
-        //        }
-        //        else
-        //        {
-        //            MessageBox.Show("No MFPN from AVL found in the scanned string.", "Not Found", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        //        }
-        //    }
-        //    else if (e.KeyCode == Keys.Escape)
-        //    {
-        //        txtbUberAvlDecoder.Clear();
-        //    }
-        //}
+    
 
 
         private void txtbUberAvlDecoder_KeyDown(object sender, KeyEventArgs e)
