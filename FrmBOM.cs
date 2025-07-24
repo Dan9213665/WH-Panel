@@ -1865,11 +1865,11 @@ namespace WH_Panel
                             itemToPrint2.Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
                             printStickerFullKit(itemToPrint2);
                             break;
-                        case DialogResult.Cancel:
+                        case DialogResult.Continue:
                             SendEmail();
                             break;
                     }
-                    if (result != DialogResult.Ignore && result != DialogResult.Abort && result != DialogResult.Cancel)
+                    if (result != DialogResult.Ignore && result != DialogResult.Abort && result != DialogResult.Continue)
                     {
                         GenerateHTMLkitBoxLabel(copiesToPrint);
                     }
@@ -2159,9 +2159,27 @@ namespace WH_Panel
                 // Helper function to add unique emails from a folder
                 void AddEmailsFromFolder(Outlook.Folder folder, string domain)
                 {
-                    foreach (var item in folder.Items)
+                    //foreach (var item in folder.Items)
+                    //{
+                    //    if (item is Outlook.MailItem mail && !string.IsNullOrEmpty(mail.SenderEmailAddress))
+                    //    {
+                    //        string senderEmailLower = mail.SenderEmailAddress.ToLower();
+                    //        string domainLower = domain.ToLower();
+                    //        if (senderEmailLower.Contains(domainLower))
+                    //        {
+                    //            string contactInfo = $"{mail.SenderName} ({mail.SenderEmailAddress})";
+                    //            emails.Add(contactInfo); // HashSet prevents duplicate entries
+                    //        }
+                    //    }
+                    //}
+                    int maxItems = 100;
+                    int totalItems = folder.Items.Count;
+                    int startIndex = Math.Max(1, totalItems - maxItems + 1); // Outlook.Items is 1-based
+
+                    for (int i = startIndex; i <= totalItems; i++)
                     {
-                        if (item is Outlook.MailItem mail && !string.IsNullOrEmpty(mail.SenderEmailAddress))
+                        object itemObj = folder.Items[i];
+                        if (itemObj is Outlook.MailItem mail && !string.IsNullOrEmpty(mail.SenderEmailAddress))
                         {
                             string senderEmailLower = mail.SenderEmailAddress.ToLower();
                             string domainLower = domain.ToLower();
