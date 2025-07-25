@@ -1177,9 +1177,10 @@ namespace WH_Panel
                             ColorTheRows(dgwIPNmoves);
                             SortIPNMovesByDate();
                             // Fetch MFPN for the selected row
-                            await FetchMFPNForRow(selectedRow);
-                            await FetchAltForRow(selectedRow);
+                            //await FetchMFPNForRow(selectedRow);
+                            //await FetchAltForRow(selectedRow);
                             await LoadDataAndFilterInStock();
+                            
                         }
                         else
                         {
@@ -3114,6 +3115,7 @@ namespace WH_Panel
 
             dgwINSTOCK.Update();
             dgwINSTOCK.Visible = true;
+            
         }
 
 
