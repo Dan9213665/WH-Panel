@@ -1648,7 +1648,7 @@ namespace WH_Panel
             string warehousePrefix = cmbWarehouses.SelectedItem.ToString().Substring(0, 3);
 
             // Construct the API URL
-            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART?$filter=PARTNAME eq '{warehousePrefix}*' AND TYPE eq 'P'";
+            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART?$filter=(PARTNAME eq '{warehousePrefix}*' AND TYPE eq 'P')&$select=PARTNAME";
 
             using (HttpClient client = new HttpClient())
             {
