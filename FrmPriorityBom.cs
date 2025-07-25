@@ -716,6 +716,7 @@ namespace WH_Panel
                     if (warehouse != null)
                     {
                         warehouseBalances = warehouse["WARHSBAL_SUBFORM"].ToObject<List<WarehouseBalance>>();
+                        SafeAppendLog($"Fetched {warehouseBalances.Count} warehouse balances for warehouse {warehouseName}\n", Color.LimeGreen);
                     }
                 }
                 catch (HttpRequestException ex)
