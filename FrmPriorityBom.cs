@@ -619,7 +619,7 @@ namespace WH_Panel
         private async Task<int> FetchIPNcountFromBom(string partName)
         {
             SafeAppendLog($"Fetching IPN count for {partName}\n",Color.Yellow);
-            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART?$filter=PARTNAME eq '{partName}'&$expand=PARTARC_SUBFORM";
+            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART?$filter=PARTNAME eq '{partName}'&$expand=PARTARC_SUBFORM($select=SONNAME)";
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -833,7 +833,7 @@ namespace WH_Panel
                     }
                 }
             }
-            await Task.Delay(300); // 100 milliseconds delay
+            await Task.Delay(200); // 100 milliseconds delay
         }
         private async Task FetchMFPNsForAllRows()
         {
@@ -1507,7 +1507,7 @@ namespace WH_Panel
             if (docNo.StartsWith("ROB"))
             {
                 // Fetch UDATE from SERIAL
-                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{docNo}'";
+                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{docNo}'&$select=UDATE";
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -1557,7 +1557,7 @@ namespace WH_Panel
             else if (docNo.StartsWith("GR"))
             {
                 // Fetch UDATE from DOCUMENTS_P
-                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{docNo}'";
+                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{docNo}'&$select=UDATE";
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -1594,7 +1594,7 @@ namespace WH_Panel
             else if (docNo.StartsWith("IC"))
             {
                 // Fetch UDATE from DOCUMENTS_P
-                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_C?$filter=DOCNO eq '{docNo}'";
+                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_C?$filter=DOCNO eq '{docNo}'&$select=UDATE";
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -1930,7 +1930,7 @@ namespace WH_Panel
                 return;
             }
             // Retrieve the TRANSORDER_K_SUBFORM data
-            string getUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM?$filter=PARTNAME eq '{partName}'";
+            string getUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM?$filter=PARTNAME eq '{partName}'&$select=PARTNAME,CQUANT,KLINE,PACKCODE";
             int kline = 0;
             string package = string.Empty;
             using (HttpClient client = new HttpClient())

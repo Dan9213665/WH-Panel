@@ -400,8 +400,8 @@ namespace WH_Panel
                             formInstance.txtbManufacturer.Clear();
                             formInstance.txtbInputQty.Clear();
                             formInstance.txtbPART.Clear();
-                            formInstance.txtLog.AppendText($"{insertedIpn} successfully inserted. Document number: {docNo}\n");
-                            formInstance.txtLog.ScrollToCaret();
+                            formInstance.AppendLog($"{insertedIpn} successfully inserted. Document number: {docNo}\n",Color.Green);
+                            
                         }
                         else
                         {
@@ -409,21 +409,22 @@ namespace WH_Panel
                             string errorContent = await response.Content.ReadAsStringAsync();
                             Clipboard.SetText($"Error: {response.StatusCode}\n{errorContent}");
                             //MessageBox.Show($"Error: {response.StatusCode}\n{errorContent}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            formInstance.txtLog.AppendText($"Error: {response.StatusCode}\n{errorContent}\n");
-                            formInstance.txtLog.ScrollToCaret();
+                            formInstance.AppendLog($"Error: {response.StatusCode}\n{errorContent}\n",Color.Red);
+                            
                         }
                     }
                     catch (HttpRequestException ex)
                     {
                         //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        formInstance.txtLog.AppendText($"Request error: {ex.Message}\n");
-                        formInstance.txtLog.ScrollToCaret();
+                        
+                        formInstance.AppendLog($"Request error: {ex.Message}\n",Color.Red);
+
                     }
                     catch (Exception ex)
                     {
                         //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        formInstance.txtLog.AppendText($"An error occurred: {ex.Message}\n");
-                        formInstance.txtLog.ScrollToCaret();
+                        formInstance.AppendLog($"An error occurred: {ex.Message}\n",Color.Red);
+                     
                     }
                 }
             }
@@ -462,8 +463,8 @@ namespace WH_Panel
                             formInstance.txtbManufacturer.Clear();
                             formInstance.txtbInputQty.Clear();
                             formInstance.txtbPART.Clear();
-                            formInstance.txtLog.AppendText($"{insertedIpn} successfully transferred. Document number: {docNo}\n");
-                            formInstance.txtLog.ScrollToCaret();
+                            formInstance.AppendLog($"{insertedIpn} successfully transferred. Document number: {docNo}\n",Color.Green);
+                           
                         }
                         else
                         {
@@ -471,20 +472,20 @@ namespace WH_Panel
                             string errorContent = await response.Content.ReadAsStringAsync();
                             Clipboard.SetText($"Error: {response.StatusCode}\n{errorContent}");
                             //MessageBox.Show($"Error: {response.StatusCode}\n{errorContent}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            formInstance.txtLog.AppendText($"Error: {response.StatusCode}\n{errorContent}\n");
+                            formInstance.AppendLog($"Error: {response.StatusCode}\n{errorContent}\n");
                             formInstance.txtLog.ScrollToCaret();
                         }
                     }
                     catch (HttpRequestException ex)
                     {
                         //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        formInstance.txtLog.AppendText($"Request error: {ex.Message}\n");
+                        formInstance.AppendLog($"Request error: {ex.Message}\n");
                         formInstance.txtLog.ScrollToCaret();
                     }
                     catch (Exception ex)
                     {
                         //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        formInstance.txtLog.AppendText($"An error occurred: {ex.Message}\n");
+                        formInstance.AppendLog($"An error occurred: {ex.Message}\n");
                         formInstance.txtLog.ScrollToCaret();
                     }
                 }
@@ -725,9 +726,9 @@ namespace WH_Panel
 
             if (string.IsNullOrWhiteSpace(partName))
             {
-                txtLog.SelectionColor = Color.Red;
-                txtLog.AppendText("Part name is empty!\n");
-                txtLog.ScrollToCaret();
+                
+                AppendLog("Part name is empty!\n");
+               
                 return;
             }
 
@@ -753,9 +754,9 @@ namespace WH_Panel
 
                 if (parents == null || parents.Count == 0)
                 {
-                    txtLog.SelectionColor = Color.Red;
-                    txtLog.AppendText($"No parents found for part {partName}.\n");
-                    txtLog.ScrollToCaret();
+                    
+                    AppendLog($"No parents found for part {partName}.\n");
+                   
                     return;
                 }
                 else
@@ -764,7 +765,7 @@ namespace WH_Panel
                     foreach (var parent in parents)
                     {
                         txtLog.SelectionColor = Color.Yellow;
-                        txtLog.AppendText($"Found parent: {parent}\n");
+                        AppendLog($"Found parent: {parent}\n");
                     }
                 }
 
@@ -794,7 +795,7 @@ namespace WH_Panel
                     foreach (var serial in serials)
                     {
                         //txtLog.SelectionColor = Color.Yellow;
-                        //txtLog.AppendText($"Found active work order {serial} for parent {parentName}.\n");
+                        //AppendLog($"Found active work order {serial} for parent {parentName}.\n");
 
                         var kitLines = serial["TRANSORDER_K_SUBFORM"];
                         if (kitLines == null || !kitLines.Any())
@@ -849,9 +850,9 @@ namespace WH_Panel
                             }
                             else
                             {
-                                txtLog.SelectionColor = Color.Red;
-                                txtLog.AppendText($"Invalid CQUANT value: '{cquantRaw}'\n");
-                                txtLog.ScrollToCaret();
+                                
+                                AppendLog($"Invalid CQUANT value: '{cquantRaw}'\n");
+                               
                             }
                         }
 
@@ -862,22 +863,22 @@ namespace WH_Panel
 
                 if (!foundAny)
                 {
-                    txtLog.SelectionColor = Color.Red;
-                    txtLog.AppendText($"No active work orders with missing part '{partName}' found.\n");
-                    txtLog.ScrollToCaret();
+                    
+                    AppendLog($"No active work orders with missing part '{partName}' found.\n");
+                   
                 }
                 else
                 {
                     txtLog.SelectionColor = Color.Green;
-                    txtLog.AppendText("Matching work orders displayed.\n");
-                    txtLog.ScrollToCaret();
+                    AppendLog("Matching work orders displayed.\n");
+                   
                 }
             }
             catch (Exception ex)
             {
-                txtLog.SelectionColor = Color.Red;
-                txtLog.AppendText($"Error during retrieval for part {partName}:\n{ex.Message}\n");
-                txtLog.ScrollToCaret();
+                
+                AppendLog($"Error during retrieval for part {partName}:\n{ex.Message}\n");
+               
             }
         }
 
@@ -1095,7 +1096,7 @@ namespace WH_Panel
         }
         private async Task LoadWarehouseData()
         {
-            txtLog.AppendText($"Loading warehouses list...\n");
+            AppendLog($"Loading warehouses list...\n");
             string url = $"{baseUrl}/WAREHOUSES?$select=WARHSNAME,WARHSDES,WARHS";
             using (HttpClient client = new HttpClient())
             {
@@ -1148,108 +1149,13 @@ namespace WH_Panel
             cmbWarehouseList.DroppedDown = true; // Open the dropdown list
         }
         private Dictionary<string, string> avlDictionary = new Dictionary<string, string>();
-        //public async void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        //{
-        //    if (cmbWarehouseList.SelectedItem != null)
-        //    {
-        //        txtLog.AppendText($"Loading {cmbWarehouseList.SelectedItem} stock data ...\n");
-        //        string selectedWarehouse = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
-        //        string selectedWarehouseDesc = cmbWarehouseList.SelectedItem.ToString().Substring(selectedWarehouse.Length).Trim();
-        //        string avlUrl = $"{baseUrl}/PARTMNFONE?$filter=PARTNAME eq '{selectedWarehouse}_*'";
-        //        string balanceUrl = $"{baseUrl}/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouse}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{selectedWarehouse}*')";
-        //        using (HttpClient client = new HttpClient())
-        //        {
-        //            try
-        //            {
-        //                // Set the request headers if needed
-        //                client.DefaultRequestHeaders.Accept.Clear();
-        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //                // Make the HTTP GET request for AVL list
-        //                HttpResponseMessage avlResponse = await client.GetAsync(avlUrl);
-        //                avlResponse.EnsureSuccessStatusCode();
-        //                string avlResponseBody = await avlResponse.Content.ReadAsStringAsync();
-        //                var avlApiResponse = JsonConvert.DeserializeObject<PartMnfOneApiResponse>(avlResponseBody);
-        //                // Populate the AVL dictionary
-        //                avlDictionary = new Dictionary<string, string>();
-        //                foreach (var part in avlApiResponse.value)
-        //                {
-        //                    if (!avlDictionary.ContainsKey(part.PARTNAME))
-        //                    {
-        //                        avlDictionary.Add(part.PARTNAME, part.MNFPARTNAME);
-        //                    }
-        //                    else
-        //                    {
-        //                        // Handle duplicate keys (e.g., log a warning or update the value)
-        //                        // txtLog.AppendText($"Duplicate PARTNAME found: {part.PARTNAME}. Skipping...\n");
-        //                    }
-        //                }
-        //                // Make the HTTP GET request for warehouse balance
-        //                HttpResponseMessage balanceResponse = await client.GetAsync(balanceUrl);
-        //                balanceResponse.EnsureSuccessStatusCode();
-        //                string balanceResponseBody = await balanceResponse.Content.ReadAsStringAsync();
-        //                var balanceApiResponse = JsonConvert.DeserializeObject<WarehouseApiResponse>(balanceResponseBody);
-        //                // Check if the response contains any data
-        //                if (balanceApiResponse.value != null && balanceApiResponse.value.Count > 0)
-        //                {
-        //                    // Extract the WARHSBAL_SUBFORM data
-        //                    var warehouseBalances = balanceApiResponse.value.SelectMany(w => w.WARHSBAL_SUBFORM).ToList();
-        //                    // Clear existing rows in the DataTable
-        //                    dataTable.Rows.Clear();
-        //                    // Add rows to the DataTable
-        //                    foreach (var balance in warehouseBalances)
-        //                    {
-        //                        try
-        //                        {
-        //                            string partName = balance.PARTNAME ?? string.Empty;
-        //                            string partDes = balance.PARTDES ?? string.Empty;
-        //                            int balanceValue = balance.BALANCE;
-        //                            string cDate = balance.CDATE?.Substring(0, 10) ?? string.Empty;
-        //                            int partId = balance.PART;
-        //                            string mfpn = avlDictionary.ContainsKey(partName) ? avlDictionary[partName] : string.Empty;
-        //                            dataTable.Rows.Add(partName, mfpn, partDes, balanceValue, cDate, partId);
-        //                        }
-        //                        catch (Exception ex)
-        //                        {
-        //                            txtLog.AppendText($"Error adding row: {ex.Message}\n");
-        //                        }
-        //                    }
-        //                    groupBox3.Text = $"Warehouse  {selectedWarehouse} {selectedWarehouseDesc}";
-        //                    ColorTheRows(dataGridView1);
-        //                    if (lastUserInput != null)
-        //                    {
-        //                        lastUserInput.Focus();
-        //                    }
-        //                    else
-        //                    {
-        //                        txtbInputIPN.Focus();
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    MessageBox.Show("No data found for the selected warehouse balance.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        //                }
-        //            }
-        //            catch (HttpRequestException ex)
-        //            {
-        //                txtLog.AppendText($"Request error: {ex.Message}\n");
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                txtLog.AppendText($"An error occurred: {ex.Message}\n");
-        //            }
-        //        }
-        //    }
-        //    txtbPrefix.Text = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
-        //}
-
+ 
 
         public async void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cmbWarehouseList.SelectedItem != null)
             {
-                txtLog.AppendText($"Loading {cmbWarehouseList.SelectedItem} stock data ...\n");
+                AppendLog($"Loading {cmbWarehouseList.SelectedItem} stock data ...\n");
                 string selectedWarehouse = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
                 string selectedWarehouseDesc = cmbWarehouseList.SelectedItem.ToString().Substring(selectedWarehouse.Length).Trim();
 
@@ -1306,7 +1212,7 @@ namespace WH_Panel
                                 }
                                 catch (Exception ex)
                                 {
-                                    txtLog.AppendText($"Error adding row: {ex.Message}\n");
+                                    AppendLog($"Error adding row: {ex.Message}\n");
                                 }
                             }
                             groupBox3.Text = $"Warehouse  {selectedWarehouse} {selectedWarehouseDesc}";
@@ -1327,11 +1233,11 @@ namespace WH_Panel
                     }
                     catch (HttpRequestException ex)
                     {
-                        txtLog.AppendText($"Request error: {ex.Message}\n");
+                       AppendLog($"Request error: {ex.Message}\n", Color.Red);
                     }
                     catch (Exception ex)
                     {
-                        txtLog.AppendText($"An error occurred: {ex.Message}\n");
+                        AppendLog($"An error occurred: {ex.Message}\n");
                     }
                 }
             }
@@ -1345,13 +1251,35 @@ namespace WH_Panel
             catch (Exception ex)
             {
 
-                txtLog.AppendText($"An error occurred: {ex.Message}\n");
+                AppendLog($"An error occurred: {ex.Message}\n");
             }
 
 
 
 
         }
+
+
+        void AppendLog(string message, Color? color = null)
+        {
+            if (color == null)
+            {
+                txtLog.AppendText(message);
+            }
+            else
+            {
+                int start = txtLog.TextLength;
+                txtLog.AppendText(message);
+                int end = txtLog.TextLength;
+
+                txtLog.Select(start, end - start);
+                txtLog.SelectionColor = color.Value;
+                txtLog.SelectionLength = 0; // reset selection
+            }
+            txtLog.ScrollToCaret();
+        }
+
+
 
         private async Task ExtractMFPNForRow(DataGridViewRow row)
         {
@@ -1551,17 +1479,14 @@ namespace WH_Panel
                     }
                     catch (HttpRequestException ex)
                     {
-                        txtLog.SelectionColor = Color.Red; // Set the color to acid green
-                        txtLog.AppendText($"Request error: {ex.Message}");
-                        txtLog.ScrollToCaret();
+                        AppendLog($"Request error: {ex.Message}", Color.Red);
                     }
                     catch (Exception ex)
                     {
                         if (txtLog != null && !txtLog.IsDisposed)
                         {
-                            txtLog.SelectionColor = Color.Red; // Set the color to acid green
-                            txtLog.AppendText($"Request error: {ex.Message}");
-                            txtLog.ScrollToCaret();
+                            AppendLog($"Request error: {ex.Message}", Color.Red);
+                          
                         }
                     }
                 }
@@ -1693,16 +1618,12 @@ namespace WH_Panel
                 }
                 catch (HttpRequestException ex)
                 {
-                    txtLog.SelectionColor = Color.Red; // Set the color to red
-                    txtLog.AppendText($"Request error: {ex.Message}\n");
-                    txtLog.ScrollToCaret();
+                    AppendLog($"Request error: {ex.Message}\n", Color.Red);
                     return new List<(string PackCode, string BookNum, string Date)>();
                 }
                 catch (Exception ex)
                 {
-                    txtLog.SelectionColor = Color.Red; // Set the color to red
-                    txtLog.AppendText($"Request error: {ex.Message}\n");
-                    txtLog.ScrollToCaret();
+                    AppendLog($"Request error: {ex.Message}\n", Color.Red);
                     return new List<(string PackCode, string BookNum, string Date)>();
                 }
             }
@@ -1712,7 +1633,7 @@ namespace WH_Panel
             string uDate = null;
             // Log the document number for debugging
             //txtLog.SelectionColor = Color.Blue; // Set the color to blue
-            //txtLog.AppendText($"Document Number: '{docNo}'\n");
+            //AppendLog($"Document Number: '{docNo}'\n");
             //txtLog.ScrollToCaret();
             if (docNo.StartsWith("ROB"))
             {
@@ -1738,33 +1659,28 @@ namespace WH_Panel
                         var serial = apiResponse["value"].FirstOrDefault();
                         if (serial != null)
                         {
-                            txtLog.AppendText($"Data for SERIALNAME: {serial}\n");
+                            AppendLog($"Data for SERIALNAME: {serial}\n");
                             uDate = serial["UDATE"]?.ToString();
                             if (uDate == null)
                             {
-                                txtLog.SelectionColor = Color.Red; // Set the color to red
-                                txtLog.AppendText($"UDATE is null for SERIALNAME: {docNo}\n");
-                                txtLog.ScrollToCaret();
+                                AppendLog($"UDATE is null for SERIALNAME: {docNo}\n", Color.Red);
                             }
                         }
                         else
                         {
-                            txtLog.SelectionColor = Color.Red; // Set the color to red
-                            txtLog.AppendText($"No serial found for SERIALNAME: {docNo}\n");
-                            txtLog.ScrollToCaret();
+                            AppendLog($"No serial found for SERIALNAME: {docNo}\n", Color.Red);
                         }
                     }
                     catch (HttpRequestException ex)
                     {
-                        txtLog.SelectionColor = Color.Red; // Set the color to red
-                        txtLog.AppendText($"Request error: {ex.Message}\n");
-                        txtLog.ScrollToCaret();
+                        
+                       AppendLog($"Request error: {ex.Message}\n", Color.Red);
+                       
                     }
                     catch (Exception ex)
                     {
-                        txtLog.SelectionColor = Color.Red; // Set the color to red
-                        txtLog.AppendText($"Request error: {ex.Message}\n");
-                        txtLog.ScrollToCaret();
+                        AppendLog($"Request error: {ex.Message}\n",Color.Red);
+                       
                     }
                 }
             }
@@ -1797,15 +1713,13 @@ namespace WH_Panel
                     }
                     catch (HttpRequestException ex)
                     {
-                        txtLog.SelectionColor = Color.Red; // Set the color to red
-                        txtLog.AppendText($"Request error: {ex.Message}\n");
-                        txtLog.ScrollToCaret();
+                        AppendLog($"Request error: {ex.Message}\n", Color.Red);
+                       
                     }
                     catch (Exception ex)
                     {
-                        txtLog.SelectionColor = Color.Red; // Set the color to red
-                        txtLog.AppendText($"Request error: {ex.Message}\n");
-                        txtLog.ScrollToCaret();
+                        AppendLog($"Request error: {ex.Message}\n", Color.Red);
+                       
                     }
                 }
             }
@@ -1834,29 +1748,27 @@ namespace WH_Panel
                         if (document != null)
                         {
                             uDate = document["UDATE"]?.ToString();
-                            //txtLog.AppendText($"Data for DOCNO: {document} UDATE: {uDate} \n");
+                            //AppendLog($"Data for DOCNO: {document} UDATE: {uDate} \n");
                         }
                     }
                     catch (HttpRequestException ex)
                     {
-                        txtLog.SelectionColor = Color.Red; // Set the color to red
-                        txtLog.AppendText($"Request error: {ex.Message}\n");
-                        txtLog.ScrollToCaret();
+                        
+                       AppendLog($"Request error: {ex.Message}\n", Color.Red);
+                       
                     }
                     catch (Exception ex)
                     {
-                        txtLog.SelectionColor = Color.Red; // Set the color to red
-                        txtLog.AppendText($"Request error: {ex.Message}\n");
-                        txtLog.ScrollToCaret();
+                        
+                       AppendLog($"Request error: {ex.Message}\n", Color.Red);
+                       
                     }
                 }
             }
             else
             {
-                // Handle other document types if needed
-                txtLog.SelectionColor = Color.Orange; // Set the color to orange
-                txtLog.AppendText($"Unhandled document type for DOCNO: {docNo}\n");
-                txtLog.ScrollToCaret();
+                AppendLog($"Unhandled document type for DOCNO: {docNo}\n", Color.Orange);
+               
             }
             return uDate;
         }
@@ -1970,15 +1882,15 @@ namespace WH_Panel
             foreach (var item in cmbPackCode.Items)
             {
                 contextMenuStrip.Items.Add(item.ToString(), null, ContextMenuItem_Click);
-                //txtLog.AppendText($"Added context menu item: {item}\n");
+                //AppendLog($"Added context menu item: {item}\n");
             }
         }
         private async void ContextMenuItem_Click(object sender, EventArgs e)
         {
-            txtLog.AppendText("Context menu item clicked\n");
+            AppendLog("Context menu item clicked\n");
             if (sender is ToolStripMenuItem menuItem && contextMenuStrip.Tag is DataGridViewRow selectedRow)
             {
-                //txtLog.AppendText("Context menu item is ToolStripMenuItem\n");
+                //AppendLog("Context menu item is ToolStripMenuItem\n");
                 string selectedPackCode = menuItem.Text;
                 string docNo = selectedRow.Cells["LOGDOCNO"].Value.ToString();
                 // Extract PARTNAME from groupBox4.Text
@@ -1987,12 +1899,12 @@ namespace WH_Panel
                 DialogResult result = MessageBox.Show($"Do you want to update the package to '{selectedPackCode}' for part '{partName}'?", "Confirm Update", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (result == DialogResult.Yes)
                 {
-                    //txtLog.AppendText($"Updating package to '{selectedPackCode}' for part '{partName}'\n");
+                    //AppendLog($"Updating package to '{selectedPackCode}' for part '{partName}'\n");
                     //string docType = "P";
                     //await UpdatePackage(docNo, docType, partName, selectedPackCode);
-                    txtLog.SelectionColor = Color.Red; // Set the color to green
-                    txtLog.AppendText($"Only through web interface! ☹️\n");
-                    txtLog.ScrollToCaret();
+                     // Set the color to green
+                    AppendLog($"Only through web interface! ☹️\n", Color.Red);
+                   
                 }
             }
         }
@@ -2017,32 +1929,32 @@ namespace WH_Panel
                     var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
                     if (apiResponse == null)
                     {
-                        txtLog.AppendText("apiResponse is null\n");
+                        AppendLog("apiResponse is null\n");
                         return;
                     }
                     var document = apiResponse["value"]?.FirstOrDefault();
                     if (document == null)
                     {
-                        txtLog.AppendText("No document found in apiResponse\n");
+                        AppendLog("No document found in apiResponse\n");
                         return;
                     }
                     var transOrderToken = document["TRANSORDER_P_SUBFORM"];
                     if (transOrderToken == null)
                     {
-                        txtLog.AppendText("document['TRANSORDER_P_SUBFORM'] is null\n");
+                        AppendLog("document['TRANSORDER_P_SUBFORM'] is null\n");
                         return;
                     }
                     var transOrder = transOrderToken.FirstOrDefault();
                     if (transOrder == null)
                     {
-                        txtLog.AppendText("No transOrder found in document['TRANSORDER_P_SUBFORM']\n");
+                        AppendLog("No transOrder found in document['TRANSORDER_P_SUBFORM']\n");
                         return;
                     }
                     string kline = transOrder["KLINE"].ToString();
                     string type = transOrder["TYPE"].ToString();
                     string trans = transOrder["TRANS"].ToString();
                     string transOrderUrl = $"{baseUrl}/DOCUMENTS_P(DOCNO='{docNo}',TYPE='{docType}')/TRANSORDER_P_SUBFORM(KLINE={kline},TYPE='{type}',TRANS={trans})";
-                    txtLog.AppendText($"PATCH URL: {transOrderUrl}\n"); // Log the PATCH URL
+                    AppendLog($"PATCH URL: {transOrderUrl}\n"); // Log the PATCH URL
                     // Check if the document is finalized
                     string originalStatus = document["STATDES"]?.ToString();
                     if (originalStatus == "סופית")
@@ -2056,7 +1968,7 @@ namespace WH_Panel
                         if (!statusResponse.IsSuccessStatusCode)
                         {
                             string errorContent = await statusResponse.Content.ReadAsStringAsync();
-                            txtLog.AppendText($"Error updating document status: {statusResponse.StatusCode}\n{errorContent}\n");
+                            AppendLog($"Error updating document status: {statusResponse.StatusCode}\n{errorContent}\n");
                             return;
                         }
                     }
@@ -2079,23 +1991,23 @@ namespace WH_Panel
                             if (!revertResponse.IsSuccessStatusCode)
                             {
                                 string errorContent = await revertResponse.Content.ReadAsStringAsync();
-                                txtLog.AppendText($"Error reverting document status: {revertResponse.StatusCode}\n{errorContent}\n");
+                                AppendLog($"Error reverting document status: {revertResponse.StatusCode}\n{errorContent}\n");
                             }
                         }
                     }
                     else
                     {
                         string errorContent = await patchResponse.Content.ReadAsStringAsync();
-                        txtLog.AppendText($"Error updating package: {patchResponse.StatusCode}\n{errorContent}\n");
+                        AppendLog($"Error updating package: {patchResponse.StatusCode}\n{errorContent}\n");
                     }
                 }
                 catch (HttpRequestException ex)
                 {
-                    txtLog.AppendText($"Request error: {ex.Message}\n");
+                   AppendLog($"Request error: {ex.Message}\n", Color.Red);
                 }
                 catch (Exception ex)
                 {
-                    txtLog.AppendText($"An error occurred: {ex.Message}\n");
+                    AppendLog($"An error occurred: {ex.Message}\n");
                 }
             }
         }
@@ -2123,7 +2035,7 @@ namespace WH_Panel
                 // Check if the clicked cell is in the PACK column
                 else if (clickedCell.OwningColumn.Name == "PACKNAME")
                 {
-                    //txtLog.AppendText($"Right-clicked on PACK cell\n");
+                    //AppendLog($"Right-clicked on PACK cell\n");
                     contextMenuStrip.Tag = selectedRow; // Store the selected row in the context menu's Tag property
                     contextMenuStrip.Show(Cursor.Position);
                 }
@@ -3089,32 +3001,32 @@ namespace WH_Panel
                             UpdatePing(stopwatch.ElapsedMilliseconds);
                             InsertedrowsCount++;
                             // Log the extracted values
-                            txtLog.SelectionColor = Color.LimeGreen; // Set the color to acid green
-                            txtLog.AppendText($"Row {row}: Part Name = {partName}, Part Description = {partDes}, Manufacturer Part Number = {partMFPN}, Manufacturer Description = {partMNFDes}\n");
-                            txtLog.ScrollToCaret();
+                        
+                            AppendLog($"Row {row}: Part Name = {partName}, Part Description = {partDes}, Manufacturer Part Number = {partMFPN}, Manufacturer Description = {partMNFDes}\n", Color.LimeGreen);
+                           
                             //await DisplayInsertedData(partId);
                         }
                         catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
                         {
                             // Log the extracted values for duplicate entries
-                            txtLog.SelectionColor = Color.Yellow; // Set the color to yellow for duplicate entries
-                            txtLog.AppendText($"Row {row}: Part Name = {partName}, Part Description = {partDes}, Manufacturer Part Number = {partMFPN}, Manufacturer Description = {partMNFDes} - Already exists (409) \n");
-                            txtLog.ScrollToCaret();
+                            
+                            AppendLog($"Row {row}: Part Name = {partName}, Part Description = {partDes}, Manufacturer Part Number = {partMFPN}, Manufacturer Description = {partMNFDes} - Already exists (409) \n",Color.Yellow);
+                           
                         }
                         catch (HttpRequestException ex)
                         {
                             // Log the extracted values
-                            txtLog.SelectionColor = Color.Red; // Set the color to acid green
-                            txtLog.AppendText($"Row {row}: Part Name = {partName}, Part Description = {partDes}, Manufacturer Part Number = {partMFPN}, Manufacturer Description = {partMNFDes} , Exception = {ex.Message}\n");
-                            txtLog.ScrollToCaret();
+                             // Set the color to acid green
+                            AppendLog($"Row {row}: Part Name = {partName}, Part Description = {partDes}, Manufacturer Part Number = {partMFPN}, Manufacturer Description = {partMNFDes} , Exception = {ex.Message}\n");
+                           
                             //MessageBox.Show($"Row {row}: Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                         catch (Exception ex)
                         {
                             // Log the extracted values
-                            txtLog.SelectionColor = Color.Red; // Set the color to acid green
-                            txtLog.AppendText($"Row {row}: Part Name = {partName}, Part Description = {partDes}, Manufacturer Part Number = {partMFPN}, Manufacturer Description = {partMNFDes}, Exception = {ex.Message}\n");
-                            txtLog.ScrollToCaret();
+                             // Set the color to acid green
+                            AppendLog($"Row {row}: Part Name = {partName}, Part Description = {partDes}, Manufacturer Part Number = {partMFPN}, Manufacturer Description = {partMNFDes}, Exception = {ex.Message}\n");
+                           
                             // MessageBox.Show($"Row {row}: An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
@@ -3314,7 +3226,7 @@ namespace WH_Panel
                 return;
             }
             // Generate HTML report
-            txtLog.AppendText($"Generating HTML report for {selectedWarehouseName} \n");
+            AppendLog($"Generating HTML report for {selectedWarehouseName} \n");
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
             string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\{selectedWarehouseName}_StockReport_{_fileTimeStamp}.html";
             GenerateHTMLFromDataGridView(filename, dataGridView1, $"{selectedWarehouseName} Stock Report {_fileTimeStamp}");
@@ -3501,7 +3413,7 @@ namespace WH_Panel
                 }
             }
             // Generate HTML report
-            txtLog.AppendText($"Generating HTML report for stock movements of {ipn} \n");
+            AppendLog($"Generating HTML report for stock movements of {ipn} \n");
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
             string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\{ipn}_StockMovements_{_fileTimeStamp}.html";
             GenerateHTMLFromDataGridView(filename, dataGridView2, $"STOCK MOVEMENTS FOR {ipn}", balance);
@@ -3898,16 +3810,16 @@ namespace WH_Panel
             string clientId = "1V0C9rxhmIcEf28EC6ADmF9avL74IDF0"; // Replace with your actual client ID
             string clientSecret = "bbNRuLqxaxjN87AQ"; // Replace with your actual client secret
             string keyword = txtbMFPN.Text; // Get the keyword from the txtbMFPN
-            txtLog.AppendText("Getting access token...\n");
+            AppendLog("Getting access token...\n");
             string accessTokenReceived = string.Empty;
             try
             {
                 accessTokenReceived = await GetAccessTokenAsync(clientId, clientSecret);
-                txtLog.AppendText($"Access token obtained successfully: {accessTokenReceived}\n");
+                AppendLog($"Access token obtained successfully: {accessTokenReceived}\n");
             }
             catch (Exception ex)
             {
-                txtLog.AppendText($"Error obtaining access token: {ex.Message}\n");
+                AppendLog($"Error obtaining access token: {ex.Message}\n");
                 return;
             }
             var requestData = new
@@ -3943,44 +3855,44 @@ namespace WH_Panel
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessTokenReceived);
                 client.DefaultRequestHeaders.Add("X-DIGIKEY-Client-Id", clientId);
-                txtLog.AppendText("Sending search request...\n");
-                txtLog.AppendText($"Request URL: {apiUrl}\n");
-                txtLog.AppendText($"Request Data: {jsonRequest}\n");
+                AppendLog("Sending search request...\n");
+                AppendLog($"Request URL: {apiUrl}\n");
+                AppendLog($"Request Data: {jsonRequest}\n");
                 HttpResponseMessage response = null;
                 try
                 {
                     response = await client.PostAsync(apiUrl, content);
                     response.EnsureSuccessStatusCode();
-                    txtLog.AppendText("Search request successful.\n");
+                    AppendLog("Search request successful.\n");
                 }
                 catch (HttpRequestException ex)
                 {
                     string errorContent = response != null ? await response.Content.ReadAsStringAsync() : "No response content";
-                    txtLog.AppendText($"Error sending search request: {ex.Message}\n");
-                    txtLog.AppendText($"Response Content: {errorContent}\n");
+                    AppendLog($"Error sending search request: {ex.Message}\n");
+                    AppendLog($"Response Content: {errorContent}\n");
                     return;
                 }
                 string jsonResponse;
                 try
                 {
                     jsonResponse = await response.Content.ReadAsStringAsync();
-                    txtLog.AppendText("Response received successfully.\n");
-                    txtLog.AppendText($"JSON Response: {jsonResponse}\n"); // Log the JSON response contents
+                    AppendLog("Response received successfully.\n");
+                    AppendLog($"JSON Response: {jsonResponse}\n"); // Log the JSON response contents
                 }
                 catch (Exception ex)
                 {
-                    txtLog.AppendText($"Error reading response: {ex.Message}\n");
+                    AppendLog($"Error reading response: {ex.Message}\n");
                     return;
                 }
                 KeywordResponse keywordResponse;
                 try
                 {
                     keywordResponse = System.Text.Json.JsonSerializer.Deserialize<KeywordResponse>(jsonResponse);
-                    txtLog.AppendText("Response deserialized successfully.\n");
+                    AppendLog("Response deserialized successfully.\n");
                 }
                 catch (Exception ex)
                 {
-                    txtLog.AppendText($"Error deserializing response: {ex.Message}\n");
+                    AppendLog($"Error deserializing response: {ex.Message}\n");
                     return;
                 }
                 // Map to simplified products
@@ -3990,10 +3902,10 @@ namespace WH_Panel
                     Manufacturer = p.Manufacturer.Name
                 }).ToList();
                 // Log the contents of the simplified products list
-                txtLog.AppendText($"Products Count: {simplifiedProducts.Count}\n");
+                AppendLog($"Products Count: {simplifiedProducts.Count}\n");
                 foreach (var product in simplifiedProducts)
                 {
-                    txtLog.AppendText($"Manufacturer: {product.Manufacturer}, Description: {product.Description}\n");
+                    AppendLog($"Manufacturer: {product.Manufacturer}, Description: {product.Description}\n");
                     txtbDESC.Text = product.Description;
                     txtbMNF.Text = product.Manufacturer.ToUpper();
                 }
@@ -4073,17 +3985,17 @@ namespace WH_Panel
                 }
                 catch (HttpRequestException ex)
                 {
-                    txtLog.AppendText($"Request error: {ex.Message}\n");
+                   AppendLog($"Request error: {ex.Message}\n", Color.Red);
                     return;
                 }
                 catch (Exception ex)
                 {
-                    txtLog.AppendText($"An error occurred: {ex.Message}\n");
+                    AppendLog($"An error occurred: {ex.Message}\n");
                     return;
                 }
             }
             // Generate HTML report
-            txtLog.AppendText($"Generating HTML report for {selectedPrefix} AVL\n");
+            AppendLog($"Generating HTML report for {selectedPrefix} AVL\n");
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
             string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\{selectedPrefix}_AVLReport_{_fileTimeStamp}.html";
             List<PartMnfOne> orderedbyIPN = partMnfOnes.OrderBy(x => x.PARTNAME).ToList();
@@ -4674,11 +4586,11 @@ namespace WH_Panel
                         }
                         avlLoaded = true;
                         lastAvlPrefix = selectedPrefix;
-                        txtLog.AppendText($"AVL loaded for prefix {selectedPrefix} ({avlMfpns.Count} MFPNs)\n");
+                        AppendLog($"AVL loaded for prefix {selectedPrefix} ({avlMfpns.Count} MFPNs)\n",Color.Green);
                     }
                     catch (Exception ex)
                     {
-                        txtLog.AppendText($"AVL load error: {ex.Message}\n");
+                        AppendLog($"AVL load error: {ex.Message}\n",Color.Red);
                         avlLoaded = false;
                     }
                 }
@@ -4701,7 +4613,7 @@ namespace WH_Panel
                     return;
                 }
 
-                txtLog.AppendText($"Querying Mouser API for: {keyword}\n");
+                AppendLog($"Querying Mouser API for: {keyword}\n");
 
                 string url = $"https://api.mouser.com/api/v1/search/keyword?apiKey={apiKey}";
                 var requestBody = new
@@ -4729,7 +4641,7 @@ namespace WH_Panel
                         var jObj = Newtonsoft.Json.Linq.JObject.Parse(responseString);
                         var mfpn = jObj["SearchResults"]?["Parts"]?.FirstOrDefault()?["ManufacturerPartNumber"]?.ToString();
 
-                        txtLog.AppendText($"Mouser data received \n");
+                        AppendLog($"Mouser data received \n");
 
                         if (!string.IsNullOrEmpty(mfpn))
                         {
