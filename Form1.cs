@@ -1,20 +1,25 @@
+using Microsoft.Extensions.Configuration;
 using System;
-using System.Data.Common;
-using System.Diagnostics;
 using System.Collections.Generic;
-using System.Linq;
+using System.Data.Common;
+using System.Data.SqlClient;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Reflection.Emit;
 using System.Windows.Forms;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
-using System.Data.SqlClient;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using System.Reflection.Emit;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+
+
 namespace WH_Panel
 {
     public partial class Form1 : Form
     {
+
+
         public Form1()
         {
             InitializeComponent();
@@ -26,6 +31,26 @@ namespace WH_Panel
                 // Set the starting position for the form
                 SetFormStartPosition();
             }
+
+       
+
+            // Somewhere early in your program startup (e.g., App.xaml.cs, Program.cs, MainWindow constructor)
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                .AddJsonFile("appsettings.json");
+
+            IConfiguration config = builder.Build();
+
+            // Build the list of users from config
+            var users = new List<(string Username, string Password)>
+                {
+                    (config["ApiUsername"], config["ApiPassword"]),
+                    (config["Api2Username"], config["Api2Password"]),
+                    // Add more if needed
+                };
+
+            // Initialize the user pool
+            ApiUserPool.Initialize(users);
         }
         private void SetFormStartPosition()
         {

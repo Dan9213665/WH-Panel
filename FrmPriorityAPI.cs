@@ -1,27 +1,27 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using OfficeOpenXml;
+using OfficeOpenXml.Drawing.Slicer.Style; // Add the EPPlus NuGet package for reading Excel files
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Net.Http.Headers;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Data.OleDb;
-using Button = System.Windows.Forms.Button;
-using TextBox = System.Windows.Forms.TextBox;
-using ComboBox = System.Windows.Forms.ComboBox;
 using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Reflection; // Add this using directive if not already present
 using System.Security.Principal; // Add this using directive if not already present
-using System.IO;
-using OfficeOpenXml;
-using OfficeOpenXml.Drawing.Slicer.Style; // Add the EPPlus NuGet package for reading Excel files
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using Button = System.Windows.Forms.Button;
+using ComboBox = System.Windows.Forms.ComboBox;
+using TextBox = System.Windows.Forms.TextBox;
 #pragma warning disable CS0618
 namespace WH_Panel
 {
@@ -39,6 +39,10 @@ namespace WH_Panel
         public static string baseUrl = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522";
         //private DataTable dataTable;
         //private DataView dataView;
+        
+        private HashSet<string> avlMfpns = new();
+        private bool avlLoaded = false;
+        private string lastAvlPrefix = "";
         public FrmPriorityAPI()
         {
             InitializeComponent();
@@ -1170,8 +1174,21 @@ namespace WH_Panel
                     {
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+
+                        //var (username, password) = ApiUserPool.GetNextApiUser();
+                        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+                        //AppendLog($"User used: {username}\n");
+                        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                        string usedUser = ApiHelper.AuthenticateClient(client);
+                        //AppendLog($"User used: {usedUser}\n");
 
                         // AVL request
                         HttpResponseMessage avlResponse = await client.GetAsync(avlUrl);
@@ -1296,8 +1313,12 @@ namespace WH_Panel
                     // Set the Authorization header
                     //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                     //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                    string usedUser = ApiHelper.AuthenticateClient(client);
+                    //AppendLog($"User used: {usedUser}\n");
+
                     // Make the HTTP GET request for part details
                     HttpResponseMessage partResponse = await client.GetAsync(partUrl);
                     partResponse.EnsureSuccessStatusCode();
@@ -1347,8 +1368,15 @@ namespace WH_Panel
                         // Set the Authorization header
                         //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                         //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                        string usedUser = ApiHelper.AuthenticateClient(client);
+                        //AppendLog($"User used: {usedUser}\n");
+
+
+
+
                         // Measure the time taken for the HTTP POST request
                         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
                         // Make the HTTP GET request for stock movements
@@ -1537,8 +1565,13 @@ namespace WH_Panel
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     // Set the Authorization header
-                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                    string usedUser = ApiHelper.AuthenticateClient(client);
+                    //AppendLog($"User used: {usedUser}\n");
+
                     // Make the HTTP GET request
                     HttpResponseMessage response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
@@ -1647,8 +1680,13 @@ namespace WH_Panel
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                         // Set the Authorization header
-                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                        string usedUser = ApiHelper.AuthenticateClient(client);
+                        //AppendLog($"User used: {usedUser}\n");
+
                         // Make the HTTP GET request
                         HttpResponseMessage response = await client.GetAsync(url);
                         response.EnsureSuccessStatusCode();
@@ -1696,8 +1734,14 @@ namespace WH_Panel
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                         // Set the Authorization header
-                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+
+                        string usedUser = ApiHelper.AuthenticateClient(client);
+                        //AppendLog($"User used: {usedUser}\n");
+
                         // Make the HTTP GET request
                         HttpResponseMessage response = await client.GetAsync(url);
                         response.EnsureSuccessStatusCode();
@@ -1735,8 +1779,15 @@ namespace WH_Panel
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                         // Set the Authorization header
-                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+
+                        string usedUser = ApiHelper.AuthenticateClient(client);
+                        //AppendLog($"User used: {usedUser}\n");
+
+
                         // Make the HTTP GET request
                         HttpResponseMessage response = await client.GetAsync(url);
                         response.EnsureSuccessStatusCode();
@@ -2137,8 +2188,15 @@ namespace WH_Panel
                 {
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+
+                    string usedUser = ApiHelper.AuthenticateClient(client);
+                    //AppendLog($"User used: {usedUser}\n");
+
+
                     HttpResponseMessage response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
                     string responseBody = await response.Content.ReadAsStringAsync();
@@ -2287,8 +2345,15 @@ namespace WH_Panel
                 {
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+
+                    string usedUser = ApiHelper.AuthenticateClient(client);
+                    //AppendLog($"User used: {usedUser}\n");
+
+
                     // Serialize the payload to JSON
                     string jsonPayload = JsonConvert.SerializeObject(newPartMnfSubformItem);
                     var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
@@ -2322,8 +2387,14 @@ namespace WH_Panel
             {
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                string usedUser = ApiHelper.AuthenticateClient(client);
+                //AppendLog($"User used: {usedUser}\n");
+
+
                 HttpResponseMessage response = await client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync();
@@ -2396,8 +2467,13 @@ namespace WH_Panel
                 {
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                    string usedUser = ApiHelper.AuthenticateClient(client);
+                    //AppendLog($"User used: {usedUser}\n");
+
                     HttpResponseMessage response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
                     string responseBody = await response.Content.ReadAsStringAsync();
@@ -2421,8 +2497,14 @@ namespace WH_Panel
             {
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                string usedUser = ApiHelper.AuthenticateClient(client);
+                //AppendLog($"User used: {usedUser}\n");
+
+
                 HttpResponseMessage response = await client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync();
@@ -2447,8 +2529,14 @@ namespace WH_Panel
                 var content = new StringContent(jsonMnfData, Encoding.UTF8, "application/json");
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                string usedUser = ApiHelper.AuthenticateClient(client);
+                //AppendLog($"User used: {usedUser}\n");
+
+
                 HttpResponseMessage response = await client.PostAsync(insertUrl, content);
                 response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync();
@@ -2459,13 +2547,19 @@ namespace WH_Panel
         }
         private async Task<int> CheckIfIPNExists(string partName)
         {
-            string url = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{partName}'";
+            string url = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{partName}'&$select=PARTNAME";
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                string usedUser = ApiHelper.AuthenticateClient(client);
+                //AppendLog($"User used: {usedUser}\n");
+
+
                 HttpResponseMessage response = await client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync();
@@ -2544,8 +2638,13 @@ namespace WH_Panel
                 // Set the Authorization header
                 //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                 //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                string usedUser = ApiHelper.AuthenticateClient(client);
+                //AppendLog($"User used: {usedUser}\n");
+
                 // Serialize the logPartData to JSON
                 string jsonLogPartData = JsonConvert.SerializeObject(logPartData);
                 var content = new StringContent(jsonLogPartData, Encoding.UTF8, "application/json");
@@ -2569,8 +2668,13 @@ namespace WH_Panel
                 // Set the Authorization header
                 //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                 //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                string usedUser = ApiHelper.AuthenticateClient(client);
+                //AppendLog($"User used: {usedUser}\n");
+
                 // Make the HTTP GET request
                 HttpResponseMessage response = await client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
@@ -2620,8 +2724,13 @@ namespace WH_Panel
                 // Set the Authorization header
                 //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                 //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                string usedUser = ApiHelper.AuthenticateClient(client);
+                //AppendLog($"User used: {usedUser}\n");
+
                 // Serialize the partMnfOneData to JSON
                 string jsonPartMnfOneData = JsonConvert.SerializeObject(partMnfOneData);
                 var content = new StringContent(jsonPartMnfOneData, Encoding.UTF8, "application/json");
@@ -2640,8 +2749,13 @@ namespace WH_Panel
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 // Set the Authorization header
-                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                string usedUser = ApiHelper.AuthenticateClient(client);
+                //AppendLog($"User used: {usedUser}\n");
+
                 // Make the HTTP GET request
                 HttpResponseMessage response = await client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
@@ -3542,93 +3656,7 @@ namespace WH_Panel
                     writer.WriteLine($"<th onclick='sortTable({column.Index}, {isNumeric.ToString().ToLower()})'>{column.HeaderText}</th>");
                 }
                 writer.WriteLine("</tr>");
-                // Add table rows for current stock
-                //            var currentStockRows = new List<DataGridViewRow>();
-                //            foreach (DataGridViewRow row in dataGridView.Rows)
-                //            {
-                //                if (row.Cells["DOCDES"].Value.ToString() == "קיזוז אוטומטי")
-                //                {
-                //                    continue;
-                //                }
-                //                else
-                //                {
-                //                    string rowDocType = row.Cells["LOGDOCNO"].Value?.ToString() ?? string.Empty;
-                //                    if (rowDocType.StartsWith("GR") && int.TryParse(row.Cells["TQUANT"].Value?.ToString(), out int balanceValue) && balanceValue > 0)
-                //                    {
-                //                        bool hasOutgoingMovement = dataGridView.Rows.Cast<DataGridViewRow>().Any(r =>
-                //    (r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("ROB") == true ||
-                //     r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("RD") == true ||
-                //     r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("SH") == true ||
-                //     r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("WR") == true ||
-                //     r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("IC") == true) &&
-                //    (r.Cells["LOGDOCNO"].Value?.ToString().StartsWith("IC") == true
-                //        ? Math.Abs(Convert.ToInt32(r.Cells["TQUANT"].Value)) == Math.Abs(Convert.ToInt32(row.Cells["TQUANT"].Value))
-                //        : r.Cells["TQUANT"].Value?.ToString() == row.Cells["TQUANT"].Value?.ToString())
-                //);
-                //                        if (!hasOutgoingMovement)
-                //                        {
-                //                            currentStockRows.Add(row);
-                //                        }
-                //                    }
-                //                }
-                //            }
-
-                //var currentStockRows = new List<DataGridViewRow>();
-                //var processedRows = new HashSet<DataGridViewRow>(); // To track rows that have been matched
-
-                //foreach (DataGridViewRow row in dataGridView.Rows)
-                //{
-                //    if (row.Cells["DOCDES"].Value.ToString() == "קיזוז אוטומטי")
-                //    {
-                //        continue;
-                //    }
-
-                //    string rowDocType = row.Cells["LOGDOCNO"].Value?.ToString() ?? string.Empty;
-
-                //    if (rowDocType.StartsWith("GR") && int.TryParse(row.Cells["TQUANT"].Value?.ToString(), out int balanceValue) && balanceValue > 0)
-                //    {
-                //        // Check if this row has a matching outgoing movement
-                //        bool hasOutgoingMovement = false;
-
-                //        foreach (DataGridViewRow potentialMatch in dataGridView.Rows)
-                //        {
-                //            if (processedRows.Contains(potentialMatch)) continue; // Skip already processed rows
-
-                //            string potentialDocType = potentialMatch.Cells["LOGDOCNO"].Value?.ToString() ?? string.Empty;
-
-                //            if ((potentialDocType.StartsWith("ROB") || potentialDocType.StartsWith("RD") || potentialDocType.StartsWith("SH") ||
-                //                 potentialDocType.StartsWith("WR") || potentialDocType.StartsWith("IC")) &&
-                //                int.TryParse(potentialMatch.Cells["TQUANT"].Value?.ToString(), out int potentialBalanceValue))
-                //            {
-                //                // Special handling for "IC" type
-                //                if (potentialDocType.StartsWith("IC") &&
-                //                    Math.Abs(potentialBalanceValue) == Math.Abs(balanceValue))
-                //                {
-                //                    hasOutgoingMovement = true;
-                //                    processedRows.Add(potentialMatch); // Mark as processed
-                //                    break;
-                //                }
-                //                else if (potentialBalanceValue == balanceValue)
-                //                {
-                //                    hasOutgoingMovement = true;
-                //                    processedRows.Add(potentialMatch); // Mark as processed
-                //                    break;
-                //                }
-                //            }
-                //        }
-                //        if (!hasOutgoingMovement)
-                //        {
-                //            currentStockRows.Add(row);
-                //        }
-                //        else
-                //        {
-                //            processedRows.Add(row); // Mark the current row as processed
-                //        }
-                //    }
-                //}
-
-
-
+          
 
                 var currentStockRows = new List<DataGridViewRow>();
                 var processedRows = new HashSet<DataGridViewRow>(); // To track rows that have been matched
@@ -3975,8 +4003,15 @@ namespace WH_Panel
                 {
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+
+                    string usedUser = ApiHelper.AuthenticateClient(client);
+                    //AppendLog($"User used: {usedUser}\n");
+
+
                     HttpResponseMessage response = await client.GetAsync(apiUrl);
                     response.EnsureSuccessStatusCode();
                     string responseBody = await response.Content.ReadAsStringAsync();
@@ -4428,8 +4463,13 @@ namespace WH_Panel
                     // Set the request headers
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+
+                    string usedUser = ApiHelper.AuthenticateClient(client);
+                    //AppendLog($"User used: {usedUser}\n");
 
                     // Make the HTTP GET request
                     HttpResponseMessage response = await client.GetAsync(url);
@@ -4470,15 +4510,7 @@ namespace WH_Panel
                     return;
                 }
 
-                ////Find all MFPNs contained in the input
-                //var foundMfpns = avlMfpns
-                //    .Where(mfpn => !string.IsNullOrEmpty(mfpn) && input.Contains(mfpn, StringComparison.OrdinalIgnoreCase))
-                //    .ToList();
-
-                //            var foundMfpns = avlMfpns
-                //.Where(mfpn => !string.IsNullOrEmpty(mfpn) &&
-                //               string.Equals(input.Trim(), mfpn, StringComparison.OrdinalIgnoreCase))
-                //.ToList();
+          
 
 
                 var foundMfpns = avlMfpns
@@ -4549,9 +4581,6 @@ namespace WH_Panel
         }
 
 
-        private HashSet<string> avlMfpns = new();
-        private bool avlLoaded = false;
-        private string lastAvlPrefix = "";
 
         private async void txtbUberAvlDecoder_Enter(object sender, EventArgs e)
         {
@@ -4573,8 +4602,16 @@ namespace WH_Panel
                     {
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                        string usedUser = ApiHelper.AuthenticateClient(client);
+                        //AppendLog($"User used: {usedUser}\n");
+
+
+
+
                         HttpResponseMessage response = await client.GetAsync(apiUrl);
                         response.EnsureSuccessStatusCode();
                         string responseBody = await response.Content.ReadAsStringAsync();
