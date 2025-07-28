@@ -1148,6 +1148,9 @@ namespace WH_Panel
                             });
                             dgwIPNmoves.Rows.Clear();
                             dgwINSTOCK.Rows.Clear();
+
+                            var fetchTasks = new List<Task>();
+
                             foreach (var logPart in logPartApiResponse.value)
                             {
                                 foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
@@ -1167,7 +1170,8 @@ namespace WH_Panel
                                     {
                                         var rowIndex = dgwIPNmoves.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "", "");
                                         var row = dgwIPNmoves.Rows[rowIndex];
-                                        _ = FetchAndSetPackCodeAndUDateAsync(row, trans.LOGDOCNO, partName, (int)trans.TQUANT);
+                                        var fetchTask = FetchAndSetPackCodeAndUDateAsync(row, trans.LOGDOCNO, partName, (int)trans.TQUANT);
+                                        fetchTasks.Add(fetchTask);
                                         await Task.Delay(100); // Optional delay
                                     }
 
@@ -1179,6 +1183,11 @@ namespace WH_Panel
                             // Fetch MFPN for the selected row
                             //await FetchMFPNForRow(selectedRow);
                             //await FetchAltForRow(selectedRow);
+
+
+                            // Wait until all UDATE fetching completes
+                            await Task.WhenAll(fetchTasks);
+
                             await LoadDataAndFilterInStock();
                             
                         }
@@ -3020,35 +3029,262 @@ namespace WH_Panel
 
 
 
+        //private async Task LoadDataAndFilterInStock()
+        //{
+        //    InitializeInStockDataGridView();
+
+        //    var robList = new List<DataGridViewRow>();
+        //    var notRobList = new List<DataGridViewRow>();
+
+        //    // Split rows into rob and non-rob
+        //    foreach (DataGridViewRow row in dgwIPNmoves.Rows)
+        //    {
+        //        if (row.Cells["LOGDOCNO"].Value != null &&
+        //            row.Cells["UDATE"].Value != null &&
+        //            DateTime.TryParse(row.Cells["UDATE"].Value.ToString(), out _))
+        //        {
+        //            string docNo = row.Cells["LOGDOCNO"].Value.ToString();
+        //            if (docNo.StartsWith("ROB") || docNo.StartsWith("IC") || docNo.StartsWith("WR") || docNo.StartsWith("SH"))
+        //            {
+        //                if (docNo.StartsWith("IC"))
+        //                {
+        //                    row.Cells["TQUANT"].Value = Math.Abs(Convert.ToInt32(row.Cells["TQUANT"].Value));
+        //                }
+        //                robList.Add(row);
+        //            }
+        //            else
+        //            {
+        //                notRobList.Add(row);
+        //            }
+        //        }
+        //    }
+
+        //    // Sort by transaction date
+        //    robList = robList.OrderBy(r => DateTime.Parse(r.Cells["UDATE"].Value.ToString())).ToList();
+        //    notRobList = notRobList.OrderBy(r => DateTime.Parse(r.Cells["UDATE"].Value.ToString())).ToList();
+
+        //    // Filter out matching pairs
+        //    var filteredNotRobList = new List<DataGridViewRow>(notRobList);
+        //    foreach (var notRobRow in notRobList)
+        //    {
+        //        if (robList.Count == 0) break;
+
+        //        int notRobQty = Convert.ToInt32(notRobRow.Cells["TQUANT"].Value);
+        //        var match = robList.FirstOrDefault(robRow => Convert.ToInt32(robRow.Cells["TQUANT"].Value) == notRobQty);
+
+        //        if (match != null)
+        //        {
+        //            filteredNotRobList.Remove(notRobRow);
+        //            robList.Remove(match);
+        //        }
+        //    }
+
+        //    // Prepare HttpClient once
+        //    using var client = new HttpClient();
+        //    client.DefaultRequestHeaders.Accept.Clear();
+        //    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+        //    dgwINSTOCK.Rows.Clear();
+        //    dgwINSTOCK.Visible = false;
+
+
+        //    // Final filtering while adding to dgwINSTOCK
+        //    foreach (var row in filteredNotRobList)
+        //    {
+        //        string docNo = row.Cells["LOGDOCNO"].Value?.ToString();
+        //        if (string.IsNullOrWhiteSpace(docNo)) continue;
+
+        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{docNo}'&$select=TOWARHSNAME";
+
+        //        try
+        //        {
+        //            var response = await client.GetAsync(url);
+        //            response.EnsureSuccessStatusCode();
+
+        //            var body = await response.Content.ReadAsStringAsync();
+        //            var json = JsonConvert.DeserializeObject<JObject>(body);
+        //            string warhs = json["value"]?.FirstOrDefault()?["TOWARHSNAME"]?.ToString()?.Trim();
+
+        //            if (warhs == "666")
+        //            {
+        //                SafeAppendLog($"Excluded DOCNO {docNo} (TOWARHSNAME = 666)");
+        //                continue;
+        //            }
+
+        //            // Add only if not 666
+        //            var newRow = (DataGridViewRow)row.Clone();
+        //            foreach (DataGridViewCell cell in row.Cells)
+        //            {
+        //                newRow.Cells[cell.ColumnIndex].Value = cell.Value;
+        //            }
+        //            dgwINSTOCK.Rows.Add(newRow);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            SafeAppendLog($"Error checking DOCNO {docNo}: {ex.Message}\n");
+        //        }
+        //    }
+
+
+        //    dgwINSTOCK.Update();
+        //    dgwINSTOCK.Visible = true;
+
+        //}
+
+
         private async Task LoadDataAndFilterInStock()
         {
+            //SafeAppendLog("Starting LoadDataAndFilterInStock...");
             InitializeInStockDataGridView();
 
             var robList = new List<DataGridViewRow>();
             var notRobList = new List<DataGridViewRow>();
 
+            SafeAppendLog($"Scanning {dgwIPNmoves.Rows.Count} rows in dgwIPNmoves...");
+
+
+
+            //foreach (DataGridViewRow row in dgwIPNmoves.Rows)
+            //{
+            //    if (row.IsNewRow) continue;
+
+            //    var docCell = row.Cells["LOGDOCNO"];
+            //    var udateCell = row.Cells["UDATE"];
+
+            //    string docNo = docCell?.Value?.ToString()?.Trim();
+            //    string udateStr = udateCell?.Value?.ToString()?.Trim();
+
+            //    bool docOk = !string.IsNullOrWhiteSpace(docNo);
+            //    bool udateOk = DateTime.TryParse(udateStr, out _);
+
+            //    if (!docOk || !udateOk)
+            //    {
+            //        SafeAppendLog($"Row skipped: LOGDOCNO='{docNo}', UDATE='{udateStr}', docOk={docOk}, udateOk={udateOk}");
+            //        continue;
+            //    }
+
+
+            //    // Split rows into rob and non-rob
+            //    foreach (DataGridViewRow row in dgwIPNmoves.Rows)
+            //{
+            //    if (row.IsNewRow) continue;
+
+            //    var docNoObj = row.Cells["LOGDOCNO"].Value;
+            //    var dateObj = row.Cells["UDATE"].Value;
+
+            //    if (docNoObj != null && dateObj != null && DateTime.TryParse(dateObj.ToString(), out _))
+            //    {
+            //        string docNo = docNoObj.ToString();
+
+            //        if (docNo.StartsWith("ROB") || docNo.StartsWith("IC") || docNo.StartsWith("WR") || docNo.StartsWith("SH"))
+            //        {
+            //            if (docNo.StartsWith("IC"))
+            //            {
+            //                SafeAppendLog($"Fixing quantity sign for IC doc {docNo}");
+            //                row.Cells["TQUANT"].Value = Math.Abs(Convert.ToInt32(row.Cells["TQUANT"].Value));
+            //            }
+
+            //            robList.Add(row);
+            //        }
+            //        else
+            //        {
+            //            notRobList.Add(row);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        SafeAppendLog("Skipped row due to missing LOGDOCNO or invalid UDATE.");
+            //    }
+            //}
+
             // Split rows into rob and non-rob
-            foreach (DataGridViewRow row in dgwIPNmoves.Rows)
+            //foreach (DataGridViewRow row in dgwIPNmoves.Rows)
+            //{
+            //    if (row.IsNewRow) continue;
+
+            //    var docNoObj = row.Cells["LOGDOCNO"].Value;
+            //    var dateObj = row.Cells["UDATE"].Value;
+
+            //    string docNo = docNoObj?.ToString()?.Trim() ?? "[null]";
+            //    string dateRaw = dateObj?.ToString()?.Trim() ?? "[null]";
+
+            //    if (string.IsNullOrWhiteSpace(docNo))
+            //    {
+            //        SafeAppendLog($"Skipped row: LOGDOCNO is missing or empty.");
+            //        continue;
+            //    }
+
+            //    if (!DateTime.TryParse(dateRaw, out DateTime parsedDate))
+            //    {
+            //        SafeAppendLog($"Skipped row: invalid UDATE. LOGDOCNO: {docNo}, UDATE raw value: '{dateRaw}'");
+            //        continue;
+            //    }
+
+            //    // LOGDOCNO is present, and UDATE is valid
+            //    if (docNo.StartsWith("ROB") || docNo.StartsWith("IC") || docNo.StartsWith("WR") || docNo.StartsWith("SH"))
+            //    {
+            //        if (docNo.StartsWith("IC"))
+            //        {
+            //            SafeAppendLog($"Fixing quantity sign for IC doc {docNo}");
+            //            try
+            //            {
+            //                row.Cells["TQUANT"].Value = Math.Abs(Convert.ToInt32(row.Cells["TQUANT"].Value));
+            //            }
+            //            catch (Exception ex)
+            //            {
+            //                SafeAppendLog($"Error fixing quantity sign for {docNo}: {ex.Message}");
+            //            }
+            //        }
+
+            //        robList.Add(row);
+            //    }
+            //    else
+            //    {
+            //        notRobList.Add(row);
+            //    }
+            //}
+
+            // Split rows into rob and non-rob, ignoring UDATE
+foreach (DataGridViewRow row in dgwIPNmoves.Rows)
+{
+    if (row.IsNewRow) continue;
+
+    var docNoObj = row.Cells["LOGDOCNO"].Value;
+    string docNo = docNoObj?.ToString()?.Trim() ?? "";
+
+    if (string.IsNullOrWhiteSpace(docNo))
+    {
+        //SafeAppendLog($"Skipped row: LOGDOCNO is missing or empty.");
+        continue;
+    }
+
+    if (docNo.StartsWith("ROB") || docNo.StartsWith("IC") || docNo.StartsWith("WR") || docNo.StartsWith("SH"))
+    {
+        if (docNo.StartsWith("IC"))
+        {
+            //SafeAppendLog($"Fixing quantity sign for IC doc {docNo}");
+            try
             {
-                if (row.Cells["LOGDOCNO"].Value != null &&
-                    row.Cells["UDATE"].Value != null &&
-                    DateTime.TryParse(row.Cells["UDATE"].Value.ToString(), out _))
-                {
-                    string docNo = row.Cells["LOGDOCNO"].Value.ToString();
-                    if (docNo.StartsWith("ROB") || docNo.StartsWith("IC") || docNo.StartsWith("WR") || docNo.StartsWith("SH"))
-                    {
-                        if (docNo.StartsWith("IC"))
-                        {
-                            row.Cells["TQUANT"].Value = Math.Abs(Convert.ToInt32(row.Cells["TQUANT"].Value));
-                        }
-                        robList.Add(row);
-                    }
-                    else
-                    {
-                        notRobList.Add(row);
-                    }
-                }
+                row.Cells["TQUANT"].Value = Math.Abs(Convert.ToInt32(row.Cells["TQUANT"].Value));
             }
+            catch (Exception ex)
+            {
+                //SafeAppendLog($"Error fixing quantity sign for {docNo}: {ex.Message}");
+            }
+        }
+        robList.Add(row);
+    }
+    else
+    {
+        notRobList.Add(row);
+    }
+}
+
+
+            //SafeAppendLog($"ROB list count: {robList.Count}");
+            //SafeAppendLog($"NotROB list count: {notRobList.Count}");
 
             // Sort by transaction date
             robList = robList.OrderBy(r => DateTime.Parse(r.Cells["UDATE"].Value.ToString())).ToList();
@@ -3070,21 +3306,29 @@ namespace WH_Panel
                 }
             }
 
-            // Prepare HttpClient once
+            //SafeAppendLog($"FilteredNotRob list count: {filteredNotRobList.Count}");
+
+            // Prepare HttpClient
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}"));
+            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
 
             dgwINSTOCK.Rows.Clear();
             dgwINSTOCK.Visible = false;
 
-            // Final filtering while adding to dgwINSTOCK
+            int addedCount = 0;
+            int excludedCount = 0;
+
             foreach (var row in filteredNotRobList)
             {
                 string docNo = row.Cells["LOGDOCNO"].Value?.ToString();
-                if (string.IsNullOrWhiteSpace(docNo)) continue;
+                if (string.IsNullOrWhiteSpace(docNo))
+                {
+                    SafeAppendLog("Skipped a row with empty DOCNO.");
+                    continue;
+                }
 
                 string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{docNo}'&$select=TOWARHSNAME";
 
@@ -3097,25 +3341,39 @@ namespace WH_Panel
                     var json = JsonConvert.DeserializeObject<JObject>(body);
                     string warhs = json["value"]?.FirstOrDefault()?["TOWARHSNAME"]?.ToString()?.Trim();
 
-                    if (warhs != "666") // Add only if not 666
+                    if (string.IsNullOrWhiteSpace(warhs))
                     {
-                        var newRow = (DataGridViewRow)row.Clone();
-                        foreach (DataGridViewCell cell in row.Cells)
-                        {
-                            newRow.Cells[cell.ColumnIndex].Value = cell.Value;
-                        }
-                        dgwINSTOCK.Rows.Add(newRow);
+                        //SafeAppendLog($"DOCNO {docNo} => Warning: No TOWARHSNAME found.");
+                        continue;
                     }
+
+                    //SafeAppendLog($"DOCNO {docNo} => TOWARHSNAME = {warhs}");
+
+                    if (warhs == "666")
+                    {
+                        excludedCount++;
+                        //SafeAppendLog($"Excluded DOCNO {docNo} (TOWARHSNAME = 666)");
+                        continue;
+                    }
+
+                    var newRow = dgwINSTOCK.Rows[dgwINSTOCK.Rows.Add()];
+                    for (int i = 0; i < row.Cells.Count; i++)
+                    {
+                        newRow.Cells[i].Value = row.Cells[i].Value;
+                    }
+
+                    addedCount++;
                 }
                 catch (Exception ex)
                 {
-                    SafeAppendLog($"Error checking DOCNO {docNo}: {ex.Message}\n");
+                    SafeAppendLog($"Error checking DOCNO {docNo}: {ex.Message}", Color.Red);
                 }
             }
 
             dgwINSTOCK.Update();
             dgwINSTOCK.Visible = true;
-            
+
+            SafeAppendLog($"Final: {addedCount} rows added to dgwINSTOCK, {excludedCount} rows excluded due to TOWARHSNAME = 666");
         }
 
 
@@ -3461,6 +3719,42 @@ namespace WH_Panel
                 SafeAppendLog($"Error in nullyfyTheOriginalIPN: {ex.Message}");
             }
         }
+        //private void SafeAppendLog(string message, Color? color = null)
+        //{
+        //    if (txtbLog == null || txtbLog.IsDisposed || txtbLog.Disposing)
+        //        return;
+
+        //    try
+        //    {
+        //        if (txtbLog.InvokeRequired)
+        //        {
+        //            txtbLog.Invoke(new Action(() => SafeAppendLog(message, color)));
+        //            return;
+        //        }
+
+        //        if (color.HasValue)
+        //        {
+        //            txtbLog.SelectionStart = txtbLog.TextLength;
+        //            txtbLog.SelectionLength = 0;
+        //            txtbLog.SelectionColor = color.Value;
+        //        }
+        //        else
+        //        {
+        //            txtbLog.SelectionColor = txtbLog.ForeColor;
+        //        }
+
+        //        txtbLog.AppendText(message);  // <<-- append here, no recursion!
+
+        //        txtbLog.SelectionColor = txtbLog.ForeColor; // reset color after append
+        //        txtbLog.SelectionStart = txtbLog.Text.Length;
+        //        txtbLog.ScrollToCaret();
+        //    }
+        //    catch (ObjectDisposedException)
+        //    {
+        //        // Control disposed, ignore safely
+        //    }
+        //}
+
         private void SafeAppendLog(string message, Color? color = null)
         {
             if (txtbLog == null || txtbLog.IsDisposed || txtbLog.Disposing)
@@ -3485,9 +3779,11 @@ namespace WH_Panel
                     txtbLog.SelectionColor = txtbLog.ForeColor;
                 }
 
-                txtbLog.AppendText(message);  // <<-- append here, no recursion!
+                // ⬇️ Add the line break here
+                txtbLog.AppendText(message + Environment.NewLine);
 
-                txtbLog.SelectionColor = txtbLog.ForeColor; // reset color after append
+                txtbLog.SelectionColor = txtbLog.ForeColor; // reset color
+                txtbLog.SelectionStart = txtbLog.Text.Length;
                 txtbLog.ScrollToCaret();
             }
             catch (ObjectDisposedException)
@@ -3495,6 +3791,7 @@ namespace WH_Panel
                 // Control disposed, ignore safely
             }
         }
+
 
 
 
