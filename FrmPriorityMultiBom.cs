@@ -109,8 +109,13 @@ namespace WH_Panel
                 {
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                    string usedUser = ApiHelper.AuthenticateClient(client);
+                    // string usedUser = ApiHelper.AuthenticateClient(client);
+
                     HttpResponseMessage response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
                     string responseBody = await response.Content.ReadAsStringAsync();
@@ -177,8 +182,13 @@ namespace WH_Panel
                     // Set the Authorization header
                     //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                     //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                    string usedUser = ApiHelper.AuthenticateClient(client);
+                    // string usedUser = ApiHelper.AuthenticateClient(client);
+
                     // Make the HTTP GET request
                     HttpResponseMessage response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
@@ -475,181 +485,7 @@ namespace WH_Panel
             }
             UpdateSelectedLabel();
         }
-        //private async Task<Dictionary<string, (int balance, int stock, int simulation)>> AggregatedSim(List<Serial> selectedWorkOrders)
-        //{
-        //    var ipnQuantities = new Dictionary<string, int>();
-        //    var ipnCQuantities = new Dictionary<string, int>();
-        //    // Fetch warehouse stock levels once
-        //    var warehouseStock = new Dictionary<string, int>();
-        //    string selectedWarehouseName = GetSelectedWarehouseName();
-        //    if (selectedWarehouseName != null)
-        //    {
-        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouseName}'&$expand=WARHSBAL_SUBFORM";
-        //        using (HttpClient client = new HttpClient())
-        //        {
-        //            try
-        //            {
-        //                AppendLogMessage($"Retrieving data for {selectedWarehouseName}", Color.Yellow);
-        //                client.DefaultRequestHeaders.Accept.Clear();
-        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //                HttpResponseMessage response = await client.GetAsync(url);
-        //                response.EnsureSuccessStatusCode();
-        //                string responseBody = await response.Content.ReadAsStringAsync();
-        //                var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-        //                var warehouseBalances = apiResponse["value"].First["WARHSBAL_SUBFORM"].ToObject<List<WarehouseBalance>>();
-        //                foreach (var balance in warehouseBalances)
-        //                {
-        //                    warehouseStock[balance.PARTNAME] = balance.BALANCE;
-        //                }
-        //                AppendLogMessage($"Loaded data for {selectedWarehouseName}", Color.Green);
-        //            }
-        //            catch (HttpRequestException ex)
-        //            {
-        //                AppendLogMessage($"Request error: {ex.Message}", Color.Red);
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                AppendLogMessage($"Request error: {ex.Message}", Color.Red);
-        //            }
-        //        }
-        //    }
-        //    foreach (var workOrder in selectedWorkOrders)
-        //    {
-        //        if (workOrder.SERIALNAME.StartsWith("ROB"))
-        //        {
-
-        //            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{workOrder.SERIALNAME}'&$expand=TRANSORDER_K_SUBFORM";
-        //            using (HttpClient client = new HttpClient())
-        //            {
-        //                try
-        //                {
-        //                    AppendLogMessage($"Retrieving data for {workOrder.SERIALNAME} \n", Color.Yellow);
-        //                    client.DefaultRequestHeaders.Accept.Clear();
-        //                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //                    HttpResponseMessage response = await client.GetAsync(url);
-        //                    response.EnsureSuccessStatusCode();
-        //                    string responseBody = await response.Content.ReadAsStringAsync();
-        //                    var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-        //                    var transOrders = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
-        //                    foreach (var transOrder in transOrders)
-        //                    {
-        //                        if (ipnQuantities.ContainsKey(transOrder.PARTNAME))
-        //                        {
-        //                            ipnQuantities[transOrder.PARTNAME] += transOrder.QUANT;
-        //                        }
-        //                        else
-        //                        {
-        //                            ipnQuantities[transOrder.PARTNAME] = transOrder.QUANT;
-
-
-        //                        }
-
-        //                        if (ipnCQuantities.TryGetValue(transOrder.PARTNAME, out int existingCQuant))
-        //                        {
-        //                            ipnCQuantities[transOrder.PARTNAME] = Math.Max(existingCQuant, transOrder.CQUANT);
-        //                        }
-        //                        else
-        //                        {
-        //                            ipnCQuantities[transOrder.PARTNAME] = transOrder.CQUANT;
-        //                        }
-        //                    }
-
-
-
-        //                    AppendLogMessage($"Loaded data for {workOrder.SERIALNAME}", Color.Green);
-        //                }
-        //                catch (HttpRequestException ex)
-        //                {
-        //                    AppendLogMessage($"Request error: {ex.Message}", Color.Red);
-        //                }
-        //                catch (Exception ex)
-        //                {
-        //                    AppendLogMessage($"Request error: {ex.Message}", Color.Red);
-        //                }
-        //            }
-        //        }
-        //        else if (workOrder.SERIALNAME.StartsWith("SIM"))
-        //        {
-        //            // Construct the API URL for the SIM work order
-        //            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART('{workOrder.PARTNAME}')/REVISIONS_SUBFORM?$filter=REVNUM eq '{workOrder.REVNUM}'&$expand=REVPARTARC_SUBFORM";
-
-        //            using (HttpClient client = new HttpClient())
-        //            {
-        //                try
-        //                {
-        //                    AppendLogMessage($"Retrieving BOM data for SIM work order '{workOrder.SERIALNAME}'", Color.Yellow);
-
-        //                    // Set the request headers
-        //                    client.DefaultRequestHeaders.Accept.Clear();
-        //                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-        //                    // Make the HTTP GET request
-        //                    HttpResponseMessage response = await client.GetAsync(url);
-        //                    response.EnsureSuccessStatusCode();
-
-        //                    // Read the response content
-        //                    string responseBody = await response.Content.ReadAsStringAsync();
-
-        //                    // Parse the JSON response
-        //                    var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-        //                    var bomItems = apiResponse["value"].First["REVPARTARC_SUBFORM"].ToObject<List<JObject>>();
-
-        //                    // Process each BOM item
-        //                    foreach (var item in bomItems)
-        //                    {
-        //                        string partName = item["SONNAME"].ToString();
-        //                        double sonQuant = item["SONQUANT"].ToObject<double>();
-        //                        int totalRequired = (int)(sonQuant * workOrder.QUANT); // Multiply SONQUANT by the Quant column value
-
-        //                        if (ipnQuantities.ContainsKey(partName))
-        //                        {
-        //                            ipnQuantities[partName] -= totalRequired;
-        //                        }
-        //                        else
-        //                        {
-        //                            ipnQuantities[partName] = 0;
-        //                            ipnCQuantities[partName] = totalRequired; // Initialize consumed quantity as 0
-        //                        }
-        //                    }
-
-        //                    AppendLogMessage($"Loaded BOM data for SIM work order '{workOrder.SERIALNAME}'", Color.Green);
-        //                }
-        //                catch (HttpRequestException ex)
-        //                {
-        //                    AppendLogMessage($"Request error for SIM work order '{workOrder.SERIALNAME}': {ex.Message}", Color.Red);
-        //                }
-        //                catch (Exception ex)
-        //                {
-        //                    AppendLogMessage($"Error processing SIM work order '{workOrder.SERIALNAME}': {ex.Message}", Color.Red);
-        //                }
-        //            }
-        //        }
-
-        //    }
-        //    // Calculate the balance for each PARTNAME
-        //    var ipnBalances = new Dictionary<string, int>();
-        //    foreach (var partName in ipnQuantities.Keys)
-        //    {
-        //        ipnBalances[partName] = ipnQuantities[partName] - ipnCQuantities[partName];
-        //    }
-        //    // Calculate the required values
-        //    var result = new Dictionary<string, (int balance, int stock, int simulation)>();
-        //    foreach (var ipn in ipnBalances.Keys)
-        //    {
-        //        int balance = ipnBalances[ipn];
-        //        int stock = warehouseStock.ContainsKey(ipn) ? warehouseStock[ipn] : 0;
-        //        int simulation = stock + balance;
-        //        result[ipn] = (balance, stock, simulation);
-        //    }
-        //    return result;
-        //}
-
+     
 
 
         private async Task<Dictionary<string, (int kitBalance, int stock, int simulation,int inHowManyKitsUsed)>> AggregatedSim(List<Serial> selectedWorkOrders)
@@ -673,8 +509,14 @@ namespace WH_Panel
                         AppendLogMessage($"Retrieving data for {selectedWarehouseName}", Color.Yellow);
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                        string usedUser = ApiHelper.AuthenticateClient(client);
+                        // string usedUser = ApiHelper.AuthenticateClient(client);
+
+
                         HttpResponseMessage response = await client.GetAsync(url);
                         response.EnsureSuccessStatusCode();
                         string responseBody = await response.Content.ReadAsStringAsync();
@@ -710,8 +552,14 @@ namespace WH_Panel
                             AppendLogMessage($"Retrieving data for {workOrder.SERIALNAME} \n", Color.Yellow);
                             client.DefaultRequestHeaders.Accept.Clear();
                             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                            //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                            string usedUser = ApiHelper.AuthenticateClient(client);
+                            // string usedUser = ApiHelper.AuthenticateClient(client);
+
+
                             HttpResponseMessage response = await client.GetAsync(url);
                             response.EnsureSuccessStatusCode();
                             string responseBody = await response.Content.ReadAsStringAsync();
@@ -777,8 +625,13 @@ namespace WH_Panel
                             AppendLogMessage($"Retrieving BOM data for SIM work order '{workOrder.SERIALNAME}'", Color.Yellow);
                             client.DefaultRequestHeaders.Accept.Clear();
                             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                            //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                            string usedUser = ApiHelper.AuthenticateClient(client);
+                            // string usedUser = ApiHelper.AuthenticateClient(client);
+
                             HttpResponseMessage response = await client.GetAsync(url);
                             response.EnsureSuccessStatusCode();
                             string responseBody = await response.Content.ReadAsStringAsync();
@@ -852,8 +705,13 @@ namespace WH_Panel
                         AppendLogMessage($"Retrieving data for {selectedWarehouseName}", Color.Yellow);
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                        string usedUser = ApiHelper.AuthenticateClient(client);
+                        // string usedUser = ApiHelper.AuthenticateClient(client);
+
                         HttpResponseMessage response = await client.GetAsync(url);
                         response.EnsureSuccessStatusCode();
                         string responseBody = await response.Content.ReadAsStringAsync();
@@ -885,8 +743,13 @@ namespace WH_Panel
                         AppendLogMessage($"Retrieving data for {workOrder.SERIALNAME}", Color.Yellow);
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                        string usedUser = ApiHelper.AuthenticateClient(client);
+                        // string usedUser = ApiHelper.AuthenticateClient(client);
+
                         HttpResponseMessage response = await client.GetAsync(url);
                         response.EnsureSuccessStatusCode();
                         string responseBody = await response.Content.ReadAsStringAsync();
@@ -895,22 +758,6 @@ namespace WH_Panel
                         var partQuantities = new Dictionary<string, int>();
                         var partCQuants = new Dictionary<string, int>();
 
-                        //foreach (var transOrder in transOrders)
-                        //{
-                        //    if (partQuantities.ContainsKey(transOrder.PARTNAME))
-                        //    {
-                        //        partQuantities[transOrder.PARTNAME] += transOrder.QUANT;
-                        //        cquant = transOrder.CQUANT;
-                        //        txtbLog.AppendText(transOrder.PARTNAME +":"+ transOrder.CQUANT);
-                        //    }
-                        //    else
-                        //    {
-                        //        partQuantities[transOrder.PARTNAME] = transOrder.QUANT;
-                        //        // Assuming cquant is the same for all parts in the kit
-                        //        cquant = transOrder.CQUANT;
-                        //    }
-
-                        //}
                         foreach (var transOrder in transOrders)
                         {
                             if (partQuantities.ContainsKey(transOrder.PARTNAME))
@@ -927,17 +774,7 @@ namespace WH_Panel
                            // txtbLog.AppendText(transOrder.PARTNAME + ":" + transOrder.CQUANT+"\n");
                         }
 
-                        //foreach (var part in partQuantities)
-                        //{
-                        //    int quant = part.Value;
-                        //    int balance =    quant - cquant;
-                        //    int simulation = balance; // This will be updated later with warehouse stock
-                        //    if (!ipnToSerials.ContainsKey(part.Key))
-                        //    {
-                        //        ipnToSerials[part.Key] = new List<(Serial serial, int quant, int cquant, int balance, int simulation)>();
-                        //    }
-                        //    ipnToSerials[part.Key].Add((workOrder, quant, cquant, balance, simulation));
-                        //}
+               
 
                         foreach (var part in partQuantities)
                         {
@@ -996,8 +833,13 @@ namespace WH_Panel
                 {
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                    string usedUser = ApiHelper.AuthenticateClient(client);
+                    // string usedUser = ApiHelper.AuthenticateClient(client);
+
 
                     try
                     {
@@ -1211,8 +1053,13 @@ namespace WH_Panel
                         AppendLogMessage($"Retrieving data for {selectedWarehouseName} \n", Color.Yellow);
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                        string usedUser = ApiHelper.AuthenticateClient(client);
+                        // string usedUser = ApiHelper.AuthenticateClient(client);
+
                         HttpResponseMessage response = await client.GetAsync(url);
                         response.EnsureSuccessStatusCode();
                         string responseBody = await response.Content.ReadAsStringAsync();
@@ -1437,8 +1284,13 @@ namespace WH_Panel
                         AppendLogMessage($"Retrieving data for {workOrder.SERIALNAME} \n", Color.Yellow);
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                        string usedUser = ApiHelper.AuthenticateClient(client);
+                        // string usedUser = ApiHelper.AuthenticateClient(client);
+
                         HttpResponseMessage response = await client.GetAsync(url);
                         response.EnsureSuccessStatusCode();
                         string responseBody = await response.Content.ReadAsStringAsync();
@@ -1657,8 +1509,13 @@ namespace WH_Panel
                     // Set the request headers
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                    string usedUser = ApiHelper.AuthenticateClient(client);
+                    // string usedUser = ApiHelper.AuthenticateClient(client);
+
 
                     // Make the HTTP GET request
                     HttpResponseMessage response = await client.GetAsync(url);
@@ -1728,8 +1585,12 @@ namespace WH_Panel
                     // Set the request headers
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                    string usedUser = ApiHelper.AuthenticateClient(client);
+                    // string usedUser = ApiHelper.AuthenticateClient(client);
 
                     // Make the HTTP GET request
                     HttpResponseMessage response = await client.GetAsync(url);
