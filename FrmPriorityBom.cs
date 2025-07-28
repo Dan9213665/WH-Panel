@@ -222,7 +222,7 @@ namespace WH_Panel
                 catch (HttpRequestException ex)
                 {
                    
-                    SafeAppendLog($"Request error: {ex.Message} \n");
+                    SafeAppendLog($"Request error: {ex.Message}");
                   
                 }
                 catch (Exception ex)
@@ -424,7 +424,7 @@ namespace WH_Panel
         }
         private async Task LoadBomDetails(string serialName)
         {
-            SafeAppendLog($"Fetching warehouse balances...\n",Color.Yellow);
+            SafeAppendLog($"Fetching warehouse balances...",Color.Yellow);
             if (dgwBom != null)
             {
                 progressBar1.Value = 0;
@@ -456,7 +456,7 @@ namespace WH_Panel
                             var bomDetails = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
                             // Aggregate the PQUANT values for each unique PARTNAME
                             int bomCountFromDB = await FetchIPNcountFromBom(txtbName.Text);
-                            SafeAppendLog($"Loading {bomCountFromDB} items from {txtbName.Text} bom \n", Color.Yellow);
+                            SafeAppendLog($"Loading {bomCountFromDB} items from {txtbName.Text} bom", Color.Yellow);
                             dgwBom.Rows.Clear();
                             var aggregatedDetails = bomDetails
                                 .GroupBy(detail => detail.PARTNAME)
@@ -507,18 +507,18 @@ namespace WH_Panel
                         }
                         else
                         {
-                            SafeAppendLog("No BOM details found for the selected serial.\n", Color.Red);
+                            SafeAppendLog("No BOM details found for the selected serial.", Color.Red);
                            
                         }
                     }
                     catch (HttpRequestException ex)
                     {
-                        SafeAppendLog($"Request error: {ex.Message} \n", Color.Red);
+                        SafeAppendLog($"Request error: {ex.Message}", Color.Red);
                 
                     }
                     catch (Exception ex)
                     {
-                        SafeAppendLog($"Request error: {ex.Message}\n", Color.Red);
+                        SafeAppendLog($"Request error: {ex.Message}", Color.Red);
                         
                     }
                 }
@@ -526,18 +526,18 @@ namespace WH_Panel
         }
         private async Task FetchMFPNsForAllRowsInSinglePull()
         {
-            SafeAppendLog("Fetching MFPNs for all rows in a single API call...\n",Color.Yellow);
+            SafeAppendLog("Fetching MFPNs for all rows in a single API call...",Color.Yellow);
             // Ensure there are rows in the DataGridView
             if (dgwBom.Rows.Count == 0)
             {
-                SafeAppendLog("No rows found in the DataGridView to fetch MFPNs.\n");
+                SafeAppendLog("No rows found in the DataGridView to fetch MFPNs.");
                 return;
             }
             // Get the warehouse name from the first 3 characters of the first PARTNAME
             string selectedWarehouse = dgwBom.Rows[0].Cells["PARTNAME"].Value?.ToString()?.Substring(0, 3);
             if (string.IsNullOrEmpty(selectedWarehouse))
             {
-                SafeAppendLog("Unable to determine the warehouse from the first PARTNAME.\n");
+                SafeAppendLog("Unable to determine the warehouse from the first PARTNAME.");
                 return;
             }
             // Construct the API URL using the warehouse name
@@ -546,7 +546,7 @@ namespace WH_Panel
             string avlUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PARTNAME eq '{selectedWarehouse}_*'&$select=PARTNAME,MNFPARTNAME,PARTDES,MNFNAME,MNFDES";
 
 
-            // SafeAppendLog($"API URL: {avlUrl}\n");
+            // SafeAppendLog($"API URL: {avlUrl}");
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -561,13 +561,13 @@ namespace WH_Panel
                     response.EnsureSuccessStatusCode();
                     // Read the response content
                     string responseBody = await response.Content.ReadAsStringAsync();
-                    // SafeAppendLog($"API Response: {responseBody}\n");
+                    // SafeAppendLog($"API Response: {responseBody}");
                     // Parse the JSON response
                     var apiResponseWrapper = JsonConvert.DeserializeObject<ApiMFPNResponseWrapper>(responseBody);
                     // Validate the API response
                     if (apiResponseWrapper?.Value == null || !apiResponseWrapper.Value.Any())
                     {
-                        SafeAppendLog("No data returned from the API.\n");
+                        SafeAppendLog("No data returned from the API.");
                         return;
                     }
                     // Map the MFPNs to the DataGridView rows
@@ -583,20 +583,20 @@ namespace WH_Panel
                             }
                             else
                             {
-                                SafeAppendLog($"No match found for PARTNAME: {partName}\n");
+                                SafeAppendLog($"No match found for PARTNAME: {partName}");
                             }
                         }
                     }
-                    SafeAppendLog("MFPN fetching completed.\n",Color.LimeGreen);
+                    SafeAppendLog("MFPN fetching completed.",Color.LimeGreen);
                 }
                 catch (HttpRequestException ex)
                 {
-                    SafeAppendLog($"Request error: {ex.Message}\n",Color.Red);
+                    SafeAppendLog($"Request error: {ex.Message}",Color.Red);
                    
                 }
                 catch (Exception ex)
                 {
-                    SafeAppendLog($"Request error: {ex.Message}\n", Color.Red);
+                    SafeAppendLog($"Request error: {ex.Message}", Color.Red);
                 }
             }
             dgwBom.Update();
@@ -618,7 +618,7 @@ namespace WH_Panel
         }
         private async Task<int> FetchIPNcountFromBom(string partName)
         {
-            SafeAppendLog($"Fetching IPN count for {partName}\n",Color.Yellow);
+            SafeAppendLog($"Fetching IPN count for {partName}",Color.Yellow);
             string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART?$filter=PARTNAME eq '{partName}'&$expand=PARTARC_SUBFORM($select=SONNAME)";
             using (HttpClient client = new HttpClient())
             {
@@ -648,13 +648,13 @@ namespace WH_Panel
                 catch (HttpRequestException ex)
                 {
                     
-                    SafeAppendLog($"Request error: {ex.Message}\n", Color.Red);
+                    SafeAppendLog($"Request error: {ex.Message}", Color.Red);
                  
                     return 0;
                 }
                 catch (Exception ex)
                 {
-                    SafeAppendLog($"Request error: {ex.Message}\n", Color.Red);
+                    SafeAppendLog($"Request error: {ex.Message}", Color.Red);
                     return 0;
                 }
             }
@@ -716,16 +716,16 @@ namespace WH_Panel
                     if (warehouse != null)
                     {
                         warehouseBalances = warehouse["WARHSBAL_SUBFORM"].ToObject<List<WarehouseBalance>>();
-                        SafeAppendLog($"Fetched {warehouseBalances.Count} warehouse balances for warehouse {warehouseName}\n", Color.LimeGreen);
+                        SafeAppendLog($"Fetched {warehouseBalances.Count} warehouse balances for warehouse {warehouseName}", Color.LimeGreen);
                     }
                 }
                 catch (HttpRequestException ex)
                 {
-                    SafeAppendLog($"Request error: {ex.Message}\n", Color.Red);
+                    SafeAppendLog($"Request error: {ex.Message}", Color.Red);
                 }
                 catch (Exception ex)
                 {
-                    SafeAppendLog($"Request error: {ex.Message}\n",Color.Red);
+                    SafeAppendLog($"Request error: {ex.Message}",Color.Red);
                 }
             }
             // Update the DataGridView rows using the fetched data
@@ -821,14 +821,14 @@ namespace WH_Panel
                     catch (HttpRequestException ex)
                     {
                        
-                        SafeAppendLog($"Request error: {ex.Message}\n", Color.Red);
+                        SafeAppendLog($"Request error: {ex.Message}", Color.Red);
                      
                     }
                     catch (Exception ex)
                     {
                         //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                        
-                        SafeAppendLog($"Request error: {ex.Message}\n", Color.Red);
+                        SafeAppendLog($"Request error: {ex.Message}", Color.Red);
                       
                     }
                 }
@@ -837,12 +837,12 @@ namespace WH_Panel
         }
         private async Task FetchMFPNsForAllRows()
         {
-            SafeAppendLog("Fetching MFPNs for all rows\n",Color.Yellow);
+            SafeAppendLog("Fetching MFPNs for all rows",Color.Yellow);
             foreach (DataGridViewRow row in dgwBom.Rows)
             {
                 await FetchMFPNForRow(row);
             }
-            SafeAppendLog("MFPN fetching completed\n",Color.LimeGreen);
+            SafeAppendLog("MFPN fetching completed",Color.LimeGreen);
         }
         private void AttachTextBoxEvents(Control parentControl)
         {
@@ -1155,15 +1155,7 @@ namespace WH_Panel
                             {
                                 foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
                                 {
-                                    //if(trans.DOCDES != "ספירות מלאי" && trans.DOCDES!= "קיזוז אוטומטי" && trans.SUPCUSTNAME!= "200052" && trans.SUPCUSTNAME!= "200048")
-                                    //{
-                                    //    var rowIndex = dgwIPNmoves.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "", "");
-                                    //    var row = dgwIPNmoves.Rows[rowIndex];
-                                    //    // Fetch the PACK code and UDATE asynchronously
-                                    //    _ = FetchAndSetPackCodeAndUDateAsync(row, trans.LOGDOCNO, partName, trans.TQUANT);
-                                    //    await Task.Delay(200); // 300 milliseconds delay
-                                    //}
-
+                              
                                     // Inside your loop:
                                     if (!ExcludedDocDescriptions.Contains(trans.DOCDES) &&
                                         !ExcludedSupCustNames.Contains(trans.SUPCUSTNAME))
@@ -1195,7 +1187,7 @@ namespace WH_Panel
                         {
                             //MessageBox.Show("No stock movements found for the selected part.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
                        
-                            SafeAppendLog("No stock movements found for the selected part.\n", Color.Red);
+                            SafeAppendLog("No stock movements found for the selected part.", Color.Red);
                     
                         }
                     }
@@ -1203,14 +1195,14 @@ namespace WH_Panel
                     {
                         //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                        
-                        SafeAppendLog($"Request error: {ex.Message}\n",Color.Red);
+                        SafeAppendLog($"Request error: {ex.Message}",Color.Red);
                        
                     }
                     catch (Exception ex)
                     {
                         //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                       
-                        SafeAppendLog($"Request error: {ex.Message} \n", Color.Red);
+                        SafeAppendLog($"Request error: {ex.Message} ", Color.Red);
                         
                     }
                 }
@@ -1220,7 +1212,7 @@ namespace WH_Panel
 
         private async Task FetchAltsForAllRows()
         {
-            SafeAppendLog("Fetching alts for all rows in batches of 25...\n", Color.Yellow);
+            SafeAppendLog("Fetching alts for all rows in batches of 25...", Color.Yellow);
 
             // Get all rows that need ALT fetching
             var rowsToProcess = dgwBom.Rows.Cast<DataGridViewRow>()
@@ -1236,7 +1228,7 @@ namespace WH_Panel
                 await FetchAltsForBatch(batch);
             }
 
-            SafeAppendLog("ALTs fetching complete.\n", Color.LimeGreen);
+            SafeAppendLog("ALTs fetching complete.", Color.LimeGreen);
         }
 
         private async Task FetchAltsForBatch(List<DataGridViewRow> batch)
@@ -1296,12 +1288,12 @@ namespace WH_Panel
                 }
                 catch (HttpRequestException ex)
                 {
-                    SafeAppendLog($"Request error: {ex.Message}\n", Color.Red);
+                    SafeAppendLog($"Request error: {ex.Message}", Color.Red);
                  
                 }
                 catch (Exception ex)
                 {
-                    SafeAppendLog($"Request error: {ex.Message}\n", Color.Red);
+                    SafeAppendLog($"Request error: {ex.Message}", Color.Red);
                   
                 }
             }
@@ -1349,11 +1341,11 @@ namespace WH_Panel
                     }
                     catch (HttpRequestException ex)
                     {
-                        SafeAppendLog($"Request error: {ex.Message}\n", Color.Red);
+                        SafeAppendLog($"Request error: {ex.Message}", Color.Red);
                     }
                     catch (Exception ex)
                     {
-                        SafeAppendLog($"Request error: {ex.Message}\n", Color.Red);
+                        SafeAppendLog($"Request error: {ex.Message}", Color.Red);
                     }
                 }
             }
@@ -1497,12 +1489,12 @@ namespace WH_Panel
                 }
                 catch (HttpRequestException ex)
                 {
-                    SafeAppendLog($"Request error: {ex.Message}\n", Color.Red);
+                    SafeAppendLog($"Request error: {ex.Message}", Color.Red);
                     return new List<(string PackCode, string BookNum, string Date)>();
                 }
                 catch (Exception ex)
                 {
-                    SafeAppendLog($"Request error: {ex.Message}\n", Color.Red);
+                    SafeAppendLog($"Request error: {ex.Message}", Color.Red);
                     return new List<(string PackCode, string BookNum, string Date)>();
                 }
             }
@@ -1512,7 +1504,7 @@ namespace WH_Panel
             string uDate = null;
             // Log the document number for debugging
             //txtLog.SelectionColor = Color.Blue; // Set the color to blue
-            //txtLog.AppendText($"Document Number: '{docNo}'\n");
+            //txtLog.AppendText($"Document Number: '{docNo}'");
             //txtLog.ScrollToCaret();
             if (docNo.StartsWith("ROB"))
             {
@@ -1538,29 +1530,29 @@ namespace WH_Panel
                         var serial = apiResponse["value"].FirstOrDefault();
                         if (serial != null)
                         {
-                            //txtLog.AppendText($"Data for SERIALNAME: {serial}\n");
+                            //txtLog.AppendText($"Data for SERIALNAME: {serial}");
                             uDate = serial["UDATE"]?.ToString();
                             if (uDate == null)
                             {
                                 //txtLog.SelectionColor = Color.Red; // Set the color to red
-                                //txtLog.AppendText($"UDATE is null for SERIALNAME: {docNo}\n");
+                                //txtLog.AppendText($"UDATE is null for SERIALNAME: {docNo}");
                                 //txtLog.ScrollToCaret();
                             }
                         }
                         else
                         {
                             //txtLog.SelectionColor = Color.Red; // Set the color to red
-                            //txtLog.AppendText($"No serial found for SERIALNAME: {docNo}\n");
+                            //txtLog.AppendText($"No serial found for SERIALNAME: {docNo}");
                             //txtLog.ScrollToCaret();
                         }
                     }
                     catch (HttpRequestException ex)
                     {
-                        SafeAppendLog($"Request error: {ex.Message}\n", Color.Red);
+                        SafeAppendLog($"Request error: {ex.Message}", Color.Red);
                     }
                     catch (Exception ex)
                     {
-                        SafeAppendLog($"Request error: {ex.Message}\n", Color.Red);
+                        SafeAppendLog($"Request error: {ex.Message}", Color.Red);
                     }
                 }
             }
@@ -1593,11 +1585,11 @@ namespace WH_Panel
                     }
                     catch (HttpRequestException ex)
                     {
-                        SafeAppendLog($"Request error: {ex.Message}\n", Color.Red);
+                        SafeAppendLog($"Request error: {ex.Message}", Color.Red);
                     }
                     catch (Exception ex)
                     {
-                        SafeAppendLog($"Request error: {ex.Message}\n", Color.Red);
+                        SafeAppendLog($"Request error: {ex.Message}", Color.Red);
                     }
                 }
             }
@@ -1630,11 +1622,11 @@ namespace WH_Panel
                     }
                     catch (HttpRequestException ex)
                     {
-                        SafeAppendLog($"Request error: {ex.Message}\n", Color.Red);
+                        SafeAppendLog($"Request error: {ex.Message}", Color.Red);
                     }
                     catch (Exception ex)
                     {
-                        SafeAppendLog($"Request error: {ex.Message}\n", Color.Red);
+                        SafeAppendLog($"Request error: {ex.Message}", Color.Red);
                     }
                 }
             }
@@ -1642,7 +1634,7 @@ namespace WH_Panel
             {
                 // Handle other document types if needed
                 //txtLog.SelectionColor = Color.Orange; // Set the color to orange
-                //txtLog.AppendText($"Unhandled document type for DOCNO: {docNo}\n");
+                //txtLog.AppendText($"Unhandled document type for DOCNO: {docNo}");
                 //txtLog.ScrollToCaret();
             }
             return uDate;
@@ -1921,7 +1913,7 @@ namespace WH_Panel
                 {
                     //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
              
-                    SafeAppendLog($"Request error: {ex.Message} \n", Color.Red);
+                    SafeAppendLog($"Request error: {ex.Message} ", Color.Red);
                    
                     return;
                 }
@@ -1929,7 +1921,7 @@ namespace WH_Panel
                 {
                     //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
               
-                    SafeAppendLog($"Request error: {ex.Message} \n", Color.Red);
+                    SafeAppendLog($"Request error: {ex.Message} ", Color.Red);
                
                     return;
                 }
@@ -1983,14 +1975,14 @@ namespace WH_Panel
                 {
                     //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                    
-                    SafeAppendLog($"Request error: {ex.Message} \n", Color.Red);
+                    SafeAppendLog($"Request error: {ex.Message} ", Color.Red);
                     
                     return;
                 }
                 catch (Exception ex)
                 {
                   
-                    SafeAppendLog($"Request error: {ex.Message}\n", Color.Red);
+                    SafeAppendLog($"Request error: {ex.Message}", Color.Red);
                  
                     if (ex.Message.Contains("429"))
                     {
@@ -2077,14 +2069,14 @@ namespace WH_Panel
                 catch (HttpRequestException ex)
                 {
                     
-                    SafeAppendLog($"Request error: {ex.Message}\n", Color.Red);
+                    SafeAppendLog($"Request error: {ex.Message}", Color.Red);
                   
                     txtbLog.ForeColor = Color.Green;
                 }
                 catch (Exception ex)
                 {
                  
-                    SafeAppendLog($"Request error: {ex.Message}\n", Color.Red);
+                    SafeAppendLog($"Request error: {ex.Message}", Color.Red);
                 
                 }
             }
@@ -2843,12 +2835,12 @@ namespace WH_Panel
                 }
                 catch (HttpRequestException ex)
                 {
-                    SafeAppendLog($"Request error: {ex.Message}\n", Color.Red);
+                    SafeAppendLog($"Request error: {ex.Message}", Color.Red);
                 
                 }
                 catch (Exception ex)
                 {
-                    SafeAppendLog($"Request error: {ex.Message}\n", Color.Red);
+                    SafeAppendLog($"Request error: {ex.Message}", Color.Red);
                  
                 }
             }
@@ -2922,12 +2914,12 @@ namespace WH_Panel
                 }
                 catch (HttpRequestException ex)
                 {
-                    SafeAppendLog($"Request error: {ex.Message}\n", Color.Red);
+                    SafeAppendLog($"Request error: {ex.Message}", Color.Red);
            
                 }
                 catch (Exception ex)
                 {
-                    SafeAppendLog($"Request error: {ex.Message}\n", Color.Red);
+                    SafeAppendLog($"Request error: {ex.Message}", Color.Red);
                   
                 }
             }
@@ -3028,112 +3020,6 @@ namespace WH_Panel
         }
 
 
-
-        //private async Task LoadDataAndFilterInStock()
-        //{
-        //    InitializeInStockDataGridView();
-
-        //    var robList = new List<DataGridViewRow>();
-        //    var notRobList = new List<DataGridViewRow>();
-
-        //    // Split rows into rob and non-rob
-        //    foreach (DataGridViewRow row in dgwIPNmoves.Rows)
-        //    {
-        //        if (row.Cells["LOGDOCNO"].Value != null &&
-        //            row.Cells["UDATE"].Value != null &&
-        //            DateTime.TryParse(row.Cells["UDATE"].Value.ToString(), out _))
-        //        {
-        //            string docNo = row.Cells["LOGDOCNO"].Value.ToString();
-        //            if (docNo.StartsWith("ROB") || docNo.StartsWith("IC") || docNo.StartsWith("WR") || docNo.StartsWith("SH"))
-        //            {
-        //                if (docNo.StartsWith("IC"))
-        //                {
-        //                    row.Cells["TQUANT"].Value = Math.Abs(Convert.ToInt32(row.Cells["TQUANT"].Value));
-        //                }
-        //                robList.Add(row);
-        //            }
-        //            else
-        //            {
-        //                notRobList.Add(row);
-        //            }
-        //        }
-        //    }
-
-        //    // Sort by transaction date
-        //    robList = robList.OrderBy(r => DateTime.Parse(r.Cells["UDATE"].Value.ToString())).ToList();
-        //    notRobList = notRobList.OrderBy(r => DateTime.Parse(r.Cells["UDATE"].Value.ToString())).ToList();
-
-        //    // Filter out matching pairs
-        //    var filteredNotRobList = new List<DataGridViewRow>(notRobList);
-        //    foreach (var notRobRow in notRobList)
-        //    {
-        //        if (robList.Count == 0) break;
-
-        //        int notRobQty = Convert.ToInt32(notRobRow.Cells["TQUANT"].Value);
-        //        var match = robList.FirstOrDefault(robRow => Convert.ToInt32(robRow.Cells["TQUANT"].Value) == notRobQty);
-
-        //        if (match != null)
-        //        {
-        //            filteredNotRobList.Remove(notRobRow);
-        //            robList.Remove(match);
-        //        }
-        //    }
-
-        //    // Prepare HttpClient once
-        //    using var client = new HttpClient();
-        //    client.DefaultRequestHeaders.Accept.Clear();
-        //    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-        //    dgwINSTOCK.Rows.Clear();
-        //    dgwINSTOCK.Visible = false;
-
-
-        //    // Final filtering while adding to dgwINSTOCK
-        //    foreach (var row in filteredNotRobList)
-        //    {
-        //        string docNo = row.Cells["LOGDOCNO"].Value?.ToString();
-        //        if (string.IsNullOrWhiteSpace(docNo)) continue;
-
-        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{docNo}'&$select=TOWARHSNAME";
-
-        //        try
-        //        {
-        //            var response = await client.GetAsync(url);
-        //            response.EnsureSuccessStatusCode();
-
-        //            var body = await response.Content.ReadAsStringAsync();
-        //            var json = JsonConvert.DeserializeObject<JObject>(body);
-        //            string warhs = json["value"]?.FirstOrDefault()?["TOWARHSNAME"]?.ToString()?.Trim();
-
-        //            if (warhs == "666")
-        //            {
-        //                SafeAppendLog($"Excluded DOCNO {docNo} (TOWARHSNAME = 666)");
-        //                continue;
-        //            }
-
-        //            // Add only if not 666
-        //            var newRow = (DataGridViewRow)row.Clone();
-        //            foreach (DataGridViewCell cell in row.Cells)
-        //            {
-        //                newRow.Cells[cell.ColumnIndex].Value = cell.Value;
-        //            }
-        //            dgwINSTOCK.Rows.Add(newRow);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            SafeAppendLog($"Error checking DOCNO {docNo}: {ex.Message}\n");
-        //        }
-        //    }
-
-
-        //    dgwINSTOCK.Update();
-        //    dgwINSTOCK.Visible = true;
-
-        //}
-
-
         private async Task LoadDataAndFilterInStock()
         {
             //SafeAppendLog("Starting LoadDataAndFilterInStock...");
@@ -3142,109 +3028,9 @@ namespace WH_Panel
             var robList = new List<DataGridViewRow>();
             var notRobList = new List<DataGridViewRow>();
 
-            SafeAppendLog($"Scanning {dgwIPNmoves.Rows.Count} rows in dgwIPNmoves...");
+            SafeAppendLog($"Scanning {dgwIPNmoves.Rows.Count} rows in dgwIPNmoves...",Color.Yellow);
 
 
-
-            //foreach (DataGridViewRow row in dgwIPNmoves.Rows)
-            //{
-            //    if (row.IsNewRow) continue;
-
-            //    var docCell = row.Cells["LOGDOCNO"];
-            //    var udateCell = row.Cells["UDATE"];
-
-            //    string docNo = docCell?.Value?.ToString()?.Trim();
-            //    string udateStr = udateCell?.Value?.ToString()?.Trim();
-
-            //    bool docOk = !string.IsNullOrWhiteSpace(docNo);
-            //    bool udateOk = DateTime.TryParse(udateStr, out _);
-
-            //    if (!docOk || !udateOk)
-            //    {
-            //        SafeAppendLog($"Row skipped: LOGDOCNO='{docNo}', UDATE='{udateStr}', docOk={docOk}, udateOk={udateOk}");
-            //        continue;
-            //    }
-
-
-            //    // Split rows into rob and non-rob
-            //    foreach (DataGridViewRow row in dgwIPNmoves.Rows)
-            //{
-            //    if (row.IsNewRow) continue;
-
-            //    var docNoObj = row.Cells["LOGDOCNO"].Value;
-            //    var dateObj = row.Cells["UDATE"].Value;
-
-            //    if (docNoObj != null && dateObj != null && DateTime.TryParse(dateObj.ToString(), out _))
-            //    {
-            //        string docNo = docNoObj.ToString();
-
-            //        if (docNo.StartsWith("ROB") || docNo.StartsWith("IC") || docNo.StartsWith("WR") || docNo.StartsWith("SH"))
-            //        {
-            //            if (docNo.StartsWith("IC"))
-            //            {
-            //                SafeAppendLog($"Fixing quantity sign for IC doc {docNo}");
-            //                row.Cells["TQUANT"].Value = Math.Abs(Convert.ToInt32(row.Cells["TQUANT"].Value));
-            //            }
-
-            //            robList.Add(row);
-            //        }
-            //        else
-            //        {
-            //            notRobList.Add(row);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        SafeAppendLog("Skipped row due to missing LOGDOCNO or invalid UDATE.");
-            //    }
-            //}
-
-            // Split rows into rob and non-rob
-            //foreach (DataGridViewRow row in dgwIPNmoves.Rows)
-            //{
-            //    if (row.IsNewRow) continue;
-
-            //    var docNoObj = row.Cells["LOGDOCNO"].Value;
-            //    var dateObj = row.Cells["UDATE"].Value;
-
-            //    string docNo = docNoObj?.ToString()?.Trim() ?? "[null]";
-            //    string dateRaw = dateObj?.ToString()?.Trim() ?? "[null]";
-
-            //    if (string.IsNullOrWhiteSpace(docNo))
-            //    {
-            //        SafeAppendLog($"Skipped row: LOGDOCNO is missing or empty.");
-            //        continue;
-            //    }
-
-            //    if (!DateTime.TryParse(dateRaw, out DateTime parsedDate))
-            //    {
-            //        SafeAppendLog($"Skipped row: invalid UDATE. LOGDOCNO: {docNo}, UDATE raw value: '{dateRaw}'");
-            //        continue;
-            //    }
-
-            //    // LOGDOCNO is present, and UDATE is valid
-            //    if (docNo.StartsWith("ROB") || docNo.StartsWith("IC") || docNo.StartsWith("WR") || docNo.StartsWith("SH"))
-            //    {
-            //        if (docNo.StartsWith("IC"))
-            //        {
-            //            SafeAppendLog($"Fixing quantity sign for IC doc {docNo}");
-            //            try
-            //            {
-            //                row.Cells["TQUANT"].Value = Math.Abs(Convert.ToInt32(row.Cells["TQUANT"].Value));
-            //            }
-            //            catch (Exception ex)
-            //            {
-            //                SafeAppendLog($"Error fixing quantity sign for {docNo}: {ex.Message}");
-            //            }
-            //        }
-
-            //        robList.Add(row);
-            //    }
-            //    else
-            //    {
-            //        notRobList.Add(row);
-            //    }
-            //}
 
             // Split rows into rob and non-rob, ignoring UDATE
 foreach (DataGridViewRow row in dgwIPNmoves.Rows)
@@ -3373,13 +3159,13 @@ foreach (DataGridViewRow row in dgwIPNmoves.Rows)
             dgwINSTOCK.Update();
             dgwINSTOCK.Visible = true;
 
-            SafeAppendLog($"Final: {addedCount} rows added to dgwINSTOCK, {excludedCount} rows excluded due to TOWARHSNAME = 666");
+            SafeAppendLog($"Final: {addedCount} rows added to dgwINSTOCK, {excludedCount} rows excluded due to TOWARHSNAME = 666",Color.LimeGreen);
         }
 
 
         private async Task RemoveRowsWithTowarhsname666Async()
         {
-            //  SafeAppendLog("RemoveRowsWithTowarhsname666Async: Start\n");
+            //  SafeAppendLog("RemoveRowsWithTowarhsname666Async: Start");
             var rowsToRemove = new List<DataGridViewRow>();
             var rows = dgwINSTOCK.Rows.Cast<DataGridViewRow>().ToList();
 
@@ -3388,12 +3174,12 @@ foreach (DataGridViewRow row in dgwIPNmoves.Rows)
                 var docNo = row.Cells["LOGDOCNO"].Value?.ToString();
                 if (string.IsNullOrEmpty(docNo))
                 {
-                    SafeAppendLog("Skipping row with empty LOGDOCNO\n");
+                    SafeAppendLog("Skipping row with empty LOGDOCNO");
                     continue;
                 }
 
                 string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{docNo}'&$select=TOWARHSNAME";
-                //SafeAppendLog($"Checking TOWARHSNAME for DOCNO: {docNo}\n");
+                //SafeAppendLog($"Checking TOWARHSNAME for DOCNO: {docNo}");
                 using (HttpClient client = new HttpClient())
                 {
                     try
@@ -3411,37 +3197,37 @@ foreach (DataGridViewRow row in dgwIPNmoves.Rows)
                         if (value != null)
                         {
                             string toWarhsName = value["TOWARHSNAME"]?.ToString();
-                            // SafeAppendLog($"DOCNO: {docNo}, TOWARHSNAME: {toWarhsName}\n");
+                            // SafeAppendLog($"DOCNO: {docNo}, TOWARHSNAME: {toWarhsName}");
                             if (toWarhsName == "666")
                             {
                                 rowsToRemove.Add(row);
-                                // SafeAppendLog($"Marked for removal: DOCNO {docNo} (TOWARHSNAME=666)\n");
+                                // SafeAppendLog($"Marked for removal: DOCNO {docNo} (TOWARHSNAME=666)");
                             }
                         }
                         else
                         {
-                            SafeAppendLog($"No value found for DOCNO: {docNo}\n");
+                            SafeAppendLog($"No value found for DOCNO: {docNo}");
                         }
                     }
                     catch (Exception ex)
                     {
-                        SafeAppendLog($"Error checking DOCNO {docNo}: {ex.Message}\n");
+                        SafeAppendLog($"Error checking DOCNO {docNo}: {ex.Message}");
                     }
                 }
             }
 
 
 
-            // SafeAppendLog($"Rows to remove (TOWARHSNAME=666): {rowsToRemove.Count}\n");
+            // SafeAppendLog($"Rows to remove (TOWARHSNAME=666): {rowsToRemove.Count}");
             foreach (var row in rowsToRemove)
             {
                 var logDocNo = row.Cells["LOGDOCNO"].Value?.ToString(); // Capture before removal
                 dgwINSTOCK.Rows.Remove(row);
-                // SafeAppendLog($"Removed row with DOCNO: {logDocNo}\n");
+                // SafeAppendLog($"Removed row with DOCNO: {logDocNo}");
             }
 
             dgwINSTOCK.Refresh();
-            // SafeAppendLog("RemoveRowsWithTowarhsname666Async: End\n");
+            // SafeAppendLog("RemoveRowsWithTowarhsname666Async: End");
 
 
             dgwINSTOCK.Visible = true; // Show grid after filtering
@@ -3470,7 +3256,7 @@ foreach (DataGridViewRow row in dgwIPNmoves.Rows)
                 if (!string.IsNullOrEmpty(robSerial) && isItemAddedToKit)
                 {
                     await PatchUpdateUdateAsync(robSerial);
-                    MessageBox.Show($"[✓] UDATE updated for ROB: {robSerial} on form close.\n");
+                    MessageBox.Show($"[✓] UDATE updated for ROB: {robSerial} on form close.");
                 }
             }
             catch (ObjectDisposedException)
@@ -3479,7 +3265,7 @@ foreach (DataGridViewRow row in dgwIPNmoves.Rows)
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"[X] Failed to update UDATE for {robSerial}:\n{ex.Message}",
+                MessageBox.Show($"[X] Failed to update UDATE for {robSerial}:{ex.Message}",
                                 "Update Error",
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Warning);
@@ -3625,7 +3411,7 @@ foreach (DataGridViewRow row in dgwIPNmoves.Rows)
         {
             if (string.IsNullOrWhiteSpace(altIpnToAddToKit) || string.IsNullOrWhiteSpace(robWoToInsertInto))
             {
-                SafeAppendLog("⚠️ Missing input parameters for posting ALT item.\n");
+                SafeAppendLog("⚠️ Missing input parameters for posting ALT item.");
                 return;
             }
 
@@ -3653,17 +3439,17 @@ foreach (DataGridViewRow row in dgwIPNmoves.Rows)
                     var response = await client.PostAsync(requestUrl, content);
                     if (response.IsSuccessStatusCode)
                     {
-                        SafeAppendLog($"✅ Successfully added ALT {altIpnToAddToKit} to {robWoToInsertInto} kit.\n");
+                        SafeAppendLog($"✅ Successfully added ALT {altIpnToAddToKit} to {robWoToInsertInto} kit.");
                     }
                     else
                     {
                         var responseBody = await response.Content.ReadAsStringAsync();
-                        SafeAppendLog($"❌ Failed to add ALT item {altIpnToAddToKit} to kit: {response.StatusCode} - {responseBody}\n");
+                        SafeAppendLog($"❌ Failed to add ALT item {altIpnToAddToKit} to kit: {response.StatusCode} - {responseBody}");
                     }
                 }
                 catch (Exception ex)
                 {
-                    SafeAppendLog($"🔥 Exception in postAltItemRowIntoKit: {ex.Message}\n{ex.InnerException?.Message}\n");
+                    SafeAppendLog($"🔥 Exception in postAltItemRowIntoKit: {ex.Message}{ex.InnerException?.Message}");
                 }
             }
         }
