@@ -2262,68 +2262,6 @@ namespace WH_Panel
         }
 
 
-
-
-
-        //private async void btnINSERTlogpart_Click(object sender, EventArgs e)
-        //{
-        //    string partName = txtbIPN.Text.Trim();
-        //    string partDes = txtbDESC.Text.Trim();
-        //    string partMFPN = txtbMFPN.Text.Trim().ToUpper();
-        //    string partMNFDes = txtbMNF.Text.Trim().ToUpper();
-        //    // Validate the required fields
-        //    if (string.IsNullOrEmpty(partName) || string.IsNullOrEmpty(partDes) || string.IsNullOrEmpty(partMFPN) || string.IsNullOrEmpty(partMNFDes))
-        //    {
-        //        MessageBox.Show("Please ensure all fields are filled in before inserting.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //        return;
-        //    }
-        //    // Truncate MNFDES to fit within the 32-character limit
-        //    if (partMNFDes.Length > 32)
-        //    {
-        //        partMNFDes = partMNFDes.Substring(0, 32);
-        //    }
-        //    // Generate MNFNAME by truncating MNFDES to fit within the 10-character limit
-        //    string partMNFName = partMNFDes.Length > 10 ? partMNFDes.Substring(0, 10) : partMNFDes;
-        //    try
-        //    {
-        //        // Measure the time taken for the HTTP POST request
-        //        var stopwatch = Stopwatch.StartNew();
-        //        // Check if the IPN already exists
-        //        int existingPartId = await CheckIfIPNExists(partName);
-        //        if (existingPartId > 0)
-        //        {
-        //            //MessageBox.Show("IPN already exists.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        //            // IPN exists, add the new MFPN
-        //            await AddingAltMFPNtoIPN(existingPartId, partMFPN, partDes, partMNFName, partMNFDes);
-        //            await DisplayInsertedData(existingPartId);
-        //        }
-        //        else
-        //        {
-        //            // Insert into LOGPART and get the generated PART ID
-        //            int partId = await InsertLogPart(partName, partDes);
-        //            // Check if the manufacturer exists, if not, insert it and get the MNF ID
-        //            int mnfId = await GetOrInsertManufacturer(partMNFName, partMNFDes);
-        //            // Insert into PARTMNFONE
-        //            await InsertPartMnfOne(partId, partMFPN, mnfId, partDes);
-        //            // Fetch and display the inserted data
-        //            await DisplayInsertedData(partId);
-        //        }
-        //        stopwatch.Stop();
-        //        // Update the ping label
-        //        UpdatePing(stopwatch.ElapsedMilliseconds);
-        //        btnClear.PerformClick();
-        //    }
-        //    catch (HttpRequestException ex)
-        //    {
-        //        MessageBox.Show($"Request error btnINSERTlogpart_Click: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show($"An error occurred btnINSERTlogpart_Click: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //    }
-        //}
-
-
         private async void btnINSERTlogpart_Click(object sender, EventArgs e)
         {
             string partName = txtbIPN.Text.Trim();
@@ -2718,42 +2656,7 @@ namespace WH_Panel
                 return null;
             }
         }
-        //private async Task<int> InsertLogPart(string partName, string partDes)
-        //{
-        //    var logPartData = new
-        //    {
-        //        PARTNAME = partName,
-        //        PARTDES = partDes,
-        //        TYPE = "R"
-        //    };
-        //    string url = $"{baseUrl}/LOGPART";
-        //    using (HttpClient client = new HttpClient())
-        //    {
-        //        // Set the request headers
-        //        client.DefaultRequestHeaders.Accept.Clear();
-        //        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //        // Set the Authorization header
-        //        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
-        //        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-        //        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-        //        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
 
-
-        //        string usedUser = ApiHelper.AuthenticateClient(client);
-        //        //AppendLog($"User used: {usedUser}\n");
-
-        //        // Serialize the logPartData to JSON
-        //        string jsonLogPartData = JsonConvert.SerializeObject(logPartData);
-        //        var content = new StringContent(jsonLogPartData, Encoding.UTF8, "application/json");
-        //        // Make the HTTP POST request
-        //        HttpResponseMessage response = await client.PostAsync(url, content);
-        //        response.EnsureSuccessStatusCode();
-        //        // Read the response content
-        //        string responseBody = await response.Content.ReadAsStringAsync();
-        //        var responseData = JsonConvert.DeserializeObject<JObject>(responseBody);
-        //        return responseData["PART"].Value<int>(); // Assuming the response contains the generated PART ID
-        //    }
-        //}
 
         private async Task<int> InsertLogPart(string partName, string partDes)
         {
