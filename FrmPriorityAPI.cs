@@ -2773,10 +2773,10 @@ namespace WH_Panel
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
 
-                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
 
-                    string usedUser = ApiHelper.AuthenticateClient(client);
+                    //string usedUser = ApiHelper.AuthenticateClient(client);
                     //// AppendLog($"User used: {usedUser}\n");
 
                     string jsonLogPartData = JsonConvert.SerializeObject(logPartData);
