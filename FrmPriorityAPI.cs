@@ -2643,7 +2643,7 @@ namespace WH_Panel
         }
         private async Task<int> CheckIfIPNExists(string partName)
         {
-            string url = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{partName}'&$select=PARTNAME";
+            string url = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{partName}'&$select=PARTNAME,PART";
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Accept.Clear();
@@ -2660,8 +2660,9 @@ namespace WH_Panel
                 response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync();
                 var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-                var part = apiResponse["value"].FirstOrDefault();
-                if (part != null)
+                
+                var part = apiResponse["value"]?.FirstOrDefault();
+                if (part?["PART"] != null)
                 {
                     return part["PART"].Value<int>();
                 }
@@ -2790,7 +2791,18 @@ namespace WH_Panel
 
                     MessageBox.Show(responseData["PART"].Value<int>().ToString());
 
-                    return responseData["PART"].Value<int>(); // Assuming response contains the PART ID
+                    var partValue = responseData["value"]?.FirstOrDefault()?["PART"]?.Value<int?>();
+
+                    if (partValue.HasValue)
+                    {
+                        MessageBox.Show(partValue.Value.ToString());
+                        return partValue.Value;
+                    }
+                    else
+                    {
+                        Debug.WriteLine($"[InsertLogPart] 'PART' not found in response: {responseData}");
+                        return -2; // Custom code for "PART not found"
+                    }
                 }
                 catch (HttpRequestException ex)
                 {
