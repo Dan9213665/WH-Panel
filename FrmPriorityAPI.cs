@@ -357,11 +357,11 @@ namespace WH_Panel
                 }
                 catch (HttpRequestException ex)
                 {
-                    MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Request error in PopulatePackCombobox: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"An error occurred in PopulatePackCombobox : {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             cmbPackCode.SelectedIndex = 0; // Select the first item by default
@@ -421,13 +421,13 @@ namespace WH_Panel
                     {
                         //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         
-                        formInstance.AppendLog($"Request error: {ex.Message}\n",Color.Red);
+                        formInstance.AppendLog($"Request error in InsertDocumentAsync: {ex.Message}\n",Color.Red);
 
                     }
                     catch (Exception ex)
                     {
                         //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        formInstance.AppendLog($"An error occurred: {ex.Message}\n",Color.Red);
+                        formInstance.AppendLog($"An error occurred InsertDocumentAsync: {ex.Message}\n",Color.Red);
                      
                     }
                 }
@@ -483,13 +483,13 @@ namespace WH_Panel
                     catch (HttpRequestException ex)
                     {
                         //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        formInstance.AppendLog($"Request error: {ex.Message}\n");
+                        formInstance.AppendLog($"Request error TransfertDocumentAsync: {ex.Message}\n");
                         formInstance.txtLog.ScrollToCaret();
                     }
                     catch (Exception ex)
                     {
                         //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        formInstance.AppendLog($"An error occurred: {ex.Message}\n");
+                        formInstance.AppendLog($"An error occurred TransfertDocumentAsync: {ex.Message}\n");
                         formInstance.txtLog.ScrollToCaret();
                     }
                 }
@@ -533,11 +533,11 @@ namespace WH_Panel
                     }
                     catch (HttpRequestException ex)
                     {
-                        MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show($"Request error UpdateDocumentStatusAsync: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show($"An error occurred UpdateDocumentStatusAsync: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
@@ -1074,11 +1074,11 @@ namespace WH_Panel
                     }
                     catch (HttpRequestException ex)
                     {
-                        MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show($"Request error txtbInputMFPN_KeyDown: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show($"An error occurred txtbInputMFPN_KeyDown: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
@@ -1143,11 +1143,11 @@ namespace WH_Panel
                 }
                 catch (HttpRequestException ex)
                 {
-                    MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Request error LoadWarehouseData: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"An error occurred LoadWarehouseData: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             cmbWarehouseList.DroppedDown = true; // Open the dropdown list
@@ -1250,11 +1250,11 @@ namespace WH_Panel
                     }
                     catch (HttpRequestException ex)
                     {
-                       AppendLog($"Request error: {ex.Message}\n", Color.Red);
+                       AppendLog($"Request error comboBox1_SelectedIndexChanged: {ex.Message}\n", Color.Red);
                     }
                     catch (Exception ex)
                     {
-                        AppendLog($"An error occurred: {ex.Message}\n");
+                        AppendLog($"An error occurred comboBox1_SelectedIndexChanged: {ex.Message}\n");
                     }
                 }
             }
@@ -1268,7 +1268,7 @@ namespace WH_Panel
             catch (Exception ex)
             {
 
-                AppendLog($"An error occurred: {ex.Message}\n");
+                AppendLog($"An error occurred comboBox1_SelectedIndexChanged: {ex.Message}\n");
             }
 
 
@@ -1341,11 +1341,11 @@ namespace WH_Panel
                 }
                 catch (HttpRequestException ex)
                 {
-                    MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Request error ExtractMFPNForRow: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"An error occurred ExtractMFPNForRow: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             await Task.Delay(100); // Delay for 1 second
@@ -2252,17 +2252,76 @@ namespace WH_Panel
                 }
                 catch (HttpRequestException ex)
                 {
-                    MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Request error ShowSerialDetails: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"An error occurred ShowSerialDetails: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
 
 
 
+
+
+        //private async void btnINSERTlogpart_Click(object sender, EventArgs e)
+        //{
+        //    string partName = txtbIPN.Text.Trim();
+        //    string partDes = txtbDESC.Text.Trim();
+        //    string partMFPN = txtbMFPN.Text.Trim().ToUpper();
+        //    string partMNFDes = txtbMNF.Text.Trim().ToUpper();
+        //    // Validate the required fields
+        //    if (string.IsNullOrEmpty(partName) || string.IsNullOrEmpty(partDes) || string.IsNullOrEmpty(partMFPN) || string.IsNullOrEmpty(partMNFDes))
+        //    {
+        //        MessageBox.Show("Please ensure all fields are filled in before inserting.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        return;
+        //    }
+        //    // Truncate MNFDES to fit within the 32-character limit
+        //    if (partMNFDes.Length > 32)
+        //    {
+        //        partMNFDes = partMNFDes.Substring(0, 32);
+        //    }
+        //    // Generate MNFNAME by truncating MNFDES to fit within the 10-character limit
+        //    string partMNFName = partMNFDes.Length > 10 ? partMNFDes.Substring(0, 10) : partMNFDes;
+        //    try
+        //    {
+        //        // Measure the time taken for the HTTP POST request
+        //        var stopwatch = Stopwatch.StartNew();
+        //        // Check if the IPN already exists
+        //        int existingPartId = await CheckIfIPNExists(partName);
+        //        if (existingPartId > 0)
+        //        {
+        //            //MessageBox.Show("IPN already exists.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //            // IPN exists, add the new MFPN
+        //            await AddingAltMFPNtoIPN(existingPartId, partMFPN, partDes, partMNFName, partMNFDes);
+        //            await DisplayInsertedData(existingPartId);
+        //        }
+        //        else
+        //        {
+        //            // Insert into LOGPART and get the generated PART ID
+        //            int partId = await InsertLogPart(partName, partDes);
+        //            // Check if the manufacturer exists, if not, insert it and get the MNF ID
+        //            int mnfId = await GetOrInsertManufacturer(partMNFName, partMNFDes);
+        //            // Insert into PARTMNFONE
+        //            await InsertPartMnfOne(partId, partMFPN, mnfId, partDes);
+        //            // Fetch and display the inserted data
+        //            await DisplayInsertedData(partId);
+        //        }
+        //        stopwatch.Stop();
+        //        // Update the ping label
+        //        UpdatePing(stopwatch.ElapsedMilliseconds);
+        //        btnClear.PerformClick();
+        //    }
+        //    catch (HttpRequestException ex)
+        //    {
+        //        MessageBox.Show($"Request error btnINSERTlogpart_Click: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show($"An error occurred btnINSERTlogpart_Click: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //    }
+        //}
 
 
         private async void btnINSERTlogpart_Click(object sender, EventArgs e)
@@ -2271,57 +2330,94 @@ namespace WH_Panel
             string partDes = txtbDESC.Text.Trim();
             string partMFPN = txtbMFPN.Text.Trim().ToUpper();
             string partMNFDes = txtbMNF.Text.Trim().ToUpper();
-            // Validate the required fields
-            if (string.IsNullOrEmpty(partName) || string.IsNullOrEmpty(partDes) || string.IsNullOrEmpty(partMFPN) || string.IsNullOrEmpty(partMNFDes))
+
+            if (string.IsNullOrEmpty(partName) || string.IsNullOrEmpty(partDes) ||
+                string.IsNullOrEmpty(partMFPN) || string.IsNullOrEmpty(partMNFDes))
             {
                 MessageBox.Show("Please ensure all fields are filled in before inserting.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            // Truncate MNFDES to fit within the 32-character limit
+
+            // Truncate to fit DB constraints
             if (partMNFDes.Length > 32)
-            {
                 partMNFDes = partMNFDes.Substring(0, 32);
-            }
-            // Generate MNFNAME by truncating MNFDES to fit within the 10-character limit
+
             string partMNFName = partMNFDes.Length > 10 ? partMNFDes.Substring(0, 10) : partMNFDes;
+
             try
             {
-                // Measure the time taken for the HTTP POST request
                 var stopwatch = Stopwatch.StartNew();
-                // Check if the IPN already exists
-                int existingPartId = await CheckIfIPNExists(partName);
+
+                int existingPartId = -1;
+                try
+                {
+                    existingPartId = await CheckIfIPNExists(partName);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"CheckIfIPNExists failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
                 if (existingPartId > 0)
                 {
-                    //MessageBox.Show("IPN already exists.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    // IPN exists, add the new MFPN
-                    await AddingAltMFPNtoIPN(existingPartId, partMFPN, partDes, partMNFName, partMNFDes);
-                    await DisplayInsertedData(existingPartId);
+                    try
+                    {
+                        await AddingAltMFPNtoIPN(existingPartId, partMFPN, partDes, partMNFName, partMNFDes);
+                        await DisplayInsertedData(existingPartId);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"AddingAltMFPNtoIPN or DisplayInsertedData failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
                 }
                 else
                 {
-                    // Insert into LOGPART and get the generated PART ID
-                    int partId = await InsertLogPart(partName, partDes);
-                    // Check if the manufacturer exists, if not, insert it and get the MNF ID
-                    int mnfId = await GetOrInsertManufacturer(partMNFName, partMNFDes);
-                    // Insert into PARTMNFONE
-                    await InsertPartMnfOne(partId, partMFPN, mnfId, partDes);
-                    // Fetch and display the inserted data
-                    await DisplayInsertedData(partId);
+                    int partId;
+                    try
+                    {
+                        partId = await InsertLogPart(partName, partDes);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"InsertLogPart failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    int mnfId;
+                    try
+                    {
+                        mnfId = await GetOrInsertManufacturer(partMNFName, partMNFDes);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"GetOrInsertManufacturer failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    try
+                    {
+                        await InsertPartMnfOne(partId, partMFPN, mnfId, partDes);
+                        await DisplayInsertedData(partId);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"InsertPartMnfOne or DisplayInsertedData failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
                 }
+
                 stopwatch.Stop();
-                // Update the ping label
                 UpdatePing(stopwatch.ElapsedMilliseconds);
                 btnClear.PerformClick();
             }
-            catch (HttpRequestException ex)
-            {
-                MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"General error in btnINSERTlogpart_Click: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
         private async Task AddingAltMFPNtoIPN(int partId, string partMFPN, string partDes, string mnfName, string mnfDes)
         {
             try
@@ -2621,6 +2717,43 @@ namespace WH_Panel
                 return null;
             }
         }
+        //private async Task<int> InsertLogPart(string partName, string partDes)
+        //{
+        //    var logPartData = new
+        //    {
+        //        PARTNAME = partName,
+        //        PARTDES = partDes,
+        //        TYPE = "R"
+        //    };
+        //    string url = $"{baseUrl}/LOGPART";
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        // Set the request headers
+        //        client.DefaultRequestHeaders.Accept.Clear();
+        //        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //        // Set the Authorization header
+        //        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+        //        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+        //        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+        //        string usedUser = ApiHelper.AuthenticateClient(client);
+        //        //AppendLog($"User used: {usedUser}\n");
+
+        //        // Serialize the logPartData to JSON
+        //        string jsonLogPartData = JsonConvert.SerializeObject(logPartData);
+        //        var content = new StringContent(jsonLogPartData, Encoding.UTF8, "application/json");
+        //        // Make the HTTP POST request
+        //        HttpResponseMessage response = await client.PostAsync(url, content);
+        //        response.EnsureSuccessStatusCode();
+        //        // Read the response content
+        //        string responseBody = await response.Content.ReadAsStringAsync();
+        //        var responseData = JsonConvert.DeserializeObject<JObject>(responseBody);
+        //        return responseData["PART"].Value<int>(); // Assuming the response contains the generated PART ID
+        //    }
+        //}
+
         private async Task<int> InsertLogPart(string partName, string partDes)
         {
             var logPartData = new
@@ -2629,82 +2762,114 @@ namespace WH_Panel
                 PARTDES = partDes,
                 TYPE = "R"
             };
+
             string url = $"{baseUrl}/LOGPART";
+
             using (HttpClient client = new HttpClient())
             {
-                // Set the request headers
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                // Set the Authorization header
-                //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
-                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-                //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                try
+                {
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
 
-                string usedUser = ApiHelper.AuthenticateClient(client);
-                //AppendLog($"User used: {usedUser}\n");
+                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
 
-                // Serialize the logPartData to JSON
-                string jsonLogPartData = JsonConvert.SerializeObject(logPartData);
-                var content = new StringContent(jsonLogPartData, Encoding.UTF8, "application/json");
-                // Make the HTTP POST request
-                HttpResponseMessage response = await client.PostAsync(url, content);
-                response.EnsureSuccessStatusCode();
-                // Read the response content
-                string responseBody = await response.Content.ReadAsStringAsync();
-                var responseData = JsonConvert.DeserializeObject<JObject>(responseBody);
-                return responseData["PART"].Value<int>(); // Assuming the response contains the generated PART ID
+                    string usedUser = ApiHelper.AuthenticateClient(client);
+                    //// AppendLog($"User used: {usedUser}\n");
+
+                    string jsonLogPartData = JsonConvert.SerializeObject(logPartData);
+                    var content = new StringContent(jsonLogPartData, Encoding.UTF8, "application/json");
+
+                    HttpResponseMessage response = await client.PostAsync(url, content);
+                    response.EnsureSuccessStatusCode();
+
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    var responseData = JsonConvert.DeserializeObject<JObject>(responseBody);
+
+                    MessageBox.Show(responseData["PART"].Value<int>().ToString());
+
+                    return responseData["PART"].Value<int>(); // Assuming response contains the PART ID
+                }
+                catch (HttpRequestException ex)
+                {
+                    // Handle networking or server issues
+                    Debug.WriteLine($"[InsertLogPart] HTTP error: {ex.Message}");
+                }
+                catch (JsonException ex)
+                {
+                    // Handle JSON serialization/deserialization errors
+                    Debug.WriteLine($"[InsertLogPart] JSON error: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    // Catch-all for anything else
+                    Debug.WriteLine($"[InsertLogPart] Unexpected error: {ex.Message}");
+                }
             }
+
+            return -1; // Indicates failure
         }
+
+
+
         private async Task<int> GetOrInsertManufacturer(string partMNFName, string partMNFDes)
         {
-            string url = $"{baseUrl}/MNFCTR?$filter=MNFNAME eq '{partMNFName}'";
-            using (HttpClient client = new HttpClient())
-            {
-                // Set the request headers
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                // Set the Authorization header
-                //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
-                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-                //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-
-                string usedUser = ApiHelper.AuthenticateClient(client);
-                //AppendLog($"User used: {usedUser}\n");
-
-                // Make the HTTP GET request
-                HttpResponseMessage response = await client.GetAsync(url);
-                response.EnsureSuccessStatusCode();
-                // Read the response content
-                string responseBody = await response.Content.ReadAsStringAsync();
-                var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-                var manufacturer = apiResponse["value"].FirstOrDefault();
-                if (manufacturer != null)
+            try {
+                string url = $"{baseUrl}/MNFCTR?$filter=MNFNAME eq '{partMNFName}'";
+                using (HttpClient client = new HttpClient())
                 {
-                    return manufacturer["MNF"].Value<int>();
-                }
-                else
-                {
-                    // Insert the manufacturer if it does not exist
-                    var mnfData = new
-                    {
-                        MNFNAME = partMNFName,
-                        MNFDES = partMNFDes
-                    };
-                    string insertUrl = $"{baseUrl}/MNFCTR";
-                    string jsonMnfData = JsonConvert.SerializeObject(mnfData);
-                    var content = new StringContent(jsonMnfData, Encoding.UTF8, "application/json");
-                    HttpResponseMessage insertResponse = await client.PostAsync(insertUrl, content);
-                    insertResponse.EnsureSuccessStatusCode();
+                    // Set the request headers
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    // Set the Authorization header
+                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                    string usedUser = ApiHelper.AuthenticateClient(client);
+                    //AppendLog($"User used: {usedUser}\n");
+
+                    // Make the HTTP GET request
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
                     // Read the response content
-                    string insertResponseBody = await insertResponse.Content.ReadAsStringAsync();
-                    var insertResponseData = JsonConvert.DeserializeObject<JObject>(insertResponseBody);
-                    return insertResponseData["MNF"].Value<int>(); // Assuming the response contains the generated MNF ID
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+                    var manufacturer = apiResponse["value"].FirstOrDefault();
+                    if (manufacturer != null)
+                    {
+                        return manufacturer["MNF"].Value<int>();
+                    }
+                    else
+                    {
+                        // Insert the manufacturer if it does not exist
+                        var mnfData = new
+                        {
+                            MNFNAME = partMNFName,
+                            MNFDES = partMNFDes
+                        };
+                        string insertUrl = $"{baseUrl}/MNFCTR";
+                        string jsonMnfData = JsonConvert.SerializeObject(mnfData);
+                        var content = new StringContent(jsonMnfData, Encoding.UTF8, "application/json");
+                        HttpResponseMessage insertResponse = await client.PostAsync(insertUrl, content);
+                        insertResponse.EnsureSuccessStatusCode();
+                        // Read the response content
+                        string insertResponseBody = await insertResponse.Content.ReadAsStringAsync();
+                        var insertResponseData = JsonConvert.DeserializeObject<JObject>(insertResponseBody);
+                        return insertResponseData["MNF"].Value<int>(); // Assuming the response contains the generated MNF ID
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"GetOrInsertManufacturer error: {ex.Message}");
+                return 0;
+            }
+        
         }
         private async Task InsertPartMnfOne(int partId, string partMFPN, int mnfId, string partDes)
         {
@@ -4020,12 +4185,12 @@ namespace WH_Panel
                 }
                 catch (HttpRequestException ex)
                 {
-                   AppendLog($"Request error: {ex.Message}\n", Color.Red);
+                   AppendLog($"Request error btnAVL_Click: {ex.Message}\n", Color.Red);
                     return;
                 }
                 catch (Exception ex)
                 {
-                    AppendLog($"An error occurred: {ex.Message}\n");
+                    AppendLog($"An error occurred btnAVL_Click: {ex.Message}\n");
                     return;
                 }
             }
@@ -4485,12 +4650,12 @@ namespace WH_Panel
                 }
                 catch (HttpRequestException ex)
                 {
-                    MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Request error GetManufacturerNameAsync: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return null;
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"An error occurred GetManufacturerNameAsync: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return null;
                 }
             }
