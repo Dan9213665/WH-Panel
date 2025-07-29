@@ -56,7 +56,9 @@
             lblPing = new Label();
             txtbLog = new RichTextBox();
             btnInStock = new Button();
-            tpmProgressBar = new ProgressBar();
+            progressBarContainer = new Panel();
+            progressBarFill = new Panel();
+            lblTpmText = new Label();
             groupBox2 = new GroupBox();
             tableLayoutPanel5 = new TableLayoutPanel();
             rtxtbComments = new RichTextBox();
@@ -74,6 +76,8 @@
             tableLayoutPanel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgwBom).BeginInit();
             tableLayoutPanel4.SuspendLayout();
+            progressBarContainer.SuspendLayout();
+            progressBarFill.SuspendLayout();
             groupBox2.SuspendLayout();
             tableLayoutPanel5.SuspendLayout();
             tableLayoutPanel6.SuspendLayout();
@@ -427,7 +431,7 @@
             tableLayoutPanel4.Controls.Add(lblPing, 1, 0);
             tableLayoutPanel4.Controls.Add(txtbLog, 0, 1);
             tableLayoutPanel4.Controls.Add(btnInStock, 0, 0);
-            tableLayoutPanel4.Controls.Add(tpmProgressBar, 0, 2);
+            tableLayoutPanel4.Controls.Add(progressBarContainer, 0, 2);
             tableLayoutPanel4.Dock = DockStyle.Fill;
             tableLayoutPanel4.Location = new Point(703, 3);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
@@ -474,14 +478,35 @@
             btnInStock.Visible = false;
             btnInStock.Click += btnInStock_Click;
             // 
-            // tpmProgressBar
+            // progressBarContainer
             // 
-            tableLayoutPanel4.SetColumnSpan(tpmProgressBar, 2);
-            tpmProgressBar.Dock = DockStyle.Fill;
-            tpmProgressBar.Location = new Point(3, 221);
-            tpmProgressBar.Name = "tpmProgressBar";
-            tpmProgressBar.Size = new Size(456, 15);
-            tpmProgressBar.TabIndex = 8;
+            tableLayoutPanel4.SetColumnSpan(progressBarContainer, 2);
+            progressBarContainer.Controls.Add(progressBarFill);
+            progressBarContainer.Dock = DockStyle.Fill;
+            progressBarContainer.Location = new Point(3, 221);
+            progressBarContainer.Name = "progressBarContainer";
+            progressBarContainer.Size = new Size(456, 15);
+            progressBarContainer.TabIndex = 8;
+            // 
+            // progressBarFill
+            // 
+            progressBarFill.Controls.Add(lblTpmText);
+            progressBarFill.Dock = DockStyle.Left;
+            progressBarFill.Location = new Point(0, 0);
+            progressBarFill.Name = "progressBarFill";
+            progressBarFill.Size = new Size(456, 15);
+            progressBarFill.TabIndex = 0;
+            // 
+            // lblTpmText
+            // 
+            lblTpmText.AutoSize = true;
+            lblTpmText.Dock = DockStyle.Left;
+            lblTpmText.ForeColor = Color.White;
+            lblTpmText.Location = new Point(0, 0);
+            lblTpmText.Name = "lblTpmText";
+            lblTpmText.Size = new Size(52, 15);
+            lblTpmText.TabIndex = 0;
+            lblTpmText.Text = "Progress";
             // 
             // groupBox2
             // 
@@ -634,6 +659,9 @@
             ((System.ComponentModel.ISupportInitialize)dgwBom).EndInit();
             tableLayoutPanel4.ResumeLayout(false);
             tableLayoutPanel4.PerformLayout();
+            progressBarContainer.ResumeLayout(false);
+            progressBarFill.ResumeLayout(false);
+            progressBarFill.PerformLayout();
             groupBox2.ResumeLayout(false);
             tableLayoutPanel5.ResumeLayout(false);
             tableLayoutPanel6.ResumeLayout(false);
@@ -685,6 +713,8 @@
         private TableLayoutPanel tableLayoutPanel6;
         private GroupBox groupBox3;
         private DataGridView dgwINSTOCK;
-        private ProgressBar tpmProgressBar;
+        private Panel progressBarContainer;
+        private Panel progressBarFill;
+        private Label lblTpmText;
     }
 }

@@ -69,6 +69,7 @@ using Point = System.Drawing.Point;
 using Range = Microsoft.Office.Interop.Excel.Range;
 using Rectangle = System.Drawing.Rectangle;
 using TextBox = System.Windows.Forms.TextBox;
+using Timer = System.Threading.Timer;
 using ToolTip = System.Windows.Forms.ToolTip;
 namespace WH_Panel
 {
@@ -111,6 +112,8 @@ namespace WH_Panel
             var switchToAltItem = new ToolStripMenuItem("SWITCH TO ALT");
             switchToAltItem.Click += SwitchToAltItem_Click;
             contextMenuSwitchToAlt.Items.Add(switchToAltItem);
+
+            
         }
         private void FrmPriorityBom_Load(object sender, EventArgs e)
         {
@@ -127,6 +130,7 @@ namespace WH_Panel
             {
                 cmbROBxList.SelectedItem = cmbROBxList.Items.Cast<Serial>().FirstOrDefault(s => s.SERIALNAME == SelectedSerialName);
             }
+            InitializeTpmMonitoring();
         }
         public class Serial
         {
@@ -197,7 +201,7 @@ namespace WH_Panel
 
                     string usedUser = ApiHelper.AuthenticateClient(client);
                     // string usedUser = ApiHelper.AuthenticateClient(client);
-
+                    RegisterTransaction(usedUser); // Log this transaction timestamp
                     // Make the HTTP GET request
                     HttpResponseMessage response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
@@ -452,7 +456,7 @@ namespace WH_Panel
 
                         string usedUser = ApiHelper.AuthenticateClient(client);
                         // string usedUser = ApiHelper.AuthenticateClient(client);
-
+                        RegisterTransaction(usedUser); // Log this transaction timestamp
                         // Make the HTTP GET request
                         HttpResponseMessage response = await client.GetAsync(url);
                         response.EnsureSuccessStatusCode();
@@ -569,6 +573,7 @@ namespace WH_Panel
 
 
                     string usedUser = ApiHelper.AuthenticateClient(client);
+                    RegisterTransaction(usedUser); // Log this transaction timestamp
                     // string usedUser = ApiHelper.AuthenticateClient(client);
                     // Make the HTTP GET request
                     HttpResponseMessage response = await client.GetAsync(avlUrl);
@@ -648,6 +653,7 @@ namespace WH_Panel
 
                     string usedUser = ApiHelper.AuthenticateClient(client);
                     // string usedUser = ApiHelper.AuthenticateClient(client);
+                    RegisterTransaction(usedUser); // Log this transaction timestamp
                     // Make the HTTP GET request
                     HttpResponseMessage response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
@@ -727,6 +733,7 @@ namespace WH_Panel
 
                     string usedUser = ApiHelper.AuthenticateClient(client);
                     // string usedUser = ApiHelper.AuthenticateClient(client);
+                    RegisterTransaction(usedUser); // Log this transaction timestamp
                     // Make the HTTP GET request
                     HttpResponseMessage response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
@@ -824,6 +831,11 @@ namespace WH_Panel
 
 
                         string usedUser = ApiHelper.AuthenticateClient(client);
+
+                        // Register the transaction for that user immediately
+                        RegisterTransaction(usedUser);
+
+
                         // string usedUser = ApiHelper.AuthenticateClient(client);
                         // Make the HTTP GET request for part details
                         HttpResponseMessage partResponse = await client.GetAsync(partUrl);
@@ -1095,7 +1107,7 @@ namespace WH_Panel
 
                         string usedUser = ApiHelper.AuthenticateClient(client);
                         // string usedUser = ApiHelper.AuthenticateClient(client);
-
+                        RegisterTransaction(usedUser); // Log this transaction timestamp
                         // Measure the time taken for the HTTP GET request
                         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
                         // Make the HTTP GET request for stock movements
@@ -1289,7 +1301,7 @@ namespace WH_Panel
 
                     string usedUser = ApiHelper.AuthenticateClient(client);
                     // string usedUser = ApiHelper.AuthenticateClient(client);
-
+                    RegisterTransaction(usedUser); // Log this transaction timestamp
                     // Make the HTTP GET request
                     HttpResponseMessage response = await client.GetAsync(batchUrl);
                     response.EnsureSuccessStatusCode();
@@ -1462,6 +1474,7 @@ namespace WH_Panel
 
 
                     string usedUser = ApiHelper.AuthenticateClient(client);
+                    RegisterTransaction(usedUser); // Log this transaction timestamp
                     // string usedUser = ApiHelper.AuthenticateClient(client);
                     // Make the HTTP GET request
                     HttpResponseMessage response = await client.GetAsync(url);
@@ -1563,7 +1576,7 @@ namespace WH_Panel
 
                         string usedUser = ApiHelper.AuthenticateClient(client);
                         // string usedUser = ApiHelper.AuthenticateClient(client);
-
+                        RegisterTransaction(usedUser); // Log this transaction timestamp
                         // Make the HTTP GET request
                         HttpResponseMessage response = await client.GetAsync(url);
                         response.EnsureSuccessStatusCode();
@@ -1618,7 +1631,7 @@ namespace WH_Panel
 
                         string usedUser = ApiHelper.AuthenticateClient(client);
                         // string usedUser = ApiHelper.AuthenticateClient(client);
-
+                        RegisterTransaction(usedUser); // Log this transaction timestamp
                         // Make the HTTP GET request
                         HttpResponseMessage response = await client.GetAsync(url);
                         response.EnsureSuccessStatusCode();
@@ -1660,7 +1673,7 @@ namespace WH_Panel
 
                         string usedUser = ApiHelper.AuthenticateClient(client);
                         // string usedUser = ApiHelper.AuthenticateClient(client);
-
+                        RegisterTransaction(usedUser); // Log this transaction timestamp
                         // Make the HTTP GET request
                         HttpResponseMessage response = await client.GetAsync(url);
                         response.EnsureSuccessStatusCode();
@@ -1832,49 +1845,234 @@ namespace WH_Panel
                 //
             }
         }
-  
 
 
-        // At class level:
-        private readonly Queue<DateTime> transactionTimestamps = new Queue<DateTime>();
-        private const int maxTpm = 90; // Max allowed transactions per minute
 
-        private bool CanProceedWithTransaction()
+
+        ////private const int maxTpm = 90; // Max allowed transactions per minute
+
+        //private bool CanProceedWithTransaction()
+        //{
+        //    DateTime now = DateTime.Now;
+
+        //    // Remove timestamps older than 60 seconds
+        //    while (transactionTimestamps.Count > 0 && (now - transactionTimestamps.Peek()).TotalSeconds > 60)
+        //    {
+        //        transactionTimestamps.Dequeue();
+        //    }
+
+        //    return transactionTimestamps.Count < maxTpm;
+        //}
+
+
+
+        //// Add this to your form
+        //private const int maxTpm = 90;            // UI display limit
+        //private const int maxTpmGlobal = 100;     // Global hard limit
+
+        //private readonly Queue<DateTime> transactionTimestamps = new();
+        //private readonly Dictionary<string, Queue<DateTime>> userTransactionTimestamps = new();
+
+        //private System.Windows.Forms.Timer tpmUpdateTimer;
+
+        //// Call this once in your form constructor or Load event
+        //private void InitializeTpmMonitoring()
+        //{
+        //    tpmUpdateTimer = new System.Windows.Forms.Timer();
+        //    tpmUpdateTimer.Interval = 1000; // 1 second
+        //    tpmUpdateTimer.Tick += TpmUpdateTimer_Tick;
+        //    tpmUpdateTimer.Start();
+        //}
+
+        //// Register transaction per request
+        //private void RegisterTransaction(string apiUsername)
+        //{
+        //    DateTime now = DateTime.Now;
+
+        //    // Global queue
+        //    transactionTimestamps.Enqueue(now);
+
+        //    // User-specific queue
+        //    if (!userTransactionTimestamps.ContainsKey(apiUsername))
+        //        userTransactionTimestamps[apiUsername] = new Queue<DateTime>();
+
+        //    userTransactionTimestamps[apiUsername].Enqueue(now);
+
+        //    // Immediate cleanup
+        //    CleanOldTransactions();
+        //    UpdateTpmIndicator();
+        //}
+
+        //// Timer tick: background cleanup and UI update
+        //private void TpmUpdateTimer_Tick(object sender, EventArgs e)
+        //{
+        //    CleanOldTransactions();
+        //    UpdateTpmIndicator();
+        //}
+
+        //// Removes outdated (older than 60 sec) timestamps
+        //private void CleanOldTransactions()
+        //{
+        //    DateTime now = DateTime.Now;
+
+        //    // Global
+        //    while (transactionTimestamps.Count > 0 && (now - transactionTimestamps.Peek()).TotalSeconds > 60)
+        //        transactionTimestamps.Dequeue();
+
+        //    // Per user
+        //    foreach (var userQueue in userTransactionTimestamps.Values)
+        //    {
+        //        while (userQueue.Count > 0 && (now - userQueue.Peek()).TotalSeconds > 60)
+        //            userQueue.Dequeue();
+        //    }
+        //}
+
+        //// Update progress bar visual
+        //private void UpdateTpmIndicator()
+        //{
+        //    int currentTpm = transactionTimestamps.Count;
+
+        //    tpmProgressBar.Maximum = maxTpm;
+        //    tpmProgressBar.Value = Math.Min(currentTpm, maxTpm);
+        //    //tpmProgressBar.ToolTipText = $"Current TPM: {currentTpm} / {maxTpm}";
+
+        //    // Set color based on threshold
+        //    if (currentTpm < maxTpm * 0.7)
+        //        tpmProgressBar.ForeColor = Color.Green;
+        //    else if (currentTpm < maxTpm * 0.9)
+        //        tpmProgressBar.ForeColor = Color.Orange;
+        //    else
+        //        tpmProgressBar.ForeColor = Color.Red;
+        //}
+
+        // Constants
+        private const int maxTpm = 200;            // Soft UI limit
+        private const int maxTpmGlobal = 200;     // Global hard limit
+        private readonly Queue<DateTime> transactionTimestamps = new();
+        private readonly Dictionary<string, Queue<DateTime>> userTransactionTimestamps = new();
+
+        // Timer for periodic cleanup and UI update
+        private System.Windows.Forms.Timer tpmUpdateTimer;
+
+        // Initialize in Form_Load or constructor
+        private void InitializeTpmMonitoring()
+        {
+            tpmUpdateTimer = new System.Windows.Forms.Timer();
+            tpmUpdateTimer.Interval = 1000; // 1 second
+            tpmUpdateTimer.Tick += TpmUpdateTimer_Tick;
+            tpmUpdateTimer.Start();
+        }
+
+        // Call when API request is made
+        private void RegisterTransaction(string apiUsername)
         {
             DateTime now = DateTime.Now;
 
-            // Remove timestamps older than 60 seconds
-            while (transactionTimestamps.Count > 0 && (now - transactionTimestamps.Peek()).TotalSeconds > 60)
+            // Global
+            transactionTimestamps.Enqueue(now);
+
+            // Per user
+            if (!userTransactionTimestamps.ContainsKey(apiUsername))
+                userTransactionTimestamps[apiUsername] = new Queue<DateTime>();
+
+            userTransactionTimestamps[apiUsername].Enqueue(now);
+
+            CleanOldTransactions();
+            int currentTpm = transactionTimestamps.Count;
+            UpdateTpmIndicator(currentTpm);
+
+            if (transactionTimestamps.Count >= maxTpmGlobal)
             {
+                ShowTpmLimitWarning();
+            }
+        }
+
+        // Timer tick event
+        private void TpmUpdateTimer_Tick(object sender, EventArgs e)
+        {
+            CleanOldTransactions();
+            int currentTpm = transactionTimestamps.Count;
+            UpdateTpmIndicator(currentTpm);
+        }
+
+        // Clean old timestamps (older than 60s)
+        private void CleanOldTransactions()
+        {
+            DateTime now = DateTime.Now;
+
+            // Global
+            while (transactionTimestamps.Count > 0 && (now - transactionTimestamps.Peek()).TotalSeconds > 60)
                 transactionTimestamps.Dequeue();
+
+            // Per user
+            foreach (var key in userTransactionTimestamps.Keys.ToList())
+            {
+                var queue = userTransactionTimestamps[key];
+                while (queue.Count > 0 && (now - queue.Peek()).TotalSeconds > 60)
+                    queue.Dequeue();
+            }
+        }
+        private ToolTip toolTip1 = new ToolTip();
+
+        private void UpdateTpmIndicator(int currentTpm)
+        {
+            int maxWidth = progressBarContainer.Width;
+            int fillWidth = (int)(maxWidth * Math.Min(currentTpm, maxTpm) / (double)maxTpm);
+
+            progressBarFill.Width = fillWidth;
+
+            if (currentTpm < 150)
+                progressBarFill.BackColor = Color.Green;
+            else if (currentTpm < 180)
+                progressBarFill.BackColor = Color.Orange;
+            else
+                progressBarFill.BackColor = Color.Red;
+
+            int cooldownSeconds = GetCooldownSeconds(maxTpmGlobal);
+
+            string cooldownText = cooldownSeconds > 0 ? $"Cooldown: {cooldownSeconds}s" : "Ready";
+
+            toolTip1.SetToolTip(progressBarContainer, $"TPM: {currentTpm} / {maxTpm} (Global limit: {maxTpmGlobal})\n{cooldownText}");
+
+            lblTpmText.Text = $"{currentTpm} / {maxTpmGlobal} {(cooldownSeconds > 0 ? $" - Cooldown: {cooldownSeconds}s" : "")}";
+        }
+
+
+        private int GetCooldownSeconds(int maxLimit)
+        {
+            if (transactionTimestamps.Count < maxLimit)
+                return 0; // No cooldown needed
+
+            DateTime now = DateTime.Now;
+            int itemsToRemove = transactionTimestamps.Count - maxLimit + 1; // +1 to get below the limit
+
+            // Oldest timestamp that needs to "expire" for count to go below limit
+            DateTime targetTimestamp = transactionTimestamps.ElementAt(itemsToRemove - 1);
+
+            int cooldown = (int)(60 - (now - targetTimestamp).TotalSeconds);
+            return cooldown > 0 ? cooldown : 0;
+        }
+
+
+        // Optional: Show visual warning when limit breached
+        private void ShowTpmLimitWarning()
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new Action(ShowTpmLimitWarning));
+                return;
             }
 
-            return transactionTimestamps.Count < maxTpm;
+            SafeAppendLog("Transaction rate limit exceeded! TPM has reached the global limit per user.",Color.Red);
         }
 
-        private void RegisterTransaction()
+        // Check if allowed before sending transaction
+        private bool CanProceedWithTransaction()
         {
-            transactionTimestamps.Enqueue(DateTime.Now);
-            UpdateTpmIndicator();
+            CleanOldTransactions(); // Always keep queue clean
+            return transactionTimestamps.Count < maxTpmGlobal;
         }
 
-        private void UpdateTpmIndicator()
-        {
-            int currentTpm = transactionTimestamps.Count;
-
-            // Assuming you have a ProgressBar control named tpmProgressBar:
-            tpmProgressBar.Maximum = maxTpm;
-            tpmProgressBar.Value = Math.Min(currentTpm, maxTpm);
-
-            // Color coding the ProgressBar - requires some custom drawing or using a third-party control
-            // For simplicity, you might change its ForeColor or BackColor here
-            if (currentTpm < maxTpm * 0.7)
-                tpmProgressBar.ForeColor = Color.Green;
-            else if (currentTpm < maxTpm * 0.9)
-                tpmProgressBar.ForeColor = Color.Orange;
-            else
-                tpmProgressBar.ForeColor = Color.Red;
-        }
 
         // Updated event handler:
         private async void txtbINPUTqty_KeyDown(object sender, KeyEventArgs e)
@@ -1905,7 +2103,7 @@ namespace WH_Panel
 
                             await AddItemToKit(partName, serialName, neededQty, qty, filteredRow, wh);
 
-                            RegisterTransaction(); // Log this transaction timestamp
+                            
 
                             txtbINPUTqty.Clear();
                             txtbInputIPN.Clear();
@@ -1948,6 +2146,11 @@ namespace WH_Panel
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+                    RegisterTransaction("Api2"); // Log this transaction timestamp
+
+
                     // Make the HTTP GET request to check quantity availability
                     HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
                     string checkResponseBody = await checkResponse.Content.ReadAsStringAsync();
@@ -1998,6 +2201,8 @@ namespace WH_Panel
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                    RegisterTransaction("Api2"); // Log this transaction timestamp
                     // Make the HTTP GET request to retrieve the TRANSORDER_K_SUBFORM data
                     HttpResponseMessage getResponse = await client.GetAsync(getUrl);
                     string getResponseBody = await getResponse.Content.ReadAsStringAsync();
@@ -2058,6 +2263,8 @@ namespace WH_Panel
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                    RegisterTransaction("Api2"); // Log this transaction timestamp
                     // Create the JSON payload for the PATCH request
                     var payload = new
                     {
@@ -2871,7 +3078,7 @@ namespace WH_Panel
 
                     string usedUser = ApiHelper.AuthenticateClient(client);
                     // string usedUser = ApiHelper.AuthenticateClient(client);
-
+                    RegisterTransaction(usedUser); // Log this transaction timestamp
                     // Make the HTTP GET request
                     HttpResponseMessage response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
@@ -2960,6 +3167,7 @@ namespace WH_Panel
                     // Set the Authorization header
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    RegisterTransaction("Api2"); // Log this transaction timestamp
                     // Create the JSON payload for the PATCH request
                     var payload = new
                     {
@@ -3163,7 +3371,7 @@ foreach (DataGridViewRow row in dgwIPNmoves.Rows)
 
             string usedUser = ApiHelper.AuthenticateClient(client);
             // string usedUser = ApiHelper.AuthenticateClient(client);
-
+          
 
             dgwINSTOCK.Rows.Clear();
             dgwINSTOCK.Visible = false;
@@ -3186,7 +3394,7 @@ foreach (DataGridViewRow row in dgwIPNmoves.Rows)
                 {
                     var response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
-
+                    RegisterTransaction(usedUser);
                     var body = await response.Content.ReadAsStringAsync();
                     var json = JsonConvert.DeserializeObject<JObject>(body);
                     string warhs = json["value"]?.FirstOrDefault()?["TOWARHSNAME"]?.ToString()?.Trim();
@@ -3351,7 +3559,7 @@ foreach (DataGridViewRow row in dgwIPNmoves.Rows)
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
+                RegisterTransaction("Api2");
                 var json = JsonConvert.SerializeObject(patchData);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
@@ -3432,8 +3640,8 @@ foreach (DataGridViewRow row in dgwIPNmoves.Rows)
 
                     HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
                     checkResponse.EnsureSuccessStatusCode();
-
-                    string checkResponseBody = await checkResponse.Content.ReadAsStringAsync();
+                        RegisterTransaction("Api2");
+                        string checkResponseBody = await checkResponse.Content.ReadAsStringAsync();
                     var checkApiResponse = JObject.Parse(checkResponseBody);
 
                     var warehouse = checkApiResponse["value"]?.FirstOrDefault();
@@ -3497,12 +3705,14 @@ foreach (DataGridViewRow row in dgwIPNmoves.Rows)
 
                 var jsonPayload = JsonConvert.SerializeObject(payload);
                 var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-
+                
                 try
                 {
                     var response = await client.PostAsync(requestUrl, content);
+                    RegisterTransaction("Api2");
                     if (response.IsSuccessStatusCode)
                     {
+                        
                         SafeAppendLog($"✅ Successfully added ALT {altIpnToAddToKit} to {robWoToInsertInto} kit.");
                     }
                     else
@@ -3532,6 +3742,7 @@ foreach (DataGridViewRow row in dgwIPNmoves.Rows)
             try
             {
                 var getResponse = await client.GetAsync(filterUrl);
+                RegisterTransaction("Api2");
                 getResponse.EnsureSuccessStatusCode();
 
                 var json = await getResponse.Content.ReadAsStringAsync();
