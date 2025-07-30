@@ -2581,7 +2581,7 @@ namespace WH_Panel
         }
         private async Task<int> CheckIfIPNExists(string partName)
         {
-            string url = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{partName}'&$select=PARTNAME,PART";
+            string url = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{partName}'";
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Accept.Clear();
