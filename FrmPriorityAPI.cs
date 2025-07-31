@@ -2692,7 +2692,7 @@ namespace WH_Panel
                     string responseBody = await response.Content.ReadAsStringAsync();
                     var responseData = JsonConvert.DeserializeObject<JObject>(responseBody);
 
-                    MessageBox.Show(responseData["PART"].Value<int>().ToString());
+                    //MessageBox.Show(responseData["PART"].Value<int>().ToString());
 
                     var partValue = responseData["value"]?.FirstOrDefault()?["PART"]?.Value<int?>();
 
