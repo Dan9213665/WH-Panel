@@ -1277,8 +1277,32 @@ namespace WH_Panel
         }
 
 
+        //void AppendLog(string message, Color? color = null)
+        //{
+        //    if (color == null)
+        //    {
+        //        txtLog.AppendText(message);
+        //    }
+        //    else
+        //    {
+        //        int start = txtLog.TextLength;
+        //        txtLog.AppendText(message);
+        //        int end = txtLog.TextLength;
+
+        //        txtLog.Select(start, end - start);
+        //        txtLog.SelectionColor = color.Value;
+        //        txtLog.SelectionLength = 0; // reset selection
+        //    }
+        //    txtLog.ScrollToCaret();
+        //}
+
+
         void AppendLog(string message, Color? color = null)
         {
+            // Ensure message ends with a newline
+            if (!message.EndsWith("\n"))
+                message += "\n";
+
             if (color == null)
             {
                 txtLog.AppendText(message);
@@ -1293,6 +1317,7 @@ namespace WH_Panel
                 txtLog.SelectionColor = color.Value;
                 txtLog.SelectionLength = 0; // reset selection
             }
+
             txtLog.ScrollToCaret();
         }
 
@@ -2658,6 +2683,75 @@ namespace WH_Panel
         }
 
 
+        //private async Task<int> InsertLogPart(string partName, string partDes)
+        //{
+        //    var logPartData = new
+        //    {
+        //        PARTNAME = partName,
+        //        PARTDES = partDes,
+        //        TYPE = "R"
+        //    };
+
+        //    string url = $"{baseUrl}/LOGPART";
+
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        try
+        //        {
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+
+        //            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+        //            //string usedUser = ApiHelper.AuthenticateClient(client);
+        //            //// AppendLog($"User used: {usedUser}\n");
+
+        //            string jsonLogPartData = JsonConvert.SerializeObject(logPartData);
+        //            var content = new StringContent(jsonLogPartData, Encoding.UTF8, "application/json");
+
+        //            HttpResponseMessage response = await client.PostAsync(url, content);
+        //            response.EnsureSuccessStatusCode();
+
+        //            string responseBody = await response.Content.ReadAsStringAsync();
+        //            var responseData = JsonConvert.DeserializeObject<JObject>(responseBody);
+
+        //            //MessageBox.Show(responseData["PART"].Value<int>().ToString());
+
+        //            var partValue = responseData["value"]?.FirstOrDefault()?["PART"]?.Value<int?>();
+
+        //            if (partValue.HasValue)
+        //            {
+        //                MessageBox.Show(partValue.Value.ToString());
+        //                return partValue.Value;
+        //            }
+        //            else
+        //            {
+        //                Debug.WriteLine($"[InsertLogPart] 'PART' not found in response: {responseData}");
+        //                return -2; // Custom code for "PART not found"
+        //            }
+        //        }
+        //        catch (HttpRequestException ex)
+        //        {
+        //            // Handle networking or server issues
+        //            Debug.WriteLine($"[InsertLogPart] HTTP error: {ex.Message}");
+        //        }
+        //        catch (JsonException ex)
+        //        {
+        //            // Handle JSON serialization/deserialization errors
+        //            Debug.WriteLine($"[InsertLogPart] JSON error: {ex.Message}");
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            // Catch-all for anything else
+        //            Debug.WriteLine($"[InsertLogPart] Unexpected error: {ex.Message}");
+        //        }
+        //    }
+
+        //    return -1; // Indicates failure
+        //}
+
         private async Task<int> InsertLogPart(string partName, string partDes)
         {
             var logPartData = new
@@ -2676,57 +2770,47 @@ namespace WH_Panel
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-                    //string usedUser = ApiHelper.AuthenticateClient(client);
-                    //// AppendLog($"User used: {usedUser}\n");
 
                     string jsonLogPartData = JsonConvert.SerializeObject(logPartData);
                     var content = new StringContent(jsonLogPartData, Encoding.UTF8, "application/json");
 
+                    AppendLog("📡 Sending request to insert LOGPART...", System.Drawing.Color.Yellow);
                     HttpResponseMessage response = await client.PostAsync(url, content);
                     response.EnsureSuccessStatusCode();
 
                     string responseBody = await response.Content.ReadAsStringAsync();
                     var responseData = JsonConvert.DeserializeObject<JObject>(responseBody);
 
-                    //MessageBox.Show(responseData["PART"].Value<int>().ToString());
-
-                    var partValue = responseData["value"]?.FirstOrDefault()?["PART"]?.Value<int?>();
-
-                    if (partValue.HasValue)
+                    int? partId = responseData["PART"]?.Value<int>();
+                    if (partId.HasValue)
                     {
-                        MessageBox.Show(partValue.Value.ToString());
-                        return partValue.Value;
+                        AppendLog($"✅ Insert successful. New PART ID: {partId.Value}", System.Drawing.Color.Green);
+                        return partId.Value;
                     }
                     else
                     {
-                        Debug.WriteLine($"[InsertLogPart] 'PART' not found in response: {responseData}");
-                        return -2; // Custom code for "PART not found"
+                        AppendLog($"❌ Insert succeeded, but PART ID missing in response: {responseBody}", System.Drawing.Color.Red);
+                        return -2; // Specific failure: PART not found
                     }
                 }
                 catch (HttpRequestException ex)
                 {
-                    // Handle networking or server issues
-                    Debug.WriteLine($"[InsertLogPart] HTTP error: {ex.Message}");
+                    AppendLog($"❌ HTTP error during insert: {ex.Message}", System.Drawing.Color.Red);
                 }
                 catch (JsonException ex)
                 {
-                    // Handle JSON serialization/deserialization errors
-                    Debug.WriteLine($"[InsertLogPart] JSON error: {ex.Message}");
+                    AppendLog($"❌ JSON parsing error: {ex.Message}", System.Drawing.Color.Red);
                 }
                 catch (Exception ex)
                 {
-                    // Catch-all for anything else
-                    Debug.WriteLine($"[InsertLogPart] Unexpected error: {ex.Message}");
+                    AppendLog($"❌ Unexpected error: {ex.Message}", System.Drawing.Color.Red);
                 }
             }
 
-            return -1; // Indicates failure
+            return -1; // General failure
         }
-
 
 
         private async Task<int> GetOrInsertManufacturer(string partMNFName, string partMNFDes)
