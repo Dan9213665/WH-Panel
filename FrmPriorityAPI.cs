@@ -4802,6 +4802,7 @@ namespace WH_Panel
         {
             if (e.KeyCode == Keys.Enter)
             {
+                lastUserInput = txtbMouse;
                 string keyword = txtbMouse.Text.Trim();
                 if (string.IsNullOrEmpty(keyword))
                     return;
