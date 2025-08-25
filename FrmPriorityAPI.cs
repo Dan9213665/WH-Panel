@@ -4850,8 +4850,11 @@ namespace WH_Panel
                         {
                             txtbInputMFPN.Text = mfpn;
                             // Simulate Enter key press in txtbInputMFPN
-                            txtbInputMFPN.Focus();
-                            SendKeys.Send("{ENTER}");
+                            //txtbInputMFPN.Focus();
+                            //SendKeys.Send("{ENTER}");
+
+
+                            txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter), txtbMouse);
                         }
                         else
                         {
