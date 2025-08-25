@@ -32,6 +32,7 @@ namespace WH_Panel
         private DataView dataView;
         private ContextMenuStrip contextMenuStrip;
         private DataGridViewRow selectedRowForContextMenu; // Class-level variable to store the selected row
+        TextBox lastUserInput = null;
         //private System.Windows.Forms.Timer breathingTimer;
         //private int opacityStep = 5;
         //private int currentOpacity = 100;
@@ -3330,7 +3331,7 @@ namespace WH_Panel
                 await ExtractMFPNForRow(row);
             }
         }
-        TextBox lastUserInput = null;
+      
         private void txtbDecoder_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
