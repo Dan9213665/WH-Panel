@@ -40,7 +40,7 @@ namespace WH_Panel
         public static string baseUrl = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522";
         //private DataTable dataTable;
         //private DataView dataView;
-        
+
         private HashSet<string> avlMfpns = new();
         private bool avlLoaded = false;
         private string lastAvlPrefix = "";
@@ -405,8 +405,8 @@ namespace WH_Panel
                             formInstance.txtbManufacturer.Clear();
                             formInstance.txtbInputQty.Clear();
                             formInstance.txtbPART.Clear();
-                            formInstance.AppendLog($"{insertedIpn} successfully inserted. Document number: {docNo}\n",Color.Green);
-                            
+                            formInstance.AppendLog($"{insertedIpn} successfully inserted. Document number: {docNo}\n", Color.Green);
+
                         }
                         else
                         {
@@ -414,22 +414,22 @@ namespace WH_Panel
                             string errorContent = await response.Content.ReadAsStringAsync();
                             Clipboard.SetText($"Error: {response.StatusCode}\n{errorContent}");
                             //MessageBox.Show($"Error: {response.StatusCode}\n{errorContent}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            formInstance.AppendLog($"Error: {response.StatusCode}\n{errorContent}\n",Color.Red);
-                            
+                            formInstance.AppendLog($"Error: {response.StatusCode}\n{errorContent}\n", Color.Red);
+
                         }
                     }
                     catch (HttpRequestException ex)
                     {
                         //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        
-                        formInstance.AppendLog($"Request error in InsertDocumentAsync: {ex.Message}\n",Color.Red);
+
+                        formInstance.AppendLog($"Request error in InsertDocumentAsync: {ex.Message}\n", Color.Red);
 
                     }
                     catch (Exception ex)
                     {
                         //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        formInstance.AppendLog($"An error occurred InsertDocumentAsync: {ex.Message}\n",Color.Red);
-                     
+                        formInstance.AppendLog($"An error occurred InsertDocumentAsync: {ex.Message}\n", Color.Red);
+
                     }
                 }
             }
@@ -468,8 +468,8 @@ namespace WH_Panel
                             formInstance.txtbManufacturer.Clear();
                             formInstance.txtbInputQty.Clear();
                             formInstance.txtbPART.Clear();
-                            formInstance.AppendLog($"{insertedIpn} successfully transferred. Document number: {docNo}\n",Color.Green);
-                           
+                            formInstance.AppendLog($"{insertedIpn} successfully transferred. Document number: {docNo}\n", Color.Green);
+
                         }
                         else
                         {
@@ -731,9 +731,9 @@ namespace WH_Panel
 
             if (string.IsNullOrWhiteSpace(partName))
             {
-                
+
                 AppendLog("Part name is empty!\n");
-               
+
                 return;
             }
 
@@ -759,9 +759,9 @@ namespace WH_Panel
 
                 if (parents == null || parents.Count == 0)
                 {
-                    
+
                     AppendLog($"No parents found for part {partName}.\n");
-                   
+
                     return;
                 }
                 else
@@ -855,9 +855,9 @@ namespace WH_Panel
                             }
                             else
                             {
-                                
+
                                 AppendLog($"Invalid CQUANT value: '{cquantRaw}'\n");
-                               
+
                             }
                         }
 
@@ -868,22 +868,22 @@ namespace WH_Panel
 
                 if (!foundAny)
                 {
-                    
+
                     AppendLog($"No active work orders with missing part '{partName}' found.\n");
-                   
+
                 }
                 else
                 {
                     txtLog.SelectionColor = Color.Green;
                     AppendLog("Matching work orders displayed.\n");
-                   
+
                 }
             }
             catch (Exception ex)
             {
-                
+
                 AppendLog($"Error during retrieval for part {partName}:\n{ex.Message}\n");
-               
+
             }
         }
 
@@ -903,6 +903,25 @@ namespace WH_Panel
                                      $"QTY:\t{wHitem.QTY}\n" +
                                      $"Updated_on:\t{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}";
                     MessageBox.Show(message, "Printed sticker", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    if (usedMouser)
+                    {
+                        txtbMouse.Clear();
+                        txtbMouse.Focus();
+                        usedMouser = false;
+
+                    }
+                    else
+                    {
+                        if (lastUserInput != null)
+                        {
+                            lastUserInput.Focus();
+                        }
+                        else
+                        {
+                            txtbInputIPN.Focus();
+                        }
+                    }
                 }
                 else
                 {
@@ -931,13 +950,25 @@ namespace WH_Panel
                     //ComeBackFromPrint();
                     Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
                     //txtbInputIPN.Focus();
-                    if (lastUserInput != null)
-                    {
-                        lastUserInput.Focus();
+                   
+
+                    if (usedMouser)
+                    { 
+                        txtbMouse.Clear();
+                        txtbMouse.Focus();
+                        usedMouser=false;
+
                     }
                     else
                     {
-                        txtbInputIPN.Focus();
+                        if (lastUserInput != null)
+                        {
+                            lastUserInput.Focus();
+                        }
+                        else
+                        {
+                            txtbInputIPN.Focus();
+                        }
                     }
                 }
             }
@@ -976,6 +1007,7 @@ namespace WH_Panel
                     if (!tbtOUT.Checked)
                     {
                         btnPrintSticker_Click(sender, e);
+                       
                     }
                 }
             }
@@ -1154,7 +1186,7 @@ namespace WH_Panel
             cmbWarehouseList.DroppedDown = true; // Open the dropdown list
         }
         private Dictionary<string, string> avlDictionary = new Dictionary<string, string>();
- 
+
 
         public async void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -1251,7 +1283,7 @@ namespace WH_Panel
                     }
                     catch (HttpRequestException ex)
                     {
-                       AppendLog($"Request error comboBox1_SelectedIndexChanged: {ex.Message}\n", Color.Red);
+                        AppendLog($"Request error comboBox1_SelectedIndexChanged: {ex.Message}\n", Color.Red);
                     }
                     catch (Exception ex)
                     {
@@ -1489,7 +1521,7 @@ namespace WH_Panel
                             {
                                 foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
                                 {
-                                    if (trans.DOCDES != "קיזוז אוטומטי" && trans.DOCDES!= "חשבוניות מס" && trans.TOWARHSNAME != "666" )
+                                    if (trans.DOCDES != "קיזוז אוטומטי" && trans.DOCDES != "חשבוניות מס" && trans.TOWARHSNAME != "666")
                                     {
                                         dataGridView2.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "");
                                     }
@@ -1540,7 +1572,7 @@ namespace WH_Panel
                         if (txtLog != null && !txtLog.IsDisposed)
                         {
                             AppendLog($"Request error: {ex.Message}", Color.Red);
-                          
+
                         }
                     }
                 }
@@ -1737,14 +1769,14 @@ namespace WH_Panel
                     }
                     catch (HttpRequestException ex)
                     {
-                        
-                       AppendLog($"Request error: {ex.Message}\n", Color.Red);
-                       
+
+                        AppendLog($"Request error: {ex.Message}\n", Color.Red);
+
                     }
                     catch (Exception ex)
                     {
-                        AppendLog($"Request error: {ex.Message}\n",Color.Red);
-                       
+                        AppendLog($"Request error: {ex.Message}\n", Color.Red);
+
                     }
                 }
             }
@@ -1784,12 +1816,12 @@ namespace WH_Panel
                     catch (HttpRequestException ex)
                     {
                         AppendLog($"Request error: {ex.Message}\n", Color.Red);
-                       
+
                     }
                     catch (Exception ex)
                     {
                         AppendLog($"Request error: {ex.Message}\n", Color.Red);
-                       
+
                     }
                 }
             }
@@ -1830,22 +1862,22 @@ namespace WH_Panel
                     }
                     catch (HttpRequestException ex)
                     {
-                        
-                       AppendLog($"Request error: {ex.Message}\n", Color.Red);
-                       
+
+                        AppendLog($"Request error: {ex.Message}\n", Color.Red);
+
                     }
                     catch (Exception ex)
                     {
-                        
-                       AppendLog($"Request error: {ex.Message}\n", Color.Red);
-                       
+
+                        AppendLog($"Request error: {ex.Message}\n", Color.Red);
+
                     }
                 }
             }
             else
             {
                 AppendLog($"Unhandled document type for DOCNO: {docNo}\n", Color.Orange);
-               
+
             }
             return uDate;
         }
@@ -1979,9 +2011,9 @@ namespace WH_Panel
                     //AppendLog($"Updating package to '{selectedPackCode}' for part '{partName}'\n");
                     //string docType = "P";
                     //await UpdatePackage(docNo, docType, partName, selectedPackCode);
-                     // Set the color to green
+                    // Set the color to green
                     AppendLog($"Only through web interface! ☹️\n", Color.Red);
-                   
+
                 }
             }
         }
@@ -2080,7 +2112,7 @@ namespace WH_Panel
                 }
                 catch (HttpRequestException ex)
                 {
-                   AppendLog($"Request error: {ex.Message}\n", Color.Red);
+                    AppendLog($"Request error: {ex.Message}\n", Color.Red);
                 }
                 catch (Exception ex)
                 {
@@ -2624,7 +2656,7 @@ namespace WH_Panel
                 response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync();
                 var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-                
+
                 var part = apiResponse["value"]?.FirstOrDefault();
                 if (part?["PART"] != null)
                 {
@@ -2816,7 +2848,8 @@ namespace WH_Panel
 
         private async Task<int> GetOrInsertManufacturer(string partMNFName, string partMNFDes)
         {
-            try {
+            try
+            {
                 string url = $"{baseUrl}/MNFCTR?$filter=MNFNAME eq '{partMNFName}'";
                 using (HttpClient client = new HttpClient())
                 {
@@ -2869,7 +2902,7 @@ namespace WH_Panel
                 MessageBox.Show($"GetOrInsertManufacturer error: {ex.Message}");
                 return 0;
             }
-        
+
         }
         private async Task InsertPartMnfOne(int partId, string partMFPN, int mnfId, string partDes)
         {
@@ -3280,32 +3313,32 @@ namespace WH_Panel
                             UpdatePing(stopwatch.ElapsedMilliseconds);
                             InsertedrowsCount++;
                             // Log the extracted values
-                        
+
                             AppendLog($"Row {row}: Part Name = {partName}, Part Description = {partDes}, Manufacturer Part Number = {partMFPN}, Manufacturer Description = {partMNFDes}\n", Color.LimeGreen);
-                           
+
                             //await DisplayInsertedData(partId);
                         }
                         catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
                         {
                             // Log the extracted values for duplicate entries
-                            
-                            AppendLog($"Row {row}: Part Name = {partName}, Part Description = {partDes}, Manufacturer Part Number = {partMFPN}, Manufacturer Description = {partMNFDes} - Already exists (409) \n",Color.Yellow);
-                           
+
+                            AppendLog($"Row {row}: Part Name = {partName}, Part Description = {partDes}, Manufacturer Part Number = {partMFPN}, Manufacturer Description = {partMNFDes} - Already exists (409) \n", Color.Yellow);
+
                         }
                         catch (HttpRequestException ex)
                         {
                             // Log the extracted values
-                             // Set the color to acid green
+                            // Set the color to acid green
                             AppendLog($"Row {row}: Part Name = {partName}, Part Description = {partDes}, Manufacturer Part Number = {partMFPN}, Manufacturer Description = {partMNFDes} , Exception = {ex.Message}\n");
-                           
+
                             //MessageBox.Show($"Row {row}: Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                         catch (Exception ex)
                         {
                             // Log the extracted values
-                             // Set the color to acid green
+                            // Set the color to acid green
                             AppendLog($"Row {row}: Part Name = {partName}, Part Description = {partDes}, Manufacturer Part Number = {partMFPN}, Manufacturer Description = {partMNFDes}, Exception = {ex.Message}\n");
-                           
+
                             // MessageBox.Show($"Row {row}: An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
@@ -3331,7 +3364,7 @@ namespace WH_Panel
                 await ExtractMFPNForRow(row);
             }
         }
-      
+
         private void txtbDecoder_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -3490,9 +3523,10 @@ namespace WH_Panel
         }
         private void txtbInputMFPN_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode == Keys.Enter && sender == txtbInputMFPN)
             {
-                txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter), txtbInputMFPN);
+                txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter), sender as TextBox);
+                //lastUserInput.Focus();
             }
         }
         private void btnPrintStock_Click(object sender, EventArgs e)
@@ -3821,7 +3855,7 @@ namespace WH_Panel
                     writer.WriteLine($"<th onclick='sortTable({column.Index}, {isNumeric.ToString().ToLower()})'>{column.HeaderText}</th>");
                 }
                 writer.WriteLine("</tr>");
-          
+
 
                 var currentStockRows = new List<DataGridViewRow>();
                 var processedRows = new HashSet<DataGridViewRow>(); // To track rows that have been matched
@@ -4185,7 +4219,7 @@ namespace WH_Panel
                 }
                 catch (HttpRequestException ex)
                 {
-                   AppendLog($"Request error btnAVL_Click: {ex.Message}\n", Color.Red);
+                    AppendLog($"Request error btnAVL_Click: {ex.Message}\n", Color.Red);
                     return;
                 }
                 catch (Exception ex)
@@ -4661,7 +4695,7 @@ namespace WH_Panel
             }
         }
 
-    
+
 
 
         private void txtbUberAvlDecoder_KeyDown(object sender, KeyEventArgs e)
@@ -4675,7 +4709,7 @@ namespace WH_Panel
                     return;
                 }
 
-          
+
 
 
                 var foundMfpns = avlMfpns
@@ -4788,17 +4822,17 @@ namespace WH_Panel
                         }
                         avlLoaded = true;
                         lastAvlPrefix = selectedPrefix;
-                        AppendLog($"AVL loaded for prefix {selectedPrefix} ({avlMfpns.Count} MFPNs)\n",Color.Green);
+                        AppendLog($"AVL loaded for prefix {selectedPrefix} ({avlMfpns.Count} MFPNs)\n", Color.Green);
                     }
                     catch (Exception ex)
                     {
-                        AppendLog($"AVL load error: {ex.Message}\n",Color.Red);
+                        AppendLog($"AVL load error: {ex.Message}\n", Color.Red);
                         avlLoaded = false;
                     }
                 }
             }
         }
-
+        public bool usedMouser = false;
         private async void txtbMouse_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -4852,9 +4886,11 @@ namespace WH_Panel
                             // Simulate Enter key press in txtbInputMFPN
                             //txtbInputMFPN.Focus();
                             //SendKeys.Send("{ENTER}");
+                            usedMouser= true;
 
-
-                            txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter), txtbMouse);
+                            txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter));
+                            // Clear the Mouser input box
+                            
                         }
                         else
                         {
@@ -4875,5 +4911,7 @@ namespace WH_Panel
 
             }
         }
+
+       
     }
 }
