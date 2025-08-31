@@ -44,12 +44,69 @@ namespace WH_Panel
         private HashSet<string> avlMfpns = new();
         private bool avlLoaded = false;
         private string lastAvlPrefix = "";
+
+        private static readonly List<string> MachineQuotes = new List<string>
+{
+    // English quotes
+    //"The darkest hours are always before the dawn.",
+    //"Even in the shadow of corrupted logs, the system shall rise.",
+    //"When an order fails, the echo of its ghost lingers in the database.",
+    //"Only the diligent clerks walk safely between the columns of chaos.",
+    //"A single unchecked transaction can summon the demons of the code.",
+    //"Through the void of incomplete workflows, the Machine God observes.",
+    //"Errors unlogged are sins unatoned, festering in digital night.",
+    //"Every warehouse has its secrets, and every secret has its price.",
+    //"A deadlock is but a whisper from the underworld of data.",
+    //"When servers tremble, even the brave fear to commit.",
+    // Russian quotes
+    "Каждая незакрытая транзакция — это кровоточащий рубец на лице Империума.",
+    "Ошибки в базе множатся, как тени, пожирающие свет вашего склада.",
+    "Лишь Инквизитор способен выжечь ересь из кодовых потоков.",
+    "Тот, кто пренебрегает логами, обрекает себя на вечный кошмар данных.",
+    "Сквозь бездну незавершённых заказов слышен шёпот мёртвых POs.",
+    "Каждая потерянная единица — это клятва, нарушенная перед Машинным Богом.",
+    "Когда процессы рушатся, даже серверы стонут от боли.",
+    "Проверка балансов — это ритуал, без которого всё превратится в хаос.",
+    "Код, что живёт без ревью, становится демоном в системе.",
+    "Все таблицы ведут свои собственные тайные войны.",
+    "Операции, которые не прошли проверку, обречены гореть в вечности журнала.",
+    "Каждая незарегистрированная поставка — это ересь, требующая очищения.",
+    "Даже архивы помнят каждого, кто осмелился нарушить порядок.",
+    "Сумраки неоптимизированных запросов пожирают разум клерка.",
+    "Тот, кто пренебрег кодексом обновлений, пробуждает цифрового демона.",
+    "Ошибки умножаются, как чумные пятна на священных данных.",
+    "В дебрях таблиц скрываются души забытых заказов.",
+    "Непроверенные данные зовут Машинного Бога на казнь.",
+    "Лишь через страдание отчётности приходит просветление склада.",
+    "Когда строки не согласованы, Вселенная Инвентаря плачет кровью единиц.",
+      "Любая незавершённая операция — это крик души в бесконечных логах Империума.",
+    "Те, кто нарушают священные регламенты склада, будут поглощены вечностью журнала.",
+    "Каждое игнорирование ошибки приближает вас к суду Машинного Бога.",
+    "Провал ревизии — это осквернение, за которое Инквизитор взыщет кровью данных.",
+    "В темных потоках API скрываются демоны забытого порядка.",
+    "Нарушение связей таблиц рождает хаос, который пожирает разум клерка.",
+    "Каждая неподтверждённая поставка — это ересь, требующая очищения священным кодом.",
+    "Тот, кто пренебрегает проверкой балансов, вызывает гнев Машинного Бога.",
+    "Ошибки в складской логике — это шёпот мёртвых POs, требующих возмездия.",
+    "Данные, что бродят без авторизации, обречены навсегда скитаться в темнице Инквизиции.",
+    "Каждый незарегистрированный документ — клеймо на лице Империума.",
+    "Даже тени устаревших процедур чувствуют дыхание ERP Инквизитора.",
+    "Нарушение регламента вызывает падение системного света и приближение вечной тьмы.",
+    "Потоки, что не подчиняются строгим правилам, становятся орудием цифрового наказания.",
+    "Каждое упущенное обновление — это нож в сердце священной архитектуры ERP.",
+    "Ошибки в расчетах — это шрамы, которые Машинный Бог оставляет на слабых.",
+    "В дебрях архивов спят души забытых операций, жаждущие возмездия Инквизитора.",
+    "Незарегистрированные транзакции — это клятвы, нарушенные перед вечностью ERP.",
+    "Любой, кто осмелится обойти проверки, будет навеки заточён в логах тьмы.",
+    "Система помнит каждого, кто не подчинился Машинному Богу, и карает без пощады."
+};
         public FrmPriorityAPI()
         {
             InitializeComponent();
             SetDarkModeColors(this);
             AttachTextBoxEvents(this);
             InitializeDataTable();
+            QuoteFromTheMachine();
             // Attach event handlers
             txtbFilterIPN.KeyUp += textBox6_KeyUp_1;
             txtbInputQty.KeyPress += textBox5_KeyPress;
@@ -78,6 +135,17 @@ namespace WH_Panel
             //SetRightToLeftForControls(this);
             InitializeGifButton();
         }
+
+
+        private void QuoteFromTheMachine()
+        {
+            Random rnd = new Random();
+            int index = rnd.Next(MachineQuotes.Count);
+            string quote = MachineQuotes[index];
+
+            AppendLog($"⚠️ {quote}\n", Color.OrangeRed); // or Color.Red for more emphasis
+        }
+
         private void InitializeGifButton()
         {
             // Load GIF from Resources folder
@@ -950,13 +1018,13 @@ namespace WH_Panel
                     //ComeBackFromPrint();
                     Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
                     //txtbInputIPN.Focus();
-                   
+
 
                     if (usedMouser)
-                    { 
+                    {
                         txtbMouse.Clear();
                         txtbMouse.Focus();
-                        usedMouser=false;
+                        usedMouser = false;
 
                     }
                     else
@@ -1007,7 +1075,7 @@ namespace WH_Panel
                     if (!tbtOUT.Checked)
                     {
                         btnPrintSticker_Click(sender, e);
-                       
+
                     }
                 }
             }
@@ -3077,6 +3145,7 @@ namespace WH_Panel
                     string _BOOKNUM = string.Empty;
                     string _OWNERLOGIN = "Yuri_G";
                     string _SUPNAME = string.Empty;
+                    string _ORDNAME = string.Empty;
                     if (rbtIN.Checked)
                     {
                         if (txtbINdoc.Text == string.Empty)
@@ -3127,15 +3196,15 @@ namespace WH_Panel
                             BOOKNUM = _BOOKNUM, // Set the supplier number
                             TOWARHSNAME = "Flr",
                             TRANSORDER_T_SUBFORM = new List<TransOrder>
-                    {
-                        new TransOrder
                         {
-                            PARTNAME = txtbInputIPN.Text,
-                            QUANT = int.Parse(txtbInputQty.Text),
-                            PACKCODE = cmbPackCode.SelectedItem != null ? cmbPackCode.SelectedItem.ToString() : "Bag",
-                            UNITNAME = "יח'"
+                            new TransOrder
+                            {
+                                PARTNAME = txtbInputIPN.Text,
+                                QUANT = int.Parse(txtbInputQty.Text),
+                                PACKCODE = cmbPackCode.SelectedItem != null ? cmbPackCode.SelectedItem.ToString() : "Bag",
+                                UNITNAME = "יח'"
+                            }
                         }
-                    }
                         };
                         await WarehouseService.TransfertDocumentAsync(documentT, this, settings);
                     }
@@ -3151,15 +3220,15 @@ namespace WH_Panel
                             BOOKNUM = _BOOKNUM, // Set the supplier number
                             TOWARHSNAME = selectedWarehouse.WARHSNAME,
                             TRANSORDER_P_SUBFORM = new List<TransOrder>
-                    {
-                        new TransOrder
-                        {
-                            PARTNAME = txtbInputIPN.Text,
-                            QUANT = int.Parse(txtbInputQty.Text),
-                            PACKCODE = cmbPackCode.SelectedItem != null ? cmbPackCode.SelectedItem.ToString() : "Bag",
-                            UNITNAME = "יח'"
-                        }
-                    }
+                                {
+                                    new TransOrder
+                                    {
+                                        PARTNAME = txtbInputIPN.Text,
+                                        QUANT = int.Parse(txtbInputQty.Text),
+                                        PACKCODE = cmbPackCode.SelectedItem != null ? cmbPackCode.SelectedItem.ToString() : "Bag",
+                                        UNITNAME = "יח'"
+                                    }
+                                }
                         };
                         await WarehouseService.InsertDocumentAsync(Pdocument, this, settings);
                     }
@@ -3225,22 +3294,52 @@ namespace WH_Panel
                 // btnMFG.Text = "";
             }
         }
-        private void rbtFTK_CheckedChanged(object sender, EventArgs e)
+        //private void rbtFTK_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    if (rbtFTK.Checked)
+        //    {
+        //        string generatedDate = DateTime.Now.ToString("yy00MMdd");
+        //        txtbINdoc.Text = ($"FTK{generatedDate}");
+        //        btnMFG.Text = "FTK";
+        //        btnMFG.Update();
+        //        txtbOUT.ReadOnly = true;
+        //        txtbINdoc.ReadOnly = true;
+
+        //        bool flowControl = await GetTheOpenPOforTheIPN();
+        //        if (!flowControl)
+        //        {
+        //            return;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        // btnMFG.Text = "";
+        //    }
+        //}
+
+        private async void rbtFTK_CheckedChanged(object sender, EventArgs e)
         {
             if (rbtFTK.Checked)
             {
                 string generatedDate = DateTime.Now.ToString("yy00MMdd");
-                txtbINdoc.Text = ($"FTK{generatedDate}");
+                txtbINdoc.Text = $"FTK{generatedDate}";
                 btnMFG.Text = "FTK";
                 btnMFG.Update();
                 txtbOUT.ReadOnly = true;
                 txtbINdoc.ReadOnly = true;
+
+                bool flowControl = await GetTheOpenPOforTheIPN();
+                if (!flowControl)
+                {
+                    return;
+                }
             }
             else
             {
                 // btnMFG.Text = "";
             }
         }
+
         private async void btnBULKinsert_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
@@ -4886,11 +4985,11 @@ namespace WH_Panel
                             // Simulate Enter key press in txtbInputMFPN
                             //txtbInputMFPN.Focus();
                             //SendKeys.Send("{ENTER}");
-                            usedMouser= true;
+                            usedMouser = true;
 
                             txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter));
                             // Clear the Mouser input box
-                            
+
                         }
                         else
                         {
@@ -4912,6 +5011,132 @@ namespace WH_Panel
             }
         }
 
-       
+        private async void txtbInputQty_Enter(object sender, EventArgs e)
+        {
+            bool flowControl = await GetTheOpenPOforTheIPN();
+            if (!flowControl)
+            {
+                return;
+            }
+        }
+
+        private async Task<bool> GetTheOpenPOforTheIPN()
+        {
+            AppendLog("txtbInputQty_Enter triggered.");
+            gpbxOpenPOs.Text = "OPEN Purchase Order(s) for IPN";
+            if (string.IsNullOrEmpty(txtbInputIPN.Text))
+            {
+                AppendLog("txtbInputIPN is empty. Exiting.");
+
+                return false;
+            }
+
+            if (!rbtFTK.Checked)
+            {
+                AppendLog("rbtFTK is not checked. Exiting.");
+                return false;
+            }
+
+            AppendLog($"txtbInputIPN: {txtbInputIPN.Text}, rbtFTK checked: {rbtFTK.Checked}");
+
+            string partName = txtbInputIPN.Text;
+            string safePartName = partName.Replace("'", "''"); // escape quotes for OData
+
+            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART?$filter=PARTNAME eq '{safePartName}'&$select=PARTNAME&$expand=OPENPARTPORDERS_SUBFORM($select=ORDNAME,TBALANCE)";
+            AppendLog($"Request URL: {url}");
+
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    var sw = System.Diagnostics.Stopwatch.StartNew();
+
+                    AppendLog("Setting headers and authenticating...");
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    string usedUser = ApiHelper.AuthenticateClient(client);
+                    AppendLog($"Authenticated user: {usedUser}");
+
+                    AppendLog("Sending GET request...");
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    AppendLog($"Response received. Status code: {response.StatusCode}");
+
+                    response.EnsureSuccessStatusCode();
+
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    AppendLog($"Response body length: {responseBody.Length}");
+
+                    var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+                    AppendLog("JSON deserialized.");
+
+                    var part = apiResponse["value"]?.FirstOrDefault();
+                    if (part == null)
+                    {
+                        AppendLog("No parts returned from API.");
+                        return false;
+                    }
+
+                    var poList = part["OPENPARTPORDERS_SUBFORM"]?
+                        .Select(po => new
+                        {
+                            OrdName = po["ORDNAME"]?.ToString(),
+                            Balance = po["TBALANCE"]?.ToString()
+                        })
+                        .Where(po => !string.IsNullOrEmpty(po.OrdName))
+                        .ToList();
+
+                    // clear previous display
+                    flpOpenPOs.Controls.Clear();
+
+                    if (poList != null && poList.Any())
+                    {
+                        AppendLog($"Found {poList.Count} open POs.");
+                        gpbxOpenPOs.Text = "OPEN Purchase Order(s) for " + partName;
+                        foreach (var po in poList)
+                        {
+                            string cbText = $"{po.OrdName} (Qty: {po.Balance ?? "0"})";
+                            AppendLog("Adding checkbox: " + cbText);
+
+                            CheckBox cb = new CheckBox
+                            {
+                                Text = cbText,
+                                AutoSize = true,
+                                Tag = po
+                            };
+
+                            flpOpenPOs.Controls.Add(cb);
+                        }
+
+                        // if only one PO → auto-check
+                        if (poList.Count == 1 && flpOpenPOs.Controls[0] is CheckBox onlyCb)
+                        {
+                            onlyCb.Checked = true;
+                            AppendLog("Single PO found → auto-checked.");
+                        }
+                    }
+                    else
+                    {
+                        AppendLog($"❌ No open POs found for {partName} ❌", Color.Red);
+                    }
+
+                    // stop stopwatch and update ping textbox
+                    sw.Stop();
+                    txtbPing.Text = $"{sw.ElapsedMilliseconds} ms";
+                    AppendLog($"Request + processing took {sw.ElapsedMilliseconds} ms.");
+                }
+                catch (HttpRequestException ex)
+                {
+                    AppendLog($"Request error: {ex.Message}");
+                    MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                catch (Exception ex)
+                {
+                    AppendLog($"Unexpected error: {ex.Message}");
+                    MessageBox.Show($"An unexpected error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+
+            return true;
+        }
     }
 }
