@@ -3179,10 +3179,31 @@ namespace WH_Panel
                         _BOOKNUM = "MFG";
                         _SUPNAME = "MFG";
                     }
+
+
                     else if (rbtFTK.Checked)
                     {
                         _BOOKNUM = txtbINdoc.Text;
-                        _SUPNAME = "FTK";
+                        _SUPNAME = null;
+
+                        var selectedPO = flpOpenPOs.Controls
+                                .OfType<CheckBox>()
+                                .Where(cb => cb.Checked)
+                                .Select(cb => cb.Tag)
+                                .Cast<dynamic>()  // since you stored an anonymous object
+                                .FirstOrDefault();
+
+                        if (selectedPO != null)
+                        {
+                            _ORDNAME = selectedPO.OrdName;
+                        }
+                        else
+                        {
+                            MessageBox.Show("Please select a purchase order.", "No Selection",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            return;
+                        }
+
                     }
                     if (tbtOUT.Checked)
                     {
@@ -3218,6 +3239,7 @@ namespace WH_Panel
                             CURDATE = DateTimeOffset.UtcNow,
                             SUPNAME = _SUPNAME, // Set the supplier name
                             BOOKNUM = _BOOKNUM, // Set the supplier number
+                            ORDNAME = _ORDNAME,
                             TOWARHSNAME = selectedWarehouse.WARHSNAME,
                             TRANSORDER_P_SUBFORM = new List<TransOrder>
                                 {
