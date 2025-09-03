@@ -53,6 +53,8 @@ namespace WH_Panel
 {
     public partial class FrmClientAgnosticWH : Form
     {
+
+        public AppSettings settings;
         public FrmClientAgnosticWH()
         {
             InitializeComponent();
@@ -1611,6 +1613,17 @@ namespace WH_Panel
         }
         private void FrmClientAgnosticWH_Load(object sender, EventArgs e)
         {
+            settings = SettingsManager.LoadSettings();
+            if (settings == null)
+            {
+                MessageBox.Show("Failed to load settings.");
+                return;
+            }
+            if (string.IsNullOrEmpty(settings.ApiUsername) || string.IsNullOrEmpty(settings.ApiPassword))
+            {
+                MessageBox.Show("API credentials are missing in the settings.");
+                return;
+            }
         }
         private void txtbFiltAVLbyDESCR_TextChanged(object sender, EventArgs e)
         {
@@ -2180,32 +2193,103 @@ namespace WH_Panel
             };
             wHitemToSplit = whi;
         }
-        private void textBox12_KeyDown(object sender, KeyEventArgs e)
+        //private void textBox12_KeyDown(object sender, KeyEventArgs e)
+        //{
+        //    if (e.KeyCode == Keys.Enter)
+        //    {
+        //        string searchbyMFPN = string.Empty;
+        //        if (textBox12.Text.Contains("-") == true && textBox12.Text.Length > 6)
+        //        {
+        //            string[] theSplit = textBox12.Text.Split("-");
+        //            if (theSplit.Length > 1)
+        //            {
+        //                searchbyMFPN = string.Join("-", theSplit, 1, theSplit.Length - 1);
+        //            }
+        //            else
+        //            {
+        //                searchbyMFPN = textBox12.Text;
+        //            }
+        //            textBox2.Text = searchbyMFPN;
+        //        }
+        //        else
+        //        {
+        //        }
+        //        //lastTxtbInputFromUser = textBox13;
+        //        textBox2.Focus();
+        //        textBox2_KeyDown(sender, e);
+        //    }
+        //}
+
+        private async void textBox12_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode != Keys.Enter)
+                return;
+
+            string keyword = textBox12.Text.Trim();
+            if (string.IsNullOrEmpty(keyword))
+                return;
+
+            // Read MouserApiKey from settings
+            string apiKey = settings?.GetType().GetProperty("MouserApiKey")?.GetValue(settings)?.ToString();
+            if (string.IsNullOrEmpty(apiKey))
             {
-                string searchbyMFPN = string.Empty;
-                if (textBox12.Text.Contains("-") == true && textBox12.Text.Length > 6)
+                MessageBox.Show("Mouser API key not found in settings.");
+                return;
+            }
+
+
+            string url = $"https://api.mouser.com/api/v1/search/keyword?apiKey={apiKey}";
+            var requestBody = new
+            {
+                SearchByKeywordRequest = new
                 {
-                    string[] theSplit = textBox12.Text.Split("-");
-                    if (theSplit.Length > 1)
+                    keyword = keyword,
+                    records = 0,
+                    startingRecord = 0,
+                    searchOptions = "",
+                    searchWithYourSignUpLanguage = false
+                }
+            };
+
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    var json = Newtonsoft.Json.JsonConvert.SerializeObject(requestBody);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    var response = await client.PostAsync(url, content);
+                    response.EnsureSuccessStatusCode();
+                    var responseString = await response.Content.ReadAsStringAsync();
+
+                    var jObj = Newtonsoft.Json.Linq.JObject.Parse(responseString);
+                    var mfpn = jObj["SearchResults"]?["Parts"]?.FirstOrDefault()?["ManufacturerPartNumber"]?.ToString();
+
+                    
+
+                    if (!string.IsNullOrEmpty(mfpn))
                     {
-                        searchbyMFPN = string.Join("-", theSplit, 1, theSplit.Length - 1);
+                        textBox2.Text = mfpn;
+
+                        // Simulate Enter key press on textBox2 if needed
+                        textBox2.Focus();
+                        textBox2_KeyDown(textBox2, new KeyEventArgs(Keys.Enter));
                     }
                     else
                     {
-                        searchbyMFPN = textBox12.Text;
+                        MessageBox.Show("Manufacturer Part Number not found in Mouser response.");
                     }
-                    textBox2.Text = searchbyMFPN;
                 }
-                else
-                {
-                }
-                //lastTxtbInputFromUser = textBox13;
-                textBox2.Focus();
-                textBox2_KeyDown(sender, e);
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error querying Mouser API: " + ex.Message);
+            }
+
+            textBox12.Clear();
         }
+
+
+
         private void textBox12_Click(object sender, EventArgs e)
         {
             textBox12.Clear();
