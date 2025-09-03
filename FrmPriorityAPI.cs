@@ -5009,7 +5009,7 @@ namespace WH_Panel
                             //SendKeys.Send("{ENTER}");
                             usedMouser = true;
 
-                            txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter));
+                            txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter),txtbMouse);
                             // Clear the Mouser input box
 
                         }
