@@ -784,6 +784,12 @@ namespace WH_Panel
                         AutoClosingMessageBox.Show($"Request error: {ex.Message}", 1000, Color.Red);
                     }
                 }
+
+
+         
+
+
+
             }
             else if (e.KeyCode == Keys.Escape)
             {
@@ -792,31 +798,525 @@ namespace WH_Panel
         }
 
 
+        //private async Task DisplayWorkOrdersByPart(string partName, HttpClient client)
+        //{
+        //    flpSerials.Controls.Clear();
+
+
+        //    if (string.IsNullOrWhiteSpace(partName))
+        //    {
+
+        //        AppendLog("Part name is empty!\n");
+
+        //        return;
+        //    }
+
+        //    //string encodedPartName = Uri.EscapeDataString(partName);
+        //    string encodedPartName = Uri.EscapeDataString(partName.Replace("'", "''"));
+
+        //    try
+        //    {
+        //        // === Stage 1: Get parents that use this part ===
+        //        string parentsUrl = $"{baseUrl}/PART?$filter=PARTNAME eq '{encodedPartName}'&$select=PARTNAME&$expand=PARTPARENT_SUBFORM($select=PARENTNAME)";
+
+        //        HttpResponseMessage parentsResponse = await client.GetAsync(parentsUrl);
+        //        parentsResponse.EnsureSuccessStatusCode();
+        //        string parentsJson = await parentsResponse.Content.ReadAsStringAsync();
+        //        var parentsApiResponse = JsonConvert.DeserializeObject<JObject>(parentsJson);
+
+        //        var parents = parentsApiResponse["value"]?
+        //            .SelectMany(p => p["PARTPARENT_SUBFORM"] ?? Enumerable.Empty<JToken>())
+        //            .Select(x => x["PARENTNAME"]?.ToString())
+        //            .Where(pn => !string.IsNullOrWhiteSpace(pn))
+        //            .Distinct()
+        //            .ToList();
+
+        //        if (parents == null || parents.Count == 0)
+        //        {
+
+        //            AppendLog($"No parents found for part {partName}.\n");
+
+        //            return;
+        //        }
+        //        else
+        //        {
+
+        //            foreach (var parent in parents)
+        //            {
+        //                txtLog.SelectionColor = Color.Yellow;
+        //                AppendLog($"Found parent: {parent}\n");
+        //            }
+        //        }
+
+        //        bool foundAny = false;
+
+        //        // === Stage 2+3: For each parent get active work orders + needed kit lines for the part ===
+        //        foreach (var parentName in parents)
+        //        {
+        //            //string encodedParent = Uri.EscapeDataString(parentName);
+        //            string encodedParent = Uri.EscapeDataString(parentName.Replace("'", "''"));
+
+        //            string serialUrl = $"{baseUrl}/SERIAL?$filter=PARTNAME eq '{encodedParent}' and SERIALSTATUSDES ne 'נסגרה' and SERIALSTATUSDES ne 'קיט מלא'&$select=SERIALNAME,SERIALDES&$expand=TRANSORDER_K_SUBFORM($filter=PARTNAME eq '{encodedPartName}' ;$select=CQUANT)"; //and QUANT eq 0
+
+
+        //            HttpResponseMessage serialResponse = await client.GetAsync(serialUrl);
+        //            serialResponse.EnsureSuccessStatusCode();
+        //            string serialJson = await serialResponse.Content.ReadAsStringAsync();
+        //            var serialApiResponse = JsonConvert.DeserializeObject<JObject>(serialJson);
+
+        //            var serials = serialApiResponse["value"];
+        //            if (serials == null || !serials.Any())
+        //            {
+        //                // No active work orders for this parent; continue to next
+        //                continue;
+        //            }
+
+        //            foreach (var serial in serials)
+        //            {
+        //                //txtLog.SelectionColor = Color.Yellow;
+        //                //AppendLog($"Found active work order {serial} for parent {parentName}.\n");
+
+        //                var kitLines = serial["TRANSORDER_K_SUBFORM"];
+        //                if (kitLines == null || !kitLines.Any())
+        //                {
+        //                    // No required kits with this part in this work order
+        //                    continue;
+        //                }
+
+        //                foundAny = true;
+
+        //                string serialName = serial["SERIALNAME"]?.ToString() ?? "(No SerialName)";
+        //                string serialDesc = serial["SERIALDES"]?.ToString() ?? "(No Description)";
+
+        //                var panel = new Panel { Width = 650, Height = 35, Margin = new Padding(2), BackColor = Color.LightSteelBlue };
+
+        //                var btnSerial = new Button
+        //                {
+        //                    Text = serialName,
+        //                    Width = 100,
+        //                    Height = 30,
+        //                    Tag = serial,
+        //                    Font = new Font("Segoe UI", 9),
+        //                    Location = new Point(0, 2),
+        //                    BackColor = Color.DarkOrange,
+        //                    ForeColor = Color.White
+        //                };
+        //                panel.Controls.Add(btnSerial);
+
+        //                int currentLeft = btnSerial.Width + 10;
+
+
+
+        //                foreach (var kit in kitLines)
+        //                {
+        //                    string cquantRaw = kit["CQUANT"]?.ToString() ?? "0";
+
+        //                    if (int.TryParse(cquantRaw, out int cquant))
+        //                    {
+        //                        var lblQty = new Label
+        //                        {
+        //                            Text = cquant > 0 ? $"-{cquant}" : $"{-cquant}",
+        //                            AutoSize = true,
+        //                            Location = new Point(currentLeft, 8),
+        //                            Font = new Font("Segoe UI", 9, FontStyle.Bold),
+        //                            ForeColor = Color.White,
+        //                            BackColor = cquant > 0 ? Color.IndianRed : Color.DarkGreen,
+        //                            Height = 30,
+        //                        };
+
+        //                        panel.Controls.Add(lblQty);
+        //                        currentLeft += lblQty.Width + 10;
+        //                    }
+        //                    else
+        //                    {
+
+        //                        AppendLog($"Invalid CQUANT value: '{cquantRaw}'\n");
+
+        //                    }
+        //                }
+
+
+        //                flpSerials.Controls.Add(panel);
+        //            }
+        //        }
+
+        //        if (!foundAny)
+        //        {
+
+        //            AppendLog($"No active work orders with missing part '{partName}' found.\n");
+
+        //        }
+        //        else
+        //        {
+        //            txtLog.SelectionColor = Color.Green;
+        //            AppendLog("Matching work orders displayed.\n");
+
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        AppendLog($"Error during retrieval for part {partName}:\n{ex.Message}\n");
+
+        //    }
+        //}
+
+
+
+
+
+
+
+        //private async Task DisplayWorkOrdersByPart(string partName, HttpClient client)
+        //{
+        //    flpSerials.Controls.Clear();
+
+        //    if (string.IsNullOrWhiteSpace(partName))
+        //    {
+        //        AppendLog("❌ Part name is empty!\n", Color.Red);
+        //        return;
+        //    }
+
+        //    string encodedPartName = Uri.EscapeDataString(partName.Replace("'", "''"));
+
+        //    try
+        //    {
+        //        // === Stage 1: Get parents that use this part ===
+        //        string parentsUrl = $"{baseUrl}/PART?$filter=PARTNAME eq '{encodedPartName}'&$select=PARTNAME&$expand=PARTPARENT_SUBFORM($select=PARENTNAME)";
+
+        //        AppendLog($"Fetching parents for part: {partName}\n", Color.Yellow);
+
+        //        HttpResponseMessage parentsResponse = await client.GetAsync(parentsUrl);
+
+        //        if (parentsResponse.StatusCode == (System.Net.HttpStatusCode)429)
+        //        {
+        //            AppendLog("Error: Too Many Requests (429). The server is rate-limiting requests.\n", Color.Red);
+        //            if (parentsResponse.Headers.TryGetValues("Retry-After", out var retryAfterValues))
+        //            {
+        //                AppendLog($"Retry-After: {retryAfterValues.FirstOrDefault()} seconds\n", Color.Red);
+        //            }
+        //            return;
+        //        }
+
+        //        parentsResponse.EnsureSuccessStatusCode();
+        //        string parentsJson = await parentsResponse.Content.ReadAsStringAsync();
+        //        var parentsApiResponse = JsonConvert.DeserializeObject<JObject>(parentsJson);
+
+        //        var parents = parentsApiResponse["value"]?
+        //            .SelectMany(p => p["PARTPARENT_SUBFORM"] ?? Enumerable.Empty<JToken>())
+        //            .Select(x => x["PARENTNAME"]?.ToString())
+        //            .Where(pn => !string.IsNullOrWhiteSpace(pn))
+        //            .Distinct()
+        //            .ToList();
+
+        //        if (parents == null || parents.Count == 0)
+        //        {
+        //            AppendLog($"❌ No parents found for part {partName}.\n", Color.Red);
+        //            return;
+        //        }
+        //        else
+        //        {
+        //            foreach (var parent in parents)
+        //                AppendLog($"Found parent: {parent}\n", Color.Yellow);
+        //        }
+
+        //        bool foundAny = false;
+
+        //        // === Stage 2+3: For each parent get active work orders ===
+        //        foreach (var parentName in parents)
+        //        {
+        //            string encodedParent = Uri.EscapeDataString(parentName.Replace("'", "''"));
+        //            string serialUrl =
+        //                $"{baseUrl}/SERIAL?$filter=PARTNAME eq '{encodedParent}' and SERIALSTATUSDES ne 'נסגרה' and SERIALSTATUSDES ne 'קיט מלא'&$select=SERIALNAME,SERIALDES&$expand=TRANSORDER_K_SUBFORM($filter=PARTNAME eq '{encodedPartName}' and QUANT eq 0;$select=CQUANT)";
+
+        //            AppendLog($"Fetching work orders for parent: {parentName}\n", Color.Yellow);
+
+        //            HttpResponseMessage serialResponse = await client.GetAsync(serialUrl);
+
+        //            if (serialResponse.StatusCode == (System.Net.HttpStatusCode)429)
+        //            {
+        //                AppendLog("Error: Too Many Requests (429). The server is rate-limiting requests.\n", Color.Red);
+        //                if (serialResponse.Headers.TryGetValues("Retry-After", out var retryAfterValues))
+        //                {
+        //                    AppendLog($"Retry-After: {retryAfterValues.FirstOrDefault()} seconds\n", Color.Red);
+        //                }
+        //                continue;
+        //            }
+
+        //            serialResponse.EnsureSuccessStatusCode();
+        //            string serialJson = await serialResponse.Content.ReadAsStringAsync();
+        //            var serialApiResponse = JsonConvert.DeserializeObject<JObject>(serialJson);
+
+        //            var serials = serialApiResponse["value"];
+        //            if (serials == null || !serials.Any())
+        //                continue; // No active work orders for this parent
+
+        //            foreach (var serial in serials)
+        //            {
+        //                AppendLog($"Found active work order {serial["SERIALNAME"]} for parent {parentName}.\n", Color.Yellow);
+        //                var kitLines = serial["TRANSORDER_K_SUBFORM"];
+        //                if (kitLines == null || !kitLines.Any())
+        //                    continue;
+
+        //                foundAny = true;
+
+        //                string serialName = serial["SERIALNAME"]?.ToString() ?? "(No SerialName)";
+        //                string serialDesc = serial["SERIALDES"]?.ToString() ?? "(No Description)";
+
+        //                var panel = new Panel
+        //                {
+        //                    Width = 650,
+        //                    Height = 35,
+        //                    Margin = new Padding(2),
+        //                    BackColor = Color.LightSteelBlue
+        //                };
+
+        //                var btnSerial = new Button
+        //                {
+        //                    Text = serialName,
+        //                    Width = 100,
+        //                    Height = 30,
+        //                    Tag = serial,
+        //                    Font = new Font("Segoe UI", 9),
+        //                    Location = new Point(0, 2),
+        //                    BackColor = Color.DarkOrange,
+        //                    ForeColor = Color.White
+        //                };
+        //                panel.Controls.Add(btnSerial);
+
+        //                int currentLeft = btnSerial.Width + 10;
+
+        //                foreach (var kit in kitLines)
+        //                {
+        //                    string cquantRaw = kit["CQUANT"]?.ToString() ?? "0";
+
+        //                    if (int.TryParse(cquantRaw, out int cquant))
+        //                    {
+        //                        var lblQty = new Label
+        //                        {
+        //                            Text = cquant > 0 ? $"-{cquant}" : $"{-cquant}",
+        //                            AutoSize = true,
+        //                            Location = new Point(currentLeft, 8),
+        //                            Font = new Font("Segoe UI", 9, FontStyle.Bold),
+        //                            ForeColor = Color.White,
+        //                            BackColor = cquant > 0 ? Color.IndianRed : Color.DarkGreen,
+        //                            Height = 30,
+        //                        };
+
+        //                        panel.Controls.Add(lblQty);
+        //                        currentLeft += lblQty.Width + 10;
+        //                    }
+        //                    else
+        //                    {
+        //                        AppendLog($"⚠ Invalid CQUANT value: '{cquantRaw}'\n", Color.Red);
+        //                    }
+        //                }
+
+        //                flpSerials.Controls.Add(panel);
+        //            }
+        //        }
+
+        //        if (!foundAny)
+        //        {
+        //            AppendLog($"No active work orders with missing part '{partName}' found.\n", Color.Red);
+        //        }
+        //        else
+        //        {
+        //            AppendLog("✅ Matching work orders displayed.\n", Color.Green);
+        //        }
+        //    }
+        //    catch (HttpRequestException ex)
+        //    {
+        //        AppendLog($"HttpRequestException in DisplayWorkOrdersByPart: {ex.Message}\n", Color.Red);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        AppendLog($"Unexpected error in DisplayWorkOrdersByPart: {ex.Message}\nStack Trace: {ex.StackTrace}\n", Color.Red);
+        //    }
+        //}
+
+
+
+        //private async Task DisplayWorkOrdersByPart(string partName, HttpClient client)
+        //{
+        //    flpSerials.Controls.Clear();
+
+        //    if (string.IsNullOrWhiteSpace(partName))
+        //    {
+        //        AppendLog("❌ Part name is empty!\n", Color.Red);
+        //        return;
+        //    }
+
+        //    string encodedPartName = Uri.EscapeDataString(partName.Replace("'", "''"));
+
+        //    try
+        //    {
+        //        // === Stage 1: Get parents that use this part ===
+        //        string parentsUrl = $"{baseUrl}/PART?$filter=PARTNAME eq '{encodedPartName}'&$select=PARTNAME&$expand=PARTPARENT_SUBFORM($select=PARENTNAME)";
+
+        //        AppendLog($"Fetching parents for part: {partName}\n", Color.Yellow);
+
+        //        HttpResponseMessage parentsResponse = await client.GetAsync(parentsUrl);
+        //        parentsResponse.EnsureSuccessStatusCode();
+
+        //        string parentsJson = await parentsResponse.Content.ReadAsStringAsync();
+        //        var parentsApiResponse = JsonConvert.DeserializeObject<JObject>(parentsJson);
+
+        //        var parents = parentsApiResponse["value"]?
+        //            .SelectMany(p => p["PARTPARENT_SUBFORM"] ?? Enumerable.Empty<JToken>())
+        //            .Select(x => x["PARENTNAME"]?.ToString())
+        //            .Where(pn => !string.IsNullOrWhiteSpace(pn))
+        //            .Distinct()
+        //            .ToList();
+
+        //        if (parents == null || parents.Count == 0)
+        //        {
+        //            AppendLog($"❌ No parents found for part {partName}.\n", Color.Red);
+        //            return;
+        //        }
+
+        //        foreach (var parent in parents)
+        //            AppendLog($"Found parent: {parent}\n", Color.Yellow);
+
+        //        bool foundAny = false;
+
+        //        // === Stage 2+3: For each parent get active work orders ===
+        //        foreach (var parentName in parents)
+        //        {
+        //           // string encodedParent = Uri.EscapeDataString(parentName.Replace("'", "''"));
+
+        //            // Make sure only ACTIVE statuses are included
+        //            string serialUrl =
+        //                $"{baseUrl}/SERIAL?$filter=PARTNAME eq '{parentName}' and SERIALSTATUSDES ne 'נסגרה' and SERIALSTATUSDES ne 'קיט מלא' &$select=SERIALNAME,SERIALDES,SERIALSTATUSDES&$expand=TRANSORDER_K_SUBFORM($filter=PARTNAME eq '{encodedPartName}' and QUANT eq 0;$select=CQUANT)";
+
+        //            AppendLog($"Fetching work orders for parent: {parentName}\n", Color.Yellow);
+
+        //            HttpResponseMessage serialResponse = await client.GetAsync(serialUrl);
+        //            serialResponse.EnsureSuccessStatusCode();
+
+        //            string serialJson = await serialResponse.Content.ReadAsStringAsync();
+        //            var serialApiResponse = JsonConvert.DeserializeObject<JObject>(serialJson);
+
+        //            AppendLog($"serialApiResponse: {serialApiResponse}\n", Color.Yellow);
+
+        //            var serials = serialApiResponse["value"];
+        //            if (serials == null || !serials.Any())
+        //                continue;
+
+        //            foreach (var serial in serials)
+        //            {
+        //                string status = serial["SERIALSTATUSDES"]?.ToString() ?? "";
+        //                if (status == "נסגרה" || status == "קיט מלא")
+        //                {
+        //                    AppendLog($"Skipping closed WO {serial["SERIALNAME"]}\n", Color.Gray);
+        //                    continue;
+        //                }
+
+        //                AppendLog($"Found active work order {serial["SERIALNAME"]} for parent {parentName}.\n", Color.Yellow);
+
+        //                var kitLines = serial["TRANSORDER_K_SUBFORM"];
+        //                if (kitLines == null || !kitLines.Any())
+        //                    continue;
+
+        //                foundAny = true;
+
+        //                string serialName = serial["SERIALNAME"]?.ToString() ?? "(No SerialName)";
+        //                string serialDesc = serial["SERIALDES"]?.ToString() ?? "(No Description)";
+
+        //                var panel = new Panel
+        //                {
+        //                    Width = 650,
+        //                    Height = 35,
+        //                    Margin = new Padding(2),
+        //                    BackColor = Color.LightSteelBlue
+        //                };
+
+        //                var btnSerial = new Button
+        //                {
+        //                    Text = serialName,
+        //                    Width = 100,
+        //                    Height = 30,
+        //                    Tag = serial,
+        //                    Font = new Font("Segoe UI", 9),
+        //                    Location = new Point(0, 2),
+        //                    BackColor = Color.DarkOrange,
+        //                    ForeColor = Color.White
+        //                };
+        //                panel.Controls.Add(btnSerial);
+
+        //                int currentLeft = btnSerial.Width + 10;
+
+        //                foreach (var kit in kitLines)
+        //                {
+        //                    string cquantRaw = kit["CQUANT"]?.ToString() ?? "0";
+
+        //                    if (int.TryParse(cquantRaw, out int cquant))
+        //                    {
+        //                        var lblQty = new Label
+        //                        {
+        //                            Text = $"-{cquant}",
+        //                            AutoSize = true,
+        //                            Location = new Point(currentLeft, 8),
+        //                            Font = new Font("Segoe UI", 9, FontStyle.Bold),
+        //                            ForeColor = Color.White,
+        //                            BackColor = cquant > 0 ? Color.IndianRed : Color.DarkGreen,
+        //                            Height = 30,
+        //                        };
+
+        //                        panel.Controls.Add(lblQty);
+        //                        currentLeft += lblQty.Width + 10;
+        //                    }
+        //                    else
+        //                    {
+        //                        AppendLog($"⚠ Invalid CQUANT value: '{cquantRaw}'\n", Color.Red);
+        //                    }
+        //                }
+
+        //                flpSerials.Controls.Add(panel);
+        //            }
+        //        }
+
+        //        if (!foundAny)
+        //        {
+        //            AppendLog($"No active work orders with missing part '{partName}' found.\n", Color.Red);
+        //        }
+        //        else
+        //        {
+        //            AppendLog("✅ Matching work orders displayed.\n", Color.Green);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        AppendLog($"Error in DisplayWorkOrdersByPart: {ex.Message}\nStack Trace: {ex.StackTrace}\n", Color.Red);
+        //    }
+        //}
+
+
+
+
+
         private async Task DisplayWorkOrdersByPart(string partName, HttpClient client)
         {
             flpSerials.Controls.Clear();
 
-
             if (string.IsNullOrWhiteSpace(partName))
             {
-
-                AppendLog("Part name is empty!\n");
-
+                AppendLog("❌ Part name is empty!\n", Color.Red);
                 return;
             }
 
-            //string encodedPartName = Uri.EscapeDataString(partName);
-            string encodedPartName = Uri.EscapeDataString(partName.Replace("'", "''"));
+            string safePartName = partName.Replace("'", "''"); // Priority OData escape
 
             try
             {
-                // === Stage 1: Get parents that use this part ===
-                string parentsUrl = $"{baseUrl}/PART?$filter=PARTNAME eq '{encodedPartName}'&$select=PARTNAME&$expand=PARTPARENT_SUBFORM($select=PARENTNAME)";
+                // === Stage 1: Get parents ===
+                string parentsUrl = $"{baseUrl}/PART?$filter=PARTNAME eq '{safePartName}'" +
+                                    "&$select=PARTNAME&$expand=PARTPARENT_SUBFORM($select=PARENTNAME)";
 
-                HttpResponseMessage parentsResponse = await client.GetAsync(parentsUrl);
-                parentsResponse.EnsureSuccessStatusCode();
-                string parentsJson = await parentsResponse.Content.ReadAsStringAsync();
-                var parentsApiResponse = JsonConvert.DeserializeObject<JObject>(parentsJson);
+                AppendLog($"Fetching parents for part: {partName}\n", Color.Yellow);
+
+                var parentsResponse = await client.GetStringAsync(parentsUrl);
+                var parentsApiResponse = JsonConvert.DeserializeObject<JObject>(parentsResponse);
 
                 var parents = parentsApiResponse["value"]?
                     .SelectMany(p => p["PARTPARENT_SUBFORM"] ?? Enumerable.Empty<JToken>())
@@ -827,108 +1327,140 @@ namespace WH_Panel
 
                 if (parents == null || parents.Count == 0)
                 {
-
-                    AppendLog($"No parents found for part {partName}.\n");
-
+                    AppendLog($"❌ No parents found for part {partName}.\n", Color.Red);
                     return;
                 }
-                else
-                {
 
-                    foreach (var parent in parents)
-                    {
-                        txtLog.SelectionColor = Color.Yellow;
-                        AppendLog($"Found parent: {parent}\n");
-                    }
-                }
+                foreach (var parent in parents)
+                    AppendLog($"Found parent: {parent}\n", Color.Yellow);
 
                 bool foundAny = false;
 
-                // === Stage 2+3: For each parent get active work orders + needed kit lines for the part ===
+                // === Stage 2: For each parent, get work orders ===
                 foreach (var parentName in parents)
                 {
-                    //string encodedParent = Uri.EscapeDataString(parentName);
-                    string encodedParent = Uri.EscapeDataString(parentName.Replace("'", "''"));
+                    string safeParent = parentName.Replace("'", "''");
 
-                    string serialUrl = $"{baseUrl}/SERIAL?$filter=PARTNAME eq '{encodedParent}' and SERIALSTATUSDES ne 'נסגרה' and SERIALSTATUSDES ne 'קיט מלא'&$select=SERIALNAME,SERIALDES&$expand=TRANSORDER_K_SUBFORM($filter=PARTNAME eq '{encodedPartName}' and QUANT eq 0;$select=CQUANT)";
+                    string serialUrl =
+                        $"{baseUrl}/SERIAL?$filter=PARTNAME eq '{safeParent}' " +
+                        "and SERIALSTATUSDES ne 'נסגרה' and SERIALSTATUSDES ne 'קיט מלא' " +
+                        "&$select=SERIALNAME,SERIALDES,SERIALSTATUSDES" +
+                        $"&$expand=TRANSORDER_K_SUBFORM($filter=PARTNAME eq '{safePartName}' and QUANT eq 0;$select=CQUANT)";
 
+                    AppendLog($"Fetching work orders for parent: {parentName}\n", Color.Yellow);
 
-                    HttpResponseMessage serialResponse = await client.GetAsync(serialUrl);
-                    serialResponse.EnsureSuccessStatusCode();
-                    string serialJson = await serialResponse.Content.ReadAsStringAsync();
-                    var serialApiResponse = JsonConvert.DeserializeObject<JObject>(serialJson);
+                    var serialResponse = await client.GetStringAsync(serialUrl);
+                    var serialApiResponse = JsonConvert.DeserializeObject<JObject>(serialResponse);
 
                     var serials = serialApiResponse["value"];
                     if (serials == null || !serials.Any())
-                    {
-                        // No active work orders for this parent; continue to next
                         continue;
-                    }
 
                     foreach (var serial in serials)
                     {
-                        //txtLog.SelectionColor = Color.Yellow;
-                        //AppendLog($"Found active work order {serial} for parent {parentName}.\n");
-
-                        var kitLines = serial["TRANSORDER_K_SUBFORM"];
-                        if (kitLines == null || !kitLines.Any())
+                        string status = serial["SERIALSTATUSDES"]?.ToString() ?? "";
+                        if (status == "נסגרה" || status == "קיט מלא")
                         {
-                            // No required kits with this part in this work order
+                            AppendLog($"Skipping closed WO {serial["SERIALNAME"]}\n", Color.Gray);
                             continue;
                         }
+
+                        AppendLog($"Found active work order {serial["SERIALNAME"]} for parent {parentName}.\n", Color.Yellow);
+                        var kitLines = serial["TRANSORDER_K_SUBFORM"];
+                        if (kitLines == null || !kitLines.Any())
+                            continue;
 
                         foundAny = true;
 
                         string serialName = serial["SERIALNAME"]?.ToString() ?? "(No SerialName)";
                         string serialDesc = serial["SERIALDES"]?.ToString() ?? "(No Description)";
 
-                        var panel = new Panel { Width = 650, Height = 35, Margin = new Padding(2), BackColor = Color.LightSteelBlue };
+                        // === Build panel UI ===
+                        var panel = new Panel
+                        {
+                            Width = 650,
+                            Height = 35,
+                            Margin = new Padding(2),
+                            BackColor = Color.LightSteelBlue
+                        };
 
                         var btnSerial = new Button
                         {
                             Text = serialName,
-                            Width = 100,
+                            Width = 120,
                             Height = 30,
                             Tag = serial,
-                            Font = new Font("Segoe UI", 9),
+                            Font = new Font("Segoe UI", 9, FontStyle.Bold),
                             Location = new Point(0, 2),
                             BackColor = Color.DarkOrange,
                             ForeColor = Color.White
                         };
                         panel.Controls.Add(btnSerial);
 
-                        int currentLeft = btnSerial.Width + 10;
+                        //var lblDesc = new Label
+                        //{
+                        //    Text = serialDesc,
+                        //    AutoSize = true,
+                        //    Location = new Point(btnSerial.Right + 10, 8),
+                        //    Font = new Font("Segoe UI", 9, FontStyle.Regular),
+                        //    ForeColor = Color.Black
+                        //};
+                        //panel.Controls.Add(lblDesc);
 
-
+                        int currentLeft = btnSerial.Right + 15;
 
                         foreach (var kit in kitLines)
                         {
-                            string cquantRaw = kit["CQUANT"]?.ToString() ?? "0";
+                            //string cquantRaw = kit["CQUANT"]?.ToString() ?? "0";
 
-                            if (int.TryParse(cquantRaw, out int cquant))
+                            //if (int.TryParse(cquantRaw, out int cquant))
+                            //{
+                            //    var lblQty = new Label
+                            //    {
+                            //        Text = $"-{cquant}",
+                            //        AutoSize = true,
+                            //        Location = new Point(currentLeft, 8),
+                            //        Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                            //        ForeColor = Color.White,
+                            //        BackColor = cquant > 0 ? Color.IndianRed : Color.DarkGreen,
+                            //        Padding = new Padding(3, 2, 3, 2)
+                            //    };
+
+                            //    panel.Controls.Add(lblQty);
+                            //    currentLeft = lblQty.Right + 10;
+                            //}
+                            //else
+                            //{
+                            //    AppendLog($"⚠ Invalid CQUANT value: '{cquantRaw}'\n", Color.Red);
+                            //}
+
+                            // Only take the first kit line
+                            var firstKit = kitLines.FirstOrDefault();
+                            if (firstKit != null)
                             {
-                                var lblQty = new Label
+                                string cquantRaw = firstKit["CQUANT"]?.ToString() ?? "0";
+                                if (int.TryParse(cquantRaw, out int cquant))
                                 {
-                                    Text = cquant > 0 ? $"-{cquant}" : $"{-cquant}",
-                                    AutoSize = true,
-                                    Location = new Point(currentLeft, 8),
-                                    Font = new Font("Segoe UI", 9, FontStyle.Bold),
-                                    ForeColor = Color.White,
-                                    BackColor = cquant > 0 ? Color.IndianRed : Color.DarkGreen,
-                                    Height = 30,
-                                };
+                                    var lblQty = new Label
+                                    {
+                                        Text = $"-{cquant}",
+                                        AutoSize = true,
+                                        Location = new Point(currentLeft, 8),
+                                        Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                                        ForeColor = Color.White,
+                                        BackColor = cquant > 0 ? Color.IndianRed : Color.DarkGreen,
+                                        Padding = new Padding(3, 2, 3, 2)
+                                    };
 
-                                panel.Controls.Add(lblQty);
-                                currentLeft += lblQty.Width + 10;
+                                    panel.Controls.Add(lblQty);
+                                }
+                                else
+                                {
+                                    AppendLog($"⚠ Invalid CQUANT value: '{cquantRaw}'\n", Color.Red);
+                                }
                             }
-                            else
-                            {
 
-                                AppendLog($"Invalid CQUANT value: '{cquantRaw}'\n");
-
-                            }
                         }
-
 
                         flpSerials.Controls.Add(panel);
                     }
@@ -936,22 +1468,16 @@ namespace WH_Panel
 
                 if (!foundAny)
                 {
-
-                    AppendLog($"No active work orders with missing part '{partName}' found.\n");
-
+                    AppendLog($"No active work orders with missing part '{partName}' found.\n", Color.Red);
                 }
                 else
                 {
-                    txtLog.SelectionColor = Color.Green;
-                    AppendLog("Matching work orders displayed.\n");
-
+                    AppendLog("✅ Matching work orders displayed.\n", Color.Green);
                 }
             }
             catch (Exception ex)
             {
-
-                AppendLog($"Error during retrieval for part {partName}:\n{ex.Message}\n");
-
+                AppendLog($"Error in DisplayWorkOrdersByPart: {ex.Message}\nStack Trace: {ex.StackTrace}\n", Color.Red);
             }
         }
 
@@ -1119,6 +1645,9 @@ namespace WH_Panel
         }
         private async void txtbInputMFPN_KeyDown(object sender, KeyEventArgs e, TextBox lastInput)
         {
+
+       
+
             if (e.KeyCode == Keys.Enter)
             {
                 lastUserInput = lastInput;
@@ -1162,6 +1691,21 @@ namespace WH_Panel
                                         await DisplayWorkOrdersByPart(thepart, client);
                                     }
                                 }
+
+
+
+
+                                bool flowControl = await GetTheOpenPOforTheIPN();   // Flow control based on PO status
+                                if (!flowControl)
+                                {
+                                    return;
+                                }
+                                else
+                                {
+
+                                    txtbInputQty.Focus();
+                                }
+
                             }
                             else
                             {
@@ -3642,12 +4186,15 @@ namespace WH_Panel
             }
             txtbInputIPN.Focus();
         }
-        private void txtbInputMFPN_KeyDown(object sender, KeyEventArgs e)
+        private async void txtbInputMFPN_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter && sender == txtbInputMFPN)
             {
                 txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter), sender as TextBox);
                 //lastUserInput.Focus();
+
+            
+
             }
         }
         private void btnPrintStock_Click(object sender, EventArgs e)
@@ -5009,7 +5556,7 @@ namespace WH_Panel
                             //SendKeys.Send("{ENTER}");
                             usedMouser = true;
 
-                            txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter),txtbMouse);
+                            txtbInputMFPN_KeyDown(txtbInputMFPN, new KeyEventArgs(Keys.Enter), txtbMouse);
                             // Clear the Mouser input box
 
                         }
@@ -5035,11 +5582,7 @@ namespace WH_Panel
 
         private async void txtbInputQty_Enter(object sender, EventArgs e)
         {
-            bool flowControl = await GetTheOpenPOforTheIPN();
-            if (!flowControl)
-            {
-                return;
-            }
+        
         }
 
         private async Task<bool> GetTheOpenPOforTheIPN()
@@ -5135,6 +5678,12 @@ namespace WH_Panel
                             onlyCb.Checked = true;
                             AppendLog("Single PO found → auto-checked.");
                         }
+                        else
+                        {
+
+                            AppendLog("Multiple POs found → user selection required.");
+
+                        }
                     }
                     else
                     {
@@ -5160,5 +5709,15 @@ namespace WH_Panel
 
             return true;
         }
+
+
+
+
+
+
+
+
+
+
     }
 }
