@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -46,6 +46,7 @@ namespace WH_Panel
                 {
                     (config["ApiUsername"], config["ApiPassword"]),
                     (config["Api2Username"], config["Api2Password"]),
+                    (config["Api3Username"], config["Api3Password"]) // ✅ now included
                     // Add more if needed
                 };
 
