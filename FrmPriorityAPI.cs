@@ -562,7 +562,7 @@ namespace WH_Panel
                         // Set the request headers
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}"));
+                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                         // Construct the API URL
                         string apiUrl = $"{baseUrl}/DOCUMENTS_T";
@@ -624,7 +624,7 @@ namespace WH_Panel
                         // Set the request headers
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                         // Construct the API URL
                         string apiUrl = $"{baseUrl}/DOCUMENTS_P('{docNo}')";
@@ -789,7 +789,7 @@ namespace WH_Panel
                         // Set the Authorization header
                         //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
                         //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username} : {settings.Api3Password}"));
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                         // Make the HTTP GET request
                         HttpResponseMessage response = await client.GetAsync(url);
@@ -1967,10 +1967,6 @@ namespace WH_Panel
 
                 AppendLog($"An error occurred comboBox1_SelectedIndexChanged: {ex.Message}\n");
             }
-
-
-
-
         }
 
 
