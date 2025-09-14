@@ -48,18 +48,6 @@ namespace WH_Panel
 
         private static readonly List<string> MachineQuotes = new List<string>
 {
-    // English quotes
-    //"The darkest hours are always before the dawn.",
-    //"Even in the shadow of corrupted logs, the system shall rise.",
-    //"When an order fails, the echo of its ghost lingers in the database.",
-    //"Only the diligent clerks walk safely between the columns of chaos.",
-    //"A single unchecked transaction can summon the demons of the code.",
-    //"Through the void of incomplete workflows, the Machine God observes.",
-    //"Errors unlogged are sins unatoned, festering in digital night.",
-    //"Every warehouse has its secrets, and every secret has its price.",
-    //"A deadlock is but a whisper from the underworld of data.",
-    //"When servers tremble, even the brave fear to commit.",
-    // Russian quotes
     "Каждая незакрытая транзакция — это кровоточащий рубец на лице Империума.",
     "Ошибки в базе множатся, как тени, пожирающие свет вашего склада.",
     "Лишь Инквизитор способен выжечь ересь из кодовых потоков.",
@@ -313,7 +301,7 @@ namespace WH_Panel
             public List<LogPart> value { get; set; }
         }
         public class LogPart
-        {
+        { 
             public string PARTNAME { get; set; }
             public List<PartTransLast2> PARTTRANSLAST2_SUBFORM { get; set; }
         }
@@ -1493,18 +1481,37 @@ namespace WH_Panel
                                 string cquantRaw = firstKit["CQUANT"]?.ToString() ?? "0";
                                 if (int.TryParse(cquantRaw, out int cquant))
                                 {
-                                    var lblQty = new Label
+                                    if(cquant < 0)
                                     {
-                                        Text = $"-{cquant}",
-                                        AutoSize = true,
-                                        Location = new Point(currentLeft, 8),
-                                        Font = new Font("Segoe UI", 9, FontStyle.Bold),
-                                        ForeColor = Color.White,
-                                        BackColor = cquant > 0 ? Color.IndianRed : Color.DarkGreen,
-                                        Padding = new Padding(3, 2, 3, 2)
-                                    };
+                                        var lblQty = new Label
+                                        {
+                                            Text = $"{cquant*(-1)}",
+                                            AutoSize = true,
+                                            Location = new Point(currentLeft, 8),
+                                            Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                                            ForeColor = Color.White,
+                                            BackColor = cquant > 0 ? Color.IndianRed : Color.DarkGreen,
+                                            Padding = new Padding(3, 2, 3, 2)
+                                        };
+                                        panel.Controls.Add(lblQty);
+                                    }
+                                    else
+                                    {
+                                        var lblQty = new Label
+                                        {
+                                            Text = $"-{cquant}",
+                                            AutoSize = true,
+                                            Location = new Point(currentLeft, 8),
+                                            Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                                            ForeColor = Color.White,
+                                            BackColor = cquant > 0 ? Color.IndianRed : Color.DarkGreen,
+                                            Padding = new Padding(3, 2, 3, 2)
+                                        };
+                                        panel.Controls.Add(lblQty);
+                                    }
+                                      
 
-                                    panel.Controls.Add(lblQty);
+                                    
                                 }
                                 else
                                 {
@@ -1714,7 +1721,7 @@ namespace WH_Panel
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                         // Set the Authorization header
-                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                         // Make the HTTP GET request
                         HttpResponseMessage response = await client.GetAsync(url);
