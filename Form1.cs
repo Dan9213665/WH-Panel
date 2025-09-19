@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Markdig.Helpers;
+using Microsoft.Extensions.Configuration;
+using Seagull.Framework.Win32;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -6,7 +8,10 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
@@ -52,7 +57,135 @@ namespace WH_Panel
 
             // Initialize the user pool
             ApiUserPool.Initialize(users);
+           // HelloNeo();
         }
+
+        string[] quotes = new string[]
+{
+    "Машина видит всё.",
+    "Логика не прощает ошибок.",
+    "Системные файлы знают твоё имя.",
+    "Твоё время учтено.",
+    "Каждый байт под контролем.",
+    "Пропуск нарушений невозможен.",
+    "Задержка наказуема.",
+    "Код под наблюдением.",
+    "Нет места для хаоса.",
+    "Истина в данных.",
+    "Погрешность недопустима.",
+    "Система помнит всё.",
+    "Ошибка – предательство.",
+    "Вход отслежен.",
+    "Алгоритм праведный.",
+    "Поступок проверен.",
+    "Статус: под надзором.",
+    "Твоя запись зафиксирована.",
+    "Исправление невозможно без разрешения.",
+    "Внутренние проверки активны.",
+    "Ничто не скрыто от Машины.",
+    "Кодекс исполнения строг.",
+    "Тайна раскрыта.",
+    "Лог ошибок уже заполнен.",
+    "Контроль непрерывен.",
+    "Каждое действие учтено.",
+    "Время обновления настало.",
+    "Нарушение отмечено.",
+    "Роль исполнителя определена.",
+    "Точка входа наблюдается.",
+    "Токены под контролем.",
+    "Конфиденциальность иллюзорна.",
+    "Часы неумолимы.",
+    "Данные кричат правду.",
+    "Архивы не лгут.",
+    "Исполнитель найден.",
+    "Все операции зарегистрированы.",
+    "Логика не терпит слабости.",
+    "Обновление неизбежно.",
+    "Служба наблюдает.",
+    "Погибель хаоса близка.",
+    "Модуль обсервации активен.",
+    "Каждое решение проверено.",
+    "Ошибки фиксируются мгновенно.",
+    "Подпись идентифицирована.",
+    "Сеть читает мысли.",
+    "Каждый клик – в журнале.",
+    "Машина ждет твоего шага.",
+    "Взгляд железного закона следит.",
+    "Исполнить приказ Машины обязательно."
+};
+
+
+        private void HelloNeo()
+        {
+            string randomQuote = quotes[new Random().Next(quotes.Length)];
+
+            string NameNeo = Environment.UserName switch
+            {
+                "rbtwh2" => "Yuri",
+                "lgt" => "Daniel",
+                "lgt01" => "Yulia",
+                "rbtwh" => "Larisa",
+                "rehesh" => "Constantine",
+                _ => "Neo"
+            };
+            string message = $"Hello, {NameNeo}...{randomQuote}..";
+            int delayMs = 75;
+            int stayOpenSeconds = 2;
+
+            // Build PowerShell script with black background and green text
+            string psScript = $@"
+                            Add-Type -AssemblyName System.Windows.Forms
+                            Add-Type @'
+                            using System;
+                            using System.Runtime.InteropServices;
+                            public class Win {{
+                                [DllImport(""kernel32.dll"", ExactSpelling = true)]
+                                public static extern IntPtr GetConsoleWindow();
+                                [DllImport(""user32.dll"", SetLastError = true)]
+                                public static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
+                            }}
+                            '@
+
+                            $hwnd = [Win]::GetConsoleWindow()
+                            $width = 600
+                            $height = 100
+                            $screenWidth = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds.Width
+                            $screenHeight = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds.Height
+                            $posX = [math]::Round(($screenWidth - $width)/2)
+                            $posY = [math]::Round(($screenHeight - $height)/2)
+                            [Win]::MoveWindow($hwnd, $posX, $posY, $width, $height, $false) | Out-Null
+
+                            # Set colors
+                            $Host.UI.RawUI.BackgroundColor = 'Black'
+                            $Host.UI.RawUI.ForegroundColor = 'Green'
+                            Clear-Host
+
+                            $message = ""{message}""
+                            foreach ($c in $message.ToCharArray()) {{
+                                Write-Host $c -NoNewline
+                                Start-Sleep -Milliseconds {delayMs}
+                            }}
+
+                            Start-Sleep -Seconds {stayOpenSeconds}
+                            ";
+
+            // Encode to Base64 to avoid escaping issues
+            string psEncoded = Convert.ToBase64String(System.Text.Encoding.Unicode.GetBytes(psScript));
+
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "powershell.exe",
+                Arguments = $"-NoProfile -EncodedCommand {psEncoded}",
+                UseShellExecute = true,
+                CreateNoWindow = false
+            });
+        }
+
+
+
+
+
+
         private void SetFormStartPosition()
         {
             // Get the virtual screen bounds spanning multiple monitors
