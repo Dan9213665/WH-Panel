@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Mvc.TagHelpers;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OfficeOpenXml;
 using OfficeOpenXml.Drawing.Slicer.Style; // Add the EPPlus NuGet package for reading Excel files
@@ -476,6 +477,30 @@ namespace WH_Panel
             cmbPackCode.SelectedIndex = 0; // Select the first item by default
         }
 
+        public string SelectTheCredentialsByLoggedUser(AppSettings settings)
+        {
+            string thecredentials = string.Empty;
+            string curentUserFull = WindowsIdentity.GetCurrent().Name; // e.g., DOMAIN\lgt01
+            string curentUser = curentUserFull.Split('\\').Last();     // just 'lgt01'
+            //MessageBox.Show($"User detected : {curentUser}\n");
+            if (curentUser == "lgt01")
+            {
+                thecredentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}"));
+            }
+            else if (curentUser == "rbtwh")
+            {
+                thecredentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
+            }
+            else if (curentUser == "rbtwh2")
+            {
+                thecredentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
+            }
+            else
+            {
+                thecredentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+            }
+            return thecredentials;
+        }
 
         public class WarehouseService
         {
@@ -490,7 +515,22 @@ namespace WH_Panel
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
+                        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
+
+                        //string curentUserFull = WindowsIdentity.GetCurrent().Name; // e.g., DOMAIN\lgt01
+                        //string curentUser = curentUserFull.Split('\\').Last();     // just 'lgt01'
+                        string credentials = formInstance.SelectTheCredentialsByLoggedUser(settings);
+                        // MessageBox.Show($"User detected : {curentUser}");
+
+                        //if (curentUser == "lgt01")
+                        //{
+                        //    credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}"));
+                        //}
+                        //else
+                        //{
+                        //    credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
+                        //}
+
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                         // Construct the API URL
                         string apiUrl = $"{baseUrl}/DOCUMENTS_P";
@@ -553,7 +593,9 @@ namespace WH_Panel
                         // Set the request headers
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
+
+                        string credentials = formInstance.SelectTheCredentialsByLoggedUser(settings);
+
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                         // Construct the API URL
                         string apiUrl = $"{baseUrl}/DOCUMENTS_T";
@@ -615,7 +657,8 @@ namespace WH_Panel
                         // Set the request headers
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
+                        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
+                        string credentials = formInstance.SelectTheCredentialsByLoggedUser(settings);
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                         // Construct the API URL
                         string apiUrl = $"{baseUrl}/DOCUMENTS_P('{docNo}')";
@@ -2990,89 +3033,113 @@ namespace WH_Panel
         }
 
 
+        //private async void btnINSERTlogpart_Click(object sender, EventArgs e)
+        //{
+        //    string partName = txtbIPN.Text.Trim();
+        //    string partDes = txtbDESC.Text.Trim();
+        //    string partMFPN = txtbMFPN.Text.Trim().ToUpper();
+        //    string partMNFDes = txtbMNF.Text.Trim().ToUpper();
+
+        //    if (string.IsNullOrEmpty(partName) || string.IsNullOrEmpty(partDes) ||
+        //        string.IsNullOrEmpty(partMFPN) || string.IsNullOrEmpty(partMNFDes))
+        //    {
+        //        MessageBox.Show("Please ensure all fields are filled in before inserting.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        return;
+        //    }
+
+        //    // Truncate to fit DB constraints
+        //    if (partMNFDes.Length > 32)
+        //        partMNFDes = partMNFDes.Substring(0, 32);
+
+        //    string partMNFName = partMNFDes.Length > 10 ? partMNFDes.Substring(0, 10) : partMNFDes;
+
+        //    try
+        //    {
+        //        var stopwatch = Stopwatch.StartNew();
+
+        //        int existingPartId = -1;
+        //        try
+        //        {
+        //            existingPartId = await CheckIfIPNExists(partName);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            MessageBox.Show($"CheckIfIPNExists failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            return;
+        //        }
+
+        //        if (existingPartId > 0)
+        //        {
+        //            try
+        //            {
+        //                await AddingAltMFPNtoIPN(existingPartId, partMFPN, partDes, partMNFName, partMNFDes);
+        //                await DisplayInsertedData(existingPartId);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                MessageBox.Show($"AddingAltMFPNtoIPN or DisplayInsertedData failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                return;
+        //            }
+        //        }
+        //        else
+        //        {
+        //            int partId;
+        //            try
+        //            {
+        //                partId = await InsertLogPart(partName, partDes);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                MessageBox.Show($"InsertLogPart failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                return;
+        //            }
+
+        //            int mnfId;
+        //            try
+        //            {
+        //                mnfId = await GetOrInsertManufacturer(partMNFName, partMNFDes);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                MessageBox.Show($"GetOrInsertManufacturer failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                return;
+        //            }
+
+        //            try
+        //            {
+        //                await InsertPartMnfOne(partId, partMFPN, mnfId, partDes);
+        //                await DisplayInsertedData(partId);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                MessageBox.Show($"InsertPartMnfOne or DisplayInsertedData failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                return;
+        //            }
+        //        }
+
+        //        stopwatch.Stop();
+        //        UpdatePing(stopwatch.ElapsedMilliseconds);
+        //        btnClear.PerformClick();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show($"General error in btnINSERTlogpart_Click: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //    }
+        //}
+
+
         private async void btnINSERTlogpart_Click(object sender, EventArgs e)
         {
-            string partName = txtbIPN.Text.Trim();
-            string partDes = txtbDESC.Text.Trim();
-            string partMFPN = txtbMFPN.Text.Trim().ToUpper();
-            string partMNFDes = txtbMNF.Text.Trim().ToUpper();
-
-            if (string.IsNullOrEmpty(partName) || string.IsNullOrEmpty(partDes) ||
-                string.IsNullOrEmpty(partMFPN) || string.IsNullOrEmpty(partMNFDes))
-            {
-                MessageBox.Show("Please ensure all fields are filled in before inserting.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            // Truncate to fit DB constraints
-            if (partMNFDes.Length > 32)
-                partMNFDes = partMNFDes.Substring(0, 32);
-
-            string partMNFName = partMNFDes.Length > 10 ? partMNFDes.Substring(0, 10) : partMNFDes;
-
             try
             {
                 var stopwatch = Stopwatch.StartNew();
 
-                int existingPartId = -1;
-                try
-                {
-                    existingPartId = await CheckIfIPNExists(partName);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"CheckIfIPNExists failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
+                string partName = txtbIPN.Text.Trim();
+                string partDes = txtbDESC.Text.Trim();
+                string partMFPN = txtbMFPN.Text.Trim().ToUpper();
+                string partMNFDes = txtbMNF.Text.Trim().ToUpper();
 
-                if (existingPartId > 0)
-                {
-                    try
-                    {
-                        await AddingAltMFPNtoIPN(existingPartId, partMFPN, partDes, partMNFName, partMNFDes);
-                        await DisplayInsertedData(existingPartId);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"AddingAltMFPNtoIPN or DisplayInsertedData failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-                }
-                else
-                {
-                    int partId;
-                    try
-                    {
-                        partId = await InsertLogPart(partName, partDes);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"InsertLogPart failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
-                    int mnfId;
-                    try
-                    {
-                        mnfId = await GetOrInsertManufacturer(partMNFName, partMNFDes);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"GetOrInsertManufacturer failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
-                    try
-                    {
-                        await InsertPartMnfOne(partId, partMFPN, mnfId, partDes);
-                        await DisplayInsertedData(partId);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"InsertPartMnfOne or DisplayInsertedData failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-                }
+                await InsertOrUpdateLogPartAsync(partName, partDes, partMFPN, partMNFDes);
 
                 stopwatch.Stop();
                 UpdatePing(stopwatch.ElapsedMilliseconds);
@@ -3080,55 +3147,234 @@ namespace WH_Panel
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"General error in btnINSERTlogpart_Click: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+               AppendLog($"Error: {ex.Message}", Color.Red);
             }
         }
+
+
+        private async Task InsertOrUpdateLogPartAsync(string partName, string partDes, string partMFPN, string partMNFDes)
+        {
+            if (string.IsNullOrWhiteSpace(partName) || string.IsNullOrWhiteSpace(partDes) ||
+                string.IsNullOrWhiteSpace(partMFPN) || string.IsNullOrWhiteSpace(partMNFDes))
+            {
+                throw new ArgumentException("All fields must be filled.");
+            }
+
+            // Truncate to DB limits
+            if (partMNFDes.Length > 32)
+                partMNFDes = partMNFDes.Substring(0, 32).Replace("&","n");
+
+            string partMNFName = partMNFDes.Length > 10 ? partMNFDes.Substring(0, 10) : partMNFDes;
+
+            int existingPartId = await CheckIfIPNExists(partName);
+
+            if (existingPartId > 0)
+            {
+                await AddingAltMFPNtoIPN(existingPartId, partMFPN, partDes, partMNFName, partMNFDes);
+                //await DisplayInsertedData(existingPartId);
+                //AppendLog(partName + " already exists, added new MFPN under existing IPN.\n", Color.Yellow);
+            }
+            else
+            {
+                int partId = await InsertLogPart(partName, partDes);
+                int mnfId = await GetOrInsertManufacturer(partMNFName, partMNFDes);
+                await InsertPartMnfOne(partId, partMFPN, mnfId, partDes);
+                //await DisplayInsertedData(partId);
+                //AppendLog(partName + " and its MFPN added successfully.\n", Color.LightGreen);
+            }
+        }
+
+
+
+
+        //private async Task AddingAltMFPNtoIPN(int partId, string partMFPN, string partDes, string mnfName, string mnfDes)
+        //{
+        //    try
+        //    {
+        //        // Ensure the manufacturer name is not already used in the list of approved MFPNs for the IPN
+        //        string uniqueMnfName = await GetUnusedManufacturerName(partId, mnfName);
+        //        // Check if the manufacturer exists, if not, create it
+        //        int mnfId = await GetOrInsertManufacturer(uniqueMnfName, mnfDes);
+        //        // Construct the payload for the new PARTMNF_SUBFORM item
+        //        var newPartMnfSubformItem = new
+        //        {
+        //            PART = partId,
+        //            MNFPARTNAME = partMFPN,
+        //            MNFPARTDES = partDes,
+        //            MNFNAME = uniqueMnfName,
+        //            MNFDES = mnfDes
+        //        };
+        //        // Construct the URL for the PARTMNFONE endpoint
+        //        string url = $"{baseUrl}/PARTMNFONE";
+        //        using (HttpClient client = new HttpClient())
+        //        {
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+
+        //            string usedUser = ApiHelper.AuthenticateClient(client);
+        //            //AppendLog($"User used: {usedUser}\n");
+
+
+        //            // Serialize the payload to JSON
+        //            string jsonPayload = JsonConvert.SerializeObject(newPartMnfSubformItem);
+        //            var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+        //            // Send the POST request
+        //            HttpResponseMessage response = await client.PostAsync(url, content);
+        //            // Handle the response
+        //            if (response.IsSuccessStatusCode)
+        //            {
+        //                MessageBox.Show("New MFPN added successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //            }
+        //            else if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
+        //            {
+        //                MessageBox.Show("Manufacturer name must be unique for this IPN. Please try again with a different name.", "Conflict Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            }
+        //            else
+        //            {
+        //                string errorContent = await response.Content.ReadAsStringAsync();
+        //                throw new HttpRequestException($"Error adding new MFPN: {response.StatusCode}\n{errorContent}");
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show($"An error occurred while adding the new MFPN: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //    }
+        //}
+
+
+        //private async Task AddingAltMFPNtoIPN(int partId, string partMFPN, string partDes, string mnfName, string mnfDes)
+        //{
+        //    try
+        //    {
+        //        using (HttpClient client = new HttpClient())
+        //        {
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        //            // Authenticate client
+        //            string usedUser = ApiHelper.AuthenticateClient(client);
+
+        //            // --- Step 1: Check if this MFPN already exists for the IPN ---
+        //            string checkUrl = $"{baseUrl}/PARTMNFONE?$filter=PART eq {partId} and MNFPARTNAME eq '{partMFPN}'";
+        //            HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
+        //            checkResponse.EnsureSuccessStatusCode();
+        //            string checkContent = await checkResponse.Content.ReadAsStringAsync();
+        //            var checkData = JsonConvert.DeserializeObject<JObject>(checkContent);
+
+        //            bool mfpnExists = checkData["PARTS"]?.Any() == true;
+        //            if (mfpnExists)
+        //            {
+        //                AppendLog($"ℹ️ MFPN '{partMFPN}' already exists for PART ID {partId}. Skipping insert.", Color.Blue);
+        //                return;
+        //            }
+
+        //            // --- Step 2: Ensure the manufacturer name is unique for this IPN ---
+        //            string uniqueMnfName = await GetUnusedManufacturerName(partId, mnfName);
+
+        //            // Check or insert manufacturer
+        //            int mnfId = await GetOrInsertManufacturer(uniqueMnfName, mnfDes);
+
+        //            // --- Step 3: Construct payload and POST ---
+        //            var newPartMnfSubformItem = new
+        //            {
+        //                PART = partId,
+        //                MNFPARTNAME = partMFPN,
+        //                MNFPARTDES = partDes,
+        //                MNFNAME = uniqueMnfName,
+        //                MNFDES = mnfDes
+        //            };
+
+        //            string url = $"{baseUrl}/PARTMNFONE";
+        //            string jsonPayload = JsonConvert.SerializeObject(newPartMnfSubformItem);
+        //            var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+        //            HttpResponseMessage response = await client.PostAsync(url, content);
+
+        //            if (response.IsSuccessStatusCode)
+        //            {
+        //                AppendLog($"✅ MFPN '{partMFPN}' added successfully for PART ID {partId}.", Color.Green);
+        //            }
+        //            else if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
+        //            {
+        //                AppendLog($"⚠️ Manufacturer name must be unique for this IPN. Conflict inserting '{uniqueMnfName}'.", Color.Orange);
+        //            }
+        //            else
+        //            {
+        //                string errorContent = await response.Content.ReadAsStringAsync();
+        //                throw new HttpRequestException($"Error adding new MFPN: {response.StatusCode}\n{errorContent}");
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        AppendLog($"❌ Error adding MFPN '{partMFPN}' for PART ID {partId}: {ex.Message}", Color.Red);
+        //    }
+        //}
+
+
 
         private async Task AddingAltMFPNtoIPN(int partId, string partMFPN, string partDes, string mnfName, string mnfDes)
         {
             try
             {
-                // Ensure the manufacturer name is not already used in the list of approved MFPNs for the IPN
-                string uniqueMnfName = await GetUnusedManufacturerName(partId, mnfName);
-                // Check if the manufacturer exists, if not, create it
-                int mnfId = await GetOrInsertManufacturer(uniqueMnfName, mnfDes);
-                // Construct the payload for the new PARTMNF_SUBFORM item
-                var newPartMnfSubformItem = new
-                {
-                    PART = partId,
-                    MNFPARTNAME = partMFPN,
-                    MNFPARTDES = partDes,
-                    MNFNAME = uniqueMnfName,
-                    MNFDES = mnfDes
-                };
-                // Construct the URL for the PARTMNFONE endpoint
-                string url = $"{baseUrl}/PARTMNFONE";
                 using (HttpClient client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
 
-
-
+                    // Authenticate client
                     string usedUser = ApiHelper.AuthenticateClient(client);
-                    //AppendLog($"User used: {usedUser}\n");
 
+                    // --- Step 1: Check if this MFPN already exists for the IPN ---
+                    string checkUrl = $"{baseUrl}/PARTMNFONE?$filter=PART eq {partId} and MNFPARTNAME eq '{partMFPN}'";
+                    HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
+                    checkResponse.EnsureSuccessStatusCode();
+                    string checkContent = await checkResponse.Content.ReadAsStringAsync();
+                    var checkData = JsonConvert.DeserializeObject<JObject>(checkContent);
 
-                    // Serialize the payload to JSON
+                    // Updated check: OData returns "value" array
+                    bool mfpnExists = checkData["value"]?.Any() == true;
+                    if (mfpnExists)
+                    {
+                        AppendLog($"ℹ️ MFPN '{partMFPN}' already exists for PART ID {partId}. Skipping insert.", Color.Yellow);
+                        return;
+                    }
+
+                    // --- Step 2: Ensure the manufacturer name is unique for this IPN ---
+                    string uniqueMnfName = await GetUnusedManufacturerName(partId, mnfName);
+
+                    // Check or insert manufacturer
+                    int mnfId = await GetOrInsertManufacturer(uniqueMnfName, mnfDes);
+
+                    // --- Step 3: Construct payload and POST ---
+                    var newPartMnfSubformItem = new
+                    {
+                        PART = partId,
+                        MNFPARTNAME = partMFPN,
+                        MNFPARTDES = partDes,
+                        MNFNAME = uniqueMnfName,
+                        MNFDES = mnfDes
+                    };
+
+                    string url = $"{baseUrl}/PARTMNFONE";
                     string jsonPayload = JsonConvert.SerializeObject(newPartMnfSubformItem);
                     var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-                    // Send the POST request
+
                     HttpResponseMessage response = await client.PostAsync(url, content);
-                    // Handle the response
+
                     if (response.IsSuccessStatusCode)
                     {
-                        MessageBox.Show("New MFPN added successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        AppendLog($"✅ MFPN '{partMFPN}' added successfully for PART ID {partId}.", Color.Green);
+                        addedNewMFPNaltsCount++;
                     }
                     else if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
                     {
-                        MessageBox.Show("Manufacturer name must be unique for this IPN. Please try again with a different name.", "Conflict Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        AppendLog($"⚠️ Manufacturer name must be unique for this IPN. Conflict inserting '{uniqueMnfName}'.", Color.Orange);
                     }
                     else
                     {
@@ -3139,9 +3385,12 @@ namespace WH_Panel
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred while adding the new MFPN: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                AppendLog($"❌ Error adding MFPN '{partMFPN}' for PART ID {partId}: {ex.Message}", Color.Red);
             }
         }
+
+
+
         private async Task<string> GetUnusedManufacturerName(int partId, string baseMnfName)
         {
             string url = $"{baseUrl}/PART?$filter=PART eq {partId}&$expand=PARTMNF_SUBFORM";
@@ -3479,6 +3728,9 @@ namespace WH_Panel
                     string jsonLogPartData = JsonConvert.SerializeObject(logPartData);
                     var content = new StringContent(jsonLogPartData, Encoding.UTF8, "application/json");
 
+
+
+
                     AppendLog("📡 Sending request to insert LOGPART...", System.Drawing.Color.Yellow);
                     HttpResponseMessage response = await client.PostAsync(url, content);
                     response.EnsureSuccessStatusCode();
@@ -3489,7 +3741,8 @@ namespace WH_Panel
                     int? partId = responseData["PART"]?.Value<int>();
                     if (partId.HasValue)
                     {
-                        AppendLog($"✅ Insert successful. New PART ID: {partId.Value}", System.Drawing.Color.Green);
+                        AppendLog($"✅ Insert successful. New PART ID: {partId.Value}", System.Drawing.Color.LimeGreen);
+                        insertedRowsCount++;
                         return partId.Value;
                     }
                     else
@@ -3514,6 +3767,93 @@ namespace WH_Panel
 
             return -1; // General failure
         }
+
+
+
+
+
+
+        //private async Task<int> InsertLogPart(string partName, string partDes)
+        //{
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        try
+        //        {
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        //            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+        //            // --- Step 1: Check if part already exists ---
+        //            string checkUrl = $"{baseUrl}/LOGPART?filter=PARTNAME eq '{partName}'&$select = PART"; // Adjust filter according to your API
+        //            AppendLog($"🔍 Checking if LOGPART '{partName}' exists...", System.Drawing.Color.Yellow);
+
+        //            HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
+        //            checkResponse.EnsureSuccessStatusCode();
+
+        //            string checkBody = await checkResponse.Content.ReadAsStringAsync();
+        //            var checkData = JsonConvert.DeserializeObject<JObject>(checkBody);
+
+        //            int? existingPartId = checkData["PARTS"]?.FirstOrDefault()?["PART"]?.Value<int>();
+        //            if (existingPartId.HasValue)
+        //            {
+        //                AppendLog($"ℹ️ LOGPART '{partName}' already exists. PART ID: {existingPartId.Value}", System.Drawing.Color.Blue);
+        //                return existingPartId.Value;
+        //            }
+
+        //            // --- Step 2: Insert new part if it doesn’t exist ---
+        //            var logPartData = new
+        //            {
+        //                PARTNAME = partName,
+        //                PARTDES = partDes,
+        //                TYPE = "R"
+        //            };
+
+        //            string jsonLogPartData = JsonConvert.SerializeObject(logPartData);
+        //            var content = new StringContent(jsonLogPartData, Encoding.UTF8, "application/json");
+
+        //            AppendLog("📡 Sending request to insert LOGPART...", System.Drawing.Color.Yellow);
+        //            HttpResponseMessage response = await client.PostAsync($"{baseUrl}/LOGPART", content);
+        //            response.EnsureSuccessStatusCode();
+
+        //            string responseBody = await response.Content.ReadAsStringAsync();
+        //            var responseData = JsonConvert.DeserializeObject<JObject>(responseBody);
+
+        //            int? partId = responseData["PART"]?.Value<int>();
+        //            if (partId.HasValue)
+        //            {
+        //                AppendLog($"✅ Insert successful. New PART ID: {partId.Value}", System.Drawing.Color.Green);
+        //                return partId.Value;
+        //            }
+        //            else
+        //            {
+        //                AppendLog($"❌ Insert succeeded, but PART ID missing in response: {responseBody}", System.Drawing.Color.Red);
+        //                return -2; // Specific failure: PART not found
+        //            }
+        //        }
+        //        catch (HttpRequestException ex)
+        //        {
+        //            AppendLog($"❌ HTTP error during operation: {ex.Message}", System.Drawing.Color.Red);
+        //        }
+        //        catch (JsonException ex)
+        //        {
+        //            AppendLog($"❌ JSON parsing error: {ex.Message}", System.Drawing.Color.Red);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            AppendLog($"❌ Unexpected error: {ex.Message}", System.Drawing.Color.Red);
+        //        }
+        //    }
+
+        //    return -1; // General failure
+        //}
+
+
+
+
+
+
 
 
         private async Task<int> GetOrInsertManufacturer(string partMNFName, string partMNFDes)
@@ -3569,7 +3909,7 @@ namespace WH_Panel
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"GetOrInsertManufacturer error: {ex.Message}");
+                AppendLog($"GetOrInsertManufacturer error: {ex.Message}",Color.Red);
                 return 0;
             }
 
@@ -3979,10 +4319,112 @@ namespace WH_Panel
                 }
             }
         }
+        //private async Task BulkInsertIntoDB(string filePath)
+        //{
+        //    int InsertedrowsCount = 0;
+        //    int totalRowsCount = 0;
+        //    try
+        //    {
+        //        var fileInfo = new FileInfo(filePath);
+        //        using (var package = new ExcelPackage(fileInfo))
+        //        {
+        //            var worksheet = package.Workbook.Worksheets[0]; // Assuming data is in the first worksheet
+        //            int rowCount = worksheet.Dimension.Rows;
+        //            int colCount = worksheet.Dimension.Columns;
+        //            // Read the header row to get the column names
+        //            Dictionary<string, int> columnIndices = new Dictionary<string, int>();
+        //            for (int col = 1; col <= colCount; col++)
+        //            {
+        //                string columnName = worksheet.Cells[1, col].Text.Trim();
+        //                columnIndices[columnName] = col;
+        //            }
+        //            // Get the column indices for the required fields
+        //            int partNameCol = columnIndices["IPN"];
+        //            int partDesCol = columnIndices["Description"];
+        //            int partMFPNCol = columnIndices["MFPN"];
+        //            int partMNFDesCol = columnIndices["Manufacturer"];
+        //            for (int row = 2; row <= rowCount; row++) // Start from row 2 to skip the header
+        //            {
+        //                totalRowsCount++;
+        //                string partName = worksheet.Cells[row, partNameCol].Text.Trim();
+        //                string partDes = worksheet.Cells[row, partDesCol].Text.Trim();
+        //                string partMFPN = worksheet.Cells[row, partMFPNCol].Text.Trim().ToUpper();
+        //                string partMNFDes = worksheet.Cells[row, partMNFDesCol].Text.Trim().ToUpper();
+        //                // Validate the required fields
+        //                if (string.IsNullOrEmpty(partName) || string.IsNullOrEmpty(partDes) || string.IsNullOrEmpty(partMFPN) || string.IsNullOrEmpty(partMNFDes))
+        //                {
+        //                    MessageBox.Show($"Row {row}: Please ensure all fields are filled in before inserting.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                    continue;
+        //                }
+        //                // Truncate MNFDES to fit within the 32-character limit
+        //                if (partMNFDes.Length > 32)
+        //                {
+        //                    partMNFDes = partMNFDes.Substring(0, 32);
+        //                }
+        //                // Generate MNFNAME by truncating MNFDES to fit within the 10-character limit
+        //                string partMNFName = partMNFDes.Length > 10 ? partMNFDes.Substring(0, 10) : partMNFDes;
+        //                try
+        //                {
+        //                    // Measure the time taken for the HTTP POST request
+        //                    var stopwatch = Stopwatch.StartNew();
+        //                    // Insert into LOGPART and get the generated PART ID
+        //                    int partId = await InsertLogPart(partName, partDes);
+        //                    // Check if the manufacturer exists, if not, insert it and get the MNF ID
+        //                    int mnfId = await GetOrInsertManufacturer(partMNFName.Replace("&","n"), partMNFDes);
+        //                    // Insert into PARTMNFONE
+        //                    await InsertPartMnfOne(partId, partMFPN, mnfId, partDes);
+        //                    stopwatch.Stop();
+        //                    // Update the ping label
+        //                    UpdatePing(stopwatch.ElapsedMilliseconds);
+        //                    InsertedrowsCount++;
+        //                    // Log the extracted values
+
+        //                    AppendLog($"Row {row}: Part Name = {partName}, Part Description = {partDes}, Manufacturer Part Number = {partMFPN}, Manufacturer Description = {partMNFDes}\n", Color.LimeGreen);
+
+        //                    //await DisplayInsertedData(partId);
+        //                }
+        //                catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+        //                {
+        //                    // Log the extracted values for duplicate entries
+
+        //                    AppendLog($"Row {row}: Part Name = {partName}, Part Description = {partDes}, Manufacturer Part Number = {partMFPN}, Manufacturer Description = {partMNFDes} - Already exists (409) \n", Color.Yellow);
+
+        //                }
+        //                catch (HttpRequestException ex)
+        //                {
+        //                    // Log the extracted values
+        //                    // Set the color to acid green
+        //                    AppendLog($"Row {row}: Part Name = {partName}, Part Description = {partDes}, Manufacturer Part Number = {partMFPN}, Manufacturer Description = {partMNFDes} , Exception = {ex.Message}\n");
+
+        //                    //MessageBox.Show($"Row {row}: Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    // Log the extracted values
+        //                    // Set the color to acid green
+        //                    AppendLog($"Row {row}: Part Name = {partName}, Part Description = {partDes}, Manufacturer Part Number = {partMFPN}, Manufacturer Description = {partMNFDes}, Exception = {ex.Message}\n");
+
+        //                    // MessageBox.Show($"Row {row}: An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                }
+        //            }
+        //            MessageBox.Show($"Bulk insert completed. {InsertedrowsCount} rows inserted of total {totalRowsCount} rows in file.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show($"An error occurred while reading the Excel file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //    }
+        //}
+
+        int insertedRowsCount {get; set;}
+        int addedNewMFPNaltsCount { get; set; }
+
         private async Task BulkInsertIntoDB(string filePath)
         {
-            int InsertedrowsCount = 0;
+            insertedRowsCount = 0;
+            addedNewMFPNaltsCount = 0;
             int totalRowsCount = 0;
+
             try
             {
                 var fileInfo = new FileInfo(filePath);
@@ -3991,83 +4433,61 @@ namespace WH_Panel
                     var worksheet = package.Workbook.Worksheets[0]; // Assuming data is in the first worksheet
                     int rowCount = worksheet.Dimension.Rows;
                     int colCount = worksheet.Dimension.Columns;
-                    // Read the header row to get the column names
+
+                    // Read header row to get column indices
                     Dictionary<string, int> columnIndices = new Dictionary<string, int>();
                     for (int col = 1; col <= colCount; col++)
                     {
                         string columnName = worksheet.Cells[1, col].Text.Trim();
                         columnIndices[columnName] = col;
                     }
-                    // Get the column indices for the required fields
+
                     int partNameCol = columnIndices["IPN"];
                     int partDesCol = columnIndices["Description"];
                     int partMFPNCol = columnIndices["MFPN"];
                     int partMNFDesCol = columnIndices["Manufacturer"];
-                    for (int row = 2; row <= rowCount; row++) // Start from row 2 to skip the header
+
+                    for (int row = 2; row <= rowCount; row++) // Skip header
                     {
                         totalRowsCount++;
+
                         string partName = worksheet.Cells[row, partNameCol].Text.Trim();
                         string partDes = worksheet.Cells[row, partDesCol].Text.Trim();
                         string partMFPN = worksheet.Cells[row, partMFPNCol].Text.Trim().ToUpper();
                         string partMNFDes = worksheet.Cells[row, partMNFDesCol].Text.Trim().ToUpper();
-                        // Validate the required fields
-                        if (string.IsNullOrEmpty(partName) || string.IsNullOrEmpty(partDes) || string.IsNullOrEmpty(partMFPN) || string.IsNullOrEmpty(partMNFDes))
+
+                        // Validate required fields
+                        if (string.IsNullOrEmpty(partName) || string.IsNullOrEmpty(partDes) ||
+                            string.IsNullOrEmpty(partMFPN) || string.IsNullOrEmpty(partMNFDes))
                         {
-                            MessageBox.Show($"Row {row}: Please ensure all fields are filled in before inserting.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            AppendLog($"Row {row}: Missing required fields, skipping.", Color.OrangeRed);
                             continue;
                         }
-                        // Truncate MNFDES to fit within the 32-character limit
+
+                        // Truncate MNFDES to fit DB limits
                         if (partMNFDes.Length > 32)
-                        {
                             partMNFDes = partMNFDes.Substring(0, 32);
-                        }
-                        // Generate MNFNAME by truncating MNFDES to fit within the 10-character limit
-                        string partMNFName = partMNFDes.Length > 10 ? partMNFDes.Substring(0, 10) : partMNFDes;
+
                         try
                         {
-                            // Measure the time taken for the HTTP POST request
                             var stopwatch = Stopwatch.StartNew();
-                            // Insert into LOGPART and get the generated PART ID
-                            int partId = await InsertLogPart(partName, partDes);
-                            // Check if the manufacturer exists, if not, insert it and get the MNF ID
-                            int mnfId = await GetOrInsertManufacturer(partMNFName, partMNFDes);
-                            // Insert into PARTMNFONE
-                            await InsertPartMnfOne(partId, partMFPN, mnfId, partDes);
+
+                            // Call the new reusable function
+                            await InsertOrUpdateLogPartAsync(partName, partDes, partMFPN, partMNFDes);
+
                             stopwatch.Stop();
-                            // Update the ping label
                             UpdatePing(stopwatch.ElapsedMilliseconds);
-                            InsertedrowsCount++;
-                            // Log the extracted values
 
-                            AppendLog($"Row {row}: Part Name = {partName}, Part Description = {partDes}, Manufacturer Part Number = {partMFPN}, Manufacturer Description = {partMNFDes}\n", Color.LimeGreen);
-
-                            //await DisplayInsertedData(partId);
-                        }
-                        catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
-                        {
-                            // Log the extracted values for duplicate entries
-
-                            AppendLog($"Row {row}: Part Name = {partName}, Part Description = {partDes}, Manufacturer Part Number = {partMFPN}, Manufacturer Description = {partMNFDes} - Already exists (409) \n", Color.Yellow);
-
-                        }
-                        catch (HttpRequestException ex)
-                        {
-                            // Log the extracted values
-                            // Set the color to acid green
-                            AppendLog($"Row {row}: Part Name = {partName}, Part Description = {partDes}, Manufacturer Part Number = {partMFPN}, Manufacturer Description = {partMNFDes} , Exception = {ex.Message}\n");
-
-                            //MessageBox.Show($"Row {row}: Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            
+                            AppendLog($"Row {row}: Successfully processed {partName}, {partDes}, {partMFPN}, {partMNFDes}", Color.Gray);
                         }
                         catch (Exception ex)
                         {
-                            // Log the extracted values
-                            // Set the color to acid green
-                            AppendLog($"Row {row}: Part Name = {partName}, Part Description = {partDes}, Manufacturer Part Number = {partMFPN}, Manufacturer Description = {partMNFDes}, Exception = {ex.Message}\n");
-
-                            // MessageBox.Show($"Row {row}: An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            AppendLog($"Row {row}: Failed to process {partName}. Exception: {ex.Message}", Color.Red);
                         }
                     }
-                    MessageBox.Show($"Bulk insert completed. {InsertedrowsCount} rows inserted of total {totalRowsCount} rows in file.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    MessageBox.Show($"Bulk insert completed. \n {insertedRowsCount} rows inserted \n {addedNewMFPNaltsCount} rows updated of \n {totalRowsCount} total rows in file.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             catch (Exception ex)
@@ -4075,6 +4495,7 @@ namespace WH_Panel
                 MessageBox.Show($"An error occurred while reading the Excel file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
         private void btnClearIpnFilter_Click(object sender, EventArgs e)
         {
             txtbFilterIPN.Clear();
