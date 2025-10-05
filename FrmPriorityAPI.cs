@@ -1746,7 +1746,11 @@ namespace WH_Panel
                 QTY = qty // Set the QTY from textBox5
             };
             // Call the printSticker method
-            printSticker(part);
+            if(canPrint)
+            {
+                printSticker(part);
+            }
+            
         }
         private async void txtbInputMFPN_KeyDown(object sender, KeyEventArgs e, TextBox lastInput)
         {
@@ -4076,8 +4080,11 @@ namespace WH_Panel
             txtbDESC.Clear();
             txtbBuffer.Clear();
         }
+
+       public bool canPrint = true;
         private async void btnMFG_Click(object sender, EventArgs e)
         {
+            canPrint=true;
             if (cmbWarehouseList.SelectedItem != null && txtbInputIPN.Text != string.Empty && txtbInputMFPN.Text != string.Empty && txtbPartDescription.Text != string.Empty && txtbManufacturer.Text != string.Empty && int.Parse(txtbInputQty.Text) > 0 && int.Parse(txtbInputQty.Text) <= 50000)
             {
                 string selectedWarehouseName = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
@@ -4143,6 +4150,7 @@ namespace WH_Panel
                         {
                             MessageBox.Show("Please select a purchase order.", "No Selection",
                                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            canPrint = false;
                             return;
                         }
 
