@@ -1705,6 +1705,7 @@ namespace WH_Panel
                     btnMFG_Click(sender, e);
                     if (!tbtOUT.Checked)
                     {
+                        
                         btnPrintSticker_Click(sender, e);
 
                     }
@@ -1748,7 +1749,9 @@ namespace WH_Panel
             // Call the printSticker method
             if(canPrint)
             {
+
                 printSticker(part);
+                flpSerials.Controls.Clear();
             }
             
         }
