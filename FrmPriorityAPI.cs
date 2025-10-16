@@ -489,7 +489,7 @@ namespace WH_Panel
             }
             else if (curentUser == "rbtwh")
             {
-                thecredentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
+                thecredentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
             }
             else if (curentUser == "rbtwh2")
             {
