@@ -17,6 +17,7 @@ using System.Net.Http.Headers;
 using System.Reflection; // Add this using directive if not already present
 using System.Security.Principal; // Add this using directive if not already present
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
@@ -3143,7 +3144,7 @@ namespace WH_Panel
 
                 string partName = txtbIPN.Text.Trim();
                 string partDes = txtbDESC.Text.Trim();
-                string partMFPN = txtbMFPN.Text.Trim().ToUpper();
+                string partMFPN =txtbMFPN.Text.Trim().ToUpper();
                 string partMNFDes = txtbMNF.Text.Trim().ToUpper();
 
                 await InsertOrUpdateLogPartAsync(partName, partDes, partMFPN, partMNFDes);
@@ -3338,7 +3339,7 @@ namespace WH_Panel
                     string usedUser = ApiHelper.AuthenticateClient(client);
 
                     // --- Step 1: Check if this MFPN already exists for the IPN ---
-                    string checkUrl = $"{baseUrl}/PARTMNFONE?$filter=PART eq {partId} and MNFPARTNAME eq '{partMFPN}'";
+                    string checkUrl = $"{baseUrl}/PARTMNFONE?$filter=PART eq {partId} and MNFPARTNAME eq '{Uri.UnescapeDataString(partMFPN)}'";
                     HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
                     checkResponse.EnsureSuccessStatusCode();
                     string checkContent = await checkResponse.Content.ReadAsStringAsync();
@@ -3480,7 +3481,7 @@ namespace WH_Panel
             while (true)
             {
                 // Check if the manufacturer exists
-                string url = $"{baseUrl}/MNFCTR?$filter=MNFNAME eq '{uniqueMnfName}'";
+                string url = $"{baseUrl}/MNFCTR?$filter=MNFNAME eq '{Uri.EscapeDataString(uniqueMnfName)}'";
                 using (HttpClient client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Accept.Clear();
@@ -3510,7 +3511,7 @@ namespace WH_Panel
         private async Task<int> EnsureManufacturerExists(string mnfName, string mnfDes)
         {
             // Check if the manufacturer exists
-            string url = $"{baseUrl}/MNFCTR?$filter=MNFNAME eq '{mnfName}'";
+            string url = $"{baseUrl}/MNFCTR?$filter=MNFNAME eq '{Uri.EscapeDataString(mnfName)}'";
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Accept.Clear();
@@ -3867,7 +3868,7 @@ namespace WH_Panel
         {
             try
             {
-                string url = $"{baseUrl}/MNFCTR?$filter=MNFNAME eq '{partMNFName}'";
+                string url = $"{baseUrl}/MNFCTR?$filter=MNFNAME eq '{Uri.UnescapeDataString(partMNFName)}'";
                 using (HttpClient client = new HttpClient())
                 {
                     // Set the request headers
