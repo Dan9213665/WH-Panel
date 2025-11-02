@@ -59,6 +59,8 @@ namespace WH_Panel
         {
             InitializeComponent();
             UpdateControlColors(this);
+            // Hook PreviewKeyDown event for textBox6
+            //this.textBox6.PreviewKeyDown += textBox6_PreviewKeyDown;
         }
         public void InitializeGlobalWarehouses(List<ClientWarehouse> warehousesFromTheMain)
         {
@@ -598,7 +600,7 @@ namespace WH_Panel
         }
         private void btnMove_Click(object sender, EventArgs e)
         {
-            if (Environment.MachineName == "RT13" || Environment.MachineName == "RT12" || Environment.MachineName == "RT1" || Environment.MachineName == "RT19")
+            if (Environment.MachineName == "RT13" || Environment.MachineName == "RT20" || Environment.MachineName == "RT12" || Environment.MachineName == "RT1" || Environment.MachineName == "RT19")
             {
                 //int qty = 0;
                 string sorce_req = string.Empty;
@@ -1095,13 +1097,45 @@ namespace WH_Panel
                 LastInputFromUser.Focus();
             }
         }
+
         private void textBox6_KeyDown(object sender, KeyEventArgs e)
         {
+            //MessageBox.Show("KeyCode:" + e.KeyCode.ToString());
+
             if (e.KeyCode == Keys.Enter)
             {
+               // MessageBox.Show("Keys.Enter fired");
                 btnMove_Click(this, new EventArgs());
             }
         }
+
+        //private void textBox6_KeyDown(object sender, KeyEventArgs e)
+        //{
+        //    // For debugging - good to keep while diagnosing.
+        //    MessageBox.Show("KeyCode:" + e.KeyCode.ToString());
+
+        //    if (e.KeyCode == Keys.Enter)
+        //    {
+        //        // Prevent further processing (optional)
+        //        e.Handled = true;
+        //        e.SuppressKeyPress = true; // prevents ding or newline insertion
+
+        //        MessageBox.Show("Keys.Enter fired");
+        //        btnMove_Click(this, EventArgs.Empty);
+        //    }
+        //}
+
+        //private void textBox6_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        //{
+        //    // Ensure Enter is treated as an input key so KeyDown will fire reliably
+        //    if (e.KeyCode == Keys.Enter)
+        //    {
+        //        e.IsInputKey = true;
+        //        // Optionally call the action here instead of waiting for KeyDown.
+        //        // But to avoid double-call, set a flag or just let KeyDown handle it.
+        //    }
+        //}
+
         private void dataGridView2_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             textBox6.Focus();
@@ -1171,7 +1205,7 @@ namespace WH_Panel
             }
             catch (Exception ex)
             {
-                 MessageBox.Show($"Error loading STOCK table: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error loading STOCK table: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             // Update UI elements
             countStockItems = stockItems.Count;
@@ -2264,7 +2298,7 @@ namespace WH_Panel
                     var jObj = Newtonsoft.Json.Linq.JObject.Parse(responseString);
                     var mfpn = jObj["SearchResults"]?["Parts"]?.FirstOrDefault()?["ManufacturerPartNumber"]?.ToString();
 
-                    
+
 
                     if (!string.IsNullOrEmpty(mfpn))
                     {
@@ -3079,7 +3113,7 @@ namespace WH_Panel
         }
         private void dataGridView2_MouseClick(object sender, MouseEventArgs e)
         {
-            if (Environment.MachineName == "RT12" || Environment.MachineName == "RT13" || Environment.MachineName == "RT1" || Environment.MachineName == "RT19")
+            if (Environment.MachineName == "RT12"|| Environment.MachineName == "RT20" || Environment.MachineName == "RT13" || Environment.MachineName == "RT1" || Environment.MachineName == "RT19")
             {
                 if (e.Button == MouseButtons.Right)
                 {
@@ -3482,7 +3516,7 @@ namespace WH_Panel
                     Description = p.Description.DetailedDescription,
                     Manufacturer = p.Manufacturer.Name
                 }).ToList();
-                if(simplifiedProducts.Count > 0)
+                if (simplifiedProducts.Count > 0)
                 {
                     //MessageBox.Show(simplifiedProducts[0].Manufacturer);
                 }
@@ -3679,5 +3713,8 @@ namespace WH_Panel
                 UpdateManufacturerByMFPN(textBox4.Text);
             }
         }
+
+     
+
     }
 }
