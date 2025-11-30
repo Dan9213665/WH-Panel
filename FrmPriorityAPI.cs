@@ -486,7 +486,7 @@ namespace WH_Panel
             //MessageBox.Show($"User detected : {curentUser}\n");
             if (curentUser == "lgt01")
             {
-                thecredentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Password}:{settings.Api3Password}"));
+                thecredentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
             }
             else if (curentUser == "rbtwh")
             {
