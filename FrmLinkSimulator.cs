@@ -574,11 +574,11 @@ namespace WH_Panel
         {
             foreach (ClientWarehouse warehouse in warehouses)
             {
-                if (firstIPN.StartsWith(warehouse.clPrefix)&&!warehouseSelected)
+                if (firstIPN.StartsWith(warehouse.clPrefix) && !warehouseSelected)
                 {
-                        comboBox6.SelectedItem = warehouse.clName;
-                        warehouseSelected = true; // Mark as selected to break after the first match
-                        break;
+                    comboBox6.SelectedItem = warehouse.clName;
+                    warehouseSelected = true; // Mark as selected to break after the first match
+                    break;
                 }
             }
         }
@@ -703,7 +703,7 @@ namespace WH_Panel
                             row.Cells[dataGridView.Columns[displayName].Index].Value = delta;
                             row.Cells[dataGridView.Columns[displayName].Index].Style.Font = new Font(dataGridView.DefaultCellStyle.Font, FontStyle.Bold); // Bold font for delta values
                             // Apply color based on delta value
-                            if (delta >= 0 && delta <10)
+                            if (delta >= 0 && delta < 10)
                             {
                                 row.Cells[dataGridView.Columns[displayName].Index].Style.BackColor = Color.Orange;
                                 row.Cells[dataGridView.Columns[displayName].Index].Style.ForeColor = Color.Black;
@@ -887,7 +887,7 @@ namespace WH_Panel
                 htmlContent += "<tr>";
                 htmlContent += "<td  colspan='7'>";
                 htmlContent += "<table border='1' style='border-collapse: collapse; width: 100%;border: 1px solid black;'>";
-                 foreach (var bomItem in mainDataSource.BOMITEMS)
+                foreach (var bomItem in mainDataSource.BOMITEMS)
                 {
                     htmlContent += "<tr style='text-align:center;'>";
                     //Truncate the last 5 characters of Title
@@ -1066,7 +1066,7 @@ var myPieChart = new Chart(ctx, {
                     }
                     catch (Exception ex)
                     {
-                         MessageBox.Show($"Error loading STOCK table: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show($"Error loading STOCK table: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
                 else
@@ -1420,7 +1420,7 @@ var myPieChart = new Chart(ctx, {
                         var stockItem = stockItems
                             .Where(s => s.IPN == kitItem.IPN)
                             .Sum(s => s.Stock);
-                        if ( stockItem >= Math.Abs((decimal)kitItem.Delta))
+                        if (stockItem >= Math.Abs((decimal)kitItem.Delta))
                         {
                             fullyStockedItemsAfter++;
                         }
@@ -1473,89 +1473,89 @@ var myPieChart = new Chart(ctx, {
             kitsForm.Controls.Add(dataGridView);
             kitsForm.ShowDialog();
         }
-    //    private void OptimizeBOMOrder()
-    //    {
-    //        if (selectedBOMs.Count >= 2)
-    //        {
-    //            // Step 2: Create a new list to store kits with their completion status
-    //            var kitCompletionStatus = new List<Tuple<BOMList, int, int, int, int>>(); // BOMList, fullyStockedItemsBefore, totalItems, fullyStockedItemsAfter
-    //            foreach (var bom in selectedBOMs)
-    //            {
-    //                int totalItems = bom.Items.Count;
-    //                int fullyStockedItemsBefore = 0;   // Fully stocked items before simulation
-    //                int fullyStockedItemsAfter = 0; // Total fully stocked items after simulation
-    //                // Count items already in the kit
-    //                foreach (var kitItem in bom.Items)
-    //                {
-    //                    if (kitItem.Delta >= 0) // Count fully stocked items
-    //                    {
-    //                        fullyStockedItemsBefore++;
-    //                    }
-    //                    else if (kitItem.Delta < 0)
-    //                    {
-    //                        //var stockItem = stockItems.Sum().(s => s.IPN == kitItem.IPN);
-    //                        var stockItem = stockItems
-    //.Where(s => s.IPN == kitItem.IPN) // Filter based on the condition
-    //.Sum(s => s.Stock);
-    //                        // Count items already in kit and available from stock
-    //                        if (stockItem != null && stockItem >= Math.Abs((decimal)kitItem.Delta)) // Check if stock is available
-    //                        {
-    //                            // Add the stock available to the count, up to what is needed
-    //                            fullyStockedItemsAfter++; // Use ?? to ensure it's a non-null value
-    //                        }
-    //                    }
-    //                }
-    //                // Add the kit and its statuses to the list
-    //                kitCompletionStatus.Add(new Tuple<BOMList, int, int, int, int>(
-    //                    bom,                              // BOMList
-    //                    fullyStockedItemsBefore,         // Fully stocked items before simulation
-    //                    totalItems,                       // Total items
-    //                    fullyStockedItemsAfter,          // Fully stocked items after simulation
-    //                    0)); // Add a default value for item5 (you need to replace this with actual logic if needed)
-    //            }
-    //            // Step 5: Create a sortable table to display the kits and their statuses
-    //            Form kitsForm = new Form
-    //            {
-    //                Text = "Kits Sorted by Completion",
-    //                Height = 600,
-    //                Width = 1500,
-    //                StartPosition = FormStartPosition.CenterScreen, // Ensure you're using the correct enum type
-    //            };
-    //            DataGridView dataGridView = new DataGridView
-    //            {
-    //                Dock = DockStyle.Fill,
-    //                AutoGenerateColumns = false
-    //            };
-    //            // Add columns to the DataGridView
-    //            dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Kit Name", DataPropertyName = "KitName" });
-    //            dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Total Items", DataPropertyName = "TotalItems" });
-    //            dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "In kit", DataPropertyName = "FullyStockedBefore" });
-    //            dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "In warehouse", DataPropertyName = "FullyStockedAfter" });
-    //            dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Simulated Completion %", DataPropertyName = "CompletionPercentage" });
-    //            var dataSource = kitCompletionStatus.Select(k =>
-    //   new
-    //   {
-    //       KitName = k.Item1.Name,
-    //       FullyStockedBefore = k.Item2, // Fully stocked before simulation
-    //       TotalItems = k.Item3, // Total items
-    //       FullyStockedAfter = k.Item4, // Fully stocked after simulation
-    //       CompletionPercentage = k.Item3 > 0 ? $"{((double)(k.Item2 + k.Item4) / k.Item3) * 100:F2}%" : "0.00%" // Avoid division by zero
-    //   })
-    //   .OrderByDescending(x => x.CompletionPercentage) // Specify how to order by the CompletionPercentage
-    //   .ToList();
-    //            dataGridView.DataSource = dataSource;
-    //            // Enable sorting and auto-sizing to fit contents
-    //            foreach (DataGridViewColumn column in dataGridView.Columns)
-    //            {
-    //                column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells; // Fit to all cell contents
-    //            }
-    //            // Step 7: Display the DataGridView in the form
-    //            kitsForm.Controls.Add(dataGridView);
-    //            kitsForm.ShowDialog();
-    //            // Sort by CompletionPercentage in descending order
-    //            //dataGridView.Sort(dataGridView.Columns["CompletionPercentage"], System.ComponentModel.ListSortDirection.Descending);
-    //        }
-    //    }
+        //    private void OptimizeBOMOrder()
+        //    {
+        //        if (selectedBOMs.Count >= 2)
+        //        {
+        //            // Step 2: Create a new list to store kits with their completion status
+        //            var kitCompletionStatus = new List<Tuple<BOMList, int, int, int, int>>(); // BOMList, fullyStockedItemsBefore, totalItems, fullyStockedItemsAfter
+        //            foreach (var bom in selectedBOMs)
+        //            {
+        //                int totalItems = bom.Items.Count;
+        //                int fullyStockedItemsBefore = 0;   // Fully stocked items before simulation
+        //                int fullyStockedItemsAfter = 0; // Total fully stocked items after simulation
+        //                // Count items already in the kit
+        //                foreach (var kitItem in bom.Items)
+        //                {
+        //                    if (kitItem.Delta >= 0) // Count fully stocked items
+        //                    {
+        //                        fullyStockedItemsBefore++;
+        //                    }
+        //                    else if (kitItem.Delta < 0)
+        //                    {
+        //                        //var stockItem = stockItems.Sum().(s => s.IPN == kitItem.IPN);
+        //                        var stockItem = stockItems
+        //.Where(s => s.IPN == kitItem.IPN) // Filter based on the condition
+        //.Sum(s => s.Stock);
+        //                        // Count items already in kit and available from stock
+        //                        if (stockItem != null && stockItem >= Math.Abs((decimal)kitItem.Delta)) // Check if stock is available
+        //                        {
+        //                            // Add the stock available to the count, up to what is needed
+        //                            fullyStockedItemsAfter++; // Use ?? to ensure it's a non-null value
+        //                        }
+        //                    }
+        //                }
+        //                // Add the kit and its statuses to the list
+        //                kitCompletionStatus.Add(new Tuple<BOMList, int, int, int, int>(
+        //                    bom,                              // BOMList
+        //                    fullyStockedItemsBefore,         // Fully stocked items before simulation
+        //                    totalItems,                       // Total items
+        //                    fullyStockedItemsAfter,          // Fully stocked items after simulation
+        //                    0)); // Add a default value for item5 (you need to replace this with actual logic if needed)
+        //            }
+        //            // Step 5: Create a sortable table to display the kits and their statuses
+        //            Form kitsForm = new Form
+        //            {
+        //                Text = "Kits Sorted by Completion",
+        //                Height = 600,
+        //                Width = 1500,
+        //                StartPosition = FormStartPosition.CenterScreen, // Ensure you're using the correct enum type
+        //            };
+        //            DataGridView dataGridView = new DataGridView
+        //            {
+        //                Dock = DockStyle.Fill,
+        //                AutoGenerateColumns = false
+        //            };
+        //            // Add columns to the DataGridView
+        //            dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Kit Name", DataPropertyName = "KitName" });
+        //            dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Total Items", DataPropertyName = "TotalItems" });
+        //            dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "In kit", DataPropertyName = "FullyStockedBefore" });
+        //            dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "In warehouse", DataPropertyName = "FullyStockedAfter" });
+        //            dataGridView.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Simulated Completion %", DataPropertyName = "CompletionPercentage" });
+        //            var dataSource = kitCompletionStatus.Select(k =>
+        //   new
+        //   {
+        //       KitName = k.Item1.Name,
+        //       FullyStockedBefore = k.Item2, // Fully stocked before simulation
+        //       TotalItems = k.Item3, // Total items
+        //       FullyStockedAfter = k.Item4, // Fully stocked after simulation
+        //       CompletionPercentage = k.Item3 > 0 ? $"{((double)(k.Item2 + k.Item4) / k.Item3) * 100:F2}%" : "0.00%" // Avoid division by zero
+        //   })
+        //   .OrderByDescending(x => x.CompletionPercentage) // Specify how to order by the CompletionPercentage
+        //   .ToList();
+        //            dataGridView.DataSource = dataSource;
+        //            // Enable sorting and auto-sizing to fit contents
+        //            foreach (DataGridViewColumn column in dataGridView.Columns)
+        //            {
+        //                column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells; // Fit to all cell contents
+        //            }
+        //            // Step 7: Display the DataGridView in the form
+        //            kitsForm.Controls.Add(dataGridView);
+        //            kitsForm.ShowDialog();
+        //            // Sort by CompletionPercentage in descending order
+        //            //dataGridView.Sort(dataGridView.Columns["CompletionPercentage"], System.ComponentModel.ListSortDirection.Descending);
+        //        }
+        //    }
         private void button4_Click(object sender, EventArgs e)
         {
             //foreach (ClientWarehouse w in warehouses)
@@ -2458,6 +2458,64 @@ var myPieChart = new Chart(ctx, {
                     }
                 }
             }
+        }
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+            // Check if a warehouse has been selected
+            if (comboBox6.SelectedItem == null)
+            {
+                // If no selection has been made, open the drop-down list
+                MessageBox.Show("Please select a warehouse before proceeding.");
+                comboBox6.DroppedDown = true; // Opens the drop-down list
+                return; // Exit the method until a selection is made
+            }
+            // Get the warehouse name from comboBox6
+            string selectedWarehouseName = comboBox6.SelectedItem.ToString();
+            // Construct the directory paths for the current and previous three months
+            string currentMonthPath = "\\\\dbr1\\Data\\WareHouse\\2025\\" + DateTime.Now.ToString("MM.yyyy");
+            string previousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2025\\" + DateTime.Now.AddMonths(-1).ToString("MM.yyyy");
+            string prepreviousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2025\\" + DateTime.Now.AddMonths(-2).ToString("MM.yyyy");
+            string preprepreviousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2025\\" + DateTime.Now.AddMonths(-3).ToString("MM.yyyy");
+            string prepreprepreviousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2025\\" + DateTime.Now.AddMonths(-4).ToString("MM.yyyy");
+            string prevprepreprepreviousMonthPath = "\\\\dbr1\\Data\\WareHouse\\2025\\" + DateTime.Now.AddMonths(-5).ToString("MM.yyyy");
+            // Get all files in the directories that start with the selected warehouse name and have the .xlsm extension
+            string[] currentMonthFiles = Directory.GetFiles(currentMonthPath, $"{selectedWarehouseName}*.xlsm");
+            string[] previousMonthFiles = Directory.GetFiles(previousMonthPath, $"{selectedWarehouseName}*.xlsm");
+            string[] prepreviousMonthFiles = Directory.GetFiles(prepreviousMonthPath, $"{selectedWarehouseName}*.xlsm");
+            string[] preprepreviousMonthFiles = Directory.GetFiles(preprepreviousMonthPath, $"{selectedWarehouseName}*.xlsm");
+            string[] prepreprepreviousMonthFiles = Directory.GetFiles(prepreprepreviousMonthPath, $"{selectedWarehouseName}*.xlsm");
+            string[] preprepreprepreviousMonthFiles = Directory.GetFiles(prevprepreprepreviousMonthPath, $"{selectedWarehouseName}*.xlsm");
+            // Combine the files from all three months
+            allFiles = currentMonthFiles
+               .Concat(previousMonthFiles)
+               .Concat(prepreviousMonthFiles)
+               .Concat(preprepreviousMonthFiles)
+               .Concat(prepreprepreviousMonthFiles)
+               .Concat(preprepreprepreviousMonthFiles)
+               .ToArray();
+            if (allFiles.Length == 0)
+            {
+                MessageBox.Show("No files found for the selected warehouse.");
+                return;
+            }
+            foreach (string fileName in allFiles)
+            {
+                string theExcelFilePath = Path.GetFileName(fileName);
+                if (IsFileLoaded(theExcelFilePath))
+                {
+                    MessageBox.Show($"File {theExcelFilePath} is already loaded!");
+                }
+                else
+                {
+                    DataLoader(fileName, theExcelFilePath);
+                    // Add the selected file path to the list
+                    selectedFileNames.Add(theExcelFilePath);
+                }
+            }
+            // Update the DataGridView and selected BOMs
+            PopulateDataGridView();
+            SetSelectedBoms();
         }
     }
 }
