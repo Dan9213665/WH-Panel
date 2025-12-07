@@ -516,21 +516,10 @@ namespace WH_Panel
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
-
-                        //string curentUserFull = WindowsIdentity.GetCurrent().Name; // e.g., DOMAIN\lgt01
-                        //string curentUser = curentUserFull.Split('\\').Last();     // just 'lgt01'
+                       
                         string credentials = formInstance.SelectTheCredentialsByLoggedUser(settings);
                         // MessageBox.Show($"User detected : {curentUser}");
 
-                        //if (curentUser == "lgt01")
-                        //{
-                        //    credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}"));
-                        //}
-                        //else
-                        //{
-                        //    credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
-                        //}
 
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                         // Construct the API URL
