@@ -4085,10 +4085,10 @@ namespace WH_Panel
             txtbBuffer.Clear();
         }
 
-       public bool canPrint = true;
+       public bool canPrint = false;
         private async void btnMFG_Click(object sender, EventArgs e)
         {
-            canPrint=true;
+            canPrint=false;
             if (cmbWarehouseList.SelectedItem != null && txtbInputIPN.Text != string.Empty && txtbInputMFPN.Text != string.Empty && txtbPartDescription.Text != string.Empty && txtbManufacturer.Text != string.Empty && int.Parse(txtbInputQty.Text) > 0 && int.Parse(txtbInputQty.Text) <= 50000)
             {
                 string selectedWarehouseName = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
@@ -4111,6 +4111,7 @@ namespace WH_Panel
                         {
                             _BOOKNUM = txtbINdoc.Text;
                             _SUPNAME = "CLIENT";
+                            canPrint= true;
                         }
                     }
                     else if (tbtOUT.Checked)
@@ -4131,6 +4132,7 @@ namespace WH_Panel
                     {
                         _BOOKNUM = "MFG";
                         _SUPNAME = "MFG";
+                        canPrint = true;
                     }
 
 
@@ -4149,12 +4151,13 @@ namespace WH_Panel
                         if (selectedPO != null)
                         {
                             _ORDNAME = selectedPO.OrdName;
+                            canPrint=true;
                         }
                         else
                         {
                             MessageBox.Show("Please select a purchase order.", "No Selection",
                                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            canPrint = false;
+                            
                             return;
                         }
 
