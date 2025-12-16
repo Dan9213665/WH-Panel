@@ -196,9 +196,9 @@ namespace WH_Panel
                 _ => "Neo"
             };
 
-            string message = $"...Hello, {NameNeo}...\n...{randomQuote}...         ";
+            string message = $"...Hello, {NameNeo}...\n...{randomQuote}...";
 
-            int delayMs = 75;        // shorter delay for smooth typing
+            int delayMs = 50;        // shorter delay for smooth typing
             int stayOpenSeconds = 4; // time to stay visible
 
             // Escape single quotes for PowerShell
@@ -236,6 +236,7 @@ $message = '{safeMessage}'
 foreach ($c in $message.ToCharArray()) {{
     Write-Host $c -NoNewline
     Start-Sleep -Milliseconds {delayMs}
+
 }}
 
 Write-Host ''
