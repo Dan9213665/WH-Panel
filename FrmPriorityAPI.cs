@@ -2240,33 +2240,36 @@ namespace WH_Panel
                             }
                             groupBox4.Text = $"Stock Movements for {partName}";
                             ColorTheRows(dataGridView2);
-                            foreach (DataGridViewRow row in dataGridView2.Rows)
-                            {
-                                var logDocNo = row.Cells["LOGDOCNO"].Value?.ToString();
-                                var partNameCell = partName;
-                                var quant = int.Parse(row.Cells["TQUANT"].Value?.ToString());
-                                if (logDocNo != null && partNameCell != null)
-                                {
-                                    var results = await FetchPackCodeAsync(logDocNo, partNameCell, quant);
-                                    foreach (var result in results)
-                                    {
-                                        if (result.PackCode != null)
-                                        {
-                                            row.Cells["PACKNAME"].Value = result.PackCode;
-                                        }
-                                        if (result.BookNum != null)
-                                        {
-                                            row.Cells["BOOKNUM"].Value = result.BookNum;
-                                        }
-                                        if (result.Date != null)
-                                        {
-                                            row.Cells["UDATE"].Value = result.Date;
-                                        }
-                                    }
-                                }
-                            }
-                            // Sort the DataGridView by the first column in descending order
-                            dataGridView2.Sort(dataGridView2.Columns[0], ListSortDirection.Descending);
+
+                            await EnrichGridWithPackAndDateAsync(partName);
+
+                            //foreach (DataGridViewRow row in dataGridView2.Rows)
+                            //{
+                            //    var logDocNo = row.Cells["LOGDOCNO"].Value?.ToString();
+                            //    var partNameCell = partName;
+                            //    var quant = int.Parse(row.Cells["TQUANT"].Value?.ToString());
+                            //    if (logDocNo != null && partNameCell != null)
+                            //    {
+                            //        var results = await FetchPackCodeAsync(logDocNo, partNameCell, quant);
+                            //        foreach (var result in results)
+                            //        {
+                            //            if (result.PackCode != null)
+                            //            {
+                            //                row.Cells["PACKNAME"].Value = result.PackCode;
+                            //            }
+                            //            if (result.BookNum != null)
+                            //            {
+                            //                row.Cells["BOOKNUM"].Value = result.BookNum;
+                            //            }
+                            //            if (result.Date != null)
+                            //            {
+                            //                row.Cells["UDATE"].Value = result.Date;
+                            //            }
+                            //        }
+                            //    }
+                            //}
+                            //// Sort the DataGridView by the first column in descending order
+                            //dataGridView2.Sort(dataGridView2.Columns[0], ListSortDirection.Descending);
                         }
                         else
                         {
@@ -2288,6 +2291,217 @@ namespace WH_Panel
                 }
             }
         }
+
+        //private async Task EnrichGridWithPackAndDateAsync(string partName)
+        //{
+        //    var rows = dataGridView2.Rows.Cast<DataGridViewRow>()
+        //        .Where(r => r.Cells["LOGDOCNO"].Value != null)
+        //        .ToList();
+
+        //    using (var client = new HttpClient())
+        //    {
+        //        client.DefaultRequestHeaders.Accept.Clear();
+        //        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //        string usedUser = ApiHelper.AuthenticateClient(client);
+        //        //AppendLog($"Authenticated as user: {usedUser}\n", Color.Green);
+
+        //        var tasks = rows.Select(async row =>
+        //        {
+        //            string logDocNo = row.Cells["LOGDOCNO"].Value.ToString();
+        //            string url = logDocNo switch
+        //            {
+        //                var s when s.StartsWith("GR") => $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM",
+        //                var s when s.StartsWith("WR") => $"{baseUrl}/DOCUMENTS_T?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_T_SUBFORM",
+        //                var s when s.StartsWith("ROB") => $"{baseUrl}/SERIAL?$filter=SERIALNAME eq '{logDocNo}'",
+        //                var s when s.StartsWith("SH") => $"{baseUrl}/DOCUMENTS_D?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_D_SUBFORM",
+        //                var s when s.StartsWith("IC") => $"{baseUrl}/DOCUMENTS_C?$filter=DOCNO eq '{logDocNo}'",
+        //                _ => $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM"
+        //            };
+
+        //            try
+        //            {
+        //                //AppendLog($"Fetching {logDocNo} at {url}\n", Color.DarkBlue);
+        //                HttpResponseMessage response = await client.GetAsync(url);
+        //                response.EnsureSuccessStatusCode();
+        //                string body = await response.Content.ReadAsStringAsync();
+        //                var doc = JsonConvert.DeserializeObject<JObject>(body)?["value"]?.FirstOrDefault();
+        //                if (doc == null) return;
+
+        //                string uDate = doc["UDATE"]?.ToString();
+        //                string bookNum = doc["BOOKNUM"]?.ToString();
+        //                string packCode = null;
+
+        //                var subForm = doc["TRANSORDER_P_SUBFORM"] ?? doc["TRANSORDER_T_SUBFORM"] ?? doc["TRANSORDER_D_SUBFORM"];
+        //                if (subForm != null)
+        //                {
+        //                    var line = subForm.FirstOrDefault(l => l["PARTNAME"]?.ToString() == partName);
+        //                    if (line != null)
+        //                        packCode = line["PACKCODE"]?.ToString();
+        //                }
+        //                else if (logDocNo.StartsWith("ROB"))
+        //                {
+        //                    packCode = doc["PACKCODE"]?.ToString();
+        //                    bookNum ??= doc["BOOKNUM"]?.ToString();
+        //                }
+
+        //                row.Cells["UDATE"].Value = uDate;
+        //                row.Cells["BOOKNUM"].Value = bookNum;
+        //                row.Cells["PACKNAME"].Value = packCode;
+        //            }
+        //            catch (HttpRequestException ex)
+        //            {
+        //                AppendLog($"HTTP error for {logDocNo}: {ex.Message}\n", Color.Red);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                AppendLog($"Error for {logDocNo}: {ex.Message}\n", Color.Red);
+        //            }
+        //        }).ToList();
+
+        //        // Run with limited concurrency to avoid throttling
+        //        const int maxConcurrency = 5;
+        //        for (int i = 0; i < tasks.Count; i += maxConcurrency)
+        //        {
+        //            await Task.WhenAll(tasks.Skip(i).Take(maxConcurrency));
+        //        }
+        //    }
+
+        //    // Sort by UDATE descending
+        //    dataGridView2.Sort(dataGridView2.Columns["UDATE"], ListSortDirection.Descending);
+        //   // AppendLog("Grid enrichment complete.\n", Color.Green);
+        //}
+
+
+
+
+
+        private async Task EnrichGridWithPackAndDateAsync(string partName)
+        {
+            var rows = dataGridView2.Rows.Cast<DataGridViewRow>()
+                .Where(r => r.Cells["LOGDOCNO"].Value != null)
+                .ToList();
+
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                string usedUser = ApiHelper.AuthenticateClient(client);
+                //AppendLog($"Authenticated as user: {usedUser}\n", Color.Green);
+
+                var tasks = rows.Select(async row =>
+                {
+                    string logDocNo = row.Cells["LOGDOCNO"].Value.ToString();
+                    string url = logDocNo switch
+                    {
+                        var s when s.StartsWith("GR") => $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM",
+                        var s when s.StartsWith("WR") => $"{baseUrl}/DOCUMENTS_T?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_T_SUBFORM",
+                        var s when s.StartsWith("ROB") => $"{baseUrl}/SERIAL?$filter=SERIALNAME eq '{logDocNo}'",
+                        var s when s.StartsWith("SH") => $"{baseUrl}/DOCUMENTS_D?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_D_SUBFORM",
+                        var s when s.StartsWith("IC") => $"{baseUrl}/DOCUMENTS_C?$filter=DOCNO eq '{logDocNo}'",
+                        _ => $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM"
+                    };
+
+                    const int maxRetry = 3;
+                    int retry = 0;
+                    while (retry <= maxRetry)
+                    {
+                        try
+                        {
+                            if (retry > 0)
+                                AppendLog($"Retry {retry} for {logDocNo}\n", Color.Orange);
+
+                            HttpResponseMessage response = await client.GetAsync(url);
+
+                            if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                            {
+                                retry++;
+                                int delayMs = 1000 * retry; // exponential backoff: 1s, 2s, 3s
+                                AppendLog($"429 Too Many Requests for {logDocNo}, waiting {delayMs}ms before retry\n", Color.Orange);
+                                await Task.Delay(delayMs);
+                                continue;
+                            }
+
+                            response.EnsureSuccessStatusCode();
+
+                            string body = await response.Content.ReadAsStringAsync();
+                            var doc = JsonConvert.DeserializeObject<JObject>(body)?["value"]?.FirstOrDefault();
+                            if (doc == null) return;
+
+                            string uDate = doc["UDATE"]?.ToString();
+                            string bookNum = doc["BOOKNUM"]?.ToString();
+                            string packCode = null;
+
+                            var subForm = doc["TRANSORDER_P_SUBFORM"] ?? doc["TRANSORDER_T_SUBFORM"] ?? doc["TRANSORDER_D_SUBFORM"];
+                            if (subForm != null)
+                            {
+                                var line = subForm.FirstOrDefault(l => l["PARTNAME"]?.ToString() == partName);
+                                if (line != null)
+                                    packCode = line["PACKCODE"]?.ToString();
+                            }
+                            else if (logDocNo.StartsWith("ROB"))
+                            {
+                                packCode = doc["PACKCODE"]?.ToString();
+                                bookNum ??= doc["BOOKNUM"]?.ToString();
+                            }
+
+                            row.Cells["UDATE"].Value = uDate;
+                            row.Cells["BOOKNUM"].Value = bookNum;
+                            row.Cells["PACKNAME"].Value = packCode;
+
+                            break; // success, exit retry loop
+                        }
+                        catch (HttpRequestException ex)
+                        {
+                            AppendLog($"HTTP error for {logDocNo}: {ex.Message}\n", Color.Red);
+                            break; // don't retry on other HTTP errors
+                        }
+                        catch (Exception ex)
+                        {
+                            AppendLog($"Error for {logDocNo}: {ex.Message}\n", Color.Red);
+                            break;
+                        }
+                    }
+                }).ToList();
+
+                // Run with limited concurrency to avoid throttling
+                const int maxConcurrency = 2; // reduce concurrency to help avoid 429
+                for (int i = 0; i < tasks.Count; i += maxConcurrency)
+                {
+                    await Task.WhenAll(tasks.Skip(i).Take(maxConcurrency));
+                    await Task.Delay(200); // small delay between batches
+                }
+            }
+
+            // Sort by UDATE descending
+            dataGridView2.Sort(dataGridView2.Columns["UDATE"], ListSortDirection.Descending);
+            //AppendLog("Grid enrichment complete.\n", Color.Green);
+        }
+
+
+
+
+        // Helper classes
+        private class DocumentInfo
+        {
+            public string UDate;
+            public string BookNum;
+            public List<LineInfo> Lines;
+        }
+
+        private class LineInfo
+        {
+            public string PartName;
+            public int Quant;
+            public string PackCode;
+        }
+
+
+
+
+
+
+
+
         public async Task<List<(string PackCode, string BookNum, string Date)>> FetchPackCodeAsync(string logDocNo, string partName, int quant)
         {
             List<(string PackCode, string BookNum, string Date)> results = new List<(string PackCode, string BookNum, string Date)>();
