@@ -2395,7 +2395,7 @@ namespace WH_Panel
                     {
                         var s when s.StartsWith("GR") => $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM",
                         var s when s.StartsWith("WR") => $"{baseUrl}/DOCUMENTS_T?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_T_SUBFORM",
-                        var s when s.StartsWith("ROB") => $"{baseUrl}/SERIAL?$filter=SERIALNAME eq '{logDocNo}'",
+                        var s when s.StartsWith("ROB") => $"{baseUrl}/SERIAL?$filter=SERIALNAME eq '{logDocNo}'&$expand=TRANSORDER_K_SUBFORM",
                         var s when s.StartsWith("SH") => $"{baseUrl}/DOCUMENTS_D?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_D_SUBFORM",
                         var s when s.StartsWith("IC") => $"{baseUrl}/DOCUMENTS_C?$filter=DOCNO eq '{logDocNo}'",
                         _ => $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM"
@@ -2440,7 +2440,16 @@ namespace WH_Panel
                             }
                             else if (logDocNo.StartsWith("ROB"))
                             {
-                                packCode = doc["PACKCODE"]?.ToString();
+                                var subROBForm = doc["TRANSORDER_K_SUBFORM"];
+                                if (subROBForm != null)
+                                {
+                                    var line = subROBForm.FirstOrDefault(l => l["PARTNAME"]?.ToString() == partName);
+                                    if (line != null)
+                                        //packCode = line["PACKCODE"]?.ToString();
+                                       // uDate = doc["CURDATE"]?.ToString();
+                                         uDate = line["CURDATE"]?.ToString();
+                                }
+                                //packCode = doc["PACKCODE"]?.ToString();
                                 bookNum ??= doc["BOOKNUM"]?.ToString();
                             }
 
