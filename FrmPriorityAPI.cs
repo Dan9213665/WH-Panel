@@ -2401,7 +2401,7 @@ namespace WH_Panel
                         _ => $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM"
                     };
 
-                    const int maxRetry = 3;
+                    const int maxRetry = 5;
                     int retry = 0;
                     while (retry <= maxRetry)
                     {
@@ -2445,9 +2445,20 @@ namespace WH_Panel
                                 {
                                     var line = subROBForm.FirstOrDefault(l => l["PARTNAME"]?.ToString() == partName);
                                     if (line != null)
-                                        //packCode = line["PACKCODE"]?.ToString();
-                                       // uDate = doc["CURDATE"]?.ToString();
-                                         uDate = line["CURDATE"]?.ToString();
+                                    {
+                                        //uDate = line["CURDATE"]?.ToString();
+                                        var curDateStr = line["CURDATE"]?.ToString();
+                                        if (DateTime.TryParse(curDateStr, out DateTime curDate))
+                                        {
+                                            // Set time to 23:59:59
+                                            uDate = curDate.Date.AddDays(1).AddSeconds(-1).ToString();
+                                        }
+                                        else
+                                        {
+                                            uDate = curDateStr; // fallback, if parsing fails
+                                        }
+                                    }
+                                       
                                 }
                                 //packCode = doc["PACKCODE"]?.ToString();
                                 bookNum ??= doc["BOOKNUM"]?.ToString();
