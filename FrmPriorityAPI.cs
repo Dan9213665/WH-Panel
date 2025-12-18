@@ -2375,34 +2375,182 @@ namespace WH_Panel
 
 
 
+        //private async Task EnrichGridWithPackAndDateAsync(string partName)
+        //{
+        //    var rows = dataGridView2.Rows.Cast<DataGridViewRow>()
+        //        .Where(r => r.Cells["LOGDOCNO"].Value != null)
+        //        .ToList();
+
+        //    using (var client = new HttpClient())
+        //    {
+        //        client.DefaultRequestHeaders.Accept.Clear();
+        //        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //        string usedUser = ApiHelper.AuthenticateClient(client);
+        //        //AppendLog($"Authenticated as user: {usedUser}\n", Color.Green);
+
+        //        var tasks = rows.Select(async row =>
+        //        {
+        //            string logDocNo = row.Cells["LOGDOCNO"].Value.ToString();
+        //            string url = logDocNo switch
+        //            {
+        //                var s when s.StartsWith("GR") => $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM",
+        //                var s when s.StartsWith("WR") => $"{baseUrl}/DOCUMENTS_T?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_T_SUBFORM",
+        //                var s when s.StartsWith("ROB") => $"{baseUrl}/SERIAL?$filter=SERIALNAME eq '{logDocNo}'&$expand=TRANSORDER_K_SUBFORM",
+        //                var s when s.StartsWith("SH") => $"{baseUrl}/DOCUMENTS_D?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_D_SUBFORM",
+        //                var s when s.StartsWith("IC") => $"{baseUrl}/DOCUMENTS_C?$filter=DOCNO eq '{logDocNo}'",
+        //                _ => $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM"
+        //            };
+
+        //            const int maxRetry = 5;
+        //            int retry = 0;
+        //            while (retry <= maxRetry)
+        //            {
+        //                try
+        //                {
+        //                    if (retry > 0)
+        //                        AppendLog($"Retry {retry} for {logDocNo}\n", Color.Orange);
+
+        //                    HttpResponseMessage response = await client.GetAsync(url);
+
+        //                    if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+        //                    {
+        //                        retry++;
+        //                        int delayMs = 1000 * retry; // exponential backoff: 1s, 2s, 3s
+        //                        AppendLog($"429 Too Many Requests for {logDocNo}, waiting {delayMs}ms before retry\n", Color.Orange);
+        //                        await Task.Delay(delayMs);
+        //                        continue;
+        //                    }
+
+        //                    response.EnsureSuccessStatusCode();
+
+        //                    string body = await response.Content.ReadAsStringAsync();
+        //                    var doc = JsonConvert.DeserializeObject<JObject>(body)?["value"]?.FirstOrDefault();
+        //                    if (doc == null) return;
+
+        //                    string uDate = doc["UDATE"]?.ToString();
+        //                    string bookNum = doc["BOOKNUM"]?.ToString();
+        //                    string packCode = null;
+
+        //                    var subForm = doc["TRANSORDER_P_SUBFORM"] ?? doc["TRANSORDER_T_SUBFORM"] ?? doc["TRANSORDER_D_SUBFORM"];
+        //                    if (subForm != null)
+        //                    {
+        //                        var line = subForm.FirstOrDefault(l => l["PARTNAME"]?.ToString() == partName);
+        //                        if (line != null)
+        //                            packCode = line["PACKCODE"]?.ToString();
+        //                    }
+        //                    else if (logDocNo.StartsWith("ROB"))
+        //                    {
+        //                        var subROBForm = doc["TRANSORDER_K_SUBFORM"];
+        //                        if (subROBForm != null)
+        //                        {
+        //                            var line = subROBForm.FirstOrDefault(l => l["PARTNAME"]?.ToString() == partName);
+        //                            if (line != null)
+        //                            {
+        //                                //uDate = line["CURDATE"]?.ToString();
+        //                                var curDateStr = line["CURDATE"]?.ToString();
+        //                                if (DateTime.TryParse(curDateStr, out DateTime curDate))
+        //                                {
+        //                                    // Set time to 23:59:59
+        //                                    uDate = curDate.Date.AddDays(1).AddSeconds(-1).ToString();
+        //                                }
+        //                                else
+        //                                {
+        //                                    uDate = curDateStr; // fallback, if parsing fails
+        //                                }
+        //                            }
+
+        //                        }
+        //                        //packCode = doc["PACKCODE"]?.ToString();
+        //                        bookNum ??= doc["BOOKNUM"]?.ToString();
+        //                    }
+
+        //                    row.Cells["UDATE"].Value = uDate;
+        //                    row.Cells["BOOKNUM"].Value = bookNum;
+        //                    row.Cells["PACKNAME"].Value = packCode;
+
+        //                    // log the user used for this request
+        //                    AppendLog($"Success for {logDocNo} using API user: {usedUser}\n", Color.Green);
+
+        //                    break; // success, exit retry loop
+        //                }
+        //                catch (HttpRequestException ex)
+        //                {
+        //                    AppendLog($"HTTP error for {logDocNo}: {ex.Message}\n", Color.Red);
+        //                    break; // don't retry on other HTTP errors
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    AppendLog($"Error for {logDocNo}: {ex.Message}\n", Color.Red);
+        //                    break;
+        //                }
+        //            }
+        //        }).ToList();
+
+        //        // Run with limited concurrency to avoid throttling
+        //        const int maxConcurrency = 2; // reduce concurrency to help avoid 429
+        //        for (int i = 0; i < tasks.Count; i += maxConcurrency)
+        //        {
+        //            await Task.WhenAll(tasks.Skip(i).Take(maxConcurrency));
+        //            await Task.Delay(200); // small delay between batches
+        //        }
+        //    }
+
+        //    // Sort by UDATE descending
+        //    dataGridView2.Sort(dataGridView2.Columns["UDATE"], ListSortDirection.Descending);
+        //    //AppendLog("Grid enrichment complete.\n", Color.Green);
+        //}
+
+
+
+
         private async Task EnrichGridWithPackAndDateAsync(string partName)
         {
             var rows = dataGridView2.Rows.Cast<DataGridViewRow>()
                 .Where(r => r.Cells["LOGDOCNO"].Value != null)
                 .ToList();
 
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                string usedUser = ApiHelper.AuthenticateClient(client);
-                //AppendLog($"Authenticated as user: {usedUser}\n", Color.Green);
-
-                var tasks = rows.Select(async row =>
+            // --- 1. Create HttpClient per API user from ApiUserPool ---
+            var clients = Enumerable.Range(0, ApiUserPool.Count)
+                .Select(_ =>
                 {
-                    string logDocNo = row.Cells["LOGDOCNO"].Value.ToString();
-                    string url = logDocNo switch
-                    {
-                        var s when s.StartsWith("GR") => $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM",
-                        var s when s.StartsWith("WR") => $"{baseUrl}/DOCUMENTS_T?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_T_SUBFORM",
-                        var s when s.StartsWith("ROB") => $"{baseUrl}/SERIAL?$filter=SERIALNAME eq '{logDocNo}'&$expand=TRANSORDER_K_SUBFORM",
-                        var s when s.StartsWith("SH") => $"{baseUrl}/DOCUMENTS_D?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_D_SUBFORM",
-                        var s when s.StartsWith("IC") => $"{baseUrl}/DOCUMENTS_C?$filter=DOCNO eq '{logDocNo}'",
-                        _ => $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM"
-                    };
+                    var c = new HttpClient();
+                    c.DefaultRequestHeaders.Accept.Clear();
+                    c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    string user = ApiHelper.AuthenticateClient(c); // automatically selects next user
+                    return (User: user, Client: c);
+                }).ToList();
 
+            // --- 2. Semaphores to limit per-user concurrency ---
+            int maxConcurrencyPerUser = 2;
+            var clientSemaphores = clients.ToDictionary(c => c.User, c => new SemaphoreSlim(maxConcurrencyPerUser));
+
+            // --- 3. Thread-safe round-robin user assignment ---
+            int userIndex = -1;
+            object userLock = new object();
+            (string User, HttpClient Client) GetNextClient()
+            {
+                lock (userLock)
+                {
+                    userIndex = (userIndex + 1) % clients.Count;
+                    return clients[userIndex];
+                }
+            }
+
+            // --- 4. Process rows in parallel ---
+            var tasks = rows.Select(async row =>
+            {
+                string logDocNo = row.Cells["LOGDOCNO"].Value.ToString();
+
+                // assign client using round-robin
+                var (usedUser, client) = GetNextClient();
+                var semaphore = clientSemaphores[usedUser];
+
+                await semaphore.WaitAsync();
+                try
+                {
                     const int maxRetry = 5;
                     int retry = 0;
+
                     while (retry <= maxRetry)
                     {
                         try
@@ -2410,12 +2558,22 @@ namespace WH_Panel
                             if (retry > 0)
                                 AppendLog($"Retry {retry} for {logDocNo}\n", Color.Orange);
 
+                            string url = logDocNo switch
+                            {
+                                var s when s.StartsWith("GR") => $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM",
+                                var s when s.StartsWith("WR") => $"{baseUrl}/DOCUMENTS_T?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_T_SUBFORM",
+                                var s when s.StartsWith("ROB") => $"{baseUrl}/SERIAL?$filter=SERIALNAME eq '{logDocNo}'&$expand=TRANSORDER_K_SUBFORM",
+                                var s when s.StartsWith("SH") => $"{baseUrl}/DOCUMENTS_D?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_D_SUBFORM",
+                                var s when s.StartsWith("IC") => $"{baseUrl}/DOCUMENTS_C?$filter=DOCNO eq '{logDocNo}'",
+                                _ => $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM"
+                            };
+
                             HttpResponseMessage response = await client.GetAsync(url);
 
                             if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
                             {
                                 retry++;
-                                int delayMs = 1000 * retry; // exponential backoff: 1s, 2s, 3s
+                                int delayMs = 1000 * retry; // exponential backoff
                                 AppendLog($"429 Too Many Requests for {logDocNo}, waiting {delayMs}ms before retry\n", Color.Orange);
                                 await Task.Delay(delayMs);
                                 continue;
@@ -2446,21 +2604,13 @@ namespace WH_Panel
                                     var line = subROBForm.FirstOrDefault(l => l["PARTNAME"]?.ToString() == partName);
                                     if (line != null)
                                     {
-                                        //uDate = line["CURDATE"]?.ToString();
                                         var curDateStr = line["CURDATE"]?.ToString();
                                         if (DateTime.TryParse(curDateStr, out DateTime curDate))
-                                        {
-                                            // Set time to 23:59:59
                                             uDate = curDate.Date.AddDays(1).AddSeconds(-1).ToString();
-                                        }
                                         else
-                                        {
-                                            uDate = curDateStr; // fallback, if parsing fails
-                                        }
+                                            uDate = curDateStr;
                                     }
-                                       
                                 }
-                                //packCode = doc["PACKCODE"]?.ToString();
                                 bookNum ??= doc["BOOKNUM"]?.ToString();
                             }
 
@@ -2468,12 +2618,15 @@ namespace WH_Panel
                             row.Cells["BOOKNUM"].Value = bookNum;
                             row.Cells["PACKNAME"].Value = packCode;
 
+                            // --- log the used API user ---
+                            //AppendLog($"Success for {logDocNo} using API user: {usedUser}\n", Color.Green);
+
                             break; // success, exit retry loop
                         }
                         catch (HttpRequestException ex)
                         {
                             AppendLog($"HTTP error for {logDocNo}: {ex.Message}\n", Color.Red);
-                            break; // don't retry on other HTTP errors
+                            break;
                         }
                         catch (Exception ex)
                         {
@@ -2481,22 +2634,19 @@ namespace WH_Panel
                             break;
                         }
                     }
-                }).ToList();
-
-                // Run with limited concurrency to avoid throttling
-                const int maxConcurrency = 2; // reduce concurrency to help avoid 429
-                for (int i = 0; i < tasks.Count; i += maxConcurrency)
-                {
-                    await Task.WhenAll(tasks.Skip(i).Take(maxConcurrency));
-                    await Task.Delay(200); // small delay between batches
                 }
-            }
+                finally
+                {
+                    semaphore.Release();
+                }
+            }).ToList();
 
-            // Sort by UDATE descending
+            await Task.WhenAll(tasks);
+
+            // --- 5. Sort grid by UDATE descending ---
             dataGridView2.Sort(dataGridView2.Columns["UDATE"], ListSortDirection.Descending);
             //AppendLog("Grid enrichment complete.\n", Color.Green);
         }
-
 
 
 

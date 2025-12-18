@@ -26,5 +26,8 @@ namespace WH_Panel
                 return user;
             }
         }
+
+        // new property
+        public static int Count => _apiUsers.Count;
     }
 }
