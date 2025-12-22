@@ -230,18 +230,22 @@ namespace WH_Panel
                 }
                 catch (HttpRequestException ex)
                 {
-                   
+
                     SafeAppendLog($"Request error: {ex.Message}");
-                  
+
                 }
                 catch (Exception ex)
                 {
-                    
+
                     SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-                    
+
                 }
             }
         }
+
+
+
+
         private void FilterWorkOrders(List<Serial> serials)
         {
             cmbROBxList.Items.Clear();
@@ -3434,7 +3438,7 @@ foreach (DataGridViewRow row in dgwIPNmoves.Rows)
             dgwINSTOCK.Update();
             dgwINSTOCK.Visible = true;
 
-            SafeAppendLog($"Final: {addedCount} rows added to dgwINSTOCK, {excludedCount} rows excluded due to TOWARHSNAME = 666",Color.LimeGreen);
+            //SafeAppendLog($"Final: {addedCount} rows added to dgwINSTOCK, {excludedCount} rows excluded due to TOWARHSNAME = 666",Color.LimeGreen);
         }
 
 
