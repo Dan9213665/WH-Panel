@@ -2336,6 +2336,20 @@ namespace WH_Panel
         }
         private void label10_MouseDown(object sender, MouseEventArgs e)
         {
+
+        }
+
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+            var title = this.Text;
+
+            FrmRollbackITP frm = new FrmRollbackITP(title)
+            {
+                StartPosition = FormStartPosition.CenterParent
+            };
+
+            frm.Show();
         }
     }
 }
