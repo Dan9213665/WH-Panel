@@ -2585,7 +2585,7 @@ namespace WH_Panel
                             var doc = JsonConvert.DeserializeObject<JObject>(body)?["value"]?.FirstOrDefault();
                             if (doc == null) return;
 
-                            string uDate = doc["CURDATE"]?.ToString();
+                            string uDate = doc["UDATE"]?.ToString();
                             string bookNum = doc["BOOKNUM"]?.ToString();
                             string packCode = null;
 
