@@ -2548,7 +2548,7 @@ namespace WH_Panel
                 await semaphore.WaitAsync();
                 try
                 {
-                    const int maxRetry = 5;
+                    const int maxRetry = 55;
                     int retry = 0;
 
                     while (retry <= maxRetry)
