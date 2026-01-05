@@ -1129,7 +1129,7 @@
             comboBox2.Dock = DockStyle.Fill;
             comboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBox2.FormattingEnabled = true;
-            comboBox2.Items.AddRange(new object[] { "", "GILT_", "WS2500", "SB2500", "WR2500", "SH2500", "IF", "FTK2500", "LS2500", "TR100" });
+            comboBox2.Items.AddRange(new object[] { "", "WR2600", "SH2600", "FTK2600" });
             comboBox2.Location = new Point(3, 40);
             comboBox2.Margin = new Padding(3, 4, 3, 4);
             comboBox2.Name = "comboBox2";

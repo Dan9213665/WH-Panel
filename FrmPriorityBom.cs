@@ -1968,7 +1968,7 @@ namespace WH_Panel
         }
 
         // Call when API request is made
-        private void RegisterTransaction(string Api2Username)
+        private void RegisterTransaction(string ApiUsername)
         {
             DateTime now = DateTime.Now;
 
@@ -1976,10 +1976,10 @@ namespace WH_Panel
             transactionTimestamps.Enqueue(now);
 
             // Per user
-            if (!userTransactionTimestamps.ContainsKey(Api2Username))
-                userTransactionTimestamps[Api2Username] = new Queue<DateTime>();
+            if (!userTransactionTimestamps.ContainsKey(ApiUsername))
+                userTransactionTimestamps[ApiUsername] = new Queue<DateTime>();
 
-            userTransactionTimestamps[Api2Username].Enqueue(now);
+            userTransactionTimestamps[ApiUsername].Enqueue(now);
 
             CleanOldTransactions();
             int currentTpm = transactionTimestamps.Count;
@@ -3075,13 +3075,7 @@ namespace WH_Panel
                     // Set the request headers if needed
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    // Set the Authorization header
-                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}"));
-                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-
                     string usedUser = ApiHelper.AuthenticateClient(client);
-                    // string usedUser = ApiHelper.AuthenticateClient(client);
                     RegisterTransaction(usedUser); // Log this transaction timestamp
                     // Make the HTTP GET request
                     HttpResponseMessage response = await client.GetAsync(url);
