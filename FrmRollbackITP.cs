@@ -59,7 +59,7 @@ namespace WH_Panel
                     conn.Open();
 
                     // Use parameterized query with sourseReqkitName
-                    string query = $"SELECT * FROM {_databaseName}.dbo.STOCK WHERE Source_Requester = @Source_Requester";
+                    string query = $"SELECT * FROM [{_databaseName}].dbo.STOCK WHERE Source_Requester = @Source_Requester";
 
                     using (SqlDataAdapter adapter = new SqlDataAdapter(query, conn))
                     {
@@ -104,7 +104,7 @@ namespace WH_Panel
 
                         int id = Convert.ToInt32(row.Cells["Id"].Value);
 
-                        using (SqlCommand cmd = new SqlCommand($"DELETE FROM {_databaseName}.dbo.STOCK WHERE Id = @Id", conn))
+                        using (SqlCommand cmd = new SqlCommand($"DELETE FROM [{_databaseName}].dbo.STOCK WHERE Id = @Id", conn))
                         {
                             cmd.Parameters.AddWithValue("@Id", id);
                             cmd.ExecuteNonQuery();
