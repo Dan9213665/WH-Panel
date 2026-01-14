@@ -20,7 +20,7 @@ using Exception = System.Exception;
 using ComboBox = System.Windows.Forms.ComboBox;
 namespace WH_Panel
 {
-   
+
     public partial class FrmPriorityMultiBom : Form
     {
         private AppSettings settings;
@@ -165,7 +165,7 @@ namespace WH_Panel
             txtbLog.SelectionStart = txtbLog.TextLength;
             txtbLog.SelectionLength = 0;
             txtbLog.SelectionColor = color;
-            txtbLog.AppendText(datestamp+"..."+message + "\n");
+            txtbLog.AppendText(datestamp + "..." + message + "\n");
             txtbLog.SelectionColor = txtbLog.ForeColor; // Reset the color to default
             txtbLog.ScrollToCaret();
         }
@@ -375,6 +375,11 @@ namespace WH_Panel
         }
         private async void btnSim1_Click(object sender, EventArgs e)
         {
+           
+        }
+
+        private async Task RunAggregatedSimulationLogic()
+        {
             if (dgvBomsList.Rows.Cast<DataGridViewRow>().Any(row => Convert.ToBoolean(row.Cells["Selected"].Value)))
             {
                 var selectedWorkOrders = dgvBomsList.Rows.Cast<DataGridViewRow>()
@@ -397,7 +402,7 @@ namespace WH_Panel
                 string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
                 string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\MultiKitsStatusReport_{_fileTimeStamp}.html";
                 await GenerateHTMLaggregated(filename, tableData, $"Multiple Kits Simulation Report {_fileTimeStamp}", selectedWorkOrders, completionPercentage);
-           
+
                 if (File.Exists(filename))
                 {
                     var p = new Process();
@@ -485,10 +490,10 @@ namespace WH_Panel
             }
             UpdateSelectedLabel();
         }
-     
 
 
-        private async Task<Dictionary<string, (int kitBalance, int stock, int simulation,int inHowManyKitsUsed)>> AggregatedSim(List<Serial> selectedWorkOrders)
+
+        private async Task<Dictionary<string, (int kitBalance, int stock, int simulation, int inHowManyKitsUsed)>> AggregatedSim(List<Serial> selectedWorkOrders)
         {
             // For each IPN, keep a list of max CQUANT per kit and sum of QUANT per kit
             var ipnToMaxCQuantPerKit = new Dictionary<string, List<int>>();
@@ -680,7 +685,7 @@ namespace WH_Panel
                 int totalRequired = ipnToMaxCQuantPerKit.ContainsKey(ipn) ? ipnToMaxCQuantPerKit[ipn].Sum() : 0;
                 int inHowManyKitsUsed = ipnToMaxCQuantPerKit.ContainsKey(ipn) ? ipnToMaxCQuantPerKit[ipn].Count : 0;
                 int totalInKits = ipnToTotalQuant.ContainsKey(ipn) ? ipnToTotalQuant[ipn] : 0;
-                int kitBalance =  totalInKits - totalRequired;
+                int kitBalance = totalInKits - totalRequired;
                 int stock = warehouseStock.ContainsKey(ipn) ? warehouseStock[ipn] : 0;
                 int simulation = stock + kitBalance;
                 result[ipn] = (kitBalance, stock, simulation, inHowManyKitsUsed);
@@ -771,10 +776,10 @@ namespace WH_Panel
                             if (!partCQuants.ContainsKey(transOrder.PARTNAME))
                                 partCQuants[transOrder.PARTNAME] = transOrder.CQUANT;
 
-                           // txtbLog.AppendText(transOrder.PARTNAME + ":" + transOrder.CQUANT+"\n");
+                            // txtbLog.AppendText(transOrder.PARTNAME + ":" + transOrder.CQUANT+"\n");
                         }
 
-               
+
 
                         foreach (var part in partQuantities)
                         {
@@ -877,7 +882,7 @@ namespace WH_Panel
 
 
 
-        private async Task GenerateHTMLaggregated(string filename, Dictionary<string, (int balance, int stock, int simulation,int inHowManyKitsUsed)> tableData, string reportTitle, List<Serial> selectedWorkOrders, double completionPercentage)
+        private async Task GenerateHTMLaggregated(string filename, Dictionary<string, (int balance, int stock, int simulation, int inHowManyKitsUsed)> tableData, string reportTitle, List<Serial> selectedWorkOrders, double completionPercentage)
         {
             tableData.OrderBy(x => x.Key == "simulation");
 
@@ -973,11 +978,11 @@ namespace WH_Panel
                 writer.WriteLine("</tr>");
                 foreach (var ipn in tableData.OrderBy(x => x.Value.simulation))
                 {
-                    var (balance, stock, simulation,inHowManyKitsUse) = ipn.Value;
+                    var (balance, stock, simulation, inHowManyKitsUse) = ipn.Value;
                     string mfpn = ipnToMfpn.TryGetValue(ipn.Key, out var mf) ? mf : "-";
                     //string rowClass = simulation >= 0 ? "green" : "red";
                     string rowClass = "red";
-                    if (simulation >= 0 && simulation <11)
+                    if (simulation >= 0 && simulation < 11)
                     {
                         rowClass = "orange";
                     }
@@ -987,7 +992,7 @@ namespace WH_Panel
                     }
 
 
-                        string balanceClass = balance < 0 ? "red-balance" : "";
+                    string balanceClass = balance < 0 ? "red-balance" : "";
                     writer.WriteLine($"<tr class='{rowClass}'>");
                     writer.WriteLine($"<td>{ipn.Key}</td>");
                     writer.WriteLine($"<td>{mfpn}</td>"); // New column
@@ -1180,7 +1185,7 @@ namespace WH_Panel
                     var serials = ipnToSerials[ipn];
                     int totalQuant = serials.Sum(s => s.quant);
                     int totalCQuant = serials.Sum(s => s.cquant);
-                    int totalBalance = totalQuant- totalCQuant;
+                    int totalBalance = totalQuant - totalCQuant;
                     int warehouseBalance = warehouseStock.ContainsKey(ipn) ? warehouseStock[ipn] : 0;
                     int totalSimulation = warehouseBalance + totalQuant - totalCQuant;
                     string totalSimulationClass = totalSimulation > 0 ? "green" : "red";
@@ -1214,7 +1219,7 @@ namespace WH_Panel
                     int currentWarehouseBalance = warehouseBalance;
                     foreach (var (serial, quant, cquant, balance, simulation) in serials)
                     {
-                        int serialBalance = quant-cquant;
+                        int serialBalance = quant - cquant;
                         int serialSimulation = currentWarehouseBalance + serialBalance;
                         currentWarehouseBalance += serialBalance;
                         string serialBalanceClass = serialBalance > 0 ? "green" : "red";
@@ -1222,7 +1227,7 @@ namespace WH_Panel
                         writer.WriteLine("<tr>");
                         writer.WriteLine($"<td>{serial.SERIALNAME}</td>");
                         writer.WriteLine($"<td>{serial.PARTNAME}</td>");
-                       
+
                         writer.WriteLine($"<td>{quant}</td>");
                         writer.WriteLine($"<td>{cquant}</td>");
                         writer.WriteLine($"<td class='{serialBalanceClass}'>{serialBalance}</td>");
@@ -1671,6 +1676,709 @@ namespace WH_Panel
 
             AppendLogMessage($"Added BOM '{cmbBom.SelectedItem}' with revision '{cmbRev.SelectedItem}' and quantity {quantity}.", Color.Green);
         }
+
+        private async void btnSim1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                // Execute your existing simulation logic
+                await RunAggregatedSimulationLogic();
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                // Execute alternative logic, like showing a settings menu or clearing the selection
+                await RunVariableAggregatedSimulationLogic();
+                
+            }
+        }
+
+        //private async Task RunVariableAggregatedSimulationLogic()
+        //{
+        //    // 1. Collect selected work orders
+        //    var kits = dgvBomsList.Rows.Cast<DataGridViewRow>()
+        //        .Where(r => Convert.ToBoolean(r.Cells["Selected"].Value))
+        //        .Select(r => new
+        //        {
+        //            Serial = r.Cells["SerialName"].Value.ToString(),
+        //            Part = r.Cells["PartName"].Value.ToString(),
+        //            Rev = r.Cells["RevNum"].Value.ToString(),
+        //            Qty = Convert.ToInt32(r.Cells["Quant"].Value)
+        //        })
+        //        .ToList();
+
+        //    if (!kits.Any())
+        //    {
+        //        MessageBox.Show("Select at least one work order.");
+        //        return;
+        //    }
+
+        //    // 2. Load warehouse stock
+        //    var warehouseStock = new Dictionary<string, int>();
+        //    string warehouse = GetSelectedWarehouseName();
+
+        //    AppendLogMessage($"Loading warehouse {warehouse}", Color.Yellow);
+
+        //    using (var client = new HttpClient())
+        //    {
+        //        ApiHelper.AuthenticateClient(client);
+
+        //        string url =
+        //            $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/" +
+        //            $"WAREHOUSES?$filter=WARHSNAME eq '{warehouse}'" +
+        //            $"&$expand=WARHSBAL_SUBFORM($select=PARTNAME,PARTDES,BALANCE)";
+
+        //        var json = JObject.Parse(await client.GetStringAsync(url));
+        //        var rows = json["value"].First["WARHSBAL_SUBFORM"]
+        //                       .ToObject<List<WarehouseBalanceCutDown>>();
+
+        //        foreach (var r in rows)
+        //            warehouseStock[r.PARTNAME] = r.BALANCE;
+        //    }
+
+        //    // 3. Load BOMs per kit (ROB + SIM)
+        //    var bomPerKit = new Dictionary<string, Dictionary<string, double>>();
+
+        //    using (var client = new HttpClient())
+        //    {
+        //        ApiHelper.AuthenticateClient(client);
+
+        //        foreach (var kit in kits)
+        //        {
+        //            var bom = new Dictionary<string, double>();
+
+        //            if (kit.Serial.StartsWith("ROB"))
+        //            {
+        //                AppendLogMessage($"Loading {kit.Serial}", Color.Yellow);
+
+        //                string url =
+        //                    $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/" +
+        //                    $"SERIAL?$filter=SERIALNAME eq '{kit.Serial}'&$expand=TRANSORDER_K_SUBFORM";
+
+        //                var json = JObject.Parse(await client.GetStringAsync(url));
+        //                var lines = json["value"].First["TRANSORDER_K_SUBFORM"]
+        //                                .ToObject<List<TransOrderKSubform>>();
+
+        //                foreach (var l in lines)
+        //                {
+        //                    bom[l.PARTNAME] = bom.TryGetValue(l.PARTNAME, out var v)
+        //                        ? Math.Max(v, l.CQUANT)
+        //                        : l.CQUANT;
+        //                }
+        //            }
+        //            else if (kit.Serial.StartsWith("SIM"))
+        //            {
+        //                AppendLogMessage($"Loading BOM for {kit.Serial}", Color.Yellow);
+
+        //                string url =
+        //                    $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/" +
+        //                    $"PART('{kit.Part}')/REVISIONS_SUBFORM?$filter=REVNUM eq '{kit.Rev}'" +
+        //                    $"&$expand=REVPARTARC_SUBFORM";
+
+        //                var json = JObject.Parse(await client.GetStringAsync(url));
+        //                var rows = json["value"].First["REVPARTARC_SUBFORM"];
+
+        //                foreach (var r in rows)
+        //                {
+        //                    string ipn = r["SONNAME"].ToString();
+        //                    double qty = r["SONQUANT"].ToObject<double>();
+        //                    bom[ipn] = qty;
+        //                }
+        //            }
+
+        //            bomPerKit[kit.Serial] = bom;
+        //            AppendLogMessage($"Loaded {kit.Serial}", Color.Green);
+        //        }
+        //    }
+
+        //    // 4. Prepare JSON structures
+        //    var kitsJson = kits.ToDictionary(
+        //        k => k.Serial,
+        //        k => new
+        //        {
+        //            quantity = k.Qty,
+        //            bom = bomPerKit.ContainsKey(k.Serial)
+        //                ? bomPerKit[k.Serial]
+        //                : new Dictionary<string, double>()
+        //        });
+
+        //    // 5. Generate portable HTML
+        //    string html = $@"
+        //<!DOCTYPE html>
+        //<html>
+        //<head>
+        //<meta charset='utf-8'>
+        //<title>Variable Aggregated Simulation</title>
+        //<style>
+        //body {{ font-family: Arial; background-color:gray; }}
+        //table {{ border-collapse: collapse; margin-bottom: 20px; }}
+        //td, th {{ border: 1px solid #aaa; padding: 4px 8px; }}
+        //input {{ width: 80px; }}
+        //</style>
+        //</head>
+        //<body>
+
+        //<h2>Kits</h2>
+        //<table id='kits'><tr><th>Kit</th><th>Quantity</th></tr></table>
+
+        //<h2>IPN Delta</h2>
+        //<table id='ipns'>
+        //<tr><th>IPN</th><th>Stock</th><th>Required</th><th>Delta</th></tr>
+        //</table>
+
+        //<script id='warehouse' type='application/json'>
+        //{JsonConvert.SerializeObject(warehouseStock)}
+        //</script>
+
+        //<script id='kitsdata' type='application/json'>
+        //{JsonConvert.SerializeObject(kitsJson)}
+        //</script>
+
+        //<script>
+        //const stock = JSON.parse(document.getElementById('warehouse').textContent);
+        //const kits  = JSON.parse(document.getElementById('kitsdata').textContent);
+
+        //const kitsTable = document.getElementById('kits');
+        //const ipnTable  = document.getElementById('ipns');
+
+        //for (const k in kits) {{
+        //  const tr = document.createElement('tr');
+        //  tr.innerHTML =
+        //    `<td>${{k}}</td>
+        //     <td><input type='number' min='0' value='${{kits[k].quantity}}'
+        //                data-kit='${{k}}'></td>`;
+        //  kitsTable.appendChild(tr);
+        //}}
+
+        //document.querySelectorAll('input').forEach(i =>
+        //  i.addEventListener('input', recalc)
+        //);
+
+        //function recalc() {{
+        //  const req = {{}};
+
+        //  document.querySelectorAll('input').forEach(i => {{
+        //    kits[i.dataset.kit].quantity = +i.value;
+        //  }});
+
+        //  for (const k in kits) {{
+        //    const q = kits[k].quantity;
+        //    for (const ipn in kits[k].bom) {{
+        //      req[ipn] = (req[ipn] || 0) + kits[k].bom[ipn] * q;
+        //    }}
+        //  }}
+
+        //  ipnTable.innerHTML =
+        //    `<tr><th>IPN</th><th>Stock</th><th>Required</th><th>Delta</th></tr>`;
+
+        //  new Set([...Object.keys(stock), ...Object.keys(req)])
+        //    .forEach(ipn => {{
+        //      const s = stock[ipn] || 0;
+        //      const r = req[ipn] || 0;
+        //        if (r === 0) return;  // skip irrelevant IPNs
+        //      const d = s - r;
+        //      ipnTable.innerHTML +=
+        //        `<tr>
+        //          <td>${{ipn}}</td>
+        //          <td>${{s}}</td>
+        //          <td>${{r.toFixed(2)}}</td>
+        //          <td style='color:${{d < 0 ? 'red' : 'green'}}'>
+        //            ${{d.toFixed(2)}}
+        //          </td>
+        //        </tr>`;
+        //    }});
+        //}}
+
+        //recalc();
+        //</script>
+
+        //</body>
+        //</html>";
+
+        //    // 6. Write and open
+        //    string file =
+        //        $@"\\dbr1\Data\WareHouse\2025\WHsearcher\VariableSim_{DateTime.Now:yyyyMMddHHmm}.html";
+
+        //    File.WriteAllText(file, html, Encoding.UTF8);
+        //    Process.Start(new ProcessStartInfo(file) { UseShellExecute = true });
+        //}
+
+        //        private async Task RunVariableAggregatedSimulationLogic()
+        //        {
+        //            // 1. Collect selected work orders
+        //            var kits = dgvBomsList.Rows.Cast<DataGridViewRow>()
+        //                .Where(r => Convert.ToBoolean(r.Cells["Selected"].Value))
+        //                .Select(r => new
+        //                {
+        //                    Serial = r.Cells["SerialName"].Value.ToString(),
+        //                    Part = r.Cells["PartName"].Value.ToString(),
+        //                    Rev = r.Cells["RevNum"].Value.ToString(),
+        //                    Qty = Convert.ToInt32(r.Cells["Quant"].Value)
+        //                })
+        //                .ToList();
+
+        //            if (!kits.Any())
+        //            {
+        //                MessageBox.Show("Select at least one work order.");
+        //                return;
+        //            }
+
+        //            // 2. Load warehouse stock + description (LOCAL anonymous structure)
+        //            var warehouseStock = new Dictionary<string, object>();
+        //            string warehouse = GetSelectedWarehouseName();
+
+        //            AppendLogMessage($"Loading warehouse {warehouse}", Color.Yellow);
+
+        //            using (var client = new HttpClient())
+        //            {
+        //                ApiHelper.AuthenticateClient(client);
+
+        //                string url =
+        //                    $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/" +
+        //                    $"WAREHOUSES?$filter=WARHSNAME eq '{warehouse}'" +
+        //                    $"&$expand=WARHSBAL_SUBFORM($select=PARTNAME,PARTDES,BALANCE)";
+
+        //                var json = JObject.Parse(await client.GetStringAsync(url));
+        //                var rows = json["value"].First["WARHSBAL_SUBFORM"];
+
+        //                foreach (var r in rows)
+        //                {
+        //                    string ipn = r["PARTNAME"].ToString();
+        //                    warehouseStock[ipn] = new
+        //                    {
+        //                        balance = r["BALANCE"].ToObject<int>(),
+        //                        description = r["PARTDES"]?.ToString() ?? ""
+        //                    };
+        //                }
+        //            }
+
+        //            // 3. Load BOMs per kit (ROB + SIM)
+        //            var bomPerKit = new Dictionary<string, Dictionary<string, double>>();
+
+        //            using (var client = new HttpClient())
+        //            {
+        //                ApiHelper.AuthenticateClient(client);
+
+        //                foreach (var kit in kits)
+        //                {
+        //                    var bom = new Dictionary<string, double>();
+
+        //                    if (kit.Serial.StartsWith("ROB"))
+        //                    {
+        //                        AppendLogMessage($"Loading {kit.Serial}", Color.Yellow);
+
+        //                        string url =
+        //                            $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/" +
+        //                            $"SERIAL?$filter=SERIALNAME eq '{kit.Serial}'&$expand=TRANSORDER_K_SUBFORM";
+
+        //                        var json = JObject.Parse(await client.GetStringAsync(url));
+        //                        var lines = json["value"].First["TRANSORDER_K_SUBFORM"];
+
+        //                        foreach (var l in lines)
+        //                        {
+        //                            string ipn = l["PARTNAME"].ToString();
+        //                            double qty = l["CQUANT"].ToObject<double>();
+
+        //                            bom[ipn] = bom.TryGetValue(ipn, out var v)
+        //                                ? Math.Max(v, qty)
+        //                                : qty;
+        //                        }
+        //                    }
+        //                    else if (kit.Serial.StartsWith("SIM"))
+        //                    {
+        //                        AppendLogMessage($"Loading BOM for {kit.Serial}", Color.Yellow);
+
+        //                        string url =
+        //                            $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/" +
+        //                            $"PART('{kit.Part}')/REVISIONS_SUBFORM?$filter=REVNUM eq '{kit.Rev}'" +
+        //                            $"&$expand=REVPARTARC_SUBFORM";
+
+        //                        var json = JObject.Parse(await client.GetStringAsync(url));
+        //                        var rows = json["value"].First["REVPARTARC_SUBFORM"];
+
+        //                        foreach (var r in rows)
+        //                        {
+        //                            string ipn = r["SONNAME"].ToString();
+        //                            double qty = r["SONQUANT"].ToObject<double>();
+        //                            bom[ipn] = qty;
+        //                        }
+        //                    }
+
+        //                    bomPerKit[kit.Serial] = bom;
+        //                    AppendLogMessage($"Loaded {kit.Serial}", Color.Green);
+        //                }
+        //            }
+
+        //            // 4. Prepare JSON structures
+        //            var kitsJson = kits.ToDictionary(
+        //                k => k.Serial,
+        //                k => new
+        //                {
+        //                    quantity = k.Qty,
+        //                    bom = bomPerKit.TryGetValue(k.Serial, out var b)
+        //                        ? b
+        //                        : new Dictionary<string, double>()
+        //                });
+
+        //            // 5. Generate portable HTML
+        //            string html = $@"
+        //<!DOCTYPE html>
+        //<html>
+        //<head>
+        //<meta charset='utf-8'>
+        //<title>Variable Aggregated Simulation</title>
+        //<style>
+        //body {{ font-family: Arial; background-color: gray; }}
+        //table {{ border-collapse: collapse; margin-bottom: 20px; background-color: white; }}
+        //td, th {{ border: 1px solid #aaa; padding: 4px 8px; }}
+        //input {{ width: 80px; }}
+        //th {{ cursor: pointer; }}
+        //</style>
+        //</head>
+        //<body>
+
+        //<h2>Kits</h2>
+        //<table id='kits'><tr><th>Kit</th><th>Quantity</th></tr></table>
+
+        //<h2>IPN Delta</h2>
+        //<table id='ipns'>
+        //<thead>
+        //<tr>
+        //<th onclick='sortTable(0)'>IPN</th>
+        //<th onclick='sortTable(1)'>Description</th>
+        //<th onclick='sortTable(2)'>Stock</th>
+        //<th onclick='sortTable(3)'>Required</th>
+        //<th onclick='sortTable(4)'>Delta</th>
+        //</tr>
+        //</thead>
+        //<tbody></tbody>
+        //</table>
+
+        //<script id='warehouse' type='application/json'>
+        //{JsonConvert.SerializeObject(warehouseStock)}
+        //</script>
+
+        //<script id='kitsdata' type='application/json'>
+        //{JsonConvert.SerializeObject(kitsJson)}
+        //</script>
+
+        //<script>
+        //const stock = JSON.parse(document.getElementById('warehouse').textContent);
+        //const kits  = JSON.parse(document.getElementById('kitsdata').textContent);
+
+        //const kitsTable = document.getElementById('kits');
+        //const ipnBody   = document.querySelector('#ipns tbody');
+
+        //for (const k in kits) {{
+        //  const tr = document.createElement('tr');
+        //  tr.innerHTML =
+        //    `<td>${{k}}</td>
+        //     <td><input type='number' min='0' value='${{kits[k].quantity}}' data-kit='${{k}}'></td>`;
+        //  kitsTable.appendChild(tr);
+        //}}
+
+        //document.querySelectorAll('input').forEach(i =>
+        //  i.addEventListener('input', recalc)
+        //);
+
+        //function recalc() {{
+        //  const req = {{}};
+
+        //  document.querySelectorAll('input').forEach(i => {{
+        //    kits[i.dataset.kit].quantity = +i.value;
+        //  }});
+
+        //  for (const k in kits) {{
+        //    for (const ipn in kits[k].bom) {{
+        //      req[ipn] = (req[ipn] || 0) + kits[k].bom[ipn] * kits[k].quantity;
+        //    }}
+        //  }}
+
+        //  ipnBody.innerHTML = '';
+
+        //  Object.keys(req)
+        //    .sort((a,b) => (stock[a]?.balance || 0) - req[a] - ((stock[b]?.balance || 0) - req[b]))
+        //    .forEach(ipn => {{
+        //      const s = stock[ipn]?.balance || 0;
+        //      const dsc = stock[ipn]?.description || '';
+        //      const r = req[ipn];
+        //      const d = s - r;
+
+        //      const tr = document.createElement('tr');
+        //      tr.innerHTML =
+        //        `<td>${{ipn}}</td>
+        //         <td>${{dsc}}</td>
+        //         <td>${{s}}</td>
+        //         <td>${{r.toFixed(2)}}</td>
+        //         <td style='color:${{d < 0 ? 'red' : 'green'}}'>${{d.toFixed(2)}}</td>`;
+        //      ipnBody.appendChild(tr);
+        //    }});
+        //}}
+
+        //function sortTable(col) {{
+        //  const rows = Array.from(ipnBody.rows);
+        //  const asc = ipnBody.dataset.sortCol == col && ipnBody.dataset.sortDir == 'asc' ? false : true;
+        //  ipnBody.dataset.sortCol = col;
+        //  ipnBody.dataset.sortDir = asc ? 'asc' : 'desc';
+
+        //  rows.sort((a,b) => {{
+        //    const A = a.cells[col].innerText;
+        //    const B = b.cells[col].innerText;
+        //    return (parseFloat(A) - parseFloat(B)) || A.localeCompare(B) * (asc ? 1 : -1);
+        //  }});
+
+        //  rows.forEach(r => ipnBody.appendChild(r));
+        //}}
+
+        //recalc();
+        //</script>
+
+        //</body>
+        //</html>";
+
+        //            // 6. Write and open
+        //            string file =
+        //                $@"\\dbr1\Data\WareHouse\2025\WHsearcher\VariableSim_{DateTime.Now:yyyyMMddHHmm}.html";
+
+        //            File.WriteAllText(file, html, Encoding.UTF8);
+        //            Process.Start(new ProcessStartInfo(file) { UseShellExecute = true });
+        //        }
+
+        private async Task RunVariableAggregatedSimulationLogic()
+        {
+            // 1. Collect selected work orders
+            var kits = dgvBomsList.Rows.Cast<DataGridViewRow>()
+                .Where(r => Convert.ToBoolean(r.Cells["Selected"].Value))
+                .Select(r => new
+                {
+                    Serial = r.Cells["SerialName"].Value.ToString(),
+                    Part = r.Cells["PartName"].Value.ToString(),
+                    Rev = r.Cells["RevNum"].Value.ToString(),
+                    Qty = Convert.ToInt32(r.Cells["Quant"].Value)
+                })
+                .ToList();
+
+            if (!kits.Any())
+            {
+                MessageBox.Show("Select at least one work order.");
+                return;
+            }
+
+            // 2. Load warehouse stock + description
+            var warehouseStock = new Dictionary<string, object>();
+            string warehouse = GetSelectedWarehouseName();
+
+            AppendLogMessage($"Loading warehouse {warehouse}", Color.Yellow);
+
+            using (var client = new HttpClient())
+            {
+                ApiHelper.AuthenticateClient(client);
+
+                string url =
+                    $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/" +
+                    $"WAREHOUSES?$filter=WARHSNAME eq '{warehouse}'" +
+                    $"&$expand=WARHSBAL_SUBFORM($select=PARTNAME,PARTDES,BALANCE)";
+
+                var json = JObject.Parse(await client.GetStringAsync(url));
+                var rows = json["value"].First["WARHSBAL_SUBFORM"];
+
+                foreach (var r in rows)
+                {
+                    string ipn = r["PARTNAME"].ToString();
+                    warehouseStock[ipn] = new
+                    {
+                        balance = r["BALANCE"].ToObject<int>(),
+                        description = r["PARTDES"]?.ToString() ?? ""
+                    };
+                }
+            }
+
+            // 3. Load BOMs per kit
+            var bomPerKit = new Dictionary<string, Dictionary<string, double>>();
+
+            using (var client = new HttpClient())
+            {
+                ApiHelper.AuthenticateClient(client);
+
+                foreach (var kit in kits)
+                {
+                    var bom = new Dictionary<string, double>();
+
+                    if (kit.Serial.StartsWith("ROB"))
+                    {
+                        AppendLogMessage($"Loading {kit.Serial}", Color.Yellow);
+
+                        string url =
+                            $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/" +
+                            $"SERIAL?$filter=SERIALNAME eq '{kit.Serial}'&$expand=TRANSORDER_K_SUBFORM";
+
+                        var json = JObject.Parse(await client.GetStringAsync(url));
+                        var lines = json["value"].First["TRANSORDER_K_SUBFORM"];
+
+                        foreach (var l in lines)
+                        {
+                            string ipn = l["PARTNAME"].ToString();
+                            double qty = l["CQUANT"].ToObject<double>();
+                            bom[ipn] = bom.TryGetValue(ipn, out var v) ? Math.Max(v, qty) : qty;
+                        }
+                    }
+                    else if (kit.Serial.StartsWith("SIM"))
+                    {
+                        AppendLogMessage($"Loading BOM for {kit.Serial}", Color.Yellow);
+
+                        string url =
+                            $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/" +
+                            $"PART('{kit.Part}')/REVISIONS_SUBFORM?$filter=REVNUM eq '{kit.Rev}'" +
+                            $"&$expand=REVPARTARC_SUBFORM";
+
+                        var json = JObject.Parse(await client.GetStringAsync(url));
+                        var rows = json["value"].First["REVPARTARC_SUBFORM"];
+
+                        foreach (var r in rows)
+                        {
+                            string ipn = r["SONNAME"].ToString();
+                            double qty = r["SONQUANT"].ToObject<double>();
+                            bom[ipn] = qty;
+                        }
+                    }
+
+                    bomPerKit[kit.Serial] = bom;
+                    AppendLogMessage($"Loaded {kit.Serial}", Color.Green);
+                }
+            }
+
+            // 4. Prepare JSON structures
+            var kitsJson = kits.ToDictionary(
+                k => k.Serial,
+                k => new
+                {
+                    quantity = k.Qty,
+                    part = k.Part,
+                    rev = k.Rev,
+                    bom = bomPerKit.TryGetValue(k.Serial, out var b) ? b : new Dictionary<string, double>()
+                });
+
+            // 5. Generate HTML safely
+            string html = $@"<!DOCTYPE html>
+<html>
+<head>
+<meta charset=""utf-8"">
+<title>Variable Aggregated Simulation</title>
+<style>
+body {{ font-family: Consolas, 'Courier New', monospace; background-color: #1e1e1e; color: #d4d4d4; text-align: center;}}
+table {{ border-collapse: collapse; margin-bottom: 20px; width: 100%; }}
+td, th {{ border: 1px solid #3c3c3c; padding: 4px 8px; }}
+th {{ cursor: pointer; background-color: #252526; }}
+tr:nth-child(even) {{ background-color: #2a2d2e; }}
+input {{ width: 80px; background-color: #3c3c3c; color: #d4d4d4; border: 1px solid #555; }}
+.red {{ color: #f44747; }}
+.green {{ color: #608b4e; }}
+</style>
+</head>
+<body>
+
+<h2>Kits</h2>
+<table id=""kits""><tr><th>Serial</th><th>Part</th><th>Rev</th><th>Quantity</th></tr></table>
+
+<h2>IPN Delta</h2>
+<table id=""ipns"">
+<thead>
+<tr>
+<th onclick=""sortTable(0)"">IPN</th>
+<th onclick=""sortTable(1)"">Description</th>
+<th onclick=""sortTable(2)"">Stock</th>
+<th onclick=""sortTable(3)"">Required</th>
+<th onclick=""sortTable(4)"">Delta</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<script id=""warehouse"" type=""application/json"">
+{JsonConvert.SerializeObject(warehouseStock)}
+</script>
+
+<script id=""kitsdata"" type=""application/json"">
+{JsonConvert.SerializeObject(kitsJson)}
+</script>
+
+<script>
+const stock = JSON.parse(document.getElementById(""warehouse"").textContent);
+const kits  = JSON.parse(document.getElementById(""kitsdata"").textContent);
+const kitsTable = document.getElementById(""kits"");
+const ipnBody   = document.querySelector(""#ipns tbody"");
+
+// Populate Kits table
+for (const k in kits) {{
+    const kit = kits[k];
+    const tr = document.createElement(""tr"");
+    tr.innerHTML =
+        '<td>' + k + '</td>' +
+        '<td>' + kit.part + '</td>' +
+        '<td>' + kit.rev + '</td>' +
+        '<td><input type=""number"" min=""0"" value=""' + kit.quantity + '"" data-kit=""' + k + '""></td>';
+    kitsTable.appendChild(tr);
+}}
+
+document.querySelectorAll('input').forEach(i => i.addEventListener('input', recalc));
+
+function recalc() {{
+    const req = {{}};
+
+    document.querySelectorAll('input').forEach(i => {{
+        kits[i.dataset.kit].quantity = +i.value;
+    }});
+
+    for (const k in kits) {{
+        const kit = kits[k];
+        for (const ipn in kit.bom) {{
+            req[ipn] = (req[ipn] || 0) + kit.bom[ipn] * kit.quantity;
+        }}
+    }}
+
+    ipnBody.innerHTML = '';
+    Object.keys(req).sort((a,b) => ((stock[a]?.balance || 0) - req[a]) - ((stock[b]?.balance || 0) - req[b])).forEach(ipn => {{
+        const s = stock[ipn]?.balance || 0;
+        const dsc = stock[ipn]?.description || '';
+        const r = req[ipn];
+        const d = s - r;
+        const tr = document.createElement(""tr"");
+        tr.innerHTML =
+            '<td>' + ipn + '</td>' +
+            '<td>' + dsc + '</td>' +
+            '<td>' + s + '</td>' +
+            '<td>' + r.toFixed(0) + '</td>' +
+            '<td class=""' + (d < 0 ? 'red' : 'green') + '"">' + d.toFixed(0) + '</td>';
+        ipnBody.appendChild(tr);
+    }});
+}}
+
+function sortTable(col) {{
+    const rows = Array.from(ipnBody.rows);
+    const asc = ipnBody.dataset.sortCol == col && ipnBody.dataset.sortDir == 'asc' ? false : true;
+    ipnBody.dataset.sortCol = col;
+    ipnBody.dataset.sortDir = asc ? 'asc' : 'desc';
+
+    rows.sort((a,b) => {{
+        const A = a.cells[col].innerText;
+        const B = b.cells[col].innerText;
+        return (parseFloat(A) - parseFloat(B)) || A.localeCompare(B) * (asc ? 1 : -1);
+    }});
+    rows.forEach(r => ipnBody.appendChild(r));
+}}
+
+recalc();
+</script>
+
+</body>
+</html>";
+
+            string file = $@"\\dbr1\Data\WareHouse\2025\WHsearcher\VariableSim_{DateTime.Now:yyyyMMddHHmmss}.html";
+            File.WriteAllText(file, html, Encoding.UTF8);
+            Process.Start(new ProcessStartInfo(file) { UseShellExecute = true });
+        }
+
+
+
 
     }
 }
