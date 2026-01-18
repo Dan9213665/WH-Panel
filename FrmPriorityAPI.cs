@@ -479,102 +479,222 @@ namespace WH_Panel
             cmbPackCode.SelectedIndex = 0; // Select the first item by default
         }
 
+        //public string SelectTheCredentialsByLoggedUser(AppSettings settings)
+        //{
+        //    string thecredentials = string.Empty;
+        //    string curentUserFull = WindowsIdentity.GetCurrent().Name; // e.g., DOMAIN\lgt01
+        //    string curentUser = curentUserFull.Split('\\').Last();     // just 'lgt01'
+        //    //MessageBox.Show($"User detected : {curentUser}\n");
+        //    if (curentUser == "lgt01")
+        //    {
+        //        thecredentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}"));
+        //    }
+        //    else if (curentUser == "rbtwh")
+        //    {
+        //        thecredentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
+        //    }
+        //    else if (curentUser == "rbtwh2")
+        //    {
+        //        thecredentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //    }
+        //    else
+        //    {
+        //        thecredentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //    }
+        //    return thecredentials;
+        //}
+        public static HashSet<string> SessionBlacklist = new HashSet<string>();
         public string SelectTheCredentialsByLoggedUser(AppSettings settings)
         {
-            string thecredentials = string.Empty;
-            string curentUserFull = WindowsIdentity.GetCurrent().Name; // e.g., DOMAIN\lgt01
-            string curentUser = curentUserFull.Split('\\').Last();     // just 'lgt01'
-            //MessageBox.Show($"User detected : {curentUser}\n");
-            if (curentUser == "lgt01")
-            {
-                thecredentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}"));
-            }
-            else if (curentUser == "rbtwh")
-            {
-                thecredentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
-            }
-            else if (curentUser == "rbtwh2")
-            {
-                thecredentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
-            }
+            string currentUser = WindowsIdentity.GetCurrent().Name.Split('\\').Last();
+
+            // Priority List: [Primary, Fallback1, Fallback2, Fallback3]
+            List<string> apiPriority = new List<string>();
+
+            if (currentUser == "lgt01")
+                apiPriority.AddRange(new[] { "api2", "api", "api3" });
+            else if (currentUser == "rbtwh")
+                apiPriority.AddRange(new[] { "api3", "api", "api2" });
+            else if (currentUser == "rbtwh2")
+                apiPriority.AddRange(new[] { "api", "api3", "api2" });
             else
-            {
-                thecredentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-            }
-            return thecredentials;
+                apiPriority.AddRange(new[] { "api","api2", "api3" });
+
+            // Pick the first one NOT in the blacklist
+            string chosenApi = apiPriority.FirstOrDefault(a => !SessionBlacklist.Contains(a)) ?? apiPriority.First();
+
+            return GetCredsByName(chosenApi, settings);
         }
 
+        // Helper to keep the switch logic out of the main loop
+        private string GetCredsByName(string apiName, AppSettings settings)
+        {
+            return apiName switch
+            {
+                "api2" => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}")),
+                "api3" => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}")),
+                _ => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"))
+            };
+        }
+        public string GetApiName(string credentials, AppSettings settings)
+        {
+            // Compare the base64 string provided to the known settings
+            if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}")))
+                return "api2";
+
+            if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}")))
+                return "api3";
+
+            // Default/Fallback account
+            if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}")))
+                return "api";
+
+            return "unknown";
+        }
         public class WarehouseService
         {
             // private static readonly string baseUrl = $"{baseUrl}";
+            //public static async Task InsertDocumentAsync(Document document, FrmPriorityAPI formInstance, AppSettings settings)
+            //{
+            //    using (HttpClient client = new HttpClient())
+            //    {
+            //        try
+            //        {
+            //            // Set the request headers
+            //            client.DefaultRequestHeaders.Accept.Clear();
+            //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+
+            //            string credentials = formInstance.SelectTheCredentialsByLoggedUser(settings);
+            //            // MessageBox.Show($"User detected : {curentUser}");
+            //            //MessageBox.Show($"Using credentials: {credentials}");
+
+            //            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+            //            // Construct the API URL
+            //            string apiUrl = $"{baseUrl}/DOCUMENTS_P";
+            //            // Serialize the document to JSON
+            //            string jsonPayload = JsonConvert.SerializeObject(document);
+            //            var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+            //            // Make the HTTP POST request
+            //            HttpResponseMessage response = await client.PostAsync(apiUrl, content);
+            //            // Check if the response indicates success
+            //            if (response.IsSuccessStatusCode)
+            //            {
+            //                // Read the response content
+            //                string responseBody = await response.Content.ReadAsStringAsync();
+            //                var responseJson = JObject.Parse(responseBody);
+            //                // MessageBox.Show(responseJson.ToString());
+            //                string docNo = responseJson["DOCNO"]?.ToString();
+            //                //MessageBox.Show(docNo);
+            //                string insertedIpn = formInstance.txtbInputIPN.Text;
+            //                formInstance.comboBox1_SelectedIndexChanged(formInstance.cmbWarehouseList, EventArgs.Empty);
+            //                formInstance.txtbInputIPN.Clear();
+            //                formInstance.txtbInputMFPN.Clear();
+            //                formInstance.txtbPartDescription.Clear();
+            //                formInstance.txtbManufacturer.Clear();
+            //                formInstance.txtbInputQty.Clear();
+            //                formInstance.txtbPART.Clear();
+            //                formInstance.AppendLog($"{insertedIpn} successfully inserted. Document number: {docNo}\n", Color.Green);
+
+            //            }
+            //            else
+            //            {
+            //                // Read the error content
+            //                string errorContent = await response.Content.ReadAsStringAsync();
+            //                Clipboard.SetText($"Error: {response.StatusCode}\n{errorContent}");
+            //                //MessageBox.Show($"Error: {response.StatusCode}\n{errorContent}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //                formInstance.AppendLog($"Error: {response.StatusCode}\n{errorContent}\n", Color.Red);
+
+            //            }
+            //        }
+            //        catch (HttpRequestException ex)
+            //        {
+            //            //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            //            formInstance.AppendLog($"Request error in InsertDocumentAsync: {ex.Message}\n", Color.Red);
+
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //            formInstance.AppendLog($"An error occurred InsertDocumentAsync: {ex.Message}\n", Color.Red);
+
+            //        }
+            //    }
+            //}
+
+
             public static async Task InsertDocumentAsync(Document document, FrmPriorityAPI formInstance, AppSettings settings)
             {
                 using (HttpClient client = new HttpClient())
                 {
-                    try
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    // Try up to 2 times (Initial attempt + 1 failover)
+                    for (int attempt = 1; attempt <= 2; attempt++)
                     {
-                        // Set the request headers
-                        client.DefaultRequestHeaders.Accept.Clear();
-                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                       
-                        string credentials = formInstance.SelectTheCredentialsByLoggedUser(settings);
-                        // MessageBox.Show($"User detected : {curentUser}");
-
-
-                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-                        // Construct the API URL
-                        string apiUrl = $"{baseUrl}/DOCUMENTS_P";
-                        // Serialize the document to JSON
-                        string jsonPayload = JsonConvert.SerializeObject(document);
-                        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-                        // Make the HTTP POST request
-                        HttpResponseMessage response = await client.PostAsync(apiUrl, content);
-                        // Check if the response indicates success
-                        if (response.IsSuccessStatusCode)
+                        try
                         {
-                            // Read the response content
-                            string responseBody = await response.Content.ReadAsStringAsync();
-                            var responseJson = JObject.Parse(responseBody);
-                            // MessageBox.Show(responseJson.ToString());
-                            string docNo = responseJson["DOCNO"]?.ToString();
-                            //MessageBox.Show(docNo);
-                            string insertedIpn = formInstance.txtbInputIPN.Text;
-                            formInstance.comboBox1_SelectedIndexChanged(formInstance.cmbWarehouseList, EventArgs.Empty);
-                            formInstance.txtbInputIPN.Clear();
-                            formInstance.txtbInputMFPN.Clear();
-                            formInstance.txtbPartDescription.Clear();
-                            formInstance.txtbManufacturer.Clear();
-                            formInstance.txtbInputQty.Clear();
-                            formInstance.txtbPART.Clear();
-                            formInstance.AppendLog($"{insertedIpn} successfully inserted. Document number: {docNo}\n", Color.Green);
+                            string credentials = formInstance.SelectTheCredentialsByLoggedUser(settings);
+                            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
 
+                            string apiUrl = $"{baseUrl}/DOCUMENTS_P";
+                            string jsonPayload = JsonConvert.SerializeObject(document);
+                            var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+                            HttpResponseMessage response = await client.PostAsync(apiUrl, content);
+
+                            if (response.IsSuccessStatusCode)
+                            {
+                                string responseBody = await response.Content.ReadAsStringAsync();
+                                var responseJson = JObject.Parse(responseBody);
+                                string docNo = responseJson["DOCNO"]?.ToString();
+                                string insertedIpn = formInstance.txtbInputIPN.Text;
+
+                                // UI Updates must be on UI Thread
+                                formInstance.Invoke((System.Windows.Forms.MethodInvoker)delegate {
+                                    formInstance.comboBox1_SelectedIndexChanged(formInstance.cmbWarehouseList, EventArgs.Empty);
+                                    formInstance.txtbInputIPN.Clear();
+                                    formInstance.txtbInputMFPN.Clear();
+                                    formInstance.txtbPartDescription.Clear();
+                                    formInstance.txtbManufacturer.Clear();
+                                    formInstance.txtbInputQty.Clear();
+                                    formInstance.txtbPART.Clear();
+                                    formInstance.AppendLog($"{insertedIpn} inserted. Doc: {docNo}\n", Color.Green);
+                                });
+                                return; // Exit successfully
+                            }
+                            else
+                            {
+                                string errorContent = await response.Content.ReadAsStringAsync();
+
+                                // Check for Quota Exhausted (403 or 429)
+                                if ((response.StatusCode == System.Net.HttpStatusCode.Forbidden && attempt == 1))
+                                {
+                                    string failedApi = formInstance.GetApiName(credentials, settings);
+                                    FrmPriorityAPI.SessionBlacklist.Add(failedApi);
+
+                                    formInstance.AppendLog($"Quota hit for {failedApi}. Blacklisting and retrying...\n", Color.Orange);
+                                    continue; // Jump to next iteration of 'for' loop
+                                }
+
+                                // Permanent Error
+                                Clipboard.SetText($"Error: {response.StatusCode}\n{errorContent}");
+                                formInstance.AppendLog($"Error: {response.StatusCode}\n{errorContent}\n", Color.Red);
+                                return;
+                            }
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            // Read the error content
-                            string errorContent = await response.Content.ReadAsStringAsync();
-                            Clipboard.SetText($"Error: {response.StatusCode}\n{errorContent}");
-                            //MessageBox.Show($"Error: {response.StatusCode}\n{errorContent}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            formInstance.AppendLog($"Error: {response.StatusCode}\n{errorContent}\n", Color.Red);
-
+                            formInstance.AppendLog($"Error in InsertDocumentAsync: {ex.Message}\n", Color.Red);
+                            return;
                         }
-                    }
-                    catch (HttpRequestException ex)
-                    {
-                        //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-                        formInstance.AppendLog($"Request error in InsertDocumentAsync: {ex.Message}\n", Color.Red);
-
-                    }
-                    catch (Exception ex)
-                    {
-                        //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        formInstance.AppendLog($"An error occurred InsertDocumentAsync: {ex.Message}\n", Color.Red);
-
                     }
                 }
             }
+           
+
             public static async Task TransfertDocumentAsync(TDocument document, FrmPriorityAPI formInstance, AppSettings settings)
             {
                 using (HttpClient client = new HttpClient())
