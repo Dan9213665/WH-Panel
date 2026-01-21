@@ -271,11 +271,26 @@ namespace WH_Panel
                 }
             }
         }
+        //private void DataGridView_Sorted(object sender, EventArgs e)
+        //{
+        //    if (sender is DataGridView dataGridView)
+        //    {
+        //        ColorTheRows(dataGridView);
+        //    }
+        //}
         private void DataGridView_Sorted(object sender, EventArgs e)
         {
-            if (sender is DataGridView dataGridView)
+            if (sender is DataGridView dgv)
             {
-                ColorTheRows(dataGridView);
+                // Check if the sender is the specific instance of your second grid
+                if (dgv == dataGridView2)
+                {
+                    ColorTheRows2(dgv);
+                }
+                else if (dgv == dataGridView1)
+                {
+                    ColorTheRows(dgv);
+                }
             }
         }
         public class PR_PART
@@ -1729,17 +1744,9 @@ namespace WH_Panel
                         // Set the request headers if needed
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        // Set the Authorization header
-                        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
-                        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-                        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
 
                         string usedUser = ApiHelper.AuthenticateClient(client);
                         //AppendLog($"User used: {usedUser}\n");
-
-
-
 
                         // Measure the time taken for the HTTP POST request
                         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
@@ -1835,37 +1842,9 @@ namespace WH_Panel
                                 }
                             }
                             groupBox4.Text = $"Stock Movements for {partName}";
-                            ColorTheRows(dataGridView2);
+                            ColorTheRows2(dataGridView2);
 
                             await EnrichGridWithPackAndDateAsync(partName);
-
-                            //foreach (DataGridViewRow row in dataGridView2.Rows)
-                            //{
-                            //    var logDocNo = row.Cells["LOGDOCNO"].Value?.ToString();
-                            //    var partNameCell = partName;
-                            //    var quant = int.Parse(row.Cells["TQUANT"].Value?.ToString());
-                            //    if (logDocNo != null && partNameCell != null)
-                            //    {
-                            //        var results = await FetchPackCodeAsync(logDocNo, partNameCell, quant);
-                            //        foreach (var result in results)
-                            //        {
-                            //            if (result.PackCode != null)
-                            //            {
-                            //                row.Cells["PACKNAME"].Value = result.PackCode;
-                            //            }
-                            //            if (result.BookNum != null)
-                            //            {
-                            //                row.Cells["BOOKNUM"].Value = result.BookNum;
-                            //            }
-                            //            if (result.Date != null)
-                            //            {
-                            //                row.Cells["UDATE"].Value = result.Date;
-                            //            }
-                            //        }
-                            //    }
-                            //}
-                            //// Sort the DataGridView by the first column in descending order
-                            //dataGridView2.Sort(dataGridView2.Columns[0], ListSortDirection.Descending);
                         }
                         else
                         {
@@ -2427,6 +2406,111 @@ namespace WH_Panel
                                 cell.Style.BackColor = Color.IndianRed;
                             }
                         }
+                    }
+                }
+            }
+        }
+
+        private void ColorTheRows2(DataGridView dataGridView)
+        {
+            // 1. Convert rows to a list for easier processing/sorting
+            var allRows = dataGridView.Rows.Cast<DataGridViewRow>()
+                .Where(r => !r.IsNewRow && r.Cells["DOCDES"].Value?.ToString() != "קיזוז אוטומטי")
+                .ToList();
+
+            // 2. Identify the first IC (Inventory Count) date to use as a baseline
+            DateTime? icDate = null;
+            var sortedByDate = allRows
+                .OrderBy(row => DateTime.TryParse(row.Cells["UDATE"].Value?.ToString(), out var d) ? d : DateTime.MinValue)
+                .ToList();
+
+            foreach (var row in sortedByDate)
+            {
+                string docNo = row.Cells["LOGDOCNO"].Value?.ToString() ?? "";
+                if (docNo.StartsWith("IC"))
+                {
+                    icDate = DateTime.TryParse(row.Cells["UDATE"].Value?.ToString(), out var d) ? d : DateTime.MinValue;
+                    break;
+                }
+            }
+
+            // 3. Track which rows are "Actual Stock"
+            HashSet<DataGridViewRow> actualStockRows = new HashSet<DataGridViewRow>();
+            HashSet<DataGridViewRow> matchedOutRows = new HashSet<DataGridViewRow>();
+
+            // Process only rows from the IC date forward
+            var relevantRows = icDate.HasValue
+                ? sortedByDate.Where(r => DateTime.TryParse(r.Cells["UDATE"].Value?.ToString(), out var d) && d >= icDate.Value).ToList()
+                : sortedByDate;
+
+            foreach (var row in relevantRows)
+            {
+                string docNo = row.Cells["LOGDOCNO"].Value?.ToString() ?? "";
+                if (docNo.StartsWith("GR") && int.TryParse(row.Cells["TQUANT"].Value?.ToString(), out int qty) && qty > 0)
+                {
+                    bool hasOutgoing = false;
+                    foreach (var potentialMatch in relevantRows)
+                    {
+                        if (matchedOutRows.Contains(potentialMatch) || potentialMatch == row) continue;
+
+                        string pDocNo = potentialMatch.Cells["LOGDOCNO"].Value?.ToString() ?? "";
+                        int.TryParse(potentialMatch.Cells["TQUANT"].Value?.ToString(), out int pQty);
+
+                        // Matching logic: Outgoing types or IC balancing
+                        bool isOutgoingType = pDocNo.StartsWith("ROB") || pDocNo.StartsWith("RD") ||
+                                             pDocNo.StartsWith("SH") || pDocNo.StartsWith("WR") || pDocNo.StartsWith("IC");
+
+                        if (isOutgoingType && Math.Abs(pQty) == Math.Abs(qty))
+                        {
+                            hasOutgoing = true;
+                            matchedOutRows.Add(potentialMatch);
+                            break;
+                        }
+                    }
+
+                    if (!hasOutgoing)
+                    {
+                        actualStockRows.Add(row);
+                    }
+                }
+            }
+
+            // 4. Apply Colors
+            foreach (DataGridViewRow row in dataGridView.Rows)
+            {
+                if (row.IsNewRow) continue;
+
+                var tQuantCell = row.Cells["TQUANT"];
+                var docDesValue = row.Cells["DOCDES"].Value?.ToString() ?? "";
+
+                // Default Reset
+                tQuantCell.Style.BackColor = dataGridView.DefaultCellStyle.BackColor;
+                tQuantCell.Style.ForeColor = dataGridView.DefaultCellStyle.ForeColor;
+
+                // Apply "Actual In Stock" Highlight (Dark Green / White Font)
+                if (actualStockRows.Contains(row))
+                {
+                    tQuantCell.Style.BackColor = Color.DarkGreen;
+                    tQuantCell.Style.ForeColor = Color.White;
+                    tQuantCell.Style.Font = new Font(dataGridView.Font, FontStyle.Bold);
+                }
+                else
+                {
+                    // Fallback to your existing logic for other movements
+                    if (docDesValue.Contains("קבלות"))
+                    {
+                        tQuantCell.Style.BackColor = Color.LightGreen;
+                        tQuantCell.Style.ForeColor = Color.Black;
+                    }
+                    else if (docDesValue.Contains("נפוק") || docDesValue.Contains("העברה"))
+                    {
+                        tQuantCell.Style.BackColor = Color.IndianRed;
+                        tQuantCell.Style.ForeColor = Color.White;
+                    }
+                    else if (docDesValue.Contains("ללקוח"))
+                    {
+                        tQuantCell.Style.BackColor = Color.BlueViolet;
+                        tQuantCell.Style.ForeColor = Color.White;
                     }
                 }
             }
