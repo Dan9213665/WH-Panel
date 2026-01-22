@@ -15,6 +15,9 @@ namespace WH_Panel
 
         public string Api3Username { get; set; }
         public string Api3Password { get; set; }
+
+        public string Api4Username { get; set; }
+        public string Api4Password { get; set; }
         // Add other settings as needed
         public string MouserApiKey { get; set; } // <-- Add this line
     }
