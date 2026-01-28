@@ -1338,8 +1338,6 @@ namespace WH_Panel
         private async void txtbInputMFPN_KeyDown(object sender, KeyEventArgs e, TextBox lastInput)
         {
 
-
-
             if (e.KeyCode == Keys.Enter)
             {
                 lastUserInput = lastInput;
@@ -1598,26 +1596,6 @@ namespace WH_Panel
         }
 
 
-        //void AppendLog(string message, Color? color = null)
-        //{
-        //    if (color == null)
-        //    {
-        //        txtLog.AppendText(message);
-        //    }
-        //    else
-        //    {
-        //        int start = txtLog.TextLength;
-        //        txtLog.AppendText(message);
-        //        int end = txtLog.TextLength;
-
-        //        txtLog.Select(start, end - start);
-        //        txtLog.SelectionColor = color.Value;
-        //        txtLog.SelectionLength = 0; // reset selection
-        //    }
-        //    txtLog.ScrollToCaret();
-        //}
-
-
         void AppendLog(string message, Color? color = null)
         {
             // Ensure message ends with a newline
@@ -1657,11 +1635,6 @@ namespace WH_Panel
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     // Set the Authorization header
-                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
-                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                     string usedUser = ApiHelper.AuthenticateClient(client);
                     //AppendLog($"User used: {usedUser}\n");
 

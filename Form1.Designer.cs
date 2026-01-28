@@ -82,8 +82,10 @@ namespace WH_Panel
             groupBox1.Dock = DockStyle.Fill;
             groupBox1.ForeColor = SystemColors.ControlLightLight;
             groupBox1.Location = new Point(0, 0);
+            groupBox1.Margin = new Padding(3, 4, 3, 4);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(574, 285);
+            groupBox1.Padding = new Padding(3, 4, 3, 4);
+            groupBox1.Size = new Size(656, 380);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Elige scopum";
@@ -101,9 +103,10 @@ namespace WH_Panel
             flowLayoutPanel1.Controls.Add(groupBox3);
             flowLayoutPanel1.Dock = DockStyle.Fill;
             flowLayoutPanel1.FlowDirection = FlowDirection.TopDown;
-            flowLayoutPanel1.Location = new Point(3, 19);
+            flowLayoutPanel1.Location = new Point(3, 24);
+            flowLayoutPanel1.Margin = new Padding(3, 4, 3, 4);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(568, 263);
+            flowLayoutPanel1.Size = new Size(650, 352);
             flowLayoutPanel1.TabIndex = 2;
             // 
             // groupBox4
@@ -111,9 +114,11 @@ namespace WH_Panel
             groupBox4.Controls.Add(button4);
             groupBox4.Controls.Add(btnWorkProgramm);
             groupBox4.ForeColor = Color.White;
-            groupBox4.Location = new Point(3, 3);
+            groupBox4.Location = new Point(3, 4);
+            groupBox4.Margin = new Padding(3, 4, 3, 4);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(132, 127);
+            groupBox4.Padding = new Padding(3, 4, 3, 4);
+            groupBox4.Size = new Size(151, 169);
             groupBox4.TabIndex = 25;
             groupBox4.TabStop = false;
             groupBox4.Text = "Work Program";
@@ -123,9 +128,10 @@ namespace WH_Panel
             button4.BackColor = Color.Transparent;
             button4.BackgroundImage = (Image)resources.GetObject("button4.BackgroundImage");
             button4.BackgroundImageLayout = ImageLayout.Zoom;
-            button4.Location = new Point(82, 78);
+            button4.Location = new Point(94, 104);
+            button4.Margin = new Padding(3, 4, 3, 4);
             button4.Name = "button4";
-            button4.Size = new Size(44, 41);
+            button4.Size = new Size(50, 55);
             button4.TabIndex = 12;
             button4.UseVisualStyleBackColor = false;
             button4.Click += button4_Click_1;
@@ -136,9 +142,10 @@ namespace WH_Panel
             btnWorkProgramm.BackgroundImageLayout = ImageLayout.Stretch;
             btnWorkProgramm.Cursor = Cursors.Hand;
             btnWorkProgramm.Dock = DockStyle.Fill;
-            btnWorkProgramm.Location = new Point(3, 19);
+            btnWorkProgramm.Location = new Point(3, 24);
+            btnWorkProgramm.Margin = new Padding(3, 4, 3, 4);
             btnWorkProgramm.Name = "btnWorkProgramm";
-            btnWorkProgramm.Size = new Size(126, 105);
+            btnWorkProgramm.Size = new Size(145, 141);
             btnWorkProgramm.TabIndex = 3;
             btnWorkProgramm.UseVisualStyleBackColor = true;
             btnWorkProgramm.Click += btnWorkProgramm_Click;
@@ -148,9 +155,11 @@ namespace WH_Panel
             groupBox6.Controls.Add(btnSearchROBs);
             groupBox6.Controls.Add(button1);
             groupBox6.ForeColor = Color.White;
-            groupBox6.Location = new Point(3, 136);
+            groupBox6.Location = new Point(3, 181);
+            groupBox6.Margin = new Padding(3, 4, 3, 4);
             groupBox6.Name = "groupBox6";
-            groupBox6.Size = new Size(132, 123);
+            groupBox6.Padding = new Padding(3, 4, 3, 4);
+            groupBox6.Size = new Size(151, 164);
             groupBox6.TabIndex = 18;
             groupBox6.TabStop = false;
             groupBox6.Text = "Priority WH";
@@ -160,9 +169,10 @@ namespace WH_Panel
             btnSearchROBs.BackColor = Color.IndianRed;
             btnSearchROBs.BackgroundImage = (Image)resources.GetObject("btnSearchROBs.BackgroundImage");
             btnSearchROBs.BackgroundImageLayout = ImageLayout.Zoom;
-            btnSearchROBs.Location = new Point(60, 19);
+            btnSearchROBs.Location = new Point(69, 25);
+            btnSearchROBs.Margin = new Padding(3, 4, 3, 4);
             btnSearchROBs.Name = "btnSearchROBs";
-            btnSearchROBs.Size = new Size(69, 64);
+            btnSearchROBs.Size = new Size(79, 85);
             btnSearchROBs.TabIndex = 8;
             btnSearchROBs.UseVisualStyleBackColor = false;
             btnSearchROBs.Click += btnSearchROBs_Click;
@@ -173,21 +183,25 @@ namespace WH_Panel
             button1.BackgroundImage = (Image)resources.GetObject("button1.BackgroundImage");
             button1.BackgroundImageLayout = ImageLayout.Stretch;
             button1.Dock = DockStyle.Fill;
-            button1.Location = new Point(3, 19);
+            button1.Location = new Point(3, 24);
+            button1.Margin = new Padding(3, 4, 3, 4);
             button1.Name = "button1";
-            button1.Size = new Size(126, 101);
+            button1.Size = new Size(145, 136);
             button1.TabIndex = 7;
             button1.UseVisualStyleBackColor = false;
             button1.Click += button1_Click_2;
+            button1.MouseDown += button1_MouseDown;
             // 
             // groupBox9
             // 
             groupBox9.Controls.Add(button14);
             groupBox9.Controls.Add(groupBox2);
             groupBox9.ForeColor = Color.White;
-            groupBox9.Location = new Point(141, 3);
+            groupBox9.Location = new Point(160, 4);
+            groupBox9.Margin = new Padding(3, 4, 3, 4);
             groupBox9.Name = "groupBox9";
-            groupBox9.Size = new Size(134, 125);
+            groupBox9.Padding = new Padding(3, 4, 3, 4);
+            groupBox9.Size = new Size(153, 167);
             groupBox9.TabIndex = 21;
             groupBox9.TabStop = false;
             groupBox9.Text = "AGNOSTIC WH";
@@ -197,9 +211,10 @@ namespace WH_Panel
             button14.BackgroundImage = (Image)resources.GetObject("button14.BackgroundImage");
             button14.BackgroundImageLayout = ImageLayout.Zoom;
             button14.Dock = DockStyle.Fill;
-            button14.Location = new Point(3, 19);
+            button14.Location = new Point(3, 24);
+            button14.Margin = new Padding(3, 4, 3, 4);
             button14.Name = "button14";
-            button14.Size = new Size(128, 103);
+            button14.Size = new Size(147, 139);
             button14.TabIndex = 12;
             button14.UseVisualStyleBackColor = true;
             button14.Click += button14_Click_1;
@@ -210,9 +225,11 @@ namespace WH_Panel
             groupBox2.Controls.Add(button15);
             groupBox2.Controls.Add(button9);
             groupBox2.ForeColor = Color.White;
-            groupBox2.Location = new Point(57, 55);
+            groupBox2.Location = new Point(65, 73);
+            groupBox2.Margin = new Padding(3, 4, 3, 4);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(62, 53);
+            groupBox2.Padding = new Padding(3, 4, 3, 4);
+            groupBox2.Size = new Size(71, 71);
             groupBox2.TabIndex = 24;
             groupBox2.TabStop = false;
             groupBox2.Text = "Excel Ripper";
@@ -222,9 +239,10 @@ namespace WH_Panel
             // 
             button15.BackgroundImage = (Image)resources.GetObject("button15.BackgroundImage");
             button15.BackgroundImageLayout = ImageLayout.Stretch;
-            button15.Location = new Point(6, 83);
+            button15.Location = new Point(7, 111);
+            button15.Margin = new Padding(3, 4, 3, 4);
             button15.Name = "button15";
-            button15.Size = new Size(56, 36);
+            button15.Size = new Size(64, 48);
             button15.TabIndex = 14;
             button15.UseVisualStyleBackColor = true;
             button15.Visible = false;
@@ -235,9 +253,10 @@ namespace WH_Panel
             button9.BackgroundImage = (Image)resources.GetObject("button9.BackgroundImage");
             button9.BackgroundImageLayout = ImageLayout.Stretch;
             button9.ForeColor = Color.Black;
-            button9.Location = new Point(68, 83);
+            button9.Location = new Point(78, 111);
+            button9.Margin = new Padding(3, 4, 3, 4);
             button9.Name = "button9";
-            button9.Size = new Size(61, 34);
+            button9.Size = new Size(70, 45);
             button9.TabIndex = 10;
             button9.UseVisualStyleBackColor = true;
             button9.Visible = false;
@@ -247,9 +266,11 @@ namespace WH_Panel
             // 
             groupBox5.Controls.Add(button16);
             groupBox5.ForeColor = Color.White;
-            groupBox5.Location = new Point(141, 134);
+            groupBox5.Location = new Point(160, 179);
+            groupBox5.Margin = new Padding(3, 4, 3, 4);
             groupBox5.Name = "groupBox5";
-            groupBox5.Size = new Size(134, 125);
+            groupBox5.Padding = new Padding(3, 4, 3, 4);
+            groupBox5.Size = new Size(153, 167);
             groupBox5.TabIndex = 26;
             groupBox5.TabStop = false;
             groupBox5.Text = "Priority BOM";
@@ -259,9 +280,10 @@ namespace WH_Panel
             button16.BackgroundImage = Properties.Resources.Screenshot_2025_01_12_071621;
             button16.BackgroundImageLayout = ImageLayout.Stretch;
             button16.Dock = DockStyle.Fill;
-            button16.Location = new Point(3, 19);
+            button16.Location = new Point(3, 24);
+            button16.Margin = new Padding(3, 4, 3, 4);
             button16.Name = "button16";
-            button16.Size = new Size(128, 103);
+            button16.Size = new Size(147, 139);
             button16.TabIndex = 8;
             button16.UseVisualStyleBackColor = true;
             button16.Click += button16_Click;
@@ -273,9 +295,11 @@ namespace WH_Panel
             groupBox10.Controls.Add(button6);
             groupBox10.Controls.Add(button11);
             groupBox10.ForeColor = Color.White;
-            groupBox10.Location = new Point(281, 3);
+            groupBox10.Location = new Point(319, 4);
+            groupBox10.Margin = new Padding(3, 4, 3, 4);
             groupBox10.Name = "groupBox10";
-            groupBox10.Size = new Size(132, 125);
+            groupBox10.Padding = new Padding(3, 4, 3, 4);
+            groupBox10.Size = new Size(151, 167);
             groupBox10.TabIndex = 22;
             groupBox10.TabStop = false;
             groupBox10.Text = "Boomer";
@@ -285,9 +309,10 @@ namespace WH_Panel
             button10.BackColor = Color.Transparent;
             button10.BackgroundImage = (Image)resources.GetObject("button10.BackgroundImage");
             button10.BackgroundImageLayout = ImageLayout.Zoom;
-            button10.Location = new Point(76, 33);
+            button10.Location = new Point(87, 44);
+            button10.Margin = new Padding(3, 4, 3, 4);
             button10.Name = "button10";
-            button10.Size = new Size(39, 36);
+            button10.Size = new Size(45, 48);
             button10.TabIndex = 2;
             button10.UseVisualStyleBackColor = false;
             button10.Click += button10_Click_1;
@@ -296,9 +321,10 @@ namespace WH_Panel
             // 
             button6.BackgroundImage = (Image)resources.GetObject("button6.BackgroundImage");
             button6.BackgroundImageLayout = ImageLayout.Stretch;
-            button6.Location = new Point(76, 80);
+            button6.Location = new Point(87, 107);
+            button6.Margin = new Padding(3, 4, 3, 4);
             button6.Name = "button6";
-            button6.Size = new Size(39, 32);
+            button6.Size = new Size(45, 43);
             button6.TabIndex = 1;
             button6.UseVisualStyleBackColor = true;
             button6.Visible = false;
@@ -310,9 +336,10 @@ namespace WH_Panel
             button11.BackgroundImageLayout = ImageLayout.Stretch;
             button11.Dock = DockStyle.Fill;
             button11.ForeColor = Color.Black;
-            button11.Location = new Point(3, 19);
+            button11.Location = new Point(3, 24);
+            button11.Margin = new Padding(3, 4, 3, 4);
             button11.Name = "button11";
-            button11.Size = new Size(126, 103);
+            button11.Size = new Size(145, 139);
             button11.TabIndex = 0;
             button11.UseVisualStyleBackColor = true;
             button11.Click += button11_Click_1;
@@ -321,9 +348,11 @@ namespace WH_Panel
             // 
             gpbxPMB.Controls.Add(btnFrmPMB);
             gpbxPMB.ForeColor = Color.White;
-            gpbxPMB.Location = new Point(281, 134);
+            gpbxPMB.Location = new Point(319, 179);
+            gpbxPMB.Margin = new Padding(3, 4, 3, 4);
             gpbxPMB.Name = "gpbxPMB";
-            gpbxPMB.Size = new Size(138, 122);
+            gpbxPMB.Padding = new Padding(3, 4, 3, 4);
+            gpbxPMB.Size = new Size(158, 163);
             gpbxPMB.TabIndex = 27;
             gpbxPMB.TabStop = false;
             gpbxPMB.Text = "Piority Simulator";
@@ -333,9 +362,10 @@ namespace WH_Panel
             btnFrmPMB.BackgroundImage = (Image)resources.GetObject("btnFrmPMB.BackgroundImage");
             btnFrmPMB.BackgroundImageLayout = ImageLayout.Stretch;
             btnFrmPMB.Dock = DockStyle.Fill;
-            btnFrmPMB.Location = new Point(3, 19);
+            btnFrmPMB.Location = new Point(3, 24);
+            btnFrmPMB.Margin = new Padding(3, 4, 3, 4);
             btnFrmPMB.Name = "btnFrmPMB";
-            btnFrmPMB.Size = new Size(132, 100);
+            btnFrmPMB.Size = new Size(152, 135);
             btnFrmPMB.TabIndex = 0;
             btnFrmPMB.UseVisualStyleBackColor = true;
             btnFrmPMB.Click += btnFrmPMB_Click;
@@ -347,9 +377,11 @@ namespace WH_Panel
             groupBox7.Controls.Add(btnMFPN);
             groupBox7.Controls.Add(button3);
             groupBox7.ForeColor = Color.White;
-            groupBox7.Location = new Point(425, 3);
+            groupBox7.Location = new Point(483, 4);
+            groupBox7.Margin = new Padding(3, 4, 3, 4);
             groupBox7.Name = "groupBox7";
-            groupBox7.Size = new Size(134, 125);
+            groupBox7.Padding = new Padding(3, 4, 3, 4);
+            groupBox7.Size = new Size(153, 167);
             groupBox7.TabIndex = 19;
             groupBox7.TabStop = false;
             groupBox7.Text = "PANDA-tabase";
@@ -358,9 +390,10 @@ namespace WH_Panel
             // 
             button12.BackgroundImage = (Image)resources.GetObject("button12.BackgroundImage");
             button12.BackgroundImageLayout = ImageLayout.Zoom;
-            button12.Location = new Point(64, 21);
+            button12.Location = new Point(73, 28);
+            button12.Margin = new Padding(3, 4, 3, 4);
             button12.Name = "button12";
-            button12.Size = new Size(64, 48);
+            button12.Size = new Size(73, 64);
             button12.TabIndex = 13;
             button12.UseVisualStyleBackColor = true;
             button12.Click += button12_Click;
@@ -369,9 +402,10 @@ namespace WH_Panel
             // 
             button5.BackgroundImageLayout = ImageLayout.Zoom;
             button5.Image = Properties.Resources.documents_files_history_64;
-            button5.Location = new Point(64, 75);
+            button5.Location = new Point(73, 100);
+            button5.Margin = new Padding(3, 4, 3, 4);
             button5.Name = "button5";
-            button5.Size = new Size(65, 42);
+            button5.Size = new Size(74, 56);
             button5.TabIndex = 11;
             button5.UseVisualStyleBackColor = true;
             button5.Click += button5_Click;
@@ -381,9 +415,10 @@ namespace WH_Panel
             btnMFPN.BackColor = Color.Black;
             btnMFPN.BackgroundImage = (Image)resources.GetObject("btnMFPN.BackgroundImage");
             btnMFPN.BackgroundImageLayout = ImageLayout.Zoom;
-            btnMFPN.Location = new Point(8, 75);
+            btnMFPN.Location = new Point(9, 100);
+            btnMFPN.Margin = new Padding(3, 4, 3, 4);
             btnMFPN.Name = "btnMFPN";
-            btnMFPN.Size = new Size(50, 42);
+            btnMFPN.Size = new Size(57, 56);
             btnMFPN.TabIndex = 12;
             btnMFPN.UseVisualStyleBackColor = false;
             btnMFPN.Click += btnMFPN_Click;
@@ -392,9 +427,10 @@ namespace WH_Panel
             // 
             button3.BackgroundImage = Properties.Resources.search;
             button3.BackgroundImageLayout = ImageLayout.Zoom;
-            button3.Location = new Point(8, 21);
+            button3.Location = new Point(9, 28);
+            button3.Margin = new Padding(3, 4, 3, 4);
             button3.Name = "button3";
-            button3.Size = new Size(50, 48);
+            button3.Size = new Size(57, 64);
             button3.TabIndex = 9;
             button3.UseVisualStyleBackColor = true;
             button3.Click += button3_Click;
@@ -406,9 +442,11 @@ namespace WH_Panel
             groupBox3.Controls.Add(groupBox11);
             groupBox3.Controls.Add(button2);
             groupBox3.ForeColor = Color.White;
-            groupBox3.Location = new Point(425, 134);
+            groupBox3.Location = new Point(483, 179);
+            groupBox3.Margin = new Padding(3, 4, 3, 4);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(134, 125);
+            groupBox3.Padding = new Padding(3, 4, 3, 4);
+            groupBox3.Size = new Size(153, 167);
             groupBox3.TabIndex = 15;
             groupBox3.TabStop = false;
             groupBox3.Text = "WH Packing Slip";
@@ -417,9 +455,10 @@ namespace WH_Panel
             // 
             button13.BackgroundImage = Properties.Resources.box_214671;
             button13.BackgroundImageLayout = ImageLayout.Zoom;
-            button13.Location = new Point(74, 68);
+            button13.Location = new Point(85, 91);
+            button13.Margin = new Padding(3, 4, 3, 4);
             button13.Name = "button13";
-            button13.Size = new Size(54, 49);
+            button13.Size = new Size(62, 65);
             button13.TabIndex = 10;
             button13.UseVisualStyleBackColor = true;
             button13.Click += button13_Click;
@@ -428,9 +467,10 @@ namespace WH_Panel
             // 
             button8.BackgroundImage = Properties.Resources.search;
             button8.BackgroundImageLayout = ImageLayout.Center;
-            button8.Location = new Point(8, 68);
+            button8.Location = new Point(9, 91);
+            button8.Margin = new Padding(3, 4, 3, 4);
             button8.Name = "button8";
-            button8.Size = new Size(54, 51);
+            button8.Size = new Size(62, 68);
             button8.TabIndex = 9;
             button8.UseVisualStyleBackColor = true;
             button8.Click += button8_Click;
@@ -441,9 +481,11 @@ namespace WH_Panel
             groupBox11.Controls.Add(button7);
             groupBox11.Enabled = false;
             groupBox11.ForeColor = Color.White;
-            groupBox11.Location = new Point(16, 22);
+            groupBox11.Location = new Point(18, 29);
+            groupBox11.Margin = new Padding(3, 4, 3, 4);
             groupBox11.Name = "groupBox11";
-            groupBox11.Size = new Size(103, 40);
+            groupBox11.Padding = new Padding(3, 4, 3, 4);
+            groupBox11.Size = new Size(118, 53);
             groupBox11.TabIndex = 23;
             groupBox11.TabStop = false;
             groupBox11.Text = "Finished Goods LOG";
@@ -455,9 +497,10 @@ namespace WH_Panel
             button7.BackgroundImageLayout = ImageLayout.Zoom;
             button7.Dock = DockStyle.Fill;
             button7.Enabled = false;
-            button7.Location = new Point(3, 19);
+            button7.Location = new Point(3, 24);
+            button7.Margin = new Padding(3, 4, 3, 4);
             button7.Name = "button7";
-            button7.Size = new Size(97, 18);
+            button7.Size = new Size(112, 25);
             button7.TabIndex = 0;
             button7.UseVisualStyleBackColor = true;
             button7.Visible = false;
@@ -467,9 +510,10 @@ namespace WH_Panel
             // 
             button2.BackgroundImage = Properties.Resources.packingSlip;
             button2.BackgroundImageLayout = ImageLayout.Zoom;
-            button2.Location = new Point(8, 17);
+            button2.Location = new Point(9, 23);
+            button2.Margin = new Padding(3, 4, 3, 4);
             button2.Name = "button2";
-            button2.Size = new Size(120, 102);
+            button2.Size = new Size(137, 136);
             button2.TabIndex = 8;
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
@@ -484,15 +528,16 @@ namespace WH_Panel
             // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
             AutoSize = true;
             BackColor = Color.Black;
-            ClientSize = new Size(574, 285);
+            ClientSize = new Size(656, 380);
             Controls.Add(groupBox1);
             ForeColor = SystemColors.ControlText;
             Icon = (Icon)resources.GetObject("$this.Icon");
+            Margin = new Padding(3, 4, 3, 4);
             Name = "Form1";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Imperium Tabula Principalis UPDATED 202212231139";

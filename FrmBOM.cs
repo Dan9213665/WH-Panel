@@ -223,8 +223,9 @@ namespace WH_Panel
         private void btn1ClickLogic()
         {
             ResetViews();
+            var currentyear = DateTime.Now.Year.ToString();
             var result = openFileDialog1.Title;
-            openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\WareHouse\\2025\\" + DateTime.Now.ToString("MM") + ".2025";
+            openFileDialog1.InitialDirectory = $"\\\\dbr1\\Data\\WareHouse\\{currentyear}\\" + DateTime.Now.ToString("MM") + $".{currentyear}";
             openFileDialog1.Filter = "BOM files(*.xlsm) | *.xlsm";
             openFileDialog1.Multiselect = false;
             List<KitHistoryItem> BomItemS = new List<KitHistoryItem>();

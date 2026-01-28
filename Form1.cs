@@ -37,7 +37,7 @@ namespace WH_Panel
                 SetFormStartPosition();
             }
 
-       
+
 
             // Somewhere early in your program startup (e.g., App.xaml.cs, Program.cs, MainWindow constructor)
             var builder = new ConfigurationBuilder()
@@ -58,7 +58,7 @@ namespace WH_Panel
 
             // Initialize the user pool
             ApiUserPool.Initialize(users);
-           
+
             HelloNeo();
         }
 
@@ -410,7 +410,7 @@ Write-Host ''
         }
         private void button14_Click(object sender, EventArgs e)
         {
-     
+
         }
         private void button3_Click(object sender, EventArgs e)
         {
@@ -467,8 +467,7 @@ Write-Host ''
         }
         private void button1_Click_2(object sender, EventArgs e)
         {
-            FrmPriorityAPI frm = new FrmPriorityAPI();
-            frm.Show();
+        
         }
         private void button2_Click(object sender, EventArgs e)
         {
@@ -543,7 +542,7 @@ Write-Host ''
         }
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-   
+
         }
         private void button12_Click(object sender, EventArgs e)
         {
@@ -603,6 +602,20 @@ Write-Host ''
         {
             FrmPrioritySearchRob frm = new FrmPrioritySearchRob();
             frm.Show();
+        }
+
+        private void button1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                FrmPriorityAPI frm = new FrmPriorityAPI();
+                frm.Show();
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+               FrmPriorityCount frm = new FrmPriorityCount();
+                frm.Show();
+            }
         }
     }
 }
