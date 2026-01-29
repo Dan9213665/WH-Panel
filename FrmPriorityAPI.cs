@@ -3399,7 +3399,7 @@ namespace WH_Panel
                 if (selectedWarehouse != null)
                 {
                     string _BOOKNUM = string.Empty;
-                    string _OWNERLOGIN = "Yuri_G";
+                    string _OWNERLOGIN = ""; //"Yuri_G";
                     string _SUPNAME = string.Empty;
                     string _ORDNAME = string.Empty;
                     if (rbtIN.Checked)
@@ -3496,7 +3496,7 @@ namespace WH_Panel
                         // Create a new Document object for incoming and manufacturing transactions
                         Document Pdocument = new Document
                         {
-                            USERLOGIN = _OWNERLOGIN,
+                            //USERLOGIN = _OWNERLOGIN,
                             TYPE = "P", // Set the document type
                             CURDATE = DateTimeOffset.UtcNow,
                             SUPNAME = _SUPNAME, // Set the supplier name
