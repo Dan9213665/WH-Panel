@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Data;
+using static Seagull.BarTender.Print.LabelFormat;
 
 namespace WH_Panel
 {
@@ -17,6 +18,7 @@ namespace WH_Panel
     {
         // Settings and Data Storage
         private AppSettings settings;
+        private List<PartMnfSubform> fullAvlList = new List<PartMnfSubform>();
         private List<Warehouse> loadedWareHouses = new List<Warehouse>();
         public static string baseUrl = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522";
         public FrmPriorityCount()
@@ -28,7 +30,7 @@ namespace WH_Panel
         {
             // 1. Style the UI immediately
             ApplyDarkTheme(this);
-
+            SetupTextBoxStyles(txtSearchIPN, txtbMFPN, txtbQTY);
             // 2.Load "Workable" Snapshots from SQL(For all users)
             // This allows non-LGT users to select a DB created by LGT
             LoadExistingSnapshots();
@@ -519,6 +521,275 @@ namespace WH_Panel
                 MessageBox.Show($"Delta Error: {ex.Message}");
             }
         }
+
+        private async void txtSearchIPN_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+                string inputIPN = txtSearchIPN.Text.Trim().ToUpper();
+
+                if (cmbSelectedWH.SelectedItem == null)
+                {
+                    MessageBox.Show("Please select an active Snapshot first.");
+                    return;
+                }
+
+                // 1. Fetch AVL data from Priority
+                bool success = await getMFPNSfromPRIORITY(inputIPN);
+
+                if (success)
+                {
+                    // 2. Prepare for the next scan
+                    txtbMFPN.Clear();
+                    txtbMFPN.Focus();
+                }
+            }
+        }
+
+        private async Task<bool> getMFPNSfromPRIORITY(string ipn)
+        {
+            string url = $"{baseUrl}/PART?$filter=PARTNAME eq '{ipn}'&$expand=PARTMNF_SUBFORM($select=MNFPARTNAME,MNFPARTDES,MNFNAME)";
+
+            Log($"Querying Priority AVL for: {ipn}...", Color.Cyan);
+
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    client.Timeout = TimeSpan.FromSeconds(30);
+
+                    string authInfo = $"{settings.ApiUsername}:{settings.ApiPassword}";
+                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(authInfo));
+                    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", credentials);
+
+                    var response = await client.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
+                    string json = await response.Content.ReadAsStringAsync();
+
+                    var partData = JsonConvert.DeserializeObject<PartApiResponse>(json);
+
+                    if (partData?.value != null && partData.value.Count > 0)
+                    {
+                        var avlList = partData.value[0].PARTMNF_SUBFORM;
+                        int avlCount = avlList?.Count ?? 0;
+
+                        fullAvlList = partData.value[0].PARTMNF_SUBFORM; // Save the full list here
+                        // 1. Bind Data
+                        dgwAVL.DataSource = avlList;
+
+                        // 2. Apply VS Dark Mode Styling
+                        ApplyDarkThemeToGrid(dgwAVL);
+
+                        // 3. Header Text & Autosizing
+                        if (dgwAVL.Columns["MNFPARTNAME"] != null) dgwAVL.Columns["MNFPARTNAME"].HeaderText = "MFPN";
+                        if (dgwAVL.Columns["MNFNAME"] != null) dgwAVL.Columns["MNFNAME"].HeaderText = "Manufacturer";
+                        if (dgwAVL.Columns["MNFPARTDES"] != null) dgwAVL.Columns["MNFPARTDES"].HeaderText = "MFPN Description";
+
+                        dgwAVL.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+                        if (dgwAVL.Columns.Count > 0)
+                            dgwAVL.Columns[dgwAVL.Columns.Count - 1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+
+                        Log($"SUCCESS: Found {avlCount} Authorized Vendors for {ipn}.", Color.LimeGreen);
+                        return true;
+                    }
+                    else
+                    {
+                        Log($"WARNING: No AVL data found in Priority for {ipn}.", Color.Yellow);
+                        MessageBox.Show("No AVL data found for this IPN in Priority.");
+                        return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"API ERROR: {ex.Message}", Color.Red);
+                MessageBox.Show($"AVL Load Error: {ex.Message}");
+                return false;
+            }
+        }
+
+        // --- Helper for Grid Styling ---
+        private void ApplyDarkThemeToGrid(DataGridView dgv)
+        {
+            dgv.EnableHeadersVisualStyles = false; // Required to change header colors
+            dgv.BackgroundColor = Color.FromArgb(30, 30, 30);
+            dgv.ForeColor = Color.FromArgb(220, 220, 220);
+            dgv.GridColor = Color.FromArgb(60, 60, 60);
+
+            // Row Styles
+            dgv.DefaultCellStyle.BackColor = Color.FromArgb(37, 37, 38);
+            dgv.DefaultCellStyle.ForeColor = Color.FromArgb(220, 220, 220);
+            dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(38, 79, 120);
+            dgv.DefaultCellStyle.SelectionForeColor = Color.White;
+
+            // Header Styles
+            dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(45, 45, 48);
+            dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(86, 156, 214); // Light Blue
+            dgv.ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(45, 45, 48);
+            dgv.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+
+            dgv.RowHeadersVisible = false; // Cleaner look for lists
+            dgv.BorderStyle = BorderStyle.None;
+            dgv.SelectionMode = DataGridViewSelectionMode.CellSelect;
+            dgv.MultiSelect = false;
+            dgv.ReadOnly = true;
+        }
+        private async Task ProcessIPNScan(string ipn)
+        {
+
+        }
+
+        private void SetupTextBoxStyles(params TextBox[] textBoxes)
+        {
+            foreach (var tb in textBoxes)
+            {
+                // Set initial state
+                tb.BackColor = VSDarkColors.Background;
+                tb.ForeColor = VSDarkColors.Foreground;
+
+                tb.Enter += (s, e) =>
+                {
+                    tb.BackColor = VSDarkColors.FocusBackground;
+                    tb.ForeColor = VSDarkColors.FocusForeground;
+                };
+
+                tb.Leave += (s, e) =>
+                {
+                    tb.BackColor = VSDarkColors.Background;
+                    tb.ForeColor = VSDarkColors.Foreground;
+                };
+            }
+        }
+
+        //private void txtbMFPN_KeyDown(object sender, KeyEventArgs e)
+        //{
+        //    if (e.KeyCode == Keys.Enter)
+        //    {
+        //        e.SuppressKeyPress = true;
+        //        string scannedMFPN = txtbMFPN.Text.Trim().ToUpper();
+
+        //        if (string.IsNullOrEmpty(scannedMFPN)) return;
+
+        //        // 1. Check if AVL data exists
+        //        var avlList = dgwAVL.DataSource as List<PartMnfSubform>;
+        //        if (avlList == null || avlList.Count == 0)
+        //        {
+        //            Log("WARNING: No AVL data loaded. Please scan an IPN first.", Color.Orange);
+        //            txtSearchIPN.Focus();
+        //            return;
+        //        }
+
+        //        // 2. Perform the Filter
+        //        // Note: Using .Equals for strict verification
+        //        var filteredMatch = avlList.Where(x => x.MNFPARTNAME.ToUpper().Equals(scannedMFPN)).ToList();
+
+        //        if (filteredMatch.Count == 1)
+        //        {
+        //            // SUCCESS
+        //            dgwAVL.DataSource = filteredMatch;
+        //            Log($"VERIFIED MFPN: {scannedMFPN} | Mfr: {filteredMatch[0].MNFNAME}", Color.LimeGreen);
+
+        //            // Move focus to Qty
+        //            txtbQTY.Focus();
+        //        }
+        //        else if (filteredMatch.Count > 1)
+        //        {
+        //            // AMBIGUITY
+        //            dgwAVL.DataSource = filteredMatch;
+        //            Log($"AMBIGUITY: {filteredMatch.Count} items match '{scannedMFPN}'. Select manually.", Color.Yellow);
+        //        }
+        //        else
+        //        {
+        //            // THE MORTAL SIN
+        //            Log($"!!! MORTAL SIN !!!: Invalid MFPN [{scannedMFPN}] for this IPN.", Color.Red);
+
+        //            MessageBox.Show(
+        //                $"MORTAL SIN DETECTED!\n\nThe scanned MFPN '{scannedMFPN}' does not belong to this IPN's AVL.\n\n" +
+        //                "Check the reel again immediately!",
+        //                "VALIDATION FAILED",
+        //                MessageBoxButtons.OK,
+        //                MessageBoxIcon.Error);
+
+        //            txtbMFPN.SelectAll();
+        //            txtbMFPN.Focus();
+        //        }
+        //    }
+        //}
+
+        private void txtbMFPN_KeyDown(object sender, KeyEventArgs e)
+        {
+            // --- ESCAPE KEY LOGIC ---
+            if (e.KeyCode == Keys.Escape)
+            {
+                e.SuppressKeyPress = true;
+                txtbMFPN.Clear();
+
+                // Restore the full list to the grid
+                dgwAVL.DataSource = null; // Reset binding
+                dgwAVL.DataSource = fullAvlList;
+
+                Log("MFPN filter cleared. Full AVL list restored.", Color.White);
+                txtbMFPN.Focus();
+                return;
+            }
+
+            // --- ENTER KEY LOGIC ---
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+                string scannedMFPN = txtbMFPN.Text.Trim().ToUpper();
+
+                if (string.IsNullOrEmpty(scannedMFPN)) return;
+
+                if (fullAvlList == null || fullAvlList.Count == 0)
+                {
+                    Log("WARNING: No AVL data loaded. Please scan an IPN first.", Color.Orange);
+                    txtSearchIPN.Focus();
+                    return;
+                }
+
+                // Use the fullAvlList for filtering so we always check the original data
+                var filteredMatch = fullAvlList.Where(x => x.MNFPARTNAME.ToUpper().Equals(scannedMFPN)).ToList();
+
+                if (filteredMatch.Count == 1)
+                {
+                    dgwAVL.DataSource = filteredMatch;
+                    Log($"VERIFIED MFPN: {scannedMFPN} | Mfr: {filteredMatch[0].MNFNAME}", Color.LimeGreen);
+                    txtbQTY.Focus();
+                }
+                else if (filteredMatch.Count > 1)
+                {
+                    dgwAVL.DataSource = filteredMatch;
+                    Log($"AMBIGUITY: {filteredMatch.Count} items match '{scannedMFPN}'. Select manually.", Color.Yellow);
+                }
+                else
+                {
+                    Log($"!!! MORTAL SIN !!!: Invalid MFPN [{scannedMFPN}] for this IPN.", Color.Red);
+                    MessageBox.Show($"MORTAL SIN DETECTED!\n\nThe scanned MFPN '{scannedMFPN}' does not belong to this IPN's AVL.", "VALIDATION FAILED", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    txtbMFPN.SelectAll();
+                }
+            }
+        }
+
+        private void Log(string message, Color color)
+        {
+            if (rtbLog.InvokeRequired)
+            {
+                rtbLog.Invoke(new Action(() => Log(message, color)));
+                return;
+            }
+
+            rtbLog.SelectionStart = rtbLog.TextLength;
+            rtbLog.SelectionLength = 0;
+            rtbLog.SelectionColor = color;
+
+            string timestamp = DateTime.Now.ToString("HH:mm:ss");
+            rtbLog.AppendText($"[{timestamp}] {message}{Environment.NewLine}");
+            rtbLog.ScrollToCaret();
+        }
+
+
     }
 
 
@@ -529,5 +800,10 @@ namespace WH_Panel
         public static Color Foreground = Color.FromArgb(220, 220, 220);
         public static Color Accent = Color.FromArgb(45, 45, 48);
         public static Color Border = Color.FromArgb(63, 63, 70);
+
+        // New Focus Colors
+        public static Color FocusBackground = Color.LightGreen;
+        public static Color FocusForeground = Color.Black;
     }
-}
+  
+ }

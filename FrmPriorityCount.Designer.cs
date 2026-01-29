@@ -28,6 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmPriorityCount));
             tableLayoutPanel1 = new TableLayoutPanel();
             groupBox11 = new GroupBox();
@@ -54,6 +57,8 @@
             lblBalance = new Label();
             gbAllWhs = new GroupBox();
             cmbAllWhs = new ComboBox();
+            groupBox4 = new GroupBox();
+            rtbLog = new RichTextBox();
             tableLayoutPanel1.SuspendLayout();
             groupBox9.SuspendLayout();
             groupBox8.SuspendLayout();
@@ -67,6 +72,7 @@
             ((System.ComponentModel.ISupportInitialize)dgwAVL).BeginInit();
             groupBox12.SuspendLayout();
             gbAllWhs.SuspendLayout();
+            groupBox4.SuspendLayout();
             SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -90,6 +96,7 @@
             tableLayoutPanel1.Controls.Add(groupBox6, 0, 2);
             tableLayoutPanel1.Controls.Add(groupBox12, 3, 0);
             tableLayoutPanel1.Controls.Add(gbAllWhs, 4, 1);
+            tableLayoutPanel1.Controls.Add(groupBox4, 3, 2);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -162,8 +169,10 @@
             txtbQTY.Font = new Font("Segoe UI", 18F);
             txtbQTY.Location = new Point(3, 23);
             txtbQTY.Name = "txtbQTY";
+            txtbQTY.PlaceholderText = "scan QTY here";
             txtbQTY.Size = new Size(395, 47);
             txtbQTY.TabIndex = 1;
+            txtbQTY.TextAlign = HorizontalAlignment.Center;
             // 
             // groupBox7
             // 
@@ -182,8 +191,11 @@
             txtbMFPN.Font = new Font("Segoe UI", 18F);
             txtbMFPN.Location = new Point(3, 23);
             txtbMFPN.Name = "txtbMFPN";
+            txtbMFPN.PlaceholderText = "scan MFPN here";
             txtbMFPN.Size = new Size(395, 47);
             txtbMFPN.TabIndex = 1;
+            txtbMFPN.TextAlign = HorizontalAlignment.Center;
+            txtbMFPN.KeyDown += txtbMFPN_KeyDown;
             // 
             // groupBox1
             // 
@@ -290,17 +302,20 @@
             txtSearchIPN.Font = new Font("Segoe UI", 18F);
             txtSearchIPN.Location = new Point(3, 23);
             txtSearchIPN.Name = "txtSearchIPN";
+            txtSearchIPN.PlaceholderText = "scan IPN here";
             txtSearchIPN.Size = new Size(395, 47);
             txtSearchIPN.TabIndex = 0;
+            txtSearchIPN.TextAlign = HorizontalAlignment.Center;
+            txtSearchIPN.KeyDown += txtSearchIPN_KeyDown;
             // 
             // groupBox6
             // 
-            tableLayoutPanel1.SetColumnSpan(groupBox6, 5);
+            tableLayoutPanel1.SetColumnSpan(groupBox6, 3);
             groupBox6.Controls.Add(dgwAVL);
             groupBox6.Dock = DockStyle.Fill;
             groupBox6.Location = new Point(3, 170);
             groupBox6.Name = "groupBox6";
-            groupBox6.Size = new Size(2032, 148);
+            groupBox6.Size = new Size(1215, 148);
             groupBox6.TabIndex = 9;
             groupBox6.TabStop = false;
             groupBox6.Text = "AVL";
@@ -309,13 +324,35 @@
             // 
             dgwAVL.AllowUserToAddRows = false;
             dgwAVL.AllowUserToDeleteRows = false;
+            dataGridViewCellStyle1.BackColor = Color.Black;
+            dataGridViewCellStyle1.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle1.ForeColor = Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = Color.FromArgb(128, 255, 128);
+            dataGridViewCellStyle1.SelectionForeColor = Color.Black;
+            dgwAVL.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dgwAVL.BackgroundColor = SystemColors.ActiveCaptionText;
             dgwAVL.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgwAVL.Dock = DockStyle.Fill;
+            dgwAVL.GridColor = SystemColors.InactiveCaptionText;
             dgwAVL.Location = new Point(3, 23);
             dgwAVL.Name = "dgwAVL";
             dgwAVL.ReadOnly = true;
-            dgwAVL.RowHeadersWidth = 51;
-            dgwAVL.Size = new Size(2026, 122);
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.Black;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle2.ForeColor = Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dgwAVL.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dgwAVL.RowHeadersWidth = 113;
+            dataGridViewCellStyle3.BackColor = Color.Black;
+            dataGridViewCellStyle3.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle3.ForeColor = Color.White;
+            dataGridViewCellStyle3.SelectionBackColor = Color.FromArgb(128, 255, 128);
+            dataGridViewCellStyle3.SelectionForeColor = Color.Black;
+            dgwAVL.RowsDefaultCellStyle = dataGridViewCellStyle3;
+            dgwAVL.Size = new Size(1209, 122);
             dgwAVL.TabIndex = 0;
             // 
             // groupBox12
@@ -364,6 +401,28 @@
             cmbAllWhs.TabIndex = 0;
             cmbAllWhs.SelectedIndexChanged += cmbAllWhs_SelectedIndexChanged;
             // 
+            // groupBox4
+            // 
+            tableLayoutPanel1.SetColumnSpan(groupBox4, 2);
+            groupBox4.Controls.Add(rtbLog);
+            groupBox4.Dock = DockStyle.Fill;
+            groupBox4.Location = new Point(1224, 170);
+            groupBox4.Name = "groupBox4";
+            groupBox4.Size = new Size(811, 148);
+            groupBox4.TabIndex = 14;
+            groupBox4.TabStop = false;
+            groupBox4.Text = "Logs";
+            // 
+            // rtbLog
+            // 
+            rtbLog.BackColor = Color.Black;
+            rtbLog.Dock = DockStyle.Fill;
+            rtbLog.Location = new Point(3, 23);
+            rtbLog.Name = "rtbLog";
+            rtbLog.Size = new Size(805, 122);
+            rtbLog.TabIndex = 0;
+            rtbLog.Text = "";
+            // 
             // FrmPriorityCount
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -393,6 +452,7 @@
             groupBox12.ResumeLayout(false);
             groupBox12.PerformLayout();
             gbAllWhs.ResumeLayout(false);
+            groupBox4.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -423,5 +483,7 @@
         private GroupBox gbAllWhs;
         private ComboBox cmbAllWhs;
         private DataGridView dgwAVL;
+        private GroupBox groupBox4;
+        private RichTextBox rtbLog;
     }
 }
