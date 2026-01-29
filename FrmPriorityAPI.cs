@@ -1487,6 +1487,8 @@ namespace WH_Panel
             }
             cmbWarehouseList.DroppedDown = true; // Open the dropdown list
         }
+
+
         private Dictionary<string, string> avlDictionary = new Dictionary<string, string>();
 
 
