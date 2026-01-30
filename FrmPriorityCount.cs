@@ -1,16 +1,23 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Office.Interop.Outlook;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static Seagull.BarTender.Print.LabelFormat;
+using static WH_Panel.FrmPriorityAPI;
+using Action = System.Action;
+using Exception = System.Exception;
 
 namespace WH_Panel
 {
@@ -34,6 +41,7 @@ namespace WH_Panel
             // 2.Load "Workable" Snapshots from SQL(For all users)
             // This allows non-LGT users to select a DB created by LGT
             LoadExistingSnapshots();
+            InitializeMovementsGrid();
             // 2. Load Application Settings (Crucial for API credentials)
             try
             {
@@ -524,7 +532,28 @@ namespace WH_Panel
 
         private async void txtSearchIPN_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+
+            if (e.KeyCode == Keys.Escape)
+            {
+                e.SuppressKeyPress = true;
+                txtSearchIPN.Clear();
+                // 1. Detach DataSources to avoid the InvalidOperationException
+                dgwAVL.DataSource = null;
+                dgvStockMovements.DataSource = null;
+                dgwINSTOCK.DataSource = null;
+
+                // 2. Now it is safe to manually clear rows/columns if they aren't auto-generated
+                dgwAVL.Rows.Clear();
+                dgvStockMovements.Rows.Clear();
+                dgwINSTOCK.Rows.Clear();
+                lblBalance.Text = "0/0";
+
+                Log("IPN filter cleared.", Color.White);
+                txtSearchIPN.Focus();
+                return;
+            }
+
+            else if (e.KeyCode == Keys.Enter)
             {
                 e.SuppressKeyPress = true;
                 string inputIPN = txtSearchIPN.Text.Trim().ToUpper();
@@ -538,6 +567,11 @@ namespace WH_Panel
                 // 1. Fetch AVL data from Priority
                 bool success = await getMFPNSfromPRIORITY(inputIPN);
 
+                getAllMovementsForIPN(inputIPN);
+
+
+
+
                 if (success)
                 {
                     // 2. Prepare for the next scan
@@ -545,6 +579,396 @@ namespace WH_Panel
                     txtbMFPN.Focus();
                 }
             }
+        }
+
+        private async Task getAllMovementsForIPN(string ipn)
+        {
+            Log($"Fetching live stock movements for {ipn}...", Color.Cyan);
+
+            // We target the LOGPART endpoint using your established pattern
+            string logPartUrl = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{ipn}'&$expand=PARTTRANSLAST2_SUBFORM";
+
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    ApiHelper.AuthenticateClient(client); // Uses your existing Auth logic
+
+                    var response = await client.GetAsync(logPartUrl);
+                    response.EnsureSuccessStatusCode();
+
+                    string json = await response.Content.ReadAsStringAsync();
+                    var logPartApiResponse = JsonConvert.DeserializeObject<LogPartApiResponse>(json);
+
+                    if (logPartApiResponse.value != null && logPartApiResponse.value.Count > 0)
+                    {
+                        // Prepare the grid for live display
+                        dgvStockMovements.Rows.Clear();
+
+                        // Extract and filter the subform data
+                        var movements = logPartApiResponse.value[0].PARTTRANSLAST2_SUBFORM
+                            .Where(t => t.DOCDES != "קיזוז אוטומטי" && t.TOWARHSNAME != "666")
+                            .ToList();
+
+                        //foreach (var trans in movements)
+                        //{
+                        //    // Adding rows to your live display grid
+                        //    // We leave Date and Pack empty for the Parallel Enrichment to fill
+                        //    dgvStockMovements.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "");
+                        //}
+                        foreach (var trans in movements)
+                        {
+                            int rowIndex = dgvStockMovements.Rows.Add(
+                                "",               // UDATE
+                                trans.LOGDOCNO,
+                                trans.DOCDES,
+                                trans.SUPCUSTNAME,
+                                "",               // BOOKNUM
+                                trans.TQUANT,
+                                ""                // PACKNAME
+                            );
+
+                            var row = dgvStockMovements.Rows[rowIndex];
+                            var qtyCell = row.Cells["TQUANT"];
+                            string docNo = trans.LOGDOCNO.ToUpper();
+
+                            // Segregate coloring by Document Type
+                            if (docNo.StartsWith("GR"))
+                            {
+                                // INCOMING
+                                qtyCell.Style.BackColor = Color.LightGreen;
+                                qtyCell.Style.ForeColor = Color.Black;
+                            }
+                            else if (docNo.StartsWith("ROB") || docNo.StartsWith("IC") || docNo.StartsWith("WR"))
+                            {
+                                // OUTGOING / ADJUSTMENT (Inventory Count 'IC' is often a reduction in this view)
+                                qtyCell.Style.BackColor = Color.IndianRed;
+                                qtyCell.Style.ForeColor = Color.Black;
+                            }
+                            else if (docNo.StartsWith("SH"))
+                            {
+                                // WAREHOUSE TRANSFER - Often depends on the DOCDES or Warehouse name
+                                // For now, let's mark it as Neutral/Cyan or check direction
+                                qtyCell.Style.BackColor = Color.DarkViolet;
+                                qtyCell.Style.ForeColor = Color.White;
+                            }
+                            else
+                            {
+                                // Default Dark Mode
+                                qtyCell.Style.BackColor = VSDarkColors.Background;
+                                qtyCell.Style.ForeColor = VSDarkColors.Foreground;
+                            }
+                        }
+
+                        Log($"Displaying {movements.Count} potential reels. Starting background enrichment...", Color.Yellow);
+
+                        // Now run your parallel enrichment logic to fetch PACKCODE and BOOKNUM
+                        await EnrichLiveGridAsync(ipn);
+                    }
+                    else
+                    {
+                        Log($"No transaction history found for {ipn}.", Color.Orange);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"Movements Load Error: {ex.Message}", Color.Red);
+            }
+
+
+
+        }
+
+
+
+
+
+        private async Task EnrichLiveGridAsync(string partName)
+        {
+            var rows = dgvStockMovements.Rows.Cast<DataGridViewRow>()
+                .Where(r => r.Cells["LOGDOCNO"].Value != null)
+                .ToList();
+
+            if (rows.Count == 0) return;
+
+            // --- Start Timing ---
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+
+            var clients = Enumerable.Range(0, ApiUserPool.Count)
+                .Select(_ =>
+                {
+                    var c = new HttpClient();
+                    c.DefaultRequestHeaders.Accept.Clear();
+                    c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    string user = ApiHelper.AuthenticateClient(c);
+                    return (User: user, Client: c);
+                }).ToList();
+
+            int maxConcurrencyPerUser = 2;
+            var clientSemaphores = clients.ToDictionary(c => c.User, c => new SemaphoreSlim(maxConcurrencyPerUser));
+            int userIndex = -1;
+            object userLock = new object();
+
+            (string User, HttpClient Client) GetNextClient()
+            {
+                lock (userLock)
+                {
+                    userIndex = (userIndex + 1) % clients.Count;
+                    return clients[userIndex];
+                }
+            }
+
+            var tasks = rows.Select(async row =>
+            {
+                string logDocNo = row.Cells["LOGDOCNO"].Value.ToString();
+                var (usedUser, client) = GetNextClient();
+                var semaphore = clientSemaphores[usedUser];
+
+                await semaphore.WaitAsync();
+                try
+                {
+                    string url = logDocNo switch
+                    {
+                        var s when s.StartsWith("GR") => $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM",
+                        var s when s.StartsWith("WR") => $"{baseUrl}/DOCUMENTS_T?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_T_SUBFORM",
+                        var s when s.StartsWith("SH") => $"{baseUrl}/DOCUMENTS_D?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_D_SUBFORM",
+                        var s when s.StartsWith("IC") => $"{baseUrl}/DOCUMENTS_C?$filter=DOCNO eq '{logDocNo}'",
+                        var s when s.StartsWith("ROB") => $"{baseUrl}/SERIAL?$filter=SERIALNAME eq '{logDocNo}'&$expand=TRANSORDER_K_SUBFORM",
+                        _ => $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM"
+                    };
+
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    if (!response.IsSuccessStatusCode) return;
+
+                    string body = await response.Content.ReadAsStringAsync();
+                    var doc = JsonConvert.DeserializeObject<JObject>(body)?["value"]?.FirstOrDefault();
+
+                    if (doc != null)
+                    {
+                        string uDate = doc["UDATE"]?.ToString();
+                        string bookNum = doc["BOOKNUM"]?.ToString()
+                                         ?? doc["CDES"]?.ToString()
+                                         ?? doc["REFERENCE"]?.ToString();
+
+                        string packCode = null;
+
+                        var subForm = doc["TRANSORDER_P_SUBFORM"]
+                                      ?? doc["TRANSORDER_T_SUBFORM"]
+                                      ?? doc["TRANSORDER_D_SUBFORM"]
+                                      ?? doc["TRANSORDER_K_SUBFORM"];
+
+                        if (subForm != null)
+                        {
+                            var line = subForm.FirstOrDefault(l => l["PARTNAME"]?.ToString() == partName);
+                            if (line != null)
+                            {
+                                packCode = line["PACKCODE"]?.ToString();
+                                if (string.IsNullOrEmpty(bookNum))
+                                {
+                                    bookNum = line["BOOKNUM"]?.ToString();
+                                }
+                            }
+                        }
+
+                        this.Invoke((Action)(() =>
+                        {
+                            row.Cells["UDATE"].Value = uDate;
+                            row.Cells["PACKNAME"].Value = packCode;
+                            row.Cells["BOOKNUM"].Value = bookNum;
+                        }));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log($"Enrichment error for {logDocNo}: {ex.Message}", Color.Gray);
+                }
+                finally
+                {
+                    semaphore.Release();
+                }
+            });
+
+
+            // AT THE END OF EnrichLiveGridAsync
+            await Task.WhenAll(tasks);
+            sw.Stop();
+
+            // Now that we ARE sure data is there, calculate stock
+            this.Invoke((Action)(() =>
+            {
+                dgvStockMovements.Sort(dgvStockMovements.Columns["UDATE"], ListSortDirection.Descending);
+                PopulateInStockByLogic(); // Call it here!
+            }));
+
+
+            Log($"Reel data enrichment complete in {sw.ElapsedMilliseconds} ms.", Color.LimeGreen);
+        }
+
+
+
+        //private void PopulateInStockByLogic()
+        //{
+        //    // Ensure the IN STOCK grid has a skeleton
+        //    if (dgwINSTOCK.Columns.Count == 0)
+        //    {
+        //        dgwINSTOCK.Columns.Add("UDATE", "Date");
+        //        dgwINSTOCK.Columns.Add("LOGDOCNO", "Doc No");
+        //        dgwINSTOCK.Columns.Add("BOOKNUM", "Client Doc");
+        //        dgwINSTOCK.Columns.Add("TQUANT", "Qty");
+        //        dgwINSTOCK.Columns.Add("SUPCUSTNAME", "Source");
+        //        dgwINSTOCK.Columns.Add("PACKNAME", "Pack Code");
+        //        dgwINSTOCK.Columns.Add("CountDate", "CountDate");
+        //        dgwINSTOCK.Columns.Add("UserCounted", "UserCounted");
+        //        ApplyDarkThemeToGrid(dgwINSTOCK);
+        //    }
+
+        //    dgwINSTOCK.Rows.Clear();
+        //    dgwINSTOCK.Rows.Clear();
+
+        //    // 1. Get all movements from your grid
+        //    var rows = dgvStockMovements.Rows.Cast<DataGridViewRow>()
+        //        .Where(r => r.Cells["TQUANT"].Value != null)
+        //        .Select(r => new {
+        //            DocNo = r.Cells["LOGDOCNO"].Value.ToString(),
+        //            Qty = Math.Abs(Convert.ToDecimal(r.Cells["TQUANT"].Value)),
+        //            Date = DateTime.TryParse(r.Cells["UDATE"].Value?.ToString(), out var d) ? d : DateTime.MinValue,
+        //            Pack = r.Cells["PACKNAME"].Value?.ToString(),
+        //            Supplier = r.Cells["SUPCUSTNAME"].Value?.ToString(),
+        //            BookNum = r.Cells["BOOKNUM"].Value?.ToString()
+        //        }).ToList();
+
+        //    // 2. Separate into In and Out
+        //    var incoming = rows.Where(r => r.DocNo.StartsWith("GR")).OrderBy(r => r.Date).ToList();
+        //    var outgoing = rows.Where(r => r.DocNo.StartsWith("ROB") || r.DocNo.StartsWith("SH")).OrderBy(r => r.Date).ToList();
+
+        //    // 3. Match and Remove
+        //    // Note: We use a list we can modify
+        //    var remainingInStock = incoming.ToList();
+
+        //    foreach (var outMove in outgoing)
+        //    {
+        //        // Find the oldest 'In' that matches this quantity exactly
+        //        var match = remainingInStock.FirstOrDefault(i => i.Qty == outMove.Qty);
+        //        if (match != null)
+        //        {
+        //            remainingInStock.Remove(match); // It's been issued, remove from "In Stock"
+        //        }
+        //    }
+
+        //    int countedTotalStr = 0;
+        //    // 4. Populate dgwINSTOCK with what's left
+        //    foreach (var item in remainingInStock)
+        //    {
+        //        dgwINSTOCK.Rows.Add(item.Date, item.DocNo,item.BookNum, item.Qty, item.Supplier, item.Pack);
+        //        countedTotalStr += (int)item.Qty;
+        //    }
+        //    lblBalance.Text = $"0/{countedTotalStr}";
+
+        //    Log($"Heuristic reconciliation: {remainingInStock.Count} reels likely in stock.", Color.Yellow);
+        //}
+
+
+        private void PopulateInStockByLogic()
+        {
+            // 1. Ensure the IN STOCK grid has a skeleton
+            if (dgwINSTOCK.Columns.Count == 0)
+            {
+                dgwINSTOCK.Columns.Add("UDATE", "Date");
+                dgwINSTOCK.Columns.Add("LOGDOCNO", "Doc No");
+                dgwINSTOCK.Columns.Add("BOOKNUM", "Client Doc");
+                dgwINSTOCK.Columns.Add("TQUANT", "Qty");
+                dgwINSTOCK.Columns.Add("SUPCUSTNAME", "Source");
+                dgwINSTOCK.Columns.Add("PACKNAME", "Pack Code");
+                // Status columns for later SQL sync
+                dgwINSTOCK.Columns.Add("CountDate", "Count Date");
+                dgwINSTOCK.Columns.Add("UserCounted", "User");
+                ApplyDarkThemeToGrid(dgwINSTOCK);
+            }
+
+            dgwINSTOCK.Rows.Clear();
+
+            // 2. Extract and sanitize movements from the main grid
+            var rows = dgvStockMovements.Rows.Cast<DataGridViewRow>()
+                .Where(r => r.Cells["TQUANT"].Value != null && !string.IsNullOrEmpty(r.Cells["TQUANT"].Value.ToString()))
+                .Select(r => new
+                {
+                    DocNo = r.Cells["LOGDOCNO"].Value?.ToString() ?? "",
+                    // Use decimal.TryParse for safety; Priority quantities are treated as absolute for matching
+                    Qty = decimal.TryParse(r.Cells["TQUANT"].Value.ToString(), out decimal q) ? Math.Abs(q) : 0,
+                    Date = DateTime.TryParse(r.Cells["UDATE"].Value?.ToString(), out var d) ? d : DateTime.MinValue,
+                    Pack = r.Cells["PACKNAME"].Value?.ToString() ?? "N/A",
+                    Supplier = r.Cells["SUPCUSTNAME"].Value?.ToString() ?? "",
+                    BookNum = r.Cells["BOOKNUM"].Value?.ToString() ?? ""
+                })
+                .Where(x => x.Qty > 0)
+                .ToList();
+
+            // 3. Robust Reconciliation: Segregate by flow, not just prefix
+            // INCOMING: Includes Goods Receipts (GR) and Warehouse Receipts (WR)
+            var incoming = rows.Where(r => r.DocNo.StartsWith("GR")).ToList();
+
+            // OUTGOING: Includes Issues (ROB), Shipping (SH), and Transfers Out (WR/SH logic)
+            var outgoing = rows.Where(r => r.DocNo.StartsWith("ROB") || r.DocNo.StartsWith("SH") || r.DocNo.StartsWith("WR")).ToList();
+
+            // 4. THE BUG WORKAROUND: Partner Matching
+            // We remove pairs that match in quantity to handle incorrect timestamps
+            var remainingInStock = incoming.OrderBy(r => r.Date).ToList();
+            var unmatchedOut = outgoing.OrderBy(r => r.Date).ToList();
+
+            foreach (var outMove in unmatchedOut)
+            {
+                // Search for a matching quantity in the 'In' bucket
+                // We look for the closest date match, but allow the 'In' to be slightly later 
+                // than the 'Out' to solve your WR/GR bug.
+                var match = remainingInStock.FirstOrDefault(i => i.Qty == outMove.Qty);
+
+                if (match != null)
+                {
+                    remainingInStock.Remove(match);
+                }
+            }
+
+            // 5. Populate dgwINSTOCK and update the Balance Label
+            decimal totalQtyInStock = 0;
+
+            foreach (var item in remainingInStock)
+            {
+                dgwINSTOCK.Rows.Add(
+                    item.Date == DateTime.MinValue ? "" : item.Date.ToString("yyyy-MM-dd HH:mm:ss"),
+                    item.DocNo,
+                    item.BookNum,
+                    item.Qty,
+                    item.Supplier,
+                    item.Pack
+                );
+                totalQtyInStock += item.Qty;
+            }
+
+            // Update the balance label: Counted (0 for now) / Calculated Stock Total
+            lblBalance.Text = $"0/{totalQtyInStock:N0}";
+
+            Log($"Heuristic reconciliation: {remainingInStock.Count} reels identified ({totalQtyInStock:N0} total pcs).", Color.Yellow);
+        }
+
+
+        private void InitializeMovementsGrid()
+        {
+            dgvStockMovements.Columns.Clear();
+            dgvStockMovements.AutoGenerateColumns = false;
+
+            // Define the columns to match your legacy logic
+            dgvStockMovements.Columns.Add(new DataGridViewTextBoxColumn { Name = "UDATE", HeaderText = "Date", Width = 110 });
+            dgvStockMovements.Columns.Add(new DataGridViewTextBoxColumn { Name = "LOGDOCNO", HeaderText = "Doc No", Width = 100 });
+            dgvStockMovements.Columns.Add(new DataGridViewTextBoxColumn { Name = "DOCDES", HeaderText = "Description", Width = 130 });
+            dgvStockMovements.Columns.Add(new DataGridViewTextBoxColumn { Name = "SUPCUSTNAME", HeaderText = "Source", Width = 150 });
+            dgvStockMovements.Columns.Add(new DataGridViewTextBoxColumn { Name = "BOOKNUM", HeaderText = "Client Doc", Width = 100 });
+            dgvStockMovements.Columns.Add(new DataGridViewTextBoxColumn { Name = "TQUANT", HeaderText = "Qty", Width = 80 });
+            dgvStockMovements.Columns.Add(new DataGridViewTextBoxColumn { Name = "PACKNAME", HeaderText = "Pack Code", Width = 120 });
+
+            // Apply your Dark Mode styling immediately
+            ApplyDarkThemeToGrid(dgvStockMovements);
         }
 
         private async Task<bool> getMFPNSfromPRIORITY(string ipn)
@@ -629,16 +1053,14 @@ namespace WH_Panel
             dgv.ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(45, 45, 48);
             dgv.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
 
-            dgv.RowHeadersVisible = false; // Cleaner look for lists
+            dgv.RowHeadersVisible = true; // Cleaner look for lists
             dgv.BorderStyle = BorderStyle.None;
             dgv.SelectionMode = DataGridViewSelectionMode.CellSelect;
-            dgv.MultiSelect = false;
+            dgv.MultiSelect = true;
             dgv.ReadOnly = true;
+            dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
         }
-        private async Task ProcessIPNScan(string ipn)
-        {
 
-        }
 
         private void SetupTextBoxStyles(params TextBox[] textBoxes)
         {
@@ -662,60 +1084,7 @@ namespace WH_Panel
             }
         }
 
-        //private void txtbMFPN_KeyDown(object sender, KeyEventArgs e)
-        //{
-        //    if (e.KeyCode == Keys.Enter)
-        //    {
-        //        e.SuppressKeyPress = true;
-        //        string scannedMFPN = txtbMFPN.Text.Trim().ToUpper();
 
-        //        if (string.IsNullOrEmpty(scannedMFPN)) return;
-
-        //        // 1. Check if AVL data exists
-        //        var avlList = dgwAVL.DataSource as List<PartMnfSubform>;
-        //        if (avlList == null || avlList.Count == 0)
-        //        {
-        //            Log("WARNING: No AVL data loaded. Please scan an IPN first.", Color.Orange);
-        //            txtSearchIPN.Focus();
-        //            return;
-        //        }
-
-        //        // 2. Perform the Filter
-        //        // Note: Using .Equals for strict verification
-        //        var filteredMatch = avlList.Where(x => x.MNFPARTNAME.ToUpper().Equals(scannedMFPN)).ToList();
-
-        //        if (filteredMatch.Count == 1)
-        //        {
-        //            // SUCCESS
-        //            dgwAVL.DataSource = filteredMatch;
-        //            Log($"VERIFIED MFPN: {scannedMFPN} | Mfr: {filteredMatch[0].MNFNAME}", Color.LimeGreen);
-
-        //            // Move focus to Qty
-        //            txtbQTY.Focus();
-        //        }
-        //        else if (filteredMatch.Count > 1)
-        //        {
-        //            // AMBIGUITY
-        //            dgwAVL.DataSource = filteredMatch;
-        //            Log($"AMBIGUITY: {filteredMatch.Count} items match '{scannedMFPN}'. Select manually.", Color.Yellow);
-        //        }
-        //        else
-        //        {
-        //            // THE MORTAL SIN
-        //            Log($"!!! MORTAL SIN !!!: Invalid MFPN [{scannedMFPN}] for this IPN.", Color.Red);
-
-        //            MessageBox.Show(
-        //                $"MORTAL SIN DETECTED!\n\nThe scanned MFPN '{scannedMFPN}' does not belong to this IPN's AVL.\n\n" +
-        //                "Check the reel again immediately!",
-        //                "VALIDATION FAILED",
-        //                MessageBoxButtons.OK,
-        //                MessageBoxIcon.Error);
-
-        //            txtbMFPN.SelectAll();
-        //            txtbMFPN.Focus();
-        //        }
-        //    }
-        //}
 
         private void txtbMFPN_KeyDown(object sender, KeyEventArgs e)
         {
@@ -789,7 +1158,105 @@ namespace WH_Panel
             rtbLog.ScrollToCaret();
         }
 
+        private void UpdateBalanceLabel()
+        {
+            decimal totalCalculatedInStock = 0;
+            decimal totalPhysicallyCounted = 0;
 
+            foreach (DataGridViewRow row in dgwINSTOCK.Rows)
+            {
+                if (decimal.TryParse(row.Cells["TQUANT"].Value?.ToString(), out decimal qty))
+                {
+                    totalCalculatedInStock += qty;
+
+                    // DATA-DRIVEN FLAG: Check if the audit fields are populated
+                    bool isCounted = row.Cells["CountDate"].Value != null &&
+                                     !string.IsNullOrEmpty(row.Cells["CountDate"].Value.ToString()) &&
+                                     row.Cells["UserCounted"].Value != null;
+
+                    if (isCounted)
+                    {
+                        totalPhysicallyCounted += qty;
+                        // Apply the visual style as a consequence of the data, not as the source of truth
+                        row.DefaultCellStyle.BackColor = Color.FromArgb(45, 65, 45);
+                    }
+                    else
+                    {
+                        row.DefaultCellStyle.BackColor = dgwINSTOCK.DefaultCellStyle.BackColor;
+                    }
+                }
+            }
+
+            lblBalance.Text = $"{totalPhysicallyCounted:N0} / {totalCalculatedInStock:N0}";
+
+            if (totalPhysicallyCounted == totalCalculatedInStock && totalCalculatedInStock > 0)
+            {
+                lblBalance.ForeColor = Color.LimeGreen;
+            }
+        }
+
+        private async void txtbQTY_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+
+                if (!decimal.TryParse(txtbQTY.Text.Trim(), out decimal scannedQty)) return;
+
+                string operatorSelection = cmbPackage.Text;
+                string currentIPN = txtSearchIPN.Text.Trim().ToUpper();
+
+                // 1. Search dgwINSTOCK for a matching quantity
+                var matchingRow = dgwINSTOCK.Rows.Cast<DataGridViewRow>()
+                    .FirstOrDefault(r => Convert.ToDecimal(r.Cells["TQUANT"].Value) == scannedQty);
+
+                if (matchingRow != null)
+                {
+                    string dbPackageType = matchingRow.Cells["PACKNAME"].Value?.ToString();
+
+                    // 2. Scenario A: User selection doesn't match the DB record
+                    if (dbPackageType != operatorSelection)
+                    {
+                        MessageBox.Show($"Incorrect Package Selection!\n\n" +
+                                        $"The system record for Qty {scannedQty} specifies: {dbPackageType}.\n" +
+                                        $"Please correct your selection in the dropdown.",
+                                        "Selection Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                        // Drop down the correct item for selection
+                        cmbPackage.SelectedItem = dbPackageType;
+                        txtbQTY.Clear();
+                        txtbQTY.Focus();
+                        return; // Do not save yet
+                    }
+
+                    // 3. Scenario B: User realizes Physical != DB
+                    // (This is handled by the operator stopping here since they cannot 
+                    // 'Verify' a mismatch without manager intervention in Priority).
+
+                    // Get the domain and username
+                    string user = WindowsIdentity.GetCurrent().Name;
+
+                    // Capture the current UTC time for the database (best practice for SQL)
+                    DateTime countTime = DateTime.UtcNow;
+
+                    // 4. Success: Write to SQL
+                    //await SaveCountToSql(matchingRow, user, countTime);
+
+                    // UI Feedback
+                    matchingRow.DefaultCellStyle.BackColor = Color.FromArgb(45, 65, 45);
+                    
+                    Log($"VERIFIED: {scannedQty} on {dbPackageType} saved to SQL.", Color.LimeGreen);
+                    UpdateBalanceLabel();
+
+                    txtbQTY.Clear();
+                    txtbQTY.Focus();
+                }
+                else
+                {
+                    Log($"!!! UNKNOWN REEL !!! No record found with Qty: {scannedQty}.", Color.Red);
+                }
+            }
+        }
     }
 
 

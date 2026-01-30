@@ -31,10 +31,15 @@
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmPriorityCount));
             tableLayoutPanel1 = new TableLayoutPanel();
             groupBox11 = new GroupBox();
+            dgvStockMovements = new DataGridView();
             groupBox10 = new GroupBox();
+            dgwINSTOCK = new DataGridView();
             groupBox9 = new GroupBox();
             cmbPackage = new ComboBox();
             groupBox8 = new GroupBox();
@@ -60,6 +65,10 @@
             groupBox4 = new GroupBox();
             rtbLog = new RichTextBox();
             tableLayoutPanel1.SuspendLayout();
+            groupBox11.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvStockMovements).BeginInit();
+            groupBox10.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgwINSTOCK).BeginInit();
             groupBox9.SuspendLayout();
             groupBox8.SuspendLayout();
             groupBox7.SuspendLayout();
@@ -112,17 +121,59 @@
             // groupBox11
             // 
             tableLayoutPanel1.SetColumnSpan(groupBox11, 5);
+            groupBox11.Controls.Add(dgvStockMovements);
             groupBox11.Dock = DockStyle.Fill;
             groupBox11.Location = new Point(3, 523);
             groupBox11.Name = "groupBox11";
             groupBox11.Size = new Size(2032, 318);
             groupBox11.TabIndex = 11;
             groupBox11.TabStop = false;
-            groupBox11.Text = "FULL LOG";
+            groupBox11.Text = "ALL MOVEMENTS";
+            // 
+            // dgvStockMovements
+            // 
+            dgvStockMovements.AllowUserToAddRows = false;
+            dgvStockMovements.AllowUserToDeleteRows = false;
+            dataGridViewCellStyle1.BackColor = Color.Black;
+            dataGridViewCellStyle1.Font = new Font("Arial Narrow", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle1.ForeColor = Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = Color.FromArgb(255, 255, 128);
+            dataGridViewCellStyle1.SelectionForeColor = Color.Black;
+            dgvStockMovements.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dgvStockMovements.BackgroundColor = Color.Black;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.Black;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle2.ForeColor = Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = Color.FromArgb(255, 255, 128);
+            dataGridViewCellStyle2.SelectionForeColor = Color.Black;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dgvStockMovements.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dgvStockMovements.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = Color.Black;
+            dataGridViewCellStyle3.Font = new Font("Arial Narrow", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle3.ForeColor = Color.White;
+            dataGridViewCellStyle3.SelectionBackColor = Color.FromArgb(255, 255, 128);
+            dataGridViewCellStyle3.SelectionForeColor = Color.Black;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.False;
+            dgvStockMovements.DefaultCellStyle = dataGridViewCellStyle3;
+            dgvStockMovements.Dock = DockStyle.Fill;
+            dgvStockMovements.Location = new Point(3, 23);
+            dgvStockMovements.Name = "dgvStockMovements";
+            dgvStockMovements.ReadOnly = true;
+            dgvStockMovements.RowHeadersWidth = 51;
+            dgvStockMovements.RowTemplate.DefaultCellStyle.BackColor = Color.Black;
+            dgvStockMovements.RowTemplate.DefaultCellStyle.ForeColor = Color.White;
+            dgvStockMovements.RowTemplate.DefaultCellStyle.SelectionBackColor = Color.FromArgb(255, 255, 128);
+            dgvStockMovements.RowTemplate.DefaultCellStyle.SelectionForeColor = Color.Black;
+            dgvStockMovements.Size = new Size(2026, 292);
+            dgvStockMovements.TabIndex = 0;
             // 
             // groupBox10
             // 
             tableLayoutPanel1.SetColumnSpan(groupBox10, 5);
+            groupBox10.Controls.Add(dgwINSTOCK);
             groupBox10.Dock = DockStyle.Fill;
             groupBox10.Location = new Point(3, 324);
             groupBox10.Name = "groupBox10";
@@ -130,6 +181,20 @@
             groupBox10.TabIndex = 10;
             groupBox10.TabStop = false;
             groupBox10.Text = "IN STOCK";
+            // 
+            // dgwINSTOCK
+            // 
+            dgwINSTOCK.AllowUserToAddRows = false;
+            dgwINSTOCK.AllowUserToDeleteRows = false;
+            dgwINSTOCK.BackgroundColor = Color.Black;
+            dgwINSTOCK.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgwINSTOCK.Dock = DockStyle.Fill;
+            dgwINSTOCK.Location = new Point(3, 23);
+            dgwINSTOCK.Name = "dgwINSTOCK";
+            dgwINSTOCK.ReadOnly = true;
+            dgwINSTOCK.RowHeadersWidth = 51;
+            dgwINSTOCK.Size = new Size(2026, 167);
+            dgwINSTOCK.TabIndex = 0;
             // 
             // groupBox9
             // 
@@ -145,8 +210,10 @@
             // cmbPackage
             // 
             cmbPackage.Dock = DockStyle.Fill;
+            cmbPackage.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbPackage.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
             cmbPackage.FormattingEnabled = true;
+            cmbPackage.Items.AddRange(new object[] { "BAG", "BOX", "Reel-10", "Reel-13", "Reel-15", "Reel-5", "Reel-7", "STICK", "STICKbag", "TRAY" });
             cmbPackage.Location = new Point(3, 23);
             cmbPackage.Name = "cmbPackage";
             cmbPackage.Size = new Size(395, 49);
@@ -173,6 +240,7 @@
             txtbQTY.Size = new Size(395, 47);
             txtbQTY.TabIndex = 1;
             txtbQTY.TextAlign = HorizontalAlignment.Center;
+            txtbQTY.KeyDown += txtbQTY_KeyDown;
             // 
             // groupBox7
             // 
@@ -324,12 +392,12 @@
             // 
             dgwAVL.AllowUserToAddRows = false;
             dgwAVL.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle1.BackColor = Color.Black;
-            dataGridViewCellStyle1.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle1.ForeColor = Color.White;
-            dataGridViewCellStyle1.SelectionBackColor = Color.FromArgb(128, 255, 128);
-            dataGridViewCellStyle1.SelectionForeColor = Color.Black;
-            dgwAVL.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.BackColor = Color.Black;
+            dataGridViewCellStyle4.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle4.ForeColor = Color.White;
+            dataGridViewCellStyle4.SelectionBackColor = Color.FromArgb(128, 255, 128);
+            dataGridViewCellStyle4.SelectionForeColor = Color.Black;
+            dgwAVL.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle4;
             dgwAVL.BackgroundColor = SystemColors.ActiveCaptionText;
             dgwAVL.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgwAVL.Dock = DockStyle.Fill;
@@ -337,21 +405,21 @@
             dgwAVL.Location = new Point(3, 23);
             dgwAVL.Name = "dgwAVL";
             dgwAVL.ReadOnly = true;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = Color.Black;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle2.ForeColor = Color.White;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
-            dgwAVL.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = Color.Black;
+            dataGridViewCellStyle5.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle5.ForeColor = Color.White;
+            dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.True;
+            dgwAVL.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
             dgwAVL.RowHeadersWidth = 113;
-            dataGridViewCellStyle3.BackColor = Color.Black;
-            dataGridViewCellStyle3.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle3.ForeColor = Color.White;
-            dataGridViewCellStyle3.SelectionBackColor = Color.FromArgb(128, 255, 128);
-            dataGridViewCellStyle3.SelectionForeColor = Color.Black;
-            dgwAVL.RowsDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle6.BackColor = Color.Black;
+            dataGridViewCellStyle6.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle6.ForeColor = Color.White;
+            dataGridViewCellStyle6.SelectionBackColor = Color.FromArgb(128, 255, 128);
+            dataGridViewCellStyle6.SelectionForeColor = Color.Black;
+            dgwAVL.RowsDefaultCellStyle = dataGridViewCellStyle6;
             dgwAVL.Size = new Size(1209, 122);
             dgwAVL.TabIndex = 0;
             // 
@@ -436,6 +504,10 @@
             WindowState = FormWindowState.Maximized;
             Load += FrmPriorityCount_Load;
             tableLayoutPanel1.ResumeLayout(false);
+            groupBox11.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvStockMovements).EndInit();
+            groupBox10.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgwINSTOCK).EndInit();
             groupBox9.ResumeLayout(false);
             groupBox8.ResumeLayout(false);
             groupBox8.PerformLayout();
@@ -485,5 +557,7 @@
         private DataGridView dgwAVL;
         private GroupBox groupBox4;
         private RichTextBox rtbLog;
+        private DataGridView dgvStockMovements;
+        private DataGridView dgwINSTOCK;
     }
 }
