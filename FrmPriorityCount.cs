@@ -18,7 +18,6 @@ using static Seagull.BarTender.Print.LabelFormat;
 using static WH_Panel.FrmPriorityAPI;
 using Action = System.Action;
 using Exception = System.Exception;
-
 namespace WH_Panel
 {
     public partial class FrmPriorityCount : Form
@@ -33,12 +32,10 @@ namespace WH_Panel
         {
             InitializeComponent();
         }
-
         private void SetupCountedLog()
         {
             dgwCountedLog.Columns.Clear();
             dgwCountedLog.AutoGenerateColumns = false;
-
             // 1. Hardcode columns
             dgwCountedLog.Columns.Add("LOG_IPN", "IPN");
             dgwCountedLog.Columns.Add("UDATE", "Date");
@@ -49,21 +46,16 @@ namespace WH_Panel
             dgwCountedLog.Columns.Add("PACKNAME", "Pack Code");
             dgwCountedLog.Columns.Add("CountDate", "Count Date");
             dgwCountedLog.Columns.Add("UserCounted", "User");
-
             // 2. Set Auto-Fit Logic
             // AllCells ensures it looks at the headers and the new data you just scanned
             dgwCountedLog.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
-
             // 3. Optional: Specific constraints for wider columns
             dgwCountedLog.Columns["SUPCUSTNAME"].MinimumWidth = 120;
             dgwCountedLog.Columns["LOG_IPN"].MinimumWidth = 100;
-
             ApplyDarkThemeToGrid(dgwCountedLog);
-
             // 4. Optimization: Disable resizing for the user to prevent accidental clicks
             dgwCountedLog.AllowUserToResizeColumns = false;
         }
-
         private async void FrmPriorityCount_Load(object sender, EventArgs e)
         {
             // 1. Style the UI immediately
@@ -89,14 +81,11 @@ namespace WH_Panel
                 MessageBox.Show($"Error accessing settings: {ex.Message}", "Init Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-
             // 3. Identify User and Set Permissions
             string currentUsername = GetLoggedUser().ToLower();
             bool isLgtUser = (currentUsername == "lgt");
-
             gbCreateCountDB.Visible = isLgtUser;
             gbAllWhs.Visible = isLgtUser;
-
             // 4. If Authorized, validate credentials and load data
             if (isLgtUser)
             {
@@ -110,12 +99,10 @@ namespace WH_Panel
                 }
             }
         }
-
         private void LoadExistingSnapshots()
         {
             string serverAddress = "DBR3\\SQLEXPRESS";
             string masterConnString = $"Server={serverAddress};Integrated Security=True;Database=master;";
-
             // We only want databases that look like our snapshots: e.g., DGT_2026...
             // The pattern searches for names containing an underscore followed by numbers
             string sqlQuery = @"
@@ -124,7 +111,6 @@ namespace WH_Panel
         WHERE name LIKE '%_202[0-9]%' 
         AND name NOT IN ('master', 'model', 'msdb', 'tempdb')
         ORDER BY create_date DESC";
-
             try
             {
                 using (SqlConnection conn = new SqlConnection(masterConnString))
@@ -142,7 +128,6 @@ namespace WH_Panel
                         }
                     }
                 }
-
                 if (cmbSelectedWH.Items.Count > 0)
                 {
                     cmbSelectedWH.SelectedIndex = 0; // Default to newest
@@ -153,42 +138,33 @@ namespace WH_Panel
                 MessageBox.Show($"Error loading snapshots: {ex.Message}");
             }
         }
-
-
         private async Task LoadWarehouseData()
         {
             // Update this URL if your baseUrl is stored in settings as well
             string url = $"{baseUrl}/WAREHOUSES?$select=WARHSNAME,WARHSDES,WARHS";
-
             using (HttpClient client = new HttpClient())
             {
                 try
                 {
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
                     // Auth using the freshly loaded settings
                     string authInfo = $"{settings.ApiUsername}:{settings.ApiPassword}";
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(authInfo));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
                     HttpResponseMessage response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
-
                     string responseBody = await response.Content.ReadAsStringAsync();
                     var apiResponse = JsonConvert.DeserializeObject<WarehouseApiResponse>(responseBody);
-
                     if (apiResponse?.value != null)
                     {
                         cmbAllWhs.Items.Clear();
                         loadedWareHouses.Clear();
-
                         foreach (var warehouse in apiResponse.value)
                         {
                             cmbAllWhs.Items.Add($"{warehouse.WARHSNAME} - {warehouse.WARHSDES}");
                             loadedWareHouses.Add(warehouse);
                         }
-
                         cmbAllWhs.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
                         cmbAllWhs.AutoCompleteSource = AutoCompleteSource.ListItems;
                         cmbAllWhs.DroppedDown = true;
@@ -200,19 +176,15 @@ namespace WH_Panel
                 }
             }
         }
-
         private string GetLoggedUser() => Environment.UserName;
-
         private void ApplyDarkTheme(Control parent)
         {
             this.BackColor = VSDarkColors.Background;
             this.ForeColor = VSDarkColors.Foreground;
-
             foreach (Control c in parent.Controls)
             {
                 c.BackColor = VSDarkColors.Background;
                 c.ForeColor = VSDarkColors.Foreground;
-
                 if (c is Button btn)
                 {
                     btn.FlatStyle = FlatStyle.Flat;
@@ -230,16 +202,13 @@ namespace WH_Panel
                     cmb.BackColor = VSDarkColors.Accent;
                     cmb.ForeColor = VSDarkColors.Foreground;
                 }
-
                 if (c.HasChildren) ApplyDarkTheme(c);
             }
         }
-
         private void cmbAllWhs_SelectedIndexChanged(object sender, EventArgs e)
         {
             btnCreateCountDB.Text = "Create Count DB for " + cmbAllWhs.SelectedItem.ToString();
         }
-
         private async void btnCreateCountDB_Click(object sender, EventArgs e)
         {
             if (cmbAllWhs.SelectedIndex == -1)
@@ -247,7 +216,6 @@ namespace WH_Panel
                 MessageBox.Show("Please select a warehouse first.");
                 return;
             }
-
             // 1. Setup Variables
             string warehouseName = loadedWareHouses[cmbAllWhs.SelectedIndex].WARHSNAME;
             string dateTimeNow = DateTime.Now.ToString("yyyyMMddHHmm");
@@ -255,30 +223,23 @@ namespace WH_Panel
             string serverAddress = "DBR3\\SQLEXPRESS";
             string masterConnString = $"Server={serverAddress};Integrated Security=True;Database=master;";
             string newDbConnString = $"Server={serverAddress};Integrated Security=True;Database={dbWHName};";
-
             btnCreateCountDB.Enabled = false;
             btnCreateCountDB.Text = "Fetching Priority Data...";
-
             try
             {
                 // STEP 1: Fetch Data from Priority API
                 var subformItems = await FetchPriorityInventoryAsync(warehouseName);
-
                 if (subformItems != null && subformItems.Count > 0)
                 {
                     btnCreateCountDB.Text = "Creating SQL Database...";
-
                     // STEP 2: Create the physical Database on the server
                     CreatePhysicalDatabase(masterConnString, dbWHName);
-
                     // STEP 3: Create the Schema (STOCK, COUNT, AVL) inside the new DB
                     btnCreateCountDB.Text = "Building Tables...";
                     CreateDatabaseSchema(newDbConnString);
-
                     // STEP 4: Bulk Insert the Priority Snapshot into the STOCK table
                     btnCreateCountDB.Text = "Populating STOCK...";
                     await BulkInsertToStockAsync(newDbConnString, subformItems);
-
                     MessageBox.Show($"Success! Database '{dbWHName}' created and populated with {subformItems.Count} items.",
                                     "ITP System", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
@@ -293,29 +254,23 @@ namespace WH_Panel
                 btnCreateCountDB.Text = "Create Count DB for " + cmbAllWhs.SelectedItem?.ToString();
             }
         }
-
         // --- SUB FUNCTIONS ---
-
         private async Task<List<WarehouseBalance>> FetchPriorityInventoryAsync(string whName)
         {
             string url = $"{baseUrl}/WAREHOUSES?$filter=WARHSNAME eq '{whName}'&$expand=WARHSBAL_SUBFORM($select=PARTNAME,PARTDES,TBALANCE;$filter=BALANCE gt 0)";
-
             using (HttpClient client = new HttpClient())
             {
                 client.Timeout = TimeSpan.FromMinutes(5);
                 string authInfo = $"{settings.ApiUsername}:{settings.ApiPassword}";
                 string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(authInfo));
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", credentials);
-
                 var response = await client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
                 string json = await response.Content.ReadAsStringAsync();
                 var apiResponse = JsonConvert.DeserializeObject<WarehouseApiResponse>(json);
-
                 return apiResponse?.value.FirstOrDefault()?.WARHSBAL_SUBFORM;
             }
         }
-
         private void CreatePhysicalDatabase(string masterConn, string dbName)
         {
             using (SqlConnection conn = new SqlConnection(masterConn))
@@ -329,10 +284,6 @@ namespace WH_Panel
                 }
             }
         }
-
-       
-
-
         private void CreateDatabaseSchema(string dbConn)
         {
             using (SqlConnection conn = new SqlConnection(dbConn))
@@ -349,7 +300,6 @@ namespace WH_Panel
                 IsCounted BIT DEFAULT 0,
                 SnapshotDate DATETIME
             );
-
             -- 2. Updated Transactional Count Table (Physical Truth)
             -- Aligned with: Id, IPN, PackageID, ActualQty, CountDate, UserCounted, 
             -- OriginalDoc, PackageType, BookNum, Supplier, PriorityDate
@@ -367,7 +317,6 @@ namespace WH_Panel
                 Supplier NVARCHAR(100) NULL,
                 PriorityDate DATETIME NULL      -- ERP Transaction Timestamp
             );
-
             -- 3. AVL Table (Manufacturer matching)
             IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'AVL')
             CREATE TABLE AVL (
@@ -377,15 +326,12 @@ namespace WH_Panel
                 MPN NVARCHAR(100),
                 Preference INT
             );";
-
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
                     cmd.ExecuteNonQuery();
                 }
             }
         }
-
-
         private async Task BulkInsertToStockAsync(string dbConn, List<WarehouseBalance> items)
         {
             DataTable dt = new DataTable();
@@ -395,12 +341,10 @@ namespace WH_Panel
             dt.Columns.Add("IsInitialized", typeof(bool));
             dt.Columns.Add("IsCounted", typeof(bool));
             dt.Columns.Add("SnapshotDate", typeof(DateTime));
-
             foreach (var item in items)
             {
                 dt.Rows.Add(item.PARTNAME, item.PARTDES, item.TBALANCE, false, false, DateTime.Now);
             }
-
             using (SqlConnection conn = new SqlConnection(dbConn))
             {
                 await conn.OpenAsync();
@@ -413,12 +357,10 @@ namespace WH_Panel
                     bulkCopy.ColumnMappings.Add("IsInitialized", "IsInitialized");
                     bulkCopy.ColumnMappings.Add("IsCounted", "IsCounted");
                     bulkCopy.ColumnMappings.Add("SnapshotDate", "SnapshotDate");
-
                     await bulkCopy.WriteToServerAsync(dt);
                 }
             }
         }
-
         private void btnStockReport_Click(object sender, EventArgs e)
         {
             if (cmbSelectedWH.SelectedItem == null)
@@ -426,21 +368,16 @@ namespace WH_Panel
                 MessageBox.Show("Please select a warehouse snapshot first.");
                 return;
             }
-
             string selectedDb = cmbSelectedWH.SelectedItem.ToString();
             string selectedPrefix = selectedDb.Split('_')[0]; // Extract "DGT" from "DGT_2026..."
             string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-
             // Your provided network path
             string directoryPath = $@"\\dbr1\Data\WareHouse\2025\WHsearcher\";
             string filename = Path.Combine(directoryPath, $"{selectedPrefix}_StockReport_{_fileTimeStamp}.html");
-
             string connectionString = $"Server=DBR3\\SQLEXPRESS;Integrated Security=True;Database={selectedDb};";
-
             try
             {
                 StringBuilder html = new StringBuilder();
-
                 // Basic CSS for a "High Russian" / Professional look
                 html.Append("<html><head><style>");
                 html.Append("body { font-family: Calibri, sans-serif; background-color: #1e1e1e; color: #dcdcdc; padding: 20px; }");
@@ -451,17 +388,13 @@ namespace WH_Panel
                 html.Append("tr:nth-child(even) { background-color: #2a2a2b; }");
                 html.Append("tr:hover { background-color: #3e3e42; }");
                 html.Append("</style></head><body>");
-
                 html.Append($"<h2>Inventory Snapshot: {selectedDb}</h2>");
                 html.Append($"<p>Report Generated: {DateTime.Now:yyyy-MM-dd HH:mm:ss}</p>");
-
                 html.Append("<table><tr><th>IPN</th><th>Description</th><th>Priority Qty</th><th>Initialized</th><th>Counted</th><th>Snapshot Date</th></tr>");
-
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
                     string query = "SELECT IPN, Description, PriorityQty, IsInitialized, IsCounted, SnapshotDate FROM STOCK ORDER BY IPN ASC";
-
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
@@ -478,15 +411,11 @@ namespace WH_Panel
                         }
                     }
                 }
-
                 html.Append("</table></body></html>");
-
                 // Ensure directory exists
                 if (!Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
-
                 // Write file
                 File.WriteAllText(filename, html.ToString(), Encoding.UTF8);
-
                 // Open the report automatically
                 System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(filename) { UseShellExecute = true });
             }
@@ -495,18 +424,13 @@ namespace WH_Panel
                 MessageBox.Show($"Error generating report: {ex.Message}", "Report Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-    
-
         private void btnDeltaReport_Click(object sender, EventArgs e)
         {
             if (cmbSelectedWH.SelectedItem == null) return;
-
             string selectedDb = cmbSelectedWH.SelectedItem.ToString();
             string selectedPrefix = selectedDb.Split('_')[0];
             string connectionString = $"Server=DBR3\\SQLEXPRESS;Integrated Security=True;Database={selectedDb};";
             string filename = Path.Combine($@"\\dbr1\Data\WareHouse\2025\WHsearcher\", $"{selectedPrefix}_DeltaReport_{DateTime.Now:yyyyMMddHHmm}.html");
-
             try
             {
                 int totalIpns = 0;
@@ -514,12 +438,10 @@ namespace WH_Panel
                 int deficitCount = 0;
                 int surplusCount = 0;
                 decimal totalVariance = 0;
-
                 // Segregated StringBuilders
                 StringBuilder deficitRows = new StringBuilder();
                 StringBuilder balancedRows = new StringBuilder();
                 StringBuilder surplusRows = new StringBuilder();
-
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
@@ -532,7 +454,6 @@ namespace WH_Panel
                            STRING_AGG(CAST(ISNULL(ActualQty, 0) AS VARCHAR), ' + ') as CountDetails
                     FROM COUNT GROUP BY IPN
                 ) C ON S.IPN = C.IPN ORDER BY S.IPN";
-
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
@@ -544,10 +465,8 @@ namespace WH_Panel
                             decimal delta = cQty - pQty;
                             string details = reader["CountDetails"]?.ToString() ?? "-";
                             totalVariance += delta;
-
                             string deltaClass = delta > 0 ? "delta-pos" : (delta < 0 ? "delta-neg" : "");
                             string rowHtml = $"<tr><td>{reader["IPN"]}</td><td>{reader["Description"]}</td><td>{pQty:F0}</td><td>{cQty:F0}</td><td class='{deltaClass}'>{delta:F0}</td><td class='detail'>{details}</td></tr>";
-
                             if (delta < 0)
                             {
                                 deficitRows.Append(rowHtml);
@@ -566,7 +485,6 @@ namespace WH_Panel
                         }
                     }
                 }
-
                 StringBuilder html = new StringBuilder();
                 html.Append("<html><head><meta charset='UTF-8'><style>");
                 html.Append("body { font-family: 'Segoe UI', sans-serif; background-color: #1e1e1e; color: #dcdcdc; padding: 20px; }");
@@ -583,7 +501,6 @@ namespace WH_Panel
                 html.Append(".delta-pos { color: #4ec9b0; font-weight: bold; } .delta-neg { color: #f44747; font-weight: bold; }");
                 html.Append(".detail { font-size: 0.85em; color: #858585; font-family: 'Consolas', monospace; }");
                 html.Append("</style>");
-
                 html.Append(@"<script>
         function sortTable(tableId, n) {
           var table = document.getElementById(tableId);
@@ -605,13 +522,11 @@ namespace WH_Panel
           }
         }
         </script></head><body>");
-
                 // 4. Summary & Nav
                 double deficitPercent = totalIpns > 0 ? ((double)deficitCount / totalIpns) * 100 : 0;
                 double matchPercent = totalIpns > 0 ? ((double)perfectMatches / totalIpns) * 100 : 0;
                 double surplusPercent = totalIpns > 0 ? ((double)surplusCount / totalIpns) * 100 : 0;
                 string snapshotDate = selectedDb.Contains('_') ? selectedDb.Split('_')[1] : "Unknown";
-
                 html.Append("<div class='summary-box'>");
                 html.Append($"<h3>Imperium Segregated Report: {selectedPrefix}</h3>");
                 html.Append("<table class='summary-table'>");
@@ -622,22 +537,18 @@ namespace WH_Panel
                 html.Append($"<tr><td>Total Variance:</td><td class='{(totalVariance >= 0 ? "delta-pos" : "delta-neg")}'>{totalVariance:F0}</td></tr>");
                 html.Append($"<tr><td>Snapshot Date:</td><td>{snapshotDate}</td></tr>");
                 html.Append("</table></div>");
-
                 html.Append("<div class='nav-links'>");
                 html.Append("<a href='#deficit'>↓ View Deficits</a><a href='#balanced'>↓ View Balanced</a><a href='#surplus'>↓ View Surplus (Found)</a></div>");
-
                 // 5. Render Sections
                 RenderSection(html, "deficit", "Deficit (Shortages)", "header-deficit", deficitRows);
                 RenderSection(html, "balanced", "Balanced (System Match)", "header-balanced", balancedRows);
                 RenderSection(html, "surplus", "Surplus (Unaccounted/Found Items)", "header-surplus", surplusRows);
-
                 html.Append("</body></html>");
                 File.WriteAllText(filename, html.ToString(), Encoding.UTF8);
                 System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(filename) { UseShellExecute = true });
             }
             catch (Exception ex) { MessageBox.Show($"Report Error: {ex.Message}"); }
         }
-
         private void RenderSection(StringBuilder html, string id, string title, string cssClass, StringBuilder rows)
         {
             html.Append($"<h2 id='{id}' class='section-header {cssClass}'>{title}</h2>");
@@ -654,7 +565,6 @@ namespace WH_Panel
         }
         private async void txtSearchIPN_KeyDown(object sender, KeyEventArgs e)
         {
-
             if (e.KeyCode == Keys.Escape)
             {
                 e.SuppressKeyPress = true;
@@ -663,37 +573,27 @@ namespace WH_Panel
                 dgwAVL.DataSource = null;
                 dgvStockMovements.DataSource = null;
                 dgwINSTOCK.DataSource = null;
-
                 // 2. Now it is safe to manually clear rows/columns if they aren't auto-generated
                 dgwAVL.Rows.Clear();
                 dgvStockMovements.Rows.Clear();
                 dgwINSTOCK.Rows.Clear();
                 lblBalance.Text = "0/0";
-
                 Log("IPN filter cleared.", Color.White);
                 txtSearchIPN.Focus();
                 return;
             }
-
             else if (e.KeyCode == Keys.Enter)
             {
                 e.SuppressKeyPress = true;
                 string inputIPN = txtSearchIPN.Text.Trim().ToUpper();
-
                 if (cmbSelectedWH.SelectedItem == null)
                 {
                     MessageBox.Show("Please select an active Snapshot first.");
                     return;
                 }
-
                 // 1. Fetch AVL data from Priority
                 bool success = await getMFPNSfromPRIORITY(inputIPN);
-
                 getAllMovementsForIPN(inputIPN);
-
-
-
-
                 if (success)
                 {
                     // 2. Prepare for the next scan
@@ -702,38 +602,29 @@ namespace WH_Panel
                 }
             }
         }
-
         private async Task getAllMovementsForIPN(string ipn)
         {
             Log($"Fetching live stock movements for {ipn}...", Color.Cyan);
-
             // We target the LOGPART endpoint using your established pattern
             string logPartUrl = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{ipn}'&$expand=PARTTRANSLAST2_SUBFORM";
-
             try
             {
                 using (HttpClient client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     ApiHelper.AuthenticateClient(client); // Uses your existing Auth logic
-
                     var response = await client.GetAsync(logPartUrl);
                     response.EnsureSuccessStatusCode();
-
                     string json = await response.Content.ReadAsStringAsync();
                     var logPartApiResponse = JsonConvert.DeserializeObject<LogPartApiResponse>(json);
-
                     if (logPartApiResponse.value != null && logPartApiResponse.value.Count > 0)
                     {
                         // Prepare the grid for live display
                         dgvStockMovements.Rows.Clear();
-
                         // Extract and filter the subform data
                         var movements = logPartApiResponse.value[0].PARTTRANSLAST2_SUBFORM
                             .Where(t => t.DOCDES != "קיזוז אוטומטי" && t.TOWARHSNAME != "666")
                             .ToList();
-
-                     
                         foreach (var trans in movements)
                         {
                             int rowIndex = dgvStockMovements.Rows.Add(
@@ -745,11 +636,9 @@ namespace WH_Panel
                                 trans.TQUANT,
                                 ""                // PACKNAME
                             );
-
                             var row = dgvStockMovements.Rows[rowIndex];
                             var qtyCell = row.Cells["TQUANT"];
                             string docNo = trans.LOGDOCNO.ToUpper();
-
                             // Segregate coloring by Document Type
                             if (docNo.StartsWith("GR"))
                             {
@@ -777,9 +666,7 @@ namespace WH_Panel
                                 qtyCell.Style.ForeColor = VSDarkColors.Foreground;
                             }
                         }
-
                         Log($"Displaying {movements.Count} potential reels. Starting background enrichment...", Color.Yellow);
-
                         // Now run your parallel enrichment logic to fetch PACKCODE and BOOKNUM
                         await EnrichLiveGridAsync(ipn);
                     }
@@ -793,26 +680,15 @@ namespace WH_Panel
             {
                 Log($"Movements Load Error: {ex.Message}", Color.Red);
             }
-
-
-
         }
-
-
-
-
-
         private async Task EnrichLiveGridAsync(string partName)
         {
             var rows = dgvStockMovements.Rows.Cast<DataGridViewRow>()
                 .Where(r => r.Cells["LOGDOCNO"].Value != null)
                 .ToList();
-
             if (rows.Count == 0) return;
-
             // --- Start Timing ---
             var sw = System.Diagnostics.Stopwatch.StartNew();
-
             var clients = Enumerable.Range(0, ApiUserPool.Count)
                 .Select(_ =>
                 {
@@ -822,12 +698,10 @@ namespace WH_Panel
                     string user = ApiHelper.AuthenticateClient(c);
                     return (User: user, Client: c);
                 }).ToList();
-
             int maxConcurrencyPerUser = 2;
             var clientSemaphores = clients.ToDictionary(c => c.User, c => new SemaphoreSlim(maxConcurrencyPerUser));
             int userIndex = -1;
             object userLock = new object();
-
             (string User, HttpClient Client) GetNextClient()
             {
                 lock (userLock)
@@ -836,13 +710,11 @@ namespace WH_Panel
                     return clients[userIndex];
                 }
             }
-
             var tasks = rows.Select(async row =>
             {
                 string logDocNo = row.Cells["LOGDOCNO"].Value.ToString();
                 var (usedUser, client) = GetNextClient();
                 var semaphore = clientSemaphores[usedUser];
-
                 await semaphore.WaitAsync();
                 try
                 {
@@ -855,27 +727,21 @@ namespace WH_Panel
                         var s when s.StartsWith("ROB") => $"{baseUrl}/SERIAL?$filter=SERIALNAME eq '{logDocNo}'&$expand=TRANSORDER_K_SUBFORM",
                         _ => $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM"
                     };
-
                     HttpResponseMessage response = await client.GetAsync(url);
                     if (!response.IsSuccessStatusCode) return;
-
                     string body = await response.Content.ReadAsStringAsync();
                     var doc = JsonConvert.DeserializeObject<JObject>(body)?["value"]?.FirstOrDefault();
-
                     if (doc != null)
                     {
                         string uDate = doc["UDATE"]?.ToString();
                         string bookNum = doc["BOOKNUM"]?.ToString()
                                          ?? doc["CDES"]?.ToString()
                                          ?? doc["REFERENCE"]?.ToString();
-
                         string packCode = null;
-
                         var subForm = doc["TRANSORDER_P_SUBFORM"]
                                       ?? doc["TRANSORDER_T_SUBFORM"]
                                       ?? doc["TRANSORDER_D_SUBFORM"]
                                       ?? doc["TRANSORDER_K_SUBFORM"];
-
                         if (subForm != null)
                         {
                             var line = subForm.FirstOrDefault(l => l["PARTNAME"]?.ToString() == partName);
@@ -888,7 +754,6 @@ namespace WH_Panel
                                 }
                             }
                         }
-
                         this.Invoke((Action)(() =>
                         {
                             row.Cells["UDATE"].Value = uDate;
@@ -906,25 +771,17 @@ namespace WH_Panel
                     semaphore.Release();
                 }
             });
-
-
             // AT THE END OF EnrichLiveGridAsync
             await Task.WhenAll(tasks);
             sw.Stop();
-
             // Now that we ARE sure data is there, calculate stock
             this.Invoke((Action)(() =>
             {
                 dgvStockMovements.Sort(dgvStockMovements.Columns["UDATE"], ListSortDirection.Descending);
                 PopulateInStockByLogic(); // Call it here!
             }));
-
-
             Log($"Reel data enrichment complete in {sw.ElapsedMilliseconds} ms.", Color.LimeGreen);
         }
-
-
-
         private async Task PopulateInStockByLogic()
         {
             // 1. Ensure the IN STOCK grid has a skeleton
@@ -940,12 +797,9 @@ namespace WH_Panel
                 dgwINSTOCK.Columns.Add("UserCounted", "User");
                 ApplyDarkThemeToGrid(dgwINSTOCK);
             }
-
             dgwINSTOCK.Rows.Clear();
-
             // CRITICAL: Clear the memory state before rebuilding
             currentIPNState.Clear();
-
             // 2. Extract movements
             var rows = dgvStockMovements.Rows.Cast<DataGridViewRow>()
                 .Where(r => r.Cells["TQUANT"].Value != null && !string.IsNullOrEmpty(r.Cells["TQUANT"].Value.ToString()))
@@ -959,20 +813,16 @@ namespace WH_Panel
                 })
                 .Where(x => x.Qty > 0)
                 .ToList();
-
             // 3. Heuristic Reconciliation
             var incoming = rows.Where(r => r.DocNo.StartsWith("GR")).ToList();
             var outgoing = rows.Where(r => r.DocNo.StartsWith("ROB") || r.DocNo.StartsWith("SH") || r.DocNo.StartsWith("WR")).ToList();
-
             var remainingInStock = incoming.OrderBy(r => r.Date).ToList();
             var unmatchedOut = outgoing.OrderBy(r => r.Date).ToList();
-
             foreach (var outMove in unmatchedOut)
             {
                 var match = remainingInStock.FirstOrDefault(i => i.Qty == outMove.Qty);
                 if (match != null) remainingInStock.Remove(match);
             }
-
             // 4. POPULATE THE DICTIONARY (State Management)
             // We do this BEFORE the SQL sync so the dictionary exists to be updated
             foreach (var item in remainingInStock)
@@ -989,12 +839,10 @@ namespace WH_Panel
                     CountDate = null
                 };
             }
-
             // 5. SQL SYNC: Update the dictionary with physical truth
             string currentIPN = txtSearchIPN.Text.Trim().ToUpper();
             string dbName = cmbSelectedWH.SelectedItem?.ToString() ?? "";
             string connString = $"Server=DBR3\\SQLEXPRESS;Integrated Security=True;Database={dbName};";
-
             if (!string.IsNullOrEmpty(dbName) && currentIPNState.Count > 0)
             {
                 try
@@ -1023,19 +871,15 @@ namespace WH_Panel
                 }
                 catch (Exception ex) { Log($"SQL Sync Error: {ex.Message}", Color.Red); }
             }
-
             // 6. Refresh UI from Dictionary
             // Use the function we defined earlier to rebuild the grid
             RefreshInStockGrid();
-
             Log($"Heuristic reconciliation complete: {currentIPNState.Count} active reels in memory.", Color.Yellow);
         }
-
         private void InitializeMovementsGrid()
         {
             dgvStockMovements.Columns.Clear();
             dgvStockMovements.AutoGenerateColumns = false;
-
             // Define the columns to match your legacy logic
             dgvStockMovements.Columns.Add(new DataGridViewTextBoxColumn { Name = "UDATE", HeaderText = "Date", Width = 110 });
             dgvStockMovements.Columns.Add(new DataGridViewTextBoxColumn { Name = "LOGDOCNO", HeaderText = "Doc No", Width = 100 });
@@ -1044,54 +888,41 @@ namespace WH_Panel
             dgvStockMovements.Columns.Add(new DataGridViewTextBoxColumn { Name = "BOOKNUM", HeaderText = "Client Doc", Width = 100 });
             dgvStockMovements.Columns.Add(new DataGridViewTextBoxColumn { Name = "TQUANT", HeaderText = "Qty", Width = 80 });
             dgvStockMovements.Columns.Add(new DataGridViewTextBoxColumn { Name = "PACKNAME", HeaderText = "Pack Code", Width = 120 });
-
             // Apply your Dark Mode styling immediately
             ApplyDarkThemeToGrid(dgvStockMovements);
         }
-
         private async Task<bool> getMFPNSfromPRIORITY(string ipn)
         {
             string url = $"{baseUrl}/PART?$filter=PARTNAME eq '{ipn}'&$expand=PARTMNF_SUBFORM($select=MNFPARTNAME,MNFPARTDES,MNFNAME)";
-
             Log($"Querying Priority AVL for: {ipn}...", Color.Cyan);
-
             try
             {
                 using (HttpClient client = new HttpClient())
                 {
                     client.Timeout = TimeSpan.FromSeconds(30);
-
                     string authInfo = $"{settings.ApiUsername}:{settings.ApiPassword}";
                     string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(authInfo));
                     client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", credentials);
-
                     var response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
                     string json = await response.Content.ReadAsStringAsync();
-
                     var partData = JsonConvert.DeserializeObject<PartApiResponse>(json);
-
                     if (partData?.value != null && partData.value.Count > 0)
                     {
                         var avlList = partData.value[0].PARTMNF_SUBFORM;
                         int avlCount = avlList?.Count ?? 0;
-
                         fullAvlList = partData.value[0].PARTMNF_SUBFORM; // Save the full list here
                         // 1. Bind Data
                         dgwAVL.DataSource = avlList;
-
                         // 2. Apply VS Dark Mode Styling
                         ApplyDarkThemeToGrid(dgwAVL);
-
                         // 3. Header Text & Autosizing
                         if (dgwAVL.Columns["MNFPARTNAME"] != null) dgwAVL.Columns["MNFPARTNAME"].HeaderText = "MFPN";
                         if (dgwAVL.Columns["MNFNAME"] != null) dgwAVL.Columns["MNFNAME"].HeaderText = "Manufacturer";
                         if (dgwAVL.Columns["MNFPARTDES"] != null) dgwAVL.Columns["MNFPARTDES"].HeaderText = "MFPN Description";
-
                         dgwAVL.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
                         if (dgwAVL.Columns.Count > 0)
                             dgwAVL.Columns[dgwAVL.Columns.Count - 1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-
                         Log($"SUCCESS: Found {avlCount} Authorized Vendors for {ipn}.", Color.LimeGreen);
                         return true;
                     }
@@ -1110,7 +941,6 @@ namespace WH_Panel
                 return false;
             }
         }
-
         // --- Helper for Grid Styling ---
         private void ApplyDarkThemeToGrid(DataGridView dgv)
         {
@@ -1118,19 +948,16 @@ namespace WH_Panel
             dgv.BackgroundColor = Color.FromArgb(30, 30, 30);
             dgv.ForeColor = Color.FromArgb(220, 220, 220);
             dgv.GridColor = Color.FromArgb(60, 60, 60);
-
             // Row Styles
             dgv.DefaultCellStyle.BackColor = Color.FromArgb(37, 37, 38);
             dgv.DefaultCellStyle.ForeColor = Color.FromArgb(220, 220, 220);
             dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(38, 79, 120);
             dgv.DefaultCellStyle.SelectionForeColor = Color.White;
-
             // Header Styles
             dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(45, 45, 48);
             dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(86, 156, 214); // Light Blue
             dgv.ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(45, 45, 48);
             dgv.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
-
             dgv.RowHeadersVisible = true; // Cleaner look for lists
             dgv.BorderStyle = BorderStyle.None;
             dgv.SelectionMode = DataGridViewSelectionMode.CellSelect;
@@ -1138,8 +965,6 @@ namespace WH_Panel
             dgv.ReadOnly = true;
             dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
         }
-
-
         private void SetupTextBoxStyles(params TextBox[] textBoxes)
         {
             foreach (var tb in textBoxes)
@@ -1147,13 +972,11 @@ namespace WH_Panel
                 // Set initial state
                 tb.BackColor = VSDarkColors.Background;
                 tb.ForeColor = VSDarkColors.Foreground;
-
                 tb.Enter += (s, e) =>
                 {
                     tb.BackColor = VSDarkColors.FocusBackground;
                     tb.ForeColor = VSDarkColors.FocusForeground;
                 };
-
                 tb.Leave += (s, e) =>
                 {
                     tb.BackColor = VSDarkColors.Background;
@@ -1161,9 +984,6 @@ namespace WH_Panel
                 };
             }
         }
-
-
-
         private void txtbMFPN_KeyDown(object sender, KeyEventArgs e)
         {
             // --- ESCAPE KEY LOGIC ---
@@ -1171,34 +991,27 @@ namespace WH_Panel
             {
                 e.SuppressKeyPress = true;
                 txtbMFPN.Clear();
-
                 // Restore the full list to the grid
                 dgwAVL.DataSource = null; // Reset binding
                 dgwAVL.DataSource = fullAvlList;
-
                 Log("MFPN filter cleared. Full AVL list restored.", Color.White);
                 txtbMFPN.Focus();
                 return;
             }
-
             // --- ENTER KEY LOGIC ---
             if (e.KeyCode == Keys.Enter)
             {
                 e.SuppressKeyPress = true;
                 string scannedMFPN = txtbMFPN.Text.Trim().ToUpper();
-
                 if (string.IsNullOrEmpty(scannedMFPN)) return;
-
                 if (fullAvlList == null || fullAvlList.Count == 0)
                 {
                     Log("WARNING: No AVL data loaded. Please scan an IPN first.", Color.Orange);
                     txtSearchIPN.Focus();
                     return;
                 }
-
                 // Use the fullAvlList for filtering so we always check the original data
                 var filteredMatch = fullAvlList.Where(x => x.MNFPARTNAME.ToUpper().Equals(scannedMFPN)).ToList();
-
                 if (filteredMatch.Count == 1)
                 {
                     dgwAVL.DataSource = filteredMatch;
@@ -1218,7 +1031,6 @@ namespace WH_Panel
                 }
             }
         }
-
         private void Log(string message, Color color)
         {
             if (rtbLog.InvokeRequired)
@@ -1226,32 +1038,26 @@ namespace WH_Panel
                 rtbLog.Invoke(new Action(() => Log(message, color)));
                 return;
             }
-
             rtbLog.SelectionStart = rtbLog.TextLength;
             rtbLog.SelectionLength = 0;
             rtbLog.SelectionColor = color;
-
             string timestamp = DateTime.Now.ToString("HH:mm:ss");
             rtbLog.AppendText($"[{timestamp}] {message}{Environment.NewLine}");
             rtbLog.ScrollToCaret();
         }
-
         private void UpdateBalanceLabel()
         {
             decimal totalCalculatedInStock = 0;
             decimal totalPhysicallyCounted = 0;
-
             foreach (DataGridViewRow row in dgwINSTOCK.Rows)
             {
                 if (decimal.TryParse(row.Cells["TQUANT"].Value?.ToString(), out decimal qty))
                 {
                     totalCalculatedInStock += qty;
-
                     // DATA-DRIVEN FLAG: Check if the audit fields are populated
                     bool isCounted = row.Cells["CountDate"].Value != null &&
                                      !string.IsNullOrEmpty(row.Cells["CountDate"].Value.ToString()) &&
                                      row.Cells["UserCounted"].Value != null;
-
                     if (isCounted)
                     {
                         totalPhysicallyCounted += qty;
@@ -1264,27 +1070,22 @@ namespace WH_Panel
                     }
                 }
             }
-
             lblBalance.Text = $"{totalPhysicallyCounted:N0} / {totalCalculatedInStock:N0}";
-
             if (totalPhysicallyCounted == totalCalculatedInStock && totalCalculatedInStock > 0)
             {
                 lblBalance.ForeColor = Color.LimeGreen;
             }
         }
-
         private async Task LoadAndSyncState(string ipn, List<ReelState> priorityReels)
         {
             currentIPNState.Clear();
             string dbName = cmbSelectedWH.SelectedItem.ToString();
             string connString = $"Server=DBR3\\SQLEXPRESS;Integrated Security=True;Database={dbName};";
-
             // 1. Initialize dictionary with unique DocNo from Priority
             foreach (var reel in priorityReels)
             {
                 currentIPNState[reel.DocNo] = reel;
             }
-
             // 2. Cross-reference with your SQL COUNT table using DocNo
             using (SqlConnection conn = new SqlConnection(connString))
             {
@@ -1308,7 +1109,6 @@ namespace WH_Panel
                     }
                 }
             }
-
             RefreshInStockGrid();
         }
         private async void ProcessCount(decimal scannedQty, string packType)
@@ -1318,9 +1118,7 @@ namespace WH_Panel
                 .Where(r => r.Qty == scannedQty && !r.IsCounted)
                 .OrderBy(r => r.PriorityDate)
                 .ToList();
-
             ReelState targetReel = null;
-
             if (potentialMatches.Count == 0)
             {
                 // Check if the quantity was already counted to give a specific warning
@@ -1328,7 +1126,6 @@ namespace WH_Panel
                 string msg = alreadyCounted
                     ? $"Quantity {scannedQty} has already been counted. Check for duplicate labels."
                     : $"No records found for {scannedQty} pcs.";
-
                 Log(msg, Color.Red);
                 return;
             }
@@ -1342,17 +1139,13 @@ namespace WH_Panel
                 targetReel = ShowReelSelectionDialog(potentialMatches);
                 if (targetReel == null) return; // User cancelled
             }
-
             // 3. Final Verification and Save
             targetReel.User = Environment.UserName;
             targetReel.CountDate = DateTime.Now;
-
             await SaveToSql(targetReel, packType);
-
             RefreshInStockGrid();
             UpdateBalanceLabel();
         }
-
         private ReelState ShowReelSelectionDialog(List<ReelState> matches)
         {
             using (Form selectionForm = new Form())
@@ -1363,7 +1156,6 @@ namespace WH_Panel
                 selectionForm.StartPosition = FormStartPosition.CenterParent;
                 selectionForm.BackColor = Color.FromArgb(30, 30, 30); // Dark theme match
                 selectionForm.ForeColor = Color.White;
-
                 Label lblHeader = new Label()
                 {
                     Text = $"Select the correct record for Qty: {matches[0].Qty:N0}",
@@ -1371,7 +1163,6 @@ namespace WH_Panel
                     Height = 30,
                     Font = new Font("Segoe UI", 10, FontStyle.Bold)
                 };
-
                 ListBox lbChoices = new ListBox()
                 {
                     Dock = DockStyle.Fill,
@@ -1379,14 +1170,12 @@ namespace WH_Panel
                     ForeColor = Color.White,
                     Font = new Font("Consolas", 10)
                 };
-
                 // Populate with identifying metadata
                 foreach (var m in matches)
                 {
                     string display = $"{m.DocNo} | Date: {m.PriorityDate:yyyy-MM-dd} | Source: {m.Supplier}";
                     lbChoices.Items.Add(display);
                 }
-
                 Button btnSelect = new Button()
                 {
                     Text = "Confirm Selection (Enter)",
@@ -1395,7 +1184,6 @@ namespace WH_Panel
                     FlatStyle = FlatStyle.Flat,
                     BackColor = Color.DarkSlateBlue
                 };
-
                 // Map the selection back to the object
                 ReelState selectedReel = null;
                 btnSelect.Click += (s, e) =>
@@ -1406,15 +1194,12 @@ namespace WH_Panel
                         selectionForm.DialogResult = DialogResult.OK;
                     }
                 };
-
                 // Keyboard support for speed
                 selectionForm.AcceptButton = btnSelect;
                 lbChoices.KeyDown += (s, e) => { if (e.KeyCode == Keys.Enter) btnSelect.PerformClick(); };
-
                 selectionForm.Controls.Add(lbChoices);
                 selectionForm.Controls.Add(lblHeader);
                 selectionForm.Controls.Add(btnSelect);
-
                 if (selectionForm.ShowDialog() == DialogResult.OK)
                 {
                     return selectedReel;
@@ -1422,21 +1207,16 @@ namespace WH_Panel
                 return null;
             }
         }
-
-
         private async Task SaveToSql(ReelState reel, string userPackageType)
         {
             // Database name is dynamic based on your selected warehouse snapshot
             string dbName = cmbSelectedWH.SelectedItem.ToString();
             string connString = $"Server=DBR3\\SQLEXPRESS;Integrated Security=True;Database={dbName};";
-
             try
             {
                 using (SqlConnection conn = new SqlConnection(connString))
                 {
                     await conn.OpenAsync();
-
-         
                     // Inside SaveToSql - Change the logic to be "Insert Only" for counts
                     string sql = @"
                         IF EXISTS (SELECT 1 FROM [COUNT] WHERE OriginalDoc = @doc)
@@ -1449,31 +1229,25 @@ namespace WH_Panel
                             INSERT INTO [COUNT] (IPN, PackageID, ActualQty, CountDate, UserCounted, OriginalDoc, BookNum, Supplier, PackageType, PriorityDate)
                             VALUES (@ipn, @pkg, @qty, @cDate, @user, @doc, @book, @supp, @pType, @pDate)
                         END";
-
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
                     {
                         // Core Identification
                         cmd.Parameters.AddWithValue("@ipn", txtSearchIPN.Text.Trim().ToUpper());
                         cmd.Parameters.AddWithValue("@doc", reel.DocNo); // Primary unique link
                         cmd.Parameters.AddWithValue("@pkg", reel.PackageID ?? "N/A");
-
                         // Count Data
                         cmd.Parameters.AddWithValue("@qty", reel.Qty);
                         cmd.Parameters.AddWithValue("@cDate", reel.CountDate ?? DateTime.Now);
                         cmd.Parameters.AddWithValue("@user", reel.User); // Environment.UserName
                         cmd.Parameters.AddWithValue("@pType", userPackageType);
-
                         // Priority Metadata for Audit Trail
                         cmd.Parameters.AddWithValue("@book", reel.BookNum ?? (object)DBNull.Value);
                         cmd.Parameters.AddWithValue("@supp", reel.Supplier ?? (object)DBNull.Value);
                         cmd.Parameters.AddWithValue("@pDate", reel.PriorityDate);
-
                         await cmd.ExecuteNonQueryAsync();
                     }
                 }
             }
-
-
             catch (Exception ex)
             {
                 Log($"SQL Save Error: {ex.Message}", Color.Red);
@@ -1484,10 +1258,8 @@ namespace WH_Panel
         {
             // 1. Prevent UI flickering during bulk updates
             dgwINSTOCK.Rows.Clear();
-
             // 2. Iterate through the dictionary values (ordered by date for operator convenience)
             var sortedReels = currentIPNState.Values.OrderBy(r => r.PriorityDate).ToList();
-
             foreach (var reel in sortedReels)
             {
                 int rowIndex = dgwINSTOCK.Rows.Add(
@@ -1500,7 +1272,6 @@ namespace WH_Panel
                     reel.CountDate?.ToString("yyyy-MM-dd HH:mm") ?? "", // Data-driven flag
                     reel.User ?? ""                                    // Data-driven flag
                 );
-
                 // 3. Apply visual styling based on the data state
                 if (reel.IsCounted)
                 {
@@ -1508,22 +1279,16 @@ namespace WH_Panel
                     dgwINSTOCK.Rows[rowIndex].DefaultCellStyle.ForeColor = Color.White;
                 }
             }
-
             // 4. Update the Balance Label once the grid is refreshed
             UpdateBalanceLabel();
         }
-
-
-
         private void AddRowToCountedLog(DataGridViewRow sourceRow, string ipn)
         {
             // 1. Insert blank row at top (returns void)
             dgwCountedLog.Rows.Insert(0, 1);
             DataGridViewRow newRow = dgwCountedLog.Rows[0];
-
             // 2. Set the IPN in the first cell (Index 0)
             newRow.Cells[0].Value = ipn;
-
             // 3. Copy every cell from the sourceRow into the log, offset by 1
             // This handles the copy-paste perfectly regardless of column names
             for (int i = 0; i < sourceRow.Cells.Count; i++)
@@ -1531,36 +1296,28 @@ namespace WH_Panel
                 // source index i maps to log index i + 1
                 newRow.Cells[i + 1].Value = sourceRow.Cells[i].Value;
             }
-
             // 4. Styling (Forest Green for verified items)
             newRow.DefaultCellStyle.BackColor = Color.FromArgb(45, 65, 45);
             newRow.DefaultCellStyle.ForeColor = Color.White;
-
             // 5. Ensure the latest scan is visible at the top
             if (dgwCountedLog.Rows.Count > 0)
                 dgwCountedLog.FirstDisplayedScrollingRowIndex = 0;
         }
-
         private async void txtbQTY_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
                 e.SuppressKeyPress = true;
-
                 // 1. Transactional Input (Int for clean inventory tracking)
                 if (!int.TryParse(txtbQTY.Text.Trim(), out int scannedQty)) return;
-
                 string operatorPackageSelection = cmbPackage.Text;
                 string currentIPN = txtSearchIPN.Text.Trim().ToUpper();
-
                 // 2. Locate the specific match in memory
                 var potentialMatches = currentIPNState.Values
                     .Where(r => r.Qty == scannedQty && !r.IsCounted)
                     .OrderBy(r => r.PriorityDate)
                     .ToList();
-
                 ReelState targetReel = null;
-
                 // 3. Match Identification
                 if (potentialMatches.Count == 0)
                 {
@@ -1568,7 +1325,6 @@ namespace WH_Panel
                     Log(alreadyDone
                         ? $"Qty {scannedQty} already verified for this IPN."
                         : $"!!! UNKNOWN REEL !!! No record found for Qty: {scannedQty}.", Color.Red);
-
                     txtbQTY.Clear();
                     return;
                 }
@@ -1582,7 +1338,6 @@ namespace WH_Panel
                     targetReel = ShowReelSelectionDialog(potentialMatches);
                     if (targetReel == null) return;
                 }
-
                 // --- RE-INTEGRATED PACKAGING VALIDATION ---
                 // 4. Validation: Packaging Type Check
                 if (targetReel.PackageID != operatorPackageSelection)
@@ -1592,49 +1347,39 @@ namespace WH_Panel
                                     $"Your current selection is: {operatorPackageSelection}.\n\n" +
                                     $"Please correct the dropdown to match the system record.",
                                     "Packaging Mismatch", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
                     // Auto-correct the dropdown to help the user and reset focus
                     cmbPackage.SelectedItem = targetReel.PackageID;
                     txtbQTY.Clear();
                     txtbQTY.Focus();
                     return; // Block save until user confirms correction
                 }
-
                 // 5. Verification & Audit Trail
                 targetReel.User = Environment.UserName;
                 targetReel.CountDate = DateTime.Now;
-
                 try
                 {
                     // Commit individual transaction to SQL
                     await SaveToSql(targetReel, operatorPackageSelection);
-
                     // 6. Update UI for the current item
                     RefreshInStockGrid();
                     UpdateBalanceLabel();
-
                     //// 7. Push to the Persistent Session Log (LIFO)
                     //var newlyCountedRow = dgwINSTOCK.Rows.Cast<DataGridViewRow>()
                     //    .FirstOrDefault(r => r.Cells["LOGDOCNO"].Value?.ToString() == targetReel.DocNo);
-
                     //if (newlyCountedRow != null)
                     //{
                     //    AddRowToCountedLog(newlyCountedRow);
                     //}
-
                     // Find the row we just updated to clone it into the persistent log
                     var rowToLog = dgwINSTOCK.Rows.Cast<DataGridViewRow>()
                         .FirstOrDefault(r => r.Cells["LOGDOCNO"].Value?.ToString() == targetReel.DocNo);
-
                     if (rowToLog != null)
                     {
                         // Pass BOTH the row and the current IPN string
                         string currentIPNtouseForLog = txtSearchIPN.Text.Trim().ToUpper();
                         AddRowToCountedLog(rowToLog, currentIPNtouseForLog);
                     }
-
                     Log($"VERIFIED: {scannedQty} pcs (Doc: {targetReel.DocNo})", Color.LimeGreen);
-
                     // 8. Reset inputs only - ready for next reel
                     ResetSessionForNextIPN();
                 }
@@ -1650,44 +1395,35 @@ namespace WH_Panel
         {
             // 1. Clear Memory State
             currentIPNState.Clear();
-
             // 2. Clear all TextBoxes
             txtSearchIPN.Clear();
             txtbQTY.Clear();
             txtbMFPN.Clear();
             // Clear any other specific info boxes you might have (e.g., lblMFPNInfo)
-
             // 3. Reset DataGridViews
             // Safety check: if bound to DataSource, set to null first
             dgwAVL.DataSource = null;
             dgwAVL.Rows.Clear();
-
             dgvStockMovements.DataSource = null;
             dgvStockMovements.Rows.Clear();
-
             dgwINSTOCK.DataSource = null;
             dgwINSTOCK.Rows.Clear();
-
             // 4. Reset Status Labels
             lblBalance.Text = "0 / 0";
             lblBalance.ForeColor = Color.White;
-
             // 5. Final UI Action
             Log("Session reset. Ready for next IPN scan.", Color.Gray);
             txtSearchIPN.Focus();
         }
-
         public static class VSDarkColors
         {
             public static Color Background = Color.FromArgb(30, 30, 30);
             public static Color Foreground = Color.FromArgb(220, 220, 220);
             public static Color Accent = Color.FromArgb(45, 45, 48);
             public static Color Border = Color.FromArgb(63, 63, 70);
-
             // New Focus Colors
             public static Color FocusBackground = Color.LightGreen;
             public static Color FocusForeground = Color.Black;
         }
-
     }
 }
