@@ -1076,76 +1076,7 @@ namespace WH_Panel
                 lblBalance.ForeColor = Color.LimeGreen;
             }
         }
-        private async Task LoadAndSyncState(string ipn, List<ReelState> priorityReels)
-        {
-            currentIPNState.Clear();
-            string dbName = cmbSelectedWH.SelectedItem.ToString();
-            string connString = $"Server=DBR3\\SQLEXPRESS;Integrated Security=True;Database={dbName};";
-            // 1. Initialize dictionary with unique DocNo from Priority
-            foreach (var reel in priorityReels)
-            {
-                currentIPNState[reel.DocNo] = reel;
-            }
-            // 2. Cross-reference with your SQL COUNT table using DocNo
-            using (SqlConnection conn = new SqlConnection(connString))
-            {
-                await conn.OpenAsync();
-                // We match on OriginalDoc (which stores the DocNo)
-                string sql = "SELECT OriginalDoc, UserCounted, CountDate FROM [COUNT] WHERE IPN = @ipn";
-                using (SqlCommand cmd = new SqlCommand(sql, conn))
-                {
-                    cmd.Parameters.AddWithValue("@ipn", ipn);
-                    using (var reader = await cmd.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            string docKey = reader["OriginalDoc"].ToString();
-                            if (currentIPNState.ContainsKey(docKey))
-                            {
-                                currentIPNState[docKey].User = reader["UserCounted"].ToString();
-                                currentIPNState[docKey].CountDate = Convert.ToDateTime(reader["CountDate"]);
-                            }
-                        }
-                    }
-                }
-            }
-            RefreshInStockGrid();
-        }
-        private async void ProcessCount(decimal scannedQty, string packType)
-        {
-            // 1. Find all uncounted reels with this exact quantity
-            var potentialMatches = currentIPNState.Values
-                .Where(r => r.Qty == scannedQty && !r.IsCounted)
-                .OrderBy(r => r.PriorityDate)
-                .ToList();
-            ReelState targetReel = null;
-            if (potentialMatches.Count == 0)
-            {
-                // Check if the quantity was already counted to give a specific warning
-                bool alreadyCounted = currentIPNState.Values.Any(r => r.Qty == scannedQty && r.IsCounted);
-                string msg = alreadyCounted
-                    ? $"Quantity {scannedQty} has already been counted. Check for duplicate labels."
-                    : $"No records found for {scannedQty} pcs.";
-                Log(msg, Color.Red);
-                return;
-            }
-            else if (potentialMatches.Count == 1)
-            {
-                targetReel = potentialMatches[0];
-            }
-            else
-            {
-                // 2. Ambiguity: Multiple reels with same Qty. Let the user choose.
-                targetReel = ShowReelSelectionDialog(potentialMatches);
-                if (targetReel == null) return; // User cancelled
-            }
-            // 3. Final Verification and Save
-            targetReel.User = Environment.UserName;
-            targetReel.CountDate = DateTime.Now;
-            await SaveToSql(targetReel, packType);
-            RefreshInStockGrid();
-            UpdateBalanceLabel();
-        }
+       
         private ReelState ShowReelSelectionDialog(List<ReelState> matches)
         {
             using (Form selectionForm = new Form())
@@ -1207,53 +1138,109 @@ namespace WH_Panel
                 return null;
             }
         }
-        private async Task SaveToSql(ReelState reel, string userPackageType)
+        //private async Task SaveToSql(ReelState reel, string userPackageType)
+        //{
+        //    // Database name is dynamic based on your selected warehouse snapshot
+        //    string dbName = cmbSelectedWH.SelectedItem.ToString();
+        //    string connString = $"Server=DBR3\\SQLEXPRESS;Integrated Security=True;Database={dbName};";
+        //    try
+        //    {
+        //        using (SqlConnection conn = new SqlConnection(connString))
+        //        {
+        //            await conn.OpenAsync();
+        //            // Inside SaveToSql - Change the logic to be "Insert Only" for counts
+        //            string sql = @"
+        //                IF EXISTS (SELECT 1 FROM [COUNT] WHERE OriginalDoc = @doc)
+        //                BEGIN
+        //                    -- Throw an error back to C# to be caught in the catch block
+        //                    RAISERROR('This specific Document (DocNo) has already been recorded in the count.', 16, 1);
+        //                END
+        //                ELSE
+        //                BEGIN
+        //                    INSERT INTO [COUNT] (IPN, PackageID, ActualQty, CountDate, UserCounted, OriginalDoc, BookNum, Supplier, PackageType, PriorityDate)
+        //                    VALUES (@ipn, @pkg, @qty, @cDate, @user, @doc, @book, @supp, @pType, @pDate)
+        //                END";
+        //            using (SqlCommand cmd = new SqlCommand(sql, conn))
+        //            {
+        //                // Core Identification
+        //                cmd.Parameters.AddWithValue("@ipn", txtSearchIPN.Text.Trim().ToUpper());
+        //                cmd.Parameters.AddWithValue("@doc", reel.DocNo); // Primary unique link
+        //                cmd.Parameters.AddWithValue("@pkg", reel.PackageID ?? "N/A");
+        //                // Count Data
+        //                cmd.Parameters.AddWithValue("@qty", reel.Qty);
+        //                cmd.Parameters.AddWithValue("@cDate", reel.CountDate ?? DateTime.Now);
+        //                cmd.Parameters.AddWithValue("@user", reel.User); // Environment.UserName
+        //                cmd.Parameters.AddWithValue("@pType", userPackageType);
+        //                // Priority Metadata for Audit Trail
+        //                cmd.Parameters.AddWithValue("@book", reel.BookNum ?? (object)DBNull.Value);
+        //                cmd.Parameters.AddWithValue("@supp", reel.Supplier ?? (object)DBNull.Value);
+        //                cmd.Parameters.AddWithValue("@pDate", reel.PriorityDate);
+        //                await cmd.ExecuteNonQueryAsync();
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Log($"SQL Save Error: {ex.Message}", Color.Red);
+        //        // Throw or handle as needed for your industrial environment
+        //    }
+        //}
+
+        private async Task<bool> SaveToSql(ReelState reel, string userPackageType)
         {
-            // Database name is dynamic based on your selected warehouse snapshot
             string dbName = cmbSelectedWH.SelectedItem.ToString();
             string connString = $"Server=DBR3\\SQLEXPRESS;Integrated Security=True;Database={dbName};";
+
             try
             {
                 using (SqlConnection conn = new SqlConnection(connString))
                 {
                     await conn.OpenAsync();
-                    // Inside SaveToSql - Change the logic to be "Insert Only" for counts
                     string sql = @"
-                        IF EXISTS (SELECT 1 FROM [COUNT] WHERE OriginalDoc = @doc)
-                        BEGIN
-                            -- Throw an error back to C# to be caught in the catch block
-                            RAISERROR('This specific Document (DocNo) has already been recorded in the count.', 16, 1);
-                        END
-                        ELSE
-                        BEGIN
-                            INSERT INTO [COUNT] (IPN, PackageID, ActualQty, CountDate, UserCounted, OriginalDoc, BookNum, Supplier, PackageType, PriorityDate)
-                            VALUES (@ipn, @pkg, @qty, @cDate, @user, @doc, @book, @supp, @pType, @pDate)
-                        END";
+                IF EXISTS (SELECT 1 FROM [COUNT] WHERE OriginalDoc = @doc)
+                BEGIN
+                    RAISERROR('This specific Document (DocNo) [%s] has already been recorded in the count.', 16, 1, @doc);
+                END
+                ELSE
+                BEGIN
+                    INSERT INTO [COUNT] (IPN, PackageID, ActualQty, CountDate, UserCounted, OriginalDoc, BookNum, Supplier, PackageType, PriorityDate)
+                    VALUES (@ipn, @pkg, @qty, @cDate, @user, @doc, @book, @supp, @pType, @pDate)
+                END";
+
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
                     {
-                        // Core Identification
                         cmd.Parameters.AddWithValue("@ipn", txtSearchIPN.Text.Trim().ToUpper());
-                        cmd.Parameters.AddWithValue("@doc", reel.DocNo); // Primary unique link
+                        cmd.Parameters.AddWithValue("@doc", reel.DocNo);
                         cmd.Parameters.AddWithValue("@pkg", reel.PackageID ?? "N/A");
-                        // Count Data
                         cmd.Parameters.AddWithValue("@qty", reel.Qty);
                         cmd.Parameters.AddWithValue("@cDate", reel.CountDate ?? DateTime.Now);
-                        cmd.Parameters.AddWithValue("@user", reel.User); // Environment.UserName
+                        cmd.Parameters.AddWithValue("@user", Environment.UserName);
                         cmd.Parameters.AddWithValue("@pType", userPackageType);
-                        // Priority Metadata for Audit Trail
                         cmd.Parameters.AddWithValue("@book", reel.BookNum ?? (object)DBNull.Value);
                         cmd.Parameters.AddWithValue("@supp", reel.Supplier ?? (object)DBNull.Value);
                         cmd.Parameters.AddWithValue("@pDate", reel.PriorityDate);
+
                         await cmd.ExecuteNonQueryAsync();
+                        return true; // Commit successful
                     }
                 }
             }
+            catch (SqlException ex)
+            {
+                // This catches the RAISERROR and other SQL-specific issues
+                Log($"Database Rejection: {ex.Message}", Color.Red);
+                MessageBox.Show(ex.Message, "Inventory Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false; // Stop further execution
+            }
             catch (Exception ex)
             {
-                Log($"SQL Save Error: {ex.Message}", Color.Red);
-                // Throw or handle as needed for your industrial environment
+                Log($"General Save Error: {ex.Message}", Color.Red);
+                MessageBox.Show($"A system error occurred: {ex.Message}", "Critical Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                return false; // Stop further execution
             }
         }
+
+
         private void RefreshInStockGrid()
         {
             // 1. Prevent UI flickering during bulk updates
@@ -1353,41 +1340,78 @@ namespace WH_Panel
                     txtbQTY.Focus();
                     return; // Block save until user confirms correction
                 }
+                //// 5. Verification & Audit Trail
+                //targetReel.User = Environment.UserName;
+                //targetReel.CountDate = DateTime.Now;
+                //try
+                //{
+                //    // Commit individual transaction to SQL
+                //    await SaveToSql(targetReel, operatorPackageSelection);
+                //    // 6. Update UI for the current item
+                //    RefreshInStockGrid();
+                //    UpdateBalanceLabel();
+
+                //    // Find the row we just updated to clone it into the persistent log
+                //    var rowToLog = dgwINSTOCK.Rows.Cast<DataGridViewRow>()
+                //        .FirstOrDefault(r => r.Cells["LOGDOCNO"].Value?.ToString() == targetReel.DocNo);
+                //    if (rowToLog != null)
+                //    {
+                //        // Pass BOTH the row and the current IPN string
+                //        string currentIPNtouseForLog = txtSearchIPN.Text.Trim().ToUpper();
+                //        AddRowToCountedLog(rowToLog, currentIPNtouseForLog);
+                //    }
+                //    Log($"VERIFIED: {scannedQty} pcs (Doc: {targetReel.DocNo})", Color.LimeGreen);
+                //    // 8. Reset inputs only - ready for next reel
+                //    ResetSessionForNextIPN();
+                //}
+                //catch (Exception ex)
+                //{
+                //    targetReel.CountDate = null;
+                //    targetReel.User = null;
+                //    Log($"DATABASE ERROR: {ex.Message}", Color.Red);
+                //}
+
                 // 5. Verification & Audit Trail
                 targetReel.User = Environment.UserName;
                 targetReel.CountDate = DateTime.Now;
-                try
+
+                // Commit individual transaction to SQL and check success
+                // SaveToSql now handles its own internal try-catch and MessageBox
+                bool isCommitted = await SaveToSql(targetReel, operatorPackageSelection);
+
+                if (isCommitted)
                 {
-                    // Commit individual transaction to SQL
-                    await SaveToSql(targetReel, operatorPackageSelection);
-                    // 6. Update UI for the current item
+                    // 6. Update UI for the current item - ONLY if SQL commit worked
                     RefreshInStockGrid();
                     UpdateBalanceLabel();
-                    //// 7. Push to the Persistent Session Log (LIFO)
-                    //var newlyCountedRow = dgwINSTOCK.Rows.Cast<DataGridViewRow>()
-                    //    .FirstOrDefault(r => r.Cells["LOGDOCNO"].Value?.ToString() == targetReel.DocNo);
-                    //if (newlyCountedRow != null)
-                    //{
-                    //    AddRowToCountedLog(newlyCountedRow);
-                    //}
+
                     // Find the row we just updated to clone it into the persistent log
                     var rowToLog = dgwINSTOCK.Rows.Cast<DataGridViewRow>()
                         .FirstOrDefault(r => r.Cells["LOGDOCNO"].Value?.ToString() == targetReel.DocNo);
+
                     if (rowToLog != null)
                     {
                         // Pass BOTH the row and the current IPN string
                         string currentIPNtouseForLog = txtSearchIPN.Text.Trim().ToUpper();
                         AddRowToCountedLog(rowToLog, currentIPNtouseForLog);
                     }
+
                     Log($"VERIFIED: {scannedQty} pcs (Doc: {targetReel.DocNo})", Color.LimeGreen);
+
                     // 8. Reset inputs only - ready for next reel
                     ResetSessionForNextIPN();
                 }
-                catch (Exception ex)
+                else
                 {
+                    // If we reach here, SaveToSql already popped the MessageBox.
+                    // We revert the local object state and do NOT update the UI.
                     targetReel.CountDate = null;
                     targetReel.User = null;
-                    Log($"DATABASE ERROR: {ex.Message}", Color.Red);
+
+                    // We don't call ResetSession here so the operator can see the 
+                    // erroneous data and decide how to fix it.
+                    MessageBox.Show("REJECTED: Entry not saved to database.");
+                    Log($"REJECTED: Entry not saved to database.", Color.Orange);
                 }
             }
         }
