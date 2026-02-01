@@ -64,6 +64,8 @@
             cmbAllWhs = new ComboBox();
             groupBox4 = new GroupBox();
             rtbLog = new RichTextBox();
+            groupBox13 = new GroupBox();
+            dgwCountedLog = new DataGridView();
             tableLayoutPanel1.SuspendLayout();
             groupBox11.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvStockMovements).BeginInit();
@@ -82,6 +84,8 @@
             groupBox12.SuspendLayout();
             gbAllWhs.SuspendLayout();
             groupBox4.SuspendLayout();
+            groupBox13.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgwCountedLog).BeginInit();
             SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -106,6 +110,7 @@
             tableLayoutPanel1.Controls.Add(groupBox12, 3, 0);
             tableLayoutPanel1.Controls.Add(gbAllWhs, 4, 1);
             tableLayoutPanel1.Controls.Add(groupBox4, 3, 2);
+            tableLayoutPanel1.Controls.Add(groupBox13, 3, 3);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -172,12 +177,12 @@
             // 
             // groupBox10
             // 
-            tableLayoutPanel1.SetColumnSpan(groupBox10, 5);
+            tableLayoutPanel1.SetColumnSpan(groupBox10, 3);
             groupBox10.Controls.Add(dgwINSTOCK);
             groupBox10.Dock = DockStyle.Fill;
             groupBox10.Location = new Point(3, 324);
             groupBox10.Name = "groupBox10";
-            groupBox10.Size = new Size(2032, 193);
+            groupBox10.Size = new Size(1215, 193);
             groupBox10.TabIndex = 10;
             groupBox10.TabStop = false;
             groupBox10.Text = "IN STOCK";
@@ -193,7 +198,7 @@
             dgwINSTOCK.Name = "dgwINSTOCK";
             dgwINSTOCK.ReadOnly = true;
             dgwINSTOCK.RowHeadersWidth = 51;
-            dgwINSTOCK.Size = new Size(2026, 167);
+            dgwINSTOCK.Size = new Size(1209, 167);
             dgwINSTOCK.TabIndex = 0;
             // 
             // groupBox9
@@ -491,6 +496,32 @@
             rtbLog.TabIndex = 0;
             rtbLog.Text = "";
             // 
+            // groupBox13
+            // 
+            tableLayoutPanel1.SetColumnSpan(groupBox13, 2);
+            groupBox13.Controls.Add(dgwCountedLog);
+            groupBox13.Dock = DockStyle.Fill;
+            groupBox13.Location = new Point(1224, 324);
+            groupBox13.Name = "groupBox13";
+            groupBox13.Size = new Size(811, 193);
+            groupBox13.TabIndex = 15;
+            groupBox13.TabStop = false;
+            groupBox13.Text = "Counted";
+            // 
+            // dgwCountedLog
+            // 
+            dgwCountedLog.AllowUserToAddRows = false;
+            dgwCountedLog.AllowUserToDeleteRows = false;
+            dgwCountedLog.BackgroundColor = Color.Black;
+            dgwCountedLog.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgwCountedLog.Dock = DockStyle.Fill;
+            dgwCountedLog.Location = new Point(3, 23);
+            dgwCountedLog.Name = "dgwCountedLog";
+            dgwCountedLog.ReadOnly = true;
+            dgwCountedLog.RowHeadersWidth = 51;
+            dgwCountedLog.Size = new Size(805, 167);
+            dgwCountedLog.TabIndex = 1;
+            // 
             // FrmPriorityCount
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -525,6 +556,8 @@
             groupBox12.PerformLayout();
             gbAllWhs.ResumeLayout(false);
             groupBox4.ResumeLayout(false);
+            groupBox13.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgwCountedLog).EndInit();
             ResumeLayout(false);
         }
 
@@ -559,5 +592,7 @@
         private RichTextBox rtbLog;
         private DataGridView dgvStockMovements;
         private DataGridView dgwINSTOCK;
+        private GroupBox groupBox13;
+        private DataGridView dgwCountedLog;
     }
 }

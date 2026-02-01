@@ -27,10 +27,138 @@ namespace WH_Panel
         private AppSettings settings;
         private List<PartMnfSubform> fullAvlList = new List<PartMnfSubform>();
         private List<Warehouse> loadedWareHouses = new List<Warehouse>();
+        private Dictionary<string, ReelState> currentIPNState = new Dictionary<string, ReelState>();
         public static string baseUrl = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522";
         public FrmPriorityCount()
         {
             InitializeComponent();
+        }
+
+        //private void SetupCountedLog()
+        //{
+        //    if (dgwCountedLog.Columns.Count == 0)
+        //    {
+        //        dgwCountedLog.Columns.Add("TIME", "Time");
+        //        dgwCountedLog.Columns.Add("IPN", "IPN");
+        //        dgwCountedLog.Columns.Add("DOC", "Doc No");
+        //        dgwCountedLog.Columns.Add("QTY", "Qty");
+        //        dgwCountedLog.Columns.Add("PKG", "Package");
+
+        //        ApplyDarkThemeToGrid(dgwCountedLog);
+
+        //        // Optional: Highlight the most recent row with a unique color
+        //        dgwCountedLog.DefaultCellStyle.SelectionBackColor = Color.SteelBlue;
+        //    }
+        //}
+
+        //private void SetupCountedLog()
+        //{
+        //    // 1. Clear any existing columns to ensure a fresh, identical copy
+        //    dgwCountedLog.Columns.Clear();
+        //    dgwCountedLog.Columns.Add("IPN");
+        //    // 2. Mirror every column directly from the In-Stock grid
+        //    foreach (DataGridViewColumn col in dgwINSTOCK.Columns)
+        //    {
+        //        // This copies the DataPropertyName, Name, and HeaderText exactly
+        //        dgwCountedLog.Columns.Add((DataGridViewColumn)col.Clone());
+        //    }
+
+        //    // 3. Re-apply the industrial dark theme to the new structure
+        //    ApplyDarkThemeToGrid(dgwCountedLog);
+
+        //    // Set selection style for better visibility on the warehouse floor
+        //    dgwCountedLog.DefaultCellStyle.SelectionBackColor = Color.SteelBlue;
+        //}
+
+        //private void SetupCountedLog()
+        //{
+        //    dgwCountedLog.Columns.Clear();
+
+        //    // 1. Add the custom IPN column first
+        //    DataGridViewTextBoxColumn ipnCol = new DataGridViewTextBoxColumn();
+        //    ipnCol.Name = "LOG_IPN"; // Use a unique name to avoid conflicts
+        //    ipnCol.HeaderText = "IPN";
+        //    ipnCol.Width = 100;
+        //    dgwCountedLog.Columns.Add(ipnCol);
+
+        //    // 2. Mirror every column directly from the In-Stock grid
+        //    foreach (DataGridViewColumn col in dgwINSTOCK.Columns)
+        //    {
+        //        dgwCountedLog.Columns.Add((DataGridViewColumn)col.Clone());
+        //    }
+
+        //    ApplyDarkThemeToGrid(dgwCountedLog);
+        //    dgwCountedLog.DefaultCellStyle.SelectionBackColor = Color.SteelBlue;
+        //}
+
+        //private void SetupCountedLog()
+        //{
+        //    dgwCountedLog.Columns.Clear();
+
+        //    // 1. Add the custom IPN column first
+        //    DataGridViewTextBoxColumn ipnCol = new DataGridViewTextBoxColumn();
+        //    ipnCol.Name = "LOG_IPN_COL";
+        //    ipnCol.HeaderText = "IPN";
+        //    dgwCountedLog.Columns.Add(ipnCol);
+
+        //    // 2. Direct Mirror of dgwINSTOCK structure
+        //    foreach (DataGridViewColumn col in dgwINSTOCK.Columns)
+        //    {
+        //        dgwCountedLog.Columns.Add((DataGridViewColumn)col.Clone());
+        //    }
+
+        //    ApplyDarkThemeToGrid(dgwCountedLog);
+        //}
+
+        //private void SetupCountedLog()
+        //{
+        //    dgwCountedLog.Columns.Clear();
+
+        //    // 1. Manually add the IPN column at Index 0
+        //    DataGridViewTextBoxColumn ipnCol = new DataGridViewTextBoxColumn();
+        //    ipnCol.Name = "LOG_IPN_COL";
+        //    ipnCol.HeaderText = "IPN";
+        //    dgwCountedLog.Columns.Add(ipnCol);
+
+        //    // 2. Clone the rest of the structure from dgwINSTOCK
+        //    foreach (DataGridViewColumn col in dgwINSTOCK.Columns)
+        //    {
+        //        dgwCountedLog.Columns.Add((DataGridViewColumn)col.Clone());
+        //    }
+
+        //    ApplyDarkThemeToGrid(dgwCountedLog);
+        //    dgwCountedLog.DefaultCellStyle.SelectionBackColor = Color.SteelBlue;
+        //}
+
+
+        private void SetupCountedLog()
+        {
+            dgwCountedLog.Columns.Clear();
+            dgwCountedLog.AutoGenerateColumns = false;
+
+            // 1. Hardcode columns
+            dgwCountedLog.Columns.Add("LOG_IPN", "IPN");
+            dgwCountedLog.Columns.Add("UDATE", "Date");
+            dgwCountedLog.Columns.Add("LOGDOCNO", "Doc No");
+            dgwCountedLog.Columns.Add("BOOKNUM", "Client Doc");
+            dgwCountedLog.Columns.Add("TQUANT", "Qty");
+            dgwCountedLog.Columns.Add("SUPCUSTNAME", "Source");
+            dgwCountedLog.Columns.Add("PACKNAME", "Pack Code");
+            dgwCountedLog.Columns.Add("CountDate", "Count Date");
+            dgwCountedLog.Columns.Add("UserCounted", "User");
+
+            // 2. Set Auto-Fit Logic
+            // AllCells ensures it looks at the headers and the new data you just scanned
+            dgwCountedLog.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+
+            // 3. Optional: Specific constraints for wider columns
+            dgwCountedLog.Columns["SUPCUSTNAME"].MinimumWidth = 120;
+            dgwCountedLog.Columns["LOG_IPN"].MinimumWidth = 100;
+
+            ApplyDarkThemeToGrid(dgwCountedLog);
+
+            // 4. Optimization: Disable resizing for the user to prevent accidental clicks
+            dgwCountedLog.AllowUserToResizeColumns = false;
         }
 
         private async void FrmPriorityCount_Load(object sender, EventArgs e)
@@ -42,6 +170,7 @@ namespace WH_Panel
             // This allows non-LGT users to select a DB created by LGT
             LoadExistingSnapshots();
             InitializeMovementsGrid();
+            SetupCountedLog();
             // 2. Load Application Settings (Crucial for API credentials)
             try
             {
@@ -808,69 +937,7 @@ namespace WH_Panel
 
 
 
-        //private void PopulateInStockByLogic()
-        //{
-        //    // Ensure the IN STOCK grid has a skeleton
-        //    if (dgwINSTOCK.Columns.Count == 0)
-        //    {
-        //        dgwINSTOCK.Columns.Add("UDATE", "Date");
-        //        dgwINSTOCK.Columns.Add("LOGDOCNO", "Doc No");
-        //        dgwINSTOCK.Columns.Add("BOOKNUM", "Client Doc");
-        //        dgwINSTOCK.Columns.Add("TQUANT", "Qty");
-        //        dgwINSTOCK.Columns.Add("SUPCUSTNAME", "Source");
-        //        dgwINSTOCK.Columns.Add("PACKNAME", "Pack Code");
-        //        dgwINSTOCK.Columns.Add("CountDate", "CountDate");
-        //        dgwINSTOCK.Columns.Add("UserCounted", "UserCounted");
-        //        ApplyDarkThemeToGrid(dgwINSTOCK);
-        //    }
-
-        //    dgwINSTOCK.Rows.Clear();
-        //    dgwINSTOCK.Rows.Clear();
-
-        //    // 1. Get all movements from your grid
-        //    var rows = dgvStockMovements.Rows.Cast<DataGridViewRow>()
-        //        .Where(r => r.Cells["TQUANT"].Value != null)
-        //        .Select(r => new {
-        //            DocNo = r.Cells["LOGDOCNO"].Value.ToString(),
-        //            Qty = Math.Abs(Convert.ToDecimal(r.Cells["TQUANT"].Value)),
-        //            Date = DateTime.TryParse(r.Cells["UDATE"].Value?.ToString(), out var d) ? d : DateTime.MinValue,
-        //            Pack = r.Cells["PACKNAME"].Value?.ToString(),
-        //            Supplier = r.Cells["SUPCUSTNAME"].Value?.ToString(),
-        //            BookNum = r.Cells["BOOKNUM"].Value?.ToString()
-        //        }).ToList();
-
-        //    // 2. Separate into In and Out
-        //    var incoming = rows.Where(r => r.DocNo.StartsWith("GR")).OrderBy(r => r.Date).ToList();
-        //    var outgoing = rows.Where(r => r.DocNo.StartsWith("ROB") || r.DocNo.StartsWith("SH")).OrderBy(r => r.Date).ToList();
-
-        //    // 3. Match and Remove
-        //    // Note: We use a list we can modify
-        //    var remainingInStock = incoming.ToList();
-
-        //    foreach (var outMove in outgoing)
-        //    {
-        //        // Find the oldest 'In' that matches this quantity exactly
-        //        var match = remainingInStock.FirstOrDefault(i => i.Qty == outMove.Qty);
-        //        if (match != null)
-        //        {
-        //            remainingInStock.Remove(match); // It's been issued, remove from "In Stock"
-        //        }
-        //    }
-
-        //    int countedTotalStr = 0;
-        //    // 4. Populate dgwINSTOCK with what's left
-        //    foreach (var item in remainingInStock)
-        //    {
-        //        dgwINSTOCK.Rows.Add(item.Date, item.DocNo,item.BookNum, item.Qty, item.Supplier, item.Pack);
-        //        countedTotalStr += (int)item.Qty;
-        //    }
-        //    lblBalance.Text = $"0/{countedTotalStr}";
-
-        //    Log($"Heuristic reconciliation: {remainingInStock.Count} reels likely in stock.", Color.Yellow);
-        //}
-
-
-        private void PopulateInStockByLogic()
+        private async Task PopulateInStockByLogic()
         {
             // 1. Ensure the IN STOCK grid has a skeleton
             if (dgwINSTOCK.Columns.Count == 0)
@@ -881,7 +948,6 @@ namespace WH_Panel
                 dgwINSTOCK.Columns.Add("TQUANT", "Qty");
                 dgwINSTOCK.Columns.Add("SUPCUSTNAME", "Source");
                 dgwINSTOCK.Columns.Add("PACKNAME", "Pack Code");
-                // Status columns for later SQL sync
                 dgwINSTOCK.Columns.Add("CountDate", "Count Date");
                 dgwINSTOCK.Columns.Add("UserCounted", "User");
                 ApplyDarkThemeToGrid(dgwINSTOCK);
@@ -889,14 +955,15 @@ namespace WH_Panel
 
             dgwINSTOCK.Rows.Clear();
 
-            // 2. Extract and sanitize movements from the main grid
+            // CRITICAL: Clear the memory state before rebuilding
+            currentIPNState.Clear();
+
+            // 2. Extract movements
             var rows = dgvStockMovements.Rows.Cast<DataGridViewRow>()
                 .Where(r => r.Cells["TQUANT"].Value != null && !string.IsNullOrEmpty(r.Cells["TQUANT"].Value.ToString()))
-                .Select(r => new
-                {
+                .Select(r => new {
                     DocNo = r.Cells["LOGDOCNO"].Value?.ToString() ?? "",
-                    // Use decimal.TryParse for safety; Priority quantities are treated as absolute for matching
-                    Qty = decimal.TryParse(r.Cells["TQUANT"].Value.ToString(), out decimal q) ? Math.Abs(q) : 0,
+                    Qty = int.TryParse(r.Cells["TQUANT"].Value.ToString(), out int q) ? Math.Abs(q) : 0,
                     Date = DateTime.TryParse(r.Cells["UDATE"].Value?.ToString(), out var d) ? d : DateTime.MinValue,
                     Pack = r.Cells["PACKNAME"].Value?.ToString() ?? "N/A",
                     Supplier = r.Cells["SUPCUSTNAME"].Value?.ToString() ?? "",
@@ -905,53 +972,76 @@ namespace WH_Panel
                 .Where(x => x.Qty > 0)
                 .ToList();
 
-            // 3. Robust Reconciliation: Segregate by flow, not just prefix
-            // INCOMING: Includes Goods Receipts (GR) and Warehouse Receipts (WR)
+            // 3. Heuristic Reconciliation
             var incoming = rows.Where(r => r.DocNo.StartsWith("GR")).ToList();
-
-            // OUTGOING: Includes Issues (ROB), Shipping (SH), and Transfers Out (WR/SH logic)
             var outgoing = rows.Where(r => r.DocNo.StartsWith("ROB") || r.DocNo.StartsWith("SH") || r.DocNo.StartsWith("WR")).ToList();
 
-            // 4. THE BUG WORKAROUND: Partner Matching
-            // We remove pairs that match in quantity to handle incorrect timestamps
             var remainingInStock = incoming.OrderBy(r => r.Date).ToList();
             var unmatchedOut = outgoing.OrderBy(r => r.Date).ToList();
 
             foreach (var outMove in unmatchedOut)
             {
-                // Search for a matching quantity in the 'In' bucket
-                // We look for the closest date match, but allow the 'In' to be slightly later 
-                // than the 'Out' to solve your WR/GR bug.
                 var match = remainingInStock.FirstOrDefault(i => i.Qty == outMove.Qty);
-
-                if (match != null)
-                {
-                    remainingInStock.Remove(match);
-                }
+                if (match != null) remainingInStock.Remove(match);
             }
 
-            // 5. Populate dgwINSTOCK and update the Balance Label
-            decimal totalQtyInStock = 0;
-
+            // 4. POPULATE THE DICTIONARY (State Management)
+            // We do this BEFORE the SQL sync so the dictionary exists to be updated
             foreach (var item in remainingInStock)
             {
-                dgwINSTOCK.Rows.Add(
-                    item.Date == DateTime.MinValue ? "" : item.Date.ToString("yyyy-MM-dd HH:mm:ss"),
-                    item.DocNo,
-                    item.BookNum,
-                    item.Qty,
-                    item.Supplier,
-                    item.Pack
-                );
-                totalQtyInStock += item.Qty;
+                currentIPNState[item.DocNo] = new ReelState
+                {
+                    DocNo = item.DocNo,
+                    Qty = item.Qty,
+                    PriorityDate = item.Date,
+                    PackageID = item.Pack,
+                    Supplier = item.Supplier,
+                    BookNum = item.BookNum,
+                    User = null,
+                    CountDate = null
+                };
             }
 
-            // Update the balance label: Counted (0 for now) / Calculated Stock Total
-            lblBalance.Text = $"0/{totalQtyInStock:N0}";
+            // 5. SQL SYNC: Update the dictionary with physical truth
+            string currentIPN = txtSearchIPN.Text.Trim().ToUpper();
+            string dbName = cmbSelectedWH.SelectedItem?.ToString() ?? "";
+            string connString = $"Server=DBR3\\SQLEXPRESS;Integrated Security=True;Database={dbName};";
 
-            Log($"Heuristic reconciliation: {remainingInStock.Count} reels identified ({totalQtyInStock:N0} total pcs).", Color.Yellow);
+            if (!string.IsNullOrEmpty(dbName) && currentIPNState.Count > 0)
+            {
+                try
+                {
+                    using (SqlConnection conn = new SqlConnection(connString))
+                    {
+                        await conn.OpenAsync();
+                        string sql = "SELECT OriginalDoc, UserCounted, CountDate FROM [COUNT] WHERE IPN = @ipn";
+                        using (SqlCommand cmd = new SqlCommand(sql, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@ipn", currentIPN);
+                            using (var reader = await cmd.ExecuteReaderAsync())
+                            {
+                                while (await reader.ReadAsync())
+                                {
+                                    string docKey = reader["OriginalDoc"].ToString();
+                                    if (currentIPNState.ContainsKey(docKey))
+                                    {
+                                        currentIPNState[docKey].User = reader["UserCounted"].ToString();
+                                        currentIPNState[docKey].CountDate = Convert.ToDateTime(reader["CountDate"]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex) { Log($"SQL Sync Error: {ex.Message}", Color.Red); }
+            }
+
+            // 6. Refresh UI from Dictionary
+            // Use the function we defined earlier to rebuild the grid
+            RefreshInStockGrid();
+
+            Log($"Heuristic reconciliation complete: {currentIPNState.Count} active reels in memory.", Color.Yellow);
         }
-
 
         private void InitializeMovementsGrid()
         {
@@ -1195,82 +1285,505 @@ namespace WH_Panel
             }
         }
 
+        private async Task LoadAndSyncState(string ipn, List<ReelState> priorityReels)
+        {
+            currentIPNState.Clear();
+            string dbName = cmbSelectedWH.SelectedItem.ToString();
+            string connString = $"Server=DBR3\\SQLEXPRESS;Integrated Security=True;Database={dbName};";
+
+            // 1. Initialize dictionary with unique DocNo from Priority
+            foreach (var reel in priorityReels)
+            {
+                currentIPNState[reel.DocNo] = reel;
+            }
+
+            // 2. Cross-reference with your SQL COUNT table using DocNo
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                await conn.OpenAsync();
+                // We match on OriginalDoc (which stores the DocNo)
+                string sql = "SELECT OriginalDoc, UserCounted, CountDate FROM [COUNT] WHERE IPN = @ipn";
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@ipn", ipn);
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            string docKey = reader["OriginalDoc"].ToString();
+                            if (currentIPNState.ContainsKey(docKey))
+                            {
+                                currentIPNState[docKey].User = reader["UserCounted"].ToString();
+                                currentIPNState[docKey].CountDate = Convert.ToDateTime(reader["CountDate"]);
+                            }
+                        }
+                    }
+                }
+            }
+
+            RefreshInStockGrid();
+        }
+        private async void ProcessCount(decimal scannedQty, string packType)
+        {
+            // 1. Find all uncounted reels with this exact quantity
+            var potentialMatches = currentIPNState.Values
+                .Where(r => r.Qty == scannedQty && !r.IsCounted)
+                .OrderBy(r => r.PriorityDate)
+                .ToList();
+
+            ReelState targetReel = null;
+
+            if (potentialMatches.Count == 0)
+            {
+                // Check if the quantity was already counted to give a specific warning
+                bool alreadyCounted = currentIPNState.Values.Any(r => r.Qty == scannedQty && r.IsCounted);
+                string msg = alreadyCounted
+                    ? $"Quantity {scannedQty} has already been counted. Check for duplicate labels."
+                    : $"No records found for {scannedQty} pcs.";
+
+                Log(msg, Color.Red);
+                return;
+            }
+            else if (potentialMatches.Count == 1)
+            {
+                targetReel = potentialMatches[0];
+            }
+            else
+            {
+                // 2. Ambiguity: Multiple reels with same Qty. Let the user choose.
+                targetReel = ShowReelSelectionDialog(potentialMatches);
+                if (targetReel == null) return; // User cancelled
+            }
+
+            // 3. Final Verification and Save
+            targetReel.User = Environment.UserName;
+            targetReel.CountDate = DateTime.Now;
+
+            await SaveToSql(targetReel, packType);
+
+            RefreshInStockGrid();
+            UpdateBalanceLabel();
+        }
+
+        private ReelState ShowReelSelectionDialog(List<ReelState> matches)
+        {
+            using (Form selectionForm = new Form())
+            {
+                selectionForm.Text = "Multiple Matches Found - Select Correct Reel";
+                selectionForm.Size = new Size(500, 300);
+                selectionForm.FormBorderStyle = FormBorderStyle.FixedDialog;
+                selectionForm.StartPosition = FormStartPosition.CenterParent;
+                selectionForm.BackColor = Color.FromArgb(30, 30, 30); // Dark theme match
+                selectionForm.ForeColor = Color.White;
+
+                Label lblHeader = new Label()
+                {
+                    Text = $"Select the correct record for Qty: {matches[0].Qty:N0}",
+                    Dock = DockStyle.Top,
+                    Height = 30,
+                    Font = new Font("Segoe UI", 10, FontStyle.Bold)
+                };
+
+                ListBox lbChoices = new ListBox()
+                {
+                    Dock = DockStyle.Fill,
+                    BackColor = Color.FromArgb(45, 45, 45),
+                    ForeColor = Color.White,
+                    Font = new Font("Consolas", 10)
+                };
+
+                // Populate with identifying metadata
+                foreach (var m in matches)
+                {
+                    string display = $"{m.DocNo} | Date: {m.PriorityDate:yyyy-MM-dd} | Source: {m.Supplier}";
+                    lbChoices.Items.Add(display);
+                }
+
+                Button btnSelect = new Button()
+                {
+                    Text = "Confirm Selection (Enter)",
+                    Dock = DockStyle.Bottom,
+                    Height = 40,
+                    FlatStyle = FlatStyle.Flat,
+                    BackColor = Color.DarkSlateBlue
+                };
+
+                // Map the selection back to the object
+                ReelState selectedReel = null;
+                btnSelect.Click += (s, e) =>
+                {
+                    if (lbChoices.SelectedIndex >= 0)
+                    {
+                        selectedReel = matches[lbChoices.SelectedIndex];
+                        selectionForm.DialogResult = DialogResult.OK;
+                    }
+                };
+
+                // Keyboard support for speed
+                selectionForm.AcceptButton = btnSelect;
+                lbChoices.KeyDown += (s, e) => { if (e.KeyCode == Keys.Enter) btnSelect.PerformClick(); };
+
+                selectionForm.Controls.Add(lbChoices);
+                selectionForm.Controls.Add(lblHeader);
+                selectionForm.Controls.Add(btnSelect);
+
+                if (selectionForm.ShowDialog() == DialogResult.OK)
+                {
+                    return selectedReel;
+                }
+                return null;
+            }
+        }
+
+
+        private async Task SaveToSql(ReelState reel, string userPackageType)
+        {
+            // Database name is dynamic based on your selected warehouse snapshot
+            string dbName = cmbSelectedWH.SelectedItem.ToString();
+            string connString = $"Server=DBR3\\SQLEXPRESS;Integrated Security=True;Database={dbName};";
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connString))
+                {
+                    await conn.OpenAsync();
+
+         
+                    // Inside SaveToSql - Change the logic to be "Insert Only" for counts
+                    string sql = @"
+                        IF EXISTS (SELECT 1 FROM [COUNT] WHERE OriginalDoc = @doc)
+                        BEGIN
+                            -- Throw an error back to C# to be caught in the catch block
+                            RAISERROR('This specific Document (DocNo) has already been recorded in the count.', 16, 1);
+                        END
+                        ELSE
+                        BEGIN
+                            INSERT INTO [COUNT] (IPN, PackageID, ActualQty, CountDate, UserCounted, OriginalDoc, BookNum, Supplier, PackageType, PriorityDate)
+                            VALUES (@ipn, @pkg, @qty, @cDate, @user, @doc, @book, @supp, @pType, @pDate)
+                        END";
+
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        // Core Identification
+                        cmd.Parameters.AddWithValue("@ipn", txtSearchIPN.Text.Trim().ToUpper());
+                        cmd.Parameters.AddWithValue("@doc", reel.DocNo); // Primary unique link
+                        cmd.Parameters.AddWithValue("@pkg", reel.PackageID ?? "N/A");
+
+                        // Count Data
+                        cmd.Parameters.AddWithValue("@qty", reel.Qty);
+                        cmd.Parameters.AddWithValue("@cDate", reel.CountDate ?? DateTime.Now);
+                        cmd.Parameters.AddWithValue("@user", reel.User); // Environment.UserName
+                        cmd.Parameters.AddWithValue("@pType", userPackageType);
+
+                        // Priority Metadata for Audit Trail
+                        cmd.Parameters.AddWithValue("@book", reel.BookNum ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@supp", reel.Supplier ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@pDate", reel.PriorityDate);
+
+                        await cmd.ExecuteNonQueryAsync();
+                    }
+                }
+            }
+
+
+            catch (Exception ex)
+            {
+                Log($"SQL Save Error: {ex.Message}", Color.Red);
+                // Throw or handle as needed for your industrial environment
+            }
+        }
+        private void RefreshInStockGrid()
+        {
+            // 1. Prevent UI flickering during bulk updates
+            dgwINSTOCK.Rows.Clear();
+
+            // 2. Iterate through the dictionary values (ordered by date for operator convenience)
+            var sortedReels = currentIPNState.Values.OrderBy(r => r.PriorityDate).ToList();
+
+            foreach (var reel in sortedReels)
+            {
+                int rowIndex = dgwINSTOCK.Rows.Add(
+                    reel.PriorityDate.ToString("yyyy-MM-dd HH:mm"),
+                    reel.DocNo,
+                    reel.BookNum,
+                    reel.Qty,
+                    reel.Supplier,
+                    reel.PackageID,
+                    reel.CountDate?.ToString("yyyy-MM-dd HH:mm") ?? "", // Data-driven flag
+                    reel.User ?? ""                                    // Data-driven flag
+                );
+
+                // 3. Apply visual styling based on the data state
+                if (reel.IsCounted)
+                {
+                    dgwINSTOCK.Rows[rowIndex].DefaultCellStyle.BackColor = Color.FromArgb(45, 65, 45); // Muted Forest Green
+                    dgwINSTOCK.Rows[rowIndex].DefaultCellStyle.ForeColor = Color.White;
+                }
+            }
+
+            // 4. Update the Balance Label once the grid is refreshed
+            UpdateBalanceLabel();
+        }
+
+
+        //private void AddRowToCountedLog(DataGridViewRow sourceRow)
+        //{
+        //    // 1. Ensure the Log Grid has the same column structure if not already initialized
+        //    if (dgwCountedLog.Columns.Count == 0)
+        //    {
+        //        foreach (DataGridViewColumn col in dgwINSTOCK.Columns)
+        //        {
+        //            dgwCountedLog.Columns.Add((DataGridViewColumn)col.Clone());
+        //        }
+        //        ApplyDarkThemeToGrid(dgwCountedLog);
+        //    }
+
+        //    // 2. Create the new row values array
+        //    object[] rowValues = new object[sourceRow.Cells.Count];
+        //    for (int i = 0; i < sourceRow.Cells.Count; i++)
+        //    {
+        //        rowValues[i] = sourceRow.Cells[i].Value;
+        //    }
+
+        //    // 3. Insert at the TOP (Index 0)
+        //    dgwCountedLog.Rows.Insert(0, rowValues);
+
+        //    // 4. Optional: Keep the green highlight to signify it was a successful count
+        //    dgwCountedLog.Rows[0].DefaultCellStyle.BackColor = Color.FromArgb(45, 65, 45);
+        //    dgwCountedLog.Rows[0].DefaultCellStyle.ForeColor = Color.White;
+
+        //    // 5. Visual cue: Auto-scroll to ensure the latest is visible
+        //    dgwCountedLog.FirstDisplayedScrollingRowIndex = 0;
+        //}
+
+        //private void AddRowToCountedLog(DataGridViewRow sourceRow, string ipn)
+        //{
+        //    // Insert at index 0 (top of the list)
+        //    // capture the index to get the newly created row
+        //    int rowIndex = dgwCountedLog.Rows.Insert(0, 1);
+        //    DataGridViewRow newRow = dgwCountedLog.Rows[rowIndex];
+
+        //    // 1. Map the IPN to the custom first column
+        //    newRow.Cells["LOG_IPN"].Value = ipn;
+
+        //    // 2. Loop through and map by column name to avoid alignment bugs
+        //    foreach (DataGridViewColumn col in dgwINSTOCK.Columns)
+        //    {
+        //        if (dgwCountedLog.Columns.Contains(col.Name))
+        //        {
+        //            newRow.Cells[col.Name].Value = sourceRow.Cells[col.Name].Value;
+        //        }
+        //    }
+
+        //    // 3. Styling for that "Successful Transaction" look
+        //    newRow.DefaultCellStyle.BackColor = Color.FromArgb(45, 65, 45); // Forest Green
+        //    newRow.DefaultCellStyle.ForeColor = Color.White;
+
+        //    // 4. Auto-scroll so Daniel sees the latest scan immediately
+        //    dgwCountedLog.FirstDisplayedScrollingRowIndex = 0;
+        //}
+
+        //private void AddRowToCountedLog(DataGridViewRow sourceRow, string ipn)
+        //{
+        //    // 1. Insert 1 row at index 0. This method returns void.
+        //    dgwCountedLog.Rows.Insert(0, 1);
+
+        //    // 2. Since we inserted at 0, the new row is at index 0
+        //    DataGridViewRow newRow = dgwCountedLog.Rows[0];
+
+        //    // 3. Map the IPN to your custom first column
+        //    newRow.Cells["LOG_IPN"].Value = ipn;
+
+        //    // 4. Map the rest of the data by column name
+        //    foreach (DataGridViewColumn col in dgwINSTOCK.Columns)
+        //    {
+        //        if (dgwCountedLog.Columns.Contains(col.Name))
+        //        {
+        //            newRow.Cells[col.Name].Value = sourceRow.Cells[col.Name].Value;
+        //        }
+        //    }
+
+        //    // 5. Styling: Apply your industrial "Verified" look
+        //    newRow.DefaultCellStyle.BackColor = Color.FromArgb(45, 65, 45); // Forest Green
+        //    newRow.DefaultCellStyle.ForeColor = Color.White;
+
+        //    // 6. Auto-scroll so Daniel sees the latest scan immediately
+        //    dgwCountedLog.FirstDisplayedScrollingRowIndex = 0;
+        //}
+
+        private void AddRowToCountedLog(DataGridViewRow sourceRow, string ipn)
+        {
+            // 1. Insert blank row at top (returns void)
+            dgwCountedLog.Rows.Insert(0, 1);
+            DataGridViewRow newRow = dgwCountedLog.Rows[0];
+
+            // 2. Set the IPN in the first cell (Index 0)
+            newRow.Cells[0].Value = ipn;
+
+            // 3. Copy every cell from the sourceRow into the log, offset by 1
+            // This handles the copy-paste perfectly regardless of column names
+            for (int i = 0; i < sourceRow.Cells.Count; i++)
+            {
+                // source index i maps to log index i + 1
+                newRow.Cells[i + 1].Value = sourceRow.Cells[i].Value;
+            }
+
+            // 4. Styling (Forest Green for verified items)
+            newRow.DefaultCellStyle.BackColor = Color.FromArgb(45, 65, 45);
+            newRow.DefaultCellStyle.ForeColor = Color.White;
+
+            // 5. Ensure the latest scan is visible at the top
+            if (dgwCountedLog.Rows.Count > 0)
+                dgwCountedLog.FirstDisplayedScrollingRowIndex = 0;
+        }
+
         private async void txtbQTY_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
                 e.SuppressKeyPress = true;
 
-                if (!decimal.TryParse(txtbQTY.Text.Trim(), out decimal scannedQty)) return;
+                // 1. Transactional Input (Int for clean inventory tracking)
+                if (!int.TryParse(txtbQTY.Text.Trim(), out int scannedQty)) return;
 
-                string operatorSelection = cmbPackage.Text;
+                string operatorPackageSelection = cmbPackage.Text;
                 string currentIPN = txtSearchIPN.Text.Trim().ToUpper();
 
-                // 1. Search dgwINSTOCK for a matching quantity
-                var matchingRow = dgwINSTOCK.Rows.Cast<DataGridViewRow>()
-                    .FirstOrDefault(r => Convert.ToDecimal(r.Cells["TQUANT"].Value) == scannedQty);
+                // 2. Locate the specific match in memory
+                var potentialMatches = currentIPNState.Values
+                    .Where(r => r.Qty == scannedQty && !r.IsCounted)
+                    .OrderBy(r => r.PriorityDate)
+                    .ToList();
 
-                if (matchingRow != null)
+                ReelState targetReel = null;
+
+                // 3. Match Identification
+                if (potentialMatches.Count == 0)
                 {
-                    string dbPackageType = matchingRow.Cells["PACKNAME"].Value?.ToString();
-
-                    // 2. Scenario A: User selection doesn't match the DB record
-                    if (dbPackageType != operatorSelection)
-                    {
-                        MessageBox.Show($"Incorrect Package Selection!\n\n" +
-                                        $"The system record for Qty {scannedQty} specifies: {dbPackageType}.\n" +
-                                        $"Please correct your selection in the dropdown.",
-                                        "Selection Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-                        // Drop down the correct item for selection
-                        cmbPackage.SelectedItem = dbPackageType;
-                        txtbQTY.Clear();
-                        txtbQTY.Focus();
-                        return; // Do not save yet
-                    }
-
-                    // 3. Scenario B: User realizes Physical != DB
-                    // (This is handled by the operator stopping here since they cannot 
-                    // 'Verify' a mismatch without manager intervention in Priority).
-
-                    // Get the domain and username
-                    string user = WindowsIdentity.GetCurrent().Name;
-
-                    // Capture the current UTC time for the database (best practice for SQL)
-                    DateTime countTime = DateTime.UtcNow;
-
-                    // 4. Success: Write to SQL
-                    //await SaveCountToSql(matchingRow, user, countTime);
-
-                    // UI Feedback
-                    matchingRow.DefaultCellStyle.BackColor = Color.FromArgb(45, 65, 45);
-                    
-                    Log($"VERIFIED: {scannedQty} on {dbPackageType} saved to SQL.", Color.LimeGreen);
-                    UpdateBalanceLabel();
+                    bool alreadyDone = currentIPNState.Values.Any(r => r.Qty == scannedQty && r.IsCounted);
+                    Log(alreadyDone
+                        ? $"Qty {scannedQty} already verified for this IPN."
+                        : $"!!! UNKNOWN REEL !!! No record found for Qty: {scannedQty}.", Color.Red);
 
                     txtbQTY.Clear();
-                    txtbQTY.Focus();
+                    return;
+                }
+                else if (potentialMatches.Count == 1)
+                {
+                    targetReel = potentialMatches[0];
                 }
                 else
                 {
-                    Log($"!!! UNKNOWN REEL !!! No record found with Qty: {scannedQty}.", Color.Red);
+                    // Selection dialog for ambiguous quantities
+                    targetReel = ShowReelSelectionDialog(potentialMatches);
+                    if (targetReel == null) return;
+                }
+
+                // --- RE-INTEGRATED PACKAGING VALIDATION ---
+                // 4. Validation: Packaging Type Check
+                if (targetReel.PackageID != operatorPackageSelection)
+                {
+                    MessageBox.Show($"Incorrect Package Selection!\n\n" +
+                                    $"Priority Record {targetReel.DocNo} is defined as: {targetReel.PackageID}.\n" +
+                                    $"Your current selection is: {operatorPackageSelection}.\n\n" +
+                                    $"Please correct the dropdown to match the system record.",
+                                    "Packaging Mismatch", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                    // Auto-correct the dropdown to help the user and reset focus
+                    cmbPackage.SelectedItem = targetReel.PackageID;
+                    txtbQTY.Clear();
+                    txtbQTY.Focus();
+                    return; // Block save until user confirms correction
+                }
+
+                // 5. Verification & Audit Trail
+                targetReel.User = Environment.UserName;
+                targetReel.CountDate = DateTime.Now;
+
+                try
+                {
+                    // Commit individual transaction to SQL
+                    await SaveToSql(targetReel, operatorPackageSelection);
+
+                    // 6. Update UI for the current item
+                    RefreshInStockGrid();
+                    UpdateBalanceLabel();
+
+                    //// 7. Push to the Persistent Session Log (LIFO)
+                    //var newlyCountedRow = dgwINSTOCK.Rows.Cast<DataGridViewRow>()
+                    //    .FirstOrDefault(r => r.Cells["LOGDOCNO"].Value?.ToString() == targetReel.DocNo);
+
+                    //if (newlyCountedRow != null)
+                    //{
+                    //    AddRowToCountedLog(newlyCountedRow);
+                    //}
+
+                    // Find the row we just updated to clone it into the persistent log
+                    var rowToLog = dgwINSTOCK.Rows.Cast<DataGridViewRow>()
+                        .FirstOrDefault(r => r.Cells["LOGDOCNO"].Value?.ToString() == targetReel.DocNo);
+
+                    if (rowToLog != null)
+                    {
+                        // Pass BOTH the row and the current IPN string
+                        string currentIPNtouseForLog = txtSearchIPN.Text.Trim().ToUpper();
+                        AddRowToCountedLog(rowToLog, currentIPNtouseForLog);
+                    }
+
+                    Log($"VERIFIED: {scannedQty} pcs (Doc: {targetReel.DocNo})", Color.LimeGreen);
+
+                    // 8. Reset inputs only - ready for next reel
+                    ResetSessionForNextIPN();
+                }
+                catch (Exception ex)
+                {
+                    targetReel.CountDate = null;
+                    targetReel.User = null;
+                    Log($"DATABASE ERROR: {ex.Message}", Color.Red);
                 }
             }
         }
+        private void ResetSessionForNextIPN()
+        {
+            // 1. Clear Memory State
+            currentIPNState.Clear();
+
+            // 2. Clear all TextBoxes
+            txtSearchIPN.Clear();
+            txtbQTY.Clear();
+            txtbMFPN.Clear();
+            // Clear any other specific info boxes you might have (e.g., lblMFPNInfo)
+
+            // 3. Reset DataGridViews
+            // Safety check: if bound to DataSource, set to null first
+            dgwAVL.DataSource = null;
+            dgwAVL.Rows.Clear();
+
+            dgvStockMovements.DataSource = null;
+            dgvStockMovements.Rows.Clear();
+
+            dgwINSTOCK.DataSource = null;
+            dgwINSTOCK.Rows.Clear();
+
+            // 4. Reset Status Labels
+            lblBalance.Text = "0 / 0";
+            lblBalance.ForeColor = Color.White;
+
+            // 5. Final UI Action
+            Log("Session reset. Ready for next IPN scan.", Color.Gray);
+            txtSearchIPN.Focus();
+        }
+
+        public static class VSDarkColors
+        {
+            public static Color Background = Color.FromArgb(30, 30, 30);
+            public static Color Foreground = Color.FromArgb(220, 220, 220);
+            public static Color Accent = Color.FromArgb(45, 45, 48);
+            public static Color Border = Color.FromArgb(63, 63, 70);
+
+            // New Focus Colors
+            public static Color FocusBackground = Color.LightGreen;
+            public static Color FocusForeground = Color.Black;
+        }
+
     }
-
-
-
-    public static class VSDarkColors
-    {
-        public static Color Background = Color.FromArgb(30, 30, 30);
-        public static Color Foreground = Color.FromArgb(220, 220, 220);
-        public static Color Accent = Color.FromArgb(45, 45, 48);
-        public static Color Border = Color.FromArgb(63, 63, 70);
-
-        // New Focus Colors
-        public static Color FocusBackground = Color.LightGreen;
-        public static Color FocusForeground = Color.Black;
-    }
-  
- }
+}
