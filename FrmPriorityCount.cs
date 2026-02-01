@@ -496,6 +496,372 @@ namespace WH_Panel
             }
         }
 
+        //private void btnDeltaReport_Click(object sender, EventArgs e)
+        //{
+        //    if (cmbSelectedWH.SelectedItem == null) return;
+
+        //    string selectedDb = cmbSelectedWH.SelectedItem.ToString();
+        //    string selectedPrefix = selectedDb.Split('_')[0];
+        //    string connectionString = $"Server=DBR3\\SQLEXPRESS;Integrated Security=True;Database={selectedDb};";
+        //    string filename = Path.Combine($@"\\dbr1\Data\WareHouse\2025\WHsearcher\", $"{selectedPrefix}_DeltaReport_{DateTime.Now:yyyyMMddHHmm}.html");
+
+        //    try
+        //    {
+        //        StringBuilder html = new StringBuilder();
+        //        // 
+        //        html.Append("<html><head><meta charset='UTF-8'><style>");
+        //        html.Append("body { font-family: 'Segoe UI', sans-serif; background-color: #1e1e1e; color: #dcdcdc; padding: 20px; }");
+        //        html.Append("table { width: 100%; border-collapse: collapse; margin-top: 20px; }");
+        //        html.Append("th, td { border: 1px solid #3e3e42; padding: 10px; text-align: left; }");
+        //        html.Append("th { background-color: #2d2d30; color: #569cd6; }");
+        //        html.Append(".delta-pos { color: #4ec9b0; } .delta-neg { color: #f44747; } .detail { font-size: 0.85em; color: #858585; }");
+        //        html.Append("</style></head><body>");
+        //        html.Append($"<h2>Delta Report: {selectedPrefix}</h2>");
+
+        //        using (SqlConnection conn = new SqlConnection(connectionString))
+        //        {
+        //            conn.Open();
+        //            // This query joins STOCK with a grouped SUM from COUNT
+        //            string query = @"
+        //        SELECT 
+        //            S.IPN, 
+        //            S.Description, 
+        //            S.PriorityQty, 
+        //            ISNULL(C.TotalCounted, 0) as TotalCounted,
+        //            C.CountDetails
+        //        FROM STOCK S
+        //        LEFT JOIN (
+        //            SELECT 
+        //                IPN, 
+        //                SUM(ISNULL(ActualQty, 0)) as TotalCounted,
+        //                STRING_AGG(CAST(ISNULL(ActualQty, 0) AS VARCHAR), ' + ') as CountDetails
+        //            FROM COUNT
+        //            GROUP BY IPN
+        //        ) C ON S.IPN = C.IPN
+        //        ORDER BY S.IPN";
+
+        //            using (SqlCommand cmd = new SqlCommand(query, conn))
+        //            using (SqlDataReader reader = cmd.ExecuteReader())
+        //            {
+        //                html.Append("<table><tr><th>IPN</th><th>Description</th><th>Priority</th><th>Counted</th><th>Delta</th><th>Details</th></tr>");
+
+        //                while (reader.Read())
+        //                {
+        //                    decimal pQty = Convert.ToDecimal(reader["PriorityQty"]);
+        //                    decimal cQty = Convert.ToDecimal(reader["TotalCounted"]);
+        //                    decimal delta = cQty - pQty;
+        //                    string details = reader["CountDetails"]?.ToString() ?? "-";
+
+        //                    // Only highlighting rows that are actually counted or have a discrepancy
+        //                    string deltaClass = delta >= 0 ? "delta-pos" : "delta-neg";
+
+        //                    html.Append("<tr>");
+        //                    html.Append($"<td>{reader["IPN"]}</td>");
+        //                    html.Append($"<td>{reader["Description"]}</td>");
+        //                    html.Append($"<td>{pQty:F0}</td>");
+        //                    html.Append($"<td>{cQty:F0}</td>");
+        //                    html.Append($"<td class='{deltaClass}'>{delta:F0}</td>");
+        //                    html.Append($"<td class='detail'>{details}</td>");
+        //                    html.Append("</tr>");
+        //                }
+        //            }
+        //        }
+
+        //        html.Append("</table></body></html>");
+        //        File.WriteAllText(filename, html.ToString(), Encoding.UTF8);
+        //        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(filename) { UseShellExecute = true });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show($"Delta Error: {ex.Message}");
+        //    }
+        //}
+
+        //private void btnDeltaReport_Click(object sender, EventArgs e)
+        //{
+        //    if (cmbSelectedWH.SelectedItem == null) return;
+
+        //    string selectedDb = cmbSelectedWH.SelectedItem.ToString();
+        //    string selectedPrefix = selectedDb.Split('_')[0];
+        //    string connectionString = $"Server=DBR3\\SQLEXPRESS;Integrated Security=True;Database={selectedDb};";
+        //    string filename = Path.Combine($@"\\dbr1\Data\WareHouse\2025\WHsearcher\", $"{selectedPrefix}_DeltaReport_{DateTime.Now:yyyyMMddHHmm}.html");
+
+        //    try
+        //    {
+        //        // 1. Metrics for the Summary Table
+        //        int totalIpns = 0;
+        //        int perfectMatches = 0;
+        //        decimal totalVariance = 0;
+        //        StringBuilder tableRows = new StringBuilder();
+
+        //        // 2. Fetch Data and Build Rows/Stats
+        //        using (SqlConnection conn = new SqlConnection(connectionString))
+        //        {
+        //            conn.Open();
+        //            string query = @"
+        //        SELECT 
+        //            S.IPN, 
+        //            S.Description, 
+        //            S.PriorityQty, 
+        //            ISNULL(C.TotalCounted, 0) as TotalCounted,
+        //            C.CountDetails
+        //        FROM STOCK S
+        //        LEFT JOIN (
+        //            SELECT 
+        //                IPN, 
+        //                SUM(ISNULL(ActualQty, 0)) as TotalCounted,
+        //                STRING_AGG(CAST(ISNULL(ActualQty, 0) AS VARCHAR), ' + ') as CountDetails
+        //            FROM COUNT
+        //            GROUP BY IPN
+        //        ) C ON S.IPN = C.IPN
+        //        ORDER BY S.IPN";
+
+        //            using (SqlCommand cmd = new SqlCommand(query, conn))
+        //            using (SqlDataReader reader = cmd.ExecuteReader())
+        //            {
+        //                while (reader.Read())
+        //                {
+        //                    totalIpns++;
+        //                    decimal pQty = Convert.ToDecimal(reader["PriorityQty"]);
+        //                    decimal cQty = Convert.ToDecimal(reader["TotalCounted"]);
+        //                    decimal delta = cQty - pQty;
+        //                    string details = reader["CountDetails"]?.ToString() ?? "-";
+
+        //                    // Update Stats
+        //                    if (delta == 0 && cQty > 0) perfectMatches++;
+        //                    totalVariance += delta;
+
+        //                    string deltaClass = delta > 0 ? "delta-pos" : (delta < 0 ? "delta-neg" : "");
+
+        //                    tableRows.Append("<tr>");
+        //                    tableRows.Append($"<td>{reader["IPN"]}</td>");
+        //                    tableRows.Append($"<td>{reader["Description"]}</td>");
+        //                    tableRows.Append($"<td>{pQty:F0}</td>");
+        //                    tableRows.Append($"<td>{cQty:F0}</td>");
+        //                    tableRows.Append($"<td class='{deltaClass}'>{delta:F0}</td>");
+        //                    tableRows.Append($"<td class='detail'>{details}</td>");
+        //                    tableRows.Append("</tr>");
+        //                }
+        //            }
+        //        }
+
+        //        // 3. Assemble the HTML
+        //        StringBuilder html = new StringBuilder();
+        //        html.Append("<html><head><meta charset='UTF-8'><style>");
+        //        html.Append("body { font-family: 'Segoe UI', sans-serif; background-color: #1e1e1e; color: #dcdcdc; padding: 20px; }");
+        //        html.Append(".summary-box { border: 2px solid #569cd6; padding: 20px; margin-bottom: 30px; background-color: #252526; display: inline-block; min-width: 400px; }");
+        //        html.Append(".summary-box h3 { margin-top: 0; color: #569cd6; border-bottom: 1px solid #3e3e42; padding-bottom: 10px; }");
+        //        html.Append(".summary-table { width: auto; margin-top: 0; border: none; }");
+        //        html.Append(".summary-table td { border: none; padding: 5px 15px 5px 0; font-size: 1.1em; }");
+        //        html.Append("table { width: 100%; border-collapse: collapse; margin-top: 20px; background-color: #252526; }");
+        //        html.Append("th { background-color: #2d2d30; color: #569cd6; cursor: pointer; position: sticky; top: 0; z-index: 10; border: 1px solid #3e3e42; padding: 12px; text-align: left; }");
+        //        html.Append("th:hover { background-color: #3e3e42; }");
+        //        html.Append("td { border: 1px solid #3e3e42; padding: 10px; text-align: left; }");
+        //        html.Append(".delta-pos { color: #4ec9b0; font-weight: bold; } .delta-neg { color: #f44747; font-weight: bold; }");
+        //        html.Append(".detail { font-size: 0.85em; color: #858585; font-family: 'Consolas', monospace; }");
+        //        html.Append("</style>");
+
+        //        // Sorting Logic (Handles Numbers and Strings)
+        //        html.Append(@"<script>
+        //function sortTable(n) {
+        //  var table = document.getElementById('deltaTable');
+        //  var rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        //  switching = true; dir = 'asc';
+        //  while (switching) {
+        //    switching = false; rows = table.rows;
+        //    for (i = 1; i < (rows.length - 1); i++) {
+        //      shouldSwitch = false;
+        //      x = rows[i].getElementsByTagName('TD')[n];
+        //      y = rows[i + 1].getElementsByTagName('TD')[n];
+        //      let xVal = x.innerHTML.replace(/,/g, '');
+        //      let yVal = y.innerHTML.replace(/,/g, '');
+        //      let xNum = parseFloat(xVal);
+        //      let yNum = parseFloat(yVal);
+        //      let v1 = isNaN(xNum) ? x.innerHTML.toLowerCase() : xNum;
+        //      let v2 = isNaN(yNum) ? y.innerHTML.toLowerCase() : yNum;
+        //      if (dir == 'asc') { if (v1 > v2) { shouldSwitch = true; break; } }
+        //      else if (dir == 'desc') { if (v1 < v2) { shouldSwitch = true; break; } }
+        //    }
+        //    if (shouldSwitch) { rows[i].parentNode.insertBefore(rows[i + 1], rows[i]); switching = true; switchcount ++; }
+        //    else { if (switchcount == 0 && dir == 'asc') { dir = 'desc'; switching = true; } }
+        //  }
+        //}
+        //</script>");
+        //        html.Append("</head><body>");
+
+        //        string snapshotDate = selectedDb.Contains('_') ? selectedDb.Split('_')[1] : "Unknown";
+
+        //        // 4. Header & Summary Section
+        //        double matchPercent = totalIpns > 0 ? ((double)perfectMatches / totalIpns) * 100 : 0;
+        //        html.Append("<div class='summary-box'>");
+        //        html.Append($"<h3>Imperium Delta Report: {selectedPrefix}</h3>");
+        //        html.Append("<table class='summary-table'>");
+        //        html.Append($"<tr><td>Total IPNs Counted:</td><td>{totalIpns}</td></tr>");
+        //        html.Append($"<tr><td>Perfect Matches (Zero Delta):</td><td>{perfectMatches} ({matchPercent:F1}%)</td></tr>");
+        //        html.Append($"<tr><td>Total Variance (Units):</td><td class='{(totalVariance >= 0 ? "delta-pos" : "delta-neg")}'>{totalVariance:F0}</td></tr>");
+        //        html.Append($"<tr><td>Snapshot Date:</td><td>{snapshotDate}</td></tr>");
+        //        html.Append("</table></div>");
+
+        //        // 5. Data Table
+        //        html.Append("<table id='deltaTable'>");
+        //        html.Append("<thead><tr>");
+        //        html.Append("<th onclick='sortTable(0)'>IPN ⇅</th>");
+        //        html.Append("<th onclick='sortTable(1)'>Description ⇅</th>");
+        //        html.Append("<th onclick='sortTable(2)'>Priority ⇅</th>");
+        //        html.Append("<th onclick='sortTable(3)'>Counted ⇅</th>");
+        //        html.Append("<th onclick='sortTable(4)'>Delta ⇅</th>");
+        //        html.Append("<th>Details</th>"); // Sorting on composition details is rarely helpful
+        //        html.Append("</tr></thead><tbody>");
+        //        html.Append(tableRows.ToString());
+        //        html.Append("</tbody></table></body></html>");
+
+        //        // 6. Save and Launch
+        //        File.WriteAllText(filename, html.ToString(), Encoding.UTF8);
+        //        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(filename) { UseShellExecute = true });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show($"Imperium Report Error: {ex.Message}", "Critical Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //    }
+        //}
+
+
+        //private void btnDeltaReport_Click(object sender, EventArgs e)
+        //{
+        //    if (cmbSelectedWH.SelectedItem == null) return;
+
+        //    string selectedDb = cmbSelectedWH.SelectedItem.ToString();
+        //    string selectedPrefix = selectedDb.Split('_')[0];
+        //    string connectionString = $"Server=DBR3\\SQLEXPRESS;Integrated Security=True;Database={selectedDb};";
+        //    string filename = Path.Combine($@"\\dbr1\Data\WareHouse\2025\WHsearcher\", $"{selectedPrefix}_DeltaReport_{DateTime.Now:yyyyMMddHHmm}.html");
+
+        //    try
+        //    {
+        //        int totalIpns = 0;
+        //        int perfectMatches = 0;
+        //        decimal totalVariance = 0;
+
+        //        // Segregated StringBuilders
+        //        StringBuilder deficitRows = new StringBuilder();
+        //        StringBuilder balancedRows = new StringBuilder();
+        //        StringBuilder surplusRows = new StringBuilder();
+
+        //        using (SqlConnection conn = new SqlConnection(connectionString))
+        //        {
+        //            conn.Open();
+        //            string query = @"
+        //        SELECT S.IPN, S.Description, S.PriorityQty, 
+        //               ISNULL(C.TotalCounted, 0) as TotalCounted, C.CountDetails
+        //        FROM STOCK S
+        //        LEFT JOIN (
+        //            SELECT IPN, SUM(ISNULL(ActualQty, 0)) as TotalCounted,
+        //                   STRING_AGG(CAST(ISNULL(ActualQty, 0) AS VARCHAR), ' + ') as CountDetails
+        //            FROM COUNT GROUP BY IPN
+        //        ) C ON S.IPN = C.IPN ORDER BY S.IPN";
+
+        //            using (SqlCommand cmd = new SqlCommand(query, conn))
+        //            using (SqlDataReader reader = cmd.ExecuteReader())
+        //            {
+        //                while (reader.Read())
+        //                {
+        //                    totalIpns++;
+        //                    decimal pQty = Convert.ToDecimal(reader["PriorityQty"]);
+        //                    decimal cQty = Convert.ToDecimal(reader["TotalCounted"]);
+        //                    decimal delta = cQty - pQty;
+        //                    string details = reader["CountDetails"]?.ToString() ?? "-";
+        //                    totalVariance += delta;
+
+        //                    string deltaClass = delta > 0 ? "delta-pos" : (delta < 0 ? "delta-neg" : "");
+        //                    string rowHtml = $"<tr><td>{reader["IPN"]}</td><td>{reader["Description"]}</td><td>{pQty:F0}</td><td>{cQty:F0}</td><td class='{deltaClass}'>{delta:F0}</td><td class='detail'>{details}</td></tr>";
+
+        //                    if (delta < 0) deficitRows.Append(rowHtml);
+        //                    else if (delta == 0) { balancedRows.Append(rowHtml); if (cQty > 0) perfectMatches++; }
+        //                    else surplusRows.Append(rowHtml);
+        //                }
+        //            }
+        //        }
+
+        //        StringBuilder html = new StringBuilder();
+        //        html.Append("<html><head><meta charset='UTF-8'><style>");
+        //        html.Append("body { font-family: 'Segoe UI', sans-serif; background-color: #1e1e1e; color: #dcdcdc; padding: 20px; }");
+        //        html.Append(".summary-box { border: 2px solid #569cd6; padding: 20px; margin-bottom: 20px; background-color: #252526; display: inline-block; min-width: 450px; }");
+        //        html.Append(".summary-table td { padding: 5px 15px 5px 0; font-size: 1.1em; }");
+        //        html.Append(".nav-links { margin-bottom: 20px; } .nav-links a { color: #569cd6; margin-right: 20px; text-decoration: none; font-weight: bold; }");
+        //        html.Append("h2.section-header { padding: 10px; margin-top: 40px; border-left: 5px solid; background-color: #2d2d30; }");
+        //        html.Append(".header-deficit { border-color: #f44747; color: #f44747; }");
+        //        html.Append(".header-balanced { border-color: #4ec9b0; color: #4ec9b0; }");
+        //        html.Append(".header-surplus { border-color: #c586c0; color: #c586c0; }");
+        //        html.Append("table { width: 100%; border-collapse: collapse; margin-bottom: 20px; background-color: #252526; }");
+        //        html.Append("th { background-color: #2d2d30; color: #569cd6; cursor: pointer; position: sticky; top: 0; padding: 12px; text-align: left; border: 1px solid #3e3e42; }");
+        //        html.Append("td { border: 1px solid #3e3e42; padding: 10px; }");
+        //        html.Append(".delta-pos { color: #4ec9b0; font-weight: bold; } .delta-neg { color: #f44747; font-weight: bold; }");
+        //        html.Append(".detail { font-size: 0.85em; color: #858585; font-family: 'Consolas', monospace; }");
+        //        html.Append("</style>");
+
+        //        html.Append(@"<script>
+        //function sortTable(tableId, n) {
+        //  var table = document.getElementById(tableId);
+        //  var rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        //  switching = true; dir = 'asc';
+        //  while (switching) {
+        //    switching = false; rows = table.rows;
+        //    for (i = 1; i < (rows.length - 1); i++) {
+        //      shouldSwitch = false;
+        //      x = rows[i].getElementsByTagName('TD')[n];
+        //      y = rows[i + 1].getElementsByTagName('TD')[n];
+        //      let v1 = isNaN(parseFloat(x.innerHTML)) ? x.innerHTML.toLowerCase() : parseFloat(x.innerHTML.replace(/,/g,''));
+        //      let v2 = isNaN(parseFloat(y.innerHTML)) ? y.innerHTML.toLowerCase() : parseFloat(y.innerHTML.replace(/,/g,''));
+        //      if (dir == 'asc') { if (v1 > v2) { shouldSwitch = true; break; } }
+        //      else { if (v1 < v2) { shouldSwitch = true; break; } }
+        //    }
+        //    if (shouldSwitch) { rows[i].parentNode.insertBefore(rows[i + 1], rows[i]); switching = true; switchcount ++; }
+        //    else { if (switchcount == 0 && dir == 'asc') { dir = 'desc'; switching = true; } }
+        //  }
+        //}
+        //</script></head><body>");
+
+        //        // 4. Summary & Nav
+        //        double matchPercent = totalIpns > 0 ? ((double)perfectMatches / totalIpns) * 100 : 0;
+        //        string snapshotDate = selectedDb.Contains('_') ? selectedDb.Split('_')[1] : "Unknown";
+
+        //        html.Append("<div class='summary-box'>");
+        //        html.Append($"<h3>Imperium Segregated Report: {selectedPrefix}</h3>");
+        //        html.Append($"<table class='summary-table'><tr><td>Total IPNs:</td><td>{totalIpns}</td></tr>");
+        //        html.Append($"<tr><td>Balanced (Perfect):</td><td>{perfectMatches} ({matchPercent:F1}%)</td></tr>");
+        //        html.Append($"<tr><td>Total Variance:</td><td class='{(totalVariance >= 0 ? "delta-pos" : "delta-neg")}'>{totalVariance:F0}</td></tr>");
+        //        html.Append($"<tr><td>Snapshot:</td><td>{snapshotDate}</td></tr></table></div>");
+
+        //        html.Append("<div class='nav-links'>");
+        //        html.Append("<a href='#deficit'>↓ View Deficits</a><a href='#balanced'>↓ View Balanced</a><a href='#surplus'>↓ View Surplus (Found)</a></div>");
+
+        //        // 5. Render Sections
+        //        RenderSection(html, "deficit", "Deficit (Shortages)", "header-deficit", deficitRows);
+        //        RenderSection(html, "balanced", "Balanced (System Match)", "header-balanced", balancedRows);
+        //        RenderSection(html, "surplus", "Surplus (Unaccounted/Found Items)", "header-surplus", surplusRows);
+
+        //        html.Append("</body></html>");
+        //        File.WriteAllText(filename, html.ToString(), Encoding.UTF8);
+        //        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(filename) { UseShellExecute = true });
+        //    }
+        //    catch (Exception ex) { MessageBox.Show($"Report Error: {ex.Message}"); }
+        //}
+
+        //private void RenderSection(StringBuilder html, string id, string title, string cssClass, StringBuilder rows)
+        //{
+        //    html.Append($"<h2 id='{id}' class='section-header {cssClass}'>{title}</h2>");
+        //    html.Append($"<table id='table_{id}'><thead><tr>");
+        //    string[] headers = { "IPN", "Description", "Priority", "Counted", "Delta", "Details" };
+        //    for (int i = 0; i < headers.Length; i++)
+        //    {
+        //        if (i < 5) html.Append($"<th onclick=\"sortTable('table_{id}', {i})\">{headers[i]} ⇅</th>");
+        //        else html.Append($"<th>{headers[i]}</th>");
+        //    }
+        //    html.Append("</tr></thead><tbody>");
+        //    html.Append(rows.Length > 0 ? rows.ToString() : "<tr><td colspan='6' style='text-align:center;'>No items in this category.</td></tr>");
+        //    html.Append("</tbody></table>");
+        //}
+
+
         private void btnDeltaReport_Click(object sender, EventArgs e)
         {
             if (cmbSelectedWH.SelectedItem == null) return;
@@ -507,76 +873,149 @@ namespace WH_Panel
 
             try
             {
-                StringBuilder html = new StringBuilder();
-                // 
-                html.Append("<html><head><meta charset='UTF-8'><style>");
-                html.Append("body { font-family: 'Segoe UI', sans-serif; background-color: #1e1e1e; color: #dcdcdc; padding: 20px; }");
-                html.Append("table { width: 100%; border-collapse: collapse; margin-top: 20px; }");
-                html.Append("th, td { border: 1px solid #3e3e42; padding: 10px; text-align: left; }");
-                html.Append("th { background-color: #2d2d30; color: #569cd6; }");
-                html.Append(".delta-pos { color: #4ec9b0; } .delta-neg { color: #f44747; } .detail { font-size: 0.85em; color: #858585; }");
-                html.Append("</style></head><body>");
-                html.Append($"<h2>Delta Report: {selectedPrefix}</h2>");
+                int totalIpns = 0;
+                int perfectMatches = 0;
+                int deficitCount = 0;
+                int surplusCount = 0;
+                decimal totalVariance = 0;
+
+                // Segregated StringBuilders
+                StringBuilder deficitRows = new StringBuilder();
+                StringBuilder balancedRows = new StringBuilder();
+                StringBuilder surplusRows = new StringBuilder();
 
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-                    // This query joins STOCK with a grouped SUM from COUNT
                     string query = @"
-                SELECT 
-                    S.IPN, 
-                    S.Description, 
-                    S.PriorityQty, 
-                    ISNULL(C.TotalCounted, 0) as TotalCounted,
-                    C.CountDetails
+                SELECT S.IPN, S.Description, S.PriorityQty, 
+                       ISNULL(C.TotalCounted, 0) as TotalCounted, C.CountDetails
                 FROM STOCK S
                 LEFT JOIN (
-                    SELECT 
-                        IPN, 
-                        SUM(ISNULL(ActualQty, 0)) as TotalCounted,
-                        STRING_AGG(CAST(ISNULL(ActualQty, 0) AS VARCHAR), ' + ') as CountDetails
-                    FROM COUNT
-                    GROUP BY IPN
-                ) C ON S.IPN = C.IPN
-                ORDER BY S.IPN";
+                    SELECT IPN, SUM(ISNULL(ActualQty, 0)) as TotalCounted,
+                           STRING_AGG(CAST(ISNULL(ActualQty, 0) AS VARCHAR), ' + ') as CountDetails
+                    FROM COUNT GROUP BY IPN
+                ) C ON S.IPN = C.IPN ORDER BY S.IPN";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        html.Append("<table><tr><th>IPN</th><th>Description</th><th>Priority</th><th>Counted</th><th>Delta</th><th>Details</th></tr>");
-
                         while (reader.Read())
                         {
+                            totalIpns++;
                             decimal pQty = Convert.ToDecimal(reader["PriorityQty"]);
                             decimal cQty = Convert.ToDecimal(reader["TotalCounted"]);
                             decimal delta = cQty - pQty;
                             string details = reader["CountDetails"]?.ToString() ?? "-";
+                            totalVariance += delta;
 
-                            // Only highlighting rows that are actually counted or have a discrepancy
-                            string deltaClass = delta >= 0 ? "delta-pos" : "delta-neg";
+                            string deltaClass = delta > 0 ? "delta-pos" : (delta < 0 ? "delta-neg" : "");
+                            string rowHtml = $"<tr><td>{reader["IPN"]}</td><td>{reader["Description"]}</td><td>{pQty:F0}</td><td>{cQty:F0}</td><td class='{deltaClass}'>{delta:F0}</td><td class='detail'>{details}</td></tr>";
 
-                            html.Append("<tr>");
-                            html.Append($"<td>{reader["IPN"]}</td>");
-                            html.Append($"<td>{reader["Description"]}</td>");
-                            html.Append($"<td>{pQty:F0}</td>");
-                            html.Append($"<td>{cQty:F0}</td>");
-                            html.Append($"<td class='{deltaClass}'>{delta:F0}</td>");
-                            html.Append($"<td class='detail'>{details}</td>");
-                            html.Append("</tr>");
+                            if (delta < 0)
+                            {
+                                deficitRows.Append(rowHtml);
+                                deficitCount++;
+                            }
+                            else if (delta == 0)
+                            {
+                                balancedRows.Append(rowHtml);
+                                if (cQty > 0) perfectMatches++;
+                            }
+                            else
+                            {
+                                surplusRows.Append(rowHtml);
+                                surplusCount++;
+                            }
                         }
                     }
                 }
 
-                html.Append("</table></body></html>");
+                StringBuilder html = new StringBuilder();
+                html.Append("<html><head><meta charset='UTF-8'><style>");
+                html.Append("body { font-family: 'Segoe UI', sans-serif; background-color: #1e1e1e; color: #dcdcdc; padding: 20px; }");
+                html.Append(".summary-box { border: 2px solid #569cd6; padding: 20px; margin-bottom: 20px; background-color: #252526; display: inline-block; min-width: 450px; }");
+                html.Append(".summary-table td { padding: 5px 15px 5px 0; font-size: 1.1em; }");
+                html.Append(".nav-links { margin-bottom: 20px; } .nav-links a { color: #569cd6; margin-right: 20px; text-decoration: none; font-weight: bold; }");
+                html.Append("h2.section-header { padding: 10px; margin-top: 40px; border-left: 5px solid; background-color: #2d2d30; }");
+                html.Append(".header-deficit { border-color: #f44747; color: #f44747; }");
+                html.Append(".header-balanced { border-color: #4ec9b0; color: #4ec9b0; }");
+                html.Append(".header-surplus { border-color: #c586c0; color: #c586c0; }");
+                html.Append("table { width: 100%; border-collapse: collapse; margin-bottom: 20px; background-color: #252526; }");
+                html.Append("th { background-color: #2d2d30; color: #569cd6; cursor: pointer; position: sticky; top: 0; padding: 12px; text-align: left; border: 1px solid #3e3e42; }");
+                html.Append("td { border: 1px solid #3e3e42; padding: 10px; }");
+                html.Append(".delta-pos { color: #4ec9b0; font-weight: bold; } .delta-neg { color: #f44747; font-weight: bold; }");
+                html.Append(".detail { font-size: 0.85em; color: #858585; font-family: 'Consolas', monospace; }");
+                html.Append("</style>");
+
+                html.Append(@"<script>
+        function sortTable(tableId, n) {
+          var table = document.getElementById(tableId);
+          var rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+          switching = true; dir = 'asc';
+          while (switching) {
+            switching = false; rows = table.rows;
+            for (i = 1; i < (rows.length - 1); i++) {
+              shouldSwitch = false;
+              x = rows[i].getElementsByTagName('TD')[n];
+              y = rows[i + 1].getElementsByTagName('TD')[n];
+              let v1 = isNaN(parseFloat(x.innerHTML)) ? x.innerHTML.toLowerCase() : parseFloat(x.innerHTML.replace(/,/g,''));
+              let v2 = isNaN(parseFloat(y.innerHTML)) ? y.innerHTML.toLowerCase() : parseFloat(y.innerHTML.replace(/,/g,''));
+              if (dir == 'asc') { if (v1 > v2) { shouldSwitch = true; break; } }
+              else { if (v1 < v2) { shouldSwitch = true; break; } }
+            }
+            if (shouldSwitch) { rows[i].parentNode.insertBefore(rows[i + 1], rows[i]); switching = true; switchcount ++; }
+            else { if (switchcount == 0 && dir == 'asc') { dir = 'desc'; switching = true; } }
+          }
+        }
+        </script></head><body>");
+
+                // 4. Summary & Nav
+                double deficitPercent = totalIpns > 0 ? ((double)deficitCount / totalIpns) * 100 : 0;
+                double matchPercent = totalIpns > 0 ? ((double)perfectMatches / totalIpns) * 100 : 0;
+                double surplusPercent = totalIpns > 0 ? ((double)surplusCount / totalIpns) * 100 : 0;
+                string snapshotDate = selectedDb.Contains('_') ? selectedDb.Split('_')[1] : "Unknown";
+
+                html.Append("<div class='summary-box'>");
+                html.Append($"<h3>Imperium Segregated Report: {selectedPrefix}</h3>");
+                html.Append("<table class='summary-table'>");
+                html.Append($"<tr><td>Total IPNs in Warehouse:</td><td>{totalIpns}</td></tr>");
+                html.Append($"<tr><td>Deficit (Shortages):</td><td class='delta-neg'>{deficitCount} ({deficitPercent:F1}%)</td></tr>");
+                html.Append($"<tr><td>Balanced (Perfect):</td><td class='delta-pos'>{perfectMatches} ({matchPercent:F1}%)</td></tr>");
+                html.Append($"<tr><td>Surplus (Found Items):</td><td style='color: #c586c0;'>{surplusCount} ({surplusPercent:F1}%)</td></tr>");
+                html.Append($"<tr><td>Total Variance:</td><td class='{(totalVariance >= 0 ? "delta-pos" : "delta-neg")}'>{totalVariance:F0}</td></tr>");
+                html.Append($"<tr><td>Snapshot Date:</td><td>{snapshotDate}</td></tr>");
+                html.Append("</table></div>");
+
+                html.Append("<div class='nav-links'>");
+                html.Append("<a href='#deficit'>↓ View Deficits</a><a href='#balanced'>↓ View Balanced</a><a href='#surplus'>↓ View Surplus (Found)</a></div>");
+
+                // 5. Render Sections
+                RenderSection(html, "deficit", "Deficit (Shortages)", "header-deficit", deficitRows);
+                RenderSection(html, "balanced", "Balanced (System Match)", "header-balanced", balancedRows);
+                RenderSection(html, "surplus", "Surplus (Unaccounted/Found Items)", "header-surplus", surplusRows);
+
+                html.Append("</body></html>");
                 File.WriteAllText(filename, html.ToString(), Encoding.UTF8);
                 System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(filename) { UseShellExecute = true });
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Delta Error: {ex.Message}");
-            }
+            catch (Exception ex) { MessageBox.Show($"Report Error: {ex.Message}"); }
         }
 
+        private void RenderSection(StringBuilder html, string id, string title, string cssClass, StringBuilder rows)
+        {
+            html.Append($"<h2 id='{id}' class='section-header {cssClass}'>{title}</h2>");
+            html.Append($"<table id='table_{id}'><thead><tr>");
+            string[] headers = { "IPN", "Description", "Priority", "Counted", "Delta", "Details" };
+            for (int i = 0; i < headers.Length; i++)
+            {
+                if (i < 5) html.Append($"<th onclick=\"sortTable('table_{id}', {i})\">{headers[i]} ⇅</th>");
+                else html.Append($"<th>{headers[i]}</th>");
+            }
+            html.Append("</tr></thead><tbody>");
+            html.Append(rows.Length > 0 ? rows.ToString() : "<tr><td colspan='6' style='text-align:center;'>No items in this category.</td></tr>");
+            html.Append("</tbody></table>");
+        }
         private async void txtSearchIPN_KeyDown(object sender, KeyEventArgs e)
         {
 
