@@ -34,103 +34,6 @@ namespace WH_Panel
             InitializeComponent();
         }
 
-        //private void SetupCountedLog()
-        //{
-        //    if (dgwCountedLog.Columns.Count == 0)
-        //    {
-        //        dgwCountedLog.Columns.Add("TIME", "Time");
-        //        dgwCountedLog.Columns.Add("IPN", "IPN");
-        //        dgwCountedLog.Columns.Add("DOC", "Doc No");
-        //        dgwCountedLog.Columns.Add("QTY", "Qty");
-        //        dgwCountedLog.Columns.Add("PKG", "Package");
-
-        //        ApplyDarkThemeToGrid(dgwCountedLog);
-
-        //        // Optional: Highlight the most recent row with a unique color
-        //        dgwCountedLog.DefaultCellStyle.SelectionBackColor = Color.SteelBlue;
-        //    }
-        //}
-
-        //private void SetupCountedLog()
-        //{
-        //    // 1. Clear any existing columns to ensure a fresh, identical copy
-        //    dgwCountedLog.Columns.Clear();
-        //    dgwCountedLog.Columns.Add("IPN");
-        //    // 2. Mirror every column directly from the In-Stock grid
-        //    foreach (DataGridViewColumn col in dgwINSTOCK.Columns)
-        //    {
-        //        // This copies the DataPropertyName, Name, and HeaderText exactly
-        //        dgwCountedLog.Columns.Add((DataGridViewColumn)col.Clone());
-        //    }
-
-        //    // 3. Re-apply the industrial dark theme to the new structure
-        //    ApplyDarkThemeToGrid(dgwCountedLog);
-
-        //    // Set selection style for better visibility on the warehouse floor
-        //    dgwCountedLog.DefaultCellStyle.SelectionBackColor = Color.SteelBlue;
-        //}
-
-        //private void SetupCountedLog()
-        //{
-        //    dgwCountedLog.Columns.Clear();
-
-        //    // 1. Add the custom IPN column first
-        //    DataGridViewTextBoxColumn ipnCol = new DataGridViewTextBoxColumn();
-        //    ipnCol.Name = "LOG_IPN"; // Use a unique name to avoid conflicts
-        //    ipnCol.HeaderText = "IPN";
-        //    ipnCol.Width = 100;
-        //    dgwCountedLog.Columns.Add(ipnCol);
-
-        //    // 2. Mirror every column directly from the In-Stock grid
-        //    foreach (DataGridViewColumn col in dgwINSTOCK.Columns)
-        //    {
-        //        dgwCountedLog.Columns.Add((DataGridViewColumn)col.Clone());
-        //    }
-
-        //    ApplyDarkThemeToGrid(dgwCountedLog);
-        //    dgwCountedLog.DefaultCellStyle.SelectionBackColor = Color.SteelBlue;
-        //}
-
-        //private void SetupCountedLog()
-        //{
-        //    dgwCountedLog.Columns.Clear();
-
-        //    // 1. Add the custom IPN column first
-        //    DataGridViewTextBoxColumn ipnCol = new DataGridViewTextBoxColumn();
-        //    ipnCol.Name = "LOG_IPN_COL";
-        //    ipnCol.HeaderText = "IPN";
-        //    dgwCountedLog.Columns.Add(ipnCol);
-
-        //    // 2. Direct Mirror of dgwINSTOCK structure
-        //    foreach (DataGridViewColumn col in dgwINSTOCK.Columns)
-        //    {
-        //        dgwCountedLog.Columns.Add((DataGridViewColumn)col.Clone());
-        //    }
-
-        //    ApplyDarkThemeToGrid(dgwCountedLog);
-        //}
-
-        //private void SetupCountedLog()
-        //{
-        //    dgwCountedLog.Columns.Clear();
-
-        //    // 1. Manually add the IPN column at Index 0
-        //    DataGridViewTextBoxColumn ipnCol = new DataGridViewTextBoxColumn();
-        //    ipnCol.Name = "LOG_IPN_COL";
-        //    ipnCol.HeaderText = "IPN";
-        //    dgwCountedLog.Columns.Add(ipnCol);
-
-        //    // 2. Clone the rest of the structure from dgwINSTOCK
-        //    foreach (DataGridViewColumn col in dgwINSTOCK.Columns)
-        //    {
-        //        dgwCountedLog.Columns.Add((DataGridViewColumn)col.Clone());
-        //    }
-
-        //    ApplyDarkThemeToGrid(dgwCountedLog);
-        //    dgwCountedLog.DefaultCellStyle.SelectionBackColor = Color.SteelBlue;
-        //}
-
-
         private void SetupCountedLog()
         {
             dgwCountedLog.Columns.Clear();
@@ -427,92 +330,53 @@ namespace WH_Panel
             }
         }
 
-        //private void CreateDatabaseSchema(string dbConn)
-        //{
-        //    using (SqlConnection conn = new SqlConnection(dbConn))
-        //    {
-        //        conn.Open();
-        //        string sql = @"
-        //    CREATE TABLE STOCK (
-        //        IPN NVARCHAR(50) PRIMARY KEY,
-        //        Description NVARCHAR(MAX),
-        //        PriorityQty DECIMAL(18,4),
-        //        IsInitialized BIT DEFAULT 0,
-        //        IsCounted BIT DEFAULT 0,
-        //        SnapshotDate DATETIME
-        //    );
-
-        //    CREATE TABLE COUNT (
-        //        Id INT IDENTITY(1,1) PRIMARY KEY,
-        //        IPN NVARCHAR(50),
-        //        PackageID NVARCHAR(100),
-        //        ExpectedQty DECIMAL(18,4),
-        //        ActualQty DECIMAL(18,4) NULL,
-        //        Status INT DEFAULT 0,
-        //        CountDate DATETIME NULL,
-        //        UserCounted NVARCHAR(50)
-        //    );
-
-        //    CREATE TABLE AVL (
-        //        Id INT IDENTITY(1,1) PRIMARY KEY,
-        //        IPN NVARCHAR(50),
-        //        Manufacturer NVARCHAR(100),
-        //        MPN NVARCHAR(100),
-        //        Preference INT
-        //    );";
-
-        //        using (SqlCommand cmd = new SqlCommand(sql, conn))
-        //        {
-        //            cmd.ExecuteNonQuery();
-        //        }
-        //    }
-        //}
+       
 
 
         private void CreateDatabaseSchema(string dbConn)
         {
             using (SqlConnection conn = new SqlConnection(dbConn))
             {
-                conn.Open();
-                string sql = @"
-    -- 1. Updated Snapshot Table (Book Value)
-    IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'STOCK')
-    CREATE TABLE STOCK (
-        IPN NVARCHAR(50) PRIMARY KEY,
-        Description NVARCHAR(MAX),
-        PriorityQty INT, -- Changed to INT for discrete reel counts
-        IsInitialized BIT DEFAULT 0,
-        IsCounted BIT DEFAULT 0,
-        SnapshotDate DATETIME
-    );
+                        conn.Open();
+                        string sql = @"
+            -- 1. Updated Snapshot Table (Book Value)
+            IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'STOCK')
+            CREATE TABLE STOCK (
+                IPN NVARCHAR(50) PRIMARY KEY,
+                Description NVARCHAR(MAX),
+                PriorityQty INT, -- Changed to INT for discrete reel counts
+                IsInitialized BIT DEFAULT 0,
+                IsCounted BIT DEFAULT 0,
+                SnapshotDate DATETIME
+            );
 
-    -- 2. Updated Transactional Count Table (Physical Truth)
-    -- Aligned with: Id, IPN, PackageID, ActualQty, CountDate, UserCounted, 
-    -- OriginalDoc, PackageType, BookNum, Supplier, PriorityDate
-    IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'COUNT')
-    CREATE TABLE [COUNT] (
-        Id INT IDENTITY(1,1) PRIMARY KEY,
-        IPN NVARCHAR(50) NULL,
-        PackageID NVARCHAR(100) NULL,
-        ActualQty INT NULL, -- Discrete integer count
-        CountDate DATETIME NULL,
-        UserCounted NVARCHAR(50) NULL,
-        OriginalDoc NVARCHAR(50) NULL, -- Unique Anchor (e.g., GR26000200)
-        PackageType NVARCHAR(50) NULL, -- User-selected packaging
-        BookNum NVARCHAR(50) NULL,      -- Priority Reference
-        Supplier NVARCHAR(100) NULL,
-        PriorityDate DATETIME NULL      -- ERP Transaction Timestamp
-    );
+            -- 2. Updated Transactional Count Table (Physical Truth)
+            -- Aligned with: Id, IPN, PackageID, ActualQty, CountDate, UserCounted, 
+            -- OriginalDoc, PackageType, BookNum, Supplier, PriorityDate
+            IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'COUNT')
+            CREATE TABLE [COUNT] (
+                Id INT IDENTITY(1,1) PRIMARY KEY,
+                IPN NVARCHAR(50) NULL,
+                PackageID NVARCHAR(100) NULL,
+                ActualQty INT NULL, -- Discrete integer count
+                CountDate DATETIME NULL,
+                UserCounted NVARCHAR(50) NULL,
+                OriginalDoc NVARCHAR(50) NULL, -- Unique Anchor (e.g., GR26000200)
+                PackageType NVARCHAR(50) NULL, -- User-selected packaging
+                BookNum NVARCHAR(50) NULL,      -- Priority Reference
+                Supplier NVARCHAR(100) NULL,
+                PriorityDate DATETIME NULL      -- ERP Transaction Timestamp
+            );
 
-    -- 3. AVL Table (Manufacturer matching)
-    IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'AVL')
-    CREATE TABLE AVL (
-        Id INT IDENTITY(1,1) PRIMARY KEY,
-        IPN NVARCHAR(50),
-        Manufacturer NVARCHAR(100),
-        MPN NVARCHAR(100),
-        Preference INT
-    );";
+            -- 3. AVL Table (Manufacturer matching)
+            IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'AVL')
+            CREATE TABLE AVL (
+                Id INT IDENTITY(1,1) PRIMARY KEY,
+                IPN NVARCHAR(50),
+                Manufacturer NVARCHAR(100),
+                MPN NVARCHAR(100),
+                Preference INT
+            );";
 
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
@@ -794,12 +658,7 @@ namespace WH_Panel
                             .Where(t => t.DOCDES != "קיזוז אוטומטי" && t.TOWARHSNAME != "666")
                             .ToList();
 
-                        //foreach (var trans in movements)
-                        //{
-                        //    // Adding rows to your live display grid
-                        //    // We leave Date and Pack empty for the Parallel Enrichment to fill
-                        //    dgvStockMovements.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "");
-                        //}
+                     
                         foreach (var trans in movements)
                         {
                             int rowIndex = dgvStockMovements.Rows.Add(
