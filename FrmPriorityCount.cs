@@ -427,39 +427,92 @@ namespace WH_Panel
             }
         }
 
+        //private void CreateDatabaseSchema(string dbConn)
+        //{
+        //    using (SqlConnection conn = new SqlConnection(dbConn))
+        //    {
+        //        conn.Open();
+        //        string sql = @"
+        //    CREATE TABLE STOCK (
+        //        IPN NVARCHAR(50) PRIMARY KEY,
+        //        Description NVARCHAR(MAX),
+        //        PriorityQty DECIMAL(18,4),
+        //        IsInitialized BIT DEFAULT 0,
+        //        IsCounted BIT DEFAULT 0,
+        //        SnapshotDate DATETIME
+        //    );
+
+        //    CREATE TABLE COUNT (
+        //        Id INT IDENTITY(1,1) PRIMARY KEY,
+        //        IPN NVARCHAR(50),
+        //        PackageID NVARCHAR(100),
+        //        ExpectedQty DECIMAL(18,4),
+        //        ActualQty DECIMAL(18,4) NULL,
+        //        Status INT DEFAULT 0,
+        //        CountDate DATETIME NULL,
+        //        UserCounted NVARCHAR(50)
+        //    );
+
+        //    CREATE TABLE AVL (
+        //        Id INT IDENTITY(1,1) PRIMARY KEY,
+        //        IPN NVARCHAR(50),
+        //        Manufacturer NVARCHAR(100),
+        //        MPN NVARCHAR(100),
+        //        Preference INT
+        //    );";
+
+        //        using (SqlCommand cmd = new SqlCommand(sql, conn))
+        //        {
+        //            cmd.ExecuteNonQuery();
+        //        }
+        //    }
+        //}
+
+
         private void CreateDatabaseSchema(string dbConn)
         {
             using (SqlConnection conn = new SqlConnection(dbConn))
             {
                 conn.Open();
                 string sql = @"
-            CREATE TABLE STOCK (
-                IPN NVARCHAR(50) PRIMARY KEY,
-                Description NVARCHAR(MAX),
-                PriorityQty DECIMAL(18,4),
-                IsInitialized BIT DEFAULT 0,
-                IsCounted BIT DEFAULT 0,
-                SnapshotDate DATETIME
-            );
+    -- 1. Updated Snapshot Table (Book Value)
+    IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'STOCK')
+    CREATE TABLE STOCK (
+        IPN NVARCHAR(50) PRIMARY KEY,
+        Description NVARCHAR(MAX),
+        PriorityQty INT, -- Changed to INT for discrete reel counts
+        IsInitialized BIT DEFAULT 0,
+        IsCounted BIT DEFAULT 0,
+        SnapshotDate DATETIME
+    );
 
-            CREATE TABLE COUNT (
-                Id INT IDENTITY(1,1) PRIMARY KEY,
-                IPN NVARCHAR(50),
-                PackageID NVARCHAR(100),
-                ExpectedQty DECIMAL(18,4),
-                ActualQty DECIMAL(18,4) NULL,
-                Status INT DEFAULT 0,
-                CountDate DATETIME NULL,
-                UserCounted NVARCHAR(50)
-            );
+    -- 2. Updated Transactional Count Table (Physical Truth)
+    -- Aligned with: Id, IPN, PackageID, ActualQty, CountDate, UserCounted, 
+    -- OriginalDoc, PackageType, BookNum, Supplier, PriorityDate
+    IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'COUNT')
+    CREATE TABLE [COUNT] (
+        Id INT IDENTITY(1,1) PRIMARY KEY,
+        IPN NVARCHAR(50) NULL,
+        PackageID NVARCHAR(100) NULL,
+        ActualQty INT NULL, -- Discrete integer count
+        CountDate DATETIME NULL,
+        UserCounted NVARCHAR(50) NULL,
+        OriginalDoc NVARCHAR(50) NULL, -- Unique Anchor (e.g., GR26000200)
+        PackageType NVARCHAR(50) NULL, -- User-selected packaging
+        BookNum NVARCHAR(50) NULL,      -- Priority Reference
+        Supplier NVARCHAR(100) NULL,
+        PriorityDate DATETIME NULL      -- ERP Transaction Timestamp
+    );
 
-            CREATE TABLE AVL (
-                Id INT IDENTITY(1,1) PRIMARY KEY,
-                IPN NVARCHAR(50),
-                Manufacturer NVARCHAR(100),
-                MPN NVARCHAR(100),
-                Preference INT
-            );";
+    -- 3. AVL Table (Manufacturer matching)
+    IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'AVL')
+    CREATE TABLE AVL (
+        Id INT IDENTITY(1,1) PRIMARY KEY,
+        IPN NVARCHAR(50),
+        Manufacturer NVARCHAR(100),
+        MPN NVARCHAR(100),
+        Preference INT
+    );";
 
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
@@ -467,6 +520,7 @@ namespace WH_Panel
                 }
             }
         }
+
 
         private async Task BulkInsertToStockAsync(string dbConn, List<WarehouseBalance> items)
         {
