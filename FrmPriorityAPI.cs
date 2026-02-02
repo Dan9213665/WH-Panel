@@ -503,13 +503,13 @@ namespace WH_Panel
             List<string> apiPriority = new List<string>();
 
             if (currentUser == "lgt01")
-                apiPriority.AddRange(new[] { "api2", "api", "api3", "api4" });
+                apiPriority.AddRange(new[] { "api2", "api", "api3", "api4", "api5" });
             else if (currentUser == "rbtwh")
-                apiPriority.AddRange(new[] { "api3", "api", "api2", "api4" });
+                apiPriority.AddRange(new[] { "api3", "api", "api2", "api4", "api5" });
             else if (currentUser == "rbtwh2")
-                apiPriority.AddRange(new[] { "api", "api3", "api2", "api4" });
+                apiPriority.AddRange(new[] { "api", "api3", "api2", "api4", "api5" });
             else
-                apiPriority.AddRange(new[] { "api","api2", "api3", "api4" });
+                apiPriority.AddRange(new[] { "api","api2", "api3", "api4", "api5" });
 
             // Pick the first one NOT in the blacklist
             string chosenApi = apiPriority.FirstOrDefault(a => !SessionBlacklist.Contains(a)) ?? apiPriority.First();
@@ -525,6 +525,7 @@ namespace WH_Panel
                 "api2" => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}")),
                 "api3" => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}")),
                 "api4" => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api4Username}:{settings.Api4Password}")),
+                "api5" => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api5Username}:{settings.Api5Password}")),
                 _ => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"))
             };
         }
@@ -538,6 +539,8 @@ namespace WH_Panel
                 return "api3";
             if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api4Username}:{settings.Api4Password}")))
                 return "api4";
+            if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api5Username}:{settings.Api5Password}")))
+                return "api5";
 
             // Default/Fallback account
             if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}")))
