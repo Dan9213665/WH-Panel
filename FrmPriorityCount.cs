@@ -138,44 +138,94 @@ namespace WH_Panel
                 MessageBox.Show($"Error loading snapshots: {ex.Message}");
             }
         }
+        //private async Task LoadWarehouseData()
+        //{
+        //    // Update this URL if your baseUrl is stored in settings as well
+        //    string url = $"{baseUrl}/WAREHOUSES?$select=WARHSNAME,WARHSDES,WARHS";
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        try
+        //        {
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            // Auth using the freshly loaded settings
+        //            string authInfo = $"{settings.ApiUsername}:{settings.ApiPassword}";
+        //            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(authInfo));
+        //            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+        //            HttpResponseMessage response = await client.GetAsync(url);
+        //            response.EnsureSuccessStatusCode();
+        //            string responseBody = await response.Content.ReadAsStringAsync();
+        //            var apiResponse = JsonConvert.DeserializeObject<WarehouseApiResponse>(responseBody);
+        //            if (apiResponse?.value != null)
+        //            {
+        //                cmbAllWhs.Items.Clear();
+        //                loadedWareHouses.Clear();
+        //                foreach (var warehouse in apiResponse.value)
+        //                {
+        //                    cmbAllWhs.Items.Add($"{warehouse.WARHSNAME} - {warehouse.WARHSDES}");
+        //                    loadedWareHouses.Add(warehouse);
+        //                }
+        //                cmbAllWhs.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+        //                cmbAllWhs.AutoCompleteSource = AutoCompleteSource.ListItems;
+        //                cmbAllWhs.DroppedDown = true;
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            MessageBox.Show($"Warehouse Load Error: {ex.Message}", "API Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        }
+        //    }
+        //}
+
         private async Task LoadWarehouseData()
         {
-            // Update this URL if your baseUrl is stored in settings as well
+            // Targeting the WAREHOUSES endpoint
             string url = $"{baseUrl}/WAREHOUSES?$select=WARHSNAME,WARHSDES,WARHS";
+
             using (HttpClient client = new HttpClient())
             {
                 try
                 {
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    // Auth using the freshly loaded settings
-                    string authInfo = $"{settings.ApiUsername}:{settings.ApiPassword}";
-                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(authInfo));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                    // Use the centralized Auth principle
+                    ApiHelper.AuthenticateClient(client);
+
                     HttpResponseMessage response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
+
                     string responseBody = await response.Content.ReadAsStringAsync();
                     var apiResponse = JsonConvert.DeserializeObject<WarehouseApiResponse>(responseBody);
+
                     if (apiResponse?.value != null)
                     {
                         cmbAllWhs.Items.Clear();
                         loadedWareHouses.Clear();
+
                         foreach (var warehouse in apiResponse.value)
                         {
+                            // Adding to the UI and the local cache
                             cmbAllWhs.Items.Add($"{warehouse.WARHSNAME} - {warehouse.WARHSDES}");
                             loadedWareHouses.Add(warehouse);
                         }
+
+                        // UI Ergonomics
                         cmbAllWhs.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
                         cmbAllWhs.AutoCompleteSource = AutoCompleteSource.ListItems;
-                        cmbAllWhs.DroppedDown = true;
+
+                        Log("Warehouse list synchronized with Priority.", Color.LimeGreen);
                     }
                 }
                 catch (Exception ex)
                 {
+                    Log($"Warehouse Load Error: {ex.Message}", Color.Red);
                     MessageBox.Show($"Warehouse Load Error: {ex.Message}", "API Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
+
+
         private string GetLoggedUser() => Environment.UserName;
         private void ApplyDarkTheme(Control parent)
         {
@@ -255,20 +305,54 @@ namespace WH_Panel
             }
         }
         // --- SUB FUNCTIONS ---
+        //private async Task<List<WarehouseBalance>> FetchPriorityInventoryAsync(string whName)
+        //{
+        //    string url = $"{baseUrl}/WAREHOUSES?$filter=WARHSNAME eq '{whName}'&$expand=WARHSBAL_SUBFORM($select=PARTNAME,PARTDES,TBALANCE;$filter=BALANCE gt 0)";
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        client.Timeout = TimeSpan.FromMinutes(5);
+        //        string authInfo = $"{settings.ApiUsername}:{settings.ApiPassword}";
+        //        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(authInfo));
+
+        //        client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", credentials);
+        //        var response = await client.GetAsync(url);
+        //        response.EnsureSuccessStatusCode();
+        //        string json = await response.Content.ReadAsStringAsync();
+        //        var apiResponse = JsonConvert.DeserializeObject<WarehouseApiResponse>(json);
+        //        return apiResponse?.value.FirstOrDefault()?.WARHSBAL_SUBFORM;
+        //    }
+        //}
+
         private async Task<List<WarehouseBalance>> FetchPriorityInventoryAsync(string whName)
         {
+            // Keeping your optimized OData filter
             string url = $"{baseUrl}/WAREHOUSES?$filter=WARHSNAME eq '{whName}'&$expand=WARHSBAL_SUBFORM($select=PARTNAME,PARTDES,TBALANCE;$filter=BALANCE gt 0)";
+
             using (HttpClient client = new HttpClient())
             {
+                // Keeping the long timeout for large inventory snapshots
                 client.Timeout = TimeSpan.FromMinutes(5);
-                string authInfo = $"{settings.ApiUsername}:{settings.ApiPassword}";
-                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(authInfo));
-                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", credentials);
-                var response = await client.GetAsync(url);
-                response.EnsureSuccessStatusCode();
-                string json = await response.Content.ReadAsStringAsync();
-                var apiResponse = JsonConvert.DeserializeObject<WarehouseApiResponse>(json);
-                return apiResponse?.value.FirstOrDefault()?.WARHSBAL_SUBFORM;
+
+                try
+                {
+                    // Inject the centralized Auth logic (and your 5-user rotation)
+                    ApiHelper.AuthenticateClient(client);
+
+                    var response = await client.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
+
+                    string json = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<WarehouseApiResponse>(json);
+
+                    Log($"Inventory sync complete for {whName}.", Color.LimeGreen);
+
+                    return apiResponse?.value.FirstOrDefault()?.WARHSBAL_SUBFORM ?? new List<WarehouseBalance>();
+                }
+                catch (Exception ex)
+                {
+                    Log($"Inventory Fetch Error [{whName}]: {ex.Message}", Color.Red);
+                    throw; // Rethrow to let the UI layer handle the specific error message
+                }
             }
         }
         private void CreatePhysicalDatabase(string masterConn, string dbName)
@@ -591,15 +675,24 @@ namespace WH_Panel
                     MessageBox.Show("Please select an active Snapshot first.");
                     return;
                 }
-                // 1. Fetch AVL data from Priority
-                bool success = await getMFPNSfromPRIORITY(inputIPN);
-                getAllMovementsForIPN(inputIPN);
-                if (success)
+
+                if (inputIPN.StartsWith(cmbSelectedWH.SelectedItem.ToString().Substring(0,3)))
                 {
-                    // 2. Prepare for the next scan
-                    txtbMFPN.Clear();
-                    txtbMFPN.Focus();
+                    // 1. Fetch AVL data from Priority
+                    bool success = await getMFPNSfromPRIORITY(inputIPN);
+                    getAllMovementsForIPN(inputIPN);
+                    if (success)
+                    {
+                        // 2. Prepare for the next scan
+                        txtbMFPN.Clear();
+                        txtbMFPN.Focus();
+                    }
                 }
+                else
+                {
+                   MessageBox.Show("IPN does not match the selected warehouse snapshot prefix. Please check your input.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                
             }
         }
         private async Task getAllMovementsForIPN(string ipn)
@@ -891,38 +984,98 @@ namespace WH_Panel
             // Apply your Dark Mode styling immediately
             ApplyDarkThemeToGrid(dgvStockMovements);
         }
+        //private async Task<bool> getMFPNSfromPRIORITY(string ipn)
+        //{
+        //    string url = $"{baseUrl}/PART?$filter=PARTNAME eq '{ipn}'&$expand=PARTMNF_SUBFORM($select=MNFPARTNAME,MNFPARTDES,MNFNAME)";
+        //    Log($"Querying Priority AVL for: {ipn}...", Color.Cyan);
+        //    try
+        //    {
+        //        using (HttpClient client = new HttpClient())
+        //        {
+        //            client.Timeout = TimeSpan.FromSeconds(30);
+        //            string authInfo = $"{settings.ApiUsername}:{settings.ApiPassword}";
+        //            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(authInfo));
+        //            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", credentials);
+        //            var response = await client.GetAsync(url);
+        //            response.EnsureSuccessStatusCode();
+        //            string json = await response.Content.ReadAsStringAsync();
+        //            var partData = JsonConvert.DeserializeObject<PartApiResponse>(json);
+        //            if (partData?.value != null && partData.value.Count > 0)
+        //            {
+        //                var avlList = partData.value[0].PARTMNF_SUBFORM;
+        //                int avlCount = avlList?.Count ?? 0;
+        //                fullAvlList = partData.value[0].PARTMNF_SUBFORM; // Save the full list here
+        //                // 1. Bind Data
+        //                dgwAVL.DataSource = avlList;
+        //                // 2. Apply VS Dark Mode Styling
+        //                ApplyDarkThemeToGrid(dgwAVL);
+        //                // 3. Header Text & Autosizing
+        //                if (dgwAVL.Columns["MNFPARTNAME"] != null) dgwAVL.Columns["MNFPARTNAME"].HeaderText = "MFPN";
+        //                if (dgwAVL.Columns["MNFNAME"] != null) dgwAVL.Columns["MNFNAME"].HeaderText = "Manufacturer";
+        //                if (dgwAVL.Columns["MNFPARTDES"] != null) dgwAVL.Columns["MNFPARTDES"].HeaderText = "MFPN Description";
+        //                dgwAVL.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+        //                if (dgwAVL.Columns.Count > 0)
+        //                    dgwAVL.Columns[dgwAVL.Columns.Count - 1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+        //                Log($"SUCCESS: Found {avlCount} Authorized Vendors for {ipn}.", Color.LimeGreen);
+        //                return true;
+        //            }
+        //            else
+        //            {
+        //                Log($"WARNING: No AVL data found in Priority for {ipn}.", Color.Yellow);
+        //                MessageBox.Show("No AVL data found for this IPN in Priority.");
+        //                return false;
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Log($"API ERROR: {ex.Message}", Color.Red);
+        //        MessageBox.Show($"AVL Load Error: {ex.Message}");
+        //        return false;
+        //    }
+        //}
+
         private async Task<bool> getMFPNSfromPRIORITY(string ipn)
         {
             string url = $"{baseUrl}/PART?$filter=PARTNAME eq '{ipn}'&$expand=PARTMNF_SUBFORM($select=MNFPARTNAME,MNFPARTDES,MNFNAME)";
             Log($"Querying Priority AVL for: {ipn}...", Color.Cyan);
+
             try
             {
                 using (HttpClient client = new HttpClient())
                 {
                     client.Timeout = TimeSpan.FromSeconds(30);
-                    string authInfo = $"{settings.ApiUsername}:{settings.ApiPassword}";
-                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(authInfo));
-                    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", credentials);
+
+                    // Using the centralized Auth + Parallel rotation logic
+                    ApiHelper.AuthenticateClient(client);
+
                     var response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
+
                     string json = await response.Content.ReadAsStringAsync();
                     var partData = JsonConvert.DeserializeObject<PartApiResponse>(json);
+
                     if (partData?.value != null && partData.value.Count > 0)
                     {
                         var avlList = partData.value[0].PARTMNF_SUBFORM;
                         int avlCount = avlList?.Count ?? 0;
-                        fullAvlList = partData.value[0].PARTMNF_SUBFORM; // Save the full list here
+                        fullAvlList = avlList; // Save for filtering/local search
+
                         // 1. Bind Data
                         dgwAVL.DataSource = avlList;
+
                         // 2. Apply VS Dark Mode Styling
                         ApplyDarkThemeToGrid(dgwAVL);
+
                         // 3. Header Text & Autosizing
                         if (dgwAVL.Columns["MNFPARTNAME"] != null) dgwAVL.Columns["MNFPARTNAME"].HeaderText = "MFPN";
                         if (dgwAVL.Columns["MNFNAME"] != null) dgwAVL.Columns["MNFNAME"].HeaderText = "Manufacturer";
                         if (dgwAVL.Columns["MNFPARTDES"] != null) dgwAVL.Columns["MNFPARTDES"].HeaderText = "MFPN Description";
+
                         dgwAVL.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
                         if (dgwAVL.Columns.Count > 0)
                             dgwAVL.Columns[dgwAVL.Columns.Count - 1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+
                         Log($"SUCCESS: Found {avlCount} Authorized Vendors for {ipn}.", Color.LimeGreen);
                         return true;
                     }
@@ -941,6 +1094,7 @@ namespace WH_Panel
                 return false;
             }
         }
+
         // --- Helper for Grid Styling ---
         private void ApplyDarkThemeToGrid(DataGridView dgv)
         {
@@ -1138,53 +1292,7 @@ namespace WH_Panel
                 return null;
             }
         }
-        //private async Task SaveToSql(ReelState reel, string userPackageType)
-        //{
-        //    // Database name is dynamic based on your selected warehouse snapshot
-        //    string dbName = cmbSelectedWH.SelectedItem.ToString();
-        //    string connString = $"Server=DBR3\\SQLEXPRESS;Integrated Security=True;Database={dbName};";
-        //    try
-        //    {
-        //        using (SqlConnection conn = new SqlConnection(connString))
-        //        {
-        //            await conn.OpenAsync();
-        //            // Inside SaveToSql - Change the logic to be "Insert Only" for counts
-        //            string sql = @"
-        //                IF EXISTS (SELECT 1 FROM [COUNT] WHERE OriginalDoc = @doc)
-        //                BEGIN
-        //                    -- Throw an error back to C# to be caught in the catch block
-        //                    RAISERROR('This specific Document (DocNo) has already been recorded in the count.', 16, 1);
-        //                END
-        //                ELSE
-        //                BEGIN
-        //                    INSERT INTO [COUNT] (IPN, PackageID, ActualQty, CountDate, UserCounted, OriginalDoc, BookNum, Supplier, PackageType, PriorityDate)
-        //                    VALUES (@ipn, @pkg, @qty, @cDate, @user, @doc, @book, @supp, @pType, @pDate)
-        //                END";
-        //            using (SqlCommand cmd = new SqlCommand(sql, conn))
-        //            {
-        //                // Core Identification
-        //                cmd.Parameters.AddWithValue("@ipn", txtSearchIPN.Text.Trim().ToUpper());
-        //                cmd.Parameters.AddWithValue("@doc", reel.DocNo); // Primary unique link
-        //                cmd.Parameters.AddWithValue("@pkg", reel.PackageID ?? "N/A");
-        //                // Count Data
-        //                cmd.Parameters.AddWithValue("@qty", reel.Qty);
-        //                cmd.Parameters.AddWithValue("@cDate", reel.CountDate ?? DateTime.Now);
-        //                cmd.Parameters.AddWithValue("@user", reel.User); // Environment.UserName
-        //                cmd.Parameters.AddWithValue("@pType", userPackageType);
-        //                // Priority Metadata for Audit Trail
-        //                cmd.Parameters.AddWithValue("@book", reel.BookNum ?? (object)DBNull.Value);
-        //                cmd.Parameters.AddWithValue("@supp", reel.Supplier ?? (object)DBNull.Value);
-        //                cmd.Parameters.AddWithValue("@pDate", reel.PriorityDate);
-        //                await cmd.ExecuteNonQueryAsync();
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Log($"SQL Save Error: {ex.Message}", Color.Red);
-        //        // Throw or handle as needed for your industrial environment
-        //    }
-        //}
+     
 
         private async Task<bool> SaveToSql(ReelState reel, string userPackageType)
         {
@@ -1340,36 +1448,7 @@ namespace WH_Panel
                     txtbQTY.Focus();
                     return; // Block save until user confirms correction
                 }
-                //// 5. Verification & Audit Trail
-                //targetReel.User = Environment.UserName;
-                //targetReel.CountDate = DateTime.Now;
-                //try
-                //{
-                //    // Commit individual transaction to SQL
-                //    await SaveToSql(targetReel, operatorPackageSelection);
-                //    // 6. Update UI for the current item
-                //    RefreshInStockGrid();
-                //    UpdateBalanceLabel();
-
-                //    // Find the row we just updated to clone it into the persistent log
-                //    var rowToLog = dgwINSTOCK.Rows.Cast<DataGridViewRow>()
-                //        .FirstOrDefault(r => r.Cells["LOGDOCNO"].Value?.ToString() == targetReel.DocNo);
-                //    if (rowToLog != null)
-                //    {
-                //        // Pass BOTH the row and the current IPN string
-                //        string currentIPNtouseForLog = txtSearchIPN.Text.Trim().ToUpper();
-                //        AddRowToCountedLog(rowToLog, currentIPNtouseForLog);
-                //    }
-                //    Log($"VERIFIED: {scannedQty} pcs (Doc: {targetReel.DocNo})", Color.LimeGreen);
-                //    // 8. Reset inputs only - ready for next reel
-                //    ResetSessionForNextIPN();
-                //}
-                //catch (Exception ex)
-                //{
-                //    targetReel.CountDate = null;
-                //    targetReel.User = null;
-                //    Log($"DATABASE ERROR: {ex.Message}", Color.Red);
-                //}
+   
 
                 // 5. Verification & Audit Trail
                 targetReel.User = Environment.UserName;
