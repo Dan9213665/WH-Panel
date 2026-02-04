@@ -504,13 +504,13 @@ namespace WH_Panel
             List<string> apiPriority = new List<string>();
 
             if (currentUser == "lgt01")
-                apiPriority.AddRange(new[] { "api2", "api", "api3", "api4", "api5" });
+                apiPriority.AddRange(new[] { "api2", "api3", "api4", "api5", "api" });
             else if (currentUser == "rbtwh")
-                apiPriority.AddRange(new[] { "api3", "api", "api2", "api4", "api5" });
+                apiPriority.AddRange(new[] { "api3", "api2", "api4", "api5", "api" });
             else if (currentUser == "rbtwh2")
-                apiPriority.AddRange(new[] { "api", "api3", "api2", "api4", "api5" });
+                apiPriority.AddRange(new[] { "api3", "api2",  "api4", "api5", "api" });
             else
-                apiPriority.AddRange(new[] { "api","api2", "api3", "api4", "api5" });
+                apiPriority.AddRange(new[] { "api5","api2", "api3", "api4", "api" });
 
             // Pick the first one NOT in the blacklist
             string chosenApi = apiPriority.FirstOrDefault(a => !SessionBlacklist.Contains(a)) ?? apiPriority.First();
