@@ -8,6 +8,9 @@ namespace WH_Panel
 {
     public class ReelState
     {
+        // The Atomic Unique Key from Priority (TRANS)
+        // Using long to match SQL BIGINT and handle large transaction IDs
+        public long TransactionId { get; set; }
         public string DocNo { get; set; } // The Unique Key (GR25025556)
         public string PackageID { get; set; } // The Pack Code
         public int Qty { get; set; }

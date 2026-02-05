@@ -332,6 +332,8 @@ namespace WH_Panel
             public double TQUANT { get; set; }
             public string DOCDES { get; set; }
             public string TOWARHSNAME { get; set; }
+
+            public int TRANS { get; set; }
         }
         public class WarehouseBalanceApiResponse
         {

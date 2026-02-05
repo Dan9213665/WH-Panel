@@ -1,12 +1,16 @@
-﻿using Microsoft.Office.Interop.Outlook;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.Office.Interop.Excel;
+using Microsoft.Office.Interop.Outlook;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Engineering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.IO.Packaging;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -14,7 +18,10 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
+using static QRCoder.PayloadGenerator;
 using static Seagull.BarTender.Print.LabelFormat;
+using static System.ComponentModel.Design.ObjectSelectorEditor;
 using static WH_Panel.FrmPriorityAPI;
 using Action = System.Action;
 using Exception = System.Exception;
@@ -46,6 +53,7 @@ namespace WH_Panel
             dgwCountedLog.Columns.Add("PACKNAME", "Pack Code");
             dgwCountedLog.Columns.Add("CountDate", "Count Date");
             dgwCountedLog.Columns.Add("UserCounted", "User");
+            dgwCountedLog.Columns.Add("TRANS", "Transaction Id");
             // 2. Set Auto-Fit Logic
             // AllCells ensures it looks at the headers and the new data you just scanned
             dgwCountedLog.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
@@ -235,13 +243,13 @@ namespace WH_Panel
             {
                 c.BackColor = VSDarkColors.Background;
                 c.ForeColor = VSDarkColors.Foreground;
-                if (c is Button btn)
+                if (c is System.Windows.Forms.Button btn)
                 {
                     btn.FlatStyle = FlatStyle.Flat;
                     btn.FlatAppearance.BorderColor = VSDarkColors.Border;
                     btn.BackColor = VSDarkColors.Accent;
                 }
-                else if (c is TextBox txt)
+                else if (c is System.Windows.Forms.TextBox txt)
                 {
                     txt.BorderStyle = BorderStyle.FixedSingle;
                     txt.BackColor = VSDarkColors.Accent;
@@ -304,24 +312,7 @@ namespace WH_Panel
                 btnCreateCountDB.Text = "Create Count DB for " + cmbAllWhs.SelectedItem?.ToString();
             }
         }
-        // --- SUB FUNCTIONS ---
-        //private async Task<List<WarehouseBalance>> FetchPriorityInventoryAsync(string whName)
-        //{
-        //    string url = $"{baseUrl}/WAREHOUSES?$filter=WARHSNAME eq '{whName}'&$expand=WARHSBAL_SUBFORM($select=PARTNAME,PARTDES,TBALANCE;$filter=BALANCE gt 0)";
-        //    using (HttpClient client = new HttpClient())
-        //    {
-        //        client.Timeout = TimeSpan.FromMinutes(5);
-        //        string authInfo = $"{settings.ApiUsername}:{settings.ApiPassword}";
-        //        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(authInfo));
-
-        //        client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", credentials);
-        //        var response = await client.GetAsync(url);
-        //        response.EnsureSuccessStatusCode();
-        //        string json = await response.Content.ReadAsStringAsync();
-        //        var apiResponse = JsonConvert.DeserializeObject<WarehouseApiResponse>(json);
-        //        return apiResponse?.value.FirstOrDefault()?.WARHSBAL_SUBFORM;
-        //    }
-        //}
+  
 
         private async Task<List<WarehouseBalance>> FetchPriorityInventoryAsync(string whName)
         {
@@ -368,6 +359,25 @@ namespace WH_Panel
                 }
             }
         }
+
+
+            //       -- 2. Updated Transactional Count Table(Physical Truth)
+            //-- Aligned with: Id, IPN, PackageID, ActualQty, CountDate, UserCounted, 
+            //-- OriginalDoc, PackageType, BookNum, Supplier, PriorityDate
+            //IF NOT EXISTS(SELECT* FROM sys.tables WHERE name = 'COUNT')
+            //CREATE TABLE[COUNT] (
+            //    Id INT IDENTITY(1,1) PRIMARY KEY,
+            //    IPN NVARCHAR(50) NULL,
+            //    PackageID NVARCHAR(100) NULL,
+            //    ActualQty INT NULL, -- Discrete integer count
+            //    CountDate DATETIME NULL,
+            //    UserCounted NVARCHAR(50) NULL,
+            //    OriginalDoc NVARCHAR(50) NULL, -- Unique Anchor(e.g., GR26000200)
+            //    PackageType NVARCHAR(50) NULL, -- User-selected packaging
+            //    BookNum NVARCHAR(50) NULL,      -- Priority Reference
+            //    Supplier NVARCHAR(100) NULL,
+            //    PriorityDate DATETIME NULL      -- ERP Transaction Timestamp
+            //);
         private void CreateDatabaseSchema(string dbConn)
         {
             using (SqlConnection conn = new SqlConnection(dbConn))
@@ -384,23 +394,28 @@ namespace WH_Panel
                 IsCounted BIT DEFAULT 0,
                 SnapshotDate DATETIME
             );
+ 
             -- 2. Updated Transactional Count Table (Physical Truth)
-            -- Aligned with: Id, IPN, PackageID, ActualQty, CountDate, UserCounted, 
-            -- OriginalDoc, PackageType, BookNum, Supplier, PriorityDate
-            IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'COUNT')
-            CREATE TABLE [COUNT] (
-                Id INT IDENTITY(1,1) PRIMARY KEY,
-                IPN NVARCHAR(50) NULL,
-                PackageID NVARCHAR(100) NULL,
-                ActualQty INT NULL, -- Discrete integer count
-                CountDate DATETIME NULL,
-                UserCounted NVARCHAR(50) NULL,
-                OriginalDoc NVARCHAR(50) NULL, -- Unique Anchor (e.g., GR26000200)
-                PackageType NVARCHAR(50) NULL, -- User-selected packaging
-                BookNum NVARCHAR(50) NULL,      -- Priority Reference
-                Supplier NVARCHAR(100) NULL,
-                PriorityDate DATETIME NULL      -- ERP Transaction Timestamp
-            );
+                IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'COUNT')
+                CREATE TABLE [COUNT] (
+                    Id INT IDENTITY(1,1) PRIMARY KEY,
+                    TransactionID BIGINT NULL,        -- The new 'TRANS' Unique Key
+                    IPN NVARCHAR(50) NULL,
+                    PackageID NVARCHAR(100) NULL,
+                    ActualQty INT NULL, 
+                    CountDate DATETIME NULL,
+                    UserCounted NVARCHAR(50) NULL,
+                    OriginalDoc NVARCHAR(50) NULL,    -- Keep as a reference/grouping ID
+                    PackageType NVARCHAR(50) NULL,
+                    BookNum NVARCHAR(50) NULL, 
+                    Supplier NVARCHAR(100) NULL,
+                    PriorityDate DATETIME NULL,
+    
+                    -- Optional: Ensure absolute uniqueness at the DB level
+                    CONSTRAINT UQ_TransactionID UNIQUE (TransactionID) 
+                );
+
+
             -- 3. AVL Table (Manufacturer matching)
             IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'AVL')
             CREATE TABLE AVL (
@@ -418,7 +433,7 @@ namespace WH_Panel
         }
         private async Task BulkInsertToStockAsync(string dbConn, List<WarehouseBalance> items)
         {
-            DataTable dt = new DataTable();
+            System.Data.DataTable dt = new System.Data.DataTable();
             dt.Columns.Add("IPN", typeof(string));
             dt.Columns.Add("Description", typeof(string));
             dt.Columns.Add("PriorityQty", typeof(decimal));
@@ -699,7 +714,7 @@ namespace WH_Panel
         {
             Log($"Fetching live stock movements for {ipn}...", Color.Cyan);
             // We target the LOGPART endpoint using your established pattern
-            string logPartUrl = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{ipn}'&$expand=PARTTRANSLAST2_SUBFORM";
+            string logPartUrl = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{ipn}'&$expand=PARTTRANSLAST2_SUBFORM($select=LOGDOCNO,DOCDES,SUPCUSTNAME,TQUANT,TRANS)";
             try
             {
                 using (HttpClient client = new HttpClient())
@@ -722,12 +737,14 @@ namespace WH_Panel
                         {
                             int rowIndex = dgvStockMovements.Rows.Add(
                                 "",               // UDATE
+                                
                                 trans.LOGDOCNO,
                                 trans.DOCDES,
                                 trans.SUPCUSTNAME,
                                 "",               // BOOKNUM
                                 trans.TQUANT,
-                                ""                // PACKNAME
+                                "" ,               // PACKNAME
+                                trans.TRANS
                             );
                             var row = dgvStockMovements.Rows[rowIndex];
                             var qtyCell = row.Cells["TQUANT"];
@@ -888,6 +905,7 @@ namespace WH_Panel
                 dgwINSTOCK.Columns.Add("PACKNAME", "Pack Code");
                 dgwINSTOCK.Columns.Add("CountDate", "Count Date");
                 dgwINSTOCK.Columns.Add("UserCounted", "User");
+                dgwINSTOCK.Columns.Add("TRANS", "Transaction ID");
                 ApplyDarkThemeToGrid(dgwINSTOCK);
             }
             dgwINSTOCK.Rows.Clear();
@@ -902,7 +920,8 @@ namespace WH_Panel
                     Date = DateTime.TryParse(r.Cells["UDATE"].Value?.ToString(), out var d) ? d : DateTime.MinValue,
                     Pack = r.Cells["PACKNAME"].Value?.ToString() ?? "N/A",
                     Supplier = r.Cells["SUPCUSTNAME"].Value?.ToString() ?? "",
-                    BookNum = r.Cells["BOOKNUM"].Value?.ToString() ?? ""
+                    BookNum = r.Cells["BOOKNUM"].Value?.ToString() ?? "",
+                    TransactionId= r.Cells["TRANS"].Value?.ToString() ?? ""
                 })
                 .Where(x => x.Qty > 0)
                 .ToList();
@@ -920,7 +939,7 @@ namespace WH_Panel
             // We do this BEFORE the SQL sync so the dictionary exists to be updated
             foreach (var item in remainingInStock)
             {
-                currentIPNState[item.DocNo] = new ReelState
+                currentIPNState[item.TransactionId] = new ReelState
                 {
                     DocNo = item.DocNo,
                     Qty = item.Qty,
@@ -929,7 +948,9 @@ namespace WH_Panel
                     Supplier = item.Supplier,
                     BookNum = item.BookNum,
                     User = null,
-                    CountDate = null
+                    CountDate = null,
+                    TransactionId = long.Parse(item.TransactionId)
+
                 };
             }
             // 5. SQL SYNC: Update the dictionary with physical truth
@@ -943,7 +964,7 @@ namespace WH_Panel
                     using (SqlConnection conn = new SqlConnection(connString))
                     {
                         await conn.OpenAsync();
-                        string sql = "SELECT OriginalDoc, UserCounted, CountDate FROM [COUNT] WHERE IPN = @ipn";
+                        string sql = "SELECT TransactionID, UserCounted, CountDate FROM [COUNT] WHERE IPN = @ipn";
                         using (SqlCommand cmd = new SqlCommand(sql, conn))
                         {
                             cmd.Parameters.AddWithValue("@ipn", currentIPN);
@@ -951,7 +972,7 @@ namespace WH_Panel
                             {
                                 while (await reader.ReadAsync())
                                 {
-                                    string docKey = reader["OriginalDoc"].ToString();
+                                    string docKey = reader["TransactionID"].ToString();
                                     if (currentIPNState.ContainsKey(docKey))
                                     {
                                         currentIPNState[docKey].User = reader["UserCounted"].ToString();
@@ -981,59 +1002,12 @@ namespace WH_Panel
             dgvStockMovements.Columns.Add(new DataGridViewTextBoxColumn { Name = "BOOKNUM", HeaderText = "Client Doc", Width = 100 });
             dgvStockMovements.Columns.Add(new DataGridViewTextBoxColumn { Name = "TQUANT", HeaderText = "Qty", Width = 80 });
             dgvStockMovements.Columns.Add(new DataGridViewTextBoxColumn { Name = "PACKNAME", HeaderText = "Pack Code", Width = 120 });
+            dgvStockMovements.Columns.Add(new DataGridViewTextBoxColumn { Name = "TRANS", HeaderText = "Transaction Id", Width = 120 });
+            
             // Apply your Dark Mode styling immediately
             ApplyDarkThemeToGrid(dgvStockMovements);
         }
-        //private async Task<bool> getMFPNSfromPRIORITY(string ipn)
-        //{
-        //    string url = $"{baseUrl}/PART?$filter=PARTNAME eq '{ipn}'&$expand=PARTMNF_SUBFORM($select=MNFPARTNAME,MNFPARTDES,MNFNAME)";
-        //    Log($"Querying Priority AVL for: {ipn}...", Color.Cyan);
-        //    try
-        //    {
-        //        using (HttpClient client = new HttpClient())
-        //        {
-        //            client.Timeout = TimeSpan.FromSeconds(30);
-        //            string authInfo = $"{settings.ApiUsername}:{settings.ApiPassword}";
-        //            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(authInfo));
-        //            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", credentials);
-        //            var response = await client.GetAsync(url);
-        //            response.EnsureSuccessStatusCode();
-        //            string json = await response.Content.ReadAsStringAsync();
-        //            var partData = JsonConvert.DeserializeObject<PartApiResponse>(json);
-        //            if (partData?.value != null && partData.value.Count > 0)
-        //            {
-        //                var avlList = partData.value[0].PARTMNF_SUBFORM;
-        //                int avlCount = avlList?.Count ?? 0;
-        //                fullAvlList = partData.value[0].PARTMNF_SUBFORM; // Save the full list here
-        //                // 1. Bind Data
-        //                dgwAVL.DataSource = avlList;
-        //                // 2. Apply VS Dark Mode Styling
-        //                ApplyDarkThemeToGrid(dgwAVL);
-        //                // 3. Header Text & Autosizing
-        //                if (dgwAVL.Columns["MNFPARTNAME"] != null) dgwAVL.Columns["MNFPARTNAME"].HeaderText = "MFPN";
-        //                if (dgwAVL.Columns["MNFNAME"] != null) dgwAVL.Columns["MNFNAME"].HeaderText = "Manufacturer";
-        //                if (dgwAVL.Columns["MNFPARTDES"] != null) dgwAVL.Columns["MNFPARTDES"].HeaderText = "MFPN Description";
-        //                dgwAVL.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
-        //                if (dgwAVL.Columns.Count > 0)
-        //                    dgwAVL.Columns[dgwAVL.Columns.Count - 1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-        //                Log($"SUCCESS: Found {avlCount} Authorized Vendors for {ipn}.", Color.LimeGreen);
-        //                return true;
-        //            }
-        //            else
-        //            {
-        //                Log($"WARNING: No AVL data found in Priority for {ipn}.", Color.Yellow);
-        //                MessageBox.Show("No AVL data found for this IPN in Priority.");
-        //                return false;
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Log($"API ERROR: {ex.Message}", Color.Red);
-        //        MessageBox.Show($"AVL Load Error: {ex.Message}");
-        //        return false;
-        //    }
-        //}
+       
 
         private async Task<bool> getMFPNSfromPRIORITY(string ipn)
         {
@@ -1119,7 +1093,7 @@ namespace WH_Panel
             dgv.ReadOnly = true;
             dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
         }
-        private void SetupTextBoxStyles(params TextBox[] textBoxes)
+        private void SetupTextBoxStyles(params System.Windows.Forms.TextBox[] textBoxes)
         {
             foreach (var tb in textBoxes)
             {
@@ -1241,19 +1215,19 @@ namespace WH_Panel
                 selectionForm.StartPosition = FormStartPosition.CenterParent;
                 selectionForm.BackColor = Color.FromArgb(30, 30, 30); // Dark theme match
                 selectionForm.ForeColor = Color.White;
-                Label lblHeader = new Label()
+                System.Windows.Forms.Label lblHeader = new System.Windows.Forms.Label()
                 {
                     Text = $"Select the correct record for Qty: {matches[0].Qty:N0}",
                     Dock = DockStyle.Top,
                     Height = 30,
-                    Font = new Font("Segoe UI", 10, FontStyle.Bold)
+                    Font = new System.Drawing.Font("Segoe UI", 10, FontStyle.Bold)
                 };
-                ListBox lbChoices = new ListBox()
+                System.Windows.Forms.ListBox lbChoices = new System.Windows.Forms.ListBox()
                 {
                     Dock = DockStyle.Fill,
                     BackColor = Color.FromArgb(45, 45, 45),
                     ForeColor = Color.White,
-                    Font = new Font("Consolas", 10)
+                    Font = new System.Drawing.Font("Consolas", 10)
                 };
                 // Populate with identifying metadata
                 foreach (var m in matches)
@@ -1261,7 +1235,7 @@ namespace WH_Panel
                     string display = $"{m.DocNo} | Date: {m.PriorityDate:yyyy-MM-dd} | Source: {m.Supplier}";
                     lbChoices.Items.Add(display);
                 }
-                Button btnSelect = new Button()
+                System.Windows.Forms.Button btnSelect = new System.Windows.Forms.Button()
                 {
                     Text = "Confirm Selection (Enter)",
                     Dock = DockStyle.Bottom,
@@ -1292,7 +1266,61 @@ namespace WH_Panel
                 return null;
             }
         }
-     
+
+
+        //private async Task<bool> SaveToSql(ReelState reel, string userPackageType)
+        //{
+        //    string dbName = cmbSelectedWH.SelectedItem.ToString();
+        //    string connString = $"Server=DBR3\\SQLEXPRESS;Integrated Security=True;Database={dbName};";
+
+        //    try
+        //    {
+        //        using (SqlConnection conn = new SqlConnection(connString))
+        //        {
+        //            await conn.OpenAsync();
+        //            string sql = @"
+        //        IF EXISTS (SELECT 1 FROM [COUNT] WHERE OriginalDoc = @doc)
+        //        BEGIN
+        //            RAISERROR('This specific Document (DocNo) [%s] has already been recorded in the count.', 16, 1, @doc);
+        //        END
+        //        ELSE
+        //        BEGIN
+        //            INSERT INTO [COUNT] (IPN, PackageID, ActualQty, CountDate, UserCounted, OriginalDoc, BookNum, Supplier, PackageType, PriorityDate)
+        //            VALUES (@ipn, @pkg, @qty, @cDate, @user, @doc, @book, @supp, @pType, @pDate)
+        //        END";
+
+        //            using (SqlCommand cmd = new SqlCommand(sql, conn))
+        //            {
+        //                cmd.Parameters.AddWithValue("@ipn", txtSearchIPN.Text.Trim().ToUpper());
+        //                cmd.Parameters.AddWithValue("@doc", reel.DocNo);
+        //                cmd.Parameters.AddWithValue("@pkg", reel.PackageID ?? "N/A");
+        //                cmd.Parameters.AddWithValue("@qty", reel.Qty);
+        //                cmd.Parameters.AddWithValue("@cDate", reel.CountDate ?? DateTime.Now);
+        //                cmd.Parameters.AddWithValue("@user", Environment.UserName);
+        //                cmd.Parameters.AddWithValue("@pType", userPackageType);
+        //                cmd.Parameters.AddWithValue("@book", reel.BookNum ?? (object)DBNull.Value);
+        //                cmd.Parameters.AddWithValue("@supp", reel.Supplier ?? (object)DBNull.Value);
+        //                cmd.Parameters.AddWithValue("@pDate", reel.PriorityDate);
+
+        //                await cmd.ExecuteNonQueryAsync();
+        //                return true; // Commit successful
+        //            }
+        //        }
+        //    }
+        //    catch (SqlException ex)
+        //    {
+        //        // This catches the RAISERROR and other SQL-specific issues
+        //        Log($"Database Rejection: {ex.Message}", Color.Red);
+        //        MessageBox.Show(ex.Message, "Inventory Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        return false; // Stop further execution
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Log($"General Save Error: {ex.Message}", Color.Red);
+        //        MessageBox.Show($"A system error occurred: {ex.Message}", "Critical Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+        //        return false; // Stop further execution
+        //    }
+        //}
 
         private async Task<bool> SaveToSql(ReelState reel, string userPackageType)
         {
@@ -1304,51 +1332,56 @@ namespace WH_Panel
                 using (SqlConnection conn = new SqlConnection(connString))
                 {
                     await conn.OpenAsync();
+
+                    // Now using TransactionID (TRANS) as the primary unique validator
                     string sql = @"
-                IF EXISTS (SELECT 1 FROM [COUNT] WHERE OriginalDoc = @doc)
+                IF EXISTS (SELECT 1 FROM [COUNT] WHERE TransactionID = @transId)
                 BEGIN
-                    RAISERROR('This specific Document (DocNo) [%s] has already been recorded in the count.', 16, 1, @doc);
+                    RAISERROR('This specific Transaction ID [%I64d] has already been recorded in the count.', 16, 1, @transId);
                 END
                 ELSE
                 BEGIN
-                    INSERT INTO [COUNT] (IPN, PackageID, ActualQty, CountDate, UserCounted, OriginalDoc, BookNum, Supplier, PackageType, PriorityDate)
-                    VALUES (@ipn, @pkg, @qty, @cDate, @user, @doc, @book, @supp, @pType, @pDate)
+                    INSERT INTO [COUNT] (TransactionID, IPN, PackageID, ActualQty, CountDate, UserCounted, OriginalDoc, BookNum, Supplier, PackageType, PriorityDate)
+                    VALUES (@transId, @ipn, @pkg, @qty, @cDate, @user, @doc, @book, @supp, @pType, @pDate)
                 END";
 
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
                     {
+                        // Core Identification - Mapping TRANS to TransactionID
+                        cmd.Parameters.AddWithValue("@transId", reel.TransactionId);
                         cmd.Parameters.AddWithValue("@ipn", txtSearchIPN.Text.Trim().ToUpper());
                         cmd.Parameters.AddWithValue("@doc", reel.DocNo);
                         cmd.Parameters.AddWithValue("@pkg", reel.PackageID ?? "N/A");
+
+                        // Count Data
                         cmd.Parameters.AddWithValue("@qty", reel.Qty);
                         cmd.Parameters.AddWithValue("@cDate", reel.CountDate ?? DateTime.Now);
                         cmd.Parameters.AddWithValue("@user", Environment.UserName);
                         cmd.Parameters.AddWithValue("@pType", userPackageType);
+
+                        // Audit Trail Metadata
                         cmd.Parameters.AddWithValue("@book", reel.BookNum ?? (object)DBNull.Value);
                         cmd.Parameters.AddWithValue("@supp", reel.Supplier ?? (object)DBNull.Value);
                         cmd.Parameters.AddWithValue("@pDate", reel.PriorityDate);
 
                         await cmd.ExecuteNonQueryAsync();
-                        return true; // Commit successful
+                        return true;
                     }
                 }
             }
             catch (SqlException ex)
             {
-                // This catches the RAISERROR and other SQL-specific issues
                 Log($"Database Rejection: {ex.Message}", Color.Red);
                 MessageBox.Show(ex.Message, "Inventory Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false; // Stop further execution
+                return false;
             }
             catch (Exception ex)
             {
                 Log($"General Save Error: {ex.Message}", Color.Red);
                 MessageBox.Show($"A system error occurred: {ex.Message}", "Critical Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-                return false; // Stop further execution
+                return false;
             }
         }
-
-
         private void RefreshInStockGrid()
         {
             // 1. Prevent UI flickering during bulk updates
@@ -1365,7 +1398,8 @@ namespace WH_Panel
                     reel.Supplier,
                     reel.PackageID,
                     reel.CountDate?.ToString("yyyy-MM-dd HH:mm") ?? "", // Data-driven flag
-                    reel.User ?? ""                                    // Data-driven flag
+                    reel.User ?? "" ,                                   // Data-driven flag
+                    reel.TransactionId.ToString()
                 );
                 // 3. Apply visual styling based on the data state
                 if (reel.IsCounted)
@@ -1466,7 +1500,7 @@ namespace WH_Panel
 
                     // Find the row we just updated to clone it into the persistent log
                     var rowToLog = dgwINSTOCK.Rows.Cast<DataGridViewRow>()
-                        .FirstOrDefault(r => r.Cells["LOGDOCNO"].Value?.ToString() == targetReel.DocNo);
+                        .FirstOrDefault(r => r.Cells["TRANS"].Value?.ToString() == targetReel.TransactionId.ToString());
 
                     if (rowToLog != null)
                     {
