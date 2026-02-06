@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO.Packaging;
 using System.Linq;
@@ -25,6 +26,7 @@ using static System.ComponentModel.Design.ObjectSelectorEditor;
 using static WH_Panel.FrmPriorityAPI;
 using Action = System.Action;
 using Exception = System.Exception;
+
 namespace WH_Panel
 {
     public partial class FrmPriorityCount : Form
@@ -691,7 +693,7 @@ namespace WH_Panel
                     return;
                 }
 
-                if (inputIPN.StartsWith(cmbSelectedWH.SelectedItem.ToString().Substring(0,3)))
+                if (inputIPN.StartsWith(cmbSelectedWH.SelectedItem.ToString().Substring(0, 3)))
                 {
                     // 1. Fetch AVL data from Priority
                     bool success = await getMFPNSfromPRIORITY(inputIPN);
@@ -705,16 +707,18 @@ namespace WH_Panel
                 }
                 else
                 {
-                   MessageBox.Show("IPN does not match the selected warehouse snapshot prefix. Please check your input.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("IPN does not match the selected warehouse snapshot prefix. Please check your input.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
-                
+
             }
         }
+
+
         private async Task getAllMovementsForIPN(string ipn)
         {
             Log($"Fetching live stock movements for {ipn}...", Color.Cyan);
             // We target the LOGPART endpoint using your established pattern
-            string logPartUrl = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{ipn}'&$expand=PARTTRANSLAST2_SUBFORM($select=LOGDOCNO,DOCDES,SUPCUSTNAME,TQUANT,TRANS)";
+            string logPartUrl = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{ipn}'&$select=PARTNAME&$expand=PARTTRANSLAST2_SUBFORM($select=LOGDOCNO,DOCDES,SUPCUSTNAME,TQUANT,TRANS)";
             try
             {
                 using (HttpClient client = new HttpClient())
@@ -776,9 +780,15 @@ namespace WH_Panel
                                 qtyCell.Style.ForeColor = VSDarkColors.Foreground;
                             }
                         }
-                        Log($"Displaying {movements.Count} potential reels. Starting background enrichment...", Color.Yellow);
-                        // Now run your parallel enrichment logic to fetch PACKCODE and BOOKNUM
-                        await EnrichLiveGridAsync(ipn);
+                        //Log($"Displaying {movements.Count} potential reels. Starting background enrichment...", Color.Yellow);
+                        //// Now run your parallel enrichment logic to fetch PACKCODE and BOOKNUM
+                        //await EnrichLiveGridAsync(ipn);
+
+                        this.Invoke((Action)(() =>
+                        {
+                            //dgvStockMovements.Sort(dgvStockMovements.Columns["UDATE"], ListSortDirection.Descending);
+                            PopulateInStockByLogic(ipn); // Call it here!
+                        }));
                     }
                     else
                     {
@@ -791,14 +801,254 @@ namespace WH_Panel
                 Log($"Movements Load Error: {ex.Message}", Color.Red);
             }
         }
+        //private async Task EnrichLiveGridAsync(string partName)
+        //{
+        //    //var rows = dgvStockMovements.Rows.Cast<DataGridViewRow>()
+        //    var rows = dgwINSTOCK.Rows.Cast<DataGridViewRow>()
+        //        .Where(r => r.Cells["LOGDOCNO"].Value != null)
+        //        .ToList();
+        //    if (rows.Count == 0) return;
+        //    // --- Start Timing ---
+        //    var sw = System.Diagnostics.Stopwatch.StartNew();
+        //    var clients = Enumerable.Range(0, ApiUserPool.Count)
+        //        .Select(_ =>
+        //        {
+        //            var c = new HttpClient();
+        //            c.DefaultRequestHeaders.Accept.Clear();
+        //            c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            string user = ApiHelper.AuthenticateClient(c);
+        //            return (User: user, Client: c);
+        //        }).ToList();
+        //    int maxConcurrencyPerUser = 2;
+        //    var clientSemaphores = clients.ToDictionary(c => c.User, c => new SemaphoreSlim(maxConcurrencyPerUser));
+        //    int userIndex = -1;
+        //    object userLock = new object();
+        //    (string User, HttpClient Client) GetNextClient()
+        //    {
+        //        lock (userLock)
+        //        {
+        //            userIndex = (userIndex + 1) % clients.Count;
+        //            return clients[userIndex];
+        //        }
+        //    }
+        //    var tasks = rows.Select(async row =>
+        //    {
+        //        string logDocNo = row.Cells["LOGDOCNO"].Value.ToString();
+        //        var (usedUser, client) = GetNextClient();
+        //        var semaphore = clientSemaphores[usedUser];
+        //        await semaphore.WaitAsync();
+        //        try
+        //        {
+        //            string url = logDocNo switch
+        //            {
+        //                var s when s.StartsWith("GR") => $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM",
+        //                var s when s.StartsWith("WR") => $"{baseUrl}/DOCUMENTS_T?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_T_SUBFORM",
+        //                var s when s.StartsWith("SH") => $"{baseUrl}/DOCUMENTS_D?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_D_SUBFORM",
+        //                var s when s.StartsWith("IC") => $"{baseUrl}/DOCUMENTS_C?$filter=DOCNO eq '{logDocNo}'",
+        //                var s when s.StartsWith("ROB") => $"{baseUrl}/SERIAL?$filter=SERIALNAME eq '{logDocNo}'&$expand=TRANSORDER_K_SUBFORM",
+        //                _ => $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM"
+        //            };
+        //            HttpResponseMessage response = await client.GetAsync(url);
+        //            if (!response.IsSuccessStatusCode) return;
+        //            string body = await response.Content.ReadAsStringAsync();
+        //            var doc = JsonConvert.DeserializeObject<JObject>(body)?["value"]?.FirstOrDefault();
+        //            if (doc != null)
+        //            {
+        //                string uDate = doc["UDATE"]?.ToString();
+        //                string bookNum = doc["BOOKNUM"]?.ToString()
+        //                                 ?? doc["CDES"]?.ToString()
+        //                                 ?? doc["REFERENCE"]?.ToString();
+        //                string packCode = null;
+        //                var subForm = doc["TRANSORDER_P_SUBFORM"]
+        //                              ?? doc["TRANSORDER_T_SUBFORM"]
+        //                              ?? doc["TRANSORDER_D_SUBFORM"]
+        //                              ?? doc["TRANSORDER_K_SUBFORM"];
+        //                if (subForm != null)
+        //                {
+        //                    var line = subForm.FirstOrDefault(l => l["PARTNAME"]?.ToString() == partName);
+        //                    if (line != null)
+        //                    {
+        //                        packCode = line["PACKCODE"]?.ToString();
+        //                        if (string.IsNullOrEmpty(bookNum))
+        //                        {
+        //                            bookNum = line["BOOKNUM"]?.ToString();
+        //                        }
+        //                    }
+        //                }
+        //                this.Invoke((Action)(() =>
+        //                {
+        //                    row.Cells["UDATE"].Value = uDate;
+        //                    row.Cells["PACKNAME"].Value = packCode;
+        //                    row.Cells["BOOKNUM"].Value = bookNum;
+        //                }));
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Log($"Enrichment error for {logDocNo}: {ex.Message}", Color.Gray);
+        //        }
+        //        finally
+        //        {
+        //            semaphore.Release();
+        //        }
+        //    });
+        //    // AT THE END OF EnrichLiveGridAsync
+        //    await Task.WhenAll(tasks);
+        //    sw.Stop();
+        //    // Now that we ARE sure data is there, calculate stock
+        //    //this.Invoke((Action)(() =>
+        //    //{
+        //    //    dgwINSTOCK.Sort(dgvStockMovements.Columns["UDATE"], ListSortDirection.Descending);
+        //    //    //PopulateInStockByLogic(partName); // Call it here!
+        //    //}));
+        //    Log($"Reel data enrichment complete in {sw.ElapsedMilliseconds} ms.", Color.LimeGreen);
+        //}
+
+        // The "Scientific Truth" cache: Key = Transaction ID (long), Value = Reel Data
+        private static Dictionary<long, (DateTime Date, string Pack, string Book)> sessionReelCache = new Dictionary<long, (DateTime, string, string)>();
+
+
+        //private async Task EnrichLiveGridAsync(string partName)
+        //{
+        //    // Target the IN-STOCK grid exclusively
+        //    var rows = dgwINSTOCK.Rows.Cast<DataGridViewRow>()
+        //        .Where(r => r.Cells["LOGDOCNO"].Value != null)
+        //        .ToList();
+
+        //    if (rows.Count == 0) return;
+
+        //    var sw = System.Diagnostics.Stopwatch.StartNew();
+
+        //    // Setup Multi-User HttpClient Pool
+        //    var clients = Enumerable.Range(0, ApiUserPool.Count)
+        //        .Select(_ =>
+        //        {
+        //            var c = new HttpClient();
+        //            c.DefaultRequestHeaders.Accept.Clear();
+        //            c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            string user = ApiHelper.AuthenticateClient(c);
+        //            return (User: user, Client: c);
+        //        }).ToList();
+
+        //    int maxConcurrencyPerUser = 2;
+        //    var clientSemaphores = clients.ToDictionary(c => c.User, c => new SemaphoreSlim(maxConcurrencyPerUser));
+        //    int userIndex = -1;
+        //    object userLock = new object();
+
+        //    (string User, HttpClient Client) GetNextClient()
+        //    {
+        //        lock (userLock)
+        //        {
+        //            userIndex = (userIndex + 1) % clients.Count;
+        //            return clients[userIndex];
+        //        }
+        //    }
+
+        //    var tasks = rows.Select(async row =>
+        //    {
+        //        string logDocNo = row.Cells["LOGDOCNO"].Value.ToString();
+        //        // Use the Transaction ID as the pivot for the dictionary
+        //        string transIdKey = row.Cells["TRANS"].Value?.ToString();
+
+        //        var (usedUser, client) = GetNextClient();
+        //        var semaphore = clientSemaphores[usedUser];
+        //        await semaphore.WaitAsync();
+
+        //        try
+        //        {
+        //            string url = logDocNo switch
+        //            {
+        //                var s when s.StartsWith("GR") => $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM",
+        //                var s when s.StartsWith("WR") => $"{baseUrl}/DOCUMENTS_T?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_T_SUBFORM",
+        //                var s when s.StartsWith("SH") => $"{baseUrl}/DOCUMENTS_D?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_D_SUBFORM",
+        //                var s when s.StartsWith("IC") => $"{baseUrl}/DOCUMENTS_C?$filter=DOCNO eq '{logDocNo}'",
+        //                var s when s.StartsWith("ROB") => $"{baseUrl}/SERIAL?$filter=SERIALNAME eq '{logDocNo}'&$expand=TRANSORDER_K_SUBFORM",
+        //                _ => $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM"
+        //            };
+
+        //            HttpResponseMessage response = await client.GetAsync(url);
+        //            if (!response.IsSuccessStatusCode) return;
+
+        //            string body = await response.Content.ReadAsStringAsync();
+        //            var doc = JsonConvert.DeserializeObject<JObject>(body)?["value"]?.FirstOrDefault();
+
+        //            if (doc != null)
+        //            {
+        //                string uDate = doc["UDATE"]?.ToString();
+        //                string bookNum = doc["BOOKNUM"]?.ToString()
+        //                                 ?? doc["CDES"]?.ToString()
+        //                                 ?? doc["REFERENCE"]?.ToString();
+        //                string packCode = null;
+
+        //                var subForm = doc["TRANSORDER_P_SUBFORM"]
+        //                             ?? doc["TRANSORDER_T_SUBFORM"]
+        //                             ?? doc["TRANSORDER_D_SUBFORM"]
+        //                             ?? doc["TRANSORDER_K_SUBFORM"];
+
+        //                if (subForm != null)
+        //                {
+        //                    var line = subForm.FirstOrDefault(l => l["PARTNAME"]?.ToString() == partName);
+        //                    if (line != null)
+        //                    {
+        //                        packCode = line["PACKCODE"]?.ToString();
+        //                        if (string.IsNullOrEmpty(bookNum))
+        //                        {
+        //                            bookNum = line["BOOKNUM"]?.ToString();
+        //                        }
+        //                    }
+        //                }
+
+        //                // UI AND DICTIONARY UPDATE
+        //                this.Invoke((Action)(() =>
+        //                {
+        //                    // 1. Update UI Cell directly
+        //                    row.Cells["UDATE"].Value = uDate;
+        //                    row.Cells["PACKNAME"].Value = packCode;
+        //                    row.Cells["BOOKNUM"].Value = bookNum;
+
+        //                    // 2. CRITICAL: Update Dictionary state so RefreshInStockGrid() has the data
+        //                    if (!string.IsNullOrEmpty(transIdKey) && currentIPNState.TryGetValue(transIdKey, out var reel))
+        //                    {
+        //                        if (DateTime.TryParse(uDate, out DateTime d))
+        //                        {
+        //                            reel.PriorityDate = d;
+        //                        }
+        //                        reel.PackageID = packCode;
+        //                        reel.BookNum = bookNum;
+        //                    }
+        //                }));
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Log($"Enrichment error for {logDocNo}: {ex.Message}", Color.Gray);
+        //        }
+        //        finally
+        //        {
+        //            semaphore.Release();
+        //        }
+        //    });
+
+        //    await Task.WhenAll(tasks);
+        //    sw.Stop();
+
+        //    // Logic for sorting or recalculating is now handled back in the PopulateInStockByLogic pipeline
+        //    Log($"Reel data enrichment complete in {sw.ElapsedMilliseconds} ms.", Color.LimeGreen);
+        //}
+
+
         private async Task EnrichLiveGridAsync(string partName)
         {
-            var rows = dgvStockMovements.Rows.Cast<DataGridViewRow>()
+            // Target the IN-STOCK grid exclusively
+            var rows = dgwINSTOCK.Rows.Cast<DataGridViewRow>()
                 .Where(r => r.Cells["LOGDOCNO"].Value != null)
                 .ToList();
+
             if (rows.Count == 0) return;
-            // --- Start Timing ---
+
             var sw = System.Diagnostics.Stopwatch.StartNew();
+
+            // Setup Multi-User HttpClient Pool
             var clients = Enumerable.Range(0, ApiUserPool.Count)
                 .Select(_ =>
                 {
@@ -808,10 +1058,12 @@ namespace WH_Panel
                     string user = ApiHelper.AuthenticateClient(c);
                     return (User: user, Client: c);
                 }).ToList();
+
             int maxConcurrencyPerUser = 2;
             var clientSemaphores = clients.ToDictionary(c => c.User, c => new SemaphoreSlim(maxConcurrencyPerUser));
             int userIndex = -1;
             object userLock = new object();
+
             (string User, HttpClient Client) GetNextClient()
             {
                 lock (userLock)
@@ -820,12 +1072,35 @@ namespace WH_Panel
                     return clients[userIndex];
                 }
             }
+
             var tasks = rows.Select(async row =>
             {
                 string logDocNo = row.Cells["LOGDOCNO"].Value.ToString();
+                string transIdKey = row.Cells["TRANS"].Value?.ToString();
+
+                // --- NEW: CACHE HIT CHECK ---
+                if (long.TryParse(transIdKey, out long transId) && sessionReelCache.TryGetValue(transId, out var cached))
+                {
+                    this.Invoke((Action)(() =>
+                    {
+                        row.Cells["UDATE"].Value = cached.Date.ToString("yyyy-MM-dd HH:mm");
+                        row.Cells["PACKNAME"].Value = cached.Pack;
+                        row.Cells["BOOKNUM"].Value = cached.Book;
+
+                        if (currentIPNState.TryGetValue(transIdKey, out var reel))
+                        {
+                            reel.PriorityDate = cached.Date;
+                            reel.PackageID = cached.Pack;
+                            reel.BookNum = cached.Book;
+                        }
+                    }));
+                    return; // Exit early, skipping API call
+                }
+
                 var (usedUser, client) = GetNextClient();
                 var semaphore = clientSemaphores[usedUser];
                 await semaphore.WaitAsync();
+
                 try
                 {
                     string url = logDocNo switch
@@ -837,10 +1112,13 @@ namespace WH_Panel
                         var s when s.StartsWith("ROB") => $"{baseUrl}/SERIAL?$filter=SERIALNAME eq '{logDocNo}'&$expand=TRANSORDER_K_SUBFORM",
                         _ => $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM"
                     };
+
                     HttpResponseMessage response = await client.GetAsync(url);
                     if (!response.IsSuccessStatusCode) return;
+
                     string body = await response.Content.ReadAsStringAsync();
                     var doc = JsonConvert.DeserializeObject<JObject>(body)?["value"]?.FirstOrDefault();
+
                     if (doc != null)
                     {
                         string uDate = doc["UDATE"]?.ToString();
@@ -848,10 +1126,12 @@ namespace WH_Panel
                                          ?? doc["CDES"]?.ToString()
                                          ?? doc["REFERENCE"]?.ToString();
                         string packCode = null;
+
                         var subForm = doc["TRANSORDER_P_SUBFORM"]
-                                      ?? doc["TRANSORDER_T_SUBFORM"]
-                                      ?? doc["TRANSORDER_D_SUBFORM"]
-                                      ?? doc["TRANSORDER_K_SUBFORM"];
+                                     ?? doc["TRANSORDER_T_SUBFORM"]
+                                     ?? doc["TRANSORDER_D_SUBFORM"]
+                                     ?? doc["TRANSORDER_K_SUBFORM"];
+
                         if (subForm != null)
                         {
                             var line = subForm.FirstOrDefault(l => l["PARTNAME"]?.ToString() == partName);
@@ -864,11 +1144,25 @@ namespace WH_Panel
                                 }
                             }
                         }
+
+                        // UI AND DICTIONARY UPDATE
                         this.Invoke((Action)(() =>
                         {
                             row.Cells["UDATE"].Value = uDate;
                             row.Cells["PACKNAME"].Value = packCode;
                             row.Cells["BOOKNUM"].Value = bookNum;
+
+                            if (!string.IsNullOrEmpty(transIdKey) && currentIPNState.TryGetValue(transIdKey, out var reel))
+                            {
+                                if (DateTime.TryParse(uDate, out DateTime d))
+                                {
+                                    reel.PriorityDate = d;
+                                    // --- NEW: CACHE STORE ---
+                                    sessionReelCache[transId] = (d, packCode, bookNum);
+                                }
+                                reel.PackageID = packCode;
+                                reel.BookNum = bookNum;
+                            }
                         }));
                     }
                 }
@@ -881,20 +1175,238 @@ namespace WH_Panel
                     semaphore.Release();
                 }
             });
-            // AT THE END OF EnrichLiveGridAsync
+
             await Task.WhenAll(tasks);
             sw.Stop();
-            // Now that we ARE sure data is there, calculate stock
-            this.Invoke((Action)(() =>
-            {
-                dgvStockMovements.Sort(dgvStockMovements.Columns["UDATE"], ListSortDirection.Descending);
-                PopulateInStockByLogic(); // Call it here!
-            }));
-            Log($"Reel data enrichment complete in {sw.ElapsedMilliseconds} ms.", Color.LimeGreen);
+
+           // Log($"Reel data enrichment complete in {sw.ElapsedMilliseconds} ms.", Color.LimeGreen);
+
+            // --- NANOSECOND MEASUREMENT ---
+            // Conversion: (Ticks / TicksPerSecond) * 1,000,000,000
+            double nanoseconds = (double)sw.ElapsedTicks / Stopwatch.Frequency * 1000000000;
+
+            Log($"Enrichment complete in {nanoseconds:N0} ns.", Color.LimeGreen);
         }
-        private async Task PopulateInStockByLogic()
+
+        //private async Task PopulateInStockByLogic(string passedOnIPN)
+        //{
+        //    // 1. Ensure the IN STOCK grid has a skeleton
+        //    if (dgwINSTOCK.Columns.Count == 0)
+        //    {
+        //        dgwINSTOCK.Columns.Add("UDATE", "Date");
+        //        dgwINSTOCK.Columns.Add("LOGDOCNO", "Doc No");
+        //        dgwINSTOCK.Columns.Add("BOOKNUM", "Client Doc");
+        //        dgwINSTOCK.Columns.Add("TQUANT", "Qty");
+        //        dgwINSTOCK.Columns.Add("SUPCUSTNAME", "Source");
+        //        dgwINSTOCK.Columns.Add("PACKNAME", "Pack Code");
+        //        dgwINSTOCK.Columns.Add("CountDate", "Count Date");
+        //        dgwINSTOCK.Columns.Add("UserCounted", "User");
+        //        dgwINSTOCK.Columns.Add("TRANS", "Transaction ID");
+        //        ApplyDarkThemeToGrid(dgwINSTOCK);
+        //    }
+        //    dgwINSTOCK.Rows.Clear();
+        //    // CRITICAL: Clear the memory state before rebuilding
+        //    currentIPNState.Clear();
+        //    // 2. Extract movements
+        //    var rows = dgvStockMovements.Rows.Cast<DataGridViewRow>()
+        //        .Where(r => r.Cells["TQUANT"].Value != null && !string.IsNullOrEmpty(r.Cells["TQUANT"].Value.ToString()))
+        //        .Select(r => new {
+        //            DocNo = r.Cells["LOGDOCNO"].Value?.ToString() ?? "",
+        //            Qty = int.TryParse(r.Cells["TQUANT"].Value.ToString(), out int q) ? Math.Abs(q) : 0,
+        //            Date = DateTime.TryParse(r.Cells["UDATE"].Value?.ToString(), out var d) ? d : DateTime.MinValue,
+        //            Pack = r.Cells["PACKNAME"].Value?.ToString() ?? "N/A",
+        //            Supplier = r.Cells["SUPCUSTNAME"].Value?.ToString() ?? "",
+        //            BookNum = r.Cells["BOOKNUM"].Value?.ToString() ?? "",
+        //            TransactionId= r.Cells["TRANS"].Value?.ToString() ?? ""
+        //        })
+        //        .Where(x => x.Qty > 0)
+        //        .ToList();
+        //    // 3. Heuristic Reconciliation
+        //    var incoming = rows.Where(r => r.DocNo.StartsWith("GR")).ToList();
+        //    var outgoing = rows.Where(r => r.DocNo.StartsWith("ROB") || r.DocNo.StartsWith("SH") || r.DocNo.StartsWith("WR")).ToList();
+        //    var remainingInStock = incoming.OrderBy(r => r.Date).ToList();
+        //    var unmatchedOut = outgoing.OrderBy(r => r.Date).ToList();
+        //    foreach (var outMove in unmatchedOut)
+        //    {
+        //        var match = remainingInStock.FirstOrDefault(i => i.Qty == outMove.Qty);
+        //        if (match != null) remainingInStock.Remove(match);
+        //    }
+        //    // 4. POPULATE THE DICTIONARY (State Management)
+        //    // We do this BEFORE the SQL sync so the dictionary exists to be updated
+        //    foreach (var item in remainingInStock)
+        //    {
+        //        currentIPNState[item.TransactionId] = new ReelState
+        //        {
+        //            DocNo = item.DocNo,
+        //            Qty = item.Qty,
+        //            PriorityDate = item.Date,
+        //            PackageID = item.Pack,
+        //            Supplier = item.Supplier,
+        //            BookNum = item.BookNum,
+        //            User = null,
+        //            CountDate = null,
+        //            TransactionId = long.Parse(item.TransactionId)
+
+        //        };
+        //    }
+        //    // 5. SQL SYNC: Update the dictionary with physical truth
+        //    string currentIPN = txtSearchIPN.Text.Trim().ToUpper();
+        //    string dbName = cmbSelectedWH.SelectedItem?.ToString() ?? "";
+        //    string connString = $"Server=DBR3\\SQLEXPRESS;Integrated Security=True;Database={dbName};";
+        //    if (!string.IsNullOrEmpty(dbName) && currentIPNState.Count > 0)
+        //    {
+        //        try
+        //        {
+        //            using (SqlConnection conn = new SqlConnection(connString))
+        //            {
+        //                await conn.OpenAsync();
+        //                string sql = "SELECT TransactionID, UserCounted, CountDate FROM [COUNT] WHERE IPN = @ipn";
+        //                using (SqlCommand cmd = new SqlCommand(sql, conn))
+        //                {
+        //                    cmd.Parameters.AddWithValue("@ipn", currentIPN);
+        //                    using (var reader = await cmd.ExecuteReaderAsync())
+        //                    {
+        //                        while (await reader.ReadAsync())
+        //                        {
+        //                            string docKey = reader["TransactionID"].ToString();
+        //                            if (currentIPNState.ContainsKey(docKey))
+        //                            {
+        //                                currentIPNState[docKey].User = reader["UserCounted"].ToString();
+        //                                currentIPNState[docKey].CountDate = Convert.ToDateTime(reader["CountDate"]);
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        catch (Exception ex) { Log($"SQL Sync Error: {ex.Message}", Color.Red); }
+        //    }
+        //    // 6. Refresh UI from Dictionary
+        //    // Use the function we defined earlier to rebuild the grid
+        //    RefreshInStockGrid();
+        //    Log($"Heuristic reconciliation complete: {currentIPNState.Count} active reels in memory.", Color.Yellow);
+        //}
+
+
+        //private async Task PopulateInStockByLogic(string passedOnIPN)
+        //{
+        //    // 1. Ensure the IN STOCK grid has a skeleton
+        //    if (dgwINSTOCK.Columns.Count == 0)
+        //    {
+        //        dgwINSTOCK.Columns.Add("UDATE", "Date");
+        //        dgwINSTOCK.Columns.Add("LOGDOCNO", "Doc No");
+        //        dgwINSTOCK.Columns.Add("BOOKNUM", "Client Doc");
+        //        dgwINSTOCK.Columns.Add("TQUANT", "Qty");
+        //        dgwINSTOCK.Columns.Add("SUPCUSTNAME", "Source");
+        //        dgwINSTOCK.Columns.Add("PACKNAME", "Pack Code");
+        //        dgwINSTOCK.Columns.Add("CountDate", "Count Date");
+        //        dgwINSTOCK.Columns.Add("UserCounted", "User");
+        //        dgwINSTOCK.Columns.Add("TRANS", "Transaction ID");
+        //        ApplyDarkThemeToGrid(dgwINSTOCK);
+        //    }
+        //    dgwINSTOCK.Rows.Clear();
+
+        //    // CRITICAL: Clear the memory state before rebuilding
+        //    currentIPNState.Clear();
+
+        //    // 2. Extract movements from the existing movements grid
+        //    var rows = dgvStockMovements.Rows.Cast<DataGridViewRow>()
+        //        .Where(r => r.Cells["TQUANT"].Value != null && !string.IsNullOrEmpty(r.Cells["TQUANT"].Value.ToString()))
+        //        .Select(r => new {
+        //            DocNo = r.Cells["LOGDOCNO"].Value?.ToString() ?? "",
+        //            Qty = int.TryParse(r.Cells["TQUANT"].Value.ToString(), out int q) ? Math.Abs(q) : 0,
+        //            Date = DateTime.TryParse(r.Cells["UDATE"].Value?.ToString(), out var d) ? d : DateTime.MinValue,
+        //            Pack = r.Cells["PACKNAME"].Value?.ToString() ?? "N/A",
+        //            Supplier = r.Cells["SUPCUSTNAME"].Value?.ToString() ?? "",
+        //            BookNum = r.Cells["BOOKNUM"].Value?.ToString() ?? "",
+        //            TransactionId = r.Cells["TRANS"].Value?.ToString() ?? ""
+        //        })
+        //        .Where(x => x.Qty > 0)
+        //        .ToList();
+
+        //    // 3. Heuristic Reconciliation
+        //    var incoming = rows.Where(r => r.DocNo.StartsWith("GR")).ToList();
+        //    var outgoing = rows.Where(r => r.DocNo.StartsWith("ROB") || r.DocNo.StartsWith("SH") || r.DocNo.StartsWith("WR")).ToList();
+        //    var remainingInStock = incoming.OrderBy(r => r.Date).ToList();
+        //    var unmatchedOut = outgoing.OrderBy(r => r.Date).ToList();
+
+        //    foreach (var outMove in unmatchedOut)
+        //    {
+        //        var match = remainingInStock.FirstOrDefault(i => i.Qty == outMove.Qty);
+        //        if (match != null) remainingInStock.Remove(match);
+        //    }
+
+        //    // 4. POPULATE THE DICTIONARY
+        //    foreach (var item in remainingInStock)
+        //    {
+        //        currentIPNState[item.TransactionId] = new ReelState
+        //        {
+        //            DocNo = item.DocNo,
+        //            Qty = item.Qty,
+        //            PriorityDate = item.Date,
+        //            PackageID = item.Pack,
+        //            Supplier = item.Supplier,
+        //            BookNum = item.BookNum,
+        //            User = null,
+        //            CountDate = null,
+        //            TransactionId = long.Parse(item.TransactionId)
+        //        };
+        //    }
+
+        //    // 5. SQL SYNC
+        //    string currentIPN = passedOnIPN; // Use the passed variable
+        //    string dbName = cmbSelectedWH.SelectedItem?.ToString() ?? "";
+        //    string connString = $"Server=DBR3\\SQLEXPRESS;Integrated Security=True;Database={dbName};";
+        //    if (!string.IsNullOrEmpty(dbName) && currentIPNState.Count > 0)
+        //    {
+        //        try
+        //        {
+        //            using (SqlConnection conn = new SqlConnection(connString))
+        //            {
+        //                await conn.OpenAsync();
+        //                string sql = "SELECT TransactionID, UserCounted, CountDate FROM [COUNT] WHERE IPN = @ipn";
+        //                using (SqlCommand cmd = new SqlCommand(sql, conn))
+        //                {
+        //                    cmd.Parameters.AddWithValue("@ipn", currentIPN);
+        //                    using (var reader = await cmd.ExecuteReaderAsync())
+        //                    {
+        //                        while (await reader.ReadAsync())
+        //                        {
+        //                            string docKey = reader["TransactionID"].ToString();
+        //                            if (currentIPNState.ContainsKey(docKey))
+        //                            {
+        //                                currentIPNState[docKey].User = reader["UserCounted"].ToString();
+        //                                currentIPNState[docKey].CountDate = reader["CountDate"] as DateTime?;
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        catch (Exception ex) { Log($"SQL Sync Error: {ex.Message}", Color.Red); }
+        //    }
+
+        //    // 6. Refresh UI Grid from Dictionary
+        //    RefreshInStockGrid();
+        //    Log($"Calculation complete: {currentIPNState.Count} reels identified.", Color.Yellow);
+
+        //    // 7. NEW INJECTION: Enrich ONLY the reels currently in dgwINSTOCK
+        //    if (dgwINSTOCK.Rows.Count > 0)
+        //    {
+        //        Log($"Starting lazy enrichment for {dgwINSTOCK.Rows.Count} in-stock reels...", Color.Cyan);
+
+        //        // Pass the IPN to the existing enricher, but make sure the enricher 
+        //        // targets dgwINSTOCK instead of dgvStockMovements
+        //        await EnrichLiveGridAsync(passedOnIPN);
+        //    }
+        //}
+
+        private System.Windows.Forms.Timer pulseTimer;
+        private int pulseStep = 0;
+
+        private async Task PopulateInStockByLogic(string passedOnIPN)
         {
-            // 1. Ensure the IN STOCK grid has a skeleton
+            // 1. Grid Skeleton Setup
             if (dgwINSTOCK.Columns.Count == 0)
             {
                 dgwINSTOCK.Columns.Add("UDATE", "Date");
@@ -908,10 +1420,8 @@ namespace WH_Panel
                 dgwINSTOCK.Columns.Add("TRANS", "Transaction ID");
                 ApplyDarkThemeToGrid(dgwINSTOCK);
             }
-            dgwINSTOCK.Rows.Clear();
-            // CRITICAL: Clear the memory state before rebuilding
-            currentIPNState.Clear();
-            // 2. Extract movements
+
+            // 2. Extract movements from the movements grid (Raw Data)
             var rows = dgvStockMovements.Rows.Cast<DataGridViewRow>()
                 .Where(r => r.Cells["TQUANT"].Value != null && !string.IsNullOrEmpty(r.Cells["TQUANT"].Value.ToString()))
                 .Select(r => new {
@@ -921,22 +1431,24 @@ namespace WH_Panel
                     Pack = r.Cells["PACKNAME"].Value?.ToString() ?? "N/A",
                     Supplier = r.Cells["SUPCUSTNAME"].Value?.ToString() ?? "",
                     BookNum = r.Cells["BOOKNUM"].Value?.ToString() ?? "",
-                    TransactionId= r.Cells["TRANS"].Value?.ToString() ?? ""
+                    TransactionId = r.Cells["TRANS"].Value?.ToString() ?? ""
                 })
                 .Where(x => x.Qty > 0)
                 .ToList();
-            // 3. Heuristic Reconciliation
+
+            // 3. Heuristic Reconciliation (Find remaining in-stock)
             var incoming = rows.Where(r => r.DocNo.StartsWith("GR")).ToList();
-            var outgoing = rows.Where(r => r.DocNo.StartsWith("ROB") || r.DocNo.StartsWith("SH") || r.DocNo.StartsWith("WR")).ToList();
+            var outgoing = rows.Where(r => !r.DocNo.StartsWith("GR")).ToList();
             var remainingInStock = incoming.OrderBy(r => r.Date).ToList();
-            var unmatchedOut = outgoing.OrderBy(r => r.Date).ToList();
-            foreach (var outMove in unmatchedOut)
+
+            foreach (var outMove in outgoing)
             {
                 var match = remainingInStock.FirstOrDefault(i => i.Qty == outMove.Qty);
                 if (match != null) remainingInStock.Remove(match);
             }
-            // 4. POPULATE THE DICTIONARY (State Management)
-            // We do this BEFORE the SQL sync so the dictionary exists to be updated
+
+            // 4. Update Memory State (Dictionary)
+            currentIPNState.Clear();
             foreach (var item in remainingInStock)
             {
                 currentIPNState[item.TransactionId] = new ReelState
@@ -947,49 +1459,135 @@ namespace WH_Panel
                     PackageID = item.Pack,
                     Supplier = item.Supplier,
                     BookNum = item.BookNum,
-                    User = null,
-                    CountDate = null,
                     TransactionId = long.Parse(item.TransactionId)
-
                 };
             }
-            // 5. SQL SYNC: Update the dictionary with physical truth
-            string currentIPN = txtSearchIPN.Text.Trim().ToUpper();
-            string dbName = cmbSelectedWH.SelectedItem?.ToString() ?? "";
-            string connString = $"Server=DBR3\\SQLEXPRESS;Integrated Security=True;Database={dbName};";
-            if (!string.IsNullOrEmpty(dbName) && currentIPNState.Count > 0)
+
+            // 5. SQL SYNC (Get local count history)
+            await SyncLocalSqlCountsAsync(passedOnIPN);
+
+            // 6. INITIAL UI REFRESH (Fast Draw)
+            RefreshInStockGrid();
+            Log($"Reconciliation complete: {currentIPNState.Count} reels identified.", Color.Yellow);
+
+            // 7. TARGETED ENRICHMENT (The Lazy Fetch)
+            if (dgwINSTOCK.Rows.Count > 0)
             {
-                try
+                
+
+                //// INSERT LOADING TEXT into the specific columns that are about to be filled
+                //this.Invoke((Action)(() => {
+                //    foreach (DataGridViewRow row in dgwINSTOCK.Rows)
+                //    {
+                //        row.Cells["UDATE"].Value = "...Loading...";
+                //        row.Cells["PACKNAME"].Value = "...Loading...";
+                //        row.DefaultCellStyle.ForeColor = Color.White; // Dim them out while loading
+                //        row.DefaultCellStyle.BackColor = Color.DarkRed; // Dim them out while loading
+                //    }
+                //}));
+
+                //Log($"Starting lazy enrichment for {dgwINSTOCK.Rows.Count} reels...", Color.Cyan);
+
+                //// This fetches details for only the items we just put in the grid
+                //await EnrichLiveGridAsync(passedOnIPN);
+
+                //// Final refresh to ensure everything is sorted and visible
+                //RefreshInStockGrid();
+
+                // 1. Setup the Timer if not exists
+                if (pulseTimer == null)
                 {
-                    using (SqlConnection conn = new SqlConnection(connString))
+                    pulseTimer = new System.Windows.Forms.Timer { Interval = 200 }; // 200ms steps
+                    pulseTimer.Tick += (s, e) => PulseLoadingRows();
+                }
+
+                // 2. Start the Pulse and Loading Text
+                this.Invoke((Action)(() => {
+                    foreach (DataGridViewRow row in dgwINSTOCK.Rows)
                     {
-                        await conn.OpenAsync();
-                        string sql = "SELECT TransactionID, UserCounted, CountDate FROM [COUNT] WHERE IPN = @ipn";
-                        using (SqlCommand cmd = new SqlCommand(sql, conn))
+                        row.Cells["UDATE"].Value = "• SYNCING •";
+                        row.Cells["PACKNAME"].Value = "WAIT";
+                        row.DefaultCellStyle.BackColor = Color.FromArgb(60, 0, 0); // Start Dark
+                    }
+                    pulseTimer.Start();
+                }));
+
+                // 3. Run the Enrichment
+                await EnrichLiveGridAsync(passedOnIPN);
+
+                // 4. Stop Pulse and Refresh
+                pulseTimer.Stop();
+                RefreshInStockGrid(); // This wipes the red and draws the final state
+            }
+        }
+        private void PulseLoadingRows()
+        {
+            pulseStep++;
+            // Use a Sine-like wave or just a simple toggle
+            int intensity = (pulseStep % 2 == 0) ? 40 : 80;
+            Color pulseColor = Color.FromArgb(intensity, 0, 0);
+
+            foreach (DataGridViewRow row in dgwINSTOCK.Rows)
+            {
+                // Only pulse rows that are still loading
+                if (row.Cells["UDATE"].Value?.ToString() == "• SYNCING •")
+                {
+                    row.DefaultCellStyle.BackColor = pulseColor;
+                }
+            }
+        }
+        private async Task SyncLocalSqlCountsAsync(string ipn)
+        {
+            // 1. Resolve the database name and connection string
+            string dbName = cmbSelectedWH.SelectedItem?.ToString() ?? "";
+            if (string.IsNullOrEmpty(dbName)) return;
+
+            string connString = $"Server=DBR3\\SQLEXPRESS;Integrated Security=True;Database={dbName};";
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connString))
+                {
+                    await conn.OpenAsync();
+
+                    // 2. Query only the relevant fields for the current IPN
+                    // We use TransactionID as our "pivot" to match Priority data
+                    string sql = "SELECT TransactionID, UserCounted, CountDate FROM [COUNT] WHERE IPN = @ipn";
+
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@ipn", ipn);
+
+                        using (var reader = await cmd.ExecuteReaderAsync())
                         {
-                            cmd.Parameters.AddWithValue("@ipn", currentIPN);
-                            using (var reader = await cmd.ExecuteReaderAsync())
+                            while (await reader.ReadAsync())
                             {
-                                while (await reader.ReadAsync())
+                                // Use TransactionID to find the reel in our memory state
+                                string transIdKey = reader["TransactionID"].ToString();
+
+                                if (currentIPNState.ContainsKey(transIdKey))
                                 {
-                                    string docKey = reader["TransactionID"].ToString();
-                                    if (currentIPNState.ContainsKey(docKey))
-                                    {
-                                        currentIPNState[docKey].User = reader["UserCounted"].ToString();
-                                        currentIPNState[docKey].CountDate = Convert.ToDateTime(reader["CountDate"]);
-                                    }
+                                    // 3. Update the memory state with the SQL "Truth"
+                                    currentIPNState[transIdKey].User = reader["UserCounted"]?.ToString();
+
+                                    // Safe cast for the date to avoid any null/overflow issues
+                                    currentIPNState[transIdKey].CountDate = reader["CountDate"] as DateTime?;
                                 }
                             }
                         }
                     }
                 }
-                catch (Exception ex) { Log($"SQL Sync Error: {ex.Message}", Color.Red); }
             }
-            // 6. Refresh UI from Dictionary
-            // Use the function we defined earlier to rebuild the grid
-            RefreshInStockGrid();
-            Log($"Heuristic reconciliation complete: {currentIPNState.Count} active reels in memory.", Color.Yellow);
+            catch (SqlException ex)
+            {
+                Log($"SQL Sync Error (Database): {ex.Message}", Color.Red);
+            }
+            catch (Exception ex)
+            {
+                Log($"SQL Sync Error (General): {ex.Message}", Color.Red);
+            }
         }
+
         private void InitializeMovementsGrid()
         {
             dgvStockMovements.Columns.Clear();
@@ -1112,6 +1710,104 @@ namespace WH_Panel
                 };
             }
         }
+        //private void txtbMFPN_KeyDown(object sender, KeyEventArgs e)
+        //{
+        //    // --- ESCAPE KEY LOGIC ---
+        //    if (e.KeyCode == Keys.Escape)
+        //    {
+        //        e.SuppressKeyPress = true;
+        //        txtbMFPN.Clear();
+        //        // Restore the full list to the grid
+        //        dgwAVL.DataSource = null; // Reset binding
+        //        dgwAVL.DataSource = fullAvlList;
+        //        Log("MFPN filter cleared. Full AVL list restored.", Color.White);
+        //        txtbMFPN.Focus();
+        //        return;
+        //    }
+        //    // --- ENTER KEY LOGIC ---
+        //    if (e.KeyCode == Keys.Enter)
+        //    {
+        //        e.SuppressKeyPress = true;
+        //        string scannedMFPN = txtbMFPN.Text.Trim().ToUpper();
+        //        if (string.IsNullOrEmpty(scannedMFPN)) return;
+        //        if (fullAvlList == null || fullAvlList.Count == 0)
+        //        {
+        //            Log("WARNING: No AVL data loaded. Please scan an IPN first.", Color.Orange);
+        //            txtSearchIPN.Focus();
+        //            return;
+        //        }
+        //        // Use the fullAvlList for filtering so we always check the original data
+        //        var filteredMatch = fullAvlList.Where(x => x.MNFPARTNAME.ToUpper().Equals(scannedMFPN)).ToList();
+        //        if (filteredMatch.Count == 1)
+        //        {
+        //            dgwAVL.DataSource = filteredMatch;
+        //            Log($"VERIFIED MFPN: {scannedMFPN} | Mfr: {filteredMatch[0].MNFNAME}", Color.LimeGreen);
+        //            txtbQTY.Focus();
+        //        }
+        //        else if (filteredMatch.Count > 1)
+        //        {
+        //            dgwAVL.DataSource = filteredMatch;
+        //            Log($"AMBIGUITY: {filteredMatch.Count} items match '{scannedMFPN}'. Select manually.", Color.Yellow);
+        //        }
+        //        else
+        //        {
+        //            Log($"!!! MORTAL SIN !!!: Invalid MFPN [{scannedMFPN}] for this IPN.", Color.Red);
+        //            MessageBox.Show($"MORTAL SIN DETECTED!\n\nThe scanned MFPN '{scannedMFPN}' does not belong to this IPN's AVL.", "VALIDATION FAILED", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            txtbMFPN.SelectAll();
+        //        }
+        //    }
+        //}
+
+
+        //private void txtbMFPN_KeyDown(object sender, KeyEventArgs e)
+        //{
+        //    // --- ESCAPE KEY LOGIC ---
+        //    if (e.KeyCode == Keys.Escape)
+        //    {
+        //        e.SuppressKeyPress = true;
+        //        txtbMFPN.Clear();
+        //        // Restore the full list to the grid
+        //        dgwAVL.DataSource = null; // Reset binding
+        //        dgwAVL.DataSource = fullAvlList;
+        //        Log("MFPN filter cleared. Full AVL list restored.", Color.White);
+        //        txtbMFPN.Focus();
+        //        return;
+        //    }
+        //    // --- ENTER KEY LOGIC ---
+        //    if (e.KeyCode == Keys.Enter)
+        //    {
+        //        e.SuppressKeyPress = true;
+        //        string scannedMFPN = txtbMFPN.Text.Trim().ToUpper();
+        //        if (string.IsNullOrEmpty(scannedMFPN)) return;
+        //        if (fullAvlList == null || fullAvlList.Count == 0)
+        //        {
+        //            Log("WARNING: No AVL data loaded. Please scan an IPN first.", Color.Orange);
+        //            txtSearchIPN.Focus();
+        //            return;
+        //        }
+        //        // Use the fullAvlList for filtering so we always check the original data
+        //        var filteredMatch = fullAvlList.Where(x => x.MNFPARTNAME.ToUpper().Equals(scannedMFPN)).ToList();
+        //        if (filteredMatch.Count == 1)
+        //        {
+        //            dgwAVL.DataSource = filteredMatch;
+        //            Log($"VERIFIED MFPN: {scannedMFPN} | Mfr: {filteredMatch[0].MNFNAME}", Color.LimeGreen);
+        //            txtbQTY.Focus();
+        //        }
+        //        else if (filteredMatch.Count > 1)
+        //        {
+        //            dgwAVL.DataSource = filteredMatch;
+        //            Log($"AMBIGUITY: {filteredMatch.Count} items match '{scannedMFPN}'. Select manually.", Color.Yellow);
+        //        }
+        //        else
+        //        {
+        //            Log($"!!! MORTAL SIN !!!: Invalid MFPN [{scannedMFPN}] for this IPN.", Color.Red);
+        //            MessageBox.Show($"MORTAL SIN DETECTED!\n\nThe scanned MFPN '{scannedMFPN}' does not belong to this IPN's AVL.", "VALIDATION FAILED", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            txtbMFPN.SelectAll();
+        //        }
+        //    }
+        //}
+
+
         private void txtbMFPN_KeyDown(object sender, KeyEventArgs e)
         {
             // --- ESCAPE KEY LOGIC ---
@@ -1119,46 +1815,72 @@ namespace WH_Panel
             {
                 e.SuppressKeyPress = true;
                 txtbMFPN.Clear();
-                // Restore the full list to the grid
-                dgwAVL.DataSource = null; // Reset binding
+                dgwAVL.DataSource = null;
                 dgwAVL.DataSource = fullAvlList;
                 Log("MFPN filter cleared. Full AVL list restored.", Color.White);
                 txtbMFPN.Focus();
                 return;
             }
+
             // --- ENTER KEY LOGIC ---
             if (e.KeyCode == Keys.Enter)
             {
                 e.SuppressKeyPress = true;
                 string scannedMFPN = txtbMFPN.Text.Trim().ToUpper();
                 if (string.IsNullOrEmpty(scannedMFPN)) return;
+
+                // 1. DATA READINESS GUARD (The STOP Sign)
+                // We check if ANY reel is missing a valid date or package code.
+                // SQL Min Date is 1753; anything less means it hasn't loaded yet.
+                DateTime sqlMin = new DateTime(1753, 1, 1);
+                bool isSyncing = currentIPNState.Values.Any(r =>
+                    r.PriorityDate < sqlMin ||
+                    string.IsNullOrEmpty(r.PackageID) ||
+                    r.PackageID == "N/A" ||
+                    r.PackageID == "...");
+
+                if (isSyncing)
+                {
+                    MessageBox.Show("STOP: Priority data is still syncing. Please wait 1-2 seconds.");
+                    Log("STOP: Priority data is still syncing. Please wait 1-2 seconds.", Color.Orange);
+                    System.Media.SystemSounds.Beep.Play(); // Optional audio cue
+                    txtbMFPN.SelectAll();
+                    txtbMFPN.Focus();
+                    return;
+                }
+
                 if (fullAvlList == null || fullAvlList.Count == 0)
                 {
-                    Log("WARNING: No AVL data loaded. Please scan an IPN first.", Color.Orange);
+                    Log("WARNING: No AVL data loaded. Scan an IPN first.", Color.Orange);
                     txtSearchIPN.Focus();
                     return;
                 }
-                // Use the fullAvlList for filtering so we always check the original data
+
+                // 2. AVL VALIDATION
                 var filteredMatch = fullAvlList.Where(x => x.MNFPARTNAME.ToUpper().Equals(scannedMFPN)).ToList();
+
                 if (filteredMatch.Count == 1)
                 {
                     dgwAVL.DataSource = filteredMatch;
                     Log($"VERIFIED MFPN: {scannedMFPN} | Mfr: {filteredMatch[0].MNFNAME}", Color.LimeGreen);
+
+                    // Now safe to move focus because the guard above passed
                     txtbQTY.Focus();
                 }
                 else if (filteredMatch.Count > 1)
                 {
                     dgwAVL.DataSource = filteredMatch;
-                    Log($"AMBIGUITY: {filteredMatch.Count} items match '{scannedMFPN}'. Select manually.", Color.Yellow);
+                    Log($"AMBIGUITY: {filteredMatch.Count} items match. Select manually.", Color.Yellow);
                 }
                 else
                 {
-                    Log($"!!! MORTAL SIN !!!: Invalid MFPN [{scannedMFPN}] for this IPN.", Color.Red);
-                    MessageBox.Show($"MORTAL SIN DETECTED!\n\nThe scanned MFPN '{scannedMFPN}' does not belong to this IPN's AVL.", "VALIDATION FAILED", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Log($"!!! MORTAL SIN !!!: Invalid MFPN [{scannedMFPN}]", Color.Red);
+                    MessageBox.Show($"MORTAL SIN DETECTED!\n\nMFPN '{scannedMFPN}' not in AVL.", "VALIDATION FAILED", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     txtbMFPN.SelectAll();
                 }
             }
         }
+
         private void Log(string message, Color color)
         {
             if (rtbLog.InvokeRequired)
