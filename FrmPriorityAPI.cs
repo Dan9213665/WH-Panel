@@ -19,6 +19,7 @@ using System.Security.Principal; // Add this using directive if not already pres
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using System.Web;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Button = System.Windows.Forms.Button;
@@ -1103,6 +1104,94 @@ namespace WH_Panel
             }
         }
 
+        private void printStickerDuplicate(PR_PART wHitem, string originalDateTime)
+        {
+            try
+            {
+                string userName = Environment.UserName;
+                string fpst = @"C:\\Users\\" + userName + "\\Desktop\\Print_Stickers.xlsx";
+                if (userName == "lgt")
+                {
+                    string message = $"PN:\t{wHitem.PARTNAME}\n" +
+                                     $"MFPN:\t{wHitem.MNFPARTNAME}\n" +
+                                     $"ItemDesc:\t{wHitem.PARTDES}\n" +
+                                     $"QTY:\t{wHitem.QTY}\n" +
+                                     $"Updated_on:\t{originalDateTime}";
+                    MessageBox.Show(message, "Printed sticker", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    if (usedMouser)
+                    {
+                        txtbMouse.Clear();
+                        txtbMouse.Focus();
+                        usedMouser = false;
+
+                    }
+                    else
+                    {
+                        if (lastUserInput != null)
+                        {
+                            lastUserInput.Focus();
+                        }
+                        else
+                        {
+                            txtbInputIPN.Focus();
+                        }
+                    }
+                }
+                else
+                {
+                    string thesheetName = "Sheet1";
+                    string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fpst + "; Extended Properties=\"Excel 12.0;HDR=YES;IMEX=0\"";
+                    using (OleDbConnection conn = new OleDbConnection(constr))
+                    {
+                        OleDbCommand cmd = new OleDbCommand();
+                        cmd.Connection = conn;
+                        cmd.CommandType = CommandType.Text;
+                        cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @Updated_on";
+                        cmd.Parameters.AddWithValue("@PN", wHitem.PARTNAME);
+                        cmd.Parameters.AddWithValue("@MFPN", wHitem.MNFPARTNAME);
+                        cmd.Parameters.AddWithValue("@ItemDesc", wHitem.PARTDES);
+                        cmd.Parameters.AddWithValue("@QTY", wHitem.QTY);
+                        cmd.Parameters.AddWithValue("@Updated_on", originalDateTime);
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                        conn.Close();
+                    }
+                    // Switch to English keyboard layout (you can adjust the culture code as needed)
+                    InputLanguage.CurrentInputLanguage = InputLanguage.FromCulture(new System.Globalization.CultureInfo("en-US"));
+                    Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
+                    SendKeys.SendWait("^p");
+                    SendKeys.SendWait("{Enter}");
+                    //ComeBackFromPrint();
+                    Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
+                    //txtbInputIPN.Focus();
+
+
+                    if (usedMouser)
+                    {
+                        txtbMouse.Clear();
+                        txtbMouse.Focus();
+                        usedMouser = false;
+
+                    }
+                    else
+                    {
+                        if (lastUserInput != null)
+                        {
+                            lastUserInput.Focus();
+                        }
+                        else
+                        {
+                            txtbInputIPN.Focus();
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Sticker printing failed: " + e.Message);
+            }
+        }
 
 
         private void printSticker(PR_PART wHitem)
@@ -2416,8 +2505,19 @@ namespace WH_Panel
                         PARTDES = partDes,
                         QTY = balance
                     };
-                    // Call the printSticker method
-                    printSticker(part);
+                    string originalDtime = selectedRow2.Cells["UDATE"].Value?.ToString();
+
+                    // Use IsNullOrWhiteSpace to catch null, "", and " "
+                    if (!string.IsNullOrWhiteSpace(originalDtime))
+                    {
+                        printStickerDuplicate(part, originalDtime);
+                        //MessageBox.Show(originalDtime);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Wait for the DATE to load");
+                    }
+
                 }
             }
         }
