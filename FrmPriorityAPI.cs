@@ -466,8 +466,6 @@ namespace WH_Panel
                     // Set the request headers if needed
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    // Set the Authorization header
-                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                     string credentials = SelectTheCredentialsByLoggedUser(settings);
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                     // Make the HTTP GET request
@@ -538,7 +536,6 @@ namespace WH_Panel
             // Compare the base64 string provided to the known settings
             if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}")))
                 return "api2";
-
             if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}")))
                 return "api3";
             if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api4Username}:{settings.Api4Password}")))
@@ -5443,5 +5440,11 @@ namespace WH_Panel
         {
 
         }
+    }
+    // Create a simple model to hold the pair
+    public class ApiCredential
+    {
+        public string Name { get; set; }
+        public string Base64Value { get; set; }
     }
 }
