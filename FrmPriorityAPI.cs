@@ -563,7 +563,7 @@ namespace WH_Panel
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                     // Try up to 2 times (Initial attempt + 1 failover)
-                    for (int attempt = 1; attempt <= 2; attempt++)
+                    for (int attempt = 1; attempt <= 5; attempt++)
                     {
                         try
                         {
