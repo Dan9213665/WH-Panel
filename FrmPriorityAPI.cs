@@ -531,24 +531,39 @@ namespace WH_Panel
                 _ => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"))
             };
         }
+        //public string GetApiName(string credentials, AppSettings settings)
+        //{
+        //    // Compare the base64 string provided to the known settings
+        //    if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}")))
+        //        return "6D3162B8E0F34660BCF256E7BBC3524C";
+        //    if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}")))
+        //        return "6ADFFD01B1B04B10A4F8FD7BCA8631D8";
+        //    if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api4Username}:{settings.Api4Password}")))
+        //        return "AEF3B8E8189A481786598CCCFD16A56A";
+        //    if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api5Username}:{settings.Api5Password}")))
+        //        return "7D4B614B3FD645F584C8661B813B5E98";
+
+        //    // Default/Fallback account
+        //    if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}")))
+        //        return "B59C4AB83FBB4784A3EBA712AF023DE9";
+
+        //    return "unknown";
+        //}
         public string GetApiName(string credentials, AppSettings settings)
         {
-            // Compare the base64 string provided to the known settings
-            if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}")))
-                return "6D3162B8E0F34660BCF256E7BBC3524C";
-            if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}")))
-                return "6ADFFD01B1B04B10A4F8FD7BCA8631D8";
-            if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api4Username}:{settings.Api4Password}")))
-                return "AEF3B8E8189A481786598CCCFD16A56A";
-            if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api5Username}:{settings.Api5Password}")))
-                return "7D4B614B3FD645F584C8661B813B5E98";
-
-            // Default/Fallback account
-            if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}")))
-                return "B59C4AB83FBB4784A3EBA712AF023DE9";
-
-            return "unknown";
+            try
+            {
+                // This decodes the "Basic [base64]" string you just sent
+                string decoded = Encoding.ASCII.GetString(Convert.FromBase64String(credentials));
+                // Returns the token part (everything before the colon)
+                return decoded.Split(':')[0];
+            }
+            catch
+            {
+                return "unknown";
+            }
         }
+
         public class WarehouseService
         {
            
