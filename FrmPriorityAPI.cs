@@ -505,17 +505,17 @@ namespace WH_Panel
             List<string> apiPriority = new List<string>();
 
             if (currentUser == "lgt01")
-                apiPriority.AddRange(new[] { "api2",  "api4", "api5", "api", "api3" });
+                apiPriority.AddRange(new[] { "6D3162B8E0F34660BCF256E7BBC3524C", "AEF3B8E8189A481786598CCCFD16A56A", "7D4B614B3FD645F584C8661B813B5E98", "B59C4AB83FBB4784A3EBA712AF023DE9", "6ADFFD01B1B04B10A4F8FD7BCA8631D8" });
             else if (currentUser == "rbtwh")
-                apiPriority.AddRange(new[] {  "api2", "api4", "api5", "api", "api3" });
+                apiPriority.AddRange(new[] { "6D3162B8E0F34660BCF256E7BBC3524C", "AEF3B8E8189A481786598CCCFD16A56A", "7D4B614B3FD645F584C8661B813B5E98", "B59C4AB83FBB4784A3EBA712AF023DE9", "6ADFFD01B1B04B10A4F8FD7BCA8631D8" });
             else if (currentUser == "rbtwh2")
-                apiPriority.AddRange(new[] {  "api2",  "api4", "api5", "api", "api3" });
+                apiPriority.AddRange(new[] { "6D3162B8E0F34660BCF256E7BBC3524C", "AEF3B8E8189A481786598CCCFD16A56A", "7D4B614B3FD645F584C8661B813B5E98", "B59C4AB83FBB4784A3EBA712AF023DE9", "6ADFFD01B1B04B10A4F8FD7BCA8631D8" });
             else
-                apiPriority.AddRange(new[] { "api5","api2",  "api4", "api", "api3" });
+                apiPriority.AddRange(new[] { "7D4B614B3FD645F584C8661B813B5E98", "6D3162B8E0F34660BCF256E7BBC3524C", "AEF3B8E8189A481786598CCCFD16A56A", "B59C4AB83FBB4784A3EBA712AF023DE9", "6ADFFD01B1B04B10A4F8FD7BCA8631D8" });
 
             // Pick the first one NOT in the blacklist
             string chosenApi = apiPriority.FirstOrDefault(a => !SessionBlacklist.Contains(a)) ?? apiPriority.First();
-
+            //MessageBox.Show("chosenApi="+chosenApi);
             return GetCredsByName(chosenApi, settings);
         }
 
@@ -524,10 +524,10 @@ namespace WH_Panel
         {
             return apiName switch
             {
-                "api2" => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}")),
-                "api3" => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}")),
-                "api4" => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api4Username}:{settings.Api4Password}")),
-                "api5" => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api5Username}:{settings.Api5Password}")),
+                "6D3162B8E0F34660BCF256E7BBC3524C" => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}")),
+                "6ADFFD01B1B04B10A4F8FD7BCA8631D8" => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}")),
+                "AEF3B8E8189A481786598CCCFD16A56A" => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api4Username}:{settings.Api4Password}")),
+                "7D4B614B3FD645F584C8661B813B5E98" => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api5Username}:{settings.Api5Password}")),
                 _ => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"))
             };
         }
@@ -535,17 +535,17 @@ namespace WH_Panel
         {
             // Compare the base64 string provided to the known settings
             if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}")))
-                return "api2";
+                return "6D3162B8E0F34660BCF256E7BBC3524C";
             if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}")))
-                return "api3";
+                return "6ADFFD01B1B04B10A4F8FD7BCA8631D8";
             if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api4Username}:{settings.Api4Password}")))
-                return "api4";
+                return "AEF3B8E8189A481786598CCCFD16A56A";
             if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api5Username}:{settings.Api5Password}")))
-                return "api5";
+                return "7D4B614B3FD645F584C8661B813B5E98";
 
             // Default/Fallback account
             if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}")))
-                return "api";
+                return "B59C4AB83FBB4784A3EBA712AF023DE9";
 
             return "unknown";
         }
