@@ -64,6 +64,7 @@ namespace WH_Panel
                     FillWeight = 25f // Set the fill weight to 33.33%
                 };
                 dgwSerials.Columns.Add(parentIpnColumn);
+
                 var serialDesColumn = new DataGridViewTextBoxColumn
                 {
                     Name = "SERIALDES",
@@ -72,6 +73,17 @@ namespace WH_Panel
                     FillWeight = 25f // Set the fill weight to 33.33%
                 };
                 dgwSerials.Columns.Add(serialDesColumn);
+                var abalanceColumn = new DataGridViewTextBoxColumn
+                {
+                    Name = "ABALANCE",
+                    HeaderText = "KIT BALANCE",
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                    FillWeight = 25f // Set the fill weight to 33.33%
+                };
+                dgwSerials.Columns.Add(abalanceColumn);
+
+
+             
             }
         }
         public class SerialInfo
@@ -81,6 +93,8 @@ namespace WH_Panel
             public string PARENTIPN { get; set; }
             public string SERIALDES { get; set; }
             public string REVNUM { get; set; }
+
+            public int? RequiredQty { get; set; }
         }
         private void SetDarkModeColors(Control parentControl)
         {
@@ -275,119 +289,240 @@ namespace WH_Panel
                 }
             }
         }
-        private async Task FetchAndDisplaySerials(string parentName,string originIPN)
-        {
-            //string serialUrl = $"{baseUrl}SERIAL?$filter=PARTNAME eq '{parentName}'";
-            string serialUrl = $"{baseUrl}SERIAL?$filter=PARTNAME eq '{parentName}'&$select=SERIALNAME,SERIALDES,SERIALSTATUSDES,REVNUM";
+        //private async Task FetchAndDisplaySerials(string parentName,string originIPN)
+        //{
+        //    //string serialUrl = $"{baseUrl}SERIAL?$filter=PARTNAME eq '{parentName}'";
+        //    string serialUrl = $"{baseUrl}SERIAL?$filter=PARTNAME eq '{parentName}'&$select=SERIALNAME,SERIALDES,SERIALSTATUSDES,REVNUM";
 
-  
+
+
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        try
+        //        {
+        //            // Log the start of the method
+        //            txtbLog.SelectionColor = Color.Yellow;
+        //            txtbLog.AppendText($"Fetching serials for parent: {parentName}\n");
+        //            txtbLog.ScrollToCaret();
+        //            // Set the request headers
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+        //            string usedUser = ApiHelper.AuthenticateClient(client);
+        //            // string usedUser = ApiHelper.AuthenticateClient(client);
+
+
+        //            // Make the HTTP GET request for serial details
+        //            HttpResponseMessage serialResponse = await client.GetAsync(serialUrl);
+        //            // Check for 429 Too Many Requests
+        //            if (serialResponse.StatusCode == (System.Net.HttpStatusCode)429)
+        //            {
+        //                txtbLog.SelectionColor = Color.Red;
+        //                txtbLog.AppendText("Error: Too Many Requests (429). The server is rate-limiting requests.\n");
+        //                // Check if the Retry-After header is present
+        //                if (serialResponse.Headers.TryGetValues("Retry-After", out var retryAfterValues))
+        //                {
+        //                    string retryAfter = retryAfterValues.FirstOrDefault();
+        //                    txtbLog.AppendText($"Retry-After: {retryAfter} seconds\n");
+        //                }
+        //                else
+        //                {
+        //                    txtbLog.AppendText("Retry-After header not provided by the server.\n");
+        //                }
+        //                txtbLog.ScrollToCaret();
+        //                return;
+        //            }
+        //            // Ensure the response is successful
+        //            serialResponse.EnsureSuccessStatusCode();
+        //            // Read and process the response
+        //            string serialResponseBody = await serialResponse.Content.ReadAsStringAsync();
+        //            var serialApiResponse = JsonConvert.DeserializeObject<JObject>(serialResponseBody);
+        //            // Log the response
+        //            txtbLog.SelectionColor = Color.Yellow;
+        //            txtbLog.AppendText($"Received response for parent: {parentName}\n");
+        //            txtbLog.ScrollToCaret();
+        //            if (serialApiResponse["value"] != null && serialApiResponse["value"].Any())
+        //            {
+        //                var serials = serialApiResponse["value"]
+        //                    .Where(s => s["SERIALSTATUSDES"]?.ToString() != "נסגרה" && s["SERIALSTATUSDES"]?.ToString() != "קיט מלא" && s["SERIALSTATUSDES"] != null && s["REVNUM"] != null)
+        //                    .Select(s => new SerialInfo
+        //                    {
+        //                        IPN = originIPN,
+        //                        SERIALNAME = s["SERIALNAME"]?.ToString(),
+        //                        PARENTIPN = parentName,
+        //                        SERIALDES = s["SERIALDES"]?.ToString(),
+        //                        REVNUM = s["REVNUM"]?.ToString()
+        //                    })
+        //                    .ToList();
+        //                if (serials.Count == 0)
+        //                {
+        //                    txtbLog.SelectionColor = Color.Red;
+        //                    txtbLog.AppendText("No open Work Orders found!\n");
+        //                    txtbLog.ScrollToCaret();
+        //                }
+        //                else
+        //                {
+        //                    txtbLog.SelectionColor = Color.Green;
+        //                    txtbLog.AppendText($"Found {serials.Count} open Work Orders for parent IPN: {parentName}\n");
+        //                    txtbLog.ScrollToCaret();
+
+        //                    DisplaySerials(serials);
+        //                }
+        //            }
+        //            else
+        //            {
+        //                txtbLog.SelectionColor = Color.Red;
+        //                txtbLog.AppendText($"No Work Orders found for the IPN: {parentName}.\n");
+        //                txtbLog.ScrollToCaret();
+        //            }
+        //        }
+        //        catch (HttpRequestException ex)
+        //        {
+        //            txtbLog.SelectionColor = Color.Red;
+        //            txtbLog.AppendText($"HttpRequestException FetchAndDisplaySerials error: {ex.Message}\n");
+        //            txtbLog.ScrollToCaret();
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            txtbLog.SelectionColor = Color.Red;
+        //            txtbLog.AppendText($"Exception FetchAndDisplaySerials error: {ex.Message}\n");
+        //            txtbLog.AppendText($"Stack Trace: {ex.StackTrace}\n");
+        //            txtbLog.ScrollToCaret();
+        //        }
+        //    }
+        //}
+        //private void DisplaySerials(List<SerialInfo> serials)
+        //{
+        //    try
+        //    {
+        //        // Add rows
+        //        foreach (var serial in serials)
+        //        {
+        //            int rowIndex = dgwSerials.Rows.Add(serial.IPN,serial.SERIALNAME, serial.PARENTIPN, serial.SERIALDES);
+        //            dgwSerials.Rows[rowIndex].Cells["SERIALNAME"].Value = $"{serial.SERIALNAME} ({serial.REVNUM})"; // Set the button text to SERIALNAME with REVNUM
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        txtbLog.SelectionColor = Color.Red;
+        //        txtbLog.AppendText($"Error in DisplaySerials: {ex.Message}\n");
+        //        txtbLog.ScrollToCaret();
+        //    }
+        //}
+
+        private async Task FetchAndDisplaySerials(string parentName, string originIPN)
+        {
+            // Updated URL to include KITITEMS_SUBFORM expansion for the specific Part and Balance
+            string serialUrl = $"{baseUrl}SERIAL?$filter=PARTNAME eq '{parentName}'" +
+                               $"&$select=SERIALNAME,SERIALDES,SERIALSTATUSDES,REVNUM" +
+                               $"&$expand=KITITEMS_SUBFORM($select=PARTNAME,ABALANCE)";
 
             using (HttpClient client = new HttpClient())
             {
                 try
                 {
-                    // Log the start of the method
                     txtbLog.SelectionColor = Color.Yellow;
-                    txtbLog.AppendText($"Fetching serials for parent: {parentName}\n");
+                    txtbLog.AppendText($"Fetching serials and kit balances for: {parentName}\n");
                     txtbLog.ScrollToCaret();
-                    // Set the request headers
+
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    ApiHelper.AuthenticateClient(client);
 
-
-                    string usedUser = ApiHelper.AuthenticateClient(client);
-                    // string usedUser = ApiHelper.AuthenticateClient(client);
-
-
-                    // Make the HTTP GET request for serial details
                     HttpResponseMessage serialResponse = await client.GetAsync(serialUrl);
-                    // Check for 429 Too Many Requests
+
                     if (serialResponse.StatusCode == (System.Net.HttpStatusCode)429)
                     {
                         txtbLog.SelectionColor = Color.Red;
-                        txtbLog.AppendText("Error: Too Many Requests (429). The server is rate-limiting requests.\n");
-                        // Check if the Retry-After header is present
+                        txtbLog.AppendText("Error: Too Many Requests (429).\n");
                         if (serialResponse.Headers.TryGetValues("Retry-After", out var retryAfterValues))
-                        {
-                            string retryAfter = retryAfterValues.FirstOrDefault();
-                            txtbLog.AppendText($"Retry-After: {retryAfter} seconds\n");
-                        }
-                        else
-                        {
-                            txtbLog.AppendText("Retry-After header not provided by the server.\n");
-                        }
-                        txtbLog.ScrollToCaret();
+                            txtbLog.AppendText($"Retry-After: {retryAfterValues.FirstOrDefault()} seconds\n");
                         return;
                     }
-                    // Ensure the response is successful
+
                     serialResponse.EnsureSuccessStatusCode();
-                    // Read and process the response
                     string serialResponseBody = await serialResponse.Content.ReadAsStringAsync();
                     var serialApiResponse = JsonConvert.DeserializeObject<JObject>(serialResponseBody);
-                    // Log the response
-                    txtbLog.SelectionColor = Color.Yellow;
-                    txtbLog.AppendText($"Received response for parent: {parentName}\n");
-                    txtbLog.ScrollToCaret();
+
                     if (serialApiResponse["value"] != null && serialApiResponse["value"].Any())
                     {
                         var serials = serialApiResponse["value"]
-                            .Where(s => s["SERIALSTATUSDES"]?.ToString() != "נסגרה" && s["SERIALSTATUSDES"]?.ToString() != "קיט מלא" && s["SERIALSTATUSDES"] != null && s["REVNUM"] != null)
-                            .Select(s => new SerialInfo
-                            {
-                                IPN = originIPN,
-                                SERIALNAME = s["SERIALNAME"]?.ToString(),
-                                PARENTIPN = parentName,
-                                SERIALDES = s["SERIALDES"]?.ToString(),
-                                REVNUM = s["REVNUM"]?.ToString()
+                            .Where(s => s["SERIALSTATUSDES"]?.ToString() != "נסגרה" &&
+                                        s["SERIALSTATUSDES"]?.ToString() != "קיט מלא" &&
+                                        s["SERIALSTATUSDES"] != null &&
+                                        s["REVNUM"] != null)
+                            .Select(s => {
+                                // Extract the balance for the specific IPN we are looking for
+                                var kitItems = s["KITITEMS_SUBFORM"] as JArray;
+                                var matchingPart = kitItems?.FirstOrDefault(p => p["PARTNAME"]?.ToString() == originIPN);
+
+                                int? requiredQty = null;
+                                if (matchingPart != null && matchingPart["ABALANCE"] != null)
+                                {
+                                    // Priority returns negative for requirements; flip sign to show positive requirement
+                                    double rawBalance = matchingPart["ABALANCE"].Value<double>();
+                                    requiredQty = (int)(rawBalance * -1);
+                                }
+
+                                return new SerialInfo
+                                {
+                                    IPN = originIPN,
+                                    SERIALNAME = s["SERIALNAME"]?.ToString(),
+                                    PARENTIPN = parentName,
+                                    SERIALDES = s["SERIALDES"]?.ToString(),
+                                    REVNUM = s["REVNUM"]?.ToString(),
+                                    RequiredQty = requiredQty // Set the int? property
+                                };
                             })
                             .ToList();
+
                         if (serials.Count == 0)
                         {
                             txtbLog.SelectionColor = Color.Red;
                             txtbLog.AppendText("No open Work Orders found!\n");
-                            txtbLog.ScrollToCaret();
                         }
                         else
                         {
                             txtbLog.SelectionColor = Color.Green;
-                            txtbLog.AppendText($"Found {serials.Count} open Work Orders for parent IPN: {parentName}\n");
-                            txtbLog.ScrollToCaret();
+                            txtbLog.AppendText($"Found {serials.Count} open Work Orders.\n");
                             DisplaySerials(serials);
                         }
                     }
                     else
                     {
                         txtbLog.SelectionColor = Color.Red;
-                        txtbLog.AppendText($"No Work Orders found for the IPN: {parentName}.\n");
-                        txtbLog.ScrollToCaret();
+                        txtbLog.AppendText($"No Work Orders found for: {parentName}.\n");
                     }
-                }
-                catch (HttpRequestException ex)
-                {
-                    txtbLog.SelectionColor = Color.Red;
-                    txtbLog.AppendText($"HttpRequestException FetchAndDisplaySerials error: {ex.Message}\n");
-                    txtbLog.ScrollToCaret();
                 }
                 catch (Exception ex)
                 {
                     txtbLog.SelectionColor = Color.Red;
-                    txtbLog.AppendText($"Exception FetchAndDisplaySerials error: {ex.Message}\n");
-                    txtbLog.AppendText($"Stack Trace: {ex.StackTrace}\n");
-                    txtbLog.ScrollToCaret();
+                    txtbLog.AppendText($"Error in FetchAndDisplaySerials: {ex.Message}\n");
                 }
+                txtbLog.ScrollToCaret();
             }
         }
+
         private void DisplaySerials(List<SerialInfo> serials)
         {
             try
             {
-                // Add rows
                 foreach (var serial in serials)
                 {
-                    int rowIndex = dgwSerials.Rows.Add(serial.IPN,serial.SERIALNAME, serial.PARENTIPN, serial.SERIALDES);
-                    dgwSerials.Rows[rowIndex].Cells["SERIALNAME"].Value = $"{serial.SERIALNAME} ({serial.REVNUM})"; // Set the button text to SERIALNAME with REVNUM
+                    // Add row - make sure your DataGridView has a column to receive RequiredQty
+                    int rowIndex = dgwSerials.Rows.Add(
+                        serial.IPN,
+                        serial.SERIALNAME,
+                        serial.PARENTIPN,
+                        serial.SERIALDES,
+                        serial.RequiredQty ?? 0 // Displays 0 if RequiredQty is null
+                    );
+
+                    // Set the button/cell text for SERIALNAME with REVNUM
+                    dgwSerials.Rows[rowIndex].Cells["SERIALNAME"].Value = $"{serial.SERIALNAME} ({serial.REVNUM})";
                 }
             }
             catch (Exception ex)
