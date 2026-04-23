@@ -2148,12 +2148,15 @@ namespace WH_Panel
                     // Set the request headers
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}"));
+                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
 
 
-                    RegisterTransaction("Api3"); // Log this transaction timestamp
+                    //RegisterTransaction("Api3"); // Log this transaction timestamp
 
+                    string usedUser = ApiHelper.AuthenticateClient(client);
+
+                    RegisterTransaction(usedUser); // Log this transaction timestamp
 
                     // Make the HTTP GET request to check quantity availability
                     HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
@@ -2203,10 +2206,12 @@ namespace WH_Panel
                     // Set the request headers
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}"));
+                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
 
-                    RegisterTransaction("Api2"); // Log this transaction timestamp
+                    string usedUser = ApiHelper.AuthenticateClient(client);
+
+                    RegisterTransaction(usedUser); // Log this transaction timestamp
                     // Make the HTTP GET request to retrieve the TRANSORDER_K_SUBFORM data
                     HttpResponseMessage getResponse = await client.GetAsync(getUrl);
                     string getResponseBody = await getResponse.Content.ReadAsStringAsync();
@@ -2265,10 +2270,11 @@ namespace WH_Panel
                     // Set the request headers
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}"));
+                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
 
-                    RegisterTransaction("Api2"); // Log this transaction timestamp
+                    string usedUser = ApiHelper.AuthenticateClient(client);
+                    RegisterTransaction(usedUser); // Log this transaction timestamp
                     // Create the JSON payload for the PATCH request
                     var payload = new
                     {
