@@ -3169,10 +3169,10 @@ namespace WH_Panel
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     // Set the Authorization header
-                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}"));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}"));
+                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
 
-
+                    string usedUser = ApiHelper.AuthenticateClient(client);
 
                     RegisterTransaction("Api2"); // Log this transaction timestamp
                     // Create the JSON payload for the PATCH request
@@ -3377,7 +3377,6 @@ foreach (DataGridViewRow row in dgwIPNmoves.Rows)
 
 
             string usedUser = ApiHelper.AuthenticateClient(client);
-            // string usedUser = ApiHelper.AuthenticateClient(client);
           
 
             dgwINSTOCK.Rows.Clear();
@@ -3562,7 +3561,7 @@ foreach (DataGridViewRow row in dgwIPNmoves.Rows)
 
             using (HttpClient client = new HttpClient())
             {
-                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
+                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
