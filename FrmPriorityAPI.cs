@@ -505,13 +505,13 @@ namespace WH_Panel
             List<string> apiPriority = new List<string>();
 
             if (currentUser == "lgt01")
-                apiPriority.AddRange(new[] { "6D3162B8E0F34660BCF256E7BBC3524C", "AEF3B8E8189A481786598CCCFD16A56A", "7D4B614B3FD645F584C8661B813B5E98", "B59C4AB83FBB4784A3EBA712AF023DE9" });   //"6ADFFD01B1B04B10A4F8FD7BCA8631D8",
+                apiPriority.AddRange(new[] { "6D3162B8E0F34660BCF256E7BBC3524C",  "7D4B614B3FD645F584C8661B813B5E98", "B59C4AB83FBB4784A3EBA712AF023DE9" });   //"6ADFFD01B1B04B10A4F8FD7BCA8631D8","AEF3B8E8189A481786598CCCFD16A56A",
             else if (currentUser == "rbtwh")
-                apiPriority.AddRange(new[] { "AEF3B8E8189A481786598CCCFD16A56A", "7D4B614B3FD645F584C8661B813B5E98", "6D3162B8E0F34660BCF256E7BBC3524C", "B59C4AB83FBB4784A3EBA712AF023DE9" });  //6ADFFD01B1B04B10A4F8FD7BCA8631D8
+                apiPriority.AddRange(new[] {  "7D4B614B3FD645F584C8661B813B5E98", "6D3162B8E0F34660BCF256E7BBC3524C", "B59C4AB83FBB4784A3EBA712AF023DE9" });  //6ADFFD01B1B04B10A4F8FD7BCA8631D8  "AEF3B8E8189A481786598CCCFD16A56A",
             else if (currentUser == "rbtwh2")
-                apiPriority.AddRange(new[] { "AEF3B8E8189A481786598CCCFD16A56A", "7D4B614B3FD645F584C8661B813B5E98",  "6D3162B8E0F34660BCF256E7BBC3524C","B59C4AB83FBB4784A3EBA712AF023DE9" }); //"6ADFFD01B1B04B10A4F8FD7BCA8631D8",
+                apiPriority.AddRange(new[] {  "7D4B614B3FD645F584C8661B813B5E98",  "6D3162B8E0F34660BCF256E7BBC3524C","B59C4AB83FBB4784A3EBA712AF023DE9" }); //"6ADFFD01B1B04B10A4F8FD7BCA8631D8", "AEF3B8E8189A481786598CCCFD16A56A",
             else
-                apiPriority.AddRange(new[] { "7D4B614B3FD645F584C8661B813B5E98",  "AEF3B8E8189A481786598CCCFD16A56A", "6D3162B8E0F34660BCF256E7BBC3524C", "B59C4AB83FBB4784A3EBA712AF023DE9" });  //"6ADFFD01B1B04B10A4F8FD7BCA8631D8",
+                apiPriority.AddRange(new[] { "7D4B614B3FD645F584C8661B813B5E98",   "6D3162B8E0F34660BCF256E7BBC3524C", "B59C4AB83FBB4784A3EBA712AF023DE9" });  //"6ADFFD01B1B04B10A4F8FD7BCA8631D8", "AEF3B8E8189A481786598CCCFD16A56A",
 
             // Pick the first one NOT in the blacklist
             string chosenApi = apiPriority.FirstOrDefault(a => !SessionBlacklist.Contains(a)) ?? apiPriority.First();
@@ -531,24 +531,7 @@ namespace WH_Panel
                 _ => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"))
             };
         }
-        //public string GetApiName(string credentials, AppSettings settings)
-        //{
-        //    // Compare the base64 string provided to the known settings
-        //    if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}")))
-        //        return "6D3162B8E0F34660BCF256E7BBC3524C";
-        //    if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}")))
-        //        return "6ADFFD01B1B04B10A4F8FD7BCA8631D8";
-        //    if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api4Username}:{settings.Api4Password}")))
-        //        return "AEF3B8E8189A481786598CCCFD16A56A";
-        //    if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api5Username}:{settings.Api5Password}")))
-        //        return "7D4B614B3FD645F584C8661B813B5E98";
-
-        //    // Default/Fallback account
-        //    if (credentials == Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}")))
-        //        return "B59C4AB83FBB4784A3EBA712AF023DE9";
-
-        //    return "unknown";
-        //}
+      
         public string GetApiName(string credentials, AppSettings settings)
         {
             try
@@ -3490,12 +3473,25 @@ namespace WH_Panel
                         _BOOKNUM = txtbINdoc.Text;
                         _SUPNAME = null;
 
-                        var selectedPO = flpOpenPOs.Controls
-                                .OfType<CheckBox>()
-                                .Where(cb => cb.Checked)
-                                .Select(cb => cb.Tag)
-                                .Cast<dynamic>()  // since you stored an anonymous object
-                                .FirstOrDefault();
+                        //var selectedPO = flpOpenPOs.Controls
+                        //        .OfType<CheckBox>()
+                        //        .Where(cb => cb.Checked)
+                        //        .Select(cb => cb.Tag)
+                        //        .Cast<dynamic>()  // since you stored an anonymous object
+                        //        .FirstOrDefault();
+
+                        var checkedBoxes = flpOpenPOs.Controls
+                                           .OfType<CheckBox>()
+                                           .Where(cb => cb.Checked)
+                                           .ToList();
+
+                        if (checkedBoxes.Count > 1)
+                        {
+                            MessageBox.Show("Please select only one Purchase Order.", "Multiple Selection");
+                            return;
+                        }
+
+                        var selectedPO = checkedBoxes.FirstOrDefault()?.Tag as dynamic;
 
                         if (selectedPO != null)
                         {
