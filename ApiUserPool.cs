@@ -50,7 +50,7 @@ internal static class ApiUserPool
         // --- TEMPORARY BLACKLIST FOR APRIL ---
         var blacklist = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
-            "6ADFFD01B1B04B10A4F8FD7BCA8631D8","AEF3B8E8189A481786598CCCFD16A56A" // Add any other exhausted users here
+           // "6ADFFD01B1B04B10A4F8FD7BCA8631D8","AEF3B8E8189A481786598CCCFD16A56A" // Add any other exhausted users here
         };
 
         lock (_locker)
