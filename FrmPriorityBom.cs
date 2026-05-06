@@ -113,14 +113,14 @@ namespace WH_Panel
             switchToAltItem.Click += SwitchToAltItem_Click;
             contextMenuSwitchToAlt.Items.Add(switchToAltItem);
 
-            
+
         }
         private void FrmPriorityBom_Load(object sender, EventArgs e)
         {
             settings = SettingsManager.LoadSettings();
             if (settings == null)
             {
-              
+
                 SafeAppendLog("Failed to load settings.", Color.Red);
                 return;
             }
@@ -437,7 +437,7 @@ namespace WH_Panel
         }
         private async Task LoadBomDetails(string serialName)
         {
-            SafeAppendLog($"Fetching warehouse balances...",Color.Yellow);
+            SafeAppendLog($"Fetching warehouse balances...", Color.Yellow);
             if (dgwBom != null)
             {
                 progressBar1.Value = 0;
@@ -526,25 +526,25 @@ namespace WH_Panel
                         else
                         {
                             SafeAppendLog("No BOM details found for the selected serial.", Color.Red);
-                           
+
                         }
                     }
                     catch (HttpRequestException ex)
                     {
                         SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-                
+
                     }
                     catch (Exception ex)
                     {
                         SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-                        
+
                     }
                 }
             }
         }
         private async Task FetchMFPNsForAllRowsInSinglePull()
         {
-            SafeAppendLog("Fetching MFPNs for all rows in a single API call...",Color.Yellow);
+            SafeAppendLog("Fetching MFPNs for all rows in a single API call...", Color.Yellow);
             // Ensure there are rows in the DataGridView
             if (dgwBom.Rows.Count == 0)
             {
@@ -610,12 +610,12 @@ namespace WH_Panel
                             }
                         }
                     }
-                    SafeAppendLog("MFPN fetching completed.",Color.LimeGreen);
+                    SafeAppendLog("MFPN fetching completed.", Color.LimeGreen);
                 }
                 catch (HttpRequestException ex)
                 {
-                    SafeAppendLog($"Request error: {ex.Message}",Color.Red);
-                   
+                    SafeAppendLog($"Request error: {ex.Message}", Color.Red);
+
                 }
                 catch (Exception ex)
                 {
@@ -641,7 +641,7 @@ namespace WH_Panel
         }
         private async Task<int> FetchIPNcountFromBom(string partName)
         {
-            SafeAppendLog($"Fetching IPN count for {partName}",Color.Yellow);
+            SafeAppendLog($"Fetching IPN count for {partName}", Color.Yellow);
             string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART?$filter=PARTNAME eq '{partName}'&$expand=PARTARC_SUBFORM($select=SONNAME)";
             using (HttpClient client = new HttpClient())
             {
@@ -675,9 +675,9 @@ namespace WH_Panel
                 }
                 catch (HttpRequestException ex)
                 {
-                    
+
                     SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-                 
+
                     return 0;
                 }
                 catch (Exception ex)
@@ -758,7 +758,7 @@ namespace WH_Panel
                 }
                 catch (Exception ex)
                 {
-                    SafeAppendLog($"Request error: {ex.Message}",Color.Red);
+                    SafeAppendLog($"Request error: {ex.Message}", Color.Red);
                 }
             }
             // Update the DataGridView rows using the fetched data
@@ -862,16 +862,16 @@ namespace WH_Panel
                     }
                     catch (HttpRequestException ex)
                     {
-                       
+
                         SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-                     
+
                     }
                     catch (Exception ex)
                     {
                         //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                       
+
                         SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-                      
+
                     }
                 }
             }
@@ -879,12 +879,12 @@ namespace WH_Panel
         }
         private async Task FetchMFPNsForAllRows()
         {
-            SafeAppendLog("Fetching MFPNs for all rows",Color.Yellow);
+            SafeAppendLog("Fetching MFPNs for all rows", Color.Yellow);
             foreach (DataGridViewRow row in dgwBom.Rows)
             {
                 await FetchMFPNForRow(row);
             }
-            SafeAppendLog("MFPN fetching completed",Color.LimeGreen);
+            SafeAppendLog("MFPN fetching completed", Color.LimeGreen);
         }
         private void AttachTextBoxEvents(Control parentControl)
         {
@@ -1082,10 +1082,10 @@ namespace WH_Panel
 };
 
         private static readonly HashSet<string> ExcludedSupCustNames = new HashSet<string>
-{
-    //"200052",
-    //"200048","200085","200009"
-};
+        {
+            //"200052",
+            //"200048","200085","200009"
+        };
 
 
         private async void dgwBom_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -1202,7 +1202,7 @@ namespace WH_Panel
                             {
                                 foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
                                 {
-                              
+
                                     // Inside your loop:
                                     if (!ExcludedDocDescriptions.Contains(trans.DOCDES) &&
                                         !ExcludedSupCustNames.Contains(trans.SUPCUSTNAME))
@@ -1228,29 +1228,29 @@ namespace WH_Panel
                             await Task.WhenAll(fetchTasks);
 
                             await LoadDataAndFilterInStock();
-                            
+
                         }
                         else
                         {
                             //MessageBox.Show("No stock movements found for the selected part.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                       
+
                             SafeAppendLog("No stock movements found for the selected part.", Color.Red);
-                    
+
                         }
                     }
                     catch (HttpRequestException ex)
                     {
                         //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                       
-                        SafeAppendLog($"Request error: {ex.Message}",Color.Red);
-                       
+
+                        SafeAppendLog($"Request error: {ex.Message}", Color.Red);
+
                     }
                     catch (Exception ex)
                     {
                         //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                      
+
                         SafeAppendLog($"Request error: {ex.Message} ", Color.Red);
-                        
+
                     }
                 }
             }
@@ -1340,12 +1340,12 @@ namespace WH_Panel
                 catch (HttpRequestException ex)
                 {
                     SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-                 
+
                 }
                 catch (Exception ex)
                 {
                     SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-                  
+
                 }
             }
 
@@ -2067,7 +2067,7 @@ namespace WH_Panel
                 return;
             }
 
-            SafeAppendLog("Transaction rate limit exceeded! TPM has reached the global limit per user.",Color.Red);
+            SafeAppendLog("Transaction rate limit exceeded! TPM has reached the global limit per user.", Color.Red);
         }
 
         // Check if allowed before sending transaction
@@ -2107,7 +2107,7 @@ namespace WH_Panel
 
                             await AddItemToKit(partName, serialName, neededQty, qty, filteredRow, wh);
 
-                            
+
 
                             txtbINPUTqty.Clear();
                             txtbInputIPN.Clear();
@@ -2176,17 +2176,17 @@ namespace WH_Panel
                 catch (HttpRequestException ex)
                 {
                     //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-             
+
                     SafeAppendLog($"Request error: {ex.Message} ", Color.Red);
-                   
+
                     return;
                 }
                 catch (Exception ex)
                 {
                     //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-              
+
                     SafeAppendLog($"Request error: {ex.Message} ", Color.Red);
-               
+
                     return;
                 }
             }
@@ -2242,16 +2242,16 @@ namespace WH_Panel
                 catch (HttpRequestException ex)
                 {
                     //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                   
+
                     SafeAppendLog($"Request error: {ex.Message} ", Color.Red);
-                    
+
                     return;
                 }
                 catch (Exception ex)
                 {
-                  
+
                     SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-                 
+
                     if (ex.Message.Contains("429"))
                     {
                         MessageBox.Show("! נא להמתין דקה !  חריגת כמות קריאות ליחידת זמן ", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -2339,16 +2339,16 @@ namespace WH_Panel
                 }
                 catch (HttpRequestException ex)
                 {
-                    
+
                     SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-                  
+
                     txtbLog.ForeColor = Color.Green;
                 }
                 catch (Exception ex)
                 {
-                 
+
                     SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-                
+
                 }
             }
         }
@@ -2412,7 +2412,7 @@ namespace WH_Panel
                     }
                     else
                     {
-                                               // If the user clicked Cancel, do nothing
+                        // If the user clicked Cancel, do nothing
                         return;
                     }
                     // Call the method with the chosen number of copies
@@ -2663,7 +2663,7 @@ namespace WH_Panel
             Marshal.ReleaseComObject(mailItem);
             Marshal.ReleaseComObject(outlookApp);
         }
- 
+
 
         public List<string> GetUniqueClientEmails(string clientDomain)
         {
@@ -3106,12 +3106,12 @@ namespace WH_Panel
                 catch (HttpRequestException ex)
                 {
                     SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-                
+
                 }
                 catch (Exception ex)
                 {
                     SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-                 
+
                 }
             }
         }
@@ -3189,12 +3189,12 @@ namespace WH_Panel
                 catch (HttpRequestException ex)
                 {
                     SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-           
+
                 }
                 catch (Exception ex)
                 {
                     SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-                  
+
                 }
             }
         }
@@ -3302,45 +3302,45 @@ namespace WH_Panel
             var robList = new List<DataGridViewRow>();
             var notRobList = new List<DataGridViewRow>();
 
-            SafeAppendLog($"Scanning {dgwIPNmoves.Rows.Count} rows in dgwIPNmoves...",Color.Yellow);
+            SafeAppendLog($"Scanning {dgwIPNmoves.Rows.Count} rows in dgwIPNmoves...", Color.Yellow);
 
 
 
             // Split rows into rob and non-rob, ignoring UDATE
-foreach (DataGridViewRow row in dgwIPNmoves.Rows)
-{
-    if (row.IsNewRow) continue;
-
-    var docNoObj = row.Cells["LOGDOCNO"].Value;
-    string docNo = docNoObj?.ToString()?.Trim() ?? "";
-
-    if (string.IsNullOrWhiteSpace(docNo))
-    {
-        //SafeAppendLog($"Skipped row: LOGDOCNO is missing or empty.");
-        continue;
-    }
-
-    if (docNo.StartsWith("ROB") || docNo.StartsWith("IC") || docNo.StartsWith("WR") || docNo.StartsWith("SH"))
-    {
-        if (docNo.StartsWith("IC"))
-        {
-            //SafeAppendLog($"Fixing quantity sign for IC doc {docNo}");
-            try
+            foreach (DataGridViewRow row in dgwIPNmoves.Rows)
             {
-                row.Cells["TQUANT"].Value = Math.Abs(Convert.ToInt32(row.Cells["TQUANT"].Value));
+                if (row.IsNewRow) continue;
+
+                var docNoObj = row.Cells["LOGDOCNO"].Value;
+                string docNo = docNoObj?.ToString()?.Trim() ?? "";
+
+                if (string.IsNullOrWhiteSpace(docNo))
+                {
+                    //SafeAppendLog($"Skipped row: LOGDOCNO is missing or empty.");
+                    continue;
+                }
+
+                if (docNo.StartsWith("ROB") || docNo.StartsWith("IC") || docNo.StartsWith("WR") || docNo.StartsWith("SH"))
+                {
+                    if (docNo.StartsWith("IC"))
+                    {
+                        //SafeAppendLog($"Fixing quantity sign for IC doc {docNo}");
+                        try
+                        {
+                            row.Cells["TQUANT"].Value = Math.Abs(Convert.ToInt32(row.Cells["TQUANT"].Value));
+                        }
+                        catch (Exception ex)
+                        {
+                            //SafeAppendLog($"Error fixing quantity sign for {docNo}: {ex.Message}");
+                        }
+                    }
+                    robList.Add(row);
+                }
+                else
+                {
+                    notRobList.Add(row);
+                }
             }
-            catch (Exception ex)
-            {
-                //SafeAppendLog($"Error fixing quantity sign for {docNo}: {ex.Message}");
-            }
-        }
-        robList.Add(row);
-    }
-    else
-    {
-        notRobList.Add(row);
-    }
-}
 
 
             //SafeAppendLog($"ROB list count: {robList.Count}");
@@ -3377,7 +3377,7 @@ foreach (DataGridViewRow row in dgwIPNmoves.Rows)
 
 
             string usedUser = ApiHelper.AuthenticateClient(client);
-          
+
 
             dgwINSTOCK.Rows.Clear();
             dgwINSTOCK.Visible = false;
@@ -3584,7 +3584,7 @@ foreach (DataGridViewRow row in dgwIPNmoves.Rows)
             if (e.Button == MouseButtons.Right)
             {
                 var hit = dgwBom.HitTest(e.X, e.Y);
-                int altColumnIndex =8;
+                int altColumnIndex = 8;
 
                 if (hit.Type == DataGridViewHitTestType.Cell && hit.ColumnIndex == altColumnIndex)
                 {
@@ -3600,63 +3600,63 @@ foreach (DataGridViewRow row in dgwIPNmoves.Rows)
             }
         }
 
-   
+
         private async void SwitchToAltItem_Click(object sender, EventArgs e)
-    {
-        if (dgwBom.SelectedCells.Count > 0)
         {
-            int rowIndex = dgwBom.SelectedCells[0].RowIndex;
-
-            int altColumnIndex = 8;
-            int ipnColumnIndex = 0;
-            int whColumnIndex = 3;
-
-            var altCell = dgwBom.Rows[rowIndex].Cells[altColumnIndex];
-            var ipnCell = dgwBom.Rows[rowIndex].Cells[ipnColumnIndex];
-            var whCell = dgwBom.Rows[rowIndex].Cells[whColumnIndex];
-
-            // Swap IPN and ALT values
-            var temp = altCell.Value;
-            string altIPN = altCell.Value?.ToString()?.Trim();
-            string originalIPN = ipnCell.Value?.ToString()?.Trim();
-                altCell.Value = ipnCell.Value;
-            ipnCell.Value = temp;
-
-            // Now the IPN cell contains the new partName to check stock for
-            string partName = ipnCell.Value?.ToString();
-            if (string.IsNullOrEmpty(partName))
+            if (dgwBom.SelectedCells.Count > 0)
             {
-                whCell.Value = "N/A";
-                return;
-            }
+                int rowIndex = dgwBom.SelectedCells[0].RowIndex;
+
+                int altColumnIndex = 8;
+                int ipnColumnIndex = 0;
+                int whColumnIndex = 3;
+
+                var altCell = dgwBom.Rows[rowIndex].Cells[altColumnIndex];
+                var ipnCell = dgwBom.Rows[rowIndex].Cells[ipnColumnIndex];
+                var whCell = dgwBom.Rows[rowIndex].Cells[whColumnIndex];
+
+                // Swap IPN and ALT values
+                var temp = altCell.Value;
+                string altIPN = altCell.Value?.ToString()?.Trim();
+                string originalIPN = ipnCell.Value?.ToString()?.Trim();
+                altCell.Value = ipnCell.Value;
+                ipnCell.Value = temp;
+
+                // Now the IPN cell contains the new partName to check stock for
+                string partName = ipnCell.Value?.ToString();
+                if (string.IsNullOrEmpty(partName))
+                {
+                    whCell.Value = "N/A";
+                    return;
+                }
 
                 string selectedWarehouse = dgwBom.Rows[0].Cells["PARTNAME"].Value?.ToString()?.Substring(0, 3);
 
                 string checkUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouse}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{partName}';$select=TBALANCE)";
 
-            int availableQty = 0;
-            try
-            {
-                using (HttpClient client = new HttpClient())
+                int availableQty = 0;
+                try
                 {
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    using (HttpClient client = new HttpClient())
+                    {
+                        client.DefaultRequestHeaders.Accept.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
 
-                    HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
-                    checkResponse.EnsureSuccessStatusCode();
+                        HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
+                        checkResponse.EnsureSuccessStatusCode();
                         RegisterTransaction("Api2");
                         string checkResponseBody = await checkResponse.Content.ReadAsStringAsync();
-                    var checkApiResponse = JObject.Parse(checkResponseBody);
+                        var checkApiResponse = JObject.Parse(checkResponseBody);
 
-                    var warehouse = checkApiResponse["value"]?.FirstOrDefault();
-                    if (warehouse != null)
-                    {
-                        var balance = warehouse["WARHSBAL_SUBFORM"]?.FirstOrDefault();
-                        if (balance != null)
+                        var warehouse = checkApiResponse["value"]?.FirstOrDefault();
+                        if (warehouse != null)
                         {
-                            availableQty = balance["TBALANCE"].Value<int>();
+                            var balance = warehouse["WARHSBAL_SUBFORM"]?.FirstOrDefault();
+                            if (balance != null)
+                            {
+                                availableQty = balance["TBALANCE"].Value<int>();
                                 if (availableQty > 0)
                                 {
                                     string serialName = txtbRob.Text;
@@ -3664,27 +3664,27 @@ foreach (DataGridViewRow row in dgwIPNmoves.Rows)
 
                                     if (qtyDelta < 0)
                                     {
-                                        await postAltItemRowIntoKit(altIPN, (qtyDelta*(-1)), serialName);
+                                        await postAltItemRowIntoKit(altIPN, (qtyDelta * (-1)), serialName);
                                         await nullyfyTheOriginalIPN(originalIPN, serialName);
                                     }
                                 }
                             }
+                        }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                // Handle error, optionally show a message or log
-                whCell.Value = "Error";
-                Console.WriteLine($"Error fetching stock: {ex.Message}");
-                return;
-            }
+                catch (Exception ex)
+                {
+                    // Handle error, optionally show a message or log
+                    whCell.Value = "Error";
+                    Console.WriteLine($"Error fetching stock: {ex.Message}");
+                    return;
+                }
 
-            // Update WH column with the fetched available quantity
-            whCell.Value = availableQty;
+                // Update WH column with the fetched available quantity
+                whCell.Value = availableQty;
+            }
         }
-    }
-     
+
         private async Task postAltItemRowIntoKit(string altIpnToAddToKit, int theQtyToInsert, string robWoToInsertInto)
         {
             if (string.IsNullOrWhiteSpace(altIpnToAddToKit) || string.IsNullOrWhiteSpace(robWoToInsertInto))
@@ -3711,14 +3711,14 @@ foreach (DataGridViewRow row in dgwIPNmoves.Rows)
 
                 var jsonPayload = JsonConvert.SerializeObject(payload);
                 var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-                
+
                 try
                 {
                     var response = await client.PostAsync(requestUrl, content);
                     RegisterTransaction("Api2");
                     if (response.IsSuccessStatusCode)
                     {
-                        
+
                         SafeAppendLog($"✅ Successfully added ALT {altIpnToAddToKit} to {robWoToInsertInto} kit.");
                     }
                     else
@@ -3786,7 +3786,7 @@ foreach (DataGridViewRow row in dgwIPNmoves.Rows)
                 SafeAppendLog($"Error in nullyfyTheOriginalIPN: {ex.Message}");
             }
         }
-    
+
 
         private void SafeAppendLog(string message, Color? color = null)
         {
@@ -3825,5 +3825,9 @@ foreach (DataGridViewRow row in dgwIPNmoves.Rows)
             }
         }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            //
+        }
     }
 }
