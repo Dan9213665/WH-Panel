@@ -31,7 +31,7 @@ namespace WH_Panel
 {
     public partial class FrmPriorityAPI : Form
     {
-        public List<string> dcManaged = new List<string>{"UVI"};
+        public List<string> dcManaged = new List<string> { "UVI" };
         public AppSettings settings;
         private DataTable dataTable;
         private DataView dataView;
@@ -495,29 +495,84 @@ namespace WH_Panel
             cmbPackCode.SelectedIndex = 0; // Select the first item by default
         }
 
-        
-        public static HashSet<string> SessionBlacklist = new HashSet<string>();
+
+        //public static HashSet<string> SessionBlacklist = new HashSet<string>() { "6ADFFD01B1B04B10A4F8FD7BCA8631D8" };
+
+
+
+        //public string SelectTheCredentialsByLoggedUser(AppSettings settings)
+        //{
+        //    string currentUser = WindowsIdentity.GetCurrent().Name.Split('\\').Last();
+
+        //    if (currentUser == "lgt")
+        //    {
+        //        MessageBox.Show(SessionBlacklist.ToList().ToString());
+        //    }
+
+        //        // Priority List: [Primary, Fallback1, Fallback2, Fallback3]
+        //        List<string> apiPriority = new List<string>();
+
+        //    if (currentUser == "lgt01")
+        //        apiPriority.AddRange(new[] { "6D3162B8E0F34660BCF256E7BBC3524C", "6ADFFD01B1B04B10A4F8FD7BCA8631D8", "AEF3B8E8189A481786598CCCFD16A56A", "7D4B614B3FD645F584C8661B813B5E98", "B59C4AB83FBB4784A3EBA712AF023DE9" });   //
+        //    else if (currentUser == "rbtwh")
+        //        apiPriority.AddRange(new[] {  "7D4B614B3FD645F584C8661B813B5E98", "6ADFFD01B1B04B10A4F8FD7BCA8631D8", "AEF3B8E8189A481786598CCCFD16A56A", "6D3162B8E0F34660BCF256E7BBC3524C", "B59C4AB83FBB4784A3EBA712AF023DE9" });  //  
+        //    else if (currentUser == "rbtwh2")
+        //        apiPriority.AddRange(new[] { "6ADFFD01B1B04B10A4F8FD7BCA8631D8", "7D4B614B3FD645F584C8661B813B5E98", "AEF3B8E8189A481786598CCCFD16A56A", "6D3162B8E0F34660BCF256E7BBC3524C","B59C4AB83FBB4784A3EBA712AF023DE9" }); // 
+        //    else
+        //        apiPriority.AddRange(new[] { "AEF3B8E8189A481786598CCCFD16A56A", "7D4B614B3FD645F584C8661B813B5E98", "6ADFFD01B1B04B10A4F8FD7BCA8631D8", "6D3162B8E0F34660BCF256E7BBC3524C", "B59C4AB83FBB4784A3EBA712AF023DE9" });  //
+
+        //    // Pick the first one NOT in the blacklist
+        //    string chosenApi = apiPriority.FirstOrDefault(a => !SessionBlacklist.Contains(a)) ?? apiPriority.First();
+        //    //MessageBox.Show("chosenApi="+chosenApi);
+        //    return GetCredsByName(chosenApi, settings);
+        //}
+
+
+        public static HashSet<string> SessionBlacklist = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+{
+    "6ADFFD01B1B04B10A4F8FD7BCA8631D8"
+};
+
         public string SelectTheCredentialsByLoggedUser(AppSettings settings)
         {
-            string currentUser = WindowsIdentity.GetCurrent().Name.Split('\\').Last();
+            // Extract user safely
+            string currentUser = WindowsIdentity.GetCurrent().Name.Split('\\').LastOrDefault() ?? string.Empty;
 
-            // Priority List: [Primary, Fallback1, Fallback2, Fallback3]
-            List<string> apiPriority = new List<string>();
+            // Fix the ToString() bug
+            if (currentUser.Equals("lgt", StringComparison.OrdinalIgnoreCase))
+            {
+                //MessageBox.Show($"Blacklist items: {string.Join(", ", SessionBlacklist)}");
+                this.AppendLog($"Blacklisted users: {string.Join(", ", SessionBlacklist)}\n", Color.Red);
+            }
 
-            if (currentUser == "lgt01")
-                apiPriority.AddRange(new[] { "6D3162B8E0F34660BCF256E7BBC3524C", "6ADFFD01B1B04B10A4F8FD7BCA8631D8", "AEF3B8E8189A481786598CCCFD16A56A", "7D4B614B3FD645F584C8661B813B5E98", "B59C4AB83FBB4784A3EBA712AF023DE9" });   //
-            else if (currentUser == "rbtwh")
-                apiPriority.AddRange(new[] {  "7D4B614B3FD645F584C8661B813B5E98", "6ADFFD01B1B04B10A4F8FD7BCA8631D8", "AEF3B8E8189A481786598CCCFD16A56A", "6D3162B8E0F34660BCF256E7BBC3524C", "B59C4AB83FBB4784A3EBA712AF023DE9" });  //  
-            else if (currentUser == "rbtwh2")
-                apiPriority.AddRange(new[] { "6ADFFD01B1B04B10A4F8FD7BCA8631D8", "7D4B614B3FD645F584C8661B813B5E98", "AEF3B8E8189A481786598CCCFD16A56A", "6D3162B8E0F34660BCF256E7BBC3524C","B59C4AB83FBB4784A3EBA712AF023DE9" }); // 
-            else
-                apiPriority.AddRange(new[] { "AEF3B8E8189A481786598CCCFD16A56A", "7D4B614B3FD645F584C8661B813B5E98", "6ADFFD01B1B04B10A4F8FD7BCA8631D8", "6D3162B8E0F34660BCF256E7BBC3524C", "B59C4AB83FBB4784A3EBA712AF023DE9" });  //
+            // Define priority tokens cleanly
+            string Yulia = "6D3162B8E0F34660BCF256E7BBC3524C";
+            string Yuri_G = "6ADFFD01B1B04B10A4F8FD7BCA8631D8";
+            string master = "AEF3B8E8189A481786598CCCFD16A56A";
+            string Jessica = "7D4B614B3FD645F584C8661B813B5E98";
+            string Daniel = "B59C4AB83FBB4784A3EBA712AF023DE9";
 
-            // Pick the first one NOT in the blacklist
-            string chosenApi = apiPriority.FirstOrDefault(a => !SessionBlacklist.Contains(a)) ?? apiPriority.First();
-            //MessageBox.Show("chosenApi="+chosenApi);
+            // Switch statements are easier to read than nested if/else for string matches
+            List<string> apiPriority = currentUser switch
+            {
+                "lgt01" => new() { Yulia, Yuri_G, master, Jessica, Daniel },
+                "rbtwh" => new() { Jessica, Yuri_G, master, Yulia, Daniel },
+                "rbtwh2" => new() { Yuri_G, Jessica, master, Yulia, Daniel },
+                _ => new() { master, Jessica, Yuri_G, Yulia, Daniel } // Default case
+            };
+
+            // Safely pick the first non-blacklisted item, fallback to the first item, or null
+            string chosenApi = apiPriority.FirstOrDefault(a => !SessionBlacklist.Contains(a))?? apiPriority.FirstOrDefault();
+
+            if (string.IsNullOrEmpty(chosenApi))
+            {
+                // Handle case where no API tokens were defined at all
+                throw new InvalidOperationException("No API credentials available.");
+            }
+
             return GetCredsByName(chosenApi, settings);
         }
+
 
         // Helper to keep the switch logic out of the main loop
         private string GetCredsByName(string apiName, AppSettings settings)
@@ -1894,6 +1949,7 @@ namespace WH_Panel
                                 var s when s.StartsWith("ROB") => $"{baseUrl}/SERIAL?$filter=SERIALNAME eq '{logDocNo}'&$expand=TRANSORDER_K_SUBFORM",
                                 var s when s.StartsWith("SH") => $"{baseUrl}/DOCUMENTS_D?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_D_SUBFORM",
                                 var s when s.StartsWith("IC") => $"{baseUrl}/DOCUMENTS_C?$filter=DOCNO eq '{logDocNo}'",
+                                var s when s.StartsWith("RD") => $"{baseUrl}/AFORM?$filter=FORMNAME eq '{logDocNo}'&$select=CURDATE,FORMNAME",
                                 _ => $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM"
                             };
 
@@ -1914,7 +1970,17 @@ namespace WH_Panel
                             var doc = JsonConvert.DeserializeObject<JObject>(body)?["value"]?.FirstOrDefault();
                             if (doc == null) return;
 
-                            string uDate = doc["UDATE"]?.ToString();
+
+                            // --- UPDATED LOGIC FOR RD DOCUMENT TYPE ---
+                            string uDate;
+                            if (logDocNo.StartsWith("RD"))
+                            {
+                                uDate = doc["CURDATE"]?.ToString();
+                            }
+                            else
+                            {
+                                uDate = doc["UDATE"]?.ToString();
+                            }
                             string bookNum = doc["BOOKNUM"]?.ToString();
                             string packCode = null;
 
@@ -2028,6 +2094,10 @@ namespace WH_Panel
             {
                 url = $"{baseUrl}/DOCUMENTS_C?$filter=DOCNO eq '{logDocNo}'";
             }
+            else if (logDocNo.StartsWith("RD"))
+            {
+                url = $"{baseUrl}/AFORM?$filter=FORMNAME eq '{logDocNo}'&$select=CURDATE,FORMNAME";
+            }
             else
             {
                 // Handle other document types if needed
@@ -2107,6 +2177,13 @@ namespace WH_Panel
                         // Handle SH document logic
                         string bookNum = document["CDES"]?.ToString();
                         string date = document["UDATE"]?.ToString();
+                        results.Add((null, bookNum, date));
+                    }
+                    else if (logDocNo.StartsWith("RD"))
+                    {
+                        // Handle RD document logic
+                        string bookNum = document["FORMNAME"]?.ToString();
+                        string date = document["CURDATE"]?.ToString();
                         results.Add((null, bookNum, date));
                     }
                     else
@@ -2418,8 +2495,8 @@ namespace WH_Panel
                         int.TryParse(potentialMatch.Cells["TQUANT"].Value?.ToString(), out int pQty);
 
                         // Matching logic: Outgoing types or IC balancing
-                        bool isOutgoingType = pDocNo.StartsWith("ROB") || pDocNo.StartsWith("RD") ||
-                                             pDocNo.StartsWith("SH") || pDocNo.StartsWith("WR") || pDocNo.StartsWith("IC");
+                        bool isOutgoingType = pDocNo.StartsWith("ROB") || 
+                                             pDocNo.StartsWith("SH") || pDocNo.StartsWith("WR") || pDocNo.StartsWith("IC");  //pDocNo.StartsWith("RD") ||
 
                         if (isOutgoingType && Math.Abs(pQty) == Math.Abs(qty))
                         {
@@ -4320,7 +4397,7 @@ namespace WH_Panel
 
                             string potentialDocType = potentialMatch.Cells["LOGDOCNO"].Value?.ToString() ?? string.Empty;
 
-                            if ((potentialDocType.StartsWith("ROB") || potentialDocType.StartsWith("RD") || potentialDocType.StartsWith("SH") ||
+                            if ((potentialDocType.StartsWith("ROB") ||  potentialDocType.StartsWith("SH") || potentialDocType.StartsWith("RD") ||
                                  potentialDocType.StartsWith("WR") || potentialDocType.StartsWith("IC")) &&
                                 int.TryParse(potentialMatch.Cells["TQUANT"].Value?.ToString(), out int potentialBalanceValue))
                             {
