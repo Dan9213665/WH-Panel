@@ -2902,6 +2902,77 @@ namespace WH_Panel
 
 
 
+        //private async Task AddingAltMFPNtoIPN(int partId, string partMFPN, string partDes, string mnfName, string mnfDes)
+        //{
+        //    try
+        //    {
+        //        using (HttpClient client = new HttpClient())
+        //        {
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        //            // Authenticate client
+        //            string usedUser = ApiHelper.AuthenticateClient(client);
+
+        //            // --- Step 1: Check if this MFPN already exists for the IPN ---
+        //            string checkUrl = $"{baseUrl}/PARTMNFONE?$filter=PART eq {partId} and MNFPARTNAME eq '{Uri.UnescapeDataString(partMFPN)}'";
+        //            HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
+        //            checkResponse.EnsureSuccessStatusCode();
+        //            string checkContent = await checkResponse.Content.ReadAsStringAsync();
+        //            var checkData = JsonConvert.DeserializeObject<JObject>(checkContent);
+
+        //            // Updated check: OData returns "value" array
+        //            bool mfpnExists = checkData["value"]?.Any() == true;
+        //            if (mfpnExists)
+        //            {
+        //                AppendLog($"ℹ️ MFPN '{partMFPN}' already exists for PART ID {partId}. Skipping insert.", Color.Yellow);
+        //                return;
+        //            }
+
+        //            // --- Step 2: Ensure the manufacturer name is unique for this IPN ---
+        //            string uniqueMnfName = await GetUnusedManufacturerName(partId, mnfName);
+
+        //            // Check or insert manufacturer
+        //            int mnfId = await GetOrInsertManufacturer(uniqueMnfName, mnfDes);
+
+        //            // --- Step 3: Construct payload and POST ---
+        //            var newPartMnfSubformItem = new
+        //            {
+        //                PART = partId,
+        //                MNFPARTNAME = partMFPN,
+        //                MNFPARTDES = partDes,
+        //                MNFNAME = uniqueMnfName,
+        //                MNFDES = mnfDes
+        //            };
+
+        //            string url = $"{baseUrl}/PARTMNFONE";
+        //            string jsonPayload = JsonConvert.SerializeObject(newPartMnfSubformItem);
+        //            var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+        //            HttpResponseMessage response = await client.PostAsync(url, content);
+
+        //            if (response.IsSuccessStatusCode)
+        //            {
+        //                AppendLog($"✅ MFPN '{partMFPN}' added successfully for PART ID {partId}.", Color.Green);
+        //                addedNewMFPNaltsCount++;
+        //            }
+        //            else if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
+        //            {
+        //                AppendLog($"⚠️ Manufacturer name must be unique for this IPN. Conflict inserting '{uniqueMnfName}'.", Color.Orange);
+        //            }
+        //            else
+        //            {
+        //                string errorContent = await response.Content.ReadAsStringAsync();
+        //                throw new HttpRequestException($"Error adding new MFPN: {response.StatusCode}\n{errorContent}");
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        AppendLog($"❌ Error adding MFPN '{partMFPN}' for PART ID {partId}: {ex.Message}", Color.Red);
+        //    }
+        //}
+
         private async Task AddingAltMFPNtoIPN(int partId, string partMFPN, string partDes, string mnfName, string mnfDes)
         {
             try
@@ -2915,7 +2986,12 @@ namespace WH_Panel
                     string usedUser = ApiHelper.AuthenticateClient(client);
 
                     // --- Step 1: Check if this MFPN already exists for the IPN ---
-                    string checkUrl = $"{baseUrl}/PARTMNFONE?$filter=PART eq {partId} and MNFPARTNAME eq '{Uri.UnescapeDataString(partMFPN)}'";
+                    // 1. First escape OData single quotes by doubling them up (' -> '')
+                    string oDataSafeMFPN = partMFPN.Replace("'", "''");
+                    // 2. Then URL encode characters like '#' or '&' so they pass through the URI fragment parser
+                    string escapedMFPN = Uri.EscapeDataString(oDataSafeMFPN);
+
+                    string checkUrl = $"{baseUrl}/PARTMNFONE?$filter=PART eq {partId} and MNFPARTNAME eq '{escapedMFPN}'";
                     HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
                     checkResponse.EnsureSuccessStatusCode();
                     string checkContent = await checkResponse.Content.ReadAsStringAsync();
@@ -2936,6 +3012,7 @@ namespace WH_Panel
                     int mnfId = await GetOrInsertManufacturer(uniqueMnfName, mnfDes);
 
                     // --- Step 3: Construct payload and POST ---
+                    // Note: Raw JSON handling does not require OData character escaping
                     var newPartMnfSubformItem = new
                     {
                         PART = partId,
@@ -2972,8 +3049,6 @@ namespace WH_Panel
                 AppendLog($"❌ Error adding MFPN '{partMFPN}' for PART ID {partId}: {ex.Message}", Color.Red);
             }
         }
-
-
 
         private async Task<string> GetUnusedManufacturerName(int partId, string baseMnfName)
         {
