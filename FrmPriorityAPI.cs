@@ -530,7 +530,7 @@ namespace WH_Panel
 
         public static HashSet<string> SessionBlacklist = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
 {
-    "6ADFFD01B1B04B10A4F8FD7BCA8631D8"
+   
 };
 
         public string SelectTheCredentialsByLoggedUser(AppSettings settings)
