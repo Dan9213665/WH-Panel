@@ -496,37 +496,6 @@ namespace WH_Panel
         }
 
 
-        //public static HashSet<string> SessionBlacklist = new HashSet<string>() { "6ADFFD01B1B04B10A4F8FD7BCA8631D8" };
-
-
-
-        //public string SelectTheCredentialsByLoggedUser(AppSettings settings)
-        //{
-        //    string currentUser = WindowsIdentity.GetCurrent().Name.Split('\\').Last();
-
-        //    if (currentUser == "lgt")
-        //    {
-        //        MessageBox.Show(SessionBlacklist.ToList().ToString());
-        //    }
-
-        //        // Priority List: [Primary, Fallback1, Fallback2, Fallback3]
-        //        List<string> apiPriority = new List<string>();
-
-        //    if (currentUser == "lgt01")
-        //        apiPriority.AddRange(new[] { "6D3162B8E0F34660BCF256E7BBC3524C", "6ADFFD01B1B04B10A4F8FD7BCA8631D8", "AEF3B8E8189A481786598CCCFD16A56A", "7D4B614B3FD645F584C8661B813B5E98", "B59C4AB83FBB4784A3EBA712AF023DE9" });   //
-        //    else if (currentUser == "rbtwh")
-        //        apiPriority.AddRange(new[] {  "7D4B614B3FD645F584C8661B813B5E98", "6ADFFD01B1B04B10A4F8FD7BCA8631D8", "AEF3B8E8189A481786598CCCFD16A56A", "6D3162B8E0F34660BCF256E7BBC3524C", "B59C4AB83FBB4784A3EBA712AF023DE9" });  //  
-        //    else if (currentUser == "rbtwh2")
-        //        apiPriority.AddRange(new[] { "6ADFFD01B1B04B10A4F8FD7BCA8631D8", "7D4B614B3FD645F584C8661B813B5E98", "AEF3B8E8189A481786598CCCFD16A56A", "6D3162B8E0F34660BCF256E7BBC3524C","B59C4AB83FBB4784A3EBA712AF023DE9" }); // 
-        //    else
-        //        apiPriority.AddRange(new[] { "AEF3B8E8189A481786598CCCFD16A56A", "7D4B614B3FD645F584C8661B813B5E98", "6ADFFD01B1B04B10A4F8FD7BCA8631D8", "6D3162B8E0F34660BCF256E7BBC3524C", "B59C4AB83FBB4784A3EBA712AF023DE9" });  //
-
-        //    // Pick the first one NOT in the blacklist
-        //    string chosenApi = apiPriority.FirstOrDefault(a => !SessionBlacklist.Contains(a)) ?? apiPriority.First();
-        //    //MessageBox.Show("chosenApi="+chosenApi);
-        //    return GetCredsByName(chosenApi, settings);
-        //}
-
 
         public static HashSet<string> SessionBlacklist = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
 {
