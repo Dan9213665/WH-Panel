@@ -2242,94 +2242,307 @@ namespace WH_Panel
 
 
 
+        //private async Task AddItemToKit(string partName, string serialName, int cQuant, int qty, DataGridViewRow filteredRow, string wh)
+        //{
+        //    // Check quantity availability in the warehouse
+        //    string checkUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{wh}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{partName}')";
+        //    int availableQty = 0;
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        try
+        //        {
+        //            // Set the request headers
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}"));
+        //            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+        //            //RegisterTransaction("Api3"); // Log this transaction timestamp
+
+        //            string usedUser = ApiHelper.AuthenticateClient(client);
+
+        //            RegisterTransaction(usedUser); // Log this transaction timestamp
+
+        //            // Make the HTTP GET request to check quantity availability
+        //            HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
+        //            string checkResponseBody = await checkResponse.Content.ReadAsStringAsync();
+        //            checkResponse.EnsureSuccessStatusCode();
+        //            var checkApiResponse = JsonConvert.DeserializeObject<JObject>(checkResponseBody);
+        //            var warehouse = checkApiResponse["value"].FirstOrDefault();
+        //            if (warehouse != null)
+        //            {
+        //                var balance = warehouse["WARHSBAL_SUBFORM"].FirstOrDefault();
+        //                if (balance != null)
+        //                {
+        //                    availableQty = balance["TBALANCE"].Value<int>();
+        //                }
+        //            }
+        //        }
+        //        catch (HttpRequestException ex)
+        //        {
+        //            //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+        //            SafeAppendLog($"Request error: {ex.Message} ", Color.Red);
+
+        //            return;
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+        //            SafeAppendLog($"Request error: {ex.Message} ", Color.Red);
+
+        //            return;
+        //        }
+        //    }
+        //    if (availableQty < qty)
+        //    {
+        //        MessageBox.Show("Insufficient quantity available in the warehouse.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        return;
+        //    }
+        //    // Retrieve the TRANSORDER_K_SUBFORM data
+        //    string getUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM?$filter=PARTNAME eq '{partName}'&$select=PARTNAME,CQUANT,KLINE,PACKCODE";
+        //    int kline = 0;
+        //    string package = string.Empty;
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        try
+        //        {
+        //            // Set the request headers
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}"));
+        //            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+        //            string usedUser = ApiHelper.AuthenticateClient(client);
+
+        //            RegisterTransaction(usedUser); // Log this transaction timestamp
+        //            // Make the HTTP GET request to retrieve the TRANSORDER_K_SUBFORM data
+        //            HttpResponseMessage getResponse = await client.GetAsync(getUrl);
+        //            string getResponseBody = await getResponse.Content.ReadAsStringAsync();
+        //            getResponse.EnsureSuccessStatusCode();
+        //            var getApiResponse = JsonConvert.DeserializeObject<JObject>(getResponseBody);
+        //            var transOrderKSubform = getApiResponse["value"];
+        //            if (transOrderKSubform != null)
+        //            {
+        //                // Filter the data to find the row with the matching PARTNAME and CQUANT
+        //                var matchingRow = transOrderKSubform.FirstOrDefault(row =>
+        //                    row["PARTNAME"].ToString() == partName &&
+        //                    row["CQUANT"].Value<int>() == cQuant);
+        //                if (matchingRow != null)
+        //                {
+        //                    kline = matchingRow["KLINE"].Value<int>();
+        //                    if (matchingRow["PACKCODE"] != null)
+        //                    {
+        //                        package = matchingRow["PACKCODE"].Value<string>();
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    MessageBox.Show("No matching row found in TRANSORDER_K_SUBFORM.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                    return;
+        //                }
+        //            }
+        //        }
+        //        catch (HttpRequestException ex)
+        //        {
+        //            //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+        //            SafeAppendLog($"Request error: {ex.Message} ", Color.Red);
+
+        //            return;
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            SafeAppendLog($"Request error: {ex.Message}", Color.Red);
+        //            if (ex.Message.Contains("429"))
+        //            {
+        //                MessageBox.Show("! נא להמתין דקה !  חריגת כמות קריאות ליחידת זמן ", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            }
+        //            return;
+        //        }
+        //    }
+        //    string partNameWH = dgwBom.Rows[0].Cells["PARTNAME"].Value.ToString();
+        //    //string warehouseName = partNameWH.Substring(0, 3); // Get the first 3 characters of the PARTNAME
+        //    // Construct the PATCH request URL
+        //    string patchUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM(TYPE='K',KLINE={kline})";
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        try
+        //        {
+        //            // Set the request headers
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}"));
+        //            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+        //            string usedUser = ApiHelper.AuthenticateClient(client);
+        //            RegisterTransaction(usedUser); // Log this transaction timestamp
+        //            // Create the JSON payload for the PATCH request
+        //            var payload = new
+        //            {
+        //                QUANT = qty,
+        //                WARHSNAME = wh, // warehouse to make transfer from
+        //                TOWARHSNAME = "Flr",
+        //                PACKCODE = package
+        //            };
+        //            var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+        //            // Make the PATCH request
+        //            HttpResponseMessage patchResponse = await client.PatchAsync(patchUrl, content);
+        //            string patchResponseBody = await patchResponse.Content.ReadAsStringAsync();
+        //            patchResponse.EnsureSuccessStatusCode();
+
+        //            AutoClosingMessageBox.Show($"{partName} - {qty} PCS moved to {serialName}", 1000, Color.Green); // Show message for 2 seconds
+        //            isItemAddedToKit = true;
+        //            // Make another GET request to update the WH cell
+        //            HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
+        //            string checkResponseBody = await checkResponse.Content.ReadAsStringAsync();
+        //            checkResponse.EnsureSuccessStatusCode();
+        //            var checkApiResponse = JsonConvert.DeserializeObject<JObject>(checkResponseBody);
+        //            var warehouse = checkApiResponse["value"].FirstOrDefault();
+        //            if (warehouse != null)
+        //            {
+        //                var balance = warehouse["WARHSBAL_SUBFORM"].FirstOrDefault();
+        //                if (balance != null)
+        //                {
+        //                    availableQty = balance["TBALANCE"].Value<int>();
+        //                    filteredRow.Cells["TBALANCE"].Value = availableQty;
+        //                }
+        //            }
+        //            int prevQty = int.Parse(filteredRow.Cells["QUANT"].Value.ToString());
+        //            string currentCALC = filteredRow.Cells["CALC"].Value?.ToString();
+        //            // Update the DataGridView row
+        //            filteredRow.Cells["QUANT"].Value = prevQty + qty;
+        //            int currentINkit = int.Parse(filteredRow.Cells["QUANT"].Value.ToString());
+        //            int requiredQty = int.Parse(filteredRow.Cells["CQUANT"].Value.ToString());
+        //            filteredRow.Cells["DELTA"].Value = currentINkit - requiredQty;
+        //            // Update the CALC field
+        //            if (string.IsNullOrEmpty(currentCALC) && prevQty == 0)
+        //            {
+        //                // Do nothing if CALC is empty and QUANT is 0
+        //            }
+        //            else if (!string.IsNullOrEmpty(currentCALC) && currentINkit != 0)
+        //            {
+        //                // If CALC is not empty and QUANT is not 0, update CALC to include the new quantity
+        //                filteredRow.Cells["CALC"].Value = $"{currentCALC}+{qty}";
+        //            }
+        //            else if (string.IsNullOrEmpty(currentCALC) && currentINkit != 0)
+        //            {
+        //                // If CALC is empty but QUANT is not 0, initialize CALC with the current and new quantities
+        //                filteredRow.Cells["CALC"].Value = $"{prevQty}+{qty}";
+        //            }
+        //            // Calculate the LEFTOVERS for the current row
+        //            int delta = Convert.ToInt32(filteredRow.Cells["DELTA"].Value);
+        //            int whQuantity = filteredRow.Cells["TBALANCE"].Value != null ? Convert.ToInt32(filteredRow.Cells["TBALANCE"].Value) : 0;
+        //            int kitQuantity = filteredRow.Cells["QUANT"].Value != null ? Convert.ToInt32(filteredRow.Cells["QUANT"].Value) : 0;
+        //            int leftovers = (whQuantity + kitQuantity) - requiredQty;
+        //            // Update the LEFTOVERS column in the DataGridView
+        //            filteredRow.Cells["LEFTOVERS"].Value = leftovers;
+        //            txtbINPUTqty.Clear();
+        //            txtbINPUTqty.Focus();
+        //        }
+        //        catch (HttpRequestException ex)
+        //        {
+
+        //            SafeAppendLog($"Request error: {ex.Message}", Color.Red);
+
+        //            txtbLog.ForeColor = Color.Green;
+        //        }
+        //        catch (Exception ex)
+        //        {
+
+        //            SafeAppendLog($"Request error: {ex.Message}", Color.Red);
+
+        //        }
+        //    }
+        //}
+
+
         private async Task AddItemToKit(string partName, string serialName, int cQuant, int qty, DataGridViewRow filteredRow, string wh)
         {
             // Check quantity availability in the warehouse
             string checkUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{wh}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{partName}')";
             int availableQty = 0;
+
+            // FIX: Single HttpClient instance used for the entire lifespan of this task sequence
             using (HttpClient client = new HttpClient())
             {
+                // Setup initial headers
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                // ==========================================
+                // STEP 1: Check Inventory Availability (GET)
+                // ==========================================
                 try
                 {
-                    // Set the request headers
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}"));
-                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-
-                    //RegisterTransaction("Api3"); // Log this transaction timestamp
-
                     string usedUser = ApiHelper.AuthenticateClient(client);
+                    RegisterTransaction(usedUser);
 
-                    RegisterTransaction(usedUser); // Log this transaction timestamp
-
-                    // Make the HTTP GET request to check quantity availability
                     HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
+
+                    if (!checkResponse.IsSuccessStatusCode)
+                    {
+                        SafeAppendLog($"Inventory check failed: {checkResponse.StatusCode}", Color.Red);
+                        MessageBox.Show("Could not verify inventory availability. Please try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
                     string checkResponseBody = await checkResponse.Content.ReadAsStringAsync();
-                    checkResponse.EnsureSuccessStatusCode();
                     var checkApiResponse = JsonConvert.DeserializeObject<JObject>(checkResponseBody);
-                    var warehouse = checkApiResponse["value"].FirstOrDefault();
+                    var warehouse = checkApiResponse["value"]?.FirstOrDefault();
+
                     if (warehouse != null)
                     {
-                        var balance = warehouse["WARHSBAL_SUBFORM"].FirstOrDefault();
+                        var balance = warehouse["WARHSBAL_SUBFORM"]?.FirstOrDefault();
                         if (balance != null)
                         {
                             availableQty = balance["TBALANCE"].Value<int>();
                         }
                     }
                 }
-                catch (HttpRequestException ex)
-                {
-                    //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-                    SafeAppendLog($"Request error: {ex.Message} ", Color.Red);
-
-                    return;
-                }
                 catch (Exception ex)
                 {
-                    //MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-                    SafeAppendLog($"Request error: {ex.Message} ", Color.Red);
-
+                    SafeAppendLog($"Inventory check exception: {ex.Message}", Color.Red);
                     return;
                 }
-            }
-            if (availableQty < qty)
-            {
-                MessageBox.Show("Insufficient quantity available in the warehouse.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-            // Retrieve the TRANSORDER_K_SUBFORM data
-            string getUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM?$filter=PARTNAME eq '{partName}'&$select=PARTNAME,CQUANT,KLINE,PACKCODE";
-            int kline = 0;
-            string package = string.Empty;
-            using (HttpClient client = new HttpClient())
-            {
+
+                // Validate quantity locally
+                if (availableQty < qty)
+                {
+                    MessageBox.Show("Insufficient quantity available in the warehouse.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // ==========================================
+                // STEP 2: Retrieve Subform Data (GET)
+                // ==========================================
+                string getUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM?$filter=PARTNAME eq '{partName}'&$select=PARTNAME,CQUANT,KLINE,PACKCODE";
+                int kline = 0;
+                string package = string.Empty;
+
                 try
                 {
-                    // Set the request headers
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}"));
-                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-                    string usedUser = ApiHelper.AuthenticateClient(client);
-
-                    RegisterTransaction(usedUser); // Log this transaction timestamp
-                    // Make the HTTP GET request to retrieve the TRANSORDER_K_SUBFORM data
                     HttpResponseMessage getResponse = await client.GetAsync(getUrl);
+
+                    if (!getResponse.IsSuccessStatusCode)
+                    {
+                        SafeAppendLog($"Subform retrieval failed: {getResponse.StatusCode}", Color.Red);
+                        MessageBox.Show("Failed to retrieve tracking information from server.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
                     string getResponseBody = await getResponse.Content.ReadAsStringAsync();
-                    getResponse.EnsureSuccessStatusCode();
                     var getApiResponse = JsonConvert.DeserializeObject<JObject>(getResponseBody);
                     var transOrderKSubform = getApiResponse["value"];
+
                     if (transOrderKSubform != null)
                     {
-                        // Filter the data to find the row with the matching PARTNAME and CQUANT
                         var matchingRow = transOrderKSubform.FirstOrDefault(row =>
-                            row["PARTNAME"].ToString() == partName &&
-                            row["CQUANT"].Value<int>() == cQuant);
+                            row["PARTNAME"]?.ToString() == partName &&
+                            row["CQUANT"]?.Value<int>() == cQuant);
+
                         if (matchingRow != null)
                         {
                             kline = matchingRow["KLINE"].Value<int>();
@@ -2345,116 +2558,125 @@ namespace WH_Panel
                         }
                     }
                 }
-                catch (HttpRequestException ex)
-                {
-                    //MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-                    SafeAppendLog($"Request error: {ex.Message} ", Color.Red);
-
-                    return;
-                }
                 catch (Exception ex)
                 {
-
-                    SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-
+                    SafeAppendLog($"Subform step exception: {ex.Message}", Color.Red);
                     if (ex.Message.Contains("429"))
                     {
-                        MessageBox.Show("! נא להמתין דקה !  חריגת כמות קריאות ליחידת זמן ", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("! נא להמתין דקה ! חריגת כמות קריאות ליחידת זמן", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     return;
                 }
-            }
-            string partNameWH = dgwBom.Rows[0].Cells["PARTNAME"].Value.ToString();
-            //string warehouseName = partNameWH.Substring(0, 3); // Get the first 3 characters of the PARTNAME
-            // Construct the PATCH request URL
-            string patchUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM(TYPE='K',KLINE={kline})";
-            using (HttpClient client = new HttpClient())
-            {
+
+                //// Safely extract BOM Part Name from the first row (index 0)
+                //string partNameWH = dgwBom.Rows.Count > 0 && dgwBom.Rows.Cells["PARTNAME"].Value != null
+                //    ? dgwBom.Rows.Cells["PARTNAME"].Value.ToString()
+                //    : string.Empty;
+
+                // ==========================================
+                // STEP 3: Execute Transfer Update (PATCH)
+                // ==========================================
+                string patchUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM(TYPE='K',KLINE={kline})";
+
                 try
                 {
-                    // Set the request headers
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}"));
-                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-                    string usedUser = ApiHelper.AuthenticateClient(client);
-                    RegisterTransaction(usedUser); // Log this transaction timestamp
-                    // Create the JSON payload for the PATCH request
                     var payload = new
                     {
                         QUANT = qty,
-                        WARHSNAME = wh, // warehouse to make transfer from
+                        WARHSNAME = wh,
                         TOWARHSNAME = "Flr",
                         PACKCODE = package
                     };
+
                     var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-                    // Make the PATCH request
                     HttpResponseMessage patchResponse = await client.PatchAsync(patchUrl, content);
-                    string patchResponseBody = await patchResponse.Content.ReadAsStringAsync();
-                    patchResponse.EnsureSuccessStatusCode();
-                    AutoClosingMessageBox.Show($"{partName} - {qty} PCS moved to {serialName}", 1000, Color.Green); // Show message for 2 seconds
-                    isItemAddedToKit = true;
-                    // Make another GET request to update the WH cell
-                    HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
-                    string checkResponseBody = await checkResponse.Content.ReadAsStringAsync();
-                    checkResponse.EnsureSuccessStatusCode();
-                    var checkApiResponse = JsonConvert.DeserializeObject<JObject>(checkResponseBody);
-                    var warehouse = checkApiResponse["value"].FirstOrDefault();
-                    if (warehouse != null)
+
+                    // ⚠️ FIX HERE: Check response code explicitly instead of calling EnsureSuccessStatusCode()
+                    if (patchResponse.IsSuccessStatusCode)
                     {
-                        var balance = warehouse["WARHSBAL_SUBFORM"].FirstOrDefault();
-                        if (balance != null)
+                        // Successful update alert
+                        AutoClosingMessageBox.Show($"{partName} - {qty} PCS moved to {serialName}", 1000, Color.Green);
+                        isItemAddedToKit = true;
+
+                        // ==========================================
+                        // STEP 4: Pull Fresh Warehouse Balance
+                        // ==========================================
+                        HttpResponseMessage freshCheckResponse = await client.GetAsync(checkUrl);
+                        if (freshCheckResponse.IsSuccessStatusCode)
                         {
-                            availableQty = balance["TBALANCE"].Value<int>();
-                            filteredRow.Cells["TBALANCE"].Value = availableQty;
+                            string freshCheckBody = await freshCheckResponse.Content.ReadAsStringAsync();
+                            var checkApiResponse = JsonConvert.DeserializeObject<JObject>(freshCheckBody);
+                            var warehouse = checkApiResponse["value"]?.FirstOrDefault();
+                            if (warehouse != null)
+                            {
+                                var balance = warehouse["WARHSBAL_SUBFORM"]?.FirstOrDefault();
+                                if (balance != null)
+                                {
+                                    availableQty = balance["TBALANCE"].Value<int>();
+                                    filteredRow.Cells["TBALANCE"].Value = availableQty; // Update UI Cell
+                                }
+                            }
                         }
-                    }
-                    int prevQty = int.Parse(filteredRow.Cells["QUANT"].Value.ToString());
-                    string currentCALC = filteredRow.Cells["CALC"].Value?.ToString();
-                    // Update the DataGridView row
-                    filteredRow.Cells["QUANT"].Value = prevQty + qty;
-                    int currentINkit = int.Parse(filteredRow.Cells["QUANT"].Value.ToString());
-                    int requiredQty = int.Parse(filteredRow.Cells["CQUANT"].Value.ToString());
-                    filteredRow.Cells["DELTA"].Value = currentINkit - requiredQty;
-                    // Update the CALC field
-                    if (string.IsNullOrEmpty(currentCALC) && prevQty == 0)
-                    {
-                        // Do nothing if CALC is empty and QUANT is 0
-                    }
-                    else if (!string.IsNullOrEmpty(currentCALC) && currentINkit != 0)
-                    {
-                        // If CALC is not empty and QUANT is not 0, update CALC to include the new quantity
-                        filteredRow.Cells["CALC"].Value = $"{currentCALC}+{qty}";
-                    }
-                    else if (string.IsNullOrEmpty(currentCALC) && currentINkit != 0)
-                    {
-                        // If CALC is empty but QUANT is not 0, initialize CALC with the current and new quantities
-                        filteredRow.Cells["CALC"].Value = $"{prevQty}+{qty}";
-                    }
-                    // Calculate the LEFTOVERS for the current row
-                    int delta = Convert.ToInt32(filteredRow.Cells["DELTA"].Value);
-                    int whQuantity = filteredRow.Cells["TBALANCE"].Value != null ? Convert.ToInt32(filteredRow.Cells["TBALANCE"].Value) : 0;
-                    int kitQuantity = filteredRow.Cells["QUANT"].Value != null ? Convert.ToInt32(filteredRow.Cells["QUANT"].Value) : 0;
-                    int leftovers = (whQuantity + kitQuantity) - requiredQty;
-                    // Update the LEFTOVERS column in the DataGridView
-                    filteredRow.Cells["LEFTOVERS"].Value = leftovers;
-                    txtbINPUTqty.Clear();
-                    txtbINPUTqty.Focus();
-                }
-                catch (HttpRequestException ex)
-                {
 
-                    SafeAppendLog($"Request error: {ex.Message}", Color.Red);
+                        // ==========================================
+                        // STEP 5: Local UI Grid Data Mathematics
+                        // ==========================================
+                        int prevQty = 0;
+                        if (filteredRow.Cells["QUANT"].Value != null)
+                        {
+                            int.TryParse(filteredRow.Cells["QUANT"].Value.ToString(), out prevQty);
+                        }
 
-                    txtbLog.ForeColor = Color.Green;
+                        string currentCALC = filteredRow.Cells["CALC"].Value?.ToString();
+
+                        // Update Grid Quantities
+                        filteredRow.Cells["QUANT"].Value = prevQty + qty;
+                        int currentINkit = prevQty + qty;
+
+                        int requiredQty = 0;
+                        if (filteredRow.Cells["CQUANT"].Value != null)
+                        {
+                            int.TryParse(filteredRow.Cells["CQUANT"].Value.ToString(), out requiredQty);
+                        }
+
+                        filteredRow.Cells["DELTA"].Value = currentINkit - requiredQty;
+
+                        // Update String Appends in CALC field
+                        if (string.IsNullOrEmpty(currentCALC) && prevQty == 0)
+                        {
+                            // Do nothing
+                        }
+                        else if (!string.IsNullOrEmpty(currentCALC) && currentINkit != 0)
+                        {
+                            filteredRow.Cells["CALC"].Value = $"{currentCALC}+{qty}";
+                        }
+                        else if (string.IsNullOrEmpty(currentCALC) && currentINkit != 0)
+                        {
+                            filteredRow.Cells["CALC"].Value = $"{prevQty}+{qty}";
+                        }
+
+                        // Compute Leftovers
+                        int delta = Convert.ToInt32(filteredRow.Cells["DELTA"].Value);
+                        int whQuantity = filteredRow.Cells["TBALANCE"].Value != null ? Convert.ToInt32(filteredRow.Cells["TBALANCE"].Value) : 0;
+                        int kitQuantity = filteredRow.Cells["QUANT"].Value != null ? Convert.ToInt32(filteredRow.Cells["QUANT"].Value) : 0;
+                        int leftovers = (whQuantity + kitQuantity) - requiredQty;
+
+                        filteredRow.Cells["LEFTOVERS"].Value = leftovers;
+
+                        // Reset inputs
+                        txtbINPUTqty.Clear();
+                        txtbINPUTqty.Focus();
+                    }
+                    else
+                    {
+                        // The PATCH failed (e.g., 400, 404, 500) -> Prompt user to retry smoothly
+                        SafeAppendLog($"PATCH Failed: {patchResponse.StatusCode}", Color.Red);
+                        MessageBox.Show("The server transaction failed. Please check details and retry.", "Transaction Failure", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
                 }
                 catch (Exception ex)
                 {
-
-                    SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-
+                    SafeAppendLog($"Execution error: {ex.Message}", Color.Red);
                 }
             }
         }
