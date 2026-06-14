@@ -83,6 +83,11 @@ namespace WH_Panel
         bool isItemAddedToKit = false;
         public string robSerial { get; set; } // Store the selected serial name for later use
 
+        // This manages the actual network sockets globally
+        private static readonly SocketsHttpHandler _handler = new SocketsHttpHandler
+        {
+            PooledConnectionLifetime = TimeSpan.FromMinutes(15)
+        };
         //private List<WarehouseBalance> warehouseBalances;
         // Define this at class level
         private ContextMenuStrip contextMenuSwitchToAlt;
@@ -187,7 +192,7 @@ namespace WH_Panel
         private async void GetRobWosList()
         {
             string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL";
-            using (HttpClient client = new HttpClient())
+            using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
             {
                 try
                 {
@@ -446,7 +451,7 @@ namespace WH_Panel
                 //string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{serialName}'&$expand=TRANSORDER_K_SUBFORM";
                 string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{serialName}'&$expand=TRANSORDER_K_SUBFORM($select=PARTNAME,PARTDES,CQUANT,QUANT,KLINE,TRANS)";
 
-                using (HttpClient client = new HttpClient())
+                using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
                 {
                     try
                     {
@@ -565,7 +570,7 @@ namespace WH_Panel
 
 
             // SafeAppendLog($"API URL: {avlUrl}");
-            using (HttpClient client = new HttpClient())
+            using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
             {
                 try
                 {
@@ -643,7 +648,7 @@ namespace WH_Panel
         {
             SafeAppendLog($"Fetching IPN count for {partName}", Color.Yellow);
             string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART?$filter=PARTNAME eq '{partName}'&$expand=PARTARC_SUBFORM($select=SONNAME)";
-            using (HttpClient client = new HttpClient())
+            using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
             {
                 try
                 {
@@ -724,7 +729,7 @@ namespace WH_Panel
         //    //string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{warehouseName}'&$expand=WARHSBAL_SUBFORM";
         //    string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{warehouseName}'&$expand=WARHSBAL_SUBFORM($select=PARTNAME,TBALANCE)";
 
-        //    using (HttpClient client = new HttpClient())
+        //    using (HttpClient client = new HttpClient(_handler, disposeHandler: false)())
         //    {
         //        try
         //        {
@@ -813,7 +818,7 @@ namespace WH_Panel
             // Pass the filter into the subform expand so Priority only passes back what is actually in this BOM
             string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{warehouseName}'&$expand=WARHSBAL_SUBFORM($filter={partNamesFilter};$select=PARTNAME,TBALANCE)";
 
-            using (HttpClient client = new HttpClient())
+            using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
             {
                 try
                 {
@@ -928,7 +933,7 @@ namespace WH_Panel
                 //string partUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PARTNAME eq '{partName}'";
                 string partUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PARTNAME eq '{partName}'&$select=PARTNAME,MNFPARTNAME";
 
-                using (HttpClient client = new HttpClient())
+                using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
                 {
                     try
                     {
@@ -1203,7 +1208,7 @@ namespace WH_Panel
                 string logPartUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART?$filter=PARTNAME eq '{partName}'&$expand=PARTTRANSLAST2_SUBFORM";
 
 
-                using (HttpClient client = new HttpClient())
+                using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
                 {
                     try
                     {
@@ -1398,7 +1403,7 @@ namespace WH_Panel
 
 
 
-            using (HttpClient client = new HttpClient())
+            using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
             {
                 try
                 {
@@ -1466,7 +1471,7 @@ namespace WH_Panel
                 string partName = row.Cells["PARTNAME"].Value.ToString();
                 //string partUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART?$filter=PARTNAME eq '{partName}'&$expand=PARTALT_SUBFORM";
                 string partUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART?$filter= PARTNAME eq '{partName}'&$expand=PARTALT_SUBFORM($select=ALTNAME)";
-                using (HttpClient client = new HttpClient())
+                using (HttpClient client = new HttpClient(_handler, disposeHandler: false))   
                 {
                     try
                     {
@@ -1571,7 +1576,7 @@ namespace WH_Panel
         }
         private async Task<List<(string PackCode, string BookNum, string Date)>> FetchPackCodeFromUrlAsync(string url, string logDocNo, string partName, int quant, bool isRobDocument)
         {
-            using (HttpClient client = new HttpClient())
+            using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
             {
                 try
                 {
@@ -1672,7 +1677,7 @@ namespace WH_Panel
             {
                 // Fetch UDATE from SERIAL
                 string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{docNo}'&$select=UDATE";
-                using (HttpClient client = new HttpClient())
+                using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
                 {
                     try
                     {
@@ -1727,7 +1732,7 @@ namespace WH_Panel
             {
                 // Fetch UDATE from DOCUMENTS_P
                 string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{docNo}'&$select=UDATE";
-                using (HttpClient client = new HttpClient())
+                using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
                 {
                     try
                     {
@@ -1769,7 +1774,7 @@ namespace WH_Panel
             {
                 // Fetch UDATE from DOCUMENTS_P
                 string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_C?$filter=DOCNO eq '{docNo}'&$select=UDATE";
-                using (HttpClient client = new HttpClient())
+                using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
                 {
                     try
                     {
@@ -2247,7 +2252,7 @@ namespace WH_Panel
         //    // Check quantity availability in the warehouse
         //    string checkUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{wh}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{partName}')";
         //    int availableQty = 0;
-        //    using (HttpClient client = new HttpClient())
+        //    using (HttpClient client = new HttpClient(_handler, disposeHandler: false)())
         //    {
         //        try
         //        {
@@ -2305,7 +2310,7 @@ namespace WH_Panel
         //    string getUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM?$filter=PARTNAME eq '{partName}'&$select=PARTNAME,CQUANT,KLINE,PACKCODE";
         //    int kline = 0;
         //    string package = string.Empty;
-        //    using (HttpClient client = new HttpClient())
+        //    using (HttpClient client = new HttpClient(_handler, disposeHandler: false)())
         //    {
         //        try
         //        {
@@ -2367,7 +2372,7 @@ namespace WH_Panel
         //    //string warehouseName = partNameWH.Substring(0, 3); // Get the first 3 characters of the PARTNAME
         //    // Construct the PATCH request URL
         //    string patchUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM(TYPE='K',KLINE={kline})";
-        //    using (HttpClient client = new HttpClient())
+        //    using (HttpClient client = new HttpClient(_handler, disposeHandler: false)())
         //    {
         //        try
         //        {
@@ -2466,7 +2471,7 @@ namespace WH_Panel
             int availableQty = 0;
 
             // FIX: Single HttpClient instance used for the entire lifespan of this task sequence
-            using (HttpClient client = new HttpClient())
+            using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
             {
                 // Setup initial headers
                 client.DefaultRequestHeaders.Accept.Clear();
@@ -3402,7 +3407,7 @@ namespace WH_Panel
             }
             string serialName = txtbRob.Text;
             string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{serialName}'&$expand=SERIALTEXT_SUBFORM";
-            using (HttpClient client = new HttpClient())
+            using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
             {
                 try
                 {
@@ -3489,7 +3494,7 @@ namespace WH_Panel
             // Reverse the process of stripping HTML tags
             string htmlComments = ConvertToHtml(comments);
             string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/SERIALTEXT_SUBFORM";
-            using (HttpClient client = new HttpClient())
+            using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
             {
                 try
                 {
@@ -3697,7 +3702,7 @@ namespace WH_Panel
             //SafeAppendLog($"FilteredNotRob list count: {filteredNotRobList.Count}");
 
             // Prepare HttpClient
-            using var client = new HttpClient();
+            using var client = new HttpClient(_handler, disposeHandler: false);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
@@ -3786,7 +3791,7 @@ namespace WH_Panel
 
                 string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{docNo}'&$select=TOWARHSNAME";
                 //SafeAppendLog($"Checking TOWARHSNAME for DOCNO: {docNo}");
-                using (HttpClient client = new HttpClient())
+                using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
                 {
                     try
                     {
@@ -3887,7 +3892,7 @@ namespace WH_Panel
                 UDATE = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")
             };
 
-            using (HttpClient client = new HttpClient())
+            using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
             {
                 string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
@@ -3965,7 +3970,7 @@ namespace WH_Panel
                 int availableQty = 0;
                 try
                 {
-                    using (HttpClient client = new HttpClient())
+                    using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
                     {
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -4021,7 +4026,7 @@ namespace WH_Panel
                 return;
             }
 
-            using (var client = new HttpClient())
+            using (var client = new HttpClient(_handler, disposeHandler: false))
             {
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -4069,7 +4074,7 @@ namespace WH_Panel
             string escapedOriginalIPN = originalIPN.Replace("'", "''");
             string filterUrl = $"{baseUrl}?$filter=PARTNAME eq '{escapedOriginalIPN}'";
 
-            using HttpClient client = new HttpClient();
+            using HttpClient client = new HttpClient(_handler, disposeHandler: false);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
                 Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}")));
 
