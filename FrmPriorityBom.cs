@@ -1039,12 +1039,168 @@ namespace WH_Panel
         //}
 
 
+        //private async Task FetchWarehouseBalances()
+        //{
+        //    // Create a list to store the final consolidated warehouse balances
+        //    List<WarehouseBalance> warehouseBalances = new List<WarehouseBalance>();
+
+        //    // Get the unique part names from the DataGridView
+        //    var partNames = dgwBom.Rows.Cast<DataGridViewRow>()
+        //        .Where(row => row.Cells["PARTNAME"].Value != null)
+        //        .Select(row => row.Cells["PARTNAME"].Value.ToString())
+        //        .Distinct()
+        //        .ToList();
+
+        //    if (partNames.Count == 0)
+        //    {
+        //        return;
+        //    }
+
+        //    string warehouseName = partNames.First().Substring(0, 3); // Assuming all parts belong to the same warehouse
+        //    List<WarehouseBalance> allRawBalances = new List<WarehouseBalance>();
+
+        //    // Define a safe chunk size to ensure the URL never gets truncated by the server
+        //    int chunkSize = 40;
+
+        //    using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
+        //    {
+        //        try
+        //        {
+        //            // Set the request headers once before firing concurrent requests
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        //            string usedUser = ApiHelper.AuthenticateClient(client);
+        //            RegisterTransaction(usedUser); // Log this transaction timestamp
+
+        //            // 1. Prepare a list to hold all parallel network tasks
+        //            var fetchTasks = new List<Task<List<WarehouseBalance>>>();
+
+        //            // 2. Build the tasks for each chunk and queue them simultaneously
+        //            for (int i = 0; i < partNames.Count; i += chunkSize)
+        //            {
+        //                var chunk = partNames.Skip(i).Take(chunkSize).ToList();
+
+        //                // Add the task directly without awaiting it inside the loop
+        //                fetchTasks.Add(FetchChunkBalancesAsync(client, chunk, warehouseName));
+        //            }
+
+        //            // 3. Fire all API requests simultaneously and wait for the full group to finish
+        //            var results = await Task.WhenAll(fetchTasks);
+
+        //            // 4. Safely aggregate the returned raw records out of the completed tasks
+        //            foreach (var chunkResult in results)
+        //            {
+        //                if (chunkResult != null)
+        //                {
+        //                    allRawBalances.AddRange(chunkResult);
+        //                }
+        //            }
+
+        //            // Consolidate the accumulated raw records from all batches by PARTNAME and sum up their TBALANCE values
+        //            if (allRawBalances.Count > 0)
+        //            {
+        //                warehouseBalances = allRawBalances
+        //                    .GroupBy(b => b.PARTNAME)
+        //                    .Select(g => new WarehouseBalance
+        //                    {
+        //                        PARTNAME = g.Key,
+        //                        TBALANCE = g.Sum(b => b.TBALANCE) // Sum all lines (WOs/serials) together!
+        //                    })
+        //                    .ToList();
+
+        //                //MessageBox.Show(warehouseBalances.Count().ToString());
+
+        //                SafeAppendLog($"Fetched and consolidated {warehouseBalances.Count} unique warehouse balances for warehouse {warehouseName}", Color.LimeGreen);
+        //            }
+        //        }
+        //        catch (HttpRequestException ex)
+        //        {
+        //            SafeAppendLog($"Request error: {ex.Message}", Color.Red);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            SafeAppendLog($"General error: {ex.Message}", Color.Red);
+        //        }
+        //    }
+
+        //    // Update the DataGridView rows using the consolidated fetched data
+        //    foreach (DataGridViewRow row in dgwBom.Rows)
+        //    {
+        //        if (row.Cells["PARTNAME"].Value != null)
+        //        {
+        //            string partName = row.Cells["PARTNAME"].Value.ToString();
+
+        //            // Case-insensitive lookups with whitespace trimming to prevent false missing items
+        //            var balance = warehouseBalances.FirstOrDefault(b =>
+        //                string.Equals(b.PARTNAME?.Trim(), partName?.Trim(), StringComparison.OrdinalIgnoreCase));
+
+        //            if (balance != null)
+        //            {
+        //                row.Cells["TBALANCE"].Value = balance.TBALANCE;
+        //            }
+        //            else
+        //            {
+        //                row.Cells["TBALANCE"].Value = 0;
+        //            }
+
+        //            // Calculate the LEFTOVERS for the current row
+        //            int delta = Convert.ToInt32(row.Cells["DELTA"].Value);
+        //            int whQuantity = row.Cells["TBALANCE"].Value != null ? Convert.ToInt32(row.Cells["TBALANCE"].Value) : 0;
+        //            int kitQuantity = row.Cells["QUANT"].Value != null ? Convert.ToInt32(row.Cells["QUANT"].Value) : 0;
+        //            int requiredQuantity = row.Cells["CQUANT"].Value != null ? Convert.ToInt32(row.Cells["CQUANT"].Value) : 0;
+
+        //            int leftovers = (whQuantity + kitQuantity) - requiredQuantity;
+
+        //            // Update the LEFTOVERS column in the DataGridView
+        //            row.Cells["LEFTOVERS"].Value = leftovers;
+        //        }
+        //    }
+        //    UpdateSimulationLabel();
+        //}
+
+        ///// <summary>
+        ///// Dedicated async helper method to fetch a single batch of part numbers concurrently.
+        ///// </summary>
+        //private async Task<List<WarehouseBalance>> FetchChunkBalancesAsync(HttpClient client, List<string> chunk, string warehouseName)
+        //{
+        //    try
+        //    {
+        //        // Construct the filter string specifically for this batch
+        //        string partNamesFilter = string.Join(" or ", chunk.Select(p => $"PARTNAME eq '{p}'"));
+        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{warehouseName}'&$expand=WARHSBAL_SUBFORM($filter={partNamesFilter};$select=PARTNAME,TBALANCE)";
+
+        //        // Execute the GET operation asynchronously
+        //        HttpResponseMessage response = await client.GetAsync(url);
+
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            string responseBody = await response.Content.ReadAsStringAsync();
+        //            var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+        //            var warehouse = apiResponse["value"]?.FirstOrDefault();
+
+        //            if (warehouse != null && warehouse["WARHSBAL_SUBFORM"] != null)
+        //            {
+        //                return warehouse["WARHSBAL_SUBFORM"].ToObject<List<WarehouseBalance>>();
+        //            }
+        //        }
+        //        else
+        //        {
+        //            SafeAppendLog($"Parallel chunk fetch dropped by server: {response.StatusCode}", Color.Orange);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        SafeAppendLog($"Error in parallel branch execution: {ex.Message}", Color.Red);
+        //    }
+
+        //    return new List<WarehouseBalance>(); // Return empty list rather than null to guarantee seamless merging inside WhenAll
+        //}
+
+
         private async Task FetchWarehouseBalances()
         {
-            // Create a list to store the final consolidated warehouse balances
-            List<WarehouseBalance> warehouseBalances = new List<WarehouseBalance>();
-
-            // Get the unique part names from the DataGridView
+            // 1. Get the unique part names from the DataGridView to verify there's work to do
             var partNames = dgwBom.Rows.Cast<DataGridViewRow>()
                 .Where(row => row.Cells["PARTNAME"].Value != null)
                 .Select(row => row.Cells["PARTNAME"].Value.ToString())
@@ -1056,88 +1212,101 @@ namespace WH_Panel
                 return;
             }
 
-            string warehouseName = partNames.First().Substring(0, 3); // Assuming all parts belong to the same warehouse
-            List<WarehouseBalance> allRawBalances = new List<WarehouseBalance>();
+            // Extract the warehouse prefix code (e.g., "UVI")
+            string warehouseName = partNames.First().Substring(0, 3);
 
-            // Define a safe chunk size to ensure the URL never gets truncated by the server
-            int chunkSize = 40;
+            // High-performance hash table for instant O(1) local memory lookups
+            var warehouseStockPool = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+            // Pull the entire warehouse stock record without using chunk filters in the URL
+            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{warehouseName}'&$expand=WARHSBAL_SUBFORM($select=PARTNAME,TBALANCE)";
 
             using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
             {
                 try
                 {
-                    // Set the request headers once before firing concurrent requests
+                    SafeAppendLog($"Retrieving complete stock profile for warehouse {warehouseName}...", Color.Yellow);
+
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                     string usedUser = ApiHelper.AuthenticateClient(client);
                     RegisterTransaction(usedUser); // Log this transaction timestamp
 
-                    // 1. Prepare a list to hold all parallel network tasks
-                    var fetchTasks = new List<Task<List<WarehouseBalance>>>();
+                    HttpResponseMessage response = await client.GetAsync(url);
 
-                    // 2. Build the tasks for each chunk and queue them simultaneously
-                    for (int i = 0; i < partNames.Count; i += chunkSize)
+                    if (response.IsSuccessStatusCode)
                     {
-                        var chunk = partNames.Skip(i).Take(chunkSize).ToList();
+                        string responseBody = await response.Content.ReadAsStringAsync();
+                        var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
 
-                        // Add the task directly without awaiting it inside the loop
-                        fetchTasks.Add(FetchChunkBalancesAsync(client, chunk, warehouseName));
-                    }
+                        // Safely extract the warehouse object avoiding array-empty errors
+                        var warehouse = apiResponse["value"]?.FirstOrDefault();
 
-                    // 3. Fire all API requests simultaneously and wait for the full group to finish
-                    var results = await Task.WhenAll(fetchTasks);
-
-                    // 4. Safely aggregate the returned raw records out of the completed tasks
-                    foreach (var chunkResult in results)
-                    {
-                        if (chunkResult != null)
+                        if (warehouse != null && warehouse["WARHSBAL_SUBFORM"] != null)
                         {
-                            allRawBalances.AddRange(chunkResult);
+                            var allRawBalances = warehouse["WARHSBAL_SUBFORM"].ToObject<List<WarehouseBalance>>();
+
+                            if (allRawBalances != null)
+                            {
+                                // Group and sum elements directly into our fast dictionary mapping lookup table
+                                foreach (var balance in allRawBalances)
+                                {
+                                    if (!string.IsNullOrEmpty(balance.PARTNAME))
+                                    {
+                                        string cleanPartName = balance.PARTNAME.Trim();
+
+                                        if (warehouseStockPool.ContainsKey(cleanPartName))
+                                        {
+                                            warehouseStockPool[cleanPartName] += balance.TBALANCE;
+                                        }
+                                        else
+                                        {
+                                            warehouseStockPool[cleanPartName] = balance.TBALANCE;
+                                        }
+                                    }
+                                }
+
+                                SafeAppendLog($"Successfully mapped {warehouseStockPool.Count} unique warehouse balances in memory.", Color.LimeGreen);
+                            }
+                        }
+                        else
+                        {
+                            SafeAppendLog($"Warehouse {warehouseName} returned no subform rows.", Color.Orange);
                         }
                     }
-
-                    // Consolidate the accumulated raw records from all batches by PARTNAME and sum up their TBALANCE values
-                    if (allRawBalances.Count > 0)
+                    else
                     {
-                        warehouseBalances = allRawBalances
-                            .GroupBy(b => b.PARTNAME)
-                            .Select(g => new WarehouseBalance
-                            {
-                                PARTNAME = g.Key,
-                                TBALANCE = g.Sum(b => b.TBALANCE) // Sum all lines (WOs/serials) together!
-                            })
-                            .ToList();
-
-                        //MessageBox.Show(warehouseBalances.Count().ToString());
-
-                        SafeAppendLog($"Fetched and consolidated {warehouseBalances.Count} unique warehouse balances for warehouse {warehouseName}", Color.LimeGreen);
+                        SafeAppendLog($"Server returned failure code: {response.StatusCode}", Color.Red);
+                        MessageBox.Show("Failed to load warehouse data from server.", "Transaction Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
                     }
                 }
                 catch (HttpRequestException ex)
                 {
-                    SafeAppendLog($"Request error: {ex.Message}", Color.Red);
+                    SafeAppendLog($"Request network error: {ex.Message}", Color.Red);
+                    return;
                 }
                 catch (Exception ex)
                 {
-                    SafeAppendLog($"General error: {ex.Message}", Color.Red);
+                    SafeAppendLog($"General runtime processing error: {ex.Message}", Color.Red);
+                    return;
                 }
             }
 
-            // Update the DataGridView rows using the consolidated fetched data
+            // =================================================================
+            // 2. Update the DataGridView rows using the high-speed dictionary
+            // =================================================================
             foreach (DataGridViewRow row in dgwBom.Rows)
             {
                 if (row.Cells["PARTNAME"].Value != null)
                 {
-                    string partName = row.Cells["PARTNAME"].Value.ToString();
+                    string partName = row.Cells["PARTNAME"].Value.ToString().Trim();
 
-                    // Case-insensitive lookups with whitespace trimming to prevent false missing items
-                    var balance = warehouseBalances.FirstOrDefault(b =>
-                        string.Equals(b.PARTNAME?.Trim(), partName?.Trim(), StringComparison.OrdinalIgnoreCase));
-
-                    if (balance != null)
+                    // Perform an instant O(1) lookup. If the part isn't in the warehouse pool, its balance is 0.
+                    if (warehouseStockPool.TryGetValue(partName, out int totalBalance))
                     {
-                        row.Cells["TBALANCE"].Value = balance.TBALANCE;
+                        row.Cells["TBALANCE"].Value = totalBalance;
                     }
                     else
                     {
@@ -1156,45 +1325,8 @@ namespace WH_Panel
                     row.Cells["LEFTOVERS"].Value = leftovers;
                 }
             }
+
             UpdateSimulationLabel();
-        }
-
-        /// <summary>
-        /// Dedicated async helper method to fetch a single batch of part numbers concurrently.
-        /// </summary>
-        private async Task<List<WarehouseBalance>> FetchChunkBalancesAsync(HttpClient client, List<string> chunk, string warehouseName)
-        {
-            try
-            {
-                // Construct the filter string specifically for this batch
-                string partNamesFilter = string.Join(" or ", chunk.Select(p => $"PARTNAME eq '{p}'"));
-                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{warehouseName}'&$expand=WARHSBAL_SUBFORM($filter={partNamesFilter};$select=PARTNAME,TBALANCE)";
-
-                // Execute the GET operation asynchronously
-                HttpResponseMessage response = await client.GetAsync(url);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseBody = await response.Content.ReadAsStringAsync();
-                    var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-                    var warehouse = apiResponse["value"]?.FirstOrDefault();
-
-                    if (warehouse != null && warehouse["WARHSBAL_SUBFORM"] != null)
-                    {
-                        return warehouse["WARHSBAL_SUBFORM"].ToObject<List<WarehouseBalance>>();
-                    }
-                }
-                else
-                {
-                    SafeAppendLog($"Parallel chunk fetch dropped by server: {response.StatusCode}", Color.Orange);
-                }
-            }
-            catch (Exception ex)
-            {
-                SafeAppendLog($"Error in parallel branch execution: {ex.Message}", Color.Red);
-            }
-
-            return new List<WarehouseBalance>(); // Return empty list rather than null to guarantee seamless merging inside WhenAll
         }
 
         private void UpdateSimulationLabel()
