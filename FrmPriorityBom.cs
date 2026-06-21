@@ -2433,14 +2433,9 @@ namespace WH_Panel
                             
                             // 3. Initiate the Priority OData API POST transaction
                                 await AddSparesToKit(filterText, activeSerial, qtyToTransfer.Value, matchedRow, sourceWarehouse);
-
-                            txtbINPUTqty.Clear();
                             txtbInputIPN.Clear();
-                            txtbInputIPN.Focus();
+                            ClearFilters();
 
-                            // Update the progress label
-                            UpdateProgressLabel();
-                            UpdateSimulationLabel();
                         }
                     }
                     return;
