@@ -46,8 +46,8 @@ namespace WH_Panel
             Size proposedSize = new Size(int.MaxValue, int.MaxValue); // Unconstrained initial check
             Size textSize = TextRenderer.MeasureText(message, messageFont, proposedSize, TextFormatFlags.WordBreak);
 
-            int calculatedWidth = textSize.Width + 50;
-            int calculatedHeight = textSize.Height + 50;
+            int calculatedWidth = textSize.Width + 100;
+            int calculatedHeight = textSize.Height + 100;
 
             // 2. Set sensible boundaries (Minimums and Maximums)
             // Prevents extremely short text from making a tiny box, or massive text from spilling past the screen bounds

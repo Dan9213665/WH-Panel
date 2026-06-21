@@ -2461,7 +2461,13 @@ namespace WH_Panel
 
         private async void txtbInputIPN_KeyDown(object sender, KeyEventArgs e)
         {
+
             if (e.KeyCode != Keys.Enter) return;
+
+            foreach (DataGridViewRow row in dgwBom.Rows)
+            {
+                row.Visible = true;
+            }
 
             string filterText = txtbInputIPN.Text.Trim();
             bool found = false;
@@ -2529,6 +2535,7 @@ namespace WH_Panel
 
                         // Initiate the Priority OData API POST transaction
                         await AddSparesToKit(filterText, activeSerial, qtyToTransfer.Value, matchedRow, sourceWarehouse);
+
                     }
                 }
                 return;
