@@ -2464,9 +2464,23 @@ namespace WH_Panel
 
             if (e.KeyCode != Keys.Enter) return;
 
-            foreach (DataGridViewRow row in dgwBom.Rows)
+            // 1. Temporarily freeze the layout engine to block repetitive UI redrawing
+            dgwBom.SuspendLayout();
+            try
             {
-                row.Visible = true;
+                foreach (DataGridViewRow row in dgwBom.Rows)
+                {
+                    // Reset row visibility to true smoothly in memory
+                    if (!row.Visible)
+                    {
+                        row.Visible = true;
+                    }
+                }
+            }
+            finally
+            {
+                // 2. Unfreeze and let it redraw everything exactly ONCE
+                dgwBom.ResumeLayout(true);
             }
 
             string filterText = txtbInputIPN.Text.Trim();
