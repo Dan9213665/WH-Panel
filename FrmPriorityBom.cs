@@ -2712,7 +2712,7 @@ namespace WH_Panel
                             txtbInputIPN.Clear();
                             txtbINPUTqty.Clear();
                             txtbInputIPN.Focus();
-                            ClearFilters();
+                            //ClearFilters();
 
                         }
                     }
@@ -3214,8 +3214,9 @@ namespace WH_Panel
                         filteredRow.Cells["LEFTOVERS"].Value = leftovers;
 
                         // Reset inputs and yield focus back
+                        txtbInputIPN.Clear();
                         txtbINPUTqty.Clear();
-                        txtbINPUTqty.Focus();
+                        txtbInputIPN.Focus();
                     }
                     else
                     {
