@@ -2365,98 +2365,194 @@ namespace WH_Panel
         //    }
         //}
 
+        //private async void txtbInputIPN_KeyDown(object sender, KeyEventArgs e)
+        //{
+        //    if (e.KeyCode == Keys.Enter)
+        //    {
+        //        string filterText = txtbInputIPN.Text.Trim();
+        //        bool found = false;
+        //        int visibleRowCount = 0;
+        //        bool dontneedeMoreItems = false;
+        //        DataGridViewRow matchedRow = null;
+
+        //        foreach (DataGridViewRow row in dgwBom.Rows)
+        //        {
+        //            if (row.Cells["DELTA"].Value == null) continue;
+
+        //            var needMoreItems = int.Parse(row.Cells["DELTA"].Value.ToString());
+
+        //            if (row.Cells["PARTNAME"].Value != null && row.Cells["PARTNAME"].Value.ToString() == filterText)
+        //            {
+        //                matchedRow = row; // Keep a reference to the row for later use
+
+        //                if (needMoreItems < 0)
+        //                {
+        //                    row.Visible = true;
+        //                    found = true;
+        //                    visibleRowCount++;
+        //                }
+        //                else
+        //                {
+        //                    dontneedeMoreItems = true;
+        //                }
+        //            }
+        //            else
+        //            {
+        //                row.Visible = false;
+        //            }
+        //        }
+
+        //        dgwBom.Update();
+
+        //        // Handle scenario where the part's balance requirements are already met ( Overage / Spares case )
+        //        if (dontneedeMoreItems)
+        //        {
+        //            txtbInputIPN.Clear();
+        //            txtbInputIPN.Focus();
+
+        //            // 1. Confirm whether user intends to process spares
+        //            DialogResult confirmation = MessageBox.Show(
+        //                $"{filterText} NOT needed anymore!\n\nDo you want to transfer spares into the kit?",
+        //                "Transfer Spares?",
+        //                MessageBoxButtons.YesNo,
+        //                MessageBoxIcon.Question
+        //            );
+
+        //            if (confirmation == DialogResult.Yes && matchedRow != null)
+        //            {
+        //                // 2. Open the completely native custom numeric prompt 
+        //                int? qtyToTransfer = NativeInputDialog.Show("Transfer Quantity", "Enter the quantity of spares to transfer:");
+
+        //                if (qtyToTransfer.HasValue && qtyToTransfer.Value > 0)
+        //                {
+        //                    // TODO: Substitute with your actual form variables mapping to active tracking info
+        //                    string activeSerial = txtbRob.Text;
+
+        //                    string sourceWarehouse = dgwBom.Rows[0].Cells["PARTNAME"].Value?.ToString()?.Substring(0, 3);
+
+
+        //                    // 3. Initiate the Priority OData API POST transaction
+        //                        await AddSparesToKit(filterText, activeSerial, qtyToTransfer.Value, matchedRow, sourceWarehouse);
+
+        //                }
+        //            }
+        //            return;
+        //        }
+
+        //        if (visibleRowCount == 1)
+        //        {
+        //            txtbINPUTqty.Focus();
+        //            await FetchMFPNForRow(dgwBom.Rows.Cast<DataGridViewRow>().FirstOrDefault(row => row.Visible));
+        //        }
+
+        //        if (!found)
+        //        {
+        //            txtbInputIPN.Clear();
+        //            ClearFilters();
+        //            AutoClosingMessageBox.Show($"{filterText} NOT FOUND!", 3000, Color.Red);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        //
+        //    }
+        //}
+
+
         private async void txtbInputIPN_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode != Keys.Enter) return;
+
+            string filterText = txtbInputIPN.Text.Trim();
+            bool found = false;
+            int visibleRowCount = 0;
+            bool dontneedeMoreItems = false;
+
+            // 1. Snapshot the grid rows into a local, safe memory list to prevent UI cross-thread flakiness
+            var localRows = dgwBom.Rows.Cast<DataGridViewRow>()
+                .Where(r => r.Cells["PARTNAME"].Value != null && r.Cells["DELTA"].Value != null)
+                .ToList();
+
+            // Find the specific object target in memory
+            DataGridViewRow matchedRow = localRows.FirstOrDefault(r => r.Cells["PARTNAME"].Value.ToString() == filterText);
+
+            // 2. Run your visibility assignments safely
+            foreach (DataGridViewRow row in dgwBom.Rows)
             {
-                string filterText = txtbInputIPN.Text.Trim();
-                bool found = false;
-                int visibleRowCount = 0;
-                bool dontneedeMoreItems = false;
-                DataGridViewRow matchedRow = null;
-
-                foreach (DataGridViewRow row in dgwBom.Rows)
+                if (row.Cells["PARTNAME"].Value != null && row.Cells["PARTNAME"].Value.ToString() == filterText)
                 {
-                    if (row.Cells["DELTA"].Value == null) continue;
+                    int.TryParse(row.Cells["DELTA"].Value.ToString(), out int needMoreItems);
 
-                    var needMoreItems = int.Parse(row.Cells["DELTA"].Value.ToString());
-
-                    if (row.Cells["PARTNAME"].Value != null && row.Cells["PARTNAME"].Value.ToString() == filterText)
+                    if (needMoreItems < 0)
                     {
-                        matchedRow = row; // Keep a reference to the row for later use
-
-                        if (needMoreItems < 0)
-                        {
-                            row.Visible = true;
-                            found = true;
-                            visibleRowCount++;
-                        }
-                        else
-                        {
-                            dontneedeMoreItems = true;
-                        }
+                        row.Visible = true;
+                        found = true;
+                        visibleRowCount++;
                     }
                     else
                     {
-                        row.Visible = false;
+                        dontneedeMoreItems = true;
                     }
                 }
-
-                dgwBom.Update();
-
-                // Handle scenario where the part's balance requirements are already met ( Overage / Spares case )
-                if (dontneedeMoreItems)
+                else
                 {
-                    txtbInputIPN.Clear();
-                    txtbInputIPN.Focus();
-
-                    // 1. Confirm whether user intends to process spares
-                    DialogResult confirmation = MessageBox.Show(
-                        $"{filterText} NOT needed anymore!\n\nDo you want to transfer spares into the kit?",
-                        "Transfer Spares?",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question
-                    );
-
-                    if (confirmation == DialogResult.Yes && matchedRow != null)
-                    {
-                        // 2. Open the completely native custom numeric prompt 
-                        int? qtyToTransfer = NativeInputDialog.Show("Transfer Quantity", "Enter the quantity of spares to transfer:");
-
-                        if (qtyToTransfer.HasValue && qtyToTransfer.Value > 0)
-                        {
-                            // TODO: Substitute with your actual form variables mapping to active tracking info
-                            string activeSerial = txtbRob.Text;
-
-                            string sourceWarehouse = dgwBom.Rows[0].Cells["PARTNAME"].Value?.ToString()?.Substring(0, 3);
-                            
-                            
-                            // 3. Initiate the Priority OData API POST transaction
-                                await AddSparesToKit(filterText, activeSerial, qtyToTransfer.Value, matchedRow, sourceWarehouse);
-                           
-                        }
-                    }
-                    return;
-                }
-
-                if (visibleRowCount == 1)
-                {
-                    txtbINPUTqty.Focus();
-                    await FetchMFPNForRow(dgwBom.Rows.Cast<DataGridViewRow>().FirstOrDefault(row => row.Visible));
-                }
-
-                if (!found)
-                {
-                    txtbInputIPN.Clear();
-                    ClearFilters();
-                    AutoClosingMessageBox.Show($"{filterText} NOT FOUND!", 3000, Color.Red);
+                    row.Visible = false;
                 }
             }
-            else
+
+            dgwBom.Update();
+
+            // Handle scenario where the part's balance requirements are already met ( Overage / Spares case )
+            if (dontneedeMoreItems)
             {
-                //
+                txtbInputIPN.Clear();
+                txtbInputIPN.Focus();
+
+                DialogResult confirmation = MessageBox.Show(
+                    $"{filterText} NOT needed anymore!\n\nDo you want to transfer spares into the kit?",
+                    "Transfer Spares?",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question
+                );
+
+                if (confirmation == DialogResult.Yes && matchedRow != null)
+                {
+                    int? qtyToTransfer = NativeInputDialog.Show("Transfer Quantity", "Enter the quantity of spares to transfer:");
+
+                    if (qtyToTransfer.HasValue && qtyToTransfer.Value > 0)
+                    {
+                        string activeSerial = txtbRob.Text;
+
+                        // FIX: Get the source warehouse safely from our memory-matched item instead of relying blindly on Rows
+                        string partNameStr = matchedRow.Cells["PARTNAME"].Value.ToString();
+                        string sourceWarehouse = partNameStr.Length >= 3 ? partNameStr.Substring(0, 3) : "WH1";
+
+                        // Initiate the Priority OData API POST transaction
+                        await AddSparesToKit(filterText, activeSerial, qtyToTransfer.Value, matchedRow, sourceWarehouse);
+                    }
+                }
+                return;
+            }
+
+            if (visibleRowCount == 1)
+            {
+                txtbINPUTqty.Focus();
+                // Grab the row safely from our localized memory list instead of executing a heavy cast loop on the visual component
+                var targetVisibleRow = localRows.FirstOrDefault(row => row.Visible);
+                if (targetVisibleRow != null)
+                {
+                    await FetchMFPNForRow(targetVisibleRow);
+                }
+            }
+
+            if (!found)
+            {
+                txtbInputIPN.Clear();
+                ClearFilters();
+                AutoClosingMessageBox.Show($"{filterText} NOT FOUND!", 3000, Color.Red);
             }
         }
+
 
         public static class NativeInputDialog
         {
