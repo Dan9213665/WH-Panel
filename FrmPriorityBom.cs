@@ -422,13 +422,43 @@ namespace WH_Panel
                 }
             }
         }
+        //private void InitializeDataGridView()
+        //{
+        //    dgwBom.Columns.Clear();
+        //    dgwBom.Columns.Add("PARTNAME", "IPN");
+        //    dgwBom.Columns.Add("MFPN", "MFPN");
+        //    dgwBom.Columns.Add("PARTDES", "Description");
+        //    dgwBom.Columns.Add("TBALANCE", "WH"); // Add WH column before KIT
+        //    dgwBom.Columns.Add("QUANT", "KIT");
+        //    dgwBom.Columns.Add("CQUANT", "Required");
+        //    dgwBom.Columns.Add("DELTA", "DELTA");
+        //    dgwBom.Columns.Add("CALC", "CALC");
+        //    dgwBom.Columns.Add("ALT", "ALT");
+        //    dgwBom.Columns.Add("LEFTOVERS", "LEFTOVERS");
+        //    dgwBom.Columns.Add("TRANS", "TRANS");
+        //    dgwBom.Columns.Add("KLINE", "KLINE");//KITLINE
+        //    dgwBom.Columns.Add("KITLINE", "KITLINE");
+        //    // Ensure the LEFTOVERS column is sortable
+        //    dgwBom.Columns["LEFTOVERS"].SortMode = DataGridViewColumnSortMode.Automatic;
+        //    dgwBom.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+
+        //    // Keep it locked at None initially
+        //    dgwBom.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+        //    dgwBom.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+        //}
+
         private void InitializeDataGridView()
         {
+            // Enable Double-Buffering via Reflection to prevent screen tearing on low-spec hardware
+            typeof(DataGridView)
+                .GetProperty("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                ?.SetValue(dgwBom, true, null);
+
             dgwBom.Columns.Clear();
             dgwBom.Columns.Add("PARTNAME", "IPN");
             dgwBom.Columns.Add("MFPN", "MFPN");
             dgwBom.Columns.Add("PARTDES", "Description");
-            dgwBom.Columns.Add("TBALANCE", "WH"); // Add WH column before KIT
+            dgwBom.Columns.Add("TBALANCE", "WH");
             dgwBom.Columns.Add("QUANT", "KIT");
             dgwBom.Columns.Add("CQUANT", "Required");
             dgwBom.Columns.Add("DELTA", "DELTA");
@@ -436,12 +466,34 @@ namespace WH_Panel
             dgwBom.Columns.Add("ALT", "ALT");
             dgwBom.Columns.Add("LEFTOVERS", "LEFTOVERS");
             dgwBom.Columns.Add("TRANS", "TRANS");
-            dgwBom.Columns.Add("KLINE", "KLINE");//KITLINE
+            dgwBom.Columns.Add("KLINE", "KLINE");
             dgwBom.Columns.Add("KITLINE", "KITLINE");
-            // Ensure the LEFTOVERS column is sortable
+
             dgwBom.Columns["LEFTOVERS"].SortMode = DataGridViewColumnSortMode.Automatic;
-            dgwBom.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+
+            // Force strict static mode
+            dgwBom.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            dgwBom.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+
+            // Safe, production-tested static widths to prevent clipping
+            dgwBom.Columns["PARTNAME"].Width = 200; // Plenty of room for standard IPNs
+            dgwBom.Columns["MFPN"].Width = 200;     // Accounts for longer manufacturer part numbers
+            dgwBom.Columns["PARTDES"].Width = 300;  // Longest field, given maximum breathing room
+            dgwBom.Columns["TBALANCE"].Width = 60;  // Numeric only
+            dgwBom.Columns["QUANT"].Width = 60;     // Numeric only
+            dgwBom.Columns["CQUANT"].Width = 75;    // Numeric only
+            dgwBom.Columns["DELTA"].Width = 65;     // Numeric only
+            dgwBom.Columns["CALC"].Width = 120;     // Gives room for appends like "100+50+10"
+            dgwBom.Columns["ALT"].Width = 150;
+            dgwBom.Columns["LEFTOVERS"].Width = 95;
+            dgwBom.Columns["TRANS"].Width = 100;
+
+            //// Hide background keys entirely
+            //dgwBom.Columns["KLINE"].Visible = false;
+            //dgwBom.Columns["KITLINE"].Visible = false;
         }
+
+
         private async Task LoadBomDetails(string serialName)
         {
             SafeAppendLog($"Fetching warehouse balances...", Color.Yellow);
