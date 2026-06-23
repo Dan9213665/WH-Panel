@@ -2881,6 +2881,7 @@ namespace WH_Panel
                             txtbInputIPN.Clear();
                             txtbINPUTqty.Clear();
                             txtbInputIPN.Focus();
+                            UpdateSimulationLabel();
                             //ClearFilters();
 
                         }
