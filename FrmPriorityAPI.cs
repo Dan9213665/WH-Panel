@@ -497,65 +497,135 @@ namespace WH_Panel
 
 
 
+        //        public static HashSet<string> SessionBlacklist = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        //{
+        //   "6ADFFD01B1B04B10A4F8FD7BCA8631D8"
+        //};
+
+        //        public string SelectTheCredentialsByLoggedUser(AppSettings settings)
+        //        {
+        //            // Extract user safely
+        //            string currentUser = WindowsIdentity.GetCurrent().Name.Split('\\').LastOrDefault() ?? string.Empty;
+
+        //            // Fix the ToString() bug
+        //            if (currentUser.Equals("lgt", StringComparison.OrdinalIgnoreCase))
+        //            {
+        //                //MessageBox.Show($"Blacklist items: {string.Join(", ", SessionBlacklist)}");
+        //                this.AppendLog($"Blacklisted users: {string.Join(", ", SessionBlacklist)}\n", Color.Red);
+        //            }
+
+        //            // Define priority tokens cleanly
+        //            string Yulia = "6D3162B8E0F34660BCF256E7BBC3524C";
+        //            string Yuri_G = "6ADFFD01B1B04B10A4F8FD7BCA8631D8";
+        //            string master = "AEF3B8E8189A481786598CCCFD16A56A";
+        //            string Jessica = "7D4B614B3FD645F584C8661B813B5E98";
+        //            string Daniel = "B59C4AB83FBB4784A3EBA712AF023DE9";
+
+        //            // Switch statements are easier to read than nested if/else for string matches
+        //            List<string> apiPriority = currentUser switch
+        //            {
+        //                "lgt01" => new() { Yulia, Yuri_G, master, Jessica, Daniel },
+        //                "rbtwh" => new() { Jessica, Yuri_G, master, Yulia, Daniel },
+        //                "rbtwh2" => new() { Yuri_G, Jessica, master, Yulia, Daniel },
+        //                _ => new() { master, Jessica, Yuri_G, Yulia, Daniel } // Default case
+        //            };
+
+        //            // Safely pick the first non-blacklisted item, fallback to the first item, or null
+        //            string chosenApi = apiPriority.FirstOrDefault(a => !SessionBlacklist.Contains(a))?? apiPriority.FirstOrDefault();
+
+        //            if (string.IsNullOrEmpty(chosenApi))
+        //            {
+        //                // Handle case where no API tokens were defined at all
+        //                throw new InvalidOperationException("No API credentials available.");
+        //            }
+
+        //            return GetCredsByName(chosenApi, settings);
+        //        }
+
+
+        //        // Helper to keep the switch logic out of the main loop
+        //        private string GetCredsByName(string apiName, AppSettings settings)
+        //        {
+        //            return apiName switch
+        //            {
+        //                "6D3162B8E0F34660BCF256E7BBC3524C" => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}")),
+        //                "6ADFFD01B1B04B10A4F8FD7BCA8631D8" => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}")),
+        //                "AEF3B8E8189A481786598CCCFD16A56A" => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api4Username}:{settings.Api4Password}")),
+        //                "7D4B614B3FD645F584C8661B813B5E98" => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api5Username}:{settings.Api5Password}")),
+        //                _ => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"))
+        //            };
+        //        }
+
+
+        // 1. Blacklist uses friendly names cleanly
         public static HashSet<string> SessionBlacklist = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
 {
-   
+    "Yuri_G"
 };
 
         public string SelectTheCredentialsByLoggedUser(AppSettings settings)
         {
-            // Extract user safely
             string currentUser = WindowsIdentity.GetCurrent().Name.Split('\\').LastOrDefault() ?? string.Empty;
 
-            // Fix the ToString() bug
             if (currentUser.Equals("lgt", StringComparison.OrdinalIgnoreCase))
             {
-                //MessageBox.Show($"Blacklist items: {string.Join(", ", SessionBlacklist)}");
                 this.AppendLog($"Blacklisted users: {string.Join(", ", SessionBlacklist)}\n", Color.Red);
             }
 
-            // Define priority tokens cleanly
+            // 2. Define tokens cleanly in one single place
             string Yulia = "6D3162B8E0F34660BCF256E7BBC3524C";
             string Yuri_G = "6ADFFD01B1B04B10A4F8FD7BCA8631D8";
             string master = "AEF3B8E8189A481786598CCCFD16A56A";
             string Jessica = "7D4B614B3FD645F584C8661B813B5E98";
             string Daniel = "B59C4AB83FBB4784A3EBA712AF023DE9";
 
-            // Switch statements are easier to read than nested if/else for string matches
+            // 3. Simple local mapping function to translate the GUID back to a string name
+            string GetNameFromToken(string token) => token switch
+            {
+                _ when token == Yulia => nameof(Yulia),
+                _ when token == Yuri_G => nameof(Yuri_G),
+                _ when token == master => nameof(master),
+                _ when token == Jessica => nameof(Jessica),
+                _ when token == Daniel => nameof(Daniel),
+                _ => string.Empty
+            };
+
             List<string> apiPriority = currentUser switch
             {
                 "lgt01" => new() { Yulia, Yuri_G, master, Jessica, Daniel },
                 "rbtwh" => new() { Jessica, Yuri_G, master, Yulia, Daniel },
                 "rbtwh2" => new() { Yuri_G, Jessica, master, Yulia, Daniel },
-                _ => new() { master, Jessica, Yuri_G, Yulia, Daniel } // Default case
+                _ => new() { master, Jessica, Yuri_G, Yulia, Daniel }
             };
 
-            // Safely pick the first non-blacklisted item, fallback to the first item, or null
-            string chosenApi = apiPriority.FirstOrDefault(a => !SessionBlacklist.Contains(a))?? apiPriority.FirstOrDefault();
+            // 4. Resolve the name before checking the blacklist
+            string chosenApi = apiPriority.FirstOrDefault(token => !SessionBlacklist.Contains(GetNameFromToken(token)))
+                            ?? apiPriority.FirstOrDefault();
 
             if (string.IsNullOrEmpty(chosenApi))
             {
-                // Handle case where no API tokens were defined at all
                 throw new InvalidOperationException("No API credentials available.");
             }
 
             return GetCredsByName(chosenApi, settings);
         }
 
-
-        // Helper to keep the switch logic out of the main loop
-        private string GetCredsByName(string apiName, AppSettings settings)
+        // 5. Cleaned up helper utilizing the actual local variables concept via switch mapping
+        private string GetCredsByName(string apiToken, AppSettings settings)
         {
-            return apiName switch
+            // Use clear pattern matching instead of duplicating magic strings
+            var (user, pass) = apiToken switch
             {
-                "6D3162B8E0F34660BCF256E7BBC3524C" => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}")),
-                "6ADFFD01B1B04B10A4F8FD7BCA8631D8" => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}")),
-                "AEF3B8E8189A481786598CCCFD16A56A" => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api4Username}:{settings.Api4Password}")),
-                "7D4B614B3FD645F584C8661B813B5E98" => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api5Username}:{settings.Api5Password}")),
-                _ => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"))
+                "6D3162B8E0F34660BCF256E7BBC3524C" => (settings.Api2Username, settings.Api2Password), // Yulia
+                "6ADFFD01B1B04B10A4F8FD7BCA8631D8" => (settings.Api3Username, settings.Api3Password), // Yuri_G
+                "AEF3B8E8189A481786598CCCFD16A56A" => (settings.Api4Username, settings.Api4Password), // master
+                "7D4B614B3FD645F584C8661B813B5E98" => (settings.Api5Username, settings.Api5Password), // Jessica
+                _ => (settings.ApiUsername, settings.ApiPassword)   // Daniel / Default
             };
+
+            return Convert.ToBase64String(Encoding.ASCII.GetBytes($"{user}:{pass}"));
         }
-      
+
         public string GetApiName(string credentials, AppSettings settings)
         {
             try
