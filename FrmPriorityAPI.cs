@@ -5171,10 +5171,34 @@ namespace WH_Panel
 
             int leftoverQty = originalQty - splitQty;
 
-            var selectedRowDW1 = dataGridView1.SelectedRows[0]; // Use dataGridView1 instead of dataGridView2
-            string partName = selectedRowDW1.Cells["PARTNAME"].Value.ToString();
-            string mnfPartName = selectedRowDW1.Cells["MNFPARTNAME"].Value.ToString();
-            string partDes = selectedRowDW1.Cells["PARTDES"].Value.ToString();
+            //var selectedRowDW1 = dataGridView1.SelectedRows[0]; // Use dataGridView1 instead of dataGridView2
+
+
+
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("The parent item selection in the primary grid was lost. Please reselect the item and try again.", "Selection Lost", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+
+            //string partName = selectedRowDW1.Cells["PARTNAME"].Value.ToString();
+            //string mnfPartName = selectedRowDW1.Cells["MNFPARTNAME"].Value.ToString();
+            //string partDes = selectedRowDW1.Cells["PARTDES"].Value.ToString();
+
+            var selectedRowDW1 = dataGridView1.SelectedRows[0];
+            string partName = selectedRowDW1.Cells["PARTNAME"].Value?.ToString() ?? string.Empty;
+            string mnfPartName = selectedRowDW1.Cells["MNFPARTNAME"].Value?.ToString() ?? string.Empty;
+            string partDes = selectedRowDW1.Cells["PARTDES"].Value?.ToString() ?? string.Empty;
+
+            if (string.IsNullOrEmpty(partName))
+            {
+                MessageBox.Show("Selected part data is invalid.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+
+
 
             // Create the outgoing transaction for the original item
             TDocument outgoingTransaction = new TDocument
