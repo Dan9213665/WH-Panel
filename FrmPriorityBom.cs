@@ -476,9 +476,9 @@ namespace WH_Panel
             dgwBom.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
 
             // Safe, production-tested static widths to prevent clipping
-            dgwBom.Columns["PARTNAME"].Width = 200; // Plenty of room for standard IPNs
-            dgwBom.Columns["MFPN"].Width = 200;     // Accounts for longer manufacturer part numbers
-            dgwBom.Columns["PARTDES"].Width = 300;  // Longest field, given maximum breathing room
+            dgwBom.Columns["PARTNAME"].Width = 180; // Plenty of room for standard IPNs
+            dgwBom.Columns["MFPN"].Width = 190;     // Accounts for longer manufacturer part numbers
+            dgwBom.Columns["PARTDES"].Width = 200;  // Longest field, given maximum breathing room
             dgwBom.Columns["TBALANCE"].Width = 60;  // Numeric only
             dgwBom.Columns["QUANT"].Width = 60;     // Numeric only
             dgwBom.Columns["CQUANT"].Width = 75;    // Numeric only
@@ -487,7 +487,8 @@ namespace WH_Panel
             dgwBom.Columns["ALT"].Width = 150;
             dgwBom.Columns["LEFTOVERS"].Width = 95;
             dgwBom.Columns["TRANS"].Width = 100;
-
+            dgwBom.Columns["KLINE"].Width = 60;
+            dgwBom.Columns["KITLINE"].Width = 60;
             //// Hide background keys entirely
             //dgwBom.Columns["KLINE"].Visible = false;
             //dgwBom.Columns["KITLINE"].Visible = false;
