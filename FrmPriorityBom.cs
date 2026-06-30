@@ -2883,6 +2883,8 @@ namespace WH_Panel
                             txtbINPUTqty.Clear();
                             txtbInputIPN.Focus();
                             UpdateSimulationLabel();
+                            UpdateProgressLabel();
+                            progressBar1.Update();
                             //ClearFilters();
 
                         }
