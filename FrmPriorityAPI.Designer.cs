@@ -720,8 +720,8 @@
             tableLayoutPanel3.RowCount = 4;
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 60F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 50.96154F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 29.0384617F));
             tableLayoutPanel3.Size = new Size(1393, 520);
             tableLayoutPanel3.TabIndex = 2;
             // 
@@ -974,7 +974,7 @@
             gpbxRequested.Margin = new Padding(3, 4, 3, 4);
             gpbxRequested.Name = "gpbxRequested";
             gpbxRequested.Padding = new Padding(3, 4, 3, 4);
-            gpbxRequested.Size = new Size(206, 304);
+            gpbxRequested.Size = new Size(206, 257);
             gpbxRequested.TabIndex = 19;
             gpbxRequested.TabStop = false;
             gpbxRequested.Text = "Requested in kits";
@@ -992,7 +992,7 @@
             tableLayoutPanel11.RowCount = 2;
             tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Percent, 14.0350876F));
             tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Percent, 85.96491F));
-            tableLayoutPanel11.Size = new Size(200, 276);
+            tableLayoutPanel11.Size = new Size(200, 229);
             tableLayoutPanel11.TabIndex = 0;
             // 
             // chkBSearchKits
@@ -1002,20 +1002,22 @@
             chkBSearchKits.Location = new Point(3, 4);
             chkBSearchKits.Margin = new Padding(3, 4, 3, 4);
             chkBSearchKits.Name = "chkBSearchKits";
-            chkBSearchKits.Size = new Size(194, 30);
+            chkBSearchKits.Size = new Size(194, 24);
             chkBSearchKits.TabIndex = 0;
             chkBSearchKits.Text = "Search in kits";
             chkBSearchKits.UseVisualStyleBackColor = true;
             // 
             // flpSerials
             // 
+            flpSerials.AutoScroll = true;
+            flpSerials.AutoSize = true;
             flpSerials.BackColor = Color.Black;
             flpSerials.Dock = DockStyle.Fill;
             flpSerials.FlowDirection = FlowDirection.TopDown;
-            flpSerials.Location = new Point(3, 42);
+            flpSerials.Location = new Point(3, 36);
             flpSerials.Margin = new Padding(3, 4, 3, 4);
             flpSerials.Name = "flpSerials";
-            flpSerials.Size = new Size(194, 230);
+            flpSerials.Size = new Size(194, 189);
             flpSerials.TabIndex = 1;
             // 
             // gpbxOpenPOs
@@ -1023,21 +1025,23 @@
             tableLayoutPanel3.SetColumnSpan(gpbxOpenPOs, 2);
             gpbxOpenPOs.Controls.Add(flpOpenPOs);
             gpbxOpenPOs.Dock = DockStyle.Fill;
-            gpbxOpenPOs.Location = new Point(619, 419);
+            gpbxOpenPOs.Location = new Point(619, 372);
             gpbxOpenPOs.Name = "gpbxOpenPOs";
-            gpbxOpenPOs.Size = new Size(206, 98);
+            gpbxOpenPOs.Size = new Size(206, 145);
             gpbxOpenPOs.TabIndex = 20;
             gpbxOpenPOs.TabStop = false;
             gpbxOpenPOs.Text = "OPEN Purchase Order(s) for IPN";
             // 
             // flpOpenPOs
             // 
+            flpOpenPOs.AutoScroll = true;
+            flpOpenPOs.AutoSize = true;
             flpOpenPOs.BackColor = Color.Black;
             flpOpenPOs.Dock = DockStyle.Fill;
             flpOpenPOs.ForeColor = SystemColors.ActiveBorder;
             flpOpenPOs.Location = new Point(3, 23);
             flpOpenPOs.Name = "flpOpenPOs";
-            flpOpenPOs.Size = new Size(200, 72);
+            flpOpenPOs.Size = new Size(200, 119);
             flpOpenPOs.TabIndex = 0;
             // 
             // tableLayoutPanel4
@@ -1336,6 +1340,7 @@
             tableLayoutPanel11.ResumeLayout(false);
             tableLayoutPanel11.PerformLayout();
             gpbxOpenPOs.ResumeLayout(false);
+            gpbxOpenPOs.PerformLayout();
             tableLayoutPanel4.ResumeLayout(false);
             gbxINSERT.ResumeLayout(false);
             tableLayoutPanel5.ResumeLayout(false);
