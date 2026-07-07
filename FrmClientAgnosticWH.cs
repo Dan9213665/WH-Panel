@@ -1336,51 +1336,109 @@ namespace WH_Panel
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
         }
+        //private void FilterStockDataGridView(string IPN)
+        //{
+        //    if (textBox3.Text != string.Empty && stockDTable != null)
+        //    {
+        //        try
+        //        {
+        //            int balance = 0;
+        //            DataView dv = stockDTable.DefaultView;
+        //            //dv.RowFilter = "[IPN] LIKE '%" + IPN + "%'";
+        //            dv.RowFilter = "[IPN] = '" + IPN + "'";
+        //            dataGridView1.DataSource = dv;
+        //            dataGridView1.Update();
+        //            SetSTOCKiewColumsOrder();
+        //            List<int> qtys = new List<int>();
+        //            for (int i = 0; i < dataGridView1.RowCount; i++)
+        //            {
+        //                int qty = 0;
+        //                int result;
+        //                bool prs = int.TryParse(dataGridView1.Rows[i].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString(), out result);
+        //                if (prs)
+        //                {
+        //                    qty = result;
+        //                }
+        //                qtys.Add(qty);
+        //            }
+        //            foreach (int i in qtys)
+        //            {
+        //                balance += i;
+        //            }
+        //            label15.Text = "BALANCE: " + balance;
+        //            if (balance > 0)
+        //                label15.BackColor = Color.LightGreen;
+        //            else if (balance == 0)
+        //                label15.BackColor = Color.IndianRed;
+        //            label15.Update();
+        //        }
+        //        catch (Exception)
+        //        {
+        //            MessageBox.Show("Incorrect search pattern, remove invalid character and try again !");
+        //            throw;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        DataView dv = stockDTable.DefaultView;
+        //        dataGridView1.DataSource = dv;
+        //        dataGridView1.Update();
+        //        SetSTOCKiewColumsOrder();
+        //    }
+        //}
+
         private void FilterStockDataGridView(string IPN)
         {
-            if (textBox3.Text != string.Empty && stockDTable != null)
+            // Ensure the data table isn't null before doing anything
+            if (stockDTable == null) return;
+
+            // Check if textBox3 has a value (assuming this dictates whether we filter or clear filter)
+            if (!string.IsNullOrEmpty(textBox3.Text))
             {
                 try
                 {
-                    int balance = 0;
                     DataView dv = stockDTable.DefaultView;
-                    dv.RowFilter = "[IPN] LIKE '%" + IPN +
-                        "%'";
+
+                    // EXACT MATCH: Escape single quotes to prevent crashes if IPN contains a '
+                    string safeIPN = IPN.Replace("'", "''");
+                    dv.RowFilter = $"[IPN] = '{safeIPN}'";
+
                     dataGridView1.DataSource = dv;
                     dataGridView1.Update();
                     SetSTOCKiewColumsOrder();
-                    List<int> qtys = new List<int>();
-                    for (int i = 0; i < dataGridView1.RowCount; i++)
+
+                    // Calculate balance efficiently using LINQ
+                    int balance = 0;
+                    int stockColumnIndex = dataGridView1.Columns["Stock"]?.Index ?? -1;
+
+                    if (stockColumnIndex != -1)
                     {
-                        int qty = 0;
-                        int result;
-                        bool prs = int.TryParse(dataGridView1.Rows[i].Cells[dataGridView1.Columns["Stock"].Index].Value.ToString(), out result);
-                        if (prs)
+                        for (int i = 0; i < dataGridView1.RowCount; i++)
                         {
-                            qty = result;
+                            var cellValue = dataGridView1.Rows[i].Cells[stockColumnIndex].Value;
+                            if (cellValue != null && int.TryParse(cellValue.ToString(), out int qty))
+                            {
+                                balance += qty;
+                            }
                         }
-                        qtys.Add(qty);
                     }
-                    foreach (int i in qtys)
-                    {
-                        balance += i;
-                    }
+
+                    // Update UI Balance Label
                     label15.Text = "BALANCE: " + balance;
-                    if (balance > 0)
-                        label15.BackColor = Color.LightGreen;
-                    else if (balance == 0)
-                        label15.BackColor = Color.IndianRed;
+                    label15.BackColor = balance > 0 ? Color.LightGreen : Color.IndianRed;
                     label15.Update();
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    MessageBox.Show("Incorrect search pattern, remove invalid character and try again !");
-                    throw;
+                    MessageBox.Show("An error occurred while filtering data: " + ex.Message);
+                    // Consider removing 'throw;' unless you want the entire application to crash here
                 }
             }
             else
             {
+                // Clear filter if textbox is empty
                 DataView dv = stockDTable.DefaultView;
+                dv.RowFilter = string.Empty; // Resets the view to show all records
                 dataGridView1.DataSource = dv;
                 dataGridView1.Update();
                 SetSTOCKiewColumsOrder();
