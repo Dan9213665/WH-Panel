@@ -166,7 +166,6 @@
             // cmbROBxList
             // 
             cmbROBxList.Dock = DockStyle.Fill;
-            cmbROBxList.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbROBxList.Font = new Font("Segoe UI", 12F);
             cmbROBxList.FormattingEnabled = true;
             cmbROBxList.Location = new Point(3, 4);
@@ -668,6 +667,7 @@
             dgwIPNmoves.RowHeadersWidth = 51;
             dgwIPNmoves.Size = new Size(851, 224);
             dgwIPNmoves.TabIndex = 0;
+            dgwIPNmoves.CellMouseDoubleClick += dgwIPNmoves_CellMouseDoubleClick;
             // 
             // groupBox3
             // 

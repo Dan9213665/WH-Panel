@@ -81,6 +81,8 @@ namespace WH_Panel
         private List<Serial> originalSerials; // List to store the original work orders
         private AppSettings settings;
         bool isItemAddedToKit = false;
+        // 1. ADD THIS LINE HERE:
+        private bool isNavigatingKeys = false;
         public string robSerial { get; set; } // Store the selected serial name for later use
 
         // This manages the actual network sockets globally
@@ -91,25 +93,117 @@ namespace WH_Panel
         //private List<WarehouseBalance> warehouseBalances;
         // Define this at class level
         private ContextMenuStrip contextMenuSwitchToAlt;
+        //public FrmPriorityBom()
+        //{
+        //    InitializeComponent();
+        //    this.Load += FrmPriorityBom_Load;
+        //    this.KeyPreview = true; // Set KeyPreview to true
+        //    SetDarkModeColors(this);
+        //    InitializeDataGridView();
+        //    // Set the DrawMode property and handle the DrawItem event
+        //    cmbROBxList.DrawMode = DrawMode.OwnerDrawFixed;
+        //    cmbROBxList.DrawItem += cmbROBxList_DrawItem;
+        //    // Place these inside your Form's constructor or FrmPriorityBom_Load event
+        //    cnkbClosed.CheckedChanged += (s, e) => {
+        //        RefreshComboBoxItems();
+        //    };
+
+        //    cmbROBxList.TextUpdate += (s, e) => {
+        //        string currentText = cmbROBxList.Text;
+
+        //        RefreshComboBoxItems();
+
+        //        // Maintain the user's typed input text and cursor position
+        //        cmbROBxList.Text = currentText;
+        //        cmbROBxList.SelectionStart = currentText.Length;
+
+        //        // Keep the dropdown open so they can see results shrinking as they type
+        //        cmbROBxList.DroppedDown = true;
+        //    };
+        //    // Initialize the ToolTip and set up the delay for the ToolTip.
+        //    toolTip = new ToolTip();
+        //    toolTip.AutoPopDelay = 5000;
+        //    toolTip.InitialDelay = 1000;
+        //    toolTip.ReshowDelay = 500;
+        //    toolTip.ShowAlways = true;
+        //    // Set up the ToolTip text for the btnGetMFNs button.
+        //    toolTip.SetToolTip(btnGetMFNs, "Click to fetch Manufacturer Part Numbers (MFPNs) or right-click to fetch ALTs.");
+        //    // Handle the CellFormatting event
+        //    dgwBom.CellFormatting += dgwBom_CellFormatting;
+        //    AttachTextBoxEvents(this);
+
+        //    contextMenuSwitchToAlt = new ContextMenuStrip();
+        //    var switchToAltItem = new ToolStripMenuItem("SWITCH TO ALT");
+        //    switchToAltItem.Click += SwitchToAltItem_Click;
+        //    contextMenuSwitchToAlt.Items.Add(switchToAltItem);
+
+
+        //}
+
         public FrmPriorityBom()
         {
             InitializeComponent();
             this.Load += FrmPriorityBom_Load;
-            this.KeyPreview = true; // Set KeyPreview to true
+            this.KeyPreview = true;
             SetDarkModeColors(this);
             InitializeDataGridView();
-            // Set the DrawMode property and handle the DrawItem event
+
             cmbROBxList.DrawMode = DrawMode.OwnerDrawFixed;
             cmbROBxList.DrawItem += cmbROBxList_DrawItem;
-            // Initialize the ToolTip and set up the delay for the ToolTip.
+
+            // Checkbox event
+            cnkbClosed.CheckedChanged += (s, e) => {
+                RefreshComboBoxItems();
+            };
+
+            // 1. ADDED KEYDOWN EVENT FOR ARROW KEYS & ENTER
+            cmbROBxList.KeyDown += (s, e) => {
+                if (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down)
+                {
+                    isNavigatingKeys = true;
+                }
+                else if (e.KeyCode == Keys.Enter)
+                {
+                    if (cmbROBxList.SelectedIndex >= 0)
+                    {
+                        cmbROBxList.DroppedDown = false;
+                        e.SuppressKeyPress = true;
+                        e.Handled = true;
+                    }
+                    else if (cmbROBxList.Items.Count > 0)
+                    {
+                        cmbROBxList.SelectedIndex = 0;
+                        cmbROBxList.DroppedDown = false;
+                        e.SuppressKeyPress = true;
+                        e.Handled = true;
+                    }
+                }
+                else
+                {
+                    isNavigatingKeys = false;
+                }
+            };
+
+            // Your existing TextUpdate, modified slightly to respect arrow keys
+            cmbROBxList.TextUpdate += (s, e) => {
+                if (isNavigatingKeys) return; // Ignore if browsing via arrows
+
+                string currentText = cmbROBxList.Text;
+                RefreshComboBoxItems();
+
+                cmbROBxList.Text = currentText;
+                cmbROBxList.SelectionStart = currentText.Length;
+                cmbROBxList.DroppedDown = true;
+            };
+
+            // Tooltip and other initializations...
             toolTip = new ToolTip();
             toolTip.AutoPopDelay = 5000;
             toolTip.InitialDelay = 1000;
             toolTip.ReshowDelay = 500;
             toolTip.ShowAlways = true;
-            // Set up the ToolTip text for the btnGetMFNs button.
             toolTip.SetToolTip(btnGetMFNs, "Click to fetch Manufacturer Part Numbers (MFPNs) or right-click to fetch ALTs.");
-            // Handle the CellFormatting event
+
             dgwBom.CellFormatting += dgwBom_CellFormatting;
             AttachTextBoxEvents(this);
 
@@ -117,8 +211,6 @@ namespace WH_Panel
             var switchToAltItem = new ToolStripMenuItem("SWITCH TO ALT");
             switchToAltItem.Click += SwitchToAltItem_Click;
             contextMenuSwitchToAlt.Items.Add(switchToAltItem);
-
-
         }
         private void FrmPriorityBom_Load(object sender, EventArgs e)
         {
@@ -190,6 +282,66 @@ namespace WH_Panel
             public int PART { get; set; }
             public string MNFPARTNAME { get; set; }
         }
+        //private async void GetRobWosList()
+        //{
+        //    string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL";
+        //    using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
+        //    {
+        //        try
+        //        {
+        //            // Set the request headers if needed
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            // Set the Authorization header
+        //            //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
+        //            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+        //            string usedUser = ApiHelper.AuthenticateClient(client);
+        //            // string usedUser = ApiHelper.AuthenticateClient(client);
+        //            RegisterTransaction(usedUser); // Log this transaction timestamp
+        //            // Make the HTTP GET request
+        //            HttpResponseMessage response = await client.GetAsync(url);
+        //            response.EnsureSuccessStatusCode();
+        //            // Read the response content
+        //            string responseBody = await response.Content.ReadAsStringAsync();
+        //            // Parse the JSON response
+        //            var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+        //            var serials = apiResponse["value"].ToObject<List<Serial>>();
+        //            // Store the original work orders
+        //            originalSerials = serials ?? new List<Serial>();
+        //            // Populate the dropdown with the data
+        //            cmbROBxList.Items.Clear();
+        //            foreach (var serial in serials)
+        //            {
+        //                // Hide work orders with status "נסגרה" if the checkbox is not checked
+        //                if ((serial.SERIALSTATUSDES != "נסגרה" && serial.SERIALSTATUSDES != "קיט מלא") || cnkbClosed.Checked)
+        //                {
+        //                    cmbROBxList.Items.Add(serial);
+        //                }
+        //            }
+        //            lblLoading.BackColor = Color.Green;
+        //            lblLoading.Text = "Data Loaded";
+        //            cmbROBxList.DroppedDown = true;
+        //            // Attach event handler to the checkbox
+        //            cnkbClosed.CheckedChanged += (s, e) => FilterWorkOrders(serials);
+        //        }
+        //        catch (HttpRequestException ex)
+        //        {
+
+        //            SafeAppendLog($"Request error: {ex.Message}");
+
+        //        }
+        //        catch (Exception ex)
+        //        {
+
+        //            SafeAppendLog($"Request error: {ex.Message}", Color.Red);
+
+        //        }
+        //    }
+        //}
+
+
         private async void GetRobWosList()
         {
             string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL";
@@ -197,60 +349,67 @@ namespace WH_Panel
             {
                 try
                 {
-                    // Set the request headers if needed
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    // Set the Authorization header
-                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
-                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
 
                     string usedUser = ApiHelper.AuthenticateClient(client);
-                    // string usedUser = ApiHelper.AuthenticateClient(client);
-                    RegisterTransaction(usedUser); // Log this transaction timestamp
-                    // Make the HTTP GET request
+                    RegisterTransaction(usedUser);
+
                     HttpResponseMessage response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
-                    // Read the response content
+
                     string responseBody = await response.Content.ReadAsStringAsync();
-                    // Parse the JSON response
                     var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
                     var serials = apiResponse["value"].ToObject<List<Serial>>();
-                    // Store the original work orders
+
+                    // Store the original work orders globally
                     originalSerials = serials ?? new List<Serial>();
-                    // Populate the dropdown with the data
-                    cmbROBxList.Items.Clear();
-                    foreach (var serial in serials)
-                    {
-                        // Hide work orders with status "נסגרה" if the checkbox is not checked
-                        if ((serial.SERIALSTATUSDES != "נסגרה" && serial.SERIALSTATUSDES != "קיט מלא") || cnkbClosed.Checked)
-                        {
-                            cmbROBxList.Items.Add(serial);
-                        }
-                    }
+
+                    // Disable native auto-complete so it doesn't conflict with our custom real-time filter
+                    cmbROBxList.AutoCompleteMode = AutoCompleteMode.None;
+
+                    // Initially populate the combo box
+                    RefreshComboBoxItems();
+
                     lblLoading.BackColor = Color.Green;
                     lblLoading.Text = "Data Loaded";
                     cmbROBxList.DroppedDown = true;
-                    // Attach event handler to the checkbox
-                    cnkbClosed.CheckedChanged += (s, e) => FilterWorkOrders(serials);
                 }
                 catch (HttpRequestException ex)
                 {
-
                     SafeAppendLog($"Request error: {ex.Message}");
-
                 }
                 catch (Exception ex)
                 {
-
                     SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-
                 }
             }
         }
 
+        // Helper method to apply status filtering based on checkbox
+        private void RefreshComboBoxItems()
+        {
+            if (originalSerials == null) return;
 
+            string filterText = cmbROBxList.Text;
 
+            cmbROBxList.BeginUpdate();
+            cmbROBxList.Items.Clear();
+
+            foreach (var serial in originalSerials)
+            {
+                // 1. First, check status rules (Hide closed unless checkbox checked)
+                if ((serial.SERIALSTATUSDES != "נסגרה" && serial.SERIALSTATUSDES != "קיט מלא") || cnkbClosed.Checked)
+                {
+                    // 2. Second, apply search text filter if user typed something
+                    if (string.IsNullOrEmpty(filterText) || serial.ToString().Contains(filterText, StringComparison.OrdinalIgnoreCase))
+                    {
+                        cmbROBxList.Items.Add(serial);
+                    }
+                }
+            }
+            cmbROBxList.EndUpdate();
+        }
 
         private void FilterWorkOrders(List<Serial> serials)
         {
@@ -1957,7 +2116,7 @@ namespace WH_Panel
                 string partName = row.Cells["PARTNAME"].Value.ToString();
                 //string partUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART?$filter=PARTNAME eq '{partName}'&$expand=PARTALT_SUBFORM";
                 string partUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PART?$filter= PARTNAME eq '{partName}'&$expand=PARTALT_SUBFORM($select=ALTNAME)";
-                using (HttpClient client = new HttpClient(_handler, disposeHandler: false))   
+                using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
                 {
                     try
                     {
@@ -3109,7 +3268,7 @@ namespace WH_Panel
 
                         filteredRow.Cells["LEFTOVERS"].Value = leftovers;
 
-                        
+
                     }
                     else
                     {
@@ -4880,6 +5039,105 @@ namespace WH_Panel
         private void button1_Click(object sender, EventArgs e)
         {
             //
+        }
+
+        private void dgwIPNmoves_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.RowIndex >= 0) // Ensure the row index is valid
+            {
+                // Get the selected row from dgwIPNmoves
+                var selectedRowMoves = dgwIPNmoves.Rows[e.RowIndex];
+
+                // Get the selected row from dgwBom
+                var selectedRowBom = dgwBom.CurrentRow;
+
+                if (selectedRowBom != null)
+                {
+                    // Extract values safely from dgwBom using string column names
+                    string partName = selectedRowBom.Cells["PARTNAME"].Value?.ToString() ?? "";
+                    string mfpn = selectedRowBom.Cells["MFPN"].Value?.ToString() ?? "";
+                    string partDes = selectedRowBom.Cells["PARTDES"].Value?.ToString() ?? "";
+
+                    // FIX: Match the exact position from Rows.Add (Index 5 is trans.TQUANT)
+                    int balance = 0;
+                    if (selectedRowMoves.Cells[5].Value != null)
+                    {
+                        int.TryParse(selectedRowMoves.Cells[5].Value.ToString(), out balance);
+                    }
+
+                    // Create the PR_PART object
+                    PR_PART part = new PR_PART
+                    {
+                        PARTNAME = partName,
+                        MNFPARTNAME = mfpn,
+                        PARTDES = partDes,
+                        QTY = balance
+                    };
+
+                    // FIX: Match the exact position from Rows.Add (Index 0 is the date)
+                    string originalDtime = selectedRowMoves.Cells[0].Value?.ToString();
+
+                    // Use IsNullOrWhiteSpace to catch null, "", and " "
+                    if (!string.IsNullOrWhiteSpace(originalDtime))
+                    {
+                        printStickerDuplicate(part, originalDtime);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Wait for the DATE to load");
+                    }
+                }
+            }
+        }
+
+        private void printStickerDuplicate(PR_PART wHitem, string originalDateTime)
+        {
+            try
+            {
+                string userName = Environment.UserName;
+                string fpst = @"C:\\Users\\" + userName + "\\Desktop\\Print_Stickers.xlsx";
+                if (userName == "lgt")
+                {
+                    string message = $"PN:\t{wHitem.PARTNAME}\n" +
+                                     $"MFPN:\t{wHitem.MNFPARTNAME}\n" +
+                                     $"ItemDesc:\t{wHitem.PARTDES}\n" +
+                                     $"QTY:\t{wHitem.QTY}\n" +
+                                     $"Updated_on:\t{originalDateTime}";
+                    MessageBox.Show(message, "Printed sticker", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                }
+                else
+                {
+                    string thesheetName = "Sheet1";
+                    string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fpst + "; Extended Properties=\"Excel 12.0;HDR=YES;IMEX=0\"";
+                    using (OleDbConnection conn = new OleDbConnection(constr))
+                    {
+                        OleDbCommand cmd = new OleDbCommand();
+                        cmd.Connection = conn;
+                        cmd.CommandType = CommandType.Text;
+                        cmd.CommandText = "UPDATE [" + thesheetName + "$] SET PN = @PN, MFPN = @MFPN, ItemDesc = @ItemDesc, QTY = @QTY, UPDATEDON = @Updated_on";
+                        cmd.Parameters.AddWithValue("@PN", wHitem.PARTNAME);
+                        cmd.Parameters.AddWithValue("@MFPN", wHitem.MNFPARTNAME);
+                        cmd.Parameters.AddWithValue("@ItemDesc", wHitem.PARTDES);
+                        cmd.Parameters.AddWithValue("@QTY", wHitem.QTY);
+                        cmd.Parameters.AddWithValue("@Updated_on", originalDateTime);
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                        conn.Close();
+                    }
+
+                    InputLanguage.CurrentInputLanguage = InputLanguage.FromCulture(new System.Globalization.CultureInfo("en-US"));
+                    Microsoft.VisualBasic.Interaction.AppActivate("PN_STICKER_2022.btw - BarTender Designer");
+                    SendKeys.SendWait("^p");
+                    SendKeys.SendWait("{Enter}");
+                    Microsoft.VisualBasic.Interaction.AppActivate("Imperium Tabula Principalis");
+
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Sticker printing failed: " + e.Message);
+            }
         }
     }
 }
