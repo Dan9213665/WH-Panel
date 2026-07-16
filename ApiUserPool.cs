@@ -17,6 +17,7 @@ internal static class ApiUserPool
         var blacklist = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             //"6ADFFD01B1B04B10A4F8FD7BCA8631D8","7D4B614B3FD645F584C8661B813B5E98"//,"AEF3B8E8189A481786598CCCFD16A56A" // Add any other exhausted users here
+            "AEF3B8E8189A481786598CCCFD16A56A"
         };
 
         lock (_locker)
