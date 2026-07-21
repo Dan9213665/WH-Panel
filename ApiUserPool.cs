@@ -13,7 +13,7 @@ internal static class ApiUserPool
         if (users == null || users.Count == 0)
             throw new ArgumentException("User list cannot be null or empty.");
 
-        // --- TEMPORARY BLACKLIST FOR APRIL ---
+        // --- TEMPORARY BLACKLIST ---
         var blacklist = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             //"6ADFFD01B1B04B10A4F8FD7BCA8631D8","7D4B614B3FD645F584C8661B813B5E98"//,"AEF3B8E8189A481786598CCCFD16A56A" // Add any other exhausted users here

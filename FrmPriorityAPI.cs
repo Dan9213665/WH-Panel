@@ -3934,23 +3934,63 @@ namespace WH_Panel
                         _SUPNAME = "MFG";
                         canPrint = true;
                     }
+                    //else if (rbtFTK.Checked)
+                    //{
+                    //    _BOOKNUM = txtbINdoc.Text;
+                    //    _SUPNAME = null;
+
+                    //    var checkedBoxes = flpOpenPOs.Controls
+                    //                               .OfType<CheckBox>()
+                    //                               .Where(cb => cb.Checked)
+                    //                               .ToList();
+
+                    //    if (checkedBoxes.Count > 1)
+                    //    {
+                    //        MessageBox.Show("Please select only one Purchase Order.", "Multiple Selection");
+                    //        return;
+                    //    }
+
+                    //    var selectedPO = checkedBoxes.FirstOrDefault()?.Tag as dynamic;
+
+                    //    if (selectedPO != null)
+                    //    {
+                    //        _ORDNAME = selectedPO.OrdName;
+                    //        canPrint = true;
+                    //    }
+                    //    else
+                    //    {
+                    //        MessageBox.Show("Please select a purchase order.", "No Selection",
+                    //            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    //        return;
+                    //    }
+                    //}
+
                     else if (rbtFTK.Checked)
                     {
                         _BOOKNUM = txtbINdoc.Text;
                         _SUPNAME = null;
 
-                        var checkedBoxes = flpOpenPOs.Controls
-                                                   .OfType<CheckBox>()
-                                                   .Where(cb => cb.Checked)
-                                                   .ToList();
+                        var selectedCheckBoxes = flpOpenPOs.Controls
+                                                           .OfType<CheckBox>()
+                                                           .Where(cb => cb.Checked)
+                                                           .ToList();
 
-                        if (checkedBoxes.Count > 1)
+                        if (selectedCheckBoxes.Count == 0)
                         {
-                            MessageBox.Show("Please select only one Purchase Order.", "Multiple Selection");
+                            MessageBox.Show("Please select a purchase order.", "No Selection",
+                                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
                             return;
                         }
 
-                        var selectedPO = checkedBoxes.FirstOrDefault()?.Tag as dynamic;
+                        if (selectedCheckBoxes.Count > 1)
+                        {
+                            MessageBox.Show("Please select only one Purchase Order.", "Multiple Selection",
+                                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            return;
+                        }
+
+                        // Safely extract Tag as dynamic without pattern matching
+                        dynamic selectedPO = selectedCheckBoxes[0].Tag;
 
                         if (selectedPO != null)
                         {
@@ -3959,8 +3999,8 @@ namespace WH_Panel
                         }
                         else
                         {
-                            MessageBox.Show("Please select a purchase order.", "No Selection",
-                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            MessageBox.Show("Selected item does not contain valid PO data.", "Data Error",
+                                            MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return;
                         }
                     }
