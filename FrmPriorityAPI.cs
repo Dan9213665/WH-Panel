@@ -437,7 +437,7 @@ namespace WH_Panel
         {
             public string PARTNAME { get; set; }
 
-            public int? OLINE { get; set; }
+            public int? ORDI { get; set; }
             public int TQUANT { get; set; }
             public int QUANT { get; set; }
             public string PACKCODE { get; set; }
@@ -665,7 +665,9 @@ namespace WH_Panel
                             string apiUrl = $"{baseUrl}/DOCUMENTS_P";
                             string jsonPayload = JsonConvert.SerializeObject(document);
                             var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+                            
                             //MessageBox.Show(jsonPayload, "Raw JSON Payload");
+
                             HttpResponseMessage response = await client.PostAsync(apiUrl, content);
 
                             if (response.IsSuccessStatusCode)
@@ -3902,7 +3904,7 @@ namespace WH_Panel
                     string _OWNERLOGIN = ""; //"Yuri_G";
                     string _SUPNAME = string.Empty;
                     string _ORDNAME = string.Empty;
-                    int? _OLINE=null;
+                    int? _ORDI= null;
                     if (rbtIN.Checked)
                     {
                         if (txtbINdoc.Text == string.Empty)
@@ -3998,8 +4000,10 @@ namespace WH_Panel
 
                         if (selectedPO != null)
                         {
+                            // <--- ADD THIS LOG TO VERIFY EXTRACTION --->
+                            AppendLog($"[DEBUG SELECT] UI Text: '{selectedCheckBoxes[0].Text}' | Extracted OrdName: {selectedPO.OrdName}, ORDI: {selectedPO.ORDI}");
                             _ORDNAME = Convert.ToString(selectedPO.OrdName);
-                            _OLINE = Convert.ToInt32(selectedPO.KLine);
+                            _ORDI = Convert.ToInt32(selectedPO.ORDI);
                             canPrint = true;
                         }
                         else
@@ -4057,7 +4061,7 @@ namespace WH_Panel
                             {
                                 PARTNAME = txtbInputIPN.Text,
                                 QUANT = int.Parse(txtbInputQty.Text),
-                                OLINE = _OLINE,
+                                ORDI = _ORDI,
                                 PACKCODE = cmbPackCode.SelectedItem != null ? cmbPackCode.SelectedItem.ToString() : "Bag",
                                 UNITNAME = "יח'"
                             }
@@ -6033,7 +6037,7 @@ namespace WH_Panel
             string safePartName = partName.Replace("'", "''"); // escape quotes for OData
 
             // Added KLINE to $select
-            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART?$filter=PARTNAME eq '{safePartName}'&$select=PARTNAME&$expand=OPENPARTPORDERS_SUBFORM($select=ORDNAME,TBALANCE,KLINE)";
+            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART?$filter=PARTNAME eq '{safePartName}'&$select=PARTNAME&$expand=OPENPARTPORDERS_SUBFORM($select=ORDNAME,TBALANCE,ORDI)";
             AppendLog($"Request URL: {url}");
 
             using (HttpClient client = new HttpClient())
@@ -6073,7 +6077,7 @@ namespace WH_Panel
                         {
                             OrdName = po["ORDNAME"]?.ToString(),
                             Balance = po["TBALANCE"]?.ToString(),
-                            KLine = po["KLINE"] != null ? Convert.ToInt32(po["KLINE"]) : 0
+                            ORDI = po["ORDI"] != null ? Convert.ToInt32(po["ORDI"]) : 0
                         })
                         .Where(po => !string.IsNullOrEmpty(po.OrdName))
                         .ToList();
@@ -6089,7 +6093,7 @@ namespace WH_Panel
                         foreach (var po in poList)
                         {
                             // Include Line number in text label
-                            string cbText = $"{po.OrdName} [Line {po.KLine}] (Qty: {po.Balance ?? "0"})";
+                            string cbText = $"{po.OrdName} [Line {po.ORDI}] (Qty: {po.Balance ?? "0"})";  //
                             AppendLog("Adding checkbox: " + cbText);
 
                             CheckBox cb = new CheckBox
