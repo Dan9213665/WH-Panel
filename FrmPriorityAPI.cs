@@ -372,6 +372,7 @@ namespace WH_Panel
             public string TYPE { get; set; }
             public DateTimeOffset CURDATE { get; set; }
             public string ORDNAME { get; set; }
+
             public string SUPNAME { get; set; }
             public string CDES { get; set; }
             public string NAME { get; set; }
@@ -435,6 +436,8 @@ namespace WH_Panel
         public class TransOrder
         {
             public string PARTNAME { get; set; }
+
+            public int? OLINE { get; set; }
             public int TQUANT { get; set; }
             public int QUANT { get; set; }
             public string PACKCODE { get; set; }
@@ -662,7 +665,7 @@ namespace WH_Panel
                             string apiUrl = $"{baseUrl}/DOCUMENTS_P";
                             string jsonPayload = JsonConvert.SerializeObject(document);
                             var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-
+                            //MessageBox.Show(jsonPayload, "Raw JSON Payload");
                             HttpResponseMessage response = await client.PostAsync(apiUrl, content);
 
                             if (response.IsSuccessStatusCode)
@@ -3899,6 +3902,7 @@ namespace WH_Panel
                     string _OWNERLOGIN = ""; //"Yuri_G";
                     string _SUPNAME = string.Empty;
                     string _ORDNAME = string.Empty;
+                    int? _OLINE=null;
                     if (rbtIN.Checked)
                     {
                         if (txtbINdoc.Text == string.Empty)
@@ -3994,7 +3998,8 @@ namespace WH_Panel
 
                         if (selectedPO != null)
                         {
-                            _ORDNAME = selectedPO.OrdName;
+                            _ORDNAME = Convert.ToString(selectedPO.OrdName);
+                            _OLINE = Convert.ToInt32(selectedPO.KLine);
                             canPrint = true;
                         }
                         else
@@ -4052,6 +4057,7 @@ namespace WH_Panel
                             {
                                 PARTNAME = txtbInputIPN.Text,
                                 QUANT = int.Parse(txtbInputQty.Text),
+                                OLINE = _OLINE,
                                 PACKCODE = cmbPackCode.SelectedItem != null ? cmbPackCode.SelectedItem.ToString() : "Bag",
                                 UNITNAME = "יח'"
                             }
@@ -5878,14 +5884,140 @@ namespace WH_Panel
 
 
 
+        //private async Task<bool> GetTheOpenPOforTheIPN()
+        //{
+        //    AppendLog("txtbInputQty_Enter triggered.");
+        //    gpbxOpenPOs.Text = "OPEN Purchase Order(s) for IPN";
+        //    if (string.IsNullOrEmpty(txtbInputIPN.Text))
+        //    {
+        //        AppendLog("txtbInputIPN is empty. Exiting.");
+
+        //        return false;
+        //    }
+
+        //    if (!rbtFTK.Checked)
+        //    {
+        //        AppendLog("rbtFTK is not checked. Exiting.");
+        //        return false;
+        //    }
+
+        //    AppendLog($"txtbInputIPN: {txtbInputIPN.Text}, rbtFTK checked: {rbtFTK.Checked}");
+
+        //    string partName = txtbInputIPN.Text;
+        //    string safePartName = partName.Replace("'", "''"); // escape quotes for OData
+
+        //    string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART?$filter=PARTNAME eq '{safePartName}'&$select=PARTNAME&$expand=OPENPARTPORDERS_SUBFORM($select=ORDNAME,TBALANCE)";
+        //    AppendLog($"Request URL: {url}");
+
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        try
+        //        {
+        //            var sw = System.Diagnostics.Stopwatch.StartNew();
+
+        //            AppendLog("Setting headers and authenticating...");
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            string usedUser = ApiHelper.AuthenticateClient(client);
+        //            AppendLog($"Authenticated user: {usedUser}");
+
+        //            AppendLog("Sending GET request...");
+        //            HttpResponseMessage response = await client.GetAsync(url);
+        //            AppendLog($"Response received. Status code: {response.StatusCode}");
+
+        //            response.EnsureSuccessStatusCode();
+
+        //            string responseBody = await response.Content.ReadAsStringAsync();
+        //            AppendLog($"Response body length: {responseBody.Length}");
+
+        //            var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+        //            AppendLog("JSON deserialized.");
+
+        //            var part = apiResponse["value"]?.FirstOrDefault();
+        //            if (part == null)
+        //            {
+        //                AppendLog("No parts returned from API.");
+        //                return false;
+        //            }
+
+        //            var poList = part["OPENPARTPORDERS_SUBFORM"]?
+        //                .Select(po => new
+        //                {
+        //                    OrdName = po["ORDNAME"]?.ToString(),
+        //                    Balance = po["TBALANCE"]?.ToString()
+        //                })
+        //                .Where(po => !string.IsNullOrEmpty(po.OrdName))
+        //                .ToList();
+
+        //            // clear previous display
+        //            flpOpenPOs.Controls.Clear();
+
+        //            if (poList != null && poList.Any())
+        //            {
+        //                AppendLog($"Found {poList.Count} open POs.");
+        //                gpbxOpenPOs.Text = "OPEN Purchase Order(s) for " + partName;
+        //                foreach (var po in poList)
+        //                {
+        //                    string cbText = $"{po.OrdName} (Qty: {po.Balance ?? "0"})";
+        //                    AppendLog("Adding checkbox: " + cbText);
+
+        //                    CheckBox cb = new CheckBox
+        //                    {
+        //                        Text = cbText,
+        //                        AutoSize = true,
+        //                        Tag = po
+        //                    };
+
+        //                    flpOpenPOs.Controls.Add(cb);
+        //                }
+
+        //                // if only one PO → auto-check
+        //                if (poList.Count == 1 && flpOpenPOs.Controls[0] is CheckBox onlyCb)
+        //                {
+        //                    onlyCb.Checked = true;
+        //                    AppendLog("Single PO found → auto-checked.");
+        //                }
+        //                else
+        //                {
+
+        //                    AppendLog("Multiple POs found → user selection required.");
+
+        //                }
+        //            }
+        //            else
+        //            {
+        //                AppendLog($"❌ No open POs found for {partName} ❌", Color.Red);
+        //            }
+
+        //            // stop stopwatch and update ping textbox
+        //            sw.Stop();
+        //            txtbPing.Text = $"{sw.ElapsedMilliseconds} ms";
+        //            AppendLog($"Request + processing took {sw.ElapsedMilliseconds} ms.");
+        //        }
+        //        catch (HttpRequestException ex)
+        //        {
+        //            AppendLog($"Request error: {ex.Message}");
+        //            MessageBox.Show($"Request error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            AppendLog($"Unexpected error: {ex.Message}");
+        //            MessageBox.Show($"An unexpected error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        }
+        //    }
+
+        //    return true;
+        //}
+
+
         private async Task<bool> GetTheOpenPOforTheIPN()
         {
             AppendLog("txtbInputQty_Enter triggered.");
             gpbxOpenPOs.Text = "OPEN Purchase Order(s) for IPN";
+
             if (string.IsNullOrEmpty(txtbInputIPN.Text))
             {
                 AppendLog("txtbInputIPN is empty. Exiting.");
-
                 return false;
             }
 
@@ -5900,7 +6032,8 @@ namespace WH_Panel
             string partName = txtbInputIPN.Text;
             string safePartName = partName.Replace("'", "''"); // escape quotes for OData
 
-            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART?$filter=PARTNAME eq '{safePartName}'&$select=PARTNAME&$expand=OPENPARTPORDERS_SUBFORM($select=ORDNAME,TBALANCE)";
+            // Added KLINE to $select
+            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART?$filter=PARTNAME eq '{safePartName}'&$select=PARTNAME&$expand=OPENPARTPORDERS_SUBFORM($select=ORDNAME,TBALANCE,KLINE)";
             AppendLog($"Request URL: {url}");
 
             using (HttpClient client = new HttpClient())
@@ -5934,25 +6067,29 @@ namespace WH_Panel
                         return false;
                     }
 
+                    // Extracted KLINE along with OrdName and Balance
                     var poList = part["OPENPARTPORDERS_SUBFORM"]?
                         .Select(po => new
                         {
                             OrdName = po["ORDNAME"]?.ToString(),
-                            Balance = po["TBALANCE"]?.ToString()
+                            Balance = po["TBALANCE"]?.ToString(),
+                            KLine = po["KLINE"] != null ? Convert.ToInt32(po["KLINE"]) : 0
                         })
                         .Where(po => !string.IsNullOrEmpty(po.OrdName))
                         .ToList();
 
-                    // clear previous display
+                    // Clear previous display
                     flpOpenPOs.Controls.Clear();
 
                     if (poList != null && poList.Any())
                     {
-                        AppendLog($"Found {poList.Count} open POs.");
+                        AppendLog($"Found {poList.Count} open PO line(s).");
                         gpbxOpenPOs.Text = "OPEN Purchase Order(s) for " + partName;
+
                         foreach (var po in poList)
                         {
-                            string cbText = $"{po.OrdName} (Qty: {po.Balance ?? "0"})";
+                            // Include Line number in text label
+                            string cbText = $"{po.OrdName} [Line {po.KLine}] (Qty: {po.Balance ?? "0"})";
                             AppendLog("Adding checkbox: " + cbText);
 
                             CheckBox cb = new CheckBox
@@ -5965,17 +6102,15 @@ namespace WH_Panel
                             flpOpenPOs.Controls.Add(cb);
                         }
 
-                        // if only one PO → auto-check
+                        // If only one PO line → auto-check
                         if (poList.Count == 1 && flpOpenPOs.Controls[0] is CheckBox onlyCb)
                         {
                             onlyCb.Checked = true;
-                            AppendLog("Single PO found → auto-checked.");
+                            AppendLog("Single PO line found → auto-checked.");
                         }
                         else
                         {
-
-                            AppendLog("Multiple POs found → user selection required.");
-
+                            AppendLog("Multiple PO lines found → user selection required.");
                         }
                     }
                     else
@@ -5983,7 +6118,6 @@ namespace WH_Panel
                         AppendLog($"❌ No open POs found for {partName} ❌", Color.Red);
                     }
 
-                    // stop stopwatch and update ping textbox
                     sw.Stop();
                     txtbPing.Text = $"{sw.ElapsedMilliseconds} ms";
                     AppendLog($"Request + processing took {sw.ElapsedMilliseconds} ms.");
@@ -6002,7 +6136,6 @@ namespace WH_Panel
 
             return true;
         }
-
         private void txtbInputQty_Enter(object sender, EventArgs e)
         {
 
