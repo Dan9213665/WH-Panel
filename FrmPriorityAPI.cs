@@ -6093,7 +6093,7 @@ namespace WH_Panel
                         foreach (var po in poList)
                         {
                             // Include Line number in text label
-                            string cbText = $"{po.OrdName} [Line {po.ORDI}] (Qty: {po.Balance ?? "0"})";  //
+                            string cbText = $"{po.OrdName}  (Qty: {po.Balance ?? "0"})";  //[ORDI {po.ORDI}]
                             AppendLog("Adding checkbox: " + cbText);
 
                             CheckBox cb = new CheckBox
