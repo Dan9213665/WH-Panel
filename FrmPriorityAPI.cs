@@ -437,6 +437,7 @@ namespace WH_Panel
         {
             public string PARTNAME { get; set; }
 
+            [JsonProperty("ORDI", NullValueHandling = NullValueHandling.Ignore)]
             public int? ORDI { get; set; }
             public int TQUANT { get; set; }
             public int QUANT { get; set; }
