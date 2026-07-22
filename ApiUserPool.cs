@@ -17,8 +17,17 @@ internal static class ApiUserPool
         var blacklist = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             //"6ADFFD01B1B04B10A4F8FD7BCA8631D8","7D4B614B3FD645F584C8661B813B5E98"//,"AEF3B8E8189A481786598CCCFD16A56A" // Add any other exhausted users here
-            "AEF3B8E8189A481786598CCCFD16A56A"
+            "AEF3B8E8189A481786598CCCFD16A56A","6ADFFD01B1B04B10A4F8FD7BCA8631D8"
         };
+
+
+        //// 2. Define tokens cleanly in one single place
+        //string Yulia = "6D3162B8E0F34660BCF256E7BBC3524C";
+        //string Yuri_G = "6ADFFD01B1B04B10A4F8FD7BCA8631D8";
+        //string master = "AEF3B8E8189A481786598CCCFD16A56A";
+        //string Jessica = "7D4B614B3FD645F584C8661B813B5E98";
+        //string Daniel = "B59C4AB83FBB4784A3EBA712AF023DE9";
+
 
         lock (_locker)
         {
