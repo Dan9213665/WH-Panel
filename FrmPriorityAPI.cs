@@ -569,7 +569,7 @@ namespace WH_Panel
         // 1. Blacklist uses friendly names cleanly
         public static HashSet<string> SessionBlacklist = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
 {
-   "Yuri_G","master"
+   "Yuri_G","master","Jessica"
 };
 
         public string SelectTheCredentialsByLoggedUser(AppSettings settings)
