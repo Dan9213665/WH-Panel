@@ -1728,126 +1728,275 @@ namespace WH_Panel
 
 
 
-        public async void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        //public async void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    if (cmbWarehouseList.SelectedItem != null)
+        //    {
+        //        AppendLog($"Loading {cmbWarehouseList.SelectedItem} stock data ...\n");
+        //        string selectedWarehouse = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
+        //        string selectedWarehouseDesc = cmbWarehouseList.SelectedItem.ToString().Substring(selectedWarehouse.Length).Trim();
+
+        //        // Only select required fields for AVL
+        //        string avlUrl = $"{baseUrl}/PARTMNFONE?$filter=PARTNAME eq '{selectedWarehouse}_*'&$select=PARTNAME,MNFPARTNAME";
+        //        // Only select required fields for warehouse balance
+        //        string balanceUrl = $"{baseUrl}/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouse}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{selectedWarehouse}*';$select=PARTNAME,PARTDES,BALANCE,CDATE,PART)";
+
+        //        using (HttpClient client = new HttpClient())
+        //        {
+        //            try
+        //            {
+        //                client.DefaultRequestHeaders.Accept.Clear();
+        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        //                string usedUser = ApiHelper.AuthenticateClient(client);
+        //                AppendLog($"User used: {usedUser}\n");
+
+        //                // AVL request
+        //                HttpResponseMessage avlResponse = await client.GetAsync(avlUrl);
+        //                avlResponse.EnsureSuccessStatusCode();
+        //                string avlResponseBody = await avlResponse.Content.ReadAsStringAsync();
+        //                var avlApiResponse = JsonConvert.DeserializeObject<PartMnfOneApiResponse>(avlResponseBody);
+
+        //                avlDictionary = new Dictionary<string, string>();
+        //                foreach (var part in avlApiResponse.value)
+        //                {
+        //                    if (!avlDictionary.ContainsKey(part.PARTNAME))
+        //                    {
+        //                        avlDictionary.Add(part.PARTNAME, part.MNFPARTNAME);
+        //                    }
+        //                }
+
+        //                // Balance request
+        //                HttpResponseMessage balanceResponse = await client.GetAsync(balanceUrl);
+        //                balanceResponse.EnsureSuccessStatusCode();
+        //                string balanceResponseBody = await balanceResponse.Content.ReadAsStringAsync();
+        //                var balanceApiResponse = JsonConvert.DeserializeObject<WarehouseApiResponse>(balanceResponseBody);
+
+        //                if (balanceApiResponse.value != null && balanceApiResponse.value.Count > 0)
+        //                {
+        //                    var warehouseBalances = balanceApiResponse.value.SelectMany(w => w.WARHSBAL_SUBFORM).ToList();
+        //                    dataTable.Rows.Clear();
+
+        //                    // Group by PARTNAME to eliminate the split records caused by server-side serialization/WOs
+        //                    var consolidatedBalances = warehouseBalances
+        //                        .GroupBy(b => b.PARTNAME ?? string.Empty)
+        //                        .Select(g => new
+        //                        {
+        //                            PartName = g.Key,
+        //                            FirstItem = g.First(),          // Grab metadata from the first record entry
+        //                            TotalBalance = g.Sum(b => b.BALANCE) // Combine all split row balances
+        //                        });
+
+        //                    foreach (var entry in consolidatedBalances)
+        //                    {
+        //                        try
+        //                        {
+        //                            string partName = entry.PartName;
+        //                            string partDes = entry.FirstItem.PARTDES ?? string.Empty;
+        //                            int balanceValue = entry.TotalBalance;
+        //                            string cDate = entry.FirstItem.CDATE?.Substring(0, 10) ?? string.Empty;
+        //                            int partId = entry.FirstItem.PART;
+
+        //                            string mfpn = avlDictionary.ContainsKey(partName) ? avlDictionary[partName] : string.Empty;
+
+        //                            dataTable.Rows.Add(partName, mfpn, partDes, balanceValue, cDate, partId);
+        //                        }
+        //                        catch (Exception ex)
+        //                        {
+        //                            AppendLog($"Error adding row: {ex.Message}\n");
+        //                        }
+        //                    }
+
+        //                    groupBox3.Text = $"Warehouse  {selectedWarehouse} {selectedWarehouseDesc}";
+        //                    ColorTheRows(dataGridView1);
+
+        //                    if (lastUserInput != null)
+        //                    {
+        //                        lastUserInput.Focus();
+        //                    }
+        //                    else
+        //                    {
+        //                        txtbInputIPN.Focus();
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    MessageBox.Show("No data found for the selected warehouse balance.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //                }
+        //            }
+        //            catch (HttpRequestException ex)
+        //            {
+        //                AppendLog($"Request error comboBox1_SelectedIndexChanged: {ex.Message}\n", Color.Red);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                AppendLog($"An error occurred comboBox1_SelectedIndexChanged: {ex.Message}\n");
+        //            }
+        //        }
+        //    }
+
+        //    try
+        //    {
+        //        if (cmbWarehouseList.SelectedItem != null)
+        //        {
+        //            txtbPrefix.Text = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        AppendLog($"An error occurred comboBox1_SelectedIndexChanged: {ex.Message}\n");
+        //    }
+        //}
+
+        private async void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cmbWarehouseList.SelectedItem != null)
-            {
-                AppendLog($"Loading {cmbWarehouseList.SelectedItem} stock data ...\n");
-                string selectedWarehouse = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
-                string selectedWarehouseDesc = cmbWarehouseList.SelectedItem.ToString().Substring(selectedWarehouse.Length).Trim();
+            if (cmbWarehouseList.SelectedItem == null) return;
 
-                // Only select required fields for AVL
-                string avlUrl = $"{baseUrl}/PARTMNFONE?$filter=PARTNAME eq '{selectedWarehouse}_*'&$select=PARTNAME,MNFPARTNAME";
-                // Only select required fields for warehouse balance
-                string balanceUrl = $"{baseUrl}/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouse}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{selectedWarehouse}*';$select=PARTNAME,PARTDES,BALANCE,CDATE,PART)";
+            string selectedWarehouse = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
+            string selectedWarehouseDesc = cmbWarehouseList.SelectedItem.ToString().Substring(selectedWarehouse.Length).Trim();
 
-                using (HttpClient client = new HttpClient())
-                {
-                    try
-                    {
-                        client.DefaultRequestHeaders.Accept.Clear();
-                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                        string usedUser = ApiHelper.AuthenticateClient(client);
-                        AppendLog($"User used: {usedUser}\n");
-
-                        // AVL request
-                        HttpResponseMessage avlResponse = await client.GetAsync(avlUrl);
-                        avlResponse.EnsureSuccessStatusCode();
-                        string avlResponseBody = await avlResponse.Content.ReadAsStringAsync();
-                        var avlApiResponse = JsonConvert.DeserializeObject<PartMnfOneApiResponse>(avlResponseBody);
-
-                        avlDictionary = new Dictionary<string, string>();
-                        foreach (var part in avlApiResponse.value)
-                        {
-                            if (!avlDictionary.ContainsKey(part.PARTNAME))
-                            {
-                                avlDictionary.Add(part.PARTNAME, part.MNFPARTNAME);
-                            }
-                        }
-
-                        // Balance request
-                        HttpResponseMessage balanceResponse = await client.GetAsync(balanceUrl);
-                        balanceResponse.EnsureSuccessStatusCode();
-                        string balanceResponseBody = await balanceResponse.Content.ReadAsStringAsync();
-                        var balanceApiResponse = JsonConvert.DeserializeObject<WarehouseApiResponse>(balanceResponseBody);
-
-                        if (balanceApiResponse.value != null && balanceApiResponse.value.Count > 0)
-                        {
-                            var warehouseBalances = balanceApiResponse.value.SelectMany(w => w.WARHSBAL_SUBFORM).ToList();
-                            dataTable.Rows.Clear();
-
-                            // Group by PARTNAME to eliminate the split records caused by server-side serialization/WOs
-                            var consolidatedBalances = warehouseBalances
-                                .GroupBy(b => b.PARTNAME ?? string.Empty)
-                                .Select(g => new
-                                {
-                                    PartName = g.Key,
-                                    FirstItem = g.First(),          // Grab metadata from the first record entry
-                                    TotalBalance = g.Sum(b => b.BALANCE) // Combine all split row balances
-                                });
-
-                            foreach (var entry in consolidatedBalances)
-                            {
-                                try
-                                {
-                                    string partName = entry.PartName;
-                                    string partDes = entry.FirstItem.PARTDES ?? string.Empty;
-                                    int balanceValue = entry.TotalBalance;
-                                    string cDate = entry.FirstItem.CDATE?.Substring(0, 10) ?? string.Empty;
-                                    int partId = entry.FirstItem.PART;
-
-                                    string mfpn = avlDictionary.ContainsKey(partName) ? avlDictionary[partName] : string.Empty;
-
-                                    dataTable.Rows.Add(partName, mfpn, partDes, balanceValue, cDate, partId);
-                                }
-                                catch (Exception ex)
-                                {
-                                    AppendLog($"Error adding row: {ex.Message}\n");
-                                }
-                            }
-
-                            groupBox3.Text = $"Warehouse  {selectedWarehouse} {selectedWarehouseDesc}";
-                            ColorTheRows(dataGridView1);
-
-                            if (lastUserInput != null)
-                            {
-                                lastUserInput.Focus();
-                            }
-                            else
-                            {
-                                txtbInputIPN.Focus();
-                            }
-                        }
-                        else
-                        {
-                            MessageBox.Show("No data found for the selected warehouse balance.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        }
-                    }
-                    catch (HttpRequestException ex)
-                    {
-                        AppendLog($"Request error comboBox1_SelectedIndexChanged: {ex.Message}\n", Color.Red);
-                    }
-                    catch (Exception ex)
-                    {
-                        AppendLog($"An error occurred comboBox1_SelectedIndexChanged: {ex.Message}\n");
-                    }
-                }
-            }
+            AppendLog($"Loading {selectedWarehouse} stock data...\n");
 
             try
             {
-                if (cmbWarehouseList.SelectedItem != null)
+                using (HttpClient client = new HttpClient())
                 {
-                    txtbPrefix.Text = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    string usedUser = ApiHelper.AuthenticateClient(client);
+
+                    // -------------------------------------------------------------
+                    // STEP 1: Fetch Balances First (WARHSBAL)
+                    // -------------------------------------------------------------
+                    string balanceUrl = $"{baseUrl}/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouse}'" +
+                                        $"&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{selectedWarehouse}*';" +
+                                        $"$select=PARTNAME,PARTDES,BALANCE,CDATE,PART)";
+
+                    HttpResponseMessage balanceResponse = await client.GetAsync(balanceUrl);
+                    balanceResponse.EnsureSuccessStatusCode();
+
+                    string balanceResponseBody = await balanceResponse.Content.ReadAsStringAsync();
+                    var balanceApiResponse = JsonConvert.DeserializeObject<WarehouseApiResponse>(balanceResponseBody);
+
+                    if (balanceApiResponse?.value == null || balanceApiResponse.value.Count == 0)
+                    {
+                        MessageBox.Show("No data found for the selected warehouse balance.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
+
+                    var warehouseBalances = balanceApiResponse.value
+                        .Where(w => w.WARHSBAL_SUBFORM != null)
+                        .SelectMany(w => w.WARHSBAL_SUBFORM)
+                        .ToList();
+
+                    if (!warehouseBalances.Any())
+                    {
+                        dataTable.Rows.Clear();
+                        MessageBox.Show("Selected warehouse has no active stock balances.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
+
+                    // Consolidate split rows caused by work orders / serialization
+                    var consolidatedBalances = warehouseBalances
+                        .GroupBy(b => b.PARTNAME ?? string.Empty)
+                        .Select(g => new
+                        {
+                            PartName = g.Key,
+                            FirstItem = g.First(),
+                            TotalBalance = g.Sum(b => b.BALANCE)
+                        })
+                        .ToList();
+
+                    // Extract distinct active Part Names
+                    List<string> activePartNames = consolidatedBalances
+                        .Select(b => b.PartName)
+                        .Where(p => !string.IsNullOrWhiteSpace(p))
+                        .Distinct()
+                        .ToList();
+
+                    // -------------------------------------------------------------
+                    // STEP 2: Fetch MFPNs ONLY for Active Parts (Targeted Batches)
+                    // -------------------------------------------------------------
+                    var avlDictionary = new Dictionary<string, string>();
+
+                    if (activePartNames.Any())
+                    {
+                        // Chunk into batches of 40 to stay under OData URL max length constraints
+                        int chunkSize = 40;
+                        for (int i = 0; i < activePartNames.Count; i += chunkSize)
+                        {
+                            var chunk = activePartNames.Skip(i).Take(chunkSize);
+                            string filterParts = string.Join(" or ", chunk.Select(p => $"PARTNAME eq '{p}'"));
+                            string avlUrl = $"{baseUrl}/PARTMNFONE?$filter={Uri.EscapeDataString(filterParts)}&$select=PARTNAME,MNFPARTNAME";
+
+                            HttpResponseMessage avlResponse = await client.GetAsync(avlUrl);
+                            if (avlResponse.IsSuccessStatusCode)
+                            {
+                                string avlResponseBody = await avlResponse.Content.ReadAsStringAsync();
+                                var avlApiResponse = JsonConvert.DeserializeObject<PartMnfOneApiResponse>(avlResponseBody);
+
+                                if (avlApiResponse?.value != null)
+                                {
+                                    foreach (var part in avlApiResponse.value)
+                                    {
+                                        if (!string.IsNullOrEmpty(part.PARTNAME) && !avlDictionary.ContainsKey(part.PARTNAME))
+                                        {
+                                            avlDictionary.Add(part.PARTNAME, part.MNFPARTNAME ?? string.Empty);
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+
+                    // -------------------------------------------------------------
+                    // STEP 3: Populate DataGrid
+                    // -------------------------------------------------------------
+                    dataTable.Rows.Clear();
+
+                    foreach (var entry in consolidatedBalances)
+                    {
+                        try
+                        {
+                            string partName = entry.PartName;
+                            string partDes = entry.FirstItem.PARTDES ?? string.Empty;
+                            int balanceValue = entry.TotalBalance;
+                            string cDate = entry.FirstItem.CDATE?.Length >= 10 ? entry.FirstItem.CDATE.Substring(0, 10) : (entry.FirstItem.CDATE ?? string.Empty);
+                            int partId = entry.FirstItem.PART;
+
+                            string mfpn = avlDictionary.TryGetValue(partName, out var m) ? m : string.Empty;
+
+                            dataTable.Rows.Add(partName, mfpn, partDes, balanceValue, cDate, partId);
+                        }
+                        catch (Exception ex)
+                        {
+                            AppendLog($"Error adding row: {ex.Message}\n");
+                        }
+                    }
+
+                    groupBox3.Text = $"Warehouse  {selectedWarehouse} {selectedWarehouseDesc}";
+                    ColorTheRows(dataGridView1);
+
+                    if (lastUserInput != null)
+                    {
+                        lastUserInput.Focus();
+                    }
+                    else
+                    {
+                        txtbInputIPN.Focus();
+                    }
+
+                    txtbPrefix.Text = selectedWarehouse;
                 }
+
+                AppendLog($"Done\n");
             }
             catch (Exception ex)
             {
-                AppendLog($"An error occurred comboBox1_SelectedIndexChanged: {ex.Message}\n");
+                AppendLog($"An error occurred in comboBox1_SelectedIndexChanged: {ex.Message}\n");
             }
         }
-
 
         void AppendLog(string message, Color? color = null)
         {
