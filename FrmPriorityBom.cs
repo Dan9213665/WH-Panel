@@ -1941,7 +1941,7 @@ namespace WH_Panel
             {
                 var selectedRow = dgwBom.Rows[e.RowIndex];
                 var partName = selectedRow.Cells["PARTNAME"].Value.ToString();
-                string logPartUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART?$filter=PARTNAME eq '{partName}'&$expand=PARTTRANSLAST2_SUBFORM";
+                string logPartUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART?$filter=PARTNAME eq '{partName}'&$expand=PARTTRANSLAST2_SUBFORM($top=30)";
 
 
                 using (HttpClient client = new HttpClient(_handler, disposeHandler: false))

@@ -2078,7 +2078,7 @@ namespace WH_Panel
                 var selectedRow = dataGridView1.Rows[e.RowIndex];
                 //await ExtractMFPNForRow(selectedRow);
                 var partName = selectedRow.Cells["PARTNAME"].Value.ToString();
-                string logPartUrl = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{partName}'&$expand=PARTTRANSLAST2_SUBFORM";
+                string logPartUrl = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{partName}'&$expand=PARTTRANSLAST2_SUBFORM($top=30)";
                 using (HttpClient client = new HttpClient())
                 {
                     try
