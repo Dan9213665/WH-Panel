@@ -662,7 +662,6 @@ namespace WH_Panel
                 progressBar1.Value = 0;
                 progressBar1.Update();
                 int completedItems = 0;
-                //string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{serialName}'&$expand=TRANSORDER_K_SUBFORM";
                 string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{serialName}'&$expand=TRANSORDER_K_SUBFORM($select=PARTNAME,PARTDES,CQUANT,QUANT,KLINE,TRANS,KITLINE)";
 
                 using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
@@ -762,86 +761,175 @@ namespace WH_Panel
                 }
             }
         }
+        //private async Task FetchMFPNsForAllRowsInSinglePull()
+        //{
+        //    SafeAppendLog("Fetching MFPNs for all rows in a single API call...", Color.Yellow);
+        //    // Ensure there are rows in the DataGridView
+        //    if (dgwBom.Rows.Count == 0)
+        //    {
+        //        SafeAppendLog("No rows found in the DataGridView to fetch MFPNs.");
+        //        return;
+        //    }
+        //    // Get the warehouse name from the first 3 characters of the first PARTNAME
+        //    string selectedWarehouse = dgwBom.Rows[0].Cells["PARTNAME"].Value?.ToString()?.Substring(0, 3);
+        //    if (string.IsNullOrEmpty(selectedWarehouse))
+        //    {
+        //        SafeAppendLog("Unable to determine the warehouse from the first PARTNAME.");
+        //        return;
+        //    }
+        //    // Construct the API URL using the warehouse name
+        //    //string avlUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PARTNAME eq '{selectedWarehouse}_*'";
+
+        //    string avlUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PARTNAME eq '{selectedWarehouse}_*'&$select=PARTNAME,MNFPARTNAME,PARTDES,MNFNAME,MNFDES";
+
+
+        //    // SafeAppendLog($"API URL: {avlUrl}");
+        //    using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
+        //    {
+        //        try
+        //        {
+        //            // Set the request headers
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
+        //            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+        //            string usedUser = ApiHelper.AuthenticateClient(client);
+        //            RegisterTransaction(usedUser); // Log this transaction timestamp
+        //            // string usedUser = ApiHelper.AuthenticateClient(client);
+        //            // Make the HTTP GET request
+        //            HttpResponseMessage response = await client.GetAsync(avlUrl);
+        //            response.EnsureSuccessStatusCode();
+        //            // Read the response content
+        //            string responseBody = await response.Content.ReadAsStringAsync();
+        //            // SafeAppendLog($"API Response: {responseBody}");
+        //            // Parse the JSON response
+        //            var apiResponseWrapper = JsonConvert.DeserializeObject<ApiMFPNResponseWrapper>(responseBody);
+        //            // Validate the API response
+        //            if (apiResponseWrapper?.Value == null || !apiResponseWrapper.Value.Any())
+        //            {
+        //                SafeAppendLog("No data returned from the API.");
+        //                return;
+        //            }
+        //            // Map the MFPNs to the DataGridView rows
+        //            foreach (DataGridViewRow row in dgwBom.Rows)
+        //            {
+        //                if (row.Cells["PARTNAME"].Value != null)
+        //                {
+        //                    string partName = row.Cells["PARTNAME"].Value.ToString();
+        //                    var matchingPart = apiResponseWrapper.Value.FirstOrDefault(p => p.PARTNAME == partName);
+        //                    if (matchingPart != null)
+        //                    {
+        //                        row.Cells["MFPN"].Value = matchingPart.MNFPARTNAME;
+        //                    }
+        //                    else
+        //                    {
+        //                        SafeAppendLog($"No match found for PARTNAME: {partName}");
+        //                    }
+        //                }
+        //            }
+        //            SafeAppendLog("MFPN fetching completed.", Color.LimeGreen);
+        //        }
+        //        catch (HttpRequestException ex)
+        //        {
+        //            SafeAppendLog($"Request error: {ex.Message}", Color.Red);
+
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            SafeAppendLog($"Request error: {ex.Message}", Color.Red);
+        //        }
+        //    }
+        //    dgwBom.Update();
+        //}
+
         private async Task FetchMFPNsForAllRowsInSinglePull()
         {
-            SafeAppendLog("Fetching MFPNs for all rows in a single API call...", Color.Yellow);
-            // Ensure there are rows in the DataGridView
-            if (dgwBom.Rows.Count == 0)
+            var partNames = dgwBom.Rows.Cast<DataGridViewRow>()
+                .Where(row => row.Cells["PARTNAME"].Value != null)
+                .Select(row => row.Cells["PARTNAME"].Value.ToString().Trim())
+                .Where(name => !string.IsNullOrEmpty(name))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            if (partNames.Count == 0)
             {
                 SafeAppendLog("No rows found in the DataGridView to fetch MFPNs.");
                 return;
             }
-            // Get the warehouse name from the first 3 characters of the first PARTNAME
-            string selectedWarehouse = dgwBom.Rows[0].Cells["PARTNAME"].Value?.ToString()?.Substring(0, 3);
-            if (string.IsNullOrEmpty(selectedWarehouse))
-            {
-                SafeAppendLog("Unable to determine the warehouse from the first PARTNAME.");
-                return;
-            }
-            // Construct the API URL using the warehouse name
-            //string avlUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PARTNAME eq '{selectedWarehouse}_*'";
 
-            string avlUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE?$filter=PARTNAME eq '{selectedWarehouse}_*'&$select=PARTNAME,MNFPARTNAME,PARTDES,MNFNAME,MNFDES";
+            SafeAppendLog($"Fetching MFPNs in targeted batches for {partNames.Count} parts...", Color.Yellow);
 
+            const int batchSize = 15;
+            var mfpnMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-            // SafeAppendLog($"API URL: {avlUrl}");
             using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
             {
-                try
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                string usedUser = ApiHelper.AuthenticateClient(client);
+
+                for (int i = 0; i < partNames.Count; i += batchSize)
                 {
-                    // Set the request headers
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
-                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                    var batch = partNames.Skip(i).Take(batchSize).ToList();
+                    string partFilter = string.Join(" or ", batch.Select(p => $"PARTNAME eq '{Uri.EscapeDataString(p)}'"));
 
+                    string avlUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/PARTMNFONE" +
+                                    $"?$filter={partFilter}" +
+                                    $"&$select=PARTNAME,MNFPARTNAME";
 
-                    string usedUser = ApiHelper.AuthenticateClient(client);
-                    RegisterTransaction(usedUser); // Log this transaction timestamp
-                    // string usedUser = ApiHelper.AuthenticateClient(client);
-                    // Make the HTTP GET request
-                    HttpResponseMessage response = await client.GetAsync(avlUrl);
-                    response.EnsureSuccessStatusCode();
-                    // Read the response content
-                    string responseBody = await response.Content.ReadAsStringAsync();
-                    // SafeAppendLog($"API Response: {responseBody}");
-                    // Parse the JSON response
-                    var apiResponseWrapper = JsonConvert.DeserializeObject<ApiMFPNResponseWrapper>(responseBody);
-                    // Validate the API response
-                    if (apiResponseWrapper?.Value == null || !apiResponseWrapper.Value.Any())
+                    try
                     {
-                        SafeAppendLog("No data returned from the API.");
-                        return;
-                    }
-                    // Map the MFPNs to the DataGridView rows
-                    foreach (DataGridViewRow row in dgwBom.Rows)
-                    {
-                        if (row.Cells["PARTNAME"].Value != null)
+                        RegisterTransaction(usedUser);
+                        HttpResponseMessage response = await client.GetAsync(avlUrl);
+
+                        if (response.IsSuccessStatusCode)
                         {
-                            string partName = row.Cells["PARTNAME"].Value.ToString();
-                            var matchingPart = apiResponseWrapper.Value.FirstOrDefault(p => p.PARTNAME == partName);
-                            if (matchingPart != null)
+                            string responseBody = await response.Content.ReadAsStringAsync();
+                            var apiResponseWrapper = JsonConvert.DeserializeObject<ApiMFPNResponseWrapper>(responseBody);
+
+                            if (apiResponseWrapper?.Value != null)
                             {
-                                row.Cells["MFPN"].Value = matchingPart.MNFPARTNAME;
-                            }
-                            else
-                            {
-                                SafeAppendLog($"No match found for PARTNAME: {partName}");
+                                foreach (var item in apiResponseWrapper.Value)
+                                {
+                                    if (!string.IsNullOrEmpty(item.PARTNAME) && !mfpnMap.ContainsKey(item.PARTNAME))
+                                    {
+                                        mfpnMap[item.PARTNAME] = item.MNFPARTNAME;
+                                    }
+                                }
                             }
                         }
+                        else
+                        {
+                            SafeAppendLog($"MFPN batch query failed: {response.StatusCode}", Color.Red);
+                        }
                     }
-                    SafeAppendLog("MFPN fetching completed.", Color.LimeGreen);
-                }
-                catch (HttpRequestException ex)
-                {
-                    SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-
-                }
-                catch (Exception ex)
-                {
-                    SafeAppendLog($"Request error: {ex.Message}", Color.Red);
+                    catch (Exception ex)
+                    {
+                        SafeAppendLog($"Error fetching MFPN batch: {ex.Message}", Color.Red);
+                    }
                 }
             }
+
+            // Direct O(1) in-memory population into the grid
+            foreach (DataGridViewRow row in dgwBom.Rows)
+            {
+                string pName = row.Cells["PARTNAME"].Value?.ToString()?.Trim();
+                if (!string.IsNullOrEmpty(pName))
+                {
+                    if (mfpnMap.TryGetValue(pName, out string mfpn))
+                    {
+                        row.Cells["MFPN"].Value = mfpn;
+                    }
+                    else
+                    {
+                        SafeAppendLog($"No match found for PARTNAME: {pName}");
+                    }
+                }
+            }
+
+            SafeAppendLog("MFPN fetching completed.", Color.LimeGreen);
             dgwBom.Update();
         }
         public class ApiMFPNResponseWrapper
@@ -924,625 +1012,7 @@ namespace WH_Panel
                 }
             }
         }
-        //private async Task FetchWarehouseBalances()
-        //{
-        //    // Create a list to store the fetched warehouse balances
-        //    List<WarehouseBalance> warehouseBalances = new List<WarehouseBalance>();
-        //    // Get the unique part names from the DataGridView
-        //    var partNames = dgwBom.Rows.Cast<DataGridViewRow>()
-        //        .Where(row => row.Cells["PARTNAME"].Value != null)
-        //        .Select(row => row.Cells["PARTNAME"].Value.ToString())
-        //        .Distinct()
-        //        .ToList();
-        //    if (partNames.Count == 0)
-        //    {
-        //        return;
-        //    }
-        //    // Construct the filter string for the API call
-        //    string partNamesFilter = string.Join(" or ", partNames.Select(p => $"PARTNAME eq '{p}'"));
-        //    string warehouseName = partNames.First().Substring(0, 3); // Assuming all parts belong to the same warehouse
-        //    //string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{warehouseName}'&$expand=WARHSBAL_SUBFORM";
-        //    string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{warehouseName}'&$expand=WARHSBAL_SUBFORM($select=PARTNAME,TBALANCE)";
-
-        //    using (HttpClient client = new HttpClient(_handler, disposeHandler: false)())
-        //    {
-        //        try
-        //        {
-        //            // Set the request headers
-        //            client.DefaultRequestHeaders.Accept.Clear();
-        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //            //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
-        //            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
-
-        //            string usedUser = ApiHelper.AuthenticateClient(client);
-        //            // string usedUser = ApiHelper.AuthenticateClient(client);
-        //            RegisterTransaction(usedUser); // Log this transaction timestamp
-        //            // Make the HTTP GET request
-        //            HttpResponseMessage response = await client.GetAsync(url);
-        //            response.EnsureSuccessStatusCode();
-        //            // Read the response content
-        //            string responseBody = await response.Content.ReadAsStringAsync();
-        //            // Parse the JSON response
-        //            var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-        //            var warehouse = apiResponse["value"].FirstOrDefault();
-        //            if (warehouse != null)
-        //            {
-        //                warehouseBalances = warehouse["WARHSBAL_SUBFORM"].ToObject<List<WarehouseBalance>>();
-        //                SafeAppendLog($"Fetched {warehouseBalances.Count} warehouse balances for warehouse {warehouseName}", Color.LimeGreen);
-        //            }
-        //        }
-        //        catch (HttpRequestException ex)
-        //        {
-        //            SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-        //        }
-        //    }
-        //    // Update the DataGridView rows using the fetched data
-        //    foreach (DataGridViewRow row in dgwBom.Rows)
-        //    {
-        //        if (row.Cells["PARTNAME"].Value != null)
-        //        {
-        //            string partName = row.Cells["PARTNAME"].Value.ToString();
-        //            var balance = warehouseBalances.FirstOrDefault(b => b.PARTNAME == partName);
-        //            if (balance != null)
-        //            {
-        //                row.Cells["TBALANCE"].Value = balance.TBALANCE;
-        //            }
-        //            else
-        //            {
-        //                row.Cells["TBALANCE"].Value = 0;
-        //            }
-        //            // Calculate the LEFTOVERS for the current row
-        //            int delta = Convert.ToInt32(row.Cells["DELTA"].Value);
-        //            int whQuantity = row.Cells["TBALANCE"].Value != null ? Convert.ToInt32(row.Cells["TBALANCE"].Value) : 0;
-        //            int kitQuantity = row.Cells["QUANT"].Value != null ? Convert.ToInt32(row.Cells["QUANT"].Value) : 0;
-        //            int requiredQuantity = row.Cells["CQUANT"].Value != null ? Convert.ToInt32(row.Cells["CQUANT"].Value) : 0;
-        //            int leftovers = (whQuantity + kitQuantity) - requiredQuantity;
-        //            // Update the LEFTOVERS column in the DataGridView
-        //            row.Cells["LEFTOVERS"].Value = leftovers;
-        //        }
-        //    }
-        //    UpdateSimulationLabel();
-        //}
-
-        //private async Task FetchWarehouseBalances()
-        //{
-        //    // Create a list to store the fetched warehouse balances
-        //    List<WarehouseBalance> warehouseBalances = new List<WarehouseBalance>();
-
-        //    // Get the unique part names from the DataGridView
-        //    var partNames = dgwBom.Rows.Cast<DataGridViewRow>()
-        //        .Where(row => row.Cells["PARTNAME"].Value != null)
-        //        .Select(row => row.Cells["PARTNAME"].Value.ToString())
-        //        .Distinct()
-        //        .ToList();
-
-        //    if (partNames.Count == 0)
-        //    {
-        //        return;
-        //    }
-
-        //    // Fix/Construct the filter string for the API call to optimize performance
-        //    string partNamesFilter = string.Join(" or ", partNames.Select(p => $"PARTNAME eq '{p}'"));
-        //    string warehouseName = partNames.First().Substring(0, 3); // Assuming all parts belong to the same warehouse
-
-        //    // Pass the filter into the subform expand so Priority only passes back what is actually in this BOM
-        //    string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{warehouseName}'&$expand=WARHSBAL_SUBFORM($filter={partNamesFilter};$select=PARTNAME,TBALANCE)";
-
-        //    using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
-        //    {
-        //        try
-        //        {
-        //            // Set the request headers
-        //            client.DefaultRequestHeaders.Accept.Clear();
-        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-        //            string usedUser = ApiHelper.AuthenticateClient(client);
-        //            RegisterTransaction(usedUser); // Log this transaction timestamp
-
-        //            // Make the HTTP GET request
-        //            HttpResponseMessage response = await client.GetAsync(url);
-        //            response.EnsureSuccessStatusCode();
-
-        //            // Read the response content
-        //            string responseBody = await response.Content.ReadAsStringAsync();
-
-        //            // Parse the JSON response
-        //            var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-        //            var warehouse = apiResponse["value"].FirstOrDefault();
-
-        //            if (warehouse != null && warehouse["WARHSBAL_SUBFORM"] != null)
-        //            {
-        //                var rawBalances = warehouse["WARHSBAL_SUBFORM"].ToObject<List<WarehouseBalance>>();
-
-
-
-        //                // Consolidate the split lines by PARTNAME and sum up their TBALANCE values
-        //                warehouseBalances = rawBalances
-        //                    .GroupBy(b => b.PARTNAME)
-        //                    .Select(g => new WarehouseBalance
-        //                    {
-        //                        PARTNAME = g.Key,
-        //                        TBALANCE = g.Sum(b => b.TBALANCE) // Sum all lines (WOs/serials) together!
-        //                    })
-        //                    .ToList();
-
-        //                MessageBox.Show(warehouseBalances.Count().ToString());
-
-        //                SafeAppendLog($"Fetched and consolidated {warehouseBalances.Count} unique warehouse balances for warehouse {warehouseName}", Color.LimeGreen);
-        //            }
-        //        }
-        //        catch (HttpRequestException ex)
-        //        {
-        //            SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            SafeAppendLog($"General error: {ex.Message}", Color.Red);
-        //        }
-        //    }
-
-        //    // Update the DataGridView rows using the consolidated fetched data
-        //    foreach (DataGridViewRow row in dgwBom.Rows)
-        //    {
-        //        if (row.Cells["PARTNAME"].Value != null)
-        //        {
-        //            string partName = row.Cells["PARTNAME"].Value.ToString();
-
-        //            // This is now safe; since we grouped it above, there is only ONE match per PARTNAME containing the true total sum
-        //            //var balance = warehouseBalances.FirstOrDefault(b => b.PARTNAME == partName);
-
-        //            var balance = warehouseBalances.FirstOrDefault(b =>string.Equals(b.PARTNAME?.Trim(), partName?.Trim(), StringComparison.OrdinalIgnoreCase));
-
-
-        //            if (balance != null)
-        //            {
-        //                row.Cells["TBALANCE"].Value = balance.TBALANCE;
-        //            }
-        //            else
-        //            {
-        //                row.Cells["TBALANCE"].Value = 0;
-        //            }
-
-        //            // Calculate the LEFTOVERS for the current row
-        //            int delta = Convert.ToInt32(row.Cells["DELTA"].Value);
-        //            int whQuantity = row.Cells["TBALANCE"].Value != null ? Convert.ToInt32(row.Cells["TBALANCE"].Value) : 0;
-        //            int kitQuantity = row.Cells["QUANT"].Value != null ? Convert.ToInt32(row.Cells["QUANT"].Value) : 0;
-        //            int requiredQuantity = row.Cells["CQUANT"].Value != null ? Convert.ToInt32(row.Cells["CQUANT"].Value) : 0;
-
-        //            int leftovers = (whQuantity + kitQuantity) - requiredQuantity;
-
-        //            // Update the LEFTOVERS column in the DataGridView
-        //            row.Cells["LEFTOVERS"].Value = leftovers;
-        //        }
-        //    }
-        //    UpdateSimulationLabel();
-        //}
-
-        //private async Task FetchWarehouseBalances()
-        //{
-        //    // Create a list to store the final consolidated warehouse balances
-        //    List<WarehouseBalance> warehouseBalances = new List<WarehouseBalance>();
-
-        //    // Get the unique part names from the DataGridView
-        //    var partNames = dgwBom.Rows.Cast<DataGridViewRow>()
-        //        .Where(row => row.Cells["PARTNAME"].Value != null)
-        //        .Select(row => row.Cells["PARTNAME"].Value.ToString())
-        //        .Distinct()
-        //        .ToList();
-
-        //    if (partNames.Count == 0)
-        //    {
-        //        return;
-        //    }
-
-        //    string warehouseName = partNames.First().Substring(0, 3); // Assuming all parts belong to the same warehouse
-        //    List<WarehouseBalance> allRawBalances = new List<WarehouseBalance>();
-
-        //    // Define a safe chunk size to ensure the URL never gets truncated by the server
-        //    int chunkSize = 40;
-
-        //    using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
-        //    {
-        //        try
-        //        {
-        //            // Set the request headers once before entering the loop
-        //            client.DefaultRequestHeaders.Accept.Clear();
-        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-        //            string usedUser = ApiHelper.AuthenticateClient(client);
-        //            RegisterTransaction(usedUser); // Log this transaction timestamp
-
-        //            // Loop over the part names in batches/chunks
-        //            for (int i = 0; i < partNames.Count; i += chunkSize)
-        //            {
-        //                var chunk = partNames.Skip(i).Take(chunkSize).ToList();
-
-        //                // Construct the filter string specifically for this batch
-        //                string partNamesFilter = string.Join(" or ", chunk.Select(p => $"PARTNAME eq '{p}'"));
-        //                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{warehouseName}'&$expand=WARHSBAL_SUBFORM($filter={partNamesFilter};$select=PARTNAME,TBALANCE)";
-
-        //                // Make the HTTP GET request for the current batch
-        //                HttpResponseMessage response = await client.GetAsync(url);
-
-        //                // Gracefully check the response code to prevent crashing the batch loop midway
-        //                if (response.IsSuccessStatusCode)
-        //                {
-        //                    string responseBody = await response.Content.ReadAsStringAsync();
-        //                    var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-        //                    var warehouse = apiResponse["value"]?.FirstOrDefault();
-
-        //                    if (warehouse != null && warehouse["WARHSBAL_SUBFORM"] != null)
-        //                    {
-        //                        var chunkBalances = warehouse["WARHSBAL_SUBFORM"].ToObject<List<WarehouseBalance>>();
-        //                        if (chunkBalances != null)
-        //                        {
-        //                            // Add this chunk's results into our master tracking pool
-        //                            allRawBalances.AddRange(chunkBalances);
-        //                        }
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    SafeAppendLog($"Batch fetch failed for items {i} to {i + chunk.Count}: {response.StatusCode}", Color.Orange);
-        //                }
-        //            }
-
-        //            // Consolidate the accumulated raw records from all batches by PARTNAME and sum up their TBALANCE values
-        //            if (allRawBalances.Count > 0)
-        //            {
-        //                warehouseBalances = allRawBalances
-        //                    .GroupBy(b => b.PARTNAME)
-        //                    .Select(g => new WarehouseBalance
-        //                    {
-        //                        PARTNAME = g.Key,
-        //                        TBALANCE = g.Sum(b => b.TBALANCE) // Sum all lines (WOs/serials) together!
-        //                    })
-        //                    .ToList();
-
-        //                MessageBox.Show(warehouseBalances.Count().ToString());
-        //                SafeAppendLog($"Fetched and consolidated {warehouseBalances.Count} unique warehouse balances for warehouse {warehouseName}", Color.LimeGreen);
-        //            }
-        //        }
-        //        catch (HttpRequestException ex)
-        //        {
-        //            SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            SafeAppendLog($"General error: {ex.Message}", Color.Red);
-        //        }
-        //    }
-
-        //    // Update the DataGridView rows using the consolidated fetched data
-        //    foreach (DataGridViewRow row in dgwBom.Rows)
-        //    {
-        //        if (row.Cells["PARTNAME"].Value != null)
-        //        {
-        //            string partName = row.Cells["PARTNAME"].Value.ToString();
-
-        //            // Case-insensitive lookups with whitespace trimming to prevent false missing items
-        //            var balance = warehouseBalances.FirstOrDefault(b =>
-        //                string.Equals(b.PARTNAME?.Trim(), partName?.Trim(), StringComparison.OrdinalIgnoreCase));
-
-        //            if (balance != null)
-        //            {
-        //                row.Cells["TBALANCE"].Value = balance.TBALANCE;
-        //            }
-        //            else
-        //            {
-        //                row.Cells["TBALANCE"].Value = 0;
-        //            }
-
-        //            // Calculate the LEFTOVERS for the current row
-        //            int delta = Convert.ToInt32(row.Cells["DELTA"].Value);
-        //            int whQuantity = row.Cells["TBALANCE"].Value != null ? Convert.ToInt32(row.Cells["TBALANCE"].Value) : 0;
-        //            int kitQuantity = row.Cells["QUANT"].Value != null ? Convert.ToInt32(row.Cells["QUANT"].Value) : 0;
-        //            int requiredQuantity = row.Cells["CQUANT"].Value != null ? Convert.ToInt32(row.Cells["CQUANT"].Value) : 0;
-
-        //            int leftovers = (whQuantity + kitQuantity) - requiredQuantity;
-
-        //            // Update the LEFTOVERS column in the DataGridView
-        //            row.Cells["LEFTOVERS"].Value = leftovers;
-        //        }
-        //    }
-        //    UpdateSimulationLabel();
-        //}
-
-
-        //private async Task FetchWarehouseBalances()
-        //{
-        //    // Create a list to store the final consolidated warehouse balances
-        //    List<WarehouseBalance> warehouseBalances = new List<WarehouseBalance>();
-
-        //    // Get the unique part names from the DataGridView
-        //    var partNames = dgwBom.Rows.Cast<DataGridViewRow>()
-        //        .Where(row => row.Cells["PARTNAME"].Value != null)
-        //        .Select(row => row.Cells["PARTNAME"].Value.ToString())
-        //        .Distinct()
-        //        .ToList();
-
-        //    if (partNames.Count == 0)
-        //    {
-        //        return;
-        //    }
-
-        //    string warehouseName = partNames.First().Substring(0, 3); // Assuming all parts belong to the same warehouse
-        //    List<WarehouseBalance> allRawBalances = new List<WarehouseBalance>();
-
-        //    // Define a safe chunk size to ensure the URL never gets truncated by the server
-        //    int chunkSize = 40;
-
-        //    using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
-        //    {
-        //        try
-        //        {
-        //            // Set the request headers once before firing concurrent requests
-        //            client.DefaultRequestHeaders.Accept.Clear();
-        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-        //            string usedUser = ApiHelper.AuthenticateClient(client);
-        //            RegisterTransaction(usedUser); // Log this transaction timestamp
-
-        //            // 1. Prepare a list to hold all parallel network tasks
-        //            var fetchTasks = new List<Task<List<WarehouseBalance>>>();
-
-        //            // 2. Build the tasks for each chunk and queue them simultaneously
-        //            for (int i = 0; i < partNames.Count; i += chunkSize)
-        //            {
-        //                var chunk = partNames.Skip(i).Take(chunkSize).ToList();
-
-        //                // Add the task directly without awaiting it inside the loop
-        //                fetchTasks.Add(FetchChunkBalancesAsync(client, chunk, warehouseName));
-        //            }
-
-        //            // 3. Fire all API requests simultaneously and wait for the full group to finish
-        //            var results = await Task.WhenAll(fetchTasks);
-
-        //            // 4. Safely aggregate the returned raw records out of the completed tasks
-        //            foreach (var chunkResult in results)
-        //            {
-        //                if (chunkResult != null)
-        //                {
-        //                    allRawBalances.AddRange(chunkResult);
-        //                }
-        //            }
-
-        //            // Consolidate the accumulated raw records from all batches by PARTNAME and sum up their TBALANCE values
-        //            if (allRawBalances.Count > 0)
-        //            {
-        //                warehouseBalances = allRawBalances
-        //                    .GroupBy(b => b.PARTNAME)
-        //                    .Select(g => new WarehouseBalance
-        //                    {
-        //                        PARTNAME = g.Key,
-        //                        TBALANCE = g.Sum(b => b.TBALANCE) // Sum all lines (WOs/serials) together!
-        //                    })
-        //                    .ToList();
-
-        //                //MessageBox.Show(warehouseBalances.Count().ToString());
-
-        //                SafeAppendLog($"Fetched and consolidated {warehouseBalances.Count} unique warehouse balances for warehouse {warehouseName}", Color.LimeGreen);
-        //            }
-        //        }
-        //        catch (HttpRequestException ex)
-        //        {
-        //            SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            SafeAppendLog($"General error: {ex.Message}", Color.Red);
-        //        }
-        //    }
-
-        //    // Update the DataGridView rows using the consolidated fetched data
-        //    foreach (DataGridViewRow row in dgwBom.Rows)
-        //    {
-        //        if (row.Cells["PARTNAME"].Value != null)
-        //        {
-        //            string partName = row.Cells["PARTNAME"].Value.ToString();
-
-        //            // Case-insensitive lookups with whitespace trimming to prevent false missing items
-        //            var balance = warehouseBalances.FirstOrDefault(b =>
-        //                string.Equals(b.PARTNAME?.Trim(), partName?.Trim(), StringComparison.OrdinalIgnoreCase));
-
-        //            if (balance != null)
-        //            {
-        //                row.Cells["TBALANCE"].Value = balance.TBALANCE;
-        //            }
-        //            else
-        //            {
-        //                row.Cells["TBALANCE"].Value = 0;
-        //            }
-
-        //            // Calculate the LEFTOVERS for the current row
-        //            int delta = Convert.ToInt32(row.Cells["DELTA"].Value);
-        //            int whQuantity = row.Cells["TBALANCE"].Value != null ? Convert.ToInt32(row.Cells["TBALANCE"].Value) : 0;
-        //            int kitQuantity = row.Cells["QUANT"].Value != null ? Convert.ToInt32(row.Cells["QUANT"].Value) : 0;
-        //            int requiredQuantity = row.Cells["CQUANT"].Value != null ? Convert.ToInt32(row.Cells["CQUANT"].Value) : 0;
-
-        //            int leftovers = (whQuantity + kitQuantity) - requiredQuantity;
-
-        //            // Update the LEFTOVERS column in the DataGridView
-        //            row.Cells["LEFTOVERS"].Value = leftovers;
-        //        }
-        //    }
-        //    UpdateSimulationLabel();
-        //}
-
-        ///// <summary>
-        ///// Dedicated async helper method to fetch a single batch of part numbers concurrently.
-        ///// </summary>
-        //private async Task<List<WarehouseBalance>> FetchChunkBalancesAsync(HttpClient client, List<string> chunk, string warehouseName)
-        //{
-        //    try
-        //    {
-        //        // Construct the filter string specifically for this batch
-        //        string partNamesFilter = string.Join(" or ", chunk.Select(p => $"PARTNAME eq '{p}'"));
-        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{warehouseName}'&$expand=WARHSBAL_SUBFORM($filter={partNamesFilter};$select=PARTNAME,TBALANCE)";
-
-        //        // Execute the GET operation asynchronously
-        //        HttpResponseMessage response = await client.GetAsync(url);
-
-        //        if (response.IsSuccessStatusCode)
-        //        {
-        //            string responseBody = await response.Content.ReadAsStringAsync();
-        //            var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-        //            var warehouse = apiResponse["value"]?.FirstOrDefault();
-
-        //            if (warehouse != null && warehouse["WARHSBAL_SUBFORM"] != null)
-        //            {
-        //                return warehouse["WARHSBAL_SUBFORM"].ToObject<List<WarehouseBalance>>();
-        //            }
-        //        }
-        //        else
-        //        {
-        //            SafeAppendLog($"Parallel chunk fetch dropped by server: {response.StatusCode}", Color.Orange);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        SafeAppendLog($"Error in parallel branch execution: {ex.Message}", Color.Red);
-        //    }
-
-        //    return new List<WarehouseBalance>(); // Return empty list rather than null to guarantee seamless merging inside WhenAll
-        //}
-
-
-        //private async Task FetchWarehouseBalances()
-        //{
-        //    // 1. Get the unique part names from the DataGridView to verify there's work to do
-        //    var partNames = dgwBom.Rows.Cast<DataGridViewRow>()
-        //        .Where(row => row.Cells["PARTNAME"].Value != null)
-        //        .Select(row => row.Cells["PARTNAME"].Value.ToString())
-        //        .Distinct()
-        //        .ToList();
-
-        //    if (partNames.Count == 0)
-        //    {
-        //        return;
-        //    }
-
-        //    // Extract the warehouse prefix code (e.g., "UVI")
-        //    string warehouseName = partNames.First().Substring(0, 3);
-
-        //    // High-performance hash table for instant O(1) local memory lookups
-        //    var warehouseStockPool = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-
-        //    // Pull the entire warehouse stock record without using chunk filters in the URL
-        //    string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{warehouseName}'&$expand=WARHSBAL_SUBFORM($select=PARTNAME,TBALANCE)";
-
-        //    using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
-        //    {
-        //        try
-        //        {
-        //            SafeAppendLog($"Retrieving complete stock profile for warehouse {warehouseName}...", Color.Yellow);
-
-        //            client.DefaultRequestHeaders.Accept.Clear();
-        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-        //            string usedUser = ApiHelper.AuthenticateClient(client);
-        //            RegisterTransaction(usedUser); // Log this transaction timestamp
-
-        //            HttpResponseMessage response = await client.GetAsync(url);
-
-        //            if (response.IsSuccessStatusCode)
-        //            {
-        //                string responseBody = await response.Content.ReadAsStringAsync();
-        //                var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-
-        //                // Safely extract the warehouse object avoiding array-empty errors
-        //                var warehouse = apiResponse["value"]?.FirstOrDefault();
-
-        //                if (warehouse != null && warehouse["WARHSBAL_SUBFORM"] != null)
-        //                {
-        //                    var allRawBalances = warehouse["WARHSBAL_SUBFORM"].ToObject<List<WarehouseBalance>>();
-
-        //                    if (allRawBalances != null)
-        //                    {
-        //                        // Group and sum elements directly into our fast dictionary mapping lookup table
-        //                        foreach (var balance in allRawBalances)
-        //                        {
-        //                            if (!string.IsNullOrEmpty(balance.PARTNAME))
-        //                            {
-        //                                string cleanPartName = balance.PARTNAME.Trim();
-
-        //                                if (warehouseStockPool.ContainsKey(cleanPartName))
-        //                                {
-        //                                    warehouseStockPool[cleanPartName] += balance.TBALANCE;
-        //                                }
-        //                                else
-        //                                {
-        //                                    warehouseStockPool[cleanPartName] = balance.TBALANCE;
-        //                                }
-        //                            }
-        //                        }
-
-        //                        SafeAppendLog($"Successfully mapped {warehouseStockPool.Count} unique warehouse balances in memory.", Color.LimeGreen);
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    SafeAppendLog($"Warehouse {warehouseName} returned no subform rows.", Color.Orange);
-        //                }
-        //            }
-        //            else
-        //            {
-        //                SafeAppendLog($"Server returned failure code: {response.StatusCode}", Color.Red);
-        //                MessageBox.Show("Failed to load warehouse data from server.", "Transaction Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        //                return;
-        //            }
-        //        }
-        //        catch (HttpRequestException ex)
-        //        {
-        //            SafeAppendLog($"Request network error: {ex.Message}", Color.Red);
-        //            return;
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            SafeAppendLog($"General runtime processing error: {ex.Message}", Color.Red);
-        //            return;
-        //        }
-        //    }
-
-        //    // =================================================================
-        //    // 2. Update the DataGridView rows using the high-speed dictionary
-        //    // =================================================================
-        //    foreach (DataGridViewRow row in dgwBom.Rows)
-        //    {
-        //        if (row.Cells["PARTNAME"].Value != null)
-        //        {
-        //            string partName = row.Cells["PARTNAME"].Value.ToString().Trim();
-
-        //            // Perform an instant O(1) lookup. If the part isn't in the warehouse pool, its balance is 0.
-        //            if (warehouseStockPool.TryGetValue(partName, out int totalBalance))
-        //            {
-        //                row.Cells["TBALANCE"].Value = totalBalance;
-        //            }
-        //            else
-        //            {
-        //                row.Cells["TBALANCE"].Value = 0;
-        //            }
-
-        //            // Calculate the LEFTOVERS for the current row
-        //            int delta = Convert.ToInt32(row.Cells["DELTA"].Value);
-        //            int whQuantity = row.Cells["TBALANCE"].Value != null ? Convert.ToInt32(row.Cells["TBALANCE"].Value) : 0;
-        //            int kitQuantity = row.Cells["QUANT"].Value != null ? Convert.ToInt32(row.Cells["QUANT"].Value) : 0;
-        //            int requiredQuantity = row.Cells["CQUANT"].Value != null ? Convert.ToInt32(row.Cells["CQUANT"].Value) : 0;
-
-        //            int leftovers = (whQuantity + kitQuantity) - requiredQuantity;
-
-        //            // Update the LEFTOVERS column in the DataGridView
-        //            row.Cells["LEFTOVERS"].Value = leftovers;
-        //        }
-        //    }
-
-        //    UpdateSimulationLabel();
-        //}
+  
 
         private async Task FetchWarehouseBalances()
         {
@@ -2106,7 +1576,8 @@ namespace WH_Panel
 
         private async Task FetchAltsForAllRows()
         {
-            SafeAppendLog("Fetching alts for all rows in batches of 25...", Color.Yellow);
+            const int batchSize = 15;
+            SafeAppendLog($"Fetching alts for all rows in batches of {batchSize}...", Color.Yellow);
 
             // Get all rows that need ALT fetching
             var rowsToProcess = dgwBom.Rows.Cast<DataGridViewRow>()
@@ -2115,7 +1586,7 @@ namespace WH_Panel
                 .ToList();
 
             // Process rows in batches of 25
-            const int batchSize = 25;
+           
             for (int i = 0; i < rowsToProcess.Count; i += batchSize)
             {
                 var batch = rowsToProcess.Skip(i).Take(batchSize).ToList();
@@ -2128,9 +1599,15 @@ namespace WH_Panel
         private async Task FetchAltsForBatch(List<DataGridViewRow> batch)
         {
             // Construct the filter for the batch
+            //var partNames = batch
+            //    .Select(row => $"PARTNAME eq '{row.Cells["PARTNAME"].Value}'")
+            //    .ToList();
+
             var partNames = batch
-                .Select(row => $"PARTNAME eq '{row.Cells["PARTNAME"].Value}'")
+                .Select(row => $"PARTNAME eq '{row.Cells["PARTNAME"].Value?.ToString()?.Trim().Replace("'", "''")}'")
                 .ToList();
+
+
             string filter = string.Join(" or ", partNames);
 
             // Construct the API URL
