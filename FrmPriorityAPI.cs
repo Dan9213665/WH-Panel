@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using OfficeOpenXml;
 using OfficeOpenXml.Drawing.Slicer.Style; // Add the EPPlus NuGet package for reading Excel files
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -18,6 +19,7 @@ using System.Reflection; // Add this using directive if not already present
 using System.Security.Principal; // Add this using directive if not already present
 using System.Text;
 using System.Text.Encodings.Web;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Forms;
@@ -2071,317 +2073,640 @@ namespace WH_Panel
             }
             await Task.Delay(100); // Delay for 1 second
         }
+        //private async void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        //{
+        //    if (e.RowIndex >= 0) // Ensure the row index is valid
+        //    {
+        //        var selectedRow = dataGridView1.Rows[e.RowIndex];
+        //        //await ExtractMFPNForRow(selectedRow);
+        //        var partName = selectedRow.Cells["PARTNAME"].Value.ToString();
+        //        string logPartUrl = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{partName}'&$expand=PARTTRANSLAST2_SUBFORM($top=50;$orderby=CURDATE desc;)";
+        //        using (HttpClient client = new HttpClient())
+        //        {
+        //            try
+        //            {
+        //                // Set the request headers if needed
+        //                client.DefaultRequestHeaders.Accept.Clear();
+        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        //                string usedUser = ApiHelper.AuthenticateClient(client);
+        //                //AppendLog($"User used: {usedUser}\n");
+
+        //                // Measure the time taken for the HTTP POST request
+        //                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        //                // Make the HTTP GET request for stock movements
+        //                HttpResponseMessage logPartResponse = await client.GetAsync(logPartUrl);
+        //                logPartResponse.EnsureSuccessStatusCode();
+        //                stopwatch.Stop();
+        //                // Update the ping label
+        //                UpdatePing(stopwatch.ElapsedMilliseconds);
+        //                // Read the response content
+        //                string logPartResponseBody = await logPartResponse.Content.ReadAsStringAsync();
+        //                // Parse the JSON response
+        //                var logPartApiResponse = JsonConvert.DeserializeObject<LogPartApiResponse>(logPartResponseBody);
+        //                // Check if the response contains any data
+        //                if (logPartApiResponse.value != null && logPartApiResponse.value.Count > 0)
+        //                {
+        //                    // Set AutoGenerateColumns to false
+        //                    dataGridView2.AutoGenerateColumns = false;
+        //                    // Clear existing columns
+        //                    dataGridView2.Columns.Clear();
+        //                    // Define the columns you want to display
+        //                    var curDateColumn = new DataGridViewTextBoxColumn
+        //                    {
+        //                        DataPropertyName = "UDATE",
+        //                        HeaderText = "Transaction Date",
+        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+        //                        Name = "UDATE"
+        //                    };
+        //                    var logDocNoColumn = new DataGridViewTextBoxColumn
+        //                    {
+        //                        DataPropertyName = "LOGDOCNO",
+        //                        HeaderText = "Document Number",
+        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+        //                        Name = "LOGDOCNO"
+        //                    };
+        //                    var logDOCDESColumn = new DataGridViewTextBoxColumn
+        //                    {
+        //                        DataPropertyName = "DOCDES",
+        //                        HeaderText = "DOCDES",
+        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+        //                        Name = "DOCDES"
+        //                    };
+        //                    var SUPCUSTNAMEColumn = new DataGridViewTextBoxColumn
+        //                    {
+        //                        DataPropertyName = "SUPCUSTNAME",
+        //                        HeaderText = "Source_Requester",
+        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+        //                        Name = "SUPCUSTNAME"
+        //                    };
+        //                    var tQuantColumn = new DataGridViewTextBoxColumn
+        //                    {
+        //                        DataPropertyName = "TQUANT",
+        //                        HeaderText = "QTY",
+        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+        //                        Name = "TQUANT"
+        //                    };
+        //                    var tPACKNAMEColumn = new DataGridViewTextBoxColumn
+        //                    {
+        //                        DataPropertyName = "PACKNAME",
+        //                        HeaderText = "PACK",
+        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+        //                        Name = "PACKNAME"
+        //                    };
+        //                    var DocBOOKNUMColumn = new DataGridViewTextBoxColumn
+        //                    {
+        //                        DataPropertyName = "BOOKNUM",
+        //                        HeaderText = "Client`s Document",
+        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+        //                        Name = "BOOKNUM"
+        //                    };
+        //                    // Add columns to the DataGridView
+        //                    dataGridView2.Columns.AddRange(new DataGridViewColumn[]
+        //                    {
+        //                curDateColumn,
+        //                logDocNoColumn,
+        //                logDOCDESColumn,
+        //                SUPCUSTNAMEColumn,
+        //                DocBOOKNUMColumn,
+        //                tQuantColumn,
+        //                tPACKNAMEColumn
+        //                    });
+        //                    // Populate the DataGridView with the data
+        //                    dataGridView2.Rows.Clear();
+        //                    foreach (var logPart in logPartApiResponse.value)
+        //                    {
+        //                        foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
+        //                        {
+        //                            if (trans.DOCDES != "קיזוז אוטומטי" && trans.DOCDES != "חשבוניות מס" && trans.TOWARHSNAME != "666")
+        //                            {
+        //                                dataGridView2.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "");
+        //                            }
+
+        //                        }
+        //                    }
+        //                    groupBox4.Text = $"Stock Movements for {partName}";
+        //                    ColorTheRows2(dataGridView2);
+
+        //                    await EnrichGridWithPackAndDateAsync(partName);
+        //                }
+        //                else
+        //                {
+        //                    MessageBox.Show("No stock movements found for the selected part.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //                }
+        //            }
+        //            catch (HttpRequestException ex)
+        //            {
+        //                AppendLog($"Request error: {ex.Message}", Color.Red);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                if (txtLog != null && !txtLog.IsDisposed)
+        //                {
+        //                    AppendLog($"Request error: {ex.Message}", Color.Red);
+
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+
+
+        //private async Task EnrichGridWithPackAndDateAsync(string partName)
+        //{
+        //    var rows = dataGridView2.Rows.Cast<DataGridViewRow>()
+        //        .Where(r => r.Cells["LOGDOCNO"].Value != null)
+        //        .ToList();
+
+        //    // --- 1. Create HttpClient per API user from ApiUserPool ---
+        //    var clients = Enumerable.Range(0, ApiUserPool.Count)
+        //        .Select(_ =>
+        //        {
+        //            var c = new HttpClient();
+        //            c.DefaultRequestHeaders.Accept.Clear();
+        //            c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            string user = ApiHelper.AuthenticateClient(c); // automatically selects next user
+        //            return (User: user, Client: c);
+        //        }).ToList();
+
+        //    // --- 2. Semaphores to limit per-user concurrency ---
+        //    int maxConcurrencyPerUser = 2;
+        //    var clientSemaphores = clients.ToDictionary(c => c.User, c => new SemaphoreSlim(maxConcurrencyPerUser));
+
+        //    // --- 3. Thread-safe round-robin user assignment ---
+        //    int userIndex = -1;
+        //    object userLock = new object();
+        //    (string User, HttpClient Client) GetNextClient()
+        //    {
+        //        lock (userLock)
+        //        {
+        //            userIndex = (userIndex + 1) % clients.Count;
+        //            return clients[userIndex];
+        //        }
+        //    }
+
+        //    // --- 4. Process rows in parallel ---
+        //    var tasks = rows.Select(async row =>
+        //    {
+        //        string logDocNo = row.Cells["LOGDOCNO"].Value.ToString();
+
+        //        // assign client using round-robin
+        //        var (usedUser, client) = GetNextClient();
+        //        var semaphore = clientSemaphores[usedUser];
+
+        //        await semaphore.WaitAsync();
+        //        try
+        //        {
+        //            const int maxRetry = 666;
+        //            int retry = 0;
+
+        //            while (retry <= maxRetry)
+        //            {
+        //                try
+        //                {
+        //                    if (retry > 0)
+        //                        AppendLog($"Retry {retry} for {logDocNo}\n", Color.Orange);
+
+        //                    string url = logDocNo switch
+        //                    {
+        //                        var s when s.StartsWith("GR") => $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM",
+        //                        var s when s.StartsWith("WR") => $"{baseUrl}/DOCUMENTS_T?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_T_SUBFORM",
+        //                        var s when s.StartsWith("ROB") => $"{baseUrl}/SERIAL?$filter=SERIALNAME eq '{logDocNo}'&$expand=TRANSORDER_K_SUBFORM",
+        //                        var s when s.StartsWith("SH") => $"{baseUrl}/DOCUMENTS_D?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_D_SUBFORM",
+        //                        var s when s.StartsWith("IC") => $"{baseUrl}/DOCUMENTS_C?$filter=DOCNO eq '{logDocNo}'",
+        //                        var s when s.StartsWith("RD") => $"{baseUrl}/AFORM?$filter=FORMNAME eq '{logDocNo}'&$select=CURDATE,FORMNAME",
+        //                        _ => $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM"
+        //                    };
+
+        //                    HttpResponseMessage response = await client.GetAsync(url);
+
+        //                    if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+        //                    {
+        //                        retry++;
+        //                        int delayMs = 500 * retry; // exponential backoff
+        //                        AppendLog($"429 Too Many Requests for {logDocNo}, waiting {delayMs}ms before retry\n", Color.Orange);
+        //                        await Task.Delay(delayMs);
+        //                        continue;
+        //                    }
+
+        //                    response.EnsureSuccessStatusCode();
+
+        //                    string body = await response.Content.ReadAsStringAsync();
+        //                    var doc = JsonConvert.DeserializeObject<JObject>(body)?["value"]?.FirstOrDefault();
+        //                    if (doc == null) return;
+
+
+        //                    // --- UPDATED LOGIC FOR RD DOCUMENT TYPE ---
+        //                    string uDate;
+        //                    if (logDocNo.StartsWith("RD"))
+        //                    {
+        //                        uDate = doc["CURDATE"]?.ToString();
+        //                    }
+        //                    else
+        //                    {
+        //                        uDate = doc["UDATE"]?.ToString();
+        //                    }
+        //                    string bookNum = doc["BOOKNUM"]?.ToString();
+        //                    string packCode = null;
+
+        //                    var subForm = doc["TRANSORDER_P_SUBFORM"] ?? doc["TRANSORDER_T_SUBFORM"] ?? doc["TRANSORDER_D_SUBFORM"];
+        //                    if (subForm != null)
+        //                    {
+        //                        var line = subForm.FirstOrDefault(l => l["PARTNAME"]?.ToString() == partName);
+        //                        if (line != null)
+        //                            packCode = line["PACKCODE"]?.ToString();
+        //                    }
+        //                    else if (logDocNo.StartsWith("ROB"))
+        //                    {
+        //                        var subROBForm = doc["TRANSORDER_K_SUBFORM"];
+        //                        if (subROBForm != null)
+        //                        {
+        //                            var line = subROBForm.FirstOrDefault(l => l["PARTNAME"]?.ToString() == partName);
+        //                            if (line != null)
+        //                            {
+        //                                var curDateStr = line["CURDATE"]?.ToString();
+        //                                if (DateTime.TryParse(curDateStr, out DateTime curDate))
+        //                                    uDate = curDate.Date.AddDays(1).AddSeconds(-1).ToString();
+        //                                else
+        //                                    uDate = curDateStr;
+        //                            }
+        //                        }
+        //                        bookNum ??= doc["BOOKNUM"]?.ToString();
+        //                    }
+
+        //                    row.Cells["UDATE"].Value = uDate;
+        //                    row.Cells["BOOKNUM"].Value = bookNum;
+        //                    row.Cells["PACKNAME"].Value = packCode;
+
+        //                    // --- log the used API user ---
+        //                    //AppendLog($"Success for {logDocNo} using API user: {usedUser}\n", Color.Green);
+
+        //                    break; // success, exit retry loop
+        //                }
+        //                catch (HttpRequestException ex)
+        //                {
+        //                    AppendLog($"HTTP error for {logDocNo}: {ex.Message}\n", Color.Red);
+        //                    break;
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    AppendLog($"Error for {logDocNo}: {ex.Message}\n", Color.Red);
+        //                    break;
+        //                }
+        //            }
+        //        }
+        //        finally
+        //        {
+        //            semaphore.Release();
+        //        }
+        //    }).ToList();
+
+        //    await Task.WhenAll(tasks);
+
+        //    // --- 5. Sort grid by UDATE descending ---
+        //    dataGridView2.Sort(dataGridView2.Columns["UDATE"], ListSortDirection.Descending);
+        //    //AppendLog("Grid enrichment complete.\n", Color.Green);
+        //}
+
+
+
+        //// Helper classes
+        //private class DocumentInfo
+        //{
+        //    public string UDate;
+        //    public string BookNum;
+        //    public List<LineInfo> Lines;
+        //}
+
+        //private class LineInfo
+        //{
+        //    public string PartName;
+        //    public int Quant;
+        //    public string PackCode;
+        //}
+
+
+
+        //UPDATED 202609070851
+
+        // --- 1. Static Client Pool(Prevents socket exhaustion and thread-safety issues) ---
+private static readonly ConcurrentBag<HttpClient> _clientPool = new();
+        private static readonly object _poolInitLock = new();
+        private static bool _poolInitialized = false;
+
+        private void EnsureClientPool()
+        {
+            if (_poolInitialized) return;
+            lock (_poolInitLock)
+            {
+                if (_poolInitialized) return;
+
+                // Directly access the static Count property on the static ApiUserPool class
+                int poolSize = Math.Max(1, ApiUserPool.Count);
+
+                for (int i = 0; i < poolSize; i++)
+                {
+                    var handler = new SocketsHttpHandler
+                    {
+                        PooledConnectionLifetime = TimeSpan.FromMinutes(15),
+                        MaxConnectionsPerServer = 10
+                    };
+                    var client = new HttpClient(handler);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    // Pre-authenticate each persistent client with a dedicated round-robin identity
+                    ApiHelper.AuthenticateClient(client);
+
+                    _clientPool.Add(client);
+                }
+                _poolInitialized = true;
+            }
+        }
+
+        private async Task<T> ExecuteWithPooledClientAsync<T>(Func<HttpClient, Task<T>> action)
+        {
+            EnsureClientPool();
+            if (!_clientPool.TryTake(out var client))
+            {
+                var handler = new SocketsHttpHandler { PooledConnectionLifetime = TimeSpan.FromMinutes(15) };
+                client = new HttpClient(handler);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                ApiHelper.AuthenticateClient(client);
+            }
+
+            try
+            {
+                return await action(client);
+            }
+            finally
+            {
+                _clientPool.Add(client);
+            }
+        }
+
+        // --- 2. Main Event Handler ---
         private async void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0) // Ensure the row index is valid
+            if (e.RowIndex < 0) return; // Ensure row index is valid
+
+            var selectedRow = dataGridView1.Rows[e.RowIndex];
+            var partName = selectedRow.Cells["PARTNAME"]?.Value?.ToString();
+            if (string.IsNullOrWhiteSpace(partName)) return;
+
+            string logPartUrl = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{Uri.EscapeDataString(partName)}'&$expand=PARTTRANSLAST2_SUBFORM($top=50;$orderby=CURDATE desc;)";
+
+            try
             {
-                var selectedRow = dataGridView1.Rows[e.RowIndex];
-                //await ExtractMFPNForRow(selectedRow);
-                var partName = selectedRow.Cells["PARTNAME"].Value.ToString();
-                string logPartUrl = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{partName}'&$expand=PARTTRANSLAST2_SUBFORM($top=50;$orderby=CURDATE desc;)";
-                using (HttpClient client = new HttpClient())
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
+                string logPartResponseBody = await ExecuteWithPooledClientAsync(async client =>
                 {
-                    try
+                    using var response = await client.GetAsync(logPartUrl);
+                    response.EnsureSuccessStatusCode();
+                    return await response.Content.ReadAsStringAsync();
+                });
+
+                stopwatch.Stop();
+                UpdatePing(stopwatch.ElapsedMilliseconds);
+
+                var logPartApiResponse = JsonConvert.DeserializeObject<LogPartApiResponse>(logPartResponseBody);
+                if (logPartApiResponse?.value == null || logPartApiResponse.value.Count == 0)
+                {
+                    MessageBox.Show("No stock movements found for the selected part.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                // Initialize Grid 2 Structure
+                InitializeMovementsGrid();
+
+                var validDocNumbers = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+                // Populate initial movement records
+                foreach (var logPart in logPartApiResponse.value)
+                {
+                    if (logPart.PARTTRANSLAST2_SUBFORM == null) continue;
+
+                    foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
                     {
-                        // Set the request headers if needed
-                        client.DefaultRequestHeaders.Accept.Clear();
-                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                        string usedUser = ApiHelper.AuthenticateClient(client);
-                        //AppendLog($"User used: {usedUser}\n");
-
-                        // Measure the time taken for the HTTP POST request
-                        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-                        // Make the HTTP GET request for stock movements
-                        HttpResponseMessage logPartResponse = await client.GetAsync(logPartUrl);
-                        logPartResponse.EnsureSuccessStatusCode();
-                        stopwatch.Stop();
-                        // Update the ping label
-                        UpdatePing(stopwatch.ElapsedMilliseconds);
-                        // Read the response content
-                        string logPartResponseBody = await logPartResponse.Content.ReadAsStringAsync();
-                        // Parse the JSON response
-                        var logPartApiResponse = JsonConvert.DeserializeObject<LogPartApiResponse>(logPartResponseBody);
-                        // Check if the response contains any data
-                        if (logPartApiResponse.value != null && logPartApiResponse.value.Count > 0)
+                        if (trans.DOCDES != "קיזוז אוטומטי" && trans.DOCDES != "חשבוניות מס" && trans.TOWARHSNAME != "666")
                         {
-                            // Set AutoGenerateColumns to false
-                            dataGridView2.AutoGenerateColumns = false;
-                            // Clear existing columns
-                            dataGridView2.Columns.Clear();
-                            // Define the columns you want to display
-                            var curDateColumn = new DataGridViewTextBoxColumn
+                            dataGridView2.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "");
+                            if (!string.IsNullOrWhiteSpace(trans.LOGDOCNO))
                             {
-                                DataPropertyName = "UDATE",
-                                HeaderText = "Transaction Date",
-                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                                Name = "UDATE"
-                            };
-                            var logDocNoColumn = new DataGridViewTextBoxColumn
-                            {
-                                DataPropertyName = "LOGDOCNO",
-                                HeaderText = "Document Number",
-                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                                Name = "LOGDOCNO"
-                            };
-                            var logDOCDESColumn = new DataGridViewTextBoxColumn
-                            {
-                                DataPropertyName = "DOCDES",
-                                HeaderText = "DOCDES",
-                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                                Name = "DOCDES"
-                            };
-                            var SUPCUSTNAMEColumn = new DataGridViewTextBoxColumn
-                            {
-                                DataPropertyName = "SUPCUSTNAME",
-                                HeaderText = "Source_Requester",
-                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                                Name = "SUPCUSTNAME"
-                            };
-                            var tQuantColumn = new DataGridViewTextBoxColumn
-                            {
-                                DataPropertyName = "TQUANT",
-                                HeaderText = "QTY",
-                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                                Name = "TQUANT"
-                            };
-                            var tPACKNAMEColumn = new DataGridViewTextBoxColumn
-                            {
-                                DataPropertyName = "PACKNAME",
-                                HeaderText = "PACK",
-                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                                Name = "PACKNAME"
-                            };
-                            var DocBOOKNUMColumn = new DataGridViewTextBoxColumn
-                            {
-                                DataPropertyName = "BOOKNUM",
-                                HeaderText = "Client`s Document",
-                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                                Name = "BOOKNUM"
-                            };
-                            // Add columns to the DataGridView
-                            dataGridView2.Columns.AddRange(new DataGridViewColumn[]
-                            {
-                        curDateColumn,
-                        logDocNoColumn,
-                        logDOCDESColumn,
-                        SUPCUSTNAMEColumn,
-                        DocBOOKNUMColumn,
-                        tQuantColumn,
-                        tPACKNAMEColumn
-                            });
-                            // Populate the DataGridView with the data
-                            dataGridView2.Rows.Clear();
-                            foreach (var logPart in logPartApiResponse.value)
-                            {
-                                foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
-                                {
-                                    if (trans.DOCDES != "קיזוז אוטומטי" && trans.DOCDES != "חשבוניות מס" && trans.TOWARHSNAME != "666")
-                                    {
-                                        dataGridView2.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "");
-                                    }
-
-                                }
+                                validDocNumbers.Add(trans.LOGDOCNO);
                             }
-                            groupBox4.Text = $"Stock Movements for {partName}";
-                            ColorTheRows2(dataGridView2);
+                        }
+                    }
+                }
 
-                            await EnrichGridWithPackAndDateAsync(partName);
-                        }
-                        else
-                        {
-                            MessageBox.Show("No stock movements found for the selected part.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        }
-                    }
-                    catch (HttpRequestException ex)
-                    {
-                        AppendLog($"Request error: {ex.Message}", Color.Red);
-                    }
-                    catch (Exception ex)
-                    {
-                        if (txtLog != null && !txtLog.IsDisposed)
-                        {
-                            AppendLog($"Request error: {ex.Message}", Color.Red);
+                groupBox4.Text = $"Stock Movements for {partName}";
+                ColorTheRows2(dataGridView2);
 
-                        }
-                    }
+                // Enrich only the retrieved unique documents in bulk
+                if (validDocNumbers.Count > 0)
+                {
+                    await EnrichGridBatchedAsync(partName, validDocNumbers.ToList());
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                AppendLog($"Request error: {ex.Message}", Color.Red);
+            }
+            catch (Exception ex)
+            {
+                if (txtLog != null && !txtLog.IsDisposed)
+                {
+                    AppendLog($"Processing error: {ex.Message}", Color.Red);
                 }
             }
         }
 
-
-        private async Task EnrichGridWithPackAndDateAsync(string partName)
+        // --- 3. Batched Document Enrichment ---
+        private async Task EnrichGridBatchedAsync(string partName, List<string> docNumbers)
         {
-            var rows = dataGridView2.Rows.Cast<DataGridViewRow>()
-                .Where(r => r.Cells["LOGDOCNO"].Value != null)
+            // Group document IDs by target endpoint to minimize API roundtrips
+            var groupedDocs = docNumbers
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .GroupBy(GetDocTypeEndpoint)
                 .ToList();
 
-            // --- 1. Create HttpClient per API user from ApiUserPool ---
-            var clients = Enumerable.Range(0, ApiUserPool.Count)
-                .Select(_ =>
-                {
-                    var c = new HttpClient();
-                    c.DefaultRequestHeaders.Accept.Clear();
-                    c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    string user = ApiHelper.AuthenticateClient(c); // automatically selects next user
-                    return (User: user, Client: c);
-                }).ToList();
+            var enrichmentData = new ConcurrentDictionary<string, (string UDate, string BookNum, string PackCode)>(StringComparer.OrdinalIgnoreCase);
 
-            // --- 2. Semaphores to limit per-user concurrency ---
-            int maxConcurrencyPerUser = 2;
-            var clientSemaphores = clients.ToDictionary(c => c.User, c => new SemaphoreSlim(maxConcurrencyPerUser));
-
-            // --- 3. Thread-safe round-robin user assignment ---
-            int userIndex = -1;
-            object userLock = new object();
-            (string User, HttpClient Client) GetNextClient()
+            // Fetch each document group concurrently using pooled clients
+            var fetchTasks = groupedDocs.Select(async group =>
             {
-                lock (userLock)
+                var config = group.Key;
+                var docs = group.ToList();
+
+                // Prevent query URLs from exceeding length limits by chunking to 25 items per request
+                const int maxChunkSize = 25;
+                for (int i = 0; i < docs.Count; i += maxChunkSize)
                 {
-                    userIndex = (userIndex + 1) % clients.Count;
-                    return clients[userIndex];
+                    var chunk = docs.Skip(i).Take(maxChunkSize).ToList();
+                    await FetchDocumentChunkAsync(config, chunk, partName, enrichmentData);
+                }
+            });
+
+            await Task.WhenAll(fetchTasks);
+
+            // Update UI strictly on the main thread in a single fast pass
+            foreach (DataGridViewRow row in dataGridView2.Rows)
+            {
+                var docNo = row.Cells["LOGDOCNO"].Value?.ToString();
+                if (docNo != null && enrichmentData.TryGetValue(docNo, out var data))
+                {
+                    row.Cells["UDATE"].Value = data.UDate;
+                    row.Cells["BOOKNUM"].Value = data.BookNum;
+                    row.Cells["PACKNAME"].Value = data.PackCode;
                 }
             }
 
-            // --- 4. Process rows in parallel ---
-            var tasks = rows.Select(async row =>
+            if (dataGridView2.Columns.Contains("UDATE"))
             {
-                string logDocNo = row.Cells["LOGDOCNO"].Value.ToString();
+                dataGridView2.Sort(dataGridView2.Columns["UDATE"], ListSortDirection.Descending);
+            }
+        }
 
-                // assign client using round-robin
-                var (usedUser, client) = GetNextClient();
-                var semaphore = clientSemaphores[usedUser];
+        // --- 4. Chunk Fetch Worker with Retry Policy ---
+        private async Task FetchDocumentChunkAsync(
+            DocEndpointConfig config,
+            List<string> docChunk,
+            string partName,
+            ConcurrentDictionary<string, (string UDate, string BookNum, string PackCode)> results)
+        {
+            string filterExpr = string.Join(" or ", docChunk.Select(d => $"{config.KeyField} eq '{Uri.EscapeDataString(d)}'"));
 
-                await semaphore.WaitAsync();
+            // Subform filter isolates only the target part directly on the server
+            string expandClause = !string.IsNullOrEmpty(config.SubformName)
+                ? $"&$expand={config.SubformName}($filter=PARTNAME eq '{Uri.EscapeDataString(partName)}';$select=PARTNAME,PACKCODE{(config.EntitySet == "SERIAL" ? ",CURDATE" : "")})"
+                : "";
+
+            string selectClause = $"&$select={config.KeyField},{(config.EntitySet == "AFORM" ? "CURDATE" : "UDATE")}{(config.HasBookNum ? ",BOOKNUM" : "")}";
+            string url = $"{baseUrl}/{config.EntitySet}?$filter=({filterExpr}){expandClause}{selectClause}";
+
+            const int maxRetries = 3;
+            for (int retry = 0; retry <= maxRetries; retry++)
+            {
                 try
                 {
-                    const int maxRetry = 666;
-                    int retry = 0;
-
-                    while (retry <= maxRetry)
+                    string body = await ExecuteWithPooledClientAsync(async client =>
                     {
-                        try
+                        using var response = await client.GetAsync(url);
+                        if (response.StatusCode == (System.Net.HttpStatusCode)429)
                         {
-                            if (retry > 0)
-                                AppendLog($"Retry {retry} for {logDocNo}\n", Color.Orange);
+                            throw new HttpRequestException("429", null, System.Net.HttpStatusCode.TooManyRequests);
+                        }
+                        response.EnsureSuccessStatusCode();
+                        return await response.Content.ReadAsStringAsync();
+                    });
 
-                            string url = logDocNo switch
+                    var json = JObject.Parse(body);
+                    if (json["value"] is not JArray items) return;
+
+                    foreach (var doc in items)
+                    {
+                        string docNo = doc[config.KeyField]?.ToString();
+                        if (string.IsNullOrEmpty(docNo)) continue;
+
+                        string uDate = config.EntitySet == "AFORM"
+                            ? doc["CURDATE"]?.ToString()
+                            : doc["UDATE"]?.ToString();
+
+                        string bookNum = config.HasBookNum ? doc["BOOKNUM"]?.ToString() : null;
+                        string packCode = null;
+
+                        if (!string.IsNullOrEmpty(config.SubformName) && doc[config.SubformName] is JArray lines)
+                        {
+                            var matchingLine = lines.FirstOrDefault(l => l["PARTNAME"]?.ToString() == partName);
+                            if (matchingLine != null)
                             {
-                                var s when s.StartsWith("GR") => $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM",
-                                var s when s.StartsWith("WR") => $"{baseUrl}/DOCUMENTS_T?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_T_SUBFORM",
-                                var s when s.StartsWith("ROB") => $"{baseUrl}/SERIAL?$filter=SERIALNAME eq '{logDocNo}'&$expand=TRANSORDER_K_SUBFORM",
-                                var s when s.StartsWith("SH") => $"{baseUrl}/DOCUMENTS_D?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_D_SUBFORM",
-                                var s when s.StartsWith("IC") => $"{baseUrl}/DOCUMENTS_C?$filter=DOCNO eq '{logDocNo}'",
-                                var s when s.StartsWith("RD") => $"{baseUrl}/AFORM?$filter=FORMNAME eq '{logDocNo}'&$select=CURDATE,FORMNAME",
-                                _ => $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM"
-                            };
+                                packCode = matchingLine["PACKCODE"]?.ToString();
 
-                            HttpResponseMessage response = await client.GetAsync(url);
-
-                            if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
-                            {
-                                retry++;
-                                int delayMs = 500 * retry; // exponential backoff
-                                AppendLog($"429 Too Many Requests for {logDocNo}, waiting {delayMs}ms before retry\n", Color.Orange);
-                                await Task.Delay(delayMs);
-                                continue;
-                            }
-
-                            response.EnsureSuccessStatusCode();
-
-                            string body = await response.Content.ReadAsStringAsync();
-                            var doc = JsonConvert.DeserializeObject<JObject>(body)?["value"]?.FirstOrDefault();
-                            if (doc == null) return;
-
-
-                            // --- UPDATED LOGIC FOR RD DOCUMENT TYPE ---
-                            string uDate;
-                            if (logDocNo.StartsWith("RD"))
-                            {
-                                uDate = doc["CURDATE"]?.ToString();
-                            }
-                            else
-                            {
-                                uDate = doc["UDATE"]?.ToString();
-                            }
-                            string bookNum = doc["BOOKNUM"]?.ToString();
-                            string packCode = null;
-
-                            var subForm = doc["TRANSORDER_P_SUBFORM"] ?? doc["TRANSORDER_T_SUBFORM"] ?? doc["TRANSORDER_D_SUBFORM"];
-                            if (subForm != null)
-                            {
-                                var line = subForm.FirstOrDefault(l => l["PARTNAME"]?.ToString() == partName);
-                                if (line != null)
-                                    packCode = line["PACKCODE"]?.ToString();
-                            }
-                            else if (logDocNo.StartsWith("ROB"))
-                            {
-                                var subROBForm = doc["TRANSORDER_K_SUBFORM"];
-                                if (subROBForm != null)
+                                if (config.EntitySet == "SERIAL")
                                 {
-                                    var line = subROBForm.FirstOrDefault(l => l["PARTNAME"]?.ToString() == partName);
-                                    if (line != null)
+                                    var curDateStr = matchingLine["CURDATE"]?.ToString();
+                                    if (DateTime.TryParse(curDateStr, out DateTime curDate))
                                     {
-                                        var curDateStr = line["CURDATE"]?.ToString();
-                                        if (DateTime.TryParse(curDateStr, out DateTime curDate))
-                                            uDate = curDate.Date.AddDays(1).AddSeconds(-1).ToString();
-                                        else
-                                            uDate = curDateStr;
+                                        uDate = curDate.Date.AddDays(1).AddSeconds(-1).ToString();
+                                    }
+                                    else
+                                    {
+                                        uDate = curDateStr;
                                     }
                                 }
-                                bookNum ??= doc["BOOKNUM"]?.ToString();
                             }
-
-                            row.Cells["UDATE"].Value = uDate;
-                            row.Cells["BOOKNUM"].Value = bookNum;
-                            row.Cells["PACKNAME"].Value = packCode;
-
-                            // --- log the used API user ---
-                            //AppendLog($"Success for {logDocNo} using API user: {usedUser}\n", Color.Green);
-
-                            break; // success, exit retry loop
                         }
-                        catch (HttpRequestException ex)
-                        {
-                            AppendLog($"HTTP error for {logDocNo}: {ex.Message}\n", Color.Red);
-                            break;
-                        }
-                        catch (Exception ex)
-                        {
-                            AppendLog($"Error for {logDocNo}: {ex.Message}\n", Color.Red);
-                            break;
-                        }
+
+                        results[docNo] = (uDate, bookNum, packCode);
                     }
+
+                    return; // Succeeded, exit retry loop
                 }
-                finally
+                catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
                 {
-                    semaphore.Release();
+                    if (retry == maxRetries)
+                    {
+                        AppendLog($"Exhausted 429 retries for chunk starting with {docChunk.First()}\n", Color.Red);
+                        return;
+                    }
+                    int delayMs = 500 * (int)Math.Pow(2, retry);
+                    AppendLog($"429 rate limit hit. Backing off {delayMs}ms (Attempt {retry + 1})...\n", Color.Orange);
+                    await Task.Delay(delayMs);
                 }
-            }).ToList();
-
-            await Task.WhenAll(tasks);
-
-            // --- 5. Sort grid by UDATE descending ---
-            dataGridView2.Sort(dataGridView2.Columns["UDATE"], ListSortDirection.Descending);
-            //AppendLog("Grid enrichment complete.\n", Color.Green);
+                catch (Exception ex)
+                {
+                    AppendLog($"Batch fetch failed for {config.EntitySet}: {ex.Message}\n", Color.Red);
+                    return;
+                }
+            }
         }
 
+        // --- 5. Supporting Endpoint Record & Grid Setup ---
+        private record DocEndpointConfig(string EntitySet, string KeyField, string SubformName, bool HasBookNum, bool HasTopLevelDate);
 
-
-        // Helper classes
-        private class DocumentInfo
+        private DocEndpointConfig GetDocTypeEndpoint(string docNo)
         {
-            public string UDate;
-            public string BookNum;
-            public List<LineInfo> Lines;
+            return docNo switch
+            {
+                var s when s.StartsWith("GR", StringComparison.OrdinalIgnoreCase) =>
+                    new DocEndpointConfig("DOCUMENTS_P", "DOCNO", "TRANSORDER_P_SUBFORM", true, true),
+                var s when s.StartsWith("WR", StringComparison.OrdinalIgnoreCase) =>
+                    new DocEndpointConfig("DOCUMENTS_T", "DOCNO", "TRANSORDER_T_SUBFORM", true, true),
+                var s when s.StartsWith("ROB", StringComparison.OrdinalIgnoreCase) =>
+            
+                    new DocEndpointConfig("SERIAL", "SERIALNAME", "TRANSORDER_K_SUBFORM", false, false),
+                var s when s.StartsWith("SH", StringComparison.OrdinalIgnoreCase) =>
+                    new DocEndpointConfig("DOCUMENTS_D", "DOCNO", "TRANSORDER_D_SUBFORM", true, true),
+                var s when s.StartsWith("IC", StringComparison.OrdinalIgnoreCase) =>
+                    new DocEndpointConfig("DOCUMENTS_C", "DOCNO", null, true, true),
+                var s when s.StartsWith("RD", StringComparison.OrdinalIgnoreCase) =>
+                    new DocEndpointConfig("AFORM", "FORMNAME", null, false, true),
+                _ =>
+                    new DocEndpointConfig("DOCUMENTS_P", "DOCNO", "TRANSORDER_P_SUBFORM", true, true)
+            };
         }
 
-        private class LineInfo
+        private void InitializeMovementsGrid()
         {
-            public string PartName;
-            public int Quant;
-            public string PackCode;
+            dataGridView2.AutoGenerateColumns = false;
+            dataGridView2.Columns.Clear();
+            dataGridView2.Columns.AddRange(new DataGridViewColumn[]
+            {
+        new DataGridViewTextBoxColumn { DataPropertyName = "UDATE", HeaderText = "Transaction Date", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells, Name = "UDATE" },
+        new DataGridViewTextBoxColumn { DataPropertyName = "LOGDOCNO", HeaderText = "Document Number", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells, Name = "LOGDOCNO" },
+        new DataGridViewTextBoxColumn { DataPropertyName = "DOCDES", HeaderText = "DOCDES", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells, Name = "DOCDES" },
+        new DataGridViewTextBoxColumn { DataPropertyName = "SUPCUSTNAME", HeaderText = "Source_Requester", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells, Name = "SUPCUSTNAME" },
+        new DataGridViewTextBoxColumn { DataPropertyName = "BOOKNUM", HeaderText = "Client`s Document", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells, Name = "BOOKNUM" },
+        new DataGridViewTextBoxColumn { DataPropertyName = "TQUANT", HeaderText = "QTY", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells, Name = "TQUANT" },
+        new DataGridViewTextBoxColumn { DataPropertyName = "PACKNAME", HeaderText = "PACK", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells, Name = "PACKNAME" }
+            });
+            dataGridView2.Rows.Clear();
         }
+
+
+        //UPDATED 202609070851
 
 
 
