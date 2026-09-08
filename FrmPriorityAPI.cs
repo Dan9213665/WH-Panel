@@ -337,6 +337,8 @@ namespace WH_Panel
             public string TOWARHSNAME { get; set; }
 
             public int TRANS { get; set; }
+
+            
         }
         public class WarehouseBalanceApiResponse
         {
