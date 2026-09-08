@@ -1873,6 +1873,7 @@ namespace WH_Panel
                     // STEP 1: Fetch Balances First (WARHSBAL)
                     // -------------------------------------------------------------
                     string balanceUrl = $"{baseUrl}/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouse}'" +
+                                        $"&$select=WARHSNAME" +
                                         $"&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{selectedWarehouse}*';" +
                                         $"$select=PARTNAME,PARTDES,BALANCE,CDATE,PART)";
 
