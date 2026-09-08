@@ -94,53 +94,13 @@ namespace WH_Panel
         //private List<WarehouseBalance> warehouseBalances;
         // Define this at class level
         private ContextMenuStrip contextMenuSwitchToAlt;
-        //public FrmPriorityBom()
-        //{
-        //    InitializeComponent();
-        //    this.Load += FrmPriorityBom_Load;
-        //    this.KeyPreview = true; // Set KeyPreview to true
-        //    SetDarkModeColors(this);
-        //    InitializeDataGridView();
-        //    // Set the DrawMode property and handle the DrawItem event
-        //    cmbROBxList.DrawMode = DrawMode.OwnerDrawFixed;
-        //    cmbROBxList.DrawItem += cmbROBxList_DrawItem;
-        //    // Place these inside your Form's constructor or FrmPriorityBom_Load event
-        //    cnkbClosed.CheckedChanged += (s, e) => {
-        //        RefreshComboBoxItems();
-        //    };
-
-        //    cmbROBxList.TextUpdate += (s, e) => {
-        //        string currentText = cmbROBxList.Text;
-
-        //        RefreshComboBoxItems();
-
-        //        // Maintain the user's typed input text and cursor position
-        //        cmbROBxList.Text = currentText;
-        //        cmbROBxList.SelectionStart = currentText.Length;
-
-        //        // Keep the dropdown open so they can see results shrinking as they type
-        //        cmbROBxList.DroppedDown = true;
-        //    };
-        //    // Initialize the ToolTip and set up the delay for the ToolTip.
-        //    toolTip = new ToolTip();
-        //    toolTip.AutoPopDelay = 5000;
-        //    toolTip.InitialDelay = 1000;
-        //    toolTip.ReshowDelay = 500;
-        //    toolTip.ShowAlways = true;
-        //    // Set up the ToolTip text for the btnGetMFNs button.
-        //    toolTip.SetToolTip(btnGetMFNs, "Click to fetch Manufacturer Part Numbers (MFPNs) or right-click to fetch ALTs.");
-        //    // Handle the CellFormatting event
-        //    dgwBom.CellFormatting += dgwBom_CellFormatting;
-        //    AttachTextBoxEvents(this);
-
-        //    contextMenuSwitchToAlt = new ContextMenuStrip();
-        //    var switchToAltItem = new ToolStripMenuItem("SWITCH TO ALT");
-        //    switchToAltItem.Click += SwitchToAltItem_Click;
-        //    contextMenuSwitchToAlt.Items.Add(switchToAltItem);
-
-
-        //}
-
+       
+        private static readonly HttpClient _sharedHttpClient = new HttpClient(new SocketsHttpHandler
+        {
+            PooledConnectionLifetime = TimeSpan.FromMinutes(15),
+            PooledConnectionIdleTimeout = TimeSpan.FromMinutes(2),
+            MaxConnectionsPerServer = 20
+        });
         public FrmPriorityBom()
         {
             InitializeComponent();
@@ -1574,12 +1534,6 @@ namespace WH_Panel
 
         
 
-        private static readonly HttpClient _sharedHttpClient = new HttpClient(new SocketsHttpHandler
-        {
-            PooledConnectionLifetime = TimeSpan.FromMinutes(15),
-            PooledConnectionIdleTimeout = TimeSpan.FromMinutes(2),
-            MaxConnectionsPerServer = 20
-        });
 
 
 
