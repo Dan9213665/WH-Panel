@@ -13,6 +13,7 @@ using Seagull.BarTender.Print;
 using Seagull.Framework.Utility;
 using Seagull.Framework.Yaml;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -756,7 +757,7 @@ namespace WH_Panel
 
             SafeAppendLog($"Fetching MFPNs in targeted batches for {partNames.Count} parts...", Color.Yellow);
 
-            const int batchSize = 15;
+            const int batchSize = 30;
             var mfpnMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
             using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
@@ -907,7 +908,102 @@ namespace WH_Panel
                 }
             }
         }
-  
+
+
+        //private async Task FetchWarehouseBalances()
+        //{
+        //    var partNames = dgwBom.Rows.Cast<DataGridViewRow>()
+        //        .Where(row => row.Cells["PARTNAME"].Value != null)
+        //        .Select(row => row.Cells["PARTNAME"].Value.ToString().Trim())
+        //        .Where(name => !string.IsNullOrEmpty(name))
+        //        .Distinct(StringComparer.OrdinalIgnoreCase)
+        //        .ToList();
+
+        //    if (partNames.Count == 0) return;
+
+        //    string warehouseName = partNames.First().Substring(0, 3);
+        //    var warehouseStockPool = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+        //    const int batchSize = 30; // Safe URL length
+        //    using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
+        //    {
+        //        client.DefaultRequestHeaders.Accept.Clear();
+        //        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //        string usedUser = ApiHelper.AuthenticateClient(client);
+
+        //        for (int i = 0; i < partNames.Count; i += batchSize)
+        //        {
+        //            var batch = partNames.Skip(i).Take(batchSize).ToList();
+
+        //            // Build subform filter: PARTNAME eq 'A' or PARTNAME eq 'B'
+        //            string partSubFilter = string.Join(" or ", batch.Select(p => $"PARTNAME eq '{Uri.EscapeDataString(p)}'"));
+
+        //            // Query WAREHOUSES with filtered $expand
+        //            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES" +
+        //                         $"?$filter=WARHSNAME eq '{Uri.EscapeDataString(warehouseName)}'" +
+        //                         $"&$expand=WARHSBAL_SUBFORM($filter={partSubFilter};$select=PARTNAME,TBALANCE)";
+
+        //            try
+        //            {
+        //                RegisterTransaction(usedUser);
+        //                HttpResponseMessage response = await client.GetAsync(url);
+
+        //                if (response.IsSuccessStatusCode)
+        //                {
+        //                    string responseBody = await response.Content.ReadAsStringAsync();
+        //                    var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+        //                    var warehouse = apiResponse["value"]?.FirstOrDefault();
+        //                    var balances = warehouse?["WARHSBAL_SUBFORM"]?.ToObject<List<WarehouseBalance>>();
+
+        //                    if (balances != null)
+        //                    {
+        //                        foreach (var b in balances)
+        //                        {
+        //                            if (string.IsNullOrEmpty(b.PARTNAME)) continue;
+        //                            string cleanName = b.PARTNAME.Trim();
+
+        //                            if (warehouseStockPool.ContainsKey(cleanName))
+        //                                warehouseStockPool[cleanName] += b.TBALANCE;
+        //                            else
+        //                                warehouseStockPool[cleanName] = b.TBALANCE;
+        //                        }
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    SafeAppendLog($"WARHSBAL subform query failed: {response.StatusCode}", Color.Red);
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                SafeAppendLog($"Error fetching stock chunk: {ex.Message}", Color.Red);
+        //            }
+        //        }
+        //    }
+
+        //    // Update Grid
+        //    foreach (DataGridViewRow row in dgwBom.Rows)
+        //    {
+        //        if (row.Cells["PARTNAME"].Value != null)
+        //        {
+        //            string partName = row.Cells["PARTNAME"].Value.ToString().Trim();
+        //            int whQuantity = warehouseStockPool.TryGetValue(partName, out int totalBalance) ? totalBalance : 0;
+        //            row.Cells["TBALANCE"].Value = whQuantity;
+
+        //            int delta = row.Cells["DELTA"].Value != null ? Convert.ToInt32(row.Cells["DELTA"].Value) : 0;
+        //            int kitQuantity = row.Cells["QUANT"].Value != null ? Convert.ToInt32(row.Cells["QUANT"].Value) : 0;
+        //            int requiredQuantity = row.Cells["CQUANT"].Value != null ? Convert.ToInt32(row.Cells["CQUANT"].Value) : 0;
+
+        //            row.Cells["LEFTOVERS"].Value = (whQuantity + kitQuantity) - requiredQuantity;
+        //        }
+        //    }
+
+        //    UpdateSimulationLabel();
+        //    SafeAppendLog($"Updated balances for {warehouseStockPool.Count} parts in warehouse {warehouseName}.", Color.LimeGreen);
+        //}
+
+
+        //UPDATED 202609080958...
 
         private async Task FetchWarehouseBalances()
         {
@@ -920,32 +1016,37 @@ namespace WH_Panel
 
             if (partNames.Count == 0) return;
 
-            string warehouseName = partNames.First().Substring(0, 3);
-            var warehouseStockPool = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+            string firstPart = partNames.First();
+            string warehouseName = firstPart.Length >= 3 ? firstPart.Substring(0, 3) : "Main";
+            var warehouseStockPool = new ConcurrentDictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 
-            const int batchSize = 30; // Safe URL length
-            using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
+            // Bumped to 75: Safe under 2,000 chars, cuts API call count in half
+            const int batchSize = 75;
+            var chunkTasks = new List<Task>();
+
+            for (int i = 0; i < partNames.Count; i += batchSize)
             {
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                string usedUser = ApiHelper.AuthenticateClient(client);
+                var batch = partNames.Skip(i).Take(batchSize).ToList();
+                string partSubFilter = string.Join(" or ", batch.Select(p => $"PARTNAME eq '{Uri.EscapeDataString(p)}'"));
 
-                for (int i = 0; i < partNames.Count; i += batchSize)
+                // Added $select=WARHSNAME to parent to strip 50+ useless columns from serialization
+                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES" +
+                             $"?$filter=WARHSNAME eq '{Uri.EscapeDataString(warehouseName)}'" +
+                             $"&$select=WARHSNAME" +
+                             $"&$expand=WARHSBAL_SUBFORM($filter={partSubFilter};$select=PARTNAME,TBALANCE)";
+
+                chunkTasks.Add(Task.Run(async () =>
                 {
-                    var batch = partNames.Skip(i).Take(batchSize).ToList();
-
-                    // Build subform filter: PARTNAME eq 'A' or PARTNAME eq 'B'
-                    string partSubFilter = string.Join(" or ", batch.Select(p => $"PARTNAME eq '{Uri.EscapeDataString(p)}'"));
-
-                    // Query WAREHOUSES with filtered $expand
-                    string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES" +
-                                 $"?$filter=WARHSNAME eq '{Uri.EscapeDataString(warehouseName)}'" +
-                                 $"&$expand=WARHSBAL_SUBFORM($filter={partSubFilter};$select=PARTNAME,TBALANCE)";
-
                     try
                     {
+                        using var request = new HttpRequestMessage(HttpMethod.Get, url);
+                        request.Headers.Accept.Clear();
+                        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        string usedUser = ApiHelper.AuthenticateClient(request);
                         RegisterTransaction(usedUser);
-                        HttpResponseMessage response = await client.GetAsync(url);
+
+                        using var response = await _sharedHttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
 
                         if (response.IsSuccessStatusCode)
                         {
@@ -958,13 +1059,9 @@ namespace WH_Panel
                             {
                                 foreach (var b in balances)
                                 {
-                                    if (string.IsNullOrEmpty(b.PARTNAME)) continue;
+                                    if (string.IsNullOrWhiteSpace(b.PARTNAME)) continue;
                                     string cleanName = b.PARTNAME.Trim();
-
-                                    if (warehouseStockPool.ContainsKey(cleanName))
-                                        warehouseStockPool[cleanName] += b.TBALANCE;
-                                    else
-                                        warehouseStockPool[cleanName] = b.TBALANCE;
+                                    warehouseStockPool.AddOrUpdate(cleanName, (int)b.TBALANCE, (_, existing) => existing + (int)b.TBALANCE);
                                 }
                             }
                         }
@@ -977,8 +1074,11 @@ namespace WH_Panel
                     {
                         SafeAppendLog($"Error fetching stock chunk: {ex.Message}", Color.Red);
                     }
-                }
+                }));
             }
+
+            // Await all chunks in parallel
+            await Task.WhenAll(chunkTasks);
 
             // Update Grid
             foreach (DataGridViewRow row in dgwBom.Rows)
@@ -989,7 +1089,6 @@ namespace WH_Panel
                     int whQuantity = warehouseStockPool.TryGetValue(partName, out int totalBalance) ? totalBalance : 0;
                     row.Cells["TBALANCE"].Value = whQuantity;
 
-                    int delta = row.Cells["DELTA"].Value != null ? Convert.ToInt32(row.Cells["DELTA"].Value) : 0;
                     int kitQuantity = row.Cells["QUANT"].Value != null ? Convert.ToInt32(row.Cells["QUANT"].Value) : 0;
                     int requiredQuantity = row.Cells["CQUANT"].Value != null ? Convert.ToInt32(row.Cells["CQUANT"].Value) : 0;
 
@@ -1000,6 +1099,11 @@ namespace WH_Panel
             UpdateSimulationLabel();
             SafeAppendLog($"Updated balances for {warehouseStockPool.Count} parts in warehouse {warehouseName}.", Color.LimeGreen);
         }
+
+
+
+        //...UPDATED 202609080958
+
         private void UpdateSimulationLabel()
         {
             int totalItems = dgwBom.Rows.Count;
@@ -1306,7 +1410,7 @@ namespace WH_Panel
         //    {
         //        var selectedRow = dgwBom.Rows[e.RowIndex];
         //        var partName = selectedRow.Cells["PARTNAME"].Value.ToString();
-        //        string logPartUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART?$filter=PARTNAME eq '{partName}'&$expand=PARTTRANSLAST2_SUBFORM($top=50;$orderby=CURDATE desc;)";
+        //        string logPartUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART?$filter=PARTNAME eq '{partName}'&$expand=PARTTRANSLAST2_SUBFORM($top=100;$orderby=CURDATE desc;)";
 
 
         //        using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
@@ -1468,7 +1572,7 @@ namespace WH_Panel
 
 
 
-        //UPDATED 202609080843
+        
 
         private static readonly HttpClient _sharedHttpClient = new HttpClient(new SocketsHttpHandler
         {
@@ -1476,6 +1580,10 @@ namespace WH_Panel
             PooledConnectionIdleTimeout = TimeSpan.FromMinutes(2),
             MaxConnectionsPerServer = 20
         });
+
+
+
+        ////UPDATED 202609080843...
 
         private bool _isGridInitialized = false;
         private int _lastSelectedRowIndex = -1;
@@ -1489,7 +1597,7 @@ namespace WH_Panel
 
             dgwIPNmoves.Columns.AddRange(new DataGridViewColumn[]
             {
-        new DataGridViewTextBoxColumn { DataPropertyName = "CURDATE", HeaderText = "Transaction Date", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells, Name = "CURDATE" },
+        new DataGridViewTextBoxColumn { DataPropertyName = "UDATE", HeaderText = "Transaction Date", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells, Name = "UDATE" },
         new DataGridViewTextBoxColumn { DataPropertyName = "LOGDOCNO", HeaderText = "Document Number", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells, Name = "LOGDOCNO" },
         new DataGridViewTextBoxColumn { DataPropertyName = "DOCDES", HeaderText = "DOCDES", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells, Name = "DOCDES" },
         new DataGridViewTextBoxColumn { DataPropertyName = "SUPCUSTNAME", HeaderText = "Source_Req", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells, Name = "SUPCUSTNAME" },
@@ -1518,7 +1626,7 @@ namespace WH_Panel
             // Query uses actual Priority schema fields to prevent XML 400 Bad Request
             string logPartUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART" +
                                 $"?$filter=PARTNAME eq '{Uri.EscapeDataString(partName)}'" +
-                                $"&$expand=PARTTRANSLAST2_SUBFORM($top=50;$orderby=CURDATE desc)";
+                                $"&$expand=PARTTRANSLAST2_SUBFORM($orderby=CURDATE desc)";
 
             try
             {
@@ -1601,11 +1709,11 @@ namespace WH_Panel
             }
         }
 
-        //UPDATED 202609080843
+        ////...UPDATED 202609080843
 
         private async Task FetchAltsForAllRows()
         {
-            const int batchSize = 15;
+            const int batchSize = 20;
             SafeAppendLog($"Fetching alts for all rows in batches of {batchSize}...", Color.Yellow);
 
             // Get all rows that need ALT fetching
@@ -4246,6 +4354,157 @@ namespace WH_Panel
 
             //SafeAppendLog($"Final: {addedCount} rows added to dgwINSTOCK, {excludedCount} rows excluded due to TOWARHSNAME = 666",Color.LimeGreen);
         }
+
+        //UPDATED 202609081018
+        //private async Task LoadDataAndFilterInStock()
+        //{
+        //    InitializeInStockDataGridView();
+
+        //    var robList = new List<DataGridViewRow>();
+        //    var notRobList = new List<DataGridViewRow>();
+
+        //    SafeAppendLog($"Scanning {dgwIPNmoves.Rows.Count} rows in dgwIPNmoves...", Color.Yellow);
+
+        //    foreach (DataGridViewRow row in dgwIPNmoves.Rows)
+        //    {
+        //        if (row.IsNewRow) continue;
+
+        //        string docNo = row.Cells["LOGDOCNO"].Value?.ToString()?.Trim() ?? "";
+        //        if (string.IsNullOrWhiteSpace(docNo)) continue;
+
+        //        if (docNo.StartsWith("ROB") || docNo.StartsWith("IC") || docNo.StartsWith("WR") || docNo.StartsWith("SH"))
+        //        {
+        //            if (docNo.StartsWith("IC"))
+        //            {
+        //                try
+        //                {
+        //                    row.Cells["TQUANT"].Value = Math.Abs(Convert.ToInt32(row.Cells["TQUANT"].Value));
+        //                }
+        //                catch { }
+        //            }
+        //            robList.Add(row);
+        //        }
+        //        else
+        //        {
+        //            notRobList.Add(row);
+        //        }
+        //    }
+
+        //    // Fixed: Sort using CURDATE with safe fallback
+        //    robList = robList.OrderBy(r => SafeParseDate(r.Cells["UDATE"]?.Value)).ToList();
+        //    notRobList = notRobList.OrderBy(r => SafeParseDate(r.Cells["UDATE"]?.Value)).ToList();
+
+        //    // Filter out matching pairs
+        //    var filteredNotRobList = new List<DataGridViewRow>(notRobList);
+        //    foreach (var notRobRow in notRobList)
+        //    {
+        //        if (robList.Count == 0) break;
+
+        //        int notRobQty = Convert.ToInt32(notRobRow.Cells["TQUANT"].Value);
+        //        var match = robList.FirstOrDefault(robRow => Convert.ToInt32(robRow.Cells["TQUANT"].Value) == notRobQty);
+
+        //        if (match != null)
+        //        {
+        //            filteredNotRobList.Remove(notRobRow);
+        //            robList.Remove(match);
+        //        }
+        //    }
+
+        //    if (filteredNotRobList.Count == 0)
+        //    {
+        //        dgwINSTOCK.Rows.Clear();
+        //        dgwINSTOCK.Visible = true;
+        //        return;
+        //    }
+
+        //    // Collect unique DOCNOs to fetch TOWARHSNAME in 1 batch query instead of N individual calls
+        //    var docNumbers = filteredNotRobList
+        //        .Select(r => r.Cells["LOGDOCNO"].Value?.ToString()?.Trim())
+        //        .Where(d => !string.IsNullOrEmpty(d))
+        //        .Distinct()
+        //        .ToList();
+
+        //    var toWarhsMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        //    const int batchSize = 50;
+        //    for (int i = 0; i < docNumbers.Count; i += batchSize)
+        //    {
+        //        var batch = docNumbers.Skip(i).Take(batchSize).ToList();
+        //        string docFilter = string.Join(" or ", batch.Select(d => $"DOCNO eq '{Uri.EscapeDataString(d)}'"));
+        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter={docFilter}&$select=DOCNO,TOWARHSNAME";
+
+        //        try
+        //        {
+        //            using var request = new HttpRequestMessage(HttpMethod.Get, url);
+        //            request.Headers.Accept.Clear();
+        //            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        //            string usedUser = ApiHelper.AuthenticateClient(request);
+        //            RegisterTransaction(usedUser);
+
+        //            using var response = await _sharedHttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+        //            if (response.IsSuccessStatusCode)
+        //            {
+        //                string body = await response.Content.ReadAsStringAsync();
+        //                var json = JsonConvert.DeserializeObject<JObject>(body);
+        //                var items = json["value"];
+
+        //                if (items != null)
+        //                {
+        //                    foreach (var item in items)
+        //                    {
+        //                        string doc = item["DOCNO"]?.ToString()?.Trim();
+        //                        string warhs = item["TOWARHSNAME"]?.ToString()?.Trim();
+        //                        if (!string.IsNullOrEmpty(doc) && !string.IsNullOrEmpty(warhs))
+        //                        {
+        //                            toWarhsMap[doc] = warhs;
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            SafeAppendLog($"Error checking documents batch: {ex.Message}", Color.Red);
+        //        }
+        //    }
+
+        //    dgwINSTOCK.Rows.Clear();
+        //    dgwINSTOCK.Visible = false;
+
+        //    foreach (var row in filteredNotRobList)
+        //    {
+        //        string docNo = row.Cells["LOGDOCNO"].Value?.ToString()?.Trim();
+        //        if (string.IsNullOrWhiteSpace(docNo)) continue;
+
+        //        if (toWarhsMap.TryGetValue(docNo, out string warhs) && warhs == "666")
+        //        {
+        //            continue; // Excluded
+        //        }
+
+        //        int newIndex = dgwINSTOCK.Rows.Add();
+        //        var newRow = dgwINSTOCK.Rows[newIndex];
+        //        for (int i = 0; i < row.Cells.Count; i++)
+        //        {
+        //            newRow.Cells[i].Value = row.Cells[i].Value;
+        //        }
+        //    }
+
+        //    dgwINSTOCK.Update();
+        //    dgwINSTOCK.Visible = true;
+        //}
+
+        //private static DateTime SafeParseDate(object val)
+        //{
+        //    if (val != null && DateTime.TryParse(val.ToString(), out var dt))
+        //        return dt;
+        //    return DateTime.MinValue;
+        //}
+
+        //UPDATED 202609081018
+
+
+
 
 
         private async Task RemoveRowsWithTowarhsname666Async()
