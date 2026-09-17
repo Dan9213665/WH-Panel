@@ -829,40 +829,96 @@ namespace WH_Panel
             textBox10.BackColor = Color.LightGreen;
             PopulateStockView();
         }
+        //private void DataInserterSql(string fp, WHitem wHitem, bool toPrintOrNotToPrint)
+        //{
+        //    bool toPrint = toPrintOrNotToPrint;
+        //    try
+        //    {
+        //        string constr = fp;
+        //        using (SqlConnection conn = new SqlConnection(constr))
+        //        {
+        //            conn.Open();
+        //            SqlCommand command = new SqlCommand("INSERT INTO STOCK (IPN,Manufacturer,MFPN,Description,Stock,Updated_on,Comments,Source_Requester) values('" + wHitem.IPN + "','" + wHitem.Manufacturer + "','" + wHitem.MFPN + "','" + wHitem.Description + "','" + wHitem.Stock + "','" + wHitem.Updated_on + "','" + wHitem.Comments + "','" + wHitem.Source_Requester + "')", conn);
+        //            command.ExecuteNonQuery();
+        //            conn.Close();
+        //        }
+        //        textBox6.Clear();
+        //        LastInputFromUser.Text = string.Empty;
+        //        label2.BackColor = Color.LightGreen;
+        //        label3.BackColor = Color.LightGreen;
+        //        LastInputFromUser.Focus();
+        //        if (toPrintOrNotToPrint)
+        //        {
+        //            printSticker(wHitem);
+        //        }
+        //        if (radioButton4.Checked == true)
+        //        {
+        //            AutoClosingMessageBox.Show(wHitem.IPN + " MOVED to " + textBox9.Text.ToString(), " Item added to " + textBox9.Text.ToString(), 1000);
+        //        }
+        //        else
+        //        {
+        //            AutoClosingMessageBox.Show(wHitem.Stock.ToString() + " PCS of " + wHitem.IPN + " in a " + wHitem.Comments + " MOVED to DB ", "Item added to DB", 2000);
+        //        }
+        //    }
+        //    catch (IOException)
+        //    {
+        //        MessageBox.Show("Error");
+        //    }
+        //}
+
         private void DataInserterSql(string fp, WHitem wHitem, bool toPrintOrNotToPrint)
         {
-            bool toPrint = toPrintOrNotToPrint;
             try
             {
-                string constr = fp;
-                using (SqlConnection conn = new SqlConnection(constr))
+                string query = @"INSERT INTO STOCK 
+            (IPN, Manufacturer, MFPN, Description, Stock, Updated_on, Comments, Source_Requester) 
+            VALUES 
+            (@IPN, @Manufacturer, @MFPN, @Description, @Stock, @Updated_on, @Comments, @Source_Requester)";
+
+                using (SqlConnection conn = new SqlConnection(fp))
+                using (SqlCommand command = new SqlCommand(query, conn))
                 {
+                    // Explicitly map string parameters to NVarChar so Hebrew is preserved
+                    command.Parameters.Add("@IPN", SqlDbType.NVarChar, 255).Value = (object)wHitem.IPN ?? DBNull.Value;
+                    command.Parameters.Add("@Manufacturer", SqlDbType.NVarChar, 255).Value = (object)wHitem.Manufacturer ?? DBNull.Value;
+                    command.Parameters.Add("@MFPN", SqlDbType.NVarChar, 255).Value = (object)wHitem.MFPN ?? DBNull.Value;
+                    command.Parameters.Add("@Description", SqlDbType.NVarChar, 255).Value = (object)wHitem.Description ?? DBNull.Value;
+                    command.Parameters.Add("@Stock", SqlDbType.Float).Value = wHitem.Stock;
+                    command.Parameters.Add("@Updated_on", SqlDbType.DateTime).Value = wHitem.Updated_on;
+                    command.Parameters.Add("@Comments", SqlDbType.NVarChar, 255).Value = (object)wHitem.Comments ?? DBNull.Value;
+                    command.Parameters.Add("@Source_Requester", SqlDbType.NVarChar, 255).Value = (object)wHitem.Source_Requester ?? DBNull.Value;
+
                     conn.Open();
-                    SqlCommand command = new SqlCommand("INSERT INTO STOCK (IPN,Manufacturer,MFPN,Description,Stock,Updated_on,Comments,Source_Requester) values('" + wHitem.IPN + "','" + wHitem.Manufacturer + "','" + wHitem.MFPN + "','" + wHitem.Description + "','" + wHitem.Stock + "','" + wHitem.Updated_on + "','" + wHitem.Comments + "','" + wHitem.Source_Requester + "')", conn);
                     command.ExecuteNonQuery();
-                    conn.Close();
                 }
+
                 textBox6.Clear();
                 LastInputFromUser.Text = string.Empty;
                 label2.BackColor = Color.LightGreen;
                 label3.BackColor = Color.LightGreen;
                 LastInputFromUser.Focus();
+
                 if (toPrintOrNotToPrint)
                 {
                     printSticker(wHitem);
                 }
-                if (radioButton4.Checked == true)
+
+                if (radioButton4.Checked)
                 {
-                    AutoClosingMessageBox.Show(wHitem.IPN + " MOVED to " + textBox9.Text.ToString(), " Item added to " + textBox9.Text.ToString(), 1000);
+                    AutoClosingMessageBox.Show(wHitem.IPN + " MOVED to " + textBox9.Text, " Item added to " + textBox9.Text, 1000);
                 }
                 else
                 {
-                    AutoClosingMessageBox.Show(wHitem.Stock.ToString() + " PCS of " + wHitem.IPN + " in a " + wHitem.Comments + " MOVED to DB ", "Item added to DB", 2000);
+                    AutoClosingMessageBox.Show(wHitem.Stock + " PCS of " + wHitem.IPN + " in a " + wHitem.Comments + " MOVED to DB ", "Item added to DB", 2000);
                 }
             }
-            catch (IOException)
+            catch (SqlException ex)
             {
-                MessageBox.Show("Error");
+                MessageBox.Show("Database Error: " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
             }
         }
         private void DataInserter(string fp, string thesheetName, WHitem wHitem, bool toPrintOrNotToPrint)
