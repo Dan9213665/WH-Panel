@@ -303,9 +303,55 @@ namespace WH_Panel
         //}
 
 
+        //private async void GetRobWosList()
+        //{
+        //    string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL";
+        //    using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
+        //    {
+        //        try
+        //        {
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        //            string usedUser = ApiHelper.AuthenticateClient(client);
+        //            RegisterTransaction(usedUser);
+
+        //            HttpResponseMessage response = await client.GetAsync(url);
+        //            response.EnsureSuccessStatusCode();
+
+        //            string responseBody = await response.Content.ReadAsStringAsync();
+        //            var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+        //            var serials = apiResponse["value"].ToObject<List<Serial>>();
+
+        //            // Store the original work orders globally
+        //            originalSerials = serials ?? new List<Serial>();
+
+        //            // Disable native auto-complete so it doesn't conflict with our custom real-time filter
+        //            cmbROBxList.AutoCompleteMode = AutoCompleteMode.None;
+
+        //            // Initially populate the combo box
+        //            RefreshComboBoxItems();
+
+        //            lblLoading.BackColor = Color.Green;
+        //            lblLoading.Text = "Data Loaded";
+        //            cmbROBxList.DroppedDown = true;
+        //        }
+        //        catch (HttpRequestException ex)
+        //        {
+        //            SafeAppendLog($"Request error: {ex.Message}");
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            SafeAppendLog($"Request error: {ex.Message}", Color.Red);
+        //        }
+        //    }
+        //}
+
         private async void GetRobWosList()
         {
-            string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL";
+            // Append $select to pull only the 5 properties used by the Serial model
+            string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$select=PARTNAME,SERIALNAME,QUANT,SERIALSTATUSDES,REVNUM";
+
             using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
             {
                 try
@@ -637,7 +683,8 @@ namespace WH_Panel
                                 {
                                     PARTNAME = group.Key,
                                     PARTDES = group.First().PARTDES,
-                                    CQUANT = group.First().CQUANT,
+                                    //CQUANT = group.First().CQUANT,
+                                    CQUANT = group.Max(detail => detail.CQUANT),
                                     CALC = string.Join("+", group.Select(detail => detail.QUANT)),
                                     QUANT = group.Sum(detail => detail.QUANT),
                                     KLINE = group.First().KLINE,
