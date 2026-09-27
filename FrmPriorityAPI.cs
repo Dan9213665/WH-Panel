@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.TagHelpers;
+using Microsoft.Office.Interop.Excel;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OfficeOpenXml;
@@ -26,6 +27,7 @@ using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Button = System.Windows.Forms.Button;
 using ComboBox = System.Windows.Forms.ComboBox;
+using ListBox = System.Windows.Forms.ListBox;
 using TextBox = System.Windows.Forms.TextBox;
 
 #pragma warning disable CS0618
@@ -35,7 +37,7 @@ namespace WH_Panel
     {
         public List<string> dcManaged = new List<string> { "UVI" };
         public AppSettings settings;
-        private DataTable dataTable;
+        private System.Data.DataTable dataTable;
         private DataView dataView;
         private ContextMenuStrip contextMenuStrip;
         private DataGridViewRow selectedRowForContextMenu; // Class-level variable to store the selected row
@@ -160,7 +162,7 @@ namespace WH_Panel
             InitializeDataTable();
             QuoteFromTheMachine();
             // Attach event handlers
-            txtbFilterIPN.KeyUp += textBox6_KeyUp_1;
+            //txtbFilterIPN.KeyUp += textBox6_KeyUp_1;
             txtbInputQty.KeyPress += textBox5_KeyPress;
             txtbInputQty.TextChanged += textBox5_TextChanged;
             // Attach Sorted event handlers to DataGridViews
@@ -231,7 +233,7 @@ namespace WH_Panel
         }
         private void InitializeDataTable()
         {
-            dataTable = new DataTable();
+            dataTable = new System.Data.DataTable();
             dataTable.Columns.Add("PARTNAME", typeof(string));
             dataTable.Columns.Add("MNFPARTNAME", typeof(string));
             dataTable.Columns.Add("PARTDES", typeof(string));
@@ -682,68 +684,6 @@ namespace WH_Panel
             cmbPackCode.SelectedIndex = 0; // Select the first item by default
         }
 
-
-
-        //        public static HashSet<string> SessionBlacklist = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-        //{
-        //   "6ADFFD01B1B04B10A4F8FD7BCA8631D8"
-        //};
-
-        //        public string SelectTheCredentialsByLoggedUser(AppSettings settings)
-        //        {
-        //            // Extract user safely
-        //            string currentUser = WindowsIdentity.GetCurrent().Name.Split('\\').LastOrDefault() ?? string.Empty;
-
-        //            // Fix the ToString() bug
-        //            if (currentUser.Equals("lgt", StringComparison.OrdinalIgnoreCase))
-        //            {
-        //                //MessageBox.Show($"Blacklist items: {string.Join(", ", SessionBlacklist)}");
-        //                this.AppendLog($"Blacklisted users: {string.Join(", ", SessionBlacklist)}\n", Color.Red);
-        //            }
-
-        //            // Define priority tokens cleanly
-        //            string Yulia = "6D3162B8E0F34660BCF256E7BBC3524C";
-        //            string Yuri_G = "6ADFFD01B1B04B10A4F8FD7BCA8631D8";
-        //            string master = "AEF3B8E8189A481786598CCCFD16A56A";
-        //            string Jessica = "7D4B614B3FD645F584C8661B813B5E98";
-        //            string Daniel = "B59C4AB83FBB4784A3EBA712AF023DE9";
-
-        //            // Switch statements are easier to read than nested if/else for string matches
-        //            List<string> apiPriority = currentUser switch
-        //            {
-        //                "lgt01" => new() { Yulia, Yuri_G, master, Jessica, Daniel },
-        //                "rbtwh" => new() { Jessica, Yuri_G, master, Yulia, Daniel },
-        //                "rbtwh2" => new() { Yuri_G, Jessica, master, Yulia, Daniel },
-        //                _ => new() { master, Jessica, Yuri_G, Yulia, Daniel } // Default case
-        //            };
-
-        //            // Safely pick the first non-blacklisted item, fallback to the first item, or null
-        //            string chosenApi = apiPriority.FirstOrDefault(a => !SessionBlacklist.Contains(a))?? apiPriority.FirstOrDefault();
-
-        //            if (string.IsNullOrEmpty(chosenApi))
-        //            {
-        //                // Handle case where no API tokens were defined at all
-        //                throw new InvalidOperationException("No API credentials available.");
-        //            }
-
-        //            return GetCredsByName(chosenApi, settings);
-        //        }
-
-
-        //        // Helper to keep the switch logic out of the main loop
-        //        private string GetCredsByName(string apiName, AppSettings settings)
-        //        {
-        //            return apiName switch
-        //            {
-        //                "6D3162B8E0F34660BCF256E7BBC3524C" => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}")),
-        //                "6ADFFD01B1B04B10A4F8FD7BCA8631D8" => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}")),
-        //                "AEF3B8E8189A481786598CCCFD16A56A" => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api4Username}:{settings.Api4Password}")),
-        //                "7D4B614B3FD645F584C8661B813B5E98" => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api5Username}:{settings.Api5Password}")),
-        //                _ => Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"))
-        //            };
-        //        }
-
-
         // 1. Blacklist uses friendly names cleanly
         public static HashSet<string> SessionBlacklist = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
 {
@@ -754,10 +694,10 @@ namespace WH_Panel
         {
             string currentUser = WindowsIdentity.GetCurrent().Name.Split('\\').LastOrDefault() ?? string.Empty;
 
-            if (currentUser.Equals("lgt", StringComparison.OrdinalIgnoreCase))
-            {
-                this.AppendLog($"Blacklisted users: {string.Join(", ", SessionBlacklist)}\n", Color.Red);
-            }
+            //if (currentUser.Equals("lgt", StringComparison.OrdinalIgnoreCase))
+            //{
+            //    this.AppendLog($"Blacklisted users: {string.Join(", ", SessionBlacklist)}\n", Color.Red);
+            //}
 
             // 2. Define tokens cleanly in one single place
             string Yulia = "6D3162B8E0F34660BCF256E7BBC3524C";
@@ -1036,7 +976,7 @@ namespace WH_Panel
                     button.FlatAppearance.BorderColor = borderColor;
                     button.ForeColor = foregroundColor;
                 }
-                else if (control is GroupBox groupBox)
+                else if (control is System.Windows.Forms.GroupBox groupBox)
                 {
                     groupBox.ForeColor = foregroundColor;
                 }
@@ -1046,7 +986,7 @@ namespace WH_Panel
                     textBox.BackColor = backgroundColor;
                     textBox.ForeColor = foregroundColor;
                 }
-                else if (control is Label label)
+                else if (control is System.Windows.Forms.Label label)
                 {
                     label.BackColor = backgroundColor;
                     label.ForeColor = foregroundColor;
@@ -1304,8 +1244,8 @@ namespace WH_Panel
                             Width = 120,
                             Height = 30,
                             Tag = serial,
-                            Font = new Font("Segoe UI", 9, FontStyle.Bold),
-                            Location = new Point(0, 2),
+                            Font = new System.Drawing.Font("Segoe UI", 9, FontStyle.Bold),
+                            Location = new System.Drawing.Point(0, 2),
                             BackColor = Color.DarkOrange,
                             ForeColor = Color.White
                         };
@@ -1327,12 +1267,12 @@ namespace WH_Panel
                                 {
                                     if (cquant < 0)
                                     {
-                                        var lblQty = new Label
+                                        var lblQty = new System.Windows.Forms.Label
                                         {
                                             Text = $"{cquant * (-1)}",
                                             AutoSize = true,
-                                            Location = new Point(currentLeft, 8),
-                                            Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                                            Location = new System.Drawing.Point(currentLeft, 8),
+                                            Font = new System.Drawing.Font("Segoe UI", 9, FontStyle.Bold),
                                             ForeColor = Color.White,
                                             BackColor = cquant > 0 ? Color.IndianRed : Color.DarkGreen,
                                             Padding = new Padding(3, 2, 3, 2)
@@ -1341,12 +1281,12 @@ namespace WH_Panel
                                     }
                                     else
                                     {
-                                        var lblQty = new Label
+                                        var lblQty = new System.Windows.Forms.Label
                                         {
                                             Text = $"-{cquant}",
                                             AutoSize = true,
-                                            Location = new Point(currentLeft, 8),
-                                            Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                                            Location = new System.Drawing.Point(currentLeft, 8),
+                                            Font = new System.Drawing.Font("Segoe UI", 9, FontStyle.Bold),
                                             ForeColor = Color.White,
                                             BackColor = cquant > 0 ? Color.IndianRed : Color.DarkGreen,
                                             Padding = new Padding(3, 2, 3, 2)
@@ -1799,383 +1739,9 @@ namespace WH_Panel
         private Dictionary<string, string> avlDictionary = new Dictionary<string, string>();
 
 
-        //public async void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        //{
-        //    if (cmbWarehouseList.SelectedItem != null)
-        //    {
-        //        AppendLog($"Loading {cmbWarehouseList.SelectedItem} stock data ...\n");
-        //        string selectedWarehouse = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
-        //        string selectedWarehouseDesc = cmbWarehouseList.SelectedItem.ToString().Substring(selectedWarehouse.Length).Trim();
-
-        //        // Only select required fields for AVL
-        //        string avlUrl = $"{baseUrl}/PARTMNFONE?$filter=PARTNAME eq '{selectedWarehouse}_*'&$select=PARTNAME,MNFPARTNAME";
-        //        // Only select required fields for warehouse balance
-        //        string balanceUrl = $"{baseUrl}/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouse}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{selectedWarehouse}*';$select=PARTNAME,PARTDES,BALANCE,CDATE,PART)";
-
-        //        using (HttpClient client = new HttpClient())
-        //        {
-        //            try
-        //            {
-        //                client.DefaultRequestHeaders.Accept.Clear();
-        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-        //                string usedUser = ApiHelper.AuthenticateClient(client);
-        //                AppendLog($"User used: {usedUser}\n");
-
-        //                // AVL request
-        //                HttpResponseMessage avlResponse = await client.GetAsync(avlUrl);
-        //                avlResponse.EnsureSuccessStatusCode();
-        //                string avlResponseBody = await avlResponse.Content.ReadAsStringAsync();
-        //                var avlApiResponse = JsonConvert.DeserializeObject<PartMnfOneApiResponse>(avlResponseBody);
-
-        //                avlDictionary = new Dictionary<string, string>();
-        //                foreach (var part in avlApiResponse.value)
-        //                {
-        //                    if (!avlDictionary.ContainsKey(part.PARTNAME))
-        //                    {
-        //                        avlDictionary.Add(part.PARTNAME, part.MNFPARTNAME);
-        //                    }
-        //                }
-
-        //                // Balance request
-        //                HttpResponseMessage balanceResponse = await client.GetAsync(balanceUrl);
-        //                balanceResponse.EnsureSuccessStatusCode();
-        //                string balanceResponseBody = await balanceResponse.Content.ReadAsStringAsync();
-        //                var balanceApiResponse = JsonConvert.DeserializeObject<WarehouseApiResponse>(balanceResponseBody);
-
-        //                if (balanceApiResponse.value != null && balanceApiResponse.value.Count > 0)
-        //                {
-        //                    var warehouseBalances = balanceApiResponse.value.SelectMany(w => w.WARHSBAL_SUBFORM).ToList();
-        //                    dataTable.Rows.Clear();
-        //                    foreach (var balance in warehouseBalances)
-        //                    {
-        //                        try
-        //                        {
-        //                            string partName = balance.PARTNAME ?? string.Empty;
-        //                            string partDes = balance.PARTDES ?? string.Empty;
-        //                            int balanceValue = balance.BALANCE;
-        //                            string cDate = balance.CDATE?.Substring(0, 10) ?? string.Empty;
-        //                            int partId = balance.PART;
-        //                            string mfpn = avlDictionary.ContainsKey(partName) ? avlDictionary[partName] : string.Empty;
-        //                            dataTable.Rows.Add(partName, mfpn, partDes, balanceValue, cDate, partId);
-        //                        }
-        //                        catch (Exception ex)
-        //                        {
-        //                            AppendLog($"Error adding row: {ex.Message}\n");
-        //                        }
-        //                    }
-        //                    groupBox3.Text = $"Warehouse  {selectedWarehouse} {selectedWarehouseDesc}";
-        //                    ColorTheRows(dataGridView1);
-        //                    if (lastUserInput != null)
-        //                    {
-        //                        lastUserInput.Focus();
-        //                    }
-        //                    else
-        //                    {
-        //                        txtbInputIPN.Focus();
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    MessageBox.Show("No data found for the selected warehouse balance.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        //                }
-        //            }
-        //            catch (HttpRequestException ex)
-        //            {
-        //                AppendLog($"Request error comboBox1_SelectedIndexChanged: {ex.Message}\n", Color.Red);
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                AppendLog($"An error occurred comboBox1_SelectedIndexChanged: {ex.Message}\n");
-        //            }
-        //        }
-        //    }
-        //    try
-        //    {
-        //        if (cmbWarehouseList.SelectedItem != null)
-        //        {
-        //            txtbPrefix.Text = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-
-        //        AppendLog($"An error occurred comboBox1_SelectedIndexChanged: {ex.Message}\n");
-        //    }
-        //}
 
 
 
-        //public async void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        //{
-        //    if (cmbWarehouseList.SelectedItem != null)
-        //    {
-        //        AppendLog($"Loading {cmbWarehouseList.SelectedItem} stock data ...\n");
-        //        string selectedWarehouse = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
-        //        string selectedWarehouseDesc = cmbWarehouseList.SelectedItem.ToString().Substring(selectedWarehouse.Length).Trim();
-
-        //        // Only select required fields for AVL
-        //        string avlUrl = $"{baseUrl}/PARTMNFONE?$filter=PARTNAME eq '{selectedWarehouse}_*'&$select=PARTNAME,MNFPARTNAME";
-        //        // Only select required fields for warehouse balance
-        //        string balanceUrl = $"{baseUrl}/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouse}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{selectedWarehouse}*';$select=PARTNAME,PARTDES,BALANCE,CDATE,PART)";
-
-        //        using (HttpClient client = new HttpClient())
-        //        {
-        //            try
-        //            {
-        //                client.DefaultRequestHeaders.Accept.Clear();
-        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-        //                string usedUser = ApiHelper.AuthenticateClient(client);
-        //                AppendLog($"User used: {usedUser}\n");
-
-        //                // AVL request
-        //                HttpResponseMessage avlResponse = await client.GetAsync(avlUrl);
-        //                avlResponse.EnsureSuccessStatusCode();
-        //                string avlResponseBody = await avlResponse.Content.ReadAsStringAsync();
-        //                var avlApiResponse = JsonConvert.DeserializeObject<PartMnfOneApiResponse>(avlResponseBody);
-
-        //                avlDictionary = new Dictionary<string, string>();
-        //                foreach (var part in avlApiResponse.value)
-        //                {
-        //                    if (!avlDictionary.ContainsKey(part.PARTNAME))
-        //                    {
-        //                        avlDictionary.Add(part.PARTNAME, part.MNFPARTNAME);
-        //                    }
-        //                }
-
-        //                // Balance request
-        //                HttpResponseMessage balanceResponse = await client.GetAsync(balanceUrl);
-        //                balanceResponse.EnsureSuccessStatusCode();
-        //                string balanceResponseBody = await balanceResponse.Content.ReadAsStringAsync();
-        //                var balanceApiResponse = JsonConvert.DeserializeObject<WarehouseApiResponse>(balanceResponseBody);
-
-        //                if (balanceApiResponse.value != null && balanceApiResponse.value.Count > 0)
-        //                {
-        //                    var warehouseBalances = balanceApiResponse.value.SelectMany(w => w.WARHSBAL_SUBFORM).ToList();
-        //                    dataTable.Rows.Clear();
-
-        //                    // Group by PARTNAME to eliminate the split records caused by server-side serialization/WOs
-        //                    var consolidatedBalances = warehouseBalances
-        //                        .GroupBy(b => b.PARTNAME ?? string.Empty)
-        //                        .Select(g => new
-        //                        {
-        //                            PartName = g.Key,
-        //                            FirstItem = g.First(),          // Grab metadata from the first record entry
-        //                            TotalBalance = g.Sum(b => b.BALANCE) // Combine all split row balances
-        //                        });
-
-        //                    foreach (var entry in consolidatedBalances)
-        //                    {
-        //                        try
-        //                        {
-        //                            string partName = entry.PartName;
-        //                            string partDes = entry.FirstItem.PARTDES ?? string.Empty;
-        //                            int balanceValue = entry.TotalBalance;
-        //                            string cDate = entry.FirstItem.CDATE?.Substring(0, 10) ?? string.Empty;
-        //                            int partId = entry.FirstItem.PART;
-
-        //                            string mfpn = avlDictionary.ContainsKey(partName) ? avlDictionary[partName] : string.Empty;
-
-        //                            dataTable.Rows.Add(partName, mfpn, partDes, balanceValue, cDate, partId);
-        //                        }
-        //                        catch (Exception ex)
-        //                        {
-        //                            AppendLog($"Error adding row: {ex.Message}\n");
-        //                        }
-        //                    }
-
-        //                    groupBox3.Text = $"Warehouse  {selectedWarehouse} {selectedWarehouseDesc}";
-        //                    ColorTheRows(dataGridView1);
-
-        //                    if (lastUserInput != null)
-        //                    {
-        //                        lastUserInput.Focus();
-        //                    }
-        //                    else
-        //                    {
-        //                        txtbInputIPN.Focus();
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    MessageBox.Show("No data found for the selected warehouse balance.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        //                }
-        //            }
-        //            catch (HttpRequestException ex)
-        //            {
-        //                AppendLog($"Request error comboBox1_SelectedIndexChanged: {ex.Message}\n", Color.Red);
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                AppendLog($"An error occurred comboBox1_SelectedIndexChanged: {ex.Message}\n");
-        //            }
-        //        }
-        //    }
-
-        //    try
-        //    {
-        //        if (cmbWarehouseList.SelectedItem != null)
-        //        {
-        //            txtbPrefix.Text = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        AppendLog($"An error occurred comboBox1_SelectedIndexChanged: {ex.Message}\n");
-        //    }
-        //}
-
-        //private async void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        //{
-        //    if (cmbWarehouseList.SelectedItem == null) return;
-
-        //    string selectedWarehouse = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
-        //    string selectedWarehouseDesc = cmbWarehouseList.SelectedItem.ToString().Substring(selectedWarehouse.Length).Trim();
-
-        //    AppendLog($"Loading {selectedWarehouse} stock data...\n");
-
-        //    try
-        //    {
-        //        using (HttpClient client = new HttpClient())
-        //        {
-        //            client.DefaultRequestHeaders.Accept.Clear();
-        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //            string usedUser = ApiHelper.AuthenticateClient(client);
-
-        //            // -------------------------------------------------------------
-        //            // STEP 1: Fetch Balances First (WARHSBAL)
-        //            // -------------------------------------------------------------
-        //            string balanceUrl = $"{baseUrl}/WAREHOUSES?$filter=WARHSNAME eq '{selectedWarehouse}'" +
-        //                                $"&$select=WARHSNAME" +
-        //                                $"&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{selectedWarehouse}*';" +
-        //                                $"$select=PARTNAME,PARTDES,BALANCE,CDATE,PART)";
-
-        //            HttpResponseMessage balanceResponse = await client.GetAsync(balanceUrl);
-        //            balanceResponse.EnsureSuccessStatusCode();
-
-        //            string balanceResponseBody = await balanceResponse.Content.ReadAsStringAsync();
-        //            var balanceApiResponse = JsonConvert.DeserializeObject<WarehouseApiResponse>(balanceResponseBody);
-
-        //            if (balanceApiResponse?.value == null || balanceApiResponse.value.Count == 0)
-        //            {
-        //                MessageBox.Show("No data found for the selected warehouse balance.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        //                return;
-        //            }
-
-        //            var warehouseBalances = balanceApiResponse.value
-        //                .Where(w => w.WARHSBAL_SUBFORM != null)
-        //                .SelectMany(w => w.WARHSBAL_SUBFORM)
-        //                .ToList();
-
-        //            if (!warehouseBalances.Any())
-        //            {
-        //                dataTable.Rows.Clear();
-        //                MessageBox.Show("Selected warehouse has no active stock balances.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        //                return;
-        //            }
-
-        //            // Consolidate split rows caused by work orders / serialization
-        //            var consolidatedBalances = warehouseBalances
-        //                .GroupBy(b => b.PARTNAME ?? string.Empty)
-        //                .Select(g => new
-        //                {
-        //                    PartName = g.Key,
-        //                    FirstItem = g.First(),
-        //                    TotalBalance = g.Sum(b => b.BALANCE)
-        //                })
-        //                .ToList();
-
-        //            // Extract distinct active Part Names
-        //            List<string> activePartNames = consolidatedBalances
-        //                .Select(b => b.PartName)
-        //                .Where(p => !string.IsNullOrWhiteSpace(p))
-        //                .Distinct()
-        //                .ToList();
-
-        //            // -------------------------------------------------------------
-        //            // STEP 2: Fetch MFPNs ONLY for Active Parts (Targeted Batches)
-        //            // -------------------------------------------------------------
-        //            var avlDictionary = new Dictionary<string, string>();
-
-        //            if (activePartNames.Any())
-        //            {
-        //                // Chunk into batches of 40 to stay under OData URL max length constraints
-        //                int chunkSize = 40;
-        //                for (int i = 0; i < activePartNames.Count; i += chunkSize)
-        //                {
-        //                    var chunk = activePartNames.Skip(i).Take(chunkSize);
-        //                    string filterParts = string.Join(" or ", chunk.Select(p => $"PARTNAME eq '{p}'"));
-        //                    string avlUrl = $"{baseUrl}/PARTMNFONE?$filter={Uri.EscapeDataString(filterParts)}&$select=PARTNAME,MNFPARTNAME";
-
-        //                    HttpResponseMessage avlResponse = await client.GetAsync(avlUrl);
-        //                    if (avlResponse.IsSuccessStatusCode)
-        //                    {
-        //                        string avlResponseBody = await avlResponse.Content.ReadAsStringAsync();
-        //                        var avlApiResponse = JsonConvert.DeserializeObject<PartMnfOneApiResponse>(avlResponseBody);
-
-        //                        if (avlApiResponse?.value != null)
-        //                        {
-        //                            foreach (var part in avlApiResponse.value)
-        //                            {
-        //                                if (!string.IsNullOrEmpty(part.PARTNAME) && !avlDictionary.ContainsKey(part.PARTNAME))
-        //                                {
-        //                                    avlDictionary.Add(part.PARTNAME, part.MNFPARTNAME ?? string.Empty);
-        //                                }
-        //                            }
-        //                        }
-
-        //                    }
-        //                }
-        //            }
-
-        //            // -------------------------------------------------------------
-        //            // STEP 3: Populate DataGrid
-        //            // -------------------------------------------------------------
-        //            dataTable.Rows.Clear();
-
-        //            foreach (var entry in consolidatedBalances)
-        //            {
-        //                try
-        //                {
-        //                    string partName = entry.PartName;
-        //                    string partDes = entry.FirstItem.PARTDES ?? string.Empty;
-        //                    int balanceValue = entry.TotalBalance;
-        //                    string cDate = entry.FirstItem.CDATE?.Length >= 10 ? entry.FirstItem.CDATE.Substring(0, 10) : (entry.FirstItem.CDATE ?? string.Empty);
-        //                    int partId = entry.FirstItem.PART;
-
-        //                    string mfpn = avlDictionary.TryGetValue(partName, out var m) ? m : string.Empty;
-
-        //                    dataTable.Rows.Add(partName, mfpn, partDes, balanceValue, cDate, partId);
-        //                }
-        //                catch (Exception ex)
-        //                {
-        //                    AppendLog($"Error adding row: {ex.Message}\n");
-        //                }
-        //            }
-
-        //            groupBox3.Text = $"Warehouse  {selectedWarehouse} {selectedWarehouseDesc}";
-        //            ColorTheRows(dataGridView1);
-
-        //            if (lastUserInput != null)
-        //            {
-        //                lastUserInput.Focus();
-        //            }
-        //            else
-        //            {
-        //                txtbInputIPN.Focus();
-        //            }
-
-        //            txtbPrefix.Text = selectedWarehouse;
-        //        }
-
-        //        AppendLog($"Done\n");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        AppendLog($"An error occurred in comboBox1_SelectedIndexChanged: {ex.Message}\n");
-        //    }
-        //}
 
         //private async void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         //{
@@ -2190,7 +1756,6 @@ namespace WH_Panel
         //    {
         //        // -------------------------------------------------------------
         //        // STEP 1: Fetch Balances (WARHSBAL)
-        //        // Stripped 50+ useless columns with $select=WARHSNAME on parent
         //        // -------------------------------------------------------------
         //        string balanceUrl = $"{baseUrl}/WAREHOUSES?$filter=WARHSNAME eq '{Uri.EscapeDataString(selectedWarehouse)}'" +
         //                            $"&$select=WARHSNAME" +
@@ -2232,70 +1797,8 @@ namespace WH_Panel
         //            })
         //            .ToList();
 
-        //        // Extract distinct active Part Names
-        //        List<string> activePartNames = consolidatedBalances
-        //            .Select(b => b.PartName)
-        //            .Where(p => !string.IsNullOrWhiteSpace(p))
-        //            .Distinct(StringComparer.OrdinalIgnoreCase)
-        //            .ToList();
-
         //        // -------------------------------------------------------------
-        //        // STEP 2: Fetch MFPNs in Clean Batches (Syntax & Encoding Fixed)
-        //        // Escapes ONLY part values; keeps 'or', 'eq', and quotes unescaped
-        //        // -------------------------------------------------------------
-        //        var avlDictionary = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-        //        if (activePartNames.Any())
-        //        {
-        //            // Increased to 60 items per batch safely under 2,000 char URL limits
-        //            const int chunkSize = 60;
-        //            for (int i = 0; i < activePartNames.Count; i += chunkSize)
-        //            {
-        //                var chunk = activePartNames.Skip(i).Take(chunkSize);
-
-        //                // Escape individual part names only; OData syntax remains intact
-        //                string filterParts = string.Join(" or ", chunk.Select(p => $"PARTNAME eq '{Uri.EscapeDataString(p)}'"));
-        //                string avlUrl = $"{baseUrl}/PARTMNFONE?$filter={filterParts}&$select=PARTNAME,MNFPARTNAME";
-
-        //                try
-        //                {
-        //                    using var avlRequest = new HttpRequestMessage(HttpMethod.Get, avlUrl);
-        //                    avlRequest.Headers.Accept.Clear();
-        //                    avlRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //                    ApiHelper.AuthenticateClient(avlRequest);
-        //                    //RegisterTransaction(usedUser);
-
-        //                    using var avlResponse = await _sharedHttpClient.SendAsync(avlRequest, HttpCompletionOption.ResponseHeadersRead);
-        //                    if (avlResponse.IsSuccessStatusCode)
-        //                    {
-        //                        string avlResponseBody = await avlResponse.Content.ReadAsStringAsync();
-        //                        var avlApiResponse = JsonConvert.DeserializeObject<PartMnfOneApiResponse>(avlResponseBody);
-
-        //                        if (avlApiResponse?.value != null)
-        //                        {
-        //                            foreach (var part in avlApiResponse.value)
-        //                            {
-        //                                if (!string.IsNullOrEmpty(part.PARTNAME) && !avlDictionary.ContainsKey(part.PARTNAME))
-        //                                {
-        //                                    avlDictionary[part.PARTNAME] = part.MNFPARTNAME ?? string.Empty;
-        //                                }
-        //                            }
-        //                        }
-        //                    }
-        //                    else
-        //                    {
-        //                        AppendLog($"PARTMNFONE batch query warning: {avlResponse.StatusCode}\n");
-        //                    }
-        //                }
-        //                catch (Exception ex)
-        //                {
-        //                    AppendLog($"Error fetching MFPN batch: {ex.Message}\n");
-        //                }
-        //            }
-        //        }
-
-        //        // -------------------------------------------------------------
-        //        // STEP 3: Populate DataGrid
+        //        // STEP 2: Instant DataGrid Population (No API calls for MFPN yet)
         //        // -------------------------------------------------------------
         //        dataTable.Rows.Clear();
 
@@ -2309,9 +1812,8 @@ namespace WH_Panel
         //                string cDate = entry.FirstItem.CDATE?.Length >= 10 ? entry.FirstItem.CDATE.Substring(0, 10) : (entry.FirstItem.CDATE ?? string.Empty);
         //                int partId = entry.FirstItem.PART;
 
-        //                string mfpn = avlDictionary.TryGetValue(partName, out var m) ? m : string.Empty;
-
-        //                dataTable.Rows.Add(partName, mfpn, partDes, balanceValue, cDate, partId);
+        //                // Insert with empty MFPN; viewport loader will populate visible rows
+        //                dataTable.Rows.Add(partName, string.Empty, partDes, balanceValue, cDate, partId);
         //            }
         //            catch (Exception ex)
         //            {
@@ -2332,6 +1834,12 @@ namespace WH_Panel
         //        }
 
         //        txtbPrefix.Text = selectedWarehouse;
+
+        //        // -------------------------------------------------------------
+        //        // STEP 3: Fetch MFPN ONLY for the currently displayed screen rows
+        //        // -------------------------------------------------------------
+        //        await FetchMfpnForVisibleRowsAsync();
+
         //        AppendLog($"Done\n");
         //    }
         //    catch (Exception ex)
@@ -2341,109 +1849,29 @@ namespace WH_Panel
         //}
 
 
-        private async void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cmbWarehouseList.SelectedItem == null) return;
 
-            string selectedWarehouse = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
-            string selectedWarehouseDesc = cmbWarehouseList.SelectedItem.ToString().Substring(selectedWarehouse.Length).Trim();
+            string raw = cmbWarehouseList.SelectedItem.ToString();
+            string selectedWarehouse = raw.Split(' ')[0];
+            string selectedWarehouseDesc = raw.Length > selectedWarehouse.Length
+                ? raw.Substring(selectedWarehouse.Length).Trim()
+                : string.Empty;
 
-            AppendLog($"Loading {selectedWarehouse} stock data...\n");
+            // Set UI Context without firing any API calls
+            groupBox3.Text = $"Warehouse: {selectedWarehouse} {selectedWarehouseDesc}";
+            txtbPrefix.Text = selectedWarehouse;
 
-            try
-            {
-                // -------------------------------------------------------------
-                // STEP 1: Fetch Balances (WARHSBAL)
-                // -------------------------------------------------------------
-                string balanceUrl = $"{baseUrl}/WAREHOUSES?$filter=WARHSNAME eq '{Uri.EscapeDataString(selectedWarehouse)}'" +
-                                    $"&$select=WARHSNAME" +
-                                    $"&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{selectedWarehouse}*';" +
-                                    $"$select=PARTNAME,PARTDES,BALANCE,CDATE,PART)";
+            // Reset grid to clean state ready for receiving
+            dataTable.Rows.Clear();
 
-                using var balanceRequest = new HttpRequestMessage(HttpMethod.Get, balanceUrl);
-                balanceRequest.Headers.Accept.Clear();
-                balanceRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                string usedUser = ApiHelper.AuthenticateClient(balanceRequest);
-                //RegisterTransaction(usedUser);
+            AppendLog($"Active warehouse switched to {selectedWarehouse}. Ready for part scan/entry.\n");
 
-                using var balanceResponse = await _sharedHttpClient.SendAsync(balanceRequest, HttpCompletionOption.ResponseHeadersRead);
-                balanceResponse.EnsureSuccessStatusCode();
-
-                string balanceResponseBody = await balanceResponse.Content.ReadAsStringAsync();
-                var balanceApiResponse = JsonConvert.DeserializeObject<WarehouseApiResponse>(balanceResponseBody);
-
-                var warehouseBalances = balanceApiResponse?.value?
-                    .Where(w => w.WARHSBAL_SUBFORM != null)
-                    .SelectMany(w => w.WARHSBAL_SUBFORM)
-                    .ToList();
-
-                if (warehouseBalances == null || !warehouseBalances.Any())
-                {
-                    dataTable.Rows.Clear();
-                    MessageBox.Show("Selected warehouse has no active stock balances.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
-
-                // Consolidate split rows caused by work orders / serialization
-                var consolidatedBalances = warehouseBalances
-                    .GroupBy(b => b.PARTNAME ?? string.Empty)
-                    .Select(g => new
-                    {
-                        PartName = g.Key,
-                        FirstItem = g.First(),
-                        TotalBalance = g.Sum(b => b.BALANCE)
-                    })
-                    .ToList();
-
-                // -------------------------------------------------------------
-                // STEP 2: Instant DataGrid Population (No API calls for MFPN yet)
-                // -------------------------------------------------------------
-                dataTable.Rows.Clear();
-
-                foreach (var entry in consolidatedBalances)
-                {
-                    try
-                    {
-                        string partName = entry.PartName;
-                        string partDes = entry.FirstItem.PARTDES ?? string.Empty;
-                        int balanceValue = entry.TotalBalance;
-                        string cDate = entry.FirstItem.CDATE?.Length >= 10 ? entry.FirstItem.CDATE.Substring(0, 10) : (entry.FirstItem.CDATE ?? string.Empty);
-                        int partId = entry.FirstItem.PART;
-
-                        // Insert with empty MFPN; viewport loader will populate visible rows
-                        dataTable.Rows.Add(partName, string.Empty, partDes, balanceValue, cDate, partId);
-                    }
-                    catch (Exception ex)
-                    {
-                        AppendLog($"Error adding row: {ex.Message}\n");
-                    }
-                }
-
-                groupBox3.Text = $"Warehouse  {selectedWarehouse} {selectedWarehouseDesc}";
-                ColorTheRows(dataGridView1);
-
-                if (lastUserInput != null)
-                {
-                    lastUserInput.Focus();
-                }
-                else
-                {
-                    txtbInputIPN.Focus();
-                }
-
-                txtbPrefix.Text = selectedWarehouse;
-
-                // -------------------------------------------------------------
-                // STEP 3: Fetch MFPN ONLY for the currently displayed screen rows
-                // -------------------------------------------------------------
-                await FetchMfpnForVisibleRowsAsync();
-
-                AppendLog($"Done\n");
-            }
-            catch (Exception ex)
-            {
-                AppendLog($"An error occurred in comboBox1_SelectedIndexChanged: {ex.Message}\n");
-            }
+            // Immediately focus scanner/keyboard entry
+            txtbInputIPN.Clear();
+            txtbInputIPN.Focus();
         }
 
 
@@ -2525,319 +1953,6 @@ namespace WH_Panel
             }
             await Task.Delay(100); // Delay for 1 second
         }
-        //private async void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
-        //{
-        //    if (e.RowIndex >= 0) // Ensure the row index is valid
-        //    {
-        //        var selectedRow = dataGridView1.Rows[e.RowIndex];
-        //        //await ExtractMFPNForRow(selectedRow);
-        //        var partName = selectedRow.Cells["PARTNAME"].Value.ToString();
-        //        string logPartUrl = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{partName}'&$expand=PARTTRANSLAST2_SUBFORM($top=50;$orderby=CURDATE desc;)";
-        //        using (HttpClient client = new HttpClient())
-        //        {
-        //            try
-        //            {
-        //                // Set the request headers if needed
-        //                client.DefaultRequestHeaders.Accept.Clear();
-        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-        //                string usedUser = ApiHelper.AuthenticateClient(client);
-        //                //AppendLog($"User used: {usedUser}\n");
-
-        //                // Measure the time taken for the HTTP POST request
-        //                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-        //                // Make the HTTP GET request for stock movements
-        //                HttpResponseMessage logPartResponse = await client.GetAsync(logPartUrl);
-        //                logPartResponse.EnsureSuccessStatusCode();
-        //                stopwatch.Stop();
-        //                // Update the ping label
-        //                UpdatePing(stopwatch.ElapsedMilliseconds);
-        //                // Read the response content
-        //                string logPartResponseBody = await logPartResponse.Content.ReadAsStringAsync();
-        //                // Parse the JSON response
-        //                var logPartApiResponse = JsonConvert.DeserializeObject<LogPartApiResponse>(logPartResponseBody);
-        //                // Check if the response contains any data
-        //                if (logPartApiResponse.value != null && logPartApiResponse.value.Count > 0)
-        //                {
-        //                    // Set AutoGenerateColumns to false
-        //                    dataGridView2.AutoGenerateColumns = false;
-        //                    // Clear existing columns
-        //                    dataGridView2.Columns.Clear();
-        //                    // Define the columns you want to display
-        //                    var curDateColumn = new DataGridViewTextBoxColumn
-        //                    {
-        //                        DataPropertyName = "UDATE",
-        //                        HeaderText = "Transaction Date",
-        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-        //                        Name = "UDATE"
-        //                    };
-        //                    var logDocNoColumn = new DataGridViewTextBoxColumn
-        //                    {
-        //                        DataPropertyName = "LOGDOCNO",
-        //                        HeaderText = "Document Number",
-        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-        //                        Name = "LOGDOCNO"
-        //                    };
-        //                    var logDOCDESColumn = new DataGridViewTextBoxColumn
-        //                    {
-        //                        DataPropertyName = "DOCDES",
-        //                        HeaderText = "DOCDES",
-        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-        //                        Name = "DOCDES"
-        //                    };
-        //                    var SUPCUSTNAMEColumn = new DataGridViewTextBoxColumn
-        //                    {
-        //                        DataPropertyName = "SUPCUSTNAME",
-        //                        HeaderText = "Source_Requester",
-        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-        //                        Name = "SUPCUSTNAME"
-        //                    };
-        //                    var tQuantColumn = new DataGridViewTextBoxColumn
-        //                    {
-        //                        DataPropertyName = "TQUANT",
-        //                        HeaderText = "QTY",
-        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-        //                        Name = "TQUANT"
-        //                    };
-        //                    var tPACKNAMEColumn = new DataGridViewTextBoxColumn
-        //                    {
-        //                        DataPropertyName = "PACKNAME",
-        //                        HeaderText = "PACK",
-        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-        //                        Name = "PACKNAME"
-        //                    };
-        //                    var DocBOOKNUMColumn = new DataGridViewTextBoxColumn
-        //                    {
-        //                        DataPropertyName = "BOOKNUM",
-        //                        HeaderText = "Client`s Document",
-        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-        //                        Name = "BOOKNUM"
-        //                    };
-        //                    // Add columns to the DataGridView
-        //                    dataGridView2.Columns.AddRange(new DataGridViewColumn[]
-        //                    {
-        //                curDateColumn,
-        //                logDocNoColumn,
-        //                logDOCDESColumn,
-        //                SUPCUSTNAMEColumn,
-        //                DocBOOKNUMColumn,
-        //                tQuantColumn,
-        //                tPACKNAMEColumn
-        //                    });
-        //                    // Populate the DataGridView with the data
-        //                    dataGridView2.Rows.Clear();
-        //                    foreach (var logPart in logPartApiResponse.value)
-        //                    {
-        //                        foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
-        //                        {
-        //                            if (trans.DOCDES != "קיזוז אוטומטי" && trans.DOCDES != "חשבוניות מס" && trans.TOWARHSNAME != "666")
-        //                            {
-        //                                dataGridView2.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "");
-        //                            }
-
-        //                        }
-        //                    }
-        //                    groupBox4.Text = $"Stock Movements for {partName}";
-        //                    ColorTheRows2(dataGridView2);
-
-        //                    await EnrichGridWithPackAndDateAsync(partName);
-        //                }
-        //                else
-        //                {
-        //                    MessageBox.Show("No stock movements found for the selected part.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        //                }
-        //            }
-        //            catch (HttpRequestException ex)
-        //            {
-        //                AppendLog($"Request error: {ex.Message}", Color.Red);
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                if (txtLog != null && !txtLog.IsDisposed)
-        //                {
-        //                    AppendLog($"Request error: {ex.Message}", Color.Red);
-
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
-
-
-        //private async Task EnrichGridWithPackAndDateAsync(string partName)
-        //{
-        //    var rows = dataGridView2.Rows.Cast<DataGridViewRow>()
-        //        .Where(r => r.Cells["LOGDOCNO"].Value != null)
-        //        .ToList();
-
-        //    // --- 1. Create HttpClient per API user from ApiUserPool ---
-        //    var clients = Enumerable.Range(0, ApiUserPool.Count)
-        //        .Select(_ =>
-        //        {
-        //            var c = new HttpClient();
-        //            c.DefaultRequestHeaders.Accept.Clear();
-        //            c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //            string user = ApiHelper.AuthenticateClient(c); // automatically selects next user
-        //            return (User: user, Client: c);
-        //        }).ToList();
-
-        //    // --- 2. Semaphores to limit per-user concurrency ---
-        //    int maxConcurrencyPerUser = 2;
-        //    var clientSemaphores = clients.ToDictionary(c => c.User, c => new SemaphoreSlim(maxConcurrencyPerUser));
-
-        //    // --- 3. Thread-safe round-robin user assignment ---
-        //    int userIndex = -1;
-        //    object userLock = new object();
-        //    (string User, HttpClient Client) GetNextClient()
-        //    {
-        //        lock (userLock)
-        //        {
-        //            userIndex = (userIndex + 1) % clients.Count;
-        //            return clients[userIndex];
-        //        }
-        //    }
-
-        //    // --- 4. Process rows in parallel ---
-        //    var tasks = rows.Select(async row =>
-        //    {
-        //        string logDocNo = row.Cells["LOGDOCNO"].Value.ToString();
-
-        //        // assign client using round-robin
-        //        var (usedUser, client) = GetNextClient();
-        //        var semaphore = clientSemaphores[usedUser];
-
-        //        await semaphore.WaitAsync();
-        //        try
-        //        {
-        //            const int maxRetry = 666;
-        //            int retry = 0;
-
-        //            while (retry <= maxRetry)
-        //            {
-        //                try
-        //                {
-        //                    if (retry > 0)
-        //                        AppendLog($"Retry {retry} for {logDocNo}\n", Color.Orange);
-
-        //                    string url = logDocNo switch
-        //                    {
-        //                        var s when s.StartsWith("GR") => $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM",
-        //                        var s when s.StartsWith("WR") => $"{baseUrl}/DOCUMENTS_T?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_T_SUBFORM",
-        //                        var s when s.StartsWith("ROB") => $"{baseUrl}/SERIAL?$filter=SERIALNAME eq '{logDocNo}'&$expand=TRANSORDER_K_SUBFORM",
-        //                        var s when s.StartsWith("SH") => $"{baseUrl}/DOCUMENTS_D?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_D_SUBFORM",
-        //                        var s when s.StartsWith("IC") => $"{baseUrl}/DOCUMENTS_C?$filter=DOCNO eq '{logDocNo}'",
-        //                        var s when s.StartsWith("RD") => $"{baseUrl}/AFORM?$filter=FORMNAME eq '{logDocNo}'&$select=CURDATE,FORMNAME",
-        //                        _ => $"{baseUrl}/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM"
-        //                    };
-
-        //                    HttpResponseMessage response = await client.GetAsync(url);
-
-        //                    if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
-        //                    {
-        //                        retry++;
-        //                        int delayMs = 500 * retry; // exponential backoff
-        //                        AppendLog($"429 Too Many Requests for {logDocNo}, waiting {delayMs}ms before retry\n", Color.Orange);
-        //                        await Task.Delay(delayMs);
-        //                        continue;
-        //                    }
-
-        //                    response.EnsureSuccessStatusCode();
-
-        //                    string body = await response.Content.ReadAsStringAsync();
-        //                    var doc = JsonConvert.DeserializeObject<JObject>(body)?["value"]?.FirstOrDefault();
-        //                    if (doc == null) return;
-
-
-        //                    // --- UPDATED LOGIC FOR RD DOCUMENT TYPE ---
-        //                    string uDate;
-        //                    if (logDocNo.StartsWith("RD"))
-        //                    {
-        //                        uDate = doc["CURDATE"]?.ToString();
-        //                    }
-        //                    else
-        //                    {
-        //                        uDate = doc["UDATE"]?.ToString();
-        //                    }
-        //                    string bookNum = doc["BOOKNUM"]?.ToString();
-        //                    string packCode = null;
-
-        //                    var subForm = doc["TRANSORDER_P_SUBFORM"] ?? doc["TRANSORDER_T_SUBFORM"] ?? doc["TRANSORDER_D_SUBFORM"];
-        //                    if (subForm != null)
-        //                    {
-        //                        var line = subForm.FirstOrDefault(l => l["PARTNAME"]?.ToString() == partName);
-        //                        if (line != null)
-        //                            packCode = line["PACKCODE"]?.ToString();
-        //                    }
-        //                    else if (logDocNo.StartsWith("ROB"))
-        //                    {
-        //                        var subROBForm = doc["TRANSORDER_K_SUBFORM"];
-        //                        if (subROBForm != null)
-        //                        {
-        //                            var line = subROBForm.FirstOrDefault(l => l["PARTNAME"]?.ToString() == partName);
-        //                            if (line != null)
-        //                            {
-        //                                var curDateStr = line["CURDATE"]?.ToString();
-        //                                if (DateTime.TryParse(curDateStr, out DateTime curDate))
-        //                                    uDate = curDate.Date.AddDays(1).AddSeconds(-1).ToString();
-        //                                else
-        //                                    uDate = curDateStr;
-        //                            }
-        //                        }
-        //                        bookNum ??= doc["BOOKNUM"]?.ToString();
-        //                    }
-
-        //                    row.Cells["UDATE"].Value = uDate;
-        //                    row.Cells["BOOKNUM"].Value = bookNum;
-        //                    row.Cells["PACKNAME"].Value = packCode;
-
-        //                    // --- log the used API user ---
-        //                    //AppendLog($"Success for {logDocNo} using API user: {usedUser}\n", Color.Green);
-
-        //                    break; // success, exit retry loop
-        //                }
-        //                catch (HttpRequestException ex)
-        //                {
-        //                    AppendLog($"HTTP error for {logDocNo}: {ex.Message}\n", Color.Red);
-        //                    break;
-        //                }
-        //                catch (Exception ex)
-        //                {
-        //                    AppendLog($"Error for {logDocNo}: {ex.Message}\n", Color.Red);
-        //                    break;
-        //                }
-        //            }
-        //        }
-        //        finally
-        //        {
-        //            semaphore.Release();
-        //        }
-        //    }).ToList();
-
-        //    await Task.WhenAll(tasks);
-
-        //    // --- 5. Sort grid by UDATE descending ---
-        //    dataGridView2.Sort(dataGridView2.Columns["UDATE"], ListSortDirection.Descending);
-        //    //AppendLog("Grid enrichment complete.\n", Color.Green);
-        //}
-
-
-
-        //// Helper classes
-        //private class DocumentInfo
-        //{
-        //    public string UDate;
-        //    public string BookNum;
-        //    public List<LineInfo> Lines;
-        //}
-
-        //private class LineInfo
-        //{
-        //    public string PartName;
-        //    public int Quant;
-        //    public string PackCode;
-        //}
-
-
 
         //UPDATED 202609070851
 
@@ -3473,61 +2588,230 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
             }
             return uDate;
         }
-        //private void textBox6_KeyUp_1(object sender, KeyEventArgs e)
+
+
+        //private async void textBox6_KeyUp_1(object sender, KeyEventArgs e)
         //{
         //    if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Escape)
         //    {
-        //        string filterText = txtbFilterIPN.Text.Trim().ToLower();
+        //        string filterText = txtbFilterIPN.Text.Trim();
+
         //        if (e.KeyCode == Keys.Escape)
         //        {
         //            txtbFilterIPN.Clear();
         //            filterText = string.Empty;
         //        }
+
         //        if (string.IsNullOrEmpty(filterText))
         //        {
         //            dataView.RowFilter = string.Empty;
-        //            ColorTheRows(dataGridView1);
         //        }
         //        else
         //        {
-        //            dataView.RowFilter = $"PARTNAME LIKE '%{filterText}%'";
-        //            ColorTheRows(dataGridView1);
+        //            // Escape single quotes to prevent ADO.NET syntax injection crashes
+        //            string sanitized = filterText.Replace("'", "''");
+        //            dataView.RowFilter = $"PARTNAME LIKE '%{sanitized}%'";
         //        }
+
+        //        ColorTheRows(dataGridView1);
+
+        //        // Fetch MFPNs for the filtered rows now visible on-screen
+        //        await FetchMfpnForVisibleRowsAsync();
+
+        //        e.Handled = true;
+        //        e.SuppressKeyPress = true;
         //    }
         //}
 
+
         private async void textBox6_KeyUp_1(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Escape)
+            if (e.KeyCode != Keys.Enter && e.KeyCode != Keys.Escape) return;
+
+            e.Handled = true;
+            e.SuppressKeyPress = true;
+
+            // Handle Escape: reset view and wipe rows
+            if (e.KeyCode == Keys.Escape)
             {
-                string filterText = txtbFilterIPN.Text.Trim();
+                txtbFilterIPN.Clear();
+                dataView.RowFilter = string.Empty;
+                dataTable.Rows.Clear();
+                ColorTheRows(dataGridView1);
+                return;
+            }
 
-                if (e.KeyCode == Keys.Escape)
+            string filterText = txtbFilterIPN.Text.Trim();
+            if (string.IsNullOrEmpty(filterText))
+            {
+                dataView.RowFilter = string.Empty;
+                return;
+            }
+
+            if (cmbWarehouseList.SelectedItem == null)
+            {
+                MessageBox.Show("Please select a target warehouse first.", "Warehouse Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string selectedWarehouse = cmbWarehouseList.SelectedItem.ToString().Split(' ')[0];
+            string sanitized = filterText.Replace("'", "''");
+
+            // 1. Check if the part was already fetched into local memory
+            DataRow[] localMatches = dataTable.Select($"PARTNAME LIKE '%{sanitized}%'");
+
+            if (localMatches.Length > 0)
+            {
+                // Zero API calls: filter existing rows in memory
+                dataView.RowFilter = $"PARTNAME LIKE '%{sanitized}%'";
+                ColorTheRows(dataGridView1);
+                await FetchMfpnForVisibleRowsAsync();
+            }
+            else
+            {
+                // 2. Not in memory: query Priority explicitly for this part and its balance
+                dataView.RowFilter = string.Empty;
+                await ExecuteTargetedLookupAsync(filterText, selectedWarehouse);
+                await FetchMfpnForVisibleRowsAsync();
+            }
+        }
+
+
+        private async Task ExecuteTargetedLookupAsync(string input, string selectedWarehouse)
+        {
+            AppendLog($"Searching parts for warehouse '{selectedWarehouse}' matching '{input}'...\n");
+
+            try
+            {
+                // -------------------------------------------------------------
+                // STEP 1: Construct Prefix-Scoped Wildcard Filter
+                // -------------------------------------------------------------
+                string cleanInput = input.Trim();
+
+                // If the user already typed or scanned the warehouse prefix (e.g. 'RAD_'), strip it 
+                // to avoid producing double prefixes like 'RAD_RAD_...'
+                if (cleanInput.StartsWith($"{selectedWarehouse}_", StringComparison.OrdinalIgnoreCase))
                 {
-                    txtbFilterIPN.Clear();
-                    filterText = string.Empty;
+                    cleanInput = cleanInput.Substring($"{selectedWarehouse}_".Length).Trim();
+                }
+                else if (cleanInput.StartsWith(selectedWarehouse, StringComparison.OrdinalIgnoreCase))
+                {
+                    cleanInput = cleanInput.Substring(selectedWarehouse.Length).TrimStart('_').Trim();
                 }
 
-                if (string.IsNullOrEmpty(filterText))
+                // Form pattern: RAD*{cleanInput}*
+                // Matches anything starting with the warehouse prefix containing the user's input
+                string filterPattern = $"{selectedWarehouse}*{cleanInput}*";
+                string escapedFilter = Uri.EscapeDataString(filterPattern);
+
+                // Targeted LOGPART query bounded strictly to this warehouse prefix
+                string partUrl = $"{baseUrl}/LOGPART?$select=PART,PARTNAME,PARTDES" +
+                                 $"&$filter=PARTNAME eq '{escapedFilter}'and TYPE eq 'R'" +
+                                 $"&$top=50";
+
+                using var partRequest = new HttpRequestMessage(HttpMethod.Get, partUrl);
+                partRequest.Headers.Accept.Clear();
+                partRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                ApiHelper.AuthenticateClient(partRequest);
+
+                using var partResponse = await _sharedHttpClient.SendAsync(partRequest, HttpCompletionOption.ResponseHeadersRead);
+                partResponse.EnsureSuccessStatusCode();
+
+                string partJson = await partResponse.Content.ReadAsStringAsync();
+                var partRoot = JObject.Parse(partJson);
+                var matchedItems = partRoot["value"] as JArray ?? new JArray();
+
+                // Fallback: If not found in LOGPART by IPN, search PARTMNFONE by MFPN
+                // while still ensuring the parent PARTNAME belongs to this warehouse
+                if (matchedItems.Count == 0)
                 {
-                    dataView.RowFilter = string.Empty;
+                    string mfpnPattern = $"*{cleanInput}*";
+                    string mfpnUrl = $"{baseUrl}/PARTMNFONE?$select=PART,PARTNAME,MNFCTRNAME,MNFCTRPARTNAME" +
+                                     $"&$filter=startswith(PARTNAME, '{Uri.EscapeDataString(selectedWarehouse)}') and " +
+                                     $"MNFCTRPARTNAME eq '{Uri.EscapeDataString(mfpnPattern)}'" +
+                                     $"&$top=50";
+
+                    using var mfpnRequest = new HttpRequestMessage(HttpMethod.Get, mfpnUrl);
+                    mfpnRequest.Headers.Accept.Clear();
+                    mfpnRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    ApiHelper.AuthenticateClient(mfpnRequest);
+
+                    using var mfpnResponse = await _sharedHttpClient.SendAsync(mfpnRequest, HttpCompletionOption.ResponseHeadersRead);
+                    if (mfpnResponse.IsSuccessStatusCode)
+                    {
+                        string mfpnJson = await mfpnResponse.Content.ReadAsStringAsync();
+                        var mfpnRoot = JObject.Parse(mfpnJson);
+                        matchedItems = mfpnRoot["value"] as JArray ?? new JArray();
+                    }
                 }
-                else
+
+                if (matchedItems.Count == 0)
                 {
-                    // Escape single quotes to prevent ADO.NET syntax injection crashes
-                    string sanitized = filterText.Replace("'", "''");
-                    dataView.RowFilter = $"PARTNAME LIKE '%{sanitized}%'";
+                    MessageBox.Show($"No parts found in {selectedWarehouse} matching '{input}'.", "Not Found", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                // -------------------------------------------------------------
+                // STEP 2: On-Demand Balance Query (WARHSBAL) for Resolved Parts
+                // -------------------------------------------------------------
+                dataTable.Rows.Clear();
+
+                foreach (var item in matchedItems)
+                {
+                    string partName = item.Value<string>("PARTNAME") ?? string.Empty;
+                    int partId = item.Value<int?>("PART") ?? 0;
+                    string partDes = item.Value<string>("PARTDES")
+                                     ?? (item["MNFCTRPARTNAME"] != null ? $"[MFPN: {item.Value<string>("MNFCTRPARTNAME")}]" : string.Empty);
+
+                    // Fetch balance strictly for this part inside the active warehouse
+                    string balanceUrl = $"{baseUrl}/WARHSBAL?$select=PARTNAME,WARHSNAME,TQUANT,CDATE" +
+                                        $"&$filter=PARTNAME eq '{Uri.EscapeDataString(partName)}' and WARHSNAME eq '{Uri.EscapeDataString(selectedWarehouse)}'";
+
+                    using var balReq = new HttpRequestMessage(HttpMethod.Get, balanceUrl);
+                    balReq.Headers.Accept.Clear();
+                    balReq.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    ApiHelper.AuthenticateClient(balReq);
+
+                    using var balResp = await _sharedHttpClient.SendAsync(balReq, HttpCompletionOption.ResponseHeadersRead);
+
+                    int currentStock = 0;
+                    string lastDate = string.Empty;
+
+                    if (balResp.IsSuccessStatusCode)
+                    {
+                        string balJson = await balResp.Content.ReadAsStringAsync();
+                        var balRoot = JObject.Parse(balJson);
+                        var balItems = balRoot["value"] as JArray;
+
+                        if (balItems != null && balItems.Count > 0)
+                        {
+                            currentStock = balItems.Sum(b => b.Value<int?>("TQUANT") ?? 0);
+                            string rawDate = balItems[0].Value<string>("CDATE");
+                            if (!string.IsNullOrEmpty(rawDate))
+                            {
+                                lastDate = rawDate.Length >= 10 ? rawDate.Substring(0, 10) : rawDate;
+                            }
+                        }
+                    }
+
+                    // Populate row ready for receiving
+                    dataTable.Rows.Add(partName, string.Empty, partDes, currentStock, lastDate, partId);
                 }
 
                 ColorTheRows(dataGridView1);
-
-                // Fetch MFPNs for the filtered rows now visible on-screen
-                await FetchMfpnForVisibleRowsAsync();
-
-                e.Handled = true;
-                e.SuppressKeyPress = true;
+                AppendLog($"Found {matchedItems.Count} item(s) for {selectedWarehouse}.\n");
+            }
+            catch (Exception ex)
+            {
+                AppendLog($"Lookup failed: {ex.Message}\n");
             }
         }
+
+
+
+
+
+
 
 
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -3665,7 +2949,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                 {
                     tQuantCell.Style.BackColor = Color.DarkGreen;
                     tQuantCell.Style.ForeColor = Color.White;
-                    tQuantCell.Style.Font = new Font(dataGridView.Font, FontStyle.Bold);
+                    tQuantCell.Style.Font = new System.Drawing.Font(dataGridView.Font, FontStyle.Bold);
                 }
                 else
                 {
@@ -4944,7 +4228,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                         _SUPNAME = null;
 
                         var selectedCheckBoxes = flpOpenPOs.Controls
-                                                           .OfType<CheckBox>()
+                                                           .OfType<System.Windows.Forms.CheckBox>()
                                                            .Where(cb => cb.Checked)
                                                            .ToList();
 
@@ -6337,13 +5621,13 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                 StartPosition = FormStartPosition.CenterParent
             };
 
-            Label lblQty = new Label { Text = "Enter quantity to split:", Dock = DockStyle.Top, TextAlign = ContentAlignment.MiddleCenter };
+            System.Windows.Forms.Label lblQty = new System.Windows.Forms.Label { Text = "Enter quantity to split:", Dock = DockStyle.Top, TextAlign = ContentAlignment.MiddleCenter };
             TextBox txtQty = new TextBox { Dock = DockStyle.Top, TextAlign = HorizontalAlignment.Center };
-            Label lblLeftoverQty = new Label { Text = "Leftover quantity:", Dock = DockStyle.Top, TextAlign = ContentAlignment.MiddleCenter };
+            System.Windows.Forms.Label lblLeftoverQty = new System.Windows.Forms.Label { Text = "Leftover quantity:", Dock = DockStyle.Top, TextAlign = ContentAlignment.MiddleCenter };
             TextBox txtLeftoverQty = new TextBox { Dock = DockStyle.Top, TextAlign = HorizontalAlignment.Center, ReadOnly = true };
-            Label lblPack = new Label { Text = "Select package for split:", Dock = DockStyle.Top, TextAlign = ContentAlignment.MiddleCenter };
+            System.Windows.Forms.Label lblPack = new System.Windows.Forms.Label { Text = "Select package for split:", Dock = DockStyle.Top, TextAlign = ContentAlignment.MiddleCenter };
             ComboBox cmbPack = new ComboBox { Dock = DockStyle.Top, DropDownStyle = ComboBoxStyle.DropDownList };
-            Label lblLeftoverPack = new Label { Text = "Select package for leftovers:", Dock = DockStyle.Top, TextAlign = ContentAlignment.MiddleCenter };
+            System.Windows.Forms.Label lblLeftoverPack = new System.Windows.Forms.Label { Text = "Select package for leftovers:", Dock = DockStyle.Top, TextAlign = ContentAlignment.MiddleCenter };
             ComboBox cmbLeftoverPack = new ComboBox { Dock = DockStyle.Top, DropDownStyle = ComboBoxStyle.DropDownList };
             Button btnConfirm = new Button { Text = "Confirm", Dock = DockStyle.Bottom };
 
@@ -6688,7 +5972,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                         ListBox listBox = new ListBox
                         {
                             Dock = DockStyle.Fill,
-                            Font = new Font("Segoe UI", 12),
+                            Font = new System.Drawing.Font("Segoe UI", 12),
                             BackColor = Color.FromArgb(50, 50, 50),
                             ForeColor = Color.FromArgb(220, 220, 220)
                         };
@@ -7063,7 +6347,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                             string cbText = $"{po.OrdName}  (Qty: {po.Balance ?? "0"})";  //[ORDI {po.ORDI}]
                             AppendLog("Adding checkbox: " + cbText);
 
-                            CheckBox cb = new CheckBox
+                            System.Windows.Forms.CheckBox cb = new System.Windows.Forms.CheckBox
                             {
                                 Text = cbText,
                                 AutoSize = true,
@@ -7074,7 +6358,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                         }
 
                         // If only one PO line → auto-check
-                        if (poList.Count == 1 && flpOpenPOs.Controls[0] is CheckBox onlyCb)
+                        if (poList.Count == 1 && flpOpenPOs.Controls[0] is System.Windows.Forms.CheckBox onlyCb)
                         {
                             onlyCb.Checked = true;
                             AppendLog("Single PO line found → auto-checked.");
@@ -7107,6 +6391,10 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
 
             return true;
         }
+
+
+
+
         private void txtbInputQty_Enter(object sender, EventArgs e)
         {
 
