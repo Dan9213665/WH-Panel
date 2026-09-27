@@ -2677,19 +2677,156 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
         }
 
 
+        //private async Task ExecuteTargetedLookupAsync(string input, string selectedWarehouse)
+        //{
+        //    AppendLog($"Searching parts for warehouse '{selectedWarehouse}' matching '{input}'...\n");
+
+        //    try
+        //    {
+        //        // -------------------------------------------------------------
+        //        // STEP 1: Construct Prefix-Scoped Wildcard Filter
+        //        // -------------------------------------------------------------
+        //        string cleanInput = input.Trim();
+
+        //        // If the user already typed or scanned the warehouse prefix (e.g. 'RAD_'), strip it 
+        //        // to avoid producing double prefixes like 'RAD_RAD_...'
+        //        if (cleanInput.StartsWith($"{selectedWarehouse}_", StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            cleanInput = cleanInput.Substring($"{selectedWarehouse}_".Length).Trim();
+        //        }
+        //        else if (cleanInput.StartsWith(selectedWarehouse, StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            cleanInput = cleanInput.Substring(selectedWarehouse.Length).TrimStart('_').Trim();
+        //        }
+
+        //        // Form pattern: RAD*{cleanInput}*
+        //        // Matches anything starting with the warehouse prefix containing the user's input
+        //        string filterPattern = $"{selectedWarehouse}*{cleanInput}*";
+        //        string escapedFilter = Uri.EscapeDataString(filterPattern);
+
+        //        // Targeted LOGPART query bounded strictly to this warehouse prefix
+        //        string partUrl = $"{baseUrl}/LOGPART?$select=PART,PARTNAME,PARTDES" +
+        //                         $"&$filter=PARTNAME eq '{escapedFilter}'and TYPE eq 'R'" +
+        //                         $"&$top=50";
+
+        //        using var partRequest = new HttpRequestMessage(HttpMethod.Get, partUrl);
+        //        partRequest.Headers.Accept.Clear();
+        //        partRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //        ApiHelper.AuthenticateClient(partRequest);
+
+        //        using var partResponse = await _sharedHttpClient.SendAsync(partRequest, HttpCompletionOption.ResponseHeadersRead);
+        //        partResponse.EnsureSuccessStatusCode();
+
+        //        string partJson = await partResponse.Content.ReadAsStringAsync();
+        //        var partRoot = JObject.Parse(partJson);
+        //        var matchedItems = partRoot["value"] as JArray ?? new JArray();
+
+        //        // Fallback: If not found in LOGPART by IPN, search PARTMNFONE by MFPN
+        //        // while still ensuring the parent PARTNAME belongs to this warehouse
+        //        if (matchedItems.Count == 0)
+        //        {
+        //            string mfpnPattern = $"*{cleanInput}*";
+        //            string mfpnUrl = $"{baseUrl}/PARTMNFONE?$select=PART,PARTNAME,MNFCTRNAME,MNFCTRPARTNAME" +
+        //                             $"&$filter=startswith(PARTNAME, '{Uri.EscapeDataString(selectedWarehouse)}') and " +
+        //                             $"MNFCTRPARTNAME eq '{Uri.EscapeDataString(mfpnPattern)}'" +
+        //                             $"&$top=50";
+
+        //            using var mfpnRequest = new HttpRequestMessage(HttpMethod.Get, mfpnUrl);
+        //            mfpnRequest.Headers.Accept.Clear();
+        //            mfpnRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            ApiHelper.AuthenticateClient(mfpnRequest);
+
+        //            using var mfpnResponse = await _sharedHttpClient.SendAsync(mfpnRequest, HttpCompletionOption.ResponseHeadersRead);
+        //            if (mfpnResponse.IsSuccessStatusCode)
+        //            {
+        //                string mfpnJson = await mfpnResponse.Content.ReadAsStringAsync();
+        //                var mfpnRoot = JObject.Parse(mfpnJson);
+        //                matchedItems = mfpnRoot["value"] as JArray ?? new JArray();
+        //            }
+        //        }
+
+        //        if (matchedItems.Count == 0)
+        //        {
+        //            MessageBox.Show($"No parts found in {selectedWarehouse} matching '{input}'.", "Not Found", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //            return;
+        //        }
+
+        //        // -------------------------------------------------------------
+        //        // STEP 2: On-Demand Balance Query (WARHSBAL) for Resolved Parts
+        //        // -------------------------------------------------------------
+        //        dataTable.Rows.Clear();
+
+        //        foreach (var item in matchedItems)
+        //        {
+        //            string partName = item.Value<string>("PARTNAME") ?? string.Empty;
+        //            int partId = item.Value<int?>("PART") ?? 0;
+        //            string partDes = item.Value<string>("PARTDES")
+        //                             ?? (item["MNFCTRPARTNAME"] != null ? $"[MFPN: {item.Value<string>("MNFCTRPARTNAME")}]" : string.Empty);
+
+        //            // Fetch balance strictly for this part inside the active warehouse
+        //            string balanceUrl = $"{baseUrl}/WARHSBAL?$select=PARTNAME,WARHSNAME,TQUANT,CDATE" +
+        //                                $"&$filter=PARTNAME eq '{Uri.EscapeDataString(partName)}' and WARHSNAME eq '{Uri.EscapeDataString(selectedWarehouse)}'";
+
+        //            using var balReq = new HttpRequestMessage(HttpMethod.Get, balanceUrl);
+        //            balReq.Headers.Accept.Clear();
+        //            balReq.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            ApiHelper.AuthenticateClient(balReq);
+
+        //            using var balResp = await _sharedHttpClient.SendAsync(balReq, HttpCompletionOption.ResponseHeadersRead);
+
+        //            int currentStock = 0;
+        //            string lastDate = string.Empty;
+
+        //            if (balResp.IsSuccessStatusCode)
+        //            {
+        //                string balJson = await balResp.Content.ReadAsStringAsync();
+        //                var balRoot = JObject.Parse(balJson);
+        //                var balItems = balRoot["value"] as JArray;
+
+        //                if (balItems != null && balItems.Count > 0)
+        //                {
+        //                    currentStock = balItems.Sum(b => b.Value<int?>("TQUANT") ?? 0);
+        //                    string rawDate = balItems[0].Value<string>("CDATE");
+        //                    if (!string.IsNullOrEmpty(rawDate))
+        //                    {
+        //                        lastDate = rawDate.Length >= 10 ? rawDate.Substring(0, 10) : rawDate;
+        //                    }
+        //                }
+        //            }
+
+        //            // Populate row ready for receiving
+        //            dataTable.Rows.Add(partName, string.Empty, partDes, currentStock, lastDate, partId);
+        //        }
+
+        //        ColorTheRows(dataGridView1);
+        //        AppendLog($"Found {matchedItems.Count} item(s) for {selectedWarehouse}.\n");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        AppendLog($"Lookup failed: {ex.Message}\n");
+        //    }
+        //}
+
+        bool _isSearching = false;
         private async Task ExecuteTargetedLookupAsync(string input, string selectedWarehouse)
         {
-            AppendLog($"Searching parts for warehouse '{selectedWarehouse}' matching '{input}'...\n");
+            if (_isSearching) return;
+            _isSearching = true;
 
             try
             {
-                // -------------------------------------------------------------
-                // STEP 1: Construct Prefix-Scoped Wildcard Filter
-                // -------------------------------------------------------------
                 string cleanInput = input.Trim();
 
-                // If the user already typed or scanned the warehouse prefix (e.g. 'RAD_'), strip it 
-                // to avoid producing double prefixes like 'RAD_RAD_...'
+                // Guard against bare wildcards triggering mass lookups
+                if (cleanInput == "*" || string.IsNullOrWhiteSpace(cleanInput))
+                {
+                    MessageBox.Show("Please enter at least one character or number to search.", "Search Term Required", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                AppendLog($"Searching parts for warehouse '{selectedWarehouse}' matching '{cleanInput}'...\n",color:Color.Orange);
+
+                // Strip warehouse prefix if already typed or scanned by operator
                 if (cleanInput.StartsWith($"{selectedWarehouse}_", StringComparison.OrdinalIgnoreCase))
                 {
                     cleanInput = cleanInput.Substring($"{selectedWarehouse}_".Length).Trim();
@@ -2699,15 +2836,15 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                     cleanInput = cleanInput.Substring(selectedWarehouse.Length).TrimStart('_').Trim();
                 }
 
-                // Form pattern: RAD*{cleanInput}*
-                // Matches anything starting with the warehouse prefix containing the user's input
                 string filterPattern = $"{selectedWarehouse}*{cleanInput}*";
                 string escapedFilter = Uri.EscapeDataString(filterPattern);
 
-                // Targeted LOGPART query bounded strictly to this warehouse prefix
-                string partUrl = $"{baseUrl}/LOGPART?$select=PART,PARTNAME,PARTDES" +
-                                 $"&$filter=PARTNAME eq '{escapedFilter}'and TYPE eq 'R'" +
-                                 $"&$top=50";
+                // -------------------------------------------------------------
+                // STEP 1: Search Part Catalog (LOGPART) - Capped to Top 25 Raw items
+                // -------------------------------------------------------------
+                string partUrl = $"{baseUrl}/LOGPART?$select=PART,PARTNAME,PARTDES,TYPE" +
+                                 $"&$filter=PARTNAME eq '{escapedFilter}' and TYPE eq 'R'" +
+                                 $"&$top=25";
 
                 using var partRequest = new HttpRequestMessage(HttpMethod.Get, partUrl);
                 partRequest.Headers.Accept.Clear();
@@ -2715,21 +2852,24 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                 ApiHelper.AuthenticateClient(partRequest);
 
                 using var partResponse = await _sharedHttpClient.SendAsync(partRequest, HttpCompletionOption.ResponseHeadersRead);
-                partResponse.EnsureSuccessStatusCode();
 
-                string partJson = await partResponse.Content.ReadAsStringAsync();
-                var partRoot = JObject.Parse(partJson);
-                var matchedItems = partRoot["value"] as JArray ?? new JArray();
+                JArray matchedItems = new JArray();
 
-                // Fallback: If not found in LOGPART by IPN, search PARTMNFONE by MFPN
-                // while still ensuring the parent PARTNAME belongs to this warehouse
+                if (partResponse.IsSuccessStatusCode)
+                {
+                    string partJson = await partResponse.Content.ReadAsStringAsync();
+                    var partRoot = JObject.Parse(partJson);
+                    matchedItems = partRoot["value"] as JArray ?? new JArray();
+                }
+
+                // Fallback: Check manufacturer part numbers (PARTMNFONE) - Capped to Top 25
                 if (matchedItems.Count == 0)
                 {
                     string mfpnPattern = $"*{cleanInput}*";
                     string mfpnUrl = $"{baseUrl}/PARTMNFONE?$select=PART,PARTNAME,MNFCTRNAME,MNFCTRPARTNAME" +
                                      $"&$filter=startswith(PARTNAME, '{Uri.EscapeDataString(selectedWarehouse)}') and " +
                                      $"MNFCTRPARTNAME eq '{Uri.EscapeDataString(mfpnPattern)}'" +
-                                     $"&$top=50";
+                                     $"&$top=25";
 
                     using var mfpnRequest = new HttpRequestMessage(HttpMethod.Get, mfpnUrl);
                     mfpnRequest.Headers.Accept.Clear();
@@ -2747,23 +2887,28 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
 
                 if (matchedItems.Count == 0)
                 {
-                    MessageBox.Show($"No parts found in {selectedWarehouse} matching '{input}'.", "Not Found", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show($"No raw parts found in {selectedWarehouse} matching '{input}'.", "Not Found", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
+
+                // Deduplicate distinct parts (guards against multiple revisions/records per PARTNAME)
+                var distinctParts = matchedItems
+                    .GroupBy(item => item.Value<string>("PARTNAME"))
+                    .Select(g => g.First())
+                    .ToList();
 
                 // -------------------------------------------------------------
                 // STEP 2: On-Demand Balance Query (WARHSBAL) for Resolved Parts
                 // -------------------------------------------------------------
                 dataTable.Rows.Clear();
 
-                foreach (var item in matchedItems)
+                foreach (var item in distinctParts)
                 {
                     string partName = item.Value<string>("PARTNAME") ?? string.Empty;
                     int partId = item.Value<int?>("PART") ?? 0;
                     string partDes = item.Value<string>("PARTDES")
                                      ?? (item["MNFCTRPARTNAME"] != null ? $"[MFPN: {item.Value<string>("MNFCTRPARTNAME")}]" : string.Empty);
 
-                    // Fetch balance strictly for this part inside the active warehouse
                     string balanceUrl = $"{baseUrl}/WARHSBAL?$select=PARTNAME,WARHSNAME,TQUANT,CDATE" +
                                         $"&$filter=PARTNAME eq '{Uri.EscapeDataString(partName)}' and WARHSNAME eq '{Uri.EscapeDataString(selectedWarehouse)}'";
 
@@ -2794,21 +2939,21 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                         }
                     }
 
-                    // Populate row ready for receiving
                     dataTable.Rows.Add(partName, string.Empty, partDes, currentStock, lastDate, partId);
                 }
 
                 ColorTheRows(dataGridView1);
-                AppendLog($"Found {matchedItems.Count} item(s) for {selectedWarehouse}.\n");
+                AppendLog($"Found {distinctParts.Count} item(s) for {selectedWarehouse}. Standing by.\n",color:Color.LimeGreen);
             }
             catch (Exception ex)
             {
                 AppendLog($"Lookup failed: {ex.Message}\n");
             }
+            finally
+            {
+                _isSearching = false;
+            }
         }
-
-
-
 
 
 
