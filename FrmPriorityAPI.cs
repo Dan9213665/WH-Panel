@@ -2808,6 +2808,154 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
         //}
 
         bool _isSearching = false;
+        //private async Task ExecuteTargetedLookupAsync(string input, string selectedWarehouse)
+        //{
+        //    if (_isSearching) return;
+        //    _isSearching = true;
+
+        //    try
+        //    {
+        //        string cleanInput = input.Trim();
+
+        //        // Guard against bare wildcards triggering mass lookups
+        //        if (cleanInput == "*" || string.IsNullOrWhiteSpace(cleanInput))
+        //        {
+        //            MessageBox.Show("Please enter at least one character or number to search.", "Search Term Required", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //            return;
+        //        }
+
+        //        AppendLog($"Searching parts for warehouse '{selectedWarehouse}' matching '{cleanInput}'...\n",color:Color.Orange);
+
+        //        // Strip warehouse prefix if already typed or scanned by operator
+        //        if (cleanInput.StartsWith($"{selectedWarehouse}_", StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            cleanInput = cleanInput.Substring($"{selectedWarehouse}_".Length).Trim();
+        //        }
+        //        else if (cleanInput.StartsWith(selectedWarehouse, StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            cleanInput = cleanInput.Substring(selectedWarehouse.Length).TrimStart('_').Trim();
+        //        }
+
+        //        string filterPattern = $"{selectedWarehouse}*{cleanInput}*";
+        //        string escapedFilter = Uri.EscapeDataString(filterPattern);
+
+        //        // -------------------------------------------------------------
+        //        // STEP 1: Search Part Catalog (LOGPART) - Capped to Top 25 Raw items
+        //        // -------------------------------------------------------------
+        //        string partUrl = $"{baseUrl}/LOGPART?$select=PART,PARTNAME,PARTDES,TYPE" +
+        //                         $"&$filter=PARTNAME eq '{escapedFilter}' and TYPE eq 'R'" +
+        //                         $"&$top=25";
+
+        //        using var partRequest = new HttpRequestMessage(HttpMethod.Get, partUrl);
+        //        partRequest.Headers.Accept.Clear();
+        //        partRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //        ApiHelper.AuthenticateClient(partRequest);
+
+        //        using var partResponse = await _sharedHttpClient.SendAsync(partRequest, HttpCompletionOption.ResponseHeadersRead);
+
+        //        JArray matchedItems = new JArray();
+
+        //        if (partResponse.IsSuccessStatusCode)
+        //        {
+        //            string partJson = await partResponse.Content.ReadAsStringAsync();
+        //            var partRoot = JObject.Parse(partJson);
+        //            matchedItems = partRoot["value"] as JArray ?? new JArray();
+        //        }
+
+        //        // Fallback: Check manufacturer part numbers (PARTMNFONE) - Capped to Top 25
+        //        if (matchedItems.Count == 0)
+        //        {
+        //            string mfpnPattern = $"*{cleanInput}*";
+        //            string mfpnUrl = $"{baseUrl}/PARTMNFONE?$select=PART,PARTNAME,MNFCTRNAME,MNFCTRPARTNAME" +
+        //                             $"&$filter=startswith(PARTNAME, '{Uri.EscapeDataString(selectedWarehouse)}') and " +
+        //                             $"MNFCTRPARTNAME eq '{Uri.EscapeDataString(mfpnPattern)}'" +
+        //                             $"&$top=50";
+
+        //            using var mfpnRequest = new HttpRequestMessage(HttpMethod.Get, mfpnUrl);
+        //            mfpnRequest.Headers.Accept.Clear();
+        //            mfpnRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            ApiHelper.AuthenticateClient(mfpnRequest);
+
+        //            using var mfpnResponse = await _sharedHttpClient.SendAsync(mfpnRequest, HttpCompletionOption.ResponseHeadersRead);
+        //            if (mfpnResponse.IsSuccessStatusCode)
+        //            {
+        //                string mfpnJson = await mfpnResponse.Content.ReadAsStringAsync();
+        //                var mfpnRoot = JObject.Parse(mfpnJson);
+        //                matchedItems = mfpnRoot["value"] as JArray ?? new JArray();
+        //            }
+        //        }
+
+        //        if (matchedItems.Count == 0)
+        //        {
+        //            MessageBox.Show($"No raw parts found in {selectedWarehouse} matching '{input}'.", "Not Found", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //            return;
+        //        }
+
+        //        // Deduplicate distinct parts (guards against multiple revisions/records per PARTNAME)
+        //        var distinctParts = matchedItems
+        //            .GroupBy(item => item.Value<string>("PARTNAME"))
+        //            .Select(g => g.First())
+        //            .ToList();
+
+        //        // -------------------------------------------------------------
+        //        // STEP 2: On-Demand Balance Query (WARHSBAL) for Resolved Parts
+        //        // -------------------------------------------------------------
+        //        dataTable.Rows.Clear();
+
+        //        foreach (var item in distinctParts)
+        //        {
+        //            string partName = item.Value<string>("PARTNAME") ?? string.Empty;
+        //            int partId = item.Value<int?>("PART") ?? 0;
+        //            string partDes = item.Value<string>("PARTDES")
+        //                             ?? (item["MNFCTRPARTNAME"] != null ? $"[MFPN: {item.Value<string>("MNFCTRPARTNAME")}]" : string.Empty);
+
+        //            string balanceUrl = $"{baseUrl}/WARHSBAL?$select=PARTNAME,WARHSNAME,TBALANCE,CDATE" +
+        //                                $"&$filter=PARTNAME eq '{Uri.EscapeDataString(partName)}' and WARHSNAME eq '{Uri.EscapeDataString(selectedWarehouse)}'";
+
+        //            using var balReq = new HttpRequestMessage(HttpMethod.Get, balanceUrl);
+        //            balReq.Headers.Accept.Clear();
+        //            balReq.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            ApiHelper.AuthenticateClient(balReq);
+
+        //            using var balResp = await _sharedHttpClient.SendAsync(balReq, HttpCompletionOption.ResponseHeadersRead);
+
+        //            int currentStock = 0;
+        //            string lastDate = string.Empty;
+
+        //            if (balResp.IsSuccessStatusCode)
+        //            {
+        //                string balJson = await balResp.Content.ReadAsStringAsync();
+        //                var balRoot = JObject.Parse(balJson);
+        //                var balItems = balRoot["value"] as JArray;
+
+        //                if (balItems != null && balItems.Count > 0)
+        //                {
+        //                    currentStock = balItems.Sum(b => b.Value<int?>("TBALANCE") ?? 0);
+        //                    string rawDate = balItems[0].Value<string>("CDATE");
+        //                    if (!string.IsNullOrEmpty(rawDate))
+        //                    {
+        //                        lastDate = rawDate.Length >= 10 ? rawDate.Substring(0, 10) : rawDate;
+        //                    }
+        //                }
+        //            }
+
+        //            dataTable.Rows.Add(partName, string.Empty, partDes, currentStock, lastDate, partId);
+        //        }
+
+        //        ColorTheRows(dataGridView1);
+        //        AppendLog($"Found {distinctParts.Count} item(s) for {selectedWarehouse}. Standing by.\n",color:Color.LimeGreen);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        AppendLog($"Lookup failed: {ex.Message}\n");
+        //    }
+        //    finally
+        //    {
+        //        _isSearching = false;
+        //    }
+        //}
+
+
         private async Task ExecuteTargetedLookupAsync(string input, string selectedWarehouse)
         {
             if (_isSearching) return;
@@ -2824,7 +2972,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                     return;
                 }
 
-                AppendLog($"Searching parts for warehouse '{selectedWarehouse}' matching '{cleanInput}'...\n",color:Color.Orange);
+                AppendLog($"Searching parts for warehouse '{selectedWarehouse}' matching '{cleanInput}'...\n", color: Color.Orange);
 
                 // Strip warehouse prefix if already typed or scanned by operator
                 if (cleanInput.StartsWith($"{selectedWarehouse}_", StringComparison.OrdinalIgnoreCase))
@@ -2862,14 +3010,14 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                     matchedItems = partRoot["value"] as JArray ?? new JArray();
                 }
 
-                // Fallback: Check manufacturer part numbers (PARTMNFONE) - Capped to Top 25
+                // Fallback: Check manufacturer part numbers (PARTMNFONE) - Capped to Top 50
                 if (matchedItems.Count == 0)
                 {
                     string mfpnPattern = $"*{cleanInput}*";
                     string mfpnUrl = $"{baseUrl}/PARTMNFONE?$select=PART,PARTNAME,MNFCTRNAME,MNFCTRPARTNAME" +
                                      $"&$filter=startswith(PARTNAME, '{Uri.EscapeDataString(selectedWarehouse)}') and " +
                                      $"MNFCTRPARTNAME eq '{Uri.EscapeDataString(mfpnPattern)}'" +
-                                     $"&$top=25";
+                                     $"&$top=50";
 
                     using var mfpnRequest = new HttpRequestMessage(HttpMethod.Get, mfpnUrl);
                     mfpnRequest.Headers.Accept.Clear();
@@ -2898,10 +3046,53 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                     .ToList();
 
                 // -------------------------------------------------------------
-                // STEP 2: On-Demand Balance Query (WARHSBAL) for Resolved Parts
+                // STEP 2: Scoped Warehouse Balance via WAREHOUSES Subform
                 // -------------------------------------------------------------
                 dataTable.Rows.Clear();
 
+                // Construct an OR filter for all resolved parts to fetch balances in ONE request
+                string subFilter = string.Join(" or ", distinctParts.Select(p => $"PARTNAME eq '{Uri.EscapeDataString(p.Value<string>("PARTNAME") ?? string.Empty)}'"));
+
+                string whBalUrl = $"{baseUrl}/WAREHOUSES?$select=WARHSNAME" +
+                                  $"&$filter=WARHSNAME eq '{Uri.EscapeDataString(selectedWarehouse)}'" +
+                                  $"&$expand=WARHSBAL_SUBFORM($filter={subFilter};$select=PARTNAME,TBALANCE,BALANCE,CDATE)";
+
+                using var whBalReq = new HttpRequestMessage(HttpMethod.Get, whBalUrl);
+                whBalReq.Headers.Accept.Clear();
+                whBalReq.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                ApiHelper.AuthenticateClient(whBalReq);
+
+                using var whBalResp = await _sharedHttpClient.SendAsync(whBalReq, HttpCompletionOption.ResponseHeadersRead);
+
+                Dictionary<string, (int Balance, string Date)> balanceLookup = new Dictionary<string, (int, string)>(StringComparer.OrdinalIgnoreCase);
+
+                if (whBalResp.IsSuccessStatusCode)
+                {
+                    string whJson = await whBalResp.Content.ReadAsStringAsync();
+                    var whRoot = JObject.Parse(whJson);
+                    var whList = whRoot["value"] as JArray;
+
+                    if (whList != null && whList.Count > 0)
+                    {
+                        var subform = whList[0]["WARHSBAL_SUBFORM"] as JArray;
+                        if (subform != null)
+                        {
+                            var groupedBalances = subform
+                                .GroupBy(b => b.Value<string>("PARTNAME") ?? string.Empty);
+
+                            foreach (var grp in groupedBalances)
+                            {
+                                int totalQty = grp.Sum(b => b.Value<int?>("TBALANCE") ?? b.Value<int?>("BALANCE") ?? 0);
+                                string rawDate = grp.Select(b => b.Value<string>("CDATE")).FirstOrDefault(d => !string.IsNullOrEmpty(d)) ?? string.Empty;
+                                string dateStr = rawDate.Length >= 10 ? rawDate.Substring(0, 10) : rawDate;
+
+                                balanceLookup[grp.Key] = (totalQty, dateStr);
+                            }
+                        }
+                    }
+                }
+
+                // Populate the DataTable
                 foreach (var item in distinctParts)
                 {
                     string partName = item.Value<string>("PARTNAME") ?? string.Empty;
@@ -2909,41 +3100,20 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                     string partDes = item.Value<string>("PARTDES")
                                      ?? (item["MNFCTRPARTNAME"] != null ? $"[MFPN: {item.Value<string>("MNFCTRPARTNAME")}]" : string.Empty);
 
-                    string balanceUrl = $"{baseUrl}/WARHSBAL?$select=PARTNAME,WARHSNAME,TQUANT,CDATE" +
-                                        $"&$filter=PARTNAME eq '{Uri.EscapeDataString(partName)}' and WARHSNAME eq '{Uri.EscapeDataString(selectedWarehouse)}'";
-
-                    using var balReq = new HttpRequestMessage(HttpMethod.Get, balanceUrl);
-                    balReq.Headers.Accept.Clear();
-                    balReq.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    ApiHelper.AuthenticateClient(balReq);
-
-                    using var balResp = await _sharedHttpClient.SendAsync(balReq, HttpCompletionOption.ResponseHeadersRead);
-
                     int currentStock = 0;
                     string lastDate = string.Empty;
 
-                    if (balResp.IsSuccessStatusCode)
+                    if (balanceLookup.TryGetValue(partName, out var balInfo))
                     {
-                        string balJson = await balResp.Content.ReadAsStringAsync();
-                        var balRoot = JObject.Parse(balJson);
-                        var balItems = balRoot["value"] as JArray;
-
-                        if (balItems != null && balItems.Count > 0)
-                        {
-                            currentStock = balItems.Sum(b => b.Value<int?>("TQUANT") ?? 0);
-                            string rawDate = balItems[0].Value<string>("CDATE");
-                            if (!string.IsNullOrEmpty(rawDate))
-                            {
-                                lastDate = rawDate.Length >= 10 ? rawDate.Substring(0, 10) : rawDate;
-                            }
-                        }
+                        currentStock = balInfo.Balance;
+                        lastDate = balInfo.Date;
                     }
 
                     dataTable.Rows.Add(partName, string.Empty, partDes, currentStock, lastDate, partId);
                 }
 
                 ColorTheRows(dataGridView1);
-                AppendLog($"Found {distinctParts.Count} item(s) for {selectedWarehouse}. Standing by.\n",color:Color.LimeGreen);
+                AppendLog($"Found {distinctParts.Count} item(s) for {selectedWarehouse}. Standing by.\n", color: Color.LimeGreen);
             }
             catch (Exception ex)
             {
@@ -2954,9 +3124,6 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                 _isSearching = false;
             }
         }
-
-
-
 
 
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
