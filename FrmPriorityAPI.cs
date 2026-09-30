@@ -5048,28 +5048,207 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
 
             }
         }
-        private void btnPrintStock_Click(object sender, EventArgs e)
+        //private void btnPrintStock_Click(object sender, EventArgs e)
+        //{
+        //    // Get the selected warehouse name
+        //    string selectedWarehouseName = GetSelectedWarehouseName();
+        //    if (string.IsNullOrEmpty(selectedWarehouseName))
+        //    {
+        //        MessageBox.Show("Please select a warehouse.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        return;
+        //    }
+        //    // Generate HTML report
+        //    AppendLog($"Generating HTML report for {selectedWarehouseName} \n");
+        //    string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+        //    string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\{selectedWarehouseName}_StockReport_{_fileTimeStamp}.html";
+        //    GenerateHTMLFromDataGridView(filename, dataGridView1, $"{selectedWarehouseName} Stock Report {_fileTimeStamp}");
+        //    // Open the file in default browser
+        //    var p = new Process();
+        //    p.StartInfo = new ProcessStartInfo(filename)
+        //    {
+        //        UseShellExecute = true
+        //    };
+        //    p.Start();
+        //}
+
+
+        private async void btnPrintStock_Click(object sender, EventArgs e)
         {
-            // Get the selected warehouse name
             string selectedWarehouseName = GetSelectedWarehouseName();
             if (string.IsNullOrEmpty(selectedWarehouseName))
             {
                 MessageBox.Show("Please select a warehouse.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            // Generate HTML report
-            AppendLog($"Generating HTML report for {selectedWarehouseName} \n");
-            string _fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-            string filename = $"\\\\dbr1\\Data\\WareHouse\\2025\\WHsearcher\\{selectedWarehouseName}_StockReport_{_fileTimeStamp}.html";
-            GenerateHTMLFromDataGridView(filename, dataGridView1, $"{selectedWarehouseName} Stock Report {_fileTimeStamp}");
-            // Open the file in default browser
-            var p = new Process();
-            p.StartInfo = new ProcessStartInfo(filename)
+
+            try
             {
-                UseShellExecute = true
-            };
-            p.Start();
+                btnPrintStock.Enabled = false;
+                Cursor = Cursors.WaitCursor;
+
+                // Extract client prefix (e.g., "AVP" from "AVP" or "AVP Warehouse")
+                string warehousePrefix = selectedWarehouseName.Split(new[] { ' ', '_', '-' }, StringSplitOptions.RemoveEmptyEntries)[0].Trim();
+
+                AppendLog($"Fetching stock balances for warehouse {selectedWarehouseName} (Prefix: {warehousePrefix})...\n");
+
+                // 1. Fetch Balances via WAREHOUSES expanding WARHSBAL_SUBFORM
+                string balanceUrl = $"{baseUrl}/WAREHOUSES?$filter=WARHSNAME eq '{Uri.EscapeDataString(selectedWarehouseName)}'" +
+                                    $"&$select=WARHSNAME" +
+                                    $"&$expand=WARHSBAL_SUBFORM($filter=BALANCE gt 0;$select=PARTNAME,PARTDES,BALANCE,CDATE,PART)";
+
+                string balanceResponseBody = await ExecuteWithPooledClientAsync(async client =>
+                {
+                    using var response = await client.GetAsync(balanceUrl);
+                    response.EnsureSuccessStatusCode();
+                    return await response.Content.ReadAsStringAsync();
+                });
+
+                var root = Newtonsoft.Json.Linq.JObject.Parse(balanceResponseBody);
+                var warehouseObj = (root["value"] as Newtonsoft.Json.Linq.JArray)?.FirstOrDefault();
+                var balancesArray = warehouseObj?["WARHSBAL_SUBFORM"] as Newtonsoft.Json.Linq.JArray;
+
+                if (balancesArray == null || balancesArray.Count == 0)
+                {
+                    AppendLog($"No active stock found in warehouse {selectedWarehouseName}.\n");
+                    MessageBox.Show($"Warehouse '{selectedWarehouseName}' currently has no positive stock balances.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                // 2. Filter strictly by warehouse prefix & consolidate serialized/work-order split lines
+                var consolidated = balancesArray
+                    .Where(b =>
+                    {
+                        string pName = (string)b["PARTNAME"] ?? string.Empty;
+                        return !string.IsNullOrEmpty(pName) &&
+                               pName.StartsWith(warehousePrefix, StringComparison.OrdinalIgnoreCase);
+                    })
+                    .GroupBy(b => (string)b["PARTNAME"])
+                    .Select(g => new
+                    {
+                        PartName = g.Key,
+                        PartDes = (string)g.First()["PARTDES"] ?? string.Empty,
+                        CDate = ((string)g.First()["CDATE"] ?? string.Empty).Length >= 10
+                                ? ((string)g.First()["CDATE"]).Substring(0, 10)
+                                : ((string)g.First()["CDATE"] ?? string.Empty),
+                        TotalBalance = g.Sum(b => (int?)b["BALANCE"] ?? 0)
+                    })
+                    .Where(x => x.TotalBalance > 0)
+                    .OrderByDescending(x => x.TotalBalance)
+                    .ToList();
+
+                if (consolidated.Count == 0)
+                {
+                    AppendLog($"No matching stock found starting with prefix '{warehousePrefix}' in {selectedWarehouseName}.\n");
+                    MessageBox.Show($"No active stock matching prefix '{warehousePrefix}' found in warehouse '{selectedWarehouseName}'.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                AppendLog($"Found {consolidated.Count} matching items. Fetching manufacturer part numbers (batched)...\n");
+
+                // 3. Batch-fetch MFPNs from PARTMNFONE (30 items per request to keep URI length safe)
+                var mfpnMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                int chunkSize = 30;
+                var partBatches = consolidated.Select(x => x.PartName).Chunk(chunkSize);
+
+                foreach (var batch in partBatches)
+                {
+                    string partFilters = string.Join(" or ", batch.Select(p => $"PARTNAME eq '{Uri.EscapeDataString(p)}'"));
+                    string mfpnUrl = $"{baseUrl}/PARTMNFONE?$filter=({partFilters})&$select=PARTNAME,MNFPARTNAME";
+
+                    try
+                    {
+                        string mfpnResponseBody = await ExecuteWithPooledClientAsync(async client =>
+                        {
+                            using var response = await client.GetAsync(mfpnUrl);
+                            response.EnsureSuccessStatusCode();
+                            return await response.Content.ReadAsStringAsync();
+                        });
+
+                        var mfpnRoot = Newtonsoft.Json.Linq.JObject.Parse(mfpnResponseBody);
+                        var mfpnItems = mfpnRoot["value"] as Newtonsoft.Json.Linq.JArray;
+
+                        if (mfpnItems != null)
+                        {
+                            foreach (var item in mfpnItems)
+                            {
+                                string pName = (string)item["PARTNAME"];
+                                string mfpn = (string)item["MNFPARTNAME"];
+
+                                if (!string.IsNullOrEmpty(pName) && !string.IsNullOrEmpty(mfpn) && !mfpnMap.ContainsKey(pName))
+                                {
+                                    mfpnMap[pName] = mfpn;
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        AppendLog($"Warning: MFPN batch fetch failed: {ex.Message}\n");
+                    }
+                }
+
+                // 4. Build detached in-memory virtual DataGridView matching your report structure
+                using (var tempGrid = new DataGridView())
+                {
+                    tempGrid.Columns.Add("PARTNAME", "Part Name");
+                    tempGrid.Columns.Add("MFPN", "Manufacturer P/N");
+                    tempGrid.Columns.Add("PARTDES", "Description");
+                    tempGrid.Columns.Add("BALANCE", "Balance");
+                    tempGrid.Columns.Add("CDATE", "Date");
+
+                    foreach (var item in consolidated)
+                    {
+                        mfpnMap.TryGetValue(item.PartName, out string mfpn);
+                        tempGrid.Rows.Add(item.PartName, mfpn ?? string.Empty, item.PartDes, item.TotalBalance, item.CDate);
+                    }
+
+                    // 5. Generate and open the HTML report via your existing generator
+                    string fileTimeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+                    string networkDir = @"\\dbr1\Data\WareHouse\2025\WHsearcher";
+                    if (!Directory.Exists(networkDir)) Directory.CreateDirectory(networkDir);
+
+                    string filename = Path.Combine(networkDir, $"{selectedWarehouseName}_StockReport_{fileTimeStamp}.html");
+
+                    AppendLog($"Generating HTML report at {filename}...\n");
+                    GenerateHTMLFromDataGridView(filename, tempGrid, $"{selectedWarehouseName} Stock Report {fileTimeStamp}");
+
+                    var p = new Process
+                    {
+                        StartInfo = new ProcessStartInfo(filename) { UseShellExecute = true }
+                    };
+                    p.Start();
+                    AppendLog($"Report generated and opened successfully.\n");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                AppendLog($"Request error: {ex.Message}\n");
+                MessageBox.Show($"API request failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                AppendLog($"Processing error: {ex.Message}\n");
+                MessageBox.Show($"Failed to generate report: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                btnPrintStock.Enabled = true;
+                Cursor = Cursors.Default;
+            }
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
         private void GenerateHTMLFromDataGridView(string filename, DataGridView dataGridView, string reportTitle)
         {
             using (StreamWriter writer = new StreamWriter(filename))
