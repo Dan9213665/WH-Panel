@@ -2016,78 +2016,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
         // --- 2. Main Event Handler ---
         private async void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex < 0) return; // Ensure row index is valid
-
-            var selectedRow = dataGridView1.Rows[e.RowIndex];
-            var partName = selectedRow.Cells["PARTNAME"]?.Value?.ToString();
-            if (string.IsNullOrWhiteSpace(partName)) return;
-
-            string logPartUrl = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{Uri.EscapeDataString(partName)}'&$expand=PARTTRANSLAST2_SUBFORM($top=50;$orderby=CURDATE desc;)";
-
-            try
-            {
-                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-
-                string logPartResponseBody = await ExecuteWithPooledClientAsync(async client =>
-                {
-                    using var response = await client.GetAsync(logPartUrl);
-                    response.EnsureSuccessStatusCode();
-                    return await response.Content.ReadAsStringAsync();
-                });
-
-                stopwatch.Stop();
-                UpdatePing(stopwatch.ElapsedMilliseconds);
-
-                var logPartApiResponse = JsonConvert.DeserializeObject<LogPartApiResponse>(logPartResponseBody);
-                if (logPartApiResponse?.value == null || logPartApiResponse.value.Count == 0)
-                {
-                    MessageBox.Show("No stock movements found for the selected part.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
-
-                // Initialize Grid 2 Structure
-                InitializeMovementsGrid();
-
-                var validDocNumbers = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-                // Populate initial movement records
-                foreach (var logPart in logPartApiResponse.value)
-                {
-                    if (logPart.PARTTRANSLAST2_SUBFORM == null) continue;
-
-                    foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
-                    {
-                        if (trans.DOCDES != "קיזוז אוטומטי" && trans.DOCDES != "חשבוניות מס" && trans.TOWARHSNAME != "666")
-                        {
-                            dataGridView2.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "");
-                            if (!string.IsNullOrWhiteSpace(trans.LOGDOCNO))
-                            {
-                                validDocNumbers.Add(trans.LOGDOCNO);
-                            }
-                        }
-                    }
-                }
-
-                groupBox4.Text = $"Stock Movements for {partName}";
-                ColorTheRows2(dataGridView2);
-
-                // Enrich only the retrieved unique documents in bulk
-                if (validDocNumbers.Count > 0)
-                {
-                    await EnrichGridBatchedAsync(partName, validDocNumbers.ToList());
-                }
-            }
-            catch (HttpRequestException ex)
-            {
-                AppendLog($"Request error: {ex.Message}", Color.Red);
-            }
-            catch (Exception ex)
-            {
-                if (txtLog != null && !txtLog.IsDisposed)
-                {
-                    AppendLog($"Processing error: {ex.Message}", Color.Red);
-                }
-            }
+            
         }
 
         // --- 3. Batched Document Enrichment ---
@@ -3126,9 +3055,82 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
         }
 
 
-        private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        private async void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            MessageBox.Show("Print stickers from Stock Movements list  >>>>");
+            //MessageBox.Show("Print stickers from Stock Movements list  >>>>");
+
+            if (e.RowIndex < 0) return; // Ensure row index is valid
+
+            var selectedRow = dataGridView1.Rows[e.RowIndex];
+            var partName = selectedRow.Cells["PARTNAME"]?.Value?.ToString();
+            if (string.IsNullOrWhiteSpace(partName)) return;
+
+            string logPartUrl = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{Uri.EscapeDataString(partName)}'&$expand=PARTTRANSLAST2_SUBFORM($top=50;$orderby=CURDATE desc;)";
+
+            try
+            {
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
+                string logPartResponseBody = await ExecuteWithPooledClientAsync(async client =>
+                {
+                    using var response = await client.GetAsync(logPartUrl);
+                    response.EnsureSuccessStatusCode();
+                    return await response.Content.ReadAsStringAsync();
+                });
+
+                stopwatch.Stop();
+                UpdatePing(stopwatch.ElapsedMilliseconds);
+
+                var logPartApiResponse = JsonConvert.DeserializeObject<LogPartApiResponse>(logPartResponseBody);
+                if (logPartApiResponse?.value == null || logPartApiResponse.value.Count == 0)
+                {
+                    MessageBox.Show("No stock movements found for the selected part.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                // Initialize Grid 2 Structure
+                InitializeMovementsGrid();
+
+                var validDocNumbers = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+                // Populate initial movement records
+                foreach (var logPart in logPartApiResponse.value)
+                {
+                    if (logPart.PARTTRANSLAST2_SUBFORM == null) continue;
+
+                    foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
+                    {
+                        if (trans.DOCDES != "קיזוז אוטומטי" && trans.DOCDES != "חשבוניות מס" && trans.TOWARHSNAME != "666")
+                        {
+                            dataGridView2.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "");
+                            if (!string.IsNullOrWhiteSpace(trans.LOGDOCNO))
+                            {
+                                validDocNumbers.Add(trans.LOGDOCNO);
+                            }
+                        }
+                    }
+                }
+
+                groupBox4.Text = $"Stock Movements for {partName}";
+                ColorTheRows2(dataGridView2);
+
+                // Enrich only the retrieved unique documents in bulk
+                if (validDocNumbers.Count > 0)
+                {
+                    await EnrichGridBatchedAsync(partName, validDocNumbers.ToList());
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                AppendLog($"Request error: {ex.Message}", Color.Red);
+            }
+            catch (Exception ex)
+            {
+                if (txtLog != null && !txtLog.IsDisposed)
+                {
+                    AppendLog($"Processing error: {ex.Message}", Color.Red);
+                }
+            }
         }
         private void ColorTheRows(DataGridView dataGridView)
         {
