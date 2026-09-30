@@ -94,7 +94,7 @@ namespace WH_Panel
         //private List<WarehouseBalance> warehouseBalances;
         // Define this at class level
         private ContextMenuStrip contextMenuSwitchToAlt;
-       
+
         private static readonly HttpClient _sharedHttpClient = new HttpClient(new SocketsHttpHandler
         {
             PooledConnectionLifetime = TimeSpan.FromMinutes(15),
@@ -113,12 +113,14 @@ namespace WH_Panel
             cmbROBxList.DrawItem += cmbROBxList_DrawItem;
 
             // Checkbox event
-            cnkbClosed.CheckedChanged += (s, e) => {
+            cnkbClosed.CheckedChanged += (s, e) =>
+            {
                 RefreshComboBoxItems();
             };
 
             // 1. ADDED KEYDOWN EVENT FOR ARROW KEYS & ENTER
-            cmbROBxList.KeyDown += (s, e) => {
+            cmbROBxList.KeyDown += (s, e) =>
+            {
                 if (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down)
                 {
                     isNavigatingKeys = true;
@@ -146,7 +148,8 @@ namespace WH_Panel
             };
 
             // Your existing TextUpdate, modified slightly to respect arrow keys
-            cmbROBxList.TextUpdate += (s, e) => {
+            cmbROBxList.TextUpdate += (s, e) =>
+            {
                 if (isNavigatingKeys) return; // Ignore if browsing via arrows
 
                 string currentText = cmbROBxList.Text;
@@ -588,7 +591,7 @@ namespace WH_Panel
                 }
             }
         }
-    
+
         private void InitializeDataGridView()
         {
             // Enable Double-Buffering via Reflection to prevent screen tearing on low-spec hardware
@@ -764,7 +767,7 @@ namespace WH_Panel
 
             SafeAppendLog($"Fetching MFPNs in targeted batches for {partNames.Count} parts...", Color.Yellow);
 
-            const int batchSize = 30;
+            const int batchSize = 40;
             var mfpnMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
             using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
@@ -1400,7 +1403,7 @@ namespace WH_Panel
         // Define these once (class-level or at the top of your method)
         private static readonly HashSet<string> ExcludedDocDescriptions = new HashSet<string>
 {
-    "ספירות מלאי",
+    //"ספירות מלאי",
     "קיזוז אוטומטי"
 };
 
@@ -1579,7 +1582,7 @@ namespace WH_Panel
 
 
 
-        
+
 
 
 
@@ -1610,11 +1613,557 @@ namespace WH_Panel
             _isGridInitialized = true;
         }
 
+        //private async void dgwBom_CellClick(object sender, DataGridViewCellEventArgs e)
+        //{
+        //    if (e.RowIndex < 0) return;
+
+        //    // Prevent re-firing if user clicks cells within the currently selected row
+        //    if (e.RowIndex == _lastSelectedRowIndex) return;
+        //    _lastSelectedRowIndex = e.RowIndex;
+
+        //    var selectedRow = dgwBom.Rows[e.RowIndex];
+        //    var partName = selectedRow.Cells["PARTNAME"].Value?.ToString();
+        //    if (string.IsNullOrWhiteSpace(partName)) return;
+
+        //    EnsureMovesGridColumns();
+
+        //    // Query uses actual Priority schema fields to prevent XML 400 Bad Request
+        //    string logPartUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART" +
+        //                        $"?$filter=PARTNAME eq '{Uri.EscapeDataString(partName)}'" +
+        //                        $"&$expand=PARTTRANSLAST2_SUBFORM($orderby=CURDATE desc)";
+
+        //    try
+        //    {
+        //        using var request = new HttpRequestMessage(HttpMethod.Get, logPartUrl);
+        //        request.Headers.Accept.Clear();
+        //        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        //        string usedUser = ApiHelper.AuthenticateClient(request);
+        //        RegisterTransaction(usedUser);
+
+        //        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        //        using var response = await _sharedHttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+        //        response.EnsureSuccessStatusCode();
+        //        stopwatch.Stop();
+
+        //        UpdatePing(stopwatch.ElapsedMilliseconds);
+
+        //        string logPartResponseBody = await response.Content.ReadAsStringAsync();
+        //        var logPartApiResponse = JsonConvert.DeserializeObject<LogPartApiResponse>(logPartResponseBody);
+
+        //        dgwIPNmoves.Rows.Clear();
+        //        dgwINSTOCK.Rows.Clear();
+
+        //        if (logPartApiResponse?.value != null && logPartApiResponse.value.Count > 0)
+        //        {
+        //            var fetchTasks = new List<Task>();
+
+        //            foreach (var logPart in logPartApiResponse.value)
+        //            {
+        //                if (logPart.PARTTRANSLAST2_SUBFORM == null) continue;
+
+        //                foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
+        //                {
+        //                    if (!ExcludedDocDescriptions.Contains(trans.DOCDES) &&
+        //                        !ExcludedSupCustNames.Contains(trans.SUPCUSTNAME))
+        //                    {
+        //                        // Add row with CURDATE and empty strings for BOOKNUM and PACK
+        //                        int rowIndex = dgwIPNmoves.Rows.Add(
+        //                            trans.CURDATE,
+        //                            trans.LOGDOCNO,
+        //                            trans.DOCDES,
+        //                            trans.SUPCUSTNAME,
+        //                            "",
+        //                            trans.TQUANT,
+        //                            ""
+        //                        );
+
+        //                        var row = dgwIPNmoves.Rows[rowIndex];
+
+        //                        // Original secondary lookup for packaging and secondary fields
+        //                        var fetchTask = FetchAndSetPackCodeAndUDateAsync(row, trans.LOGDOCNO, partName, (int)trans.TQUANT);
+        //                        fetchTasks.Add(fetchTask);
+
+        //                        await Task.Delay(10);
+        //                    }
+        //                }
+        //            }
+
+        //            gbxIPNstockMovements.Text = $"Stock Movements for {partName}";
+        //            ColorTheRows(dgwIPNmoves);
+        //            SortIPNMovesByDate();
+
+        //            // Await all pack lookups to complete filling the rows before continuing
+        //            await Task.WhenAll(fetchTasks);
+
+        //            await LoadDataAndFilterInStock();
+        //        }
+        //        else
+        //        {
+        //            SafeAppendLog("No stock movements found for the selected part.", Color.Red);
+        //        }
+        //    }
+        //    catch (HttpRequestException ex)
+        //    {
+        //        SafeAppendLog($"Request error: {ex.Message}", Color.Red);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        SafeAppendLog($"Request error: {ex.Message}", Color.Red);
+        //    }
+        //}
+
+
+
+
+        //private async void dgwBom_CellClick(object sender, DataGridViewCellEventArgs e)
+        //{
+        //    if (e.RowIndex < 0) return;
+        //    if (e.RowIndex == _lastSelectedRowIndex) return;
+        //    _lastSelectedRowIndex = e.RowIndex;
+
+        //    var selectedRow = dgwBom.Rows[e.RowIndex];
+        //    var partName = selectedRow.Cells["PARTNAME"].Value?.ToString();
+        //    if (string.IsNullOrWhiteSpace(partName)) return;
+
+        //    EnsureMovesGridColumns();
+        //    InitializeInStockDataGridView();
+
+        //    dgwIPNmoves.Rows.Clear();
+        //    dgwINSTOCK.Rows.Clear();
+
+        //    // =========================================================================
+        //    // API CALL 1: Pull full transaction history from Day 1 (No $top cap!)
+        //    // =========================================================================
+        //    string logPartUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART" +
+        //                        $"?$filter=PARTNAME eq '{Uri.EscapeDataString(partName)}'" +
+        //                        $"&$expand=PARTTRANSLAST2_SUBFORM($orderby=CURDATE asc)"; // asc makes FIFO matching easy
+
+        //    try
+        //    {
+        //        using var request = new HttpRequestMessage(HttpMethod.Get, logPartUrl);
+        //        request.Headers.Accept.Clear();
+        //        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        //        string usedUser = ApiHelper.AuthenticateClient(request);
+        //        RegisterTransaction(usedUser);
+
+        //        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        //        using var response = await _sharedHttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+        //        response.EnsureSuccessStatusCode();
+        //        stopwatch.Stop();
+        //        UpdatePing(stopwatch.ElapsedMilliseconds);
+
+        //        string logPartResponseBody = await response.Content.ReadAsStringAsync();
+        //        var logPartApiResponse = JsonConvert.DeserializeObject<LogPartApiResponse>(logPartResponseBody);
+
+        //        var movements = logPartApiResponse?.value?.FirstOrDefault()?.PARTTRANSLAST2_SUBFORM;
+        //        if (movements == null || movements.Count == 0)
+        //        {
+        //            SafeAppendLog("No stock movements found for the selected part.", Color.Red);
+        //            return;
+        //        }
+
+        //        // =========================================================================
+        //        // STEP 2: In-Memory Ledger Separation & FIFO Netting
+        //        // =========================================================================
+        //        var robList = new List<PartTransLast2>();
+        //        var notRobList = new List<PartTransLast2>();
+
+        //        foreach (var trans in movements)
+        //        {
+        //            if (ExcludedDocDescriptions.Contains(trans.DOCDES) || ExcludedSupCustNames.Contains(trans.SUPCUSTNAME))
+        //                continue;
+
+        //            string docNo = trans.LOGDOCNO?.Trim() ?? "";
+        //            if (string.IsNullOrEmpty(docNo)) continue;
+
+        //            if (docNo.StartsWith("ROB") || docNo.StartsWith("IC") || docNo.StartsWith("WR") || docNo.StartsWith("SH"))
+        //            {
+        //                if (docNo.StartsWith("IC"))
+        //                {
+        //                    trans.TQUANT = Math.Abs(trans.TQUANT);
+        //                }
+        //                robList.Add(trans);
+        //            }
+        //            else
+        //            {
+        //                notRobList.Add(trans);
+        //            }
+
+        //            // Populate movements grid instantly without waiting for network headers!
+        //            dgwIPNmoves.Rows.Add(
+        //                trans.CURDATE,
+        //                trans.LOGDOCNO,
+        //                trans.DOCDES,
+        //                trans.SUPCUSTNAME,
+        //                "", // BOOKNUM (filled later if surviving)
+        //                trans.TQUANT,
+        //                ""  // PACK (filled later if surviving)
+        //            );
+        //        }
+
+        //        gbxIPNstockMovements.Text = $"Stock Movements for {partName}";
+        //        ColorTheRows(dgwIPNmoves);
+
+        //        // Cancel out consumed packages in memory
+        //        var filteredNotRobList = new List<PartTransLast2>(notRobList);
+        //        foreach (var notRob in notRobList)
+        //        {
+        //            if (robList.Count == 0) break;
+
+        //            int notRobQty = (int)notRob.TQUANT;
+        //            var match = robList.FirstOrDefault(rob => (int)rob.TQUANT == notRobQty);
+
+        //            if (match != null)
+        //            {
+        //                filteredNotRobList.Remove(notRob);
+        //                robList.Remove(match);
+        //            }
+        //        }
+
+        //        if (filteredNotRobList.Count == 0)
+        //        {
+        //            SafeAppendLog("All packages are fully consumed.", Color.Yellow);
+        //            return;
+        //        }
+
+        //        // =========================================================================
+        //        // API CALL 2: Fetch Metadata (PACKCODE, BOOKNUM, TOWARHSNAME) ONLY FOR SURVIVING PACKAGES
+        //        // =========================================================================
+        //        var survivingDocNos = filteredNotRobList
+        //            .Select(x => x.LOGDOCNO.Trim())
+        //            .Distinct()
+        //            .ToList();
+
+        //        string docFilter = string.Join(" or ", survivingDocNos.Select(d => $"DOCNO eq '{d}'"));
+        //        string batchDocUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P" +
+        //                             $"?$filter={docFilter}" +
+        //                             $"&$select=DOCNO,BOOKNUM,UDATE,TOWARHSNAME" +
+        //                             $"&$expand=TRANSORDER_P_SUBFORM($filter=PARTNAME eq '{Uri.EscapeDataString(partName)}';$select=PARTNAME,TQUANT,PACKCODE)";
+
+        //        using var docRequest = new HttpRequestMessage(HttpMethod.Get, batchDocUrl);
+        //        docRequest.Headers.Accept.Clear();
+        //        docRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        //        string docUser = ApiHelper.AuthenticateClient(docRequest);
+        //        RegisterTransaction(docUser);
+
+        //        using var docResponse = await _sharedHttpClient.SendAsync(docRequest, HttpCompletionOption.ResponseHeadersRead);
+        //        if (docResponse.IsSuccessStatusCode)
+        //        {
+        //            string docResponseBody = await docResponse.Content.ReadAsStringAsync();
+        //            var docApiResponse = JsonConvert.DeserializeObject<JObject>(docResponseBody);
+        //            var docs = docApiResponse?["value"];
+
+        //            // Key: DOCNO -> (TOWARHSNAME, BOOKNUM, UDATE, Dictionary<QUANT, PACKCODE>)
+        //            var docData = new Dictionary<string, (string ToWarhs, string BookNum, string UDate, Dictionary<int, string> Packs)>(StringComparer.OrdinalIgnoreCase);
+
+        //            if (docs != null)
+        //            {
+        //                foreach (var doc in docs)
+        //                {
+        //                    string docNo = doc["DOCNO"]?.ToString();
+        //                    string toWarhs = doc["TOWARHSNAME"]?.ToString()?.Trim() ?? "";
+        //                    string bookNum = doc["BOOKNUM"]?.ToString() ?? "";
+        //                    string uDate = doc["UDATE"]?.ToString() ?? "";
+
+        //                    var packMap = new Dictionary<int, string>();
+        //                    var transP = doc["TRANSORDER_P_SUBFORM"];
+        //                    if (transP != null)
+        //                    {
+        //                        foreach (var line in transP)
+        //                        {
+        //                            int q = line["TQUANT"] != null ? (int)line["TQUANT"] : 0;
+        //                            string pCode = line["PACKCODE"]?.ToString() ?? "";
+        //                            packMap[q] = pCode;
+        //                        }
+        //                    }
+
+        //                    docData[docNo] = (toWarhs, bookNum, uDate, packMap);
+        //                }
+        //            }
+
+        //            // =========================================================================
+        //            // STEP 3: Populate dgwINSTOCK (Excluding Warehouse 666)
+        //            // =========================================================================
+        //            dgwINSTOCK.Visible = false;
+        //            foreach (var item in filteredNotRobList)
+        //            {
+        //                string docNo = item.LOGDOCNO.Trim();
+        //                string bookNum = "";
+        //                string packCode = "";
+        //                string toWarhs = "";
+
+        //                if (docData.TryGetValue(docNo, out var meta))
+        //                {
+        //                    if (meta.ToWarhs == "666") continue; // Exclude quarantine / warehouse 666
+
+        //                    toWarhs = meta.ToWarhs;
+        //                    bookNum = meta.BookNum;
+        //                    meta.Packs.TryGetValue((int)item.TQUANT, out packCode);
+        //                }
+
+        //                // Add to In-Stock Grid
+        //                dgwINSTOCK.Rows.Add(
+        //                    item.CURDATE,
+        //                    item.LOGDOCNO,
+        //                    item.DOCDES,
+        //                    item.SUPCUSTNAME,
+        //                    bookNum,
+        //                    item.TQUANT,
+        //                    packCode ?? ""
+        //                );
+        //            }
+        //            dgwINSTOCK.Visible = true;
+        //            dgwINSTOCK.Update();
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        SafeAppendLog($"Error processing stock moves: {ex.Message}", Color.Red);
+        //    }
+        //}
+
+
+        //private async void dgwBom_CellClick(object sender, DataGridViewCellEventArgs e)
+        //{
+        //    if (e.RowIndex < 0) return;
+        //    if (e.RowIndex == _lastSelectedRowIndex) return;
+        //    _lastSelectedRowIndex = e.RowIndex;
+
+        //    var selectedRow = dgwBom.Rows[e.RowIndex];
+        //    var partName = selectedRow.Cells["PARTNAME"].Value?.ToString();
+        //    if (string.IsNullOrWhiteSpace(partName)) return;
+
+        //    EnsureMovesGridColumns();
+        //    InitializeInStockDataGridView();
+
+        //    dgwIPNmoves.Rows.Clear();
+        //    dgwINSTOCK.Rows.Clear();
+
+        //    // =========================================================================
+        //    // API CALL 1: Pull full transaction history back to Day 1 (No $top cap!)
+        //    // =========================================================================
+        //    string logPartUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART" +
+        //                        $"?$filter=PARTNAME eq '{Uri.EscapeDataString(partName)}'" +
+        //                        $"&$expand=PARTTRANSLAST2_SUBFORM($orderby=CURDATE asc)"; // asc order ensures correct FIFO matching
+
+        //    try
+        //    {
+        //        using var request = new HttpRequestMessage(HttpMethod.Get, logPartUrl);
+        //        request.Headers.Accept.Clear();
+        //        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        //        string usedUser = ApiHelper.AuthenticateClient(request);
+        //        RegisterTransaction(usedUser);
+
+        //        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        //        using var response = await _sharedHttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+        //        response.EnsureSuccessStatusCode();
+        //        stopwatch.Stop();
+        //        UpdatePing(stopwatch.ElapsedMilliseconds);
+
+        //        string logPartResponseBody = await response.Content.ReadAsStringAsync();
+        //        var logPartApiResponse = JsonConvert.DeserializeObject<LogPartApiResponse>(logPartResponseBody);
+
+        //        var movements = logPartApiResponse?.value?.FirstOrDefault()?.PARTTRANSLAST2_SUBFORM;
+        //        if (movements == null || movements.Count == 0)
+        //        {
+        //            SafeAppendLog("No stock movements found for the selected part.", Color.Red);
+        //            return;
+        //        }
+
+        //        // =========================================================================
+        //        // STEP 2: In-Memory Ledger Separation & FIFO Netting
+        //        // =========================================================================
+        //        var robList = new List<PartTransLast2>();
+        //        var notRobList = new List<PartTransLast2>();
+
+        //        foreach (var trans in movements)
+        //        {
+        //            if (ExcludedDocDescriptions.Contains(trans.DOCDES) || ExcludedSupCustNames.Contains(trans.SUPCUSTNAME))
+        //                continue;
+
+        //            string docNo = trans.LOGDOCNO?.Trim() ?? "";
+        //            if (string.IsNullOrEmpty(docNo)) continue;
+
+        //            // FIX: If the transaction occurred in warehouse 666, discard it completely from clean stock
+        //            // (Checks property reflection safely in case your PartTransLast2 class doesn't define WARHSNAME yet)
+        //            var warhsProp = trans.GetType().GetProperty("WARHSNAME");
+        //            string transWarhs = warhsProp?.GetValue(trans)?.ToString()?.Trim();
+        //            if (transWarhs == "666")
+        //            {
+        //                continue;
+        //            }
+
+        //            if (docNo.StartsWith("ROB") || docNo.StartsWith("IC") || docNo.StartsWith("WR") || docNo.StartsWith("SH"))
+        //            {
+        //                if (docNo.StartsWith("IC"))
+        //                {
+        //                    trans.TQUANT = Math.Abs(trans.TQUANT);
+        //                }
+        //                robList.Add(trans);
+        //            }
+        //            else
+        //            {
+        //                notRobList.Add(trans);
+        //            }
+
+        //            // Populate movements grid immediately
+        //            dgwIPNmoves.Rows.Add(
+        //                trans.CURDATE,
+        //                trans.LOGDOCNO,
+        //                trans.DOCDES,
+        //                trans.SUPCUSTNAME,
+        //                "", // BOOKNUM (filled later if surviving)
+        //                trans.TQUANT,
+        //                ""  // PACK (filled later if surviving)
+        //            );
+        //        }
+
+        //        gbxIPNstockMovements.Text = $"Stock Movements for {partName}";
+        //        ColorTheRows(dgwIPNmoves);
+
+        //        // Cancel out consumed packages in memory (FIFO matching)
+        //        var filteredNotRobList = new List<PartTransLast2>(notRobList);
+        //        foreach (var notRob in notRobList)
+        //        {
+        //            if (robList.Count == 0) break;
+
+        //            int notRobQty = (int)notRob.TQUANT;
+        //            var match = robList.FirstOrDefault(rob => (int)rob.TQUANT == notRobQty);
+
+        //            if (match != null)
+        //            {
+        //                filteredNotRobList.Remove(notRob);
+        //                robList.Remove(match);
+        //            }
+        //        }
+
+        //        if (filteredNotRobList.Count == 0)
+        //        {
+        //            SafeAppendLog("All packages are fully consumed. Balance is 0.", Color.LimeGreen);
+        //            return;
+        //        }
+
+        //        // =========================================================================
+        //        // API CALL 2: Fetch Metadata (PACKCODE, BOOKNUM, TOWARHSNAME) ONLY FOR SURVIVING PACKAGES
+        //        // =========================================================================
+        //        var survivingDocNos = filteredNotRobList
+        //            .Select(x => x.LOGDOCNO.Trim())
+        //            .Where(doc => doc.StartsWith("GR", StringComparison.OrdinalIgnoreCase))
+        //            .Distinct()
+        //            .ToList();
+
+        //        // Key: DOCNO -> (TOWARHSNAME, BOOKNUM, UDATE, Dictionary<QUANT, (PACKCODE, LINE_WARHS)>)
+        //        var docData = new Dictionary<string, (string ToWarhs, string BookNum, string UDate, Dictionary<int, (string PackCode, string LineWarhs)> Packs)>(StringComparer.OrdinalIgnoreCase);
+
+        //        // Batch in chunks of 20 to strictly avoid URL length limits
+        //        const int batchSize = 30;
+        //        for (int i = 0; i < survivingDocNos.Count; i += batchSize)
+        //        {
+        //            var batch = survivingDocNos.Skip(i).Take(batchSize).ToList();
+        //            string docFilter = string.Join(" or ", batch.Select(d => $"DOCNO eq '{d}'"));
+        //            string batchDocUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P" +
+        //                                 $"?$filter={docFilter}" +
+        //                                 $"&$select=DOCNO,BOOKNUM,UDATE,TOWARHSNAME" +
+        //                                 $"&$expand=TRANSORDER_P_SUBFORM($filter=PARTNAME eq '{Uri.EscapeDataString(partName)}';$select=PARTNAME,TQUANT,PACKCODE,WARHSNAME)";
+
+        //            using var docRequest = new HttpRequestMessage(HttpMethod.Get, batchDocUrl);
+        //            docRequest.Headers.Accept.Clear();
+        //            docRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        //            string docUser = ApiHelper.AuthenticateClient(docRequest);
+        //            RegisterTransaction(docUser);
+
+        //            using var docResponse = await _sharedHttpClient.SendAsync(docRequest, HttpCompletionOption.ResponseHeadersRead);
+        //            if (docResponse.IsSuccessStatusCode)
+        //            {
+        //                string docResponseBody = await docResponse.Content.ReadAsStringAsync();
+        //                var docApiResponse = JsonConvert.DeserializeObject<JObject>(docResponseBody);
+        //                var docs = docApiResponse?["value"];
+
+        //                if (docs != null)
+        //                {
+        //                    foreach (var doc in docs)
+        //                    {
+        //                        string docNo = doc["DOCNO"]?.ToString();
+        //                        string toWarhs = doc["TOWARHSNAME"]?.ToString()?.Trim() ?? "";
+        //                        string bookNum = doc["BOOKNUM"]?.ToString() ?? "";
+        //                        string uDate = doc["UDATE"]?.ToString() ?? "";
+
+        //                        var packMap = new Dictionary<int, (string PackCode, string LineWarhs)>();
+        //                        var transP = doc["TRANSORDER_P_SUBFORM"];
+        //                        if (transP != null)
+        //                        {
+        //                            foreach (var line in transP)
+        //                            {
+        //                                int q = line["TQUANT"] != null ? (int)line["TQUANT"] : 0;
+        //                                string pCode = line["PACKCODE"]?.ToString() ?? "";
+        //                                string lineWarhs = line["WARHSNAME"]?.ToString()?.Trim() ?? "";
+        //                                packMap[q] = (pCode, lineWarhs);
+        //                            }
+        //                        }
+
+        //                        docData[docNo] = (toWarhs, bookNum, uDate, packMap);
+        //                    }
+        //                }
+        //            }
+        //        }
+
+        //        // =========================================================================
+        //        // STEP 3: Populate dgwINSTOCK (Excluding Warehouse 666 Header and Line Level)
+        //        // =========================================================================
+        //        dgwINSTOCK.Visible = false;
+        //        foreach (var item in filteredNotRobList)
+        //        {
+        //            string docNo = item.LOGDOCNO.Trim();
+        //            string bookNum = "";
+        //            string packCode = "";
+
+        //            if (docData.TryGetValue(docNo, out var meta))
+        //            {
+        //                // 1. Exclude if parent document was received into 666
+        //                if (meta.ToWarhs == "666") continue;
+
+        //                // 2. Check line-level warehouse
+        //                if (meta.Packs.TryGetValue((int)item.TQUANT, out var packDetail))
+        //                {
+        //                    if (packDetail.LineWarhs == "666") continue; // Exclude if specific line routed to 666
+        //                    packCode = packDetail.PackCode;
+        //                }
+
+        //                bookNum = meta.BookNum;
+        //            }
+
+        //            // Add to In-Stock Grid
+        //            dgwINSTOCK.Rows.Add(
+        //                item.CURDATE,
+        //                item.LOGDOCNO,
+        //                item.DOCDES,
+        //                item.SUPCUSTNAME,
+        //                bookNum,
+        //                item.TQUANT,
+        //                packCode ?? ""
+        //            );
+        //        }
+
+        //        dgwINSTOCK.Visible = true;
+        //        dgwINSTOCK.Update();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        SafeAppendLog($"Error processing stock moves: {ex.Message}", Color.Red);
+        //    }
+        //}
+
+
+
+
         private async void dgwBom_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
-
-            // Prevent re-firing if user clicks cells within the currently selected row
             if (e.RowIndex == _lastSelectedRowIndex) return;
             _lastSelectedRowIndex = e.RowIndex;
 
@@ -1622,12 +2171,25 @@ namespace WH_Panel
             var partName = selectedRow.Cells["PARTNAME"].Value?.ToString();
             if (string.IsNullOrWhiteSpace(partName)) return;
 
-            EnsureMovesGridColumns();
+            // Grab the actual live warehouse balance already present in the BOM row!
+            int targetBalance = 0;
+            if (selectedRow.Cells["TBALANCE"]?.Value != null)
+            {
+                int.TryParse(selectedRow.Cells["TBALANCE"].Value.ToString(), out targetBalance);
+            }
 
-            // Query uses actual Priority schema fields to prevent XML 400 Bad Request
+            EnsureMovesGridColumns();
+            InitializeInStockDataGridView();
+
+            dgwIPNmoves.Rows.Clear();
+            dgwINSTOCK.Rows.Clear();
+
+            // =========================================================================
+            // API CALL 1: Pull full transaction history (Ascending for accurate FIFO replay)
+            // =========================================================================
             string logPartUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART" +
                                 $"?$filter=PARTNAME eq '{Uri.EscapeDataString(partName)}'" +
-                                $"&$expand=PARTTRANSLAST2_SUBFORM($orderby=CURDATE desc)";
+                                $"&$expand=PARTTRANSLAST2_SUBFORM($orderby=CURDATE asc)";
 
             try
             {
@@ -1642,79 +2204,260 @@ namespace WH_Panel
                 using var response = await _sharedHttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
                 response.EnsureSuccessStatusCode();
                 stopwatch.Stop();
-
                 UpdatePing(stopwatch.ElapsedMilliseconds);
 
                 string logPartResponseBody = await response.Content.ReadAsStringAsync();
                 var logPartApiResponse = JsonConvert.DeserializeObject<LogPartApiResponse>(logPartResponseBody);
 
-                dgwIPNmoves.Rows.Clear();
-                dgwINSTOCK.Rows.Clear();
-
-                if (logPartApiResponse?.value != null && logPartApiResponse.value.Count > 0)
+                var movements = logPartApiResponse?.value?.FirstOrDefault()?.PARTTRANSLAST2_SUBFORM;
+                if (movements == null || movements.Count == 0)
                 {
-                    var fetchTasks = new List<Task>();
+                    SafeAppendLog("No stock movements found for the selected part.", Color.Red);
+                    return;
+                }
 
-                    foreach (var logPart in logPartApiResponse.value)
+                // =========================================================================
+                // STEP 1: Populate Movements Grid & Separate Inflow vs Outflow
+                // =========================================================================
+                var receiptBuckets = new List<(PartTransLast2 Trans, int RemainingQty)>();
+                var issueBuckets = new List<(PartTransLast2 Trans, int RemainingQty)>();
+
+                foreach (var trans in movements)
+                {
+                    string docNo = trans.LOGDOCNO?.Trim() ?? "";
+                    if (string.IsNullOrEmpty(docNo)) continue;
+
+                    bool isIC = docNo.StartsWith("IC", StringComparison.OrdinalIgnoreCase);
+                    if (!isIC)
                     {
-                        if (logPart.PARTTRANSLAST2_SUBFORM == null) continue;
+                        if (ExcludedDocDescriptions.Contains(trans.DOCDES) || ExcludedSupCustNames.Contains(trans.SUPCUSTNAME))
+                            continue;
+                    }
 
-                        foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
+                    // Exclude quarantine warehouse 666 movements
+                    var warhsProp = trans.GetType().GetProperty("WARHSNAME");
+                    string transWarhs = warhsProp?.GetValue(trans)?.ToString()?.Trim();
+                    if (transWarhs == "666") continue;
+
+                    if (isIC)
+                    {
+                        trans.TQUANT = Math.Abs(trans.TQUANT);
+                    }
+
+                    // Add to the full history audit grid
+                    dgwIPNmoves.Rows.Add(
+                        trans.CURDATE,
+                        trans.LOGDOCNO,
+                        trans.DOCDES,
+                        trans.SUPCUSTNAME,
+                        "", // BOOKNUM
+                        trans.TQUANT,
+                        ""  // PACK
+                    );
+
+                    int qty = (int)trans.TQUANT;
+                    if (qty <= 0) continue;
+
+                    // Separate incoming vs outgoing
+                    if (docNo.StartsWith("ROB", StringComparison.OrdinalIgnoreCase) ||
+                        isIC ||
+                        docNo.StartsWith("WR", StringComparison.OrdinalIgnoreCase) ||
+                        docNo.StartsWith("SH", StringComparison.OrdinalIgnoreCase))
+                    {
+                        issueBuckets.Add((trans, qty));
+                    }
+                    else if (docNo.StartsWith("GR", StringComparison.OrdinalIgnoreCase))
+                    {
+                        receiptBuckets.Add((trans, qty));
+                    }
+                }
+
+                gbxIPNstockMovements.Text = $"Stock Movements for {partName}";
+                ColorTheRows(dgwIPNmoves);
+
+                // If actual live balance is 0, exit immediately
+                if (targetBalance <= 0)
+                {
+                    SafeAppendLog($"Live balance is 0. No packages in stock.", Color.LimeGreen);
+                    return;
+                }
+
+                // =========================================================================
+                // STEP 2: Intelligent Stock Reconciliation (Exact Match + FIFO Drain)
+                // =========================================================================
+
+                // PASS 1: Exact Quantity Matching (Cancels direct whole-package issues, e.g. 478 -> 478)
+                for (int i = 0; i < issueBuckets.Count; i++)
+                {
+                    if (issueBuckets[i].RemainingQty == 0) continue;
+
+                    for (int r = 0; r < receiptBuckets.Count; r++)
+                    {
+                        if (receiptBuckets[r].RemainingQty == issueBuckets[i].RemainingQty)
                         {
-                            if (!ExcludedDocDescriptions.Contains(trans.DOCDES) &&
-                                !ExcludedSupCustNames.Contains(trans.SUPCUSTNAME))
-                            {
-                                // Add row with CURDATE and empty strings for BOOKNUM and PACK
-                                int rowIndex = dgwIPNmoves.Rows.Add(
-                                    trans.CURDATE,
-                                    trans.LOGDOCNO,
-                                    trans.DOCDES,
-                                    trans.SUPCUSTNAME,
-                                    "",
-                                    trans.TQUANT,
-                                    ""
-                                );
+                            receiptBuckets[r] = (receiptBuckets[r].Trans, 0);
+                            issueBuckets[i] = (issueBuckets[i].Trans, 0);
+                            break;
+                        }
+                    }
+                }
 
-                                var row = dgwIPNmoves.Rows[rowIndex];
+                // PASS 2: FIFO Partial Drain (Handles split picks: e.g. 144 + 88 draining a 232 reel)
+                for (int i = 0; i < issueBuckets.Count; i++)
+                {
+                    int currentIssueRemaining = issueBuckets[i].RemainingQty;
+                    if (currentIssueRemaining == 0) continue;
 
-                                // Original secondary lookup for packaging and secondary fields
-                                var fetchTask = FetchAndSetPackCodeAndUDateAsync(row, trans.LOGDOCNO, partName, (int)trans.TQUANT);
-                                fetchTasks.Add(fetchTask);
+                    for (int r = 0; r < receiptBuckets.Count; r++)
+                    {
+                        if (currentIssueRemaining == 0) break;
+                        if (receiptBuckets[r].RemainingQty == 0) continue;
 
-                                await Task.Delay(100);
-                            }
+                        if (receiptBuckets[r].RemainingQty <= currentIssueRemaining)
+                        {
+                            currentIssueRemaining -= receiptBuckets[r].RemainingQty;
+                            receiptBuckets[r] = (receiptBuckets[r].Trans, 0);
+                        }
+                        else
+                        {
+                            receiptBuckets[r] = (receiptBuckets[r].Trans, receiptBuckets[r].RemainingQty - currentIssueRemaining);
+                            currentIssueRemaining = 0;
                         }
                     }
 
-                    gbxIPNstockMovements.Text = $"Stock Movements for {partName}";
-                    ColorTheRows(dgwIPNmoves);
-                    SortIPNMovesByDate();
-
-                    // Await all pack lookups to complete filling the rows before continuing
-                    await Task.WhenAll(fetchTasks);
-
-                    await LoadDataAndFilterInStock();
+                    issueBuckets[i] = (issueBuckets[i].Trans, currentIssueRemaining);
                 }
-                else
+
+                // Filter receipts that still have positive balance remaining
+                var survivingReceipts = receiptBuckets.Where(r => r.RemainingQty > 0).ToList();
+
+                if (survivingReceipts.Count == 0)
                 {
-                    SafeAppendLog("No stock movements found for the selected part.", Color.Red);
+                    SafeAppendLog("All packages consumed by ledger replay.", Color.Yellow);
+                    return;
                 }
-            }
-            catch (HttpRequestException ex)
-            {
-                SafeAppendLog($"Request error: {ex.Message}", Color.Red);
+
+                // =========================================================================
+                // API CALL 2: Fetch Metadata (PACKCODE, BOOKNUM, TOWARHSNAME) ONLY FOR SURVIVING PACKAGES
+                // =========================================================================
+                var survivingDocNos = survivingReceipts
+                    .Select(x => x.Trans.LOGDOCNO.Trim())
+                    .Distinct()
+                    .ToList();
+
+                var docData = new Dictionary<string, (string ToWarhs, string BookNum, string UDate, Dictionary<int, (string PackCode, string LineWarhs)> Packs)>(StringComparer.OrdinalIgnoreCase);
+
+                const int batchSize = 20;
+                for (int i = 0; i < survivingDocNos.Count; i += batchSize)
+                {
+                    var batch = survivingDocNos.Skip(i).Take(batchSize).ToList();
+                    string docFilter = string.Join(" or ", batch.Select(d => $"DOCNO eq '{d}'"));
+                    string batchDocUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P" +
+                                         $"?$filter={docFilter}" +
+                                         $"&$select=DOCNO,BOOKNUM,UDATE,TOWARHSNAME" +
+                                         $"&$expand=TRANSORDER_P_SUBFORM($filter=PARTNAME eq '{Uri.EscapeDataString(partName)}';$select=PARTNAME,TQUANT,PACKCODE,WARHSNAME)";
+
+                    using var docRequest = new HttpRequestMessage(HttpMethod.Get, batchDocUrl);
+                    docRequest.Headers.Accept.Clear();
+                    docRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    string docUser = ApiHelper.AuthenticateClient(docRequest);
+                    RegisterTransaction(docUser);
+
+                    using var docResponse = await _sharedHttpClient.SendAsync(docRequest, HttpCompletionOption.ResponseHeadersRead);
+                    if (docResponse.IsSuccessStatusCode)
+                    {
+                        string docResponseBody = await docResponse.Content.ReadAsStringAsync();
+                        var docApiResponse = JsonConvert.DeserializeObject<JObject>(docResponseBody);
+                        var docs = docApiResponse?["value"];
+
+                        if (docs != null)
+                        {
+                            foreach (var doc in docs)
+                            {
+                                string docNo = doc["DOCNO"]?.ToString();
+                                string toWarhs = doc["TOWARHSNAME"]?.ToString()?.Trim() ?? "";
+                                string bookNum = doc["BOOKNUM"]?.ToString() ?? "";
+                                string uDate = doc["UDATE"]?.ToString() ?? "";
+
+                                var packMap = new Dictionary<int, (string PackCode, string LineWarhs)>();
+                                var transP = doc["TRANSORDER_P_SUBFORM"];
+                                if (transP != null)
+                                {
+                                    foreach (var line in transP)
+                                    {
+                                        int q = line["TQUANT"] != null ? (int)line["TQUANT"] : 0;
+                                        string pCode = line["PACKCODE"]?.ToString() ?? "";
+                                        string lineWarhs = line["WARHSNAME"]?.ToString()?.Trim() ?? "";
+                                        packMap[q] = (pCode, lineWarhs);
+                                    }
+                                }
+
+                                docData[docNo] = (toWarhs, bookNum, uDate, packMap);
+                            }
+                        }
+                    }
+                }
+
+                // =========================================================================
+                // STEP 3: Populate dgwINSTOCK
+                // =========================================================================
+                dgwINSTOCK.Visible = false;
+                foreach (var item in survivingReceipts)
+                {
+                    string docNo = item.Trans.LOGDOCNO.Trim();
+                    string bookNum = "";
+                    string packCode = "";
+
+                    if (docData.TryGetValue(docNo, out var meta))
+                    {
+                        if (meta.ToWarhs == "666") continue;
+
+                        if (meta.Packs.TryGetValue((int)item.Trans.TQUANT, out var packDetail))
+                        {
+                            if (packDetail.LineWarhs == "666") continue;
+                            packCode = packDetail.PackCode;
+                        }
+
+                        bookNum = meta.BookNum;
+                    }
+
+                    dgwINSTOCK.Rows.Add(
+                        item.Trans.CURDATE,
+                        item.Trans.LOGDOCNO,
+                        item.Trans.DOCDES,
+                        item.Trans.SUPCUSTNAME,
+                        bookNum,
+                        item.RemainingQty, // Displays actual surviving quantity accurately
+                        packCode ?? ""
+                    );
+                }
+
+                dgwINSTOCK.Visible = true;
+                dgwINSTOCK.Update();
             }
             catch (Exception ex)
             {
-                SafeAppendLog($"Request error: {ex.Message}", Color.Red);
+                SafeAppendLog($"Error processing stock moves: {ex.Message}", Color.Red);
             }
         }
+
+
+
+
+
+
+
+
+
+
+
 
         ////...UPDATED 202609080843
 
         private async Task FetchAltsForAllRows()
         {
-            const int batchSize = 20;
+            const int batchSize = 40;
             SafeAppendLog($"Fetching alts for all rows in batches of {batchSize}...", Color.Yellow);
 
             // Get all rows that need ALT fetching
@@ -1724,7 +2467,7 @@ namespace WH_Panel
                 .ToList();
 
             // Process rows in batches of 25
-           
+
             for (int i = 0; i < rowsToProcess.Count; i += batchSize)
             {
                 var batch = rowsToProcess.Skip(i).Take(batchSize).ToList();
@@ -2480,7 +3223,7 @@ namespace WH_Panel
                 var targetVisibleRow = localRows.FirstOrDefault(row => row.Visible);
                 if (targetVisibleRow != null)
                 {
-                    await FetchMFPNForRow(targetVisibleRow);
+                    // await FetchMFPNForRow(targetVisibleRow);
                 }
             }
 
@@ -2770,29 +3513,246 @@ namespace WH_Panel
             }
         }
 
+        //private async Task AddItemToKit(string partName, string serialName, int cQuant, int qty, DataGridViewRow filteredRow, string wh)
+        //{
+        //    // Check quantity availability in the warehouse
+        //    string checkUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{wh}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{partName}')";
+        //    int availableQty = 0;
+
+        //    // FIX: Single HttpClient instance used for the entire lifespan of this task sequence
+        //    using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
+        //    {
+        //        // Setup initial headers
+        //        client.DefaultRequestHeaders.Accept.Clear();
+        //        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        //        // ==========================================
+        //        // STEP 1: Check Inventory Availability (GET)
+        //        // ==========================================
+        //        try
+        //        {
+        //            string usedUser = ApiHelper.AuthenticateClient(client);
+        //            RegisterTransaction(usedUser);
+
+        //            HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
+
+        //            if (!checkResponse.IsSuccessStatusCode)
+        //            {
+        //                SafeAppendLog($"Inventory check failed: {checkResponse.StatusCode}", Color.Red);
+        //                MessageBox.Show("Could not verify inventory availability. Please try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        //                return;
+        //            }
+
+        //            string checkResponseBody = await checkResponse.Content.ReadAsStringAsync();
+        //            var checkApiResponse = JsonConvert.DeserializeObject<JObject>(checkResponseBody);
+        //            var warehouse = checkApiResponse["value"]?.FirstOrDefault();
+
+        //            if (warehouse != null)
+        //            {
+        //                var balance = warehouse["WARHSBAL_SUBFORM"]?.FirstOrDefault();
+        //                if (balance != null)
+        //                {
+        //                    availableQty = balance["TBALANCE"].Value<int>();
+        //                }
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            SafeAppendLog($"Inventory check exception: {ex.Message}", Color.Red);
+        //            return;
+        //        }
+
+        //        // Validate quantity locally
+        //        if (availableQty < qty)
+        //        {
+        //            MessageBox.Show("Insufficient quantity available in the warehouse.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            return;
+        //        }
+
+        //        // ==========================================
+        //        // STEP 2: Retrieve Subform Data (GET)
+        //        // ==========================================
+        //        string getUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM?$filter=PARTNAME eq '{partName}'&$select=PARTNAME,CQUANT,KLINE,PACKCODE";
+        //        int kline = 0;
+        //        string package = string.Empty;
+
+        //        try
+        //        {
+        //            HttpResponseMessage getResponse = await client.GetAsync(getUrl);
+
+        //            if (!getResponse.IsSuccessStatusCode)
+        //            {
+        //                SafeAppendLog($"Subform retrieval failed: {getResponse.StatusCode}", Color.Red);
+        //                MessageBox.Show("Failed to retrieve tracking information from server.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                return;
+        //            }
+
+        //            string getResponseBody = await getResponse.Content.ReadAsStringAsync();
+        //            var getApiResponse = JsonConvert.DeserializeObject<JObject>(getResponseBody);
+        //            var transOrderKSubform = getApiResponse["value"];
+
+        //            if (transOrderKSubform != null)
+        //            {
+        //                var matchingRow = transOrderKSubform.FirstOrDefault(row =>
+        //                    row["PARTNAME"]?.ToString() == partName &&
+        //                    row["CQUANT"]?.Value<int>() == cQuant);
+
+        //                if (matchingRow != null)
+        //                {
+        //                    kline = matchingRow["KLINE"].Value<int>();
+        //                    if (matchingRow["PACKCODE"] != null)
+        //                    {
+        //                        package = matchingRow["PACKCODE"].Value<string>();
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    MessageBox.Show("No matching row found in TRANSORDER_K_SUBFORM.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                    return;
+        //                }
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            SafeAppendLog($"Subform step exception: {ex.Message}", Color.Red);
+        //            if (ex.Message.Contains("429"))
+        //            {
+        //                MessageBox.Show("! נא להמתין דקה ! חריגת כמות קריאות ליחידת זמן", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //            }
+        //            return;
+        //        }
+
+        //        //// Safely extract BOM Part Name from the first row (index 0)
+        //        //string partNameWH = dgwBom.Rows.Count > 0 && dgwBom.Rows.Cells["PARTNAME"].Value != null
+        //        //    ? dgwBom.Rows.Cells["PARTNAME"].Value.ToString()
+        //        //    : string.Empty;
+
+        //        // ==========================================
+        //        // STEP 3: Execute Transfer Update (PATCH)
+        //        // ==========================================
+        //        string patchUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM(TYPE='K',KLINE={kline})";
+
+        //        try
+        //        {
+        //            var payload = new
+        //            {
+        //                QUANT = qty,
+        //                WARHSNAME = wh,
+        //                TOWARHSNAME = "Flr",
+        //                PACKCODE = package
+        //            };
+
+        //            var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+        //            HttpResponseMessage patchResponse = await client.PatchAsync(patchUrl, content);
+
+        //            // ⚠️ FIX HERE: Check response code explicitly instead of calling EnsureSuccessStatusCode()
+        //            if (patchResponse.IsSuccessStatusCode)
+        //            {
+        //                // Successful update alert
+        //                AutoClosingMessageBox.Show($"{partName} - {qty} PCS moved to {serialName}", 1000, Color.Green);
+        //                isItemAddedToKit = true;
+
+        //                // ==========================================
+        //                // STEP 4: Pull Fresh Warehouse Balance
+        //                // ==========================================
+        //                HttpResponseMessage freshCheckResponse = await client.GetAsync(checkUrl);
+        //                if (freshCheckResponse.IsSuccessStatusCode)
+        //                {
+        //                    string freshCheckBody = await freshCheckResponse.Content.ReadAsStringAsync();
+        //                    var checkApiResponse = JsonConvert.DeserializeObject<JObject>(freshCheckBody);
+        //                    var warehouse = checkApiResponse["value"]?.FirstOrDefault();
+        //                    if (warehouse != null)
+        //                    {
+        //                        var balance = warehouse["WARHSBAL_SUBFORM"]?.FirstOrDefault();
+        //                        if (balance != null)
+        //                        {
+        //                            availableQty = balance["TBALANCE"].Value<int>();
+        //                            filteredRow.Cells["TBALANCE"].Value = availableQty; // Update UI Cell
+        //                        }
+        //                    }
+        //                }
+
+        //                // ==========================================
+        //                // STEP 5: Local UI Grid Data Mathematics
+        //                // ==========================================
+        //                int prevQty = 0;
+        //                if (filteredRow.Cells["QUANT"].Value != null)
+        //                {
+        //                    int.TryParse(filteredRow.Cells["QUANT"].Value.ToString(), out prevQty);
+        //                }
+
+        //                string currentCALC = filteredRow.Cells["CALC"].Value?.ToString();
+
+        //                // Update Grid Quantities
+        //                filteredRow.Cells["QUANT"].Value = prevQty + qty;
+        //                int currentINkit = prevQty + qty;
+
+        //                int requiredQty = 0;
+        //                if (filteredRow.Cells["CQUANT"].Value != null)
+        //                {
+        //                    int.TryParse(filteredRow.Cells["CQUANT"].Value.ToString(), out requiredQty);
+        //                }
+
+        //                filteredRow.Cells["DELTA"].Value = currentINkit - requiredQty;
+
+        //                // Update String Appends in CALC field
+        //                if (string.IsNullOrEmpty(currentCALC) && prevQty == 0)
+        //                {
+        //                    // Do nothing
+        //                }
+        //                else if (!string.IsNullOrEmpty(currentCALC) && currentINkit != 0)
+        //                {
+        //                    filteredRow.Cells["CALC"].Value = $"{currentCALC}+{qty}";
+        //                }
+        //                else if (string.IsNullOrEmpty(currentCALC) && currentINkit != 0)
+        //                {
+        //                    filteredRow.Cells["CALC"].Value = $"{prevQty}+{qty}";
+        //                }
+
+        //                // Compute Leftovers
+        //                int delta = Convert.ToInt32(filteredRow.Cells["DELTA"].Value);
+        //                int whQuantity = filteredRow.Cells["TBALANCE"].Value != null ? Convert.ToInt32(filteredRow.Cells["TBALANCE"].Value) : 0;
+        //                int kitQuantity = filteredRow.Cells["QUANT"].Value != null ? Convert.ToInt32(filteredRow.Cells["QUANT"].Value) : 0;
+        //                int leftovers = (whQuantity + kitQuantity) - requiredQty;
+
+        //                filteredRow.Cells["LEFTOVERS"].Value = leftovers;
+
+
+        //            }
+        //            else
+        //            {
+        //                // The PATCH failed (e.g., 400, 404, 500) -> Prompt user to retry smoothly
+        //                SafeAppendLog($"PATCH Failed: {patchResponse.StatusCode}", Color.Red);
+        //                MessageBox.Show("The server transaction failed. Please check details and retry.", "Transaction Failure", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            SafeAppendLog($"Execution error: {ex.Message}", Color.Red);
+        //        }
+        //    }
+        //}
+
+
         private async Task AddItemToKit(string partName, string serialName, int cQuant, int qty, DataGridViewRow filteredRow, string wh)
         {
-            // Check quantity availability in the warehouse
+            // =========================================================================
+            // STEP 1: Real-time Stock Check (KEPT for physical warehouse reality)
+            // =========================================================================
             string checkUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{wh}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{partName}')";
             int availableQty = 0;
 
-            // FIX: Single HttpClient instance used for the entire lifespan of this task sequence
             using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
             {
-                // Setup initial headers
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                // ==========================================
-                // STEP 1: Check Inventory Availability (GET)
-                // ==========================================
                 try
                 {
                     string usedUser = ApiHelper.AuthenticateClient(client);
                     RegisterTransaction(usedUser);
 
                     HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
-
                     if (!checkResponse.IsSuccessStatusCode)
                     {
                         SafeAppendLog($"Inventory check failed: {checkResponse.StatusCode}", Color.Red);
@@ -2810,6 +3770,7 @@ namespace WH_Panel
                         if (balance != null)
                         {
                             availableQty = balance["TBALANCE"].Value<int>();
+                            filteredRow.Cells["TBALANCE"].Value = availableQty; // Update UI with true live number
                         }
                     }
                 }
@@ -2819,74 +3780,30 @@ namespace WH_Panel
                     return;
                 }
 
-                // Validate quantity locally
+                // Validate quantity against live server stock
                 if (availableQty < qty)
                 {
-                    MessageBox.Show("Insufficient quantity available in the warehouse.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Insufficient quantity available in warehouse {wh}.\nAvailable: {availableQty}, Requested: {qty}",
+                                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
-                // ==========================================
-                // STEP 2: Retrieve Subform Data (GET)
-                // ==========================================
-                string getUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM?$filter=PARTNAME eq '{partName}'&$select=PARTNAME,CQUANT,KLINE,PACKCODE";
-                int kline = 0;
-                string package = string.Empty;
-
-                try
+                // =========================================================================
+                // STEP 2: Use KLINE from Memory (Saves 1 GET to TRANSORDER_K)
+                // =========================================================================
+                if (filteredRow.Cells["KLINE"].Value == null ||
+                    !int.TryParse(filteredRow.Cells["KLINE"].Value.ToString(), out int kline) ||
+                    kline <= 0)
                 {
-                    HttpResponseMessage getResponse = await client.GetAsync(getUrl);
-
-                    if (!getResponse.IsSuccessStatusCode)
-                    {
-                        SafeAppendLog($"Subform retrieval failed: {getResponse.StatusCode}", Color.Red);
-                        MessageBox.Show("Failed to retrieve tracking information from server.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
-                    string getResponseBody = await getResponse.Content.ReadAsStringAsync();
-                    var getApiResponse = JsonConvert.DeserializeObject<JObject>(getResponseBody);
-                    var transOrderKSubform = getApiResponse["value"];
-
-                    if (transOrderKSubform != null)
-                    {
-                        var matchingRow = transOrderKSubform.FirstOrDefault(row =>
-                            row["PARTNAME"]?.ToString() == partName &&
-                            row["CQUANT"]?.Value<int>() == cQuant);
-
-                        if (matchingRow != null)
-                        {
-                            kline = matchingRow["KLINE"].Value<int>();
-                            if (matchingRow["PACKCODE"] != null)
-                            {
-                                package = matchingRow["PACKCODE"].Value<string>();
-                            }
-                        }
-                        else
-                        {
-                            MessageBox.Show("No matching row found in TRANSORDER_K_SUBFORM.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            return;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    SafeAppendLog($"Subform step exception: {ex.Message}", Color.Red);
-                    if (ex.Message.Contains("429"))
-                    {
-                        MessageBox.Show("! נא להמתין דקה ! חריגת כמות קריאות ליחידת זמן", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                    MessageBox.Show("Missing KLINE identifier in grid. Please reload the BOM.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
-                //// Safely extract BOM Part Name from the first row (index 0)
-                //string partNameWH = dgwBom.Rows.Count > 0 && dgwBom.Rows.Cells["PARTNAME"].Value != null
-                //    ? dgwBom.Rows.Cells["PARTNAME"].Value.ToString()
-                //    : string.Empty;
+                //string package = filteredRow.Cells["PACKCODE"]?.Value?.ToString() ?? string.Empty;
 
-                // ==========================================
-                // STEP 3: Execute Transfer Update (PATCH)
-                // ==========================================
+                // =========================================================================
+                // STEP 3: Execute Transfer Update (1 Write)
+                // =========================================================================
                 string patchUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM(TYPE='K',KLINE={kline})";
 
                 try
@@ -2895,54 +3812,35 @@ namespace WH_Panel
                     {
                         QUANT = qty,
                         WARHSNAME = wh,
-                        TOWARHSNAME = "Flr",
-                        PACKCODE = package
+                        TOWARHSNAME = "Flr"
                     };
 
                     var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
                     HttpResponseMessage patchResponse = await client.PatchAsync(patchUrl, content);
 
-                    // ⚠️ FIX HERE: Check response code explicitly instead of calling EnsureSuccessStatusCode()
                     if (patchResponse.IsSuccessStatusCode)
                     {
-                        // Successful update alert
                         AutoClosingMessageBox.Show($"{partName} - {qty} PCS moved to {serialName}", 1000, Color.Green);
                         isItemAddedToKit = true;
 
-                        // ==========================================
-                        // STEP 4: Pull Fresh Warehouse Balance
-                        // ==========================================
-                        HttpResponseMessage freshCheckResponse = await client.GetAsync(checkUrl);
-                        if (freshCheckResponse.IsSuccessStatusCode)
-                        {
-                            string freshCheckBody = await freshCheckResponse.Content.ReadAsStringAsync();
-                            var checkApiResponse = JsonConvert.DeserializeObject<JObject>(freshCheckBody);
-                            var warehouse = checkApiResponse["value"]?.FirstOrDefault();
-                            if (warehouse != null)
-                            {
-                                var balance = warehouse["WARHSBAL_SUBFORM"]?.FirstOrDefault();
-                                if (balance != null)
-                                {
-                                    availableQty = balance["TBALANCE"].Value<int>();
-                                    filteredRow.Cells["TBALANCE"].Value = availableQty; // Update UI Cell
-                                }
-                            }
-                        }
+                        // =====================================================================
+                        // STEP 4: Local Decrement (Saves 1 GET to WAREHOUSES)
+                        // We know what the stock was 1 second ago in Step 1, minus our pick.
+                        // =====================================================================
+                        int newBalance = Math.Max(0, availableQty - qty);
+                        filteredRow.Cells["TBALANCE"].Value = newBalance;
 
-                        // ==========================================
-                        // STEP 5: Local UI Grid Data Mathematics
-                        // ==========================================
+                        // =====================================================================
+                        // STEP 5: Grid Quantities & Delta Calculations
+                        // =====================================================================
                         int prevQty = 0;
                         if (filteredRow.Cells["QUANT"].Value != null)
                         {
                             int.TryParse(filteredRow.Cells["QUANT"].Value.ToString(), out prevQty);
                         }
 
-                        string currentCALC = filteredRow.Cells["CALC"].Value?.ToString();
-
-                        // Update Grid Quantities
-                        filteredRow.Cells["QUANT"].Value = prevQty + qty;
                         int currentINkit = prevQty + qty;
+                        filteredRow.Cells["QUANT"].Value = currentINkit;
 
                         int requiredQty = 0;
                         if (filteredRow.Cells["CQUANT"].Value != null)
@@ -2952,35 +3850,23 @@ namespace WH_Panel
 
                         filteredRow.Cells["DELTA"].Value = currentINkit - requiredQty;
 
-                        // Update String Appends in CALC field
-                        if (string.IsNullOrEmpty(currentCALC) && prevQty == 0)
-                        {
-                            // Do nothing
-                        }
-                        else if (!string.IsNullOrEmpty(currentCALC) && currentINkit != 0)
+                        string currentCALC = filteredRow.Cells["CALC"].Value?.ToString();
+                        if (!string.IsNullOrEmpty(currentCALC) && currentINkit != 0)
                         {
                             filteredRow.Cells["CALC"].Value = $"{currentCALC}+{qty}";
                         }
-                        else if (string.IsNullOrEmpty(currentCALC) && currentINkit != 0)
+                        else if (string.IsNullOrEmpty(currentCALC) && currentINkit != 0 && prevQty > 0)
                         {
                             filteredRow.Cells["CALC"].Value = $"{prevQty}+{qty}";
                         }
 
-                        // Compute Leftovers
-                        int delta = Convert.ToInt32(filteredRow.Cells["DELTA"].Value);
-                        int whQuantity = filteredRow.Cells["TBALANCE"].Value != null ? Convert.ToInt32(filteredRow.Cells["TBALANCE"].Value) : 0;
-                        int kitQuantity = filteredRow.Cells["QUANT"].Value != null ? Convert.ToInt32(filteredRow.Cells["QUANT"].Value) : 0;
-                        int leftovers = (whQuantity + kitQuantity) - requiredQty;
-
-                        filteredRow.Cells["LEFTOVERS"].Value = leftovers;
-
-
+                        filteredRow.Cells["LEFTOVERS"].Value = (newBalance + currentINkit) - requiredQty;
                     }
                     else
                     {
-                        // The PATCH failed (e.g., 400, 404, 500) -> Prompt user to retry smoothly
                         SafeAppendLog($"PATCH Failed: {patchResponse.StatusCode}", Color.Red);
-                        MessageBox.Show("The server transaction failed. Please check details and retry.", "Transaction Failure", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show("The server transaction failed. Please check details and retry.",
+                                        "Transaction Failure", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                 }
                 catch (Exception ex)
@@ -2989,6 +3875,8 @@ namespace WH_Panel
                 }
             }
         }
+
+
 
 
 
@@ -4993,6 +5881,113 @@ namespace WH_Panel
             catch (Exception e)
             {
                 MessageBox.Show("Sticker printing failed: " + e.Message);
+            }
+        }
+
+        private async void dgwIPNmoves_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
+
+            var row = dgwIPNmoves.Rows[e.RowIndex];
+            string docNo = row.Cells["LOGDOCNO"].Value?.ToString()?.Trim() ?? "";
+            if (string.IsNullOrEmpty(docNo)) return;
+
+            // Skip if already populated
+            string existingPack = row.Cells["PACK"].Value?.ToString()?.Trim() ?? "";
+            string existingBook = row.Cells["BOOKNUM"].Value?.ToString()?.Trim() ?? "";
+            if (!string.IsNullOrEmpty(existingPack) || !string.IsNullOrEmpty(existingBook))
+            {
+                return;
+            }
+
+            // Get current part name from selected BOM row
+            if (dgwBom.CurrentRow == null) return;
+            string partName = dgwBom.CurrentRow.Cells["PARTNAME"].Value?.ToString()?.Trim() ?? "";
+            if (string.IsNullOrEmpty(partName)) return;
+
+            int.TryParse(row.Cells["TQUANT"].Value?.ToString(), out int rowQuant);
+
+            try
+            {
+                string url = null;
+                bool isSerial = docNo.StartsWith("ROB", StringComparison.OrdinalIgnoreCase);
+
+                if (docNo.StartsWith("GR", StringComparison.OrdinalIgnoreCase))
+                {
+                    url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P" +
+                          $"?$filter=DOCNO eq '{docNo}'" +
+                          $"&$select=DOCNO,BOOKNUM,UDATE" +
+                          $"&$expand=TRANSORDER_P_SUBFORM($filter=PARTNAME eq '{Uri.EscapeDataString(partName)}';$select=PARTNAME,TQUANT,PACKCODE)";
+                }
+                else if (isSerial)
+                {
+                    url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL" +
+                          $"?$filter=SERIALNAME eq '{docNo}'&$select=SERIALNAME,BOOKNUM,UDATE,PACKCODE";
+                }
+                else if (docNo.StartsWith("IC", StringComparison.OrdinalIgnoreCase))
+                {
+                    url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_C?$filter=DOCNO eq '{docNo}'&$select=DOCNO,UDATE";
+                }
+                else if (docNo.StartsWith("WR", StringComparison.OrdinalIgnoreCase))
+                {
+                    url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_T?$filter=DOCNO eq '{docNo}'&$select=DOCNO,UDATE";
+                }
+                else if (docNo.StartsWith("SH", StringComparison.OrdinalIgnoreCase))
+                {
+                    url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_D?$filter=DOCNO eq '{docNo}'&$select=DOCNO,UDATE";
+                }
+
+                if (string.IsNullOrEmpty(url)) return;
+
+                using var request = new HttpRequestMessage(HttpMethod.Get, url);
+                request.Headers.Accept.Clear();
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                string usedUser = ApiHelper.AuthenticateClient(request);
+                RegisterTransaction(usedUser);
+
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                using var response = await _sharedHttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+                if (!response.IsSuccessStatusCode) return;
+                stopwatch.Stop();
+                UpdatePing(stopwatch.ElapsedMilliseconds);
+
+                string responseBody = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+                var doc = apiResponse?["value"]?.FirstOrDefault();
+                if (doc == null) return;
+
+                string bookNum = doc["BOOKNUM"]?.ToString() ?? "";
+                string packCode = "";
+
+                if (isSerial)
+                {
+                    packCode = doc["PACKCODE"]?.ToString() ?? "";
+                }
+                else if (docNo.StartsWith("GR", StringComparison.OrdinalIgnoreCase))
+                {
+                    var lines = doc["TRANSORDER_P_SUBFORM"];
+                    if (lines != null)
+                    {
+                        // Match by quantity if multiple packaging lines exist
+                        var matchingLine = lines.FirstOrDefault(l => (int?)l["TQUANT"] == rowQuant) ?? lines.FirstOrDefault();
+                        packCode = matchingLine?["PACKCODE"]?.ToString() ?? "";
+                    }
+                }
+
+                // Apply metadata directly to the clicked row
+                if (!string.IsNullOrEmpty(bookNum)) row.Cells["BOOKNUM"].Value = bookNum;
+                if (!string.IsNullOrEmpty(packCode)) row.Cells["PACK"].Value = packCode;
+
+                string uDate = doc["UDATE"]?.ToString();
+                if (!string.IsNullOrEmpty(uDate) && row.DataGridView.Columns.Contains("UDATE"))
+                {
+                    row.Cells["UDATE"].Value = uDate;
+                }
+            }
+            catch (Exception ex)
+            {
+                SafeAppendLog($"Error fetching details for {docNo}: {ex.Message}", Color.Red);
             }
         }
     }

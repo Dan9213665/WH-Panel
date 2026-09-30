@@ -667,6 +667,7 @@
             dgwIPNmoves.RowHeadersWidth = 51;
             dgwIPNmoves.Size = new Size(851, 224);
             dgwIPNmoves.TabIndex = 0;
+            dgwIPNmoves.CellMouseClick += dgwIPNmoves_CellMouseClick;
             dgwIPNmoves.CellMouseDoubleClick += dgwIPNmoves_CellMouseDoubleClick;
             // 
             // groupBox3
