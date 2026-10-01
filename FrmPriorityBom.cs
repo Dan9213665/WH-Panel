@@ -3513,225 +3513,225 @@ namespace WH_Panel
             }
         }
 
-        //private async Task AddItemToKit(string partName, string serialName, int cQuant, int qty, DataGridViewRow filteredRow, string wh)
-        //{
-        //    // Check quantity availability in the warehouse
-        //    string checkUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{wh}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{partName}')";
-        //    int availableQty = 0;
+        private async Task AddItemToKit(string partName, string serialName, int cQuant, int qty, DataGridViewRow filteredRow, string wh)
+        {
+            // Check quantity availability in the warehouse
+            string checkUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{wh}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{partName}')";
+            int availableQty = 0;
 
-        //    // FIX: Single HttpClient instance used for the entire lifespan of this task sequence
-        //    using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
-        //    {
-        //        // Setup initial headers
-        //        client.DefaultRequestHeaders.Accept.Clear();
-        //        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            // FIX: Single HttpClient instance used for the entire lifespan of this task sequence
+            using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
+            {
+                // Setup initial headers
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        //        // ==========================================
-        //        // STEP 1: Check Inventory Availability (GET)
-        //        // ==========================================
-        //        try
-        //        {
-        //            string usedUser = ApiHelper.AuthenticateClient(client);
-        //            RegisterTransaction(usedUser);
+                // ==========================================
+                // STEP 1: Check Inventory Availability (GET)
+                // ==========================================
+                try
+                {
+                    string usedUser = ApiHelper.AuthenticateClient(client);
+                    RegisterTransaction(usedUser);
 
-        //            HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
+                    HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
 
-        //            if (!checkResponse.IsSuccessStatusCode)
-        //            {
-        //                SafeAppendLog($"Inventory check failed: {checkResponse.StatusCode}", Color.Red);
-        //                MessageBox.Show("Could not verify inventory availability. Please try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        //                return;
-        //            }
+                    if (!checkResponse.IsSuccessStatusCode)
+                    {
+                        SafeAppendLog($"Inventory check failed: {checkResponse.StatusCode}", Color.Red);
+                        MessageBox.Show("Could not verify inventory availability. Please try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
 
-        //            string checkResponseBody = await checkResponse.Content.ReadAsStringAsync();
-        //            var checkApiResponse = JsonConvert.DeserializeObject<JObject>(checkResponseBody);
-        //            var warehouse = checkApiResponse["value"]?.FirstOrDefault();
+                    string checkResponseBody = await checkResponse.Content.ReadAsStringAsync();
+                    var checkApiResponse = JsonConvert.DeserializeObject<JObject>(checkResponseBody);
+                    var warehouse = checkApiResponse["value"]?.FirstOrDefault();
 
-        //            if (warehouse != null)
-        //            {
-        //                var balance = warehouse["WARHSBAL_SUBFORM"]?.FirstOrDefault();
-        //                if (balance != null)
-        //                {
-        //                    availableQty = balance["TBALANCE"].Value<int>();
-        //                }
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            SafeAppendLog($"Inventory check exception: {ex.Message}", Color.Red);
-        //            return;
-        //        }
+                    if (warehouse != null)
+                    {
+                        var balance = warehouse["WARHSBAL_SUBFORM"]?.FirstOrDefault();
+                        if (balance != null)
+                        {
+                            availableQty = balance["TBALANCE"].Value<int>();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    SafeAppendLog($"Inventory check exception: {ex.Message}", Color.Red);
+                    return;
+                }
 
-        //        // Validate quantity locally
-        //        if (availableQty < qty)
-        //        {
-        //            MessageBox.Show("Insufficient quantity available in the warehouse.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //            return;
-        //        }
+                // Validate quantity locally
+                if (availableQty < qty)
+                {
+                    MessageBox.Show("Insufficient quantity available in the warehouse.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
 
-        //        // ==========================================
-        //        // STEP 2: Retrieve Subform Data (GET)
-        //        // ==========================================
-        //        string getUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM?$filter=PARTNAME eq '{partName}'&$select=PARTNAME,CQUANT,KLINE,PACKCODE";
-        //        int kline = 0;
-        //        string package = string.Empty;
+                // ==========================================
+                // STEP 2: Retrieve Subform Data (GET)
+                // ==========================================
+                string getUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM?$filter=PARTNAME eq '{partName}'&$select=PARTNAME,CQUANT,KLINE,PACKCODE";
+                int kline = 0;
+                string package = string.Empty;
 
-        //        try
-        //        {
-        //            HttpResponseMessage getResponse = await client.GetAsync(getUrl);
+                try
+                {
+                    HttpResponseMessage getResponse = await client.GetAsync(getUrl);
 
-        //            if (!getResponse.IsSuccessStatusCode)
-        //            {
-        //                SafeAppendLog($"Subform retrieval failed: {getResponse.StatusCode}", Color.Red);
-        //                MessageBox.Show("Failed to retrieve tracking information from server.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //                return;
-        //            }
+                    if (!getResponse.IsSuccessStatusCode)
+                    {
+                        SafeAppendLog($"Subform retrieval failed: {getResponse.StatusCode}", Color.Red);
+                        MessageBox.Show("Failed to retrieve tracking information from server.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
 
-        //            string getResponseBody = await getResponse.Content.ReadAsStringAsync();
-        //            var getApiResponse = JsonConvert.DeserializeObject<JObject>(getResponseBody);
-        //            var transOrderKSubform = getApiResponse["value"];
+                    string getResponseBody = await getResponse.Content.ReadAsStringAsync();
+                    var getApiResponse = JsonConvert.DeserializeObject<JObject>(getResponseBody);
+                    var transOrderKSubform = getApiResponse["value"];
 
-        //            if (transOrderKSubform != null)
-        //            {
-        //                var matchingRow = transOrderKSubform.FirstOrDefault(row =>
-        //                    row["PARTNAME"]?.ToString() == partName &&
-        //                    row["CQUANT"]?.Value<int>() == cQuant);
+                    if (transOrderKSubform != null)
+                    {
+                        var matchingRow = transOrderKSubform.FirstOrDefault(row =>
+                            row["PARTNAME"]?.ToString() == partName &&
+                            row["CQUANT"]?.Value<int>() == cQuant);
 
-        //                if (matchingRow != null)
-        //                {
-        //                    kline = matchingRow["KLINE"].Value<int>();
-        //                    if (matchingRow["PACKCODE"] != null)
-        //                    {
-        //                        package = matchingRow["PACKCODE"].Value<string>();
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    MessageBox.Show("No matching row found in TRANSORDER_K_SUBFORM.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //                    return;
-        //                }
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            SafeAppendLog($"Subform step exception: {ex.Message}", Color.Red);
-        //            if (ex.Message.Contains("429"))
-        //            {
-        //                MessageBox.Show("! נא להמתין דקה ! חריגת כמות קריאות ליחידת זמן", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //            }
-        //            return;
-        //        }
+                        if (matchingRow != null)
+                        {
+                            kline = matchingRow["KLINE"].Value<int>();
+                            if (matchingRow["PACKCODE"] != null)
+                            {
+                                package = matchingRow["PACKCODE"].Value<string>();
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("No matching row found in TRANSORDER_K_SUBFORM.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    SafeAppendLog($"Subform step exception: {ex.Message}", Color.Red);
+                    if (ex.Message.Contains("429"))
+                    {
+                        MessageBox.Show("! נא להמתין דקה ! חריגת כמות קריאות ליחידת זמן", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    return;
+                }
 
-        //        //// Safely extract BOM Part Name from the first row (index 0)
-        //        //string partNameWH = dgwBom.Rows.Count > 0 && dgwBom.Rows.Cells["PARTNAME"].Value != null
-        //        //    ? dgwBom.Rows.Cells["PARTNAME"].Value.ToString()
-        //        //    : string.Empty;
+                //// Safely extract BOM Part Name from the first row (index 0)
+                //string partNameWH = dgwBom.Rows.Count > 0 && dgwBom.Rows.Cells["PARTNAME"].Value != null
+                //    ? dgwBom.Rows.Cells["PARTNAME"].Value.ToString()
+                //    : string.Empty;
 
-        //        // ==========================================
-        //        // STEP 3: Execute Transfer Update (PATCH)
-        //        // ==========================================
-        //        string patchUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM(TYPE='K',KLINE={kline})";
+                // ==========================================
+                // STEP 3: Execute Transfer Update (PATCH)
+                // ==========================================
+                string patchUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM(TYPE='K',KLINE={kline})";
 
-        //        try
-        //        {
-        //            var payload = new
-        //            {
-        //                QUANT = qty,
-        //                WARHSNAME = wh,
-        //                TOWARHSNAME = "Flr",
-        //                PACKCODE = package
-        //            };
+                try
+                {
+                    var payload = new
+                    {
+                        QUANT = qty,
+                        WARHSNAME = wh,
+                        TOWARHSNAME = "Flr",
+                        PACKCODE = package
+                    };
 
-        //            var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-        //            HttpResponseMessage patchResponse = await client.PatchAsync(patchUrl, content);
+                    var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+                    HttpResponseMessage patchResponse = await client.PatchAsync(patchUrl, content);
 
-        //            // ⚠️ FIX HERE: Check response code explicitly instead of calling EnsureSuccessStatusCode()
-        //            if (patchResponse.IsSuccessStatusCode)
-        //            {
-        //                // Successful update alert
-        //                AutoClosingMessageBox.Show($"{partName} - {qty} PCS moved to {serialName}", 1000, Color.Green);
-        //                isItemAddedToKit = true;
+                    // ⚠️ FIX HERE: Check response code explicitly instead of calling EnsureSuccessStatusCode()
+                    if (patchResponse.IsSuccessStatusCode)
+                    {
+                        // Successful update alert
+                        AutoClosingMessageBox.Show($"{partName} - {qty} PCS moved to {serialName}", 1000, Color.Green);
+                        isItemAddedToKit = true;
 
-        //                // ==========================================
-        //                // STEP 4: Pull Fresh Warehouse Balance
-        //                // ==========================================
-        //                HttpResponseMessage freshCheckResponse = await client.GetAsync(checkUrl);
-        //                if (freshCheckResponse.IsSuccessStatusCode)
-        //                {
-        //                    string freshCheckBody = await freshCheckResponse.Content.ReadAsStringAsync();
-        //                    var checkApiResponse = JsonConvert.DeserializeObject<JObject>(freshCheckBody);
-        //                    var warehouse = checkApiResponse["value"]?.FirstOrDefault();
-        //                    if (warehouse != null)
-        //                    {
-        //                        var balance = warehouse["WARHSBAL_SUBFORM"]?.FirstOrDefault();
-        //                        if (balance != null)
-        //                        {
-        //                            availableQty = balance["TBALANCE"].Value<int>();
-        //                            filteredRow.Cells["TBALANCE"].Value = availableQty; // Update UI Cell
-        //                        }
-        //                    }
-        //                }
+                        // ==========================================
+                        // STEP 4: Pull Fresh Warehouse Balance
+                        // ==========================================
+                        HttpResponseMessage freshCheckResponse = await client.GetAsync(checkUrl);
+                        if (freshCheckResponse.IsSuccessStatusCode)
+                        {
+                            string freshCheckBody = await freshCheckResponse.Content.ReadAsStringAsync();
+                            var checkApiResponse = JsonConvert.DeserializeObject<JObject>(freshCheckBody);
+                            var warehouse = checkApiResponse["value"]?.FirstOrDefault();
+                            if (warehouse != null)
+                            {
+                                var balance = warehouse["WARHSBAL_SUBFORM"]?.FirstOrDefault();
+                                if (balance != null)
+                                {
+                                    availableQty = balance["TBALANCE"].Value<int>();
+                                    filteredRow.Cells["TBALANCE"].Value = availableQty; // Update UI Cell
+                                }
+                            }
+                        }
 
-        //                // ==========================================
-        //                // STEP 5: Local UI Grid Data Mathematics
-        //                // ==========================================
-        //                int prevQty = 0;
-        //                if (filteredRow.Cells["QUANT"].Value != null)
-        //                {
-        //                    int.TryParse(filteredRow.Cells["QUANT"].Value.ToString(), out prevQty);
-        //                }
+                        // ==========================================
+                        // STEP 5: Local UI Grid Data Mathematics
+                        // ==========================================
+                        int prevQty = 0;
+                        if (filteredRow.Cells["QUANT"].Value != null)
+                        {
+                            int.TryParse(filteredRow.Cells["QUANT"].Value.ToString(), out prevQty);
+                        }
 
-        //                string currentCALC = filteredRow.Cells["CALC"].Value?.ToString();
+                        string currentCALC = filteredRow.Cells["CALC"].Value?.ToString();
 
-        //                // Update Grid Quantities
-        //                filteredRow.Cells["QUANT"].Value = prevQty + qty;
-        //                int currentINkit = prevQty + qty;
+                        // Update Grid Quantities
+                        filteredRow.Cells["QUANT"].Value = prevQty + qty;
+                        int currentINkit = prevQty + qty;
 
-        //                int requiredQty = 0;
-        //                if (filteredRow.Cells["CQUANT"].Value != null)
-        //                {
-        //                    int.TryParse(filteredRow.Cells["CQUANT"].Value.ToString(), out requiredQty);
-        //                }
+                        int requiredQty = 0;
+                        if (filteredRow.Cells["CQUANT"].Value != null)
+                        {
+                            int.TryParse(filteredRow.Cells["CQUANT"].Value.ToString(), out requiredQty);
+                        }
 
-        //                filteredRow.Cells["DELTA"].Value = currentINkit - requiredQty;
+                        filteredRow.Cells["DELTA"].Value = currentINkit - requiredQty;
 
-        //                // Update String Appends in CALC field
-        //                if (string.IsNullOrEmpty(currentCALC) && prevQty == 0)
-        //                {
-        //                    // Do nothing
-        //                }
-        //                else if (!string.IsNullOrEmpty(currentCALC) && currentINkit != 0)
-        //                {
-        //                    filteredRow.Cells["CALC"].Value = $"{currentCALC}+{qty}";
-        //                }
-        //                else if (string.IsNullOrEmpty(currentCALC) && currentINkit != 0)
-        //                {
-        //                    filteredRow.Cells["CALC"].Value = $"{prevQty}+{qty}";
-        //                }
+                        // Update String Appends in CALC field
+                        if (string.IsNullOrEmpty(currentCALC) && prevQty == 0)
+                        {
+                            // Do nothing
+                        }
+                        else if (!string.IsNullOrEmpty(currentCALC) && currentINkit != 0)
+                        {
+                            filteredRow.Cells["CALC"].Value = $"{currentCALC}+{qty}";
+                        }
+                        else if (string.IsNullOrEmpty(currentCALC) && currentINkit != 0)
+                        {
+                            filteredRow.Cells["CALC"].Value = $"{prevQty}+{qty}";
+                        }
 
-        //                // Compute Leftovers
-        //                int delta = Convert.ToInt32(filteredRow.Cells["DELTA"].Value);
-        //                int whQuantity = filteredRow.Cells["TBALANCE"].Value != null ? Convert.ToInt32(filteredRow.Cells["TBALANCE"].Value) : 0;
-        //                int kitQuantity = filteredRow.Cells["QUANT"].Value != null ? Convert.ToInt32(filteredRow.Cells["QUANT"].Value) : 0;
-        //                int leftovers = (whQuantity + kitQuantity) - requiredQty;
+                        // Compute Leftovers
+                        int delta = Convert.ToInt32(filteredRow.Cells["DELTA"].Value);
+                        int whQuantity = filteredRow.Cells["TBALANCE"].Value != null ? Convert.ToInt32(filteredRow.Cells["TBALANCE"].Value) : 0;
+                        int kitQuantity = filteredRow.Cells["QUANT"].Value != null ? Convert.ToInt32(filteredRow.Cells["QUANT"].Value) : 0;
+                        int leftovers = (whQuantity + kitQuantity) - requiredQty;
 
-        //                filteredRow.Cells["LEFTOVERS"].Value = leftovers;
+                        filteredRow.Cells["LEFTOVERS"].Value = leftovers;
 
 
-        //            }
-        //            else
-        //            {
-        //                // The PATCH failed (e.g., 400, 404, 500) -> Prompt user to retry smoothly
-        //                SafeAppendLog($"PATCH Failed: {patchResponse.StatusCode}", Color.Red);
-        //                MessageBox.Show("The server transaction failed. Please check details and retry.", "Transaction Failure", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            SafeAppendLog($"Execution error: {ex.Message}", Color.Red);
-        //        }
-        //    }
-        //}
+                    }
+                    else
+                    {
+                        // The PATCH failed (e.g., 400, 404, 500) -> Prompt user to retry smoothly
+                        SafeAppendLog($"PATCH Failed: {patchResponse.StatusCode}", Color.Red);
+                        MessageBox.Show("The server transaction failed. Please check details and retry.", "Transaction Failure", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    SafeAppendLog($"Execution error: {ex.Message}", Color.Red);
+                }
+            }
+        }
 
 
         //private async Task AddItemToKit(string partName, string serialName, int cQuant, int qty, DataGridViewRow filteredRow, string wh)
@@ -4026,173 +4026,173 @@ namespace WH_Panel
         //}
 
 
-        private async Task AddItemToKit(string partName, string serialName, int cQuant, int qty, DataGridViewRow filteredRow, string wh)
-        {
-            string usedUser = "Unknown";
+        //private async Task AddItemToKit(string partName, string serialName, int cQuant, int qty, DataGridViewRow filteredRow, string wh)
+        //{
+        //    string usedUser = "Unknown";
 
-            using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
-            {
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //    using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
+        //    {
+        //        client.DefaultRequestHeaders.Accept.Clear();
+        //        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                try
-                {
-                    usedUser = ApiHelper.AuthenticateClient(client);
+        //        try
+        //        {
+        //            usedUser = ApiHelper.AuthenticateClient(client);
 
-                    // =========================================================================
-                    // STEP 1: Real-time Stock Check
-                    // =========================================================================
-                    string checkUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{wh}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{partName}')";
-                    RegisterTransaction(usedUser);
+        //            // =========================================================================
+        //            // STEP 1: Real-time Stock Check
+        //            // =========================================================================
+        //            string checkUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{wh}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{partName}')";
+        //            RegisterTransaction(usedUser);
 
-                    HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
-                    if (!checkResponse.IsSuccessStatusCode)
-                    {
-                        SafeAppendLog($"[{usedUser}] Inventory check failed: {checkResponse.StatusCode}", Color.Red);
-                        MessageBox.Show("Could not verify inventory availability. Please try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
-                    }
+        //            HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
+        //            if (!checkResponse.IsSuccessStatusCode)
+        //            {
+        //                SafeAppendLog($"[{usedUser}] Inventory check failed: {checkResponse.StatusCode}", Color.Red);
+        //                MessageBox.Show("Could not verify inventory availability. Please try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        //                return;
+        //            }
 
-                    string checkResponseBody = await checkResponse.Content.ReadAsStringAsync();
-                    var checkApiResponse = JsonConvert.DeserializeObject<JObject>(checkResponseBody);
-                    var warehouse = checkApiResponse["value"]?.FirstOrDefault();
+        //            string checkResponseBody = await checkResponse.Content.ReadAsStringAsync();
+        //            var checkApiResponse = JsonConvert.DeserializeObject<JObject>(checkResponseBody);
+        //            var warehouse = checkApiResponse["value"]?.FirstOrDefault();
 
-                    int availableQty = 0;
-                    if (warehouse != null)
-                    {
-                        var balance = warehouse["WARHSBAL_SUBFORM"]?.FirstOrDefault();
-                        if (balance != null)
-                        {
-                            availableQty = balance["TBALANCE"]?.Value<int>() ?? 0;
-                            filteredRow.Cells["TBALANCE"].Value = availableQty;
-                        }
-                    }
+        //            int availableQty = 0;
+        //            if (warehouse != null)
+        //            {
+        //                var balance = warehouse["WARHSBAL_SUBFORM"]?.FirstOrDefault();
+        //                if (balance != null)
+        //                {
+        //                    availableQty = balance["TBALANCE"]?.Value<int>() ?? 0;
+        //                    filteredRow.Cells["TBALANCE"].Value = availableQty;
+        //                }
+        //            }
 
-                    if (availableQty < qty)
-                    {
-                        MessageBox.Show($"Insufficient quantity in warehouse {wh}.\nAvailable: {availableQty}, Requested: {qty}",
-                                        "Insufficient Stock", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
+        //            if (availableQty < qty)
+        //            {
+        //                MessageBox.Show($"Insufficient quantity in warehouse {wh}.\nAvailable: {availableQty}, Requested: {qty}",
+        //                                "Insufficient Stock", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                return;
+        //            }
 
-                    // =========================================================================
-                    // STEP 2: Live KLINE & TYPE Resolution (Ensures 100% Valid Target Key)
-                    // =========================================================================
-                    string klineQueryUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM?$filter=PARTNAME eq '{partName}'&$select=KLINE,TYPE,QUANT";
-                    RegisterTransaction(usedUser);
+        //            // =========================================================================
+        //            // STEP 2: Live KLINE & TYPE Resolution (Ensures 100% Valid Target Key)
+        //            // =========================================================================
+        //            string klineQueryUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM?$filter=PARTNAME eq '{partName}'&$select=KLINE,TYPE,QUANT";
+        //            RegisterTransaction(usedUser);
 
-                    HttpResponseMessage klineResponse = await client.GetAsync(klineQueryUrl);
-                    if (!klineResponse.IsSuccessStatusCode)
-                    {
-                        string klineErr = await klineResponse.Content.ReadAsStringAsync();
-                        SafeAppendLog($"[{usedUser}] Failed to fetch KLINE for {partName}: {klineResponse.StatusCode} - {klineErr}", Color.Red);
-                        MessageBox.Show($"Could not resolve work order line for {partName}.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
+        //            HttpResponseMessage klineResponse = await client.GetAsync(klineQueryUrl);
+        //            if (!klineResponse.IsSuccessStatusCode)
+        //            {
+        //                string klineErr = await klineResponse.Content.ReadAsStringAsync();
+        //                SafeAppendLog($"[{usedUser}] Failed to fetch KLINE for {partName}: {klineResponse.StatusCode} - {klineErr}", Color.Red);
+        //                MessageBox.Show($"Could not resolve work order line for {partName}.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //                return;
+        //            }
 
-                    string klineBody = await klineResponse.Content.ReadAsStringAsync();
-                    var klineJson = JsonConvert.DeserializeObject<JObject>(klineBody);
-                    var klineRecord = klineJson["value"]?.FirstOrDefault();
+        //            string klineBody = await klineResponse.Content.ReadAsStringAsync();
+        //            var klineJson = JsonConvert.DeserializeObject<JObject>(klineBody);
+        //            var klineRecord = klineJson["value"]?.FirstOrDefault();
 
-                    HttpResponseMessage writeResponse;
+        //            HttpResponseMessage writeResponse;
 
-                    if (klineRecord != null)
-                    {
-                        // Line already exists -> PATCH existing line
-                        int liveKline = klineRecord["KLINE"].Value<int>();
-                        string lineType = klineRecord["TYPE"]?.Value<string>() ?? "K";
+        //            if (klineRecord != null)
+        //            {
+        //                // Line already exists -> PATCH existing line
+        //                int liveKline = klineRecord["KLINE"].Value<int>();
+        //                string lineType = klineRecord["TYPE"]?.Value<string>() ?? "K";
 
-                        filteredRow.Cells["KLINE"].Value = liveKline;
+        //                filteredRow.Cells["KLINE"].Value = liveKline;
 
-                        string patchUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM(TYPE='{lineType}',KLINE={liveKline})";
+        //                string patchUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM(TYPE='{lineType}',KLINE={liveKline})";
 
-                        var payload = new
-                        {
-                            QUANT = qty,
-                            WARHSNAME = wh,
-                            TOWARHSNAME = "Flr"
-                        };
+        //                var payload = new
+        //                {
+        //                    QUANT = qty,
+        //                    WARHSNAME = wh,
+        //                    TOWARHSNAME = "Flr"
+        //                };
 
-                        var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-                        RegisterTransaction(usedUser);
-                        writeResponse = await client.PatchAsync(patchUrl, content);
-                    }
-                    else
-                    {
-                        // Line does NOT exist (Alt part / unallocated demand) -> POST new line
-                        SafeAppendLog($"[{usedUser}] No existing KLINE found for {partName} in {serialName}. Creating new record via POST...", Color.DarkOrange);
+        //                var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+        //                RegisterTransaction(usedUser);
+        //                writeResponse = await client.PatchAsync(patchUrl, content);
+        //            }
+        //            else
+        //            {
+        //                // Line does NOT exist (Alt part / unallocated demand) -> POST new line
+        //                SafeAppendLog($"[{usedUser}] No existing KLINE found for {partName} in {serialName}. Creating new record via POST...", Color.DarkOrange);
 
-                        string postUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM";
+        //                string postUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM";
 
-                        var payload = new
-                        {
-                            PARTNAME = partName,
-                            QUANT = qty,
-                            WARHSNAME = wh,
-                            TOWARHSNAME = "Flr"
-                        };
+        //                var payload = new
+        //                {
+        //                    PARTNAME = partName,
+        //                    QUANT = qty,
+        //                    WARHSNAME = wh,
+        //                    TOWARHSNAME = "Flr"
+        //                };
 
-                        var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-                        RegisterTransaction(usedUser);
-                        writeResponse = await client.PostAsync(postUrl, content);
-                    }
+        //                var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+        //                RegisterTransaction(usedUser);
+        //                writeResponse = await client.PostAsync(postUrl, content);
+        //            }
 
-                    // =========================================================================
-                    // STEP 3: Handle Result & UI Sync
-                    // =========================================================================
-                    if (writeResponse.IsSuccessStatusCode)
-                    {
-                        AutoClosingMessageBox.Show($"{partName} - {qty} PCS moved to {serialName}", 1000, Color.Green);
-                        SafeAppendLog($"[{usedUser}] Successfully kitted {qty} PCS of {partName} into {serialName} (WH: {wh} -> Flr)", Color.DarkGreen);
-                        isItemAddedToKit = true;
+        //            // =========================================================================
+        //            // STEP 3: Handle Result & UI Sync
+        //            // =========================================================================
+        //            if (writeResponse.IsSuccessStatusCode)
+        //            {
+        //                AutoClosingMessageBox.Show($"{partName} - {qty} PCS moved to {serialName}", 1000, Color.Green);
+        //                SafeAppendLog($"[{usedUser}] Successfully kitted {qty} PCS of {partName} into {serialName} (WH: {wh} -> Flr)", Color.DarkGreen);
+        //                isItemAddedToKit = true;
 
-                        // Local balance decrement
-                        int newBalance = Math.Max(0, availableQty - qty);
-                        filteredRow.Cells["TBALANCE"].Value = newBalance;
+        //                // Local balance decrement
+        //                int newBalance = Math.Max(0, availableQty - qty);
+        //                filteredRow.Cells["TBALANCE"].Value = newBalance;
 
-                        // Update Grid Quantities & Delta
-                        int prevQty = 0;
-                        if (filteredRow.Cells["QUANT"].Value != null)
-                        {
-                            int.TryParse(filteredRow.Cells["QUANT"].Value.ToString(), out prevQty);
-                        }
+        //                // Update Grid Quantities & Delta
+        //                int prevQty = 0;
+        //                if (filteredRow.Cells["QUANT"].Value != null)
+        //                {
+        //                    int.TryParse(filteredRow.Cells["QUANT"].Value.ToString(), out prevQty);
+        //                }
 
-                        int currentINkit = prevQty + qty;
-                        filteredRow.Cells["QUANT"].Value = currentINkit;
+        //                int currentINkit = prevQty + qty;
+        //                filteredRow.Cells["QUANT"].Value = currentINkit;
 
-                        int requiredQty = 0;
-                        if (filteredRow.Cells["CQUANT"].Value != null)
-                        {
-                            int.TryParse(filteredRow.Cells["CQUANT"].Value.ToString(), out requiredQty);
-                        }
+        //                int requiredQty = 0;
+        //                if (filteredRow.Cells["CQUANT"].Value != null)
+        //                {
+        //                    int.TryParse(filteredRow.Cells["CQUANT"].Value.ToString(), out requiredQty);
+        //                }
 
-                        filteredRow.Cells["DELTA"].Value = currentINkit - requiredQty;
+        //                filteredRow.Cells["DELTA"].Value = currentINkit - requiredQty;
 
-                        string currentCALC = filteredRow.Cells["CALC"].Value?.ToString();
-                        if (!string.IsNullOrEmpty(currentCALC) && currentINkit != 0)
-                        {
-                            filteredRow.Cells["CALC"].Value = $"{currentCALC}+{qty}";
-                        }
-                        else if (string.IsNullOrEmpty(currentCALC) && currentINkit != 0 && prevQty > 0)
-                        {
-                            filteredRow.Cells["CALC"].Value = $"{prevQty}+{qty}";
-                        }
+        //                string currentCALC = filteredRow.Cells["CALC"].Value?.ToString();
+        //                if (!string.IsNullOrEmpty(currentCALC) && currentINkit != 0)
+        //                {
+        //                    filteredRow.Cells["CALC"].Value = $"{currentCALC}+{qty}";
+        //                }
+        //                else if (string.IsNullOrEmpty(currentCALC) && currentINkit != 0 && prevQty > 0)
+        //                {
+        //                    filteredRow.Cells["CALC"].Value = $"{prevQty}+{qty}";
+        //                }
 
-                        filteredRow.Cells["LEFTOVERS"].Value = (newBalance + currentINkit) - requiredQty;
-                    }
-                    else
-                    {
-                        string writeErr = await writeResponse.Content.ReadAsStringAsync();
-                        SafeAppendLog($"[{usedUser}] Kitting Write Failed ({writeResponse.StatusCode}): {writeErr}", Color.Red);
-                        MessageBox.Show($"Transaction failed:\n{writeErr}", "Transaction Failure", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    SafeAppendLog($"[{usedUser}] Execution error: {ex.Message}", Color.Red);
-                }
-            }
-        }
+        //                filteredRow.Cells["LEFTOVERS"].Value = (newBalance + currentINkit) - requiredQty;
+        //            }
+        //            else
+        //            {
+        //                string writeErr = await writeResponse.Content.ReadAsStringAsync();
+        //                SafeAppendLog($"[{usedUser}] Kitting Write Failed ({writeResponse.StatusCode}): {writeErr}", Color.Red);
+        //                MessageBox.Show($"Transaction failed:\n{writeErr}", "Transaction Failure", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            SafeAppendLog($"[{usedUser}] Execution error: {ex.Message}", Color.Red);
+        //        }
+        //    }
+        //}
 
 
         //private async Task AddSparesToKit(string partName, string serialName, int qty, DataGridViewRow filteredRow, string wh)
