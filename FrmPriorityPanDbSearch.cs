@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
@@ -22,6 +23,7 @@ using GroupBox = System.Windows.Forms.GroupBox;
 using Label = System.Windows.Forms.Label;
 using TextBox = System.Windows.Forms.TextBox;
 using Timer = System.Threading.Timer;
+
 namespace WH_Panel
 {
     public partial class FrmPriorityPanDbSearch : Form
@@ -31,6 +33,15 @@ namespace WH_Panel
         private List<Warehouse> loadedWareHouses = new List<Warehouse>();
         public AppSettings settings;
         public string baseUrl = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522";
+
+
+        private System.Windows.Forms.Timer debounceTimer;
+        private readonly Dictionary<string, DataTable> sessionSearchCache = new Dictionary<string, DataTable>(StringComparer.OrdinalIgnoreCase);
+        private CancellationTokenSource searchCts;
+        private static readonly HttpClient sharedHttpClient = new HttpClient();
+
+        private readonly Dictionary<string, string> balanceCache = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
         public FrmPriorityPanDbSearch()
         {
             InitializeComponent();
@@ -57,7 +68,188 @@ namespace WH_Panel
             txtbMFPN.Leave += TextBox_Leave;
             txtbDESC.Enter += TextBox_Enter;
             txtbDESC.Leave += TextBox_Leave;
+
+            // Inside FrmPriorityPanDbSearch() constructor:
+            // Keep all your original txtb*.TextChanged += FilterData lines as they are!
+            // Just initialize the timer:
+            debounceTimer = new System.Windows.Forms.Timer { Interval = 400 };
+            debounceTimer.Tick += DebounceTimer_Tick;
+
         }
+
+        private void FilterData(object sender, EventArgs e)
+        {
+            // Reset debounce timer on every keystroke
+            debounceTimer.Stop();
+            debounceTimer.Start();
+        }
+
+        private async void DebounceTimer_Tick(object sender, EventArgs e)
+        {
+            debounceTimer.Stop();
+            await ExecutePrioritySearchAsync();
+        }
+
+        private async Task ExecutePrioritySearchAsync()
+        {
+            string wh = txtbWH.Text.Trim();
+            string ipn = txtbIPN.Text.Trim();
+            string mfpn = txtbMFPN.Text.Trim();
+            string desc = txtbDESC.Text.Trim();
+
+            // Guard: Require at least 3 characters in at least one input box
+            bool hasSearchTerm = wh.Length >= 3 || ipn.Length >= 3 || mfpn.Length >= 3 || desc.Length >= 3;
+
+            if (!hasSearchTerm)
+            {
+                dataTable.Clear();
+                return;
+            }
+
+            // Normalized cache key for the session
+            string cacheKey = $"{wh}|{ipn}|{mfpn}|{desc}";
+
+            // Check session cache first (0 ms, 0 API transactions)
+            if (sessionSearchCache.TryGetValue(cacheKey, out DataTable cachedTable))
+            {
+                dataTable = cachedTable.Copy();
+                dataView = new DataView(dataTable);
+                dgwALLDATA.DataSource = dataView;
+                AddLogRow($"[Cache Hit] Loaded {dataTable.Rows.Count} rows (0 API calls).", Color.LightGreen);
+                return;
+            }
+
+            // Cancel previous request if user typed again
+            searchCts?.Cancel();
+            searchCts = new CancellationTokenSource();
+
+            try
+            {
+                AddLogRow("Searching Priority server...", Color.Orange);
+                DataTable resultTable = await FetchFilteredDataFromPriorityAsync(wh, ipn, mfpn, desc, searchCts.Token);
+
+                // Store result in session cache
+                sessionSearchCache[cacheKey] = resultTable.Copy();
+
+                dataTable = resultTable;
+                dataView = new DataView(dataTable);
+                // Default ascending sort by IPN (PARTNAME)
+                dataView.Sort = "PARTNAME ASC";
+                dgwALLDATA.DataSource = dataView;
+
+                AddLogRow($"Found {dataTable.Rows.Count} matching records.", Color.Green);
+            }
+            catch (OperationCanceledException)
+            {
+                // Suppress cancelled request
+            }
+            catch (Exception ex)
+            {
+                AddLogRow($"Search failed: {ex.Message}", Color.Red);
+            }
+        }
+
+        private async Task<DataTable> FetchFilteredDataFromPriorityAsync(string wh, string ipn, string mfpn, string desc, CancellationToken ct)
+        {
+            var filterClauses = new List<string>();
+
+            // 1. חיתוך לפי מחסן - קידומת 3 תווים במק"ט
+            if (wh.Length >= 1)
+            {
+                filterClauses.Add($"startswith(PARTNAME, '{EscapeOData(wh)}')");
+            }
+
+            // 2. חיפוש לפי מק"ט (IPN)
+            if (ipn.Length >= 3)
+            {
+                filterClauses.Add($"contains(PARTNAME, '{EscapeOData(ipn)}')");
+            }
+
+            // 3. חיפוש לפי מק"ט יצרן (MFPN)
+            if (mfpn.Length >= 3)
+            {
+                filterClauses.Add($"contains(MNFPARTNAME, '{EscapeOData(mfpn)}')");
+            }
+
+            // 4. חיפוש לפי תיאור פריט (תומך בהפרדת + לחיפוש מילים מרובות)
+            if (desc.Length >= 3)
+            {
+                string[] descTerms = desc.Split(new[] { '+' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var term in descTerms)
+                {
+                    string clean = term.Trim();
+                    if (clean.Length > 0)
+                    {
+                        filterClauses.Add($"contains(PARTDES, '{EscapeOData(clean)}')");
+                    }
+                }
+            }
+
+            if (filterClauses.Count == 0)
+            {
+                return dataTable.Clone();
+            }
+
+            string filterParam = string.Join(" and ", filterClauses);
+
+            // שליפה ישירה ממסך PARTMNFONE
+            string url = $"{baseUrl}/PARTMNFONE?$filter={filterParam}" +
+                         $"&$select=PARTNAME,PARTDES,MNFPARTNAME,MNFNAME,PART";
+
+            using (var request = new HttpRequestMessage(HttpMethod.Get, url))
+            {
+                request.Headers.Accept.Clear();
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                ApiHelper.AuthenticateClient(request);
+
+                using (var response = await sharedHttpClient.SendAsync(request, ct))
+                {
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        string errorBody = await response.Content.ReadAsStringAsync();
+                        AddLogRow($"Priority Error ({(int)response.StatusCode}): {errorBody}", Color.Red);
+                        return dataTable.Clone();
+                    }
+
+                    string json = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<PartMnfOneResponse>(json);
+
+                    DataTable dt = dataTable.Clone();
+                    if (apiResponse?.Value != null)
+                    {
+                        foreach (var row in apiResponse.Value)
+                        {
+                            // גזירת קוד המחסן מתוך 3 התווים הראשונים של ה-IPN
+                            string derivedWh = row.PARTNAME != null && row.PARTNAME.Length >= 3
+                                ? row.PARTNAME.Substring(0, 3)
+                                : string.Empty;
+
+                            string balanceKey = $"{derivedWh}|{row.PARTNAME}";
+                            string displayBalance = balanceCache.TryGetValue(balanceKey, out string cachedVal)
+                                ? cachedVal
+                                : "-";
+
+                            dt.Rows.Add(
+                                derivedWh,                           // עמודת WH הנגזרת
+                                row.PARTNAME,                        // IPN
+                                row.MNFPARTNAME ?? string.Empty,     // MFPN
+                                row.PARTDES ?? string.Empty,         // Description
+                                row.MNFNAME ?? string.Empty,
+                                displayBalance,   // Populates cached value or "-" placeholder
+                                row.PART                             // Internal ID
+                            );
+                        }
+                    }
+                    return dt;
+                }
+            }
+        }
+
+        private string EscapeOData(string input)
+        {
+            return input.Replace("'", "''");
+        }
+
         private void TextBox_Enter(object sender, EventArgs e)
         {
             ((TextBox)sender).ForeColor = Color.Black;
@@ -94,7 +286,7 @@ namespace WH_Panel
                 else
                 {
                     await LoadWarehouseData();
-                    await LoadDataIntoDataTable(); // Load data into the DataTable after initializing
+                    //await LoadDataIntoDataTable(); // Load data into the DataTable after initializing
                 }
             }
             catch (Exception ex)
@@ -209,7 +401,7 @@ namespace WH_Panel
                     //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
 
                     string usedUser = ApiHelper.AuthenticateClient(client);
-               // string usedUser = ApiHelper.AuthenticateClient(client);
+                    // string usedUser = ApiHelper.AuthenticateClient(client);
 
                     HttpResponseMessage response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
@@ -267,7 +459,7 @@ namespace WH_Panel
 
 
                         string usedUser = ApiHelper.AuthenticateClient(client);
-                   // string usedUser = ApiHelper.AuthenticateClient(client);
+                        // string usedUser = ApiHelper.AuthenticateClient(client);
 
 
                         HttpResponseMessage response = await client.GetAsync(balanceUrl);
@@ -306,7 +498,7 @@ namespace WH_Panel
 
 
                         string usedUser = ApiHelper.AuthenticateClient(client);
-                   // string usedUser = ApiHelper.AuthenticateClient(client);
+                        // string usedUser = ApiHelper.AuthenticateClient(client);
 
                         HttpResponseMessage response = await client.GetAsync(mfpnUrl);
                         response.EnsureSuccessStatusCode();
@@ -363,11 +555,15 @@ namespace WH_Panel
             dataTable.Columns.Add("PARTNAME", typeof(string));
             dataTable.Columns.Add("MNFPARTNAME", typeof(string));
             dataTable.Columns.Add("PARTDES", typeof(string));
-            dataTable.Columns.Add("BALANCE", typeof(int));
-            dataTable.Columns.Add("CDATE", typeof(string));
-            dataTable.Columns.Add("PART", typeof(int));
+            dataTable.Columns.Add("MNFNAME", typeof(string)); // Replaces BALANCE
+            dataTable.Columns.Add("BALANCE", typeof(string)); // String allows "-" or "Click to load"
+            dataTable.Columns.Add("PART", typeof(long));       // Replaces CDATE/PART
+
             dataView = new DataView(dataTable);
             dgwALLDATA.DataSource = dataView;
+
+
+
             // Auto-widen the IPN, MFPN, and Desc columns
             dgwALLDATA.Columns["PARTNAME"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             dgwALLDATA.Columns["MNFPARTNAME"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
@@ -397,211 +593,163 @@ namespace WH_Panel
                 }
             }
         }
-        private void FilterData(object sender, EventArgs e)
-        {
-            StringBuilder filter = new StringBuilder();
-            if (!string.IsNullOrEmpty(txtbWH.Text))
-            {
-                filter.Append($"WH LIKE '%{txtbWH.Text}%'");
-            }
-            if (!string.IsNullOrEmpty(txtbIPN.Text))
-            {
-                if (filter.Length > 0) filter.Append(" AND ");
-                filter.Append($"PARTNAME LIKE '%{txtbIPN.Text}%'");
-            }
-            if (!string.IsNullOrEmpty(txtbMFPN.Text))
-            {
-                if (filter.Length > 0) filter.Append(" AND ");
-                filter.Append($"MNFPARTNAME LIKE '%{txtbMFPN.Text}%'");
-            }
-            if (!string.IsNullOrEmpty(txtbDESC.Text))
-            {
-                if (filter.Length > 0) filter.Append(" AND ");
-                string[] descTerms = txtbDESC.Text.Split(new char[] { '+' }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (string term in descTerms)
-                {
-                    filter.Append($"PARTDES LIKE '%{term.Trim()}%' AND ");
-                }
-                filter.Length -= 5; // Remove the trailing " AND "
-            }
-            dataView.RowFilter = filter.ToString();
-        }
+        //private void FilterData(object sender, EventArgs e)
+        //{
+        //    StringBuilder filter = new StringBuilder();
+        //    if (!string.IsNullOrEmpty(txtbWH.Text))
+        //    {
+        //        filter.Append($"WH LIKE '%{txtbWH.Text}%'");
+        //    }
+        //    if (!string.IsNullOrEmpty(txtbIPN.Text))
+        //    {
+        //        if (filter.Length > 0) filter.Append(" AND ");
+        //        filter.Append($"PARTNAME LIKE '%{txtbIPN.Text}%'");
+        //    }
+        //    if (!string.IsNullOrEmpty(txtbMFPN.Text))
+        //    {
+        //        if (filter.Length > 0) filter.Append(" AND ");
+        //        filter.Append($"MNFPARTNAME LIKE '%{txtbMFPN.Text}%'");
+        //    }
+        //    if (!string.IsNullOrEmpty(txtbDESC.Text))
+        //    {
+        //        if (filter.Length > 0) filter.Append(" AND ");
+        //        string[] descTerms = txtbDESC.Text.Split(new char[] { '+' }, StringSplitOptions.RemoveEmptyEntries);
+        //        foreach (string term in descTerms)
+        //        {
+        //            filter.Append($"PARTDES LIKE '%{term.Trim()}%' AND ");
+        //        }
+        //        filter.Length -= 5; // Remove the trailing " AND "
+        //    }
+        //    dataView.RowFilter = filter.ToString();
+        //}
+        //private async void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        //{
+        //    // Ignore header clicks
+        //    if (e.RowIndex < 0 || e.RowIndex >= dgwALLDATA.Rows.Count)
+        //        return;
+
+        //    var currentRow = dgwALLDATA.Rows[e.RowIndex];
+        //    if (currentRow.DataBoundItem is not DataRowView rowView)
+        //        return;
+
+        //    DataRow row = rowView.Row;
+        //    string currentBalance = row["BALANCE"]?.ToString();
+
+        //    // If balance is already loaded (not "-" or empty), skip to avoid duplicate API calls
+        //    if (!string.IsNullOrEmpty(currentBalance) && currentBalance != "-" && currentBalance != "...")
+        //        return;
+
+        //    string wh = row["WH"]?.ToString();
+        //    string ipn = row["PARTNAME"]?.ToString();
+
+        //    if (string.IsNullOrEmpty(wh) || string.IsNullOrEmpty(ipn))
+        //        return;
+
+        //    try
+        //    {
+        //        // Visual indicator that it's fetching
+        //        row["BALANCE"] = "...";
+
+        //        decimal balance = await FetchSingleBalanceAsync(wh, ipn);
+        //        row["BALANCE"] = balance.ToString("0");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        row["BALANCE"] = "Err";
+        //        AddLogRow($"Balance check failed for {ipn}: {ex.Message}", Color.Red);
+        //    }
+        //}
+
         private async void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0) // Ensure the row index is valid
+            if (e.RowIndex < 0 || e.RowIndex >= dgwALLDATA.Rows.Count)
+                return;
+
+            var currentRow = dgwALLDATA.Rows[e.RowIndex];
+            if (currentRow.DataBoundItem is not DataRowView rowView)
+                return;
+
+            DataRow row = rowView.Row;
+            string currentBalance = row["BALANCE"]?.ToString();
+
+            // Already resolved on this row
+            if (!string.IsNullOrEmpty(currentBalance) && currentBalance != "-" && currentBalance != "...")
+                return;
+
+            string wh = row["WH"]?.ToString();
+            string ipn = row["PARTNAME"]?.ToString();
+
+            if (string.IsNullOrEmpty(wh) || string.IsNullOrEmpty(ipn))
+                return;
+
+            string cacheKey = $"{wh}|{ipn}";
+
+            // Check balance session cache
+            if (balanceCache.TryGetValue(cacheKey, out string cachedBalance))
             {
-                dgwINSTOCK.Rows.Clear();
-                var selectedRow = dgwALLDATA.Rows[e.RowIndex];
-                await ExtractMFPNForRow(selectedRow);
-                var partName = selectedRow.Cells["PARTNAME"].Value.ToString();
-                string logPartUrl = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{partName}'&$expand=PARTTRANSLAST2_SUBFORM";
-                using (HttpClient client = new HttpClient())
-                {
-                    try
-                    {
-                        // Set the request headers if needed
-                        client.DefaultRequestHeaders.Accept.Clear();
-                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        // Set the Authorization header
-                        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
-                        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-                        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
-                        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                row["BALANCE"] = cachedBalance;
+                return;
+            }
 
+            try
+            {
+                row["BALANCE"] = "...";
 
-                        string usedUser = ApiHelper.AuthenticateClient(client);
-                   // string usedUser = ApiHelper.AuthenticateClient(client);
+                decimal balance = await FetchSingleBalanceAsync(wh, ipn);
+                string formattedBalance = balance.ToString("0"); // Pure raw digits (no spaces, no commas)
 
-
-                        // Measure the time taken for the HTTP POST request
-                        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-                        // Make the HTTP GET request for stock movements
-                        HttpResponseMessage logPartResponse = await client.GetAsync(logPartUrl);
-                        logPartResponse.EnsureSuccessStatusCode();
-                        stopwatch.Stop();
-                        // Update the ping label
-                        //UpdatePing(stopwatch.ElapsedMilliseconds);
-                        // Read the response content
-                        string logPartResponseBody = await logPartResponse.Content.ReadAsStringAsync();
-                        // Parse the JSON response
-                        var logPartApiResponse = JsonConvert.DeserializeObject<LogPartApiResponse>(logPartResponseBody);
-                        // Check if the response contains any data
-                        if (logPartApiResponse.value != null && logPartApiResponse.value.Count > 0)
-                        {
-                            // Set AutoGenerateColumns to false
-                            dgwTRANSACTIONS.AutoGenerateColumns = false;
-                            // Clear existing columns
-                            dgwTRANSACTIONS.Columns.Clear();
-                            // Define the columns you want to display
-                            var curDateColumn = new DataGridViewTextBoxColumn
-                            {
-                                DataPropertyName = "UDATE",
-                                HeaderText = "Transaction Date",
-                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                                Name = "UDATE"
-                            };
-                            var logDocNoColumn = new DataGridViewTextBoxColumn
-                            {
-                                DataPropertyName = "LOGDOCNO",
-                                HeaderText = "Document Number",
-                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                                Name = "LOGDOCNO"
-                            };
-                            var logDOCDESColumn = new DataGridViewTextBoxColumn
-                            {
-                                DataPropertyName = "DOCDES",
-                                HeaderText = "DOCDES",
-                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                                Name = "DOCDES"
-                            };
-                            var SUPCUSTNAMEColumn = new DataGridViewTextBoxColumn
-                            {
-                                DataPropertyName = "SUPCUSTNAME",
-                                HeaderText = "Source_Requester",
-                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                                Name = "SUPCUSTNAME"
-                            };
-                            var tQuantColumn = new DataGridViewTextBoxColumn
-                            {
-                                DataPropertyName = "TQUANT",
-                                HeaderText = "QTY",
-                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                                Name = "TQUANT"
-                            };
-                            var tPACKNAMEColumn = new DataGridViewTextBoxColumn
-                            {
-                                DataPropertyName = "PACKNAME",
-                                HeaderText = "PACK",
-                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                                Name = "PACKNAME"
-                            };
-                            var DocBOOKNUMColumn = new DataGridViewTextBoxColumn
-                            {
-                                DataPropertyName = "BOOKNUM",
-                                HeaderText = "Client`s Document",
-                                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
-                                Name = "BOOKNUM"
-                            };
-                            // Add columns to the DataGridView
-                            dgwTRANSACTIONS.Columns.AddRange(new DataGridViewColumn[]
-                            {
-                        curDateColumn,
-                        logDocNoColumn,
-                        logDOCDESColumn,
-                        SUPCUSTNAMEColumn,
-                        DocBOOKNUMColumn,
-                        tQuantColumn,
-                        tPACKNAMEColumn
-                            });
-                            // Populate the DataGridView with the data
-                            dgwTRANSACTIONS.Rows.Clear();
-                            foreach (var logPart in logPartApiResponse.value)
-                            {
-                                foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
-                                {
-                                    if(trans.DOCDES!= "קיזוז אוטומטי")
-                                    {
-                                        dgwTRANSACTIONS.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "");
-                                    }
-                                       
-                                }
-                            }
-                            groupBox6.Text = $"TRANSACTIONS for {partName}";
-                            //ColorTheRows(dataGridView2);
-                            foreach (DataGridViewRow row in dgwTRANSACTIONS.Rows)
-                            {
-                                var logDocNo = row.Cells["LOGDOCNO"].Value?.ToString();
-                                var partNameCell = partName;
-                                var quant = int.Parse(row.Cells["TQUANT"].Value?.ToString());
-                                if (logDocNo != null && partNameCell != null)
-                                {
-                                    var results = await FetchPackCodeAsync(logDocNo, partNameCell, quant);
-                                    foreach (var result in results)
-                                    {
-                                        if (result.PackCode != null)
-                                        {
-                                            row.Cells["PACKNAME"].Value = result.PackCode;
-                                        }
-                                        if (result.BookNum != null)
-                                        {
-                                            row.Cells["BOOKNUM"].Value = result.BookNum;
-                                        }
-                                        if (result.Date != null)
-                                        {
-                                            row.Cells["UDATE"].Value = result.Date;
-                                        }
-                                    }
-                                }
-                            }
-                            // Sort the DataGridView by the first column in descending order
-                            dgwTRANSACTIONS.Sort(dgwTRANSACTIONS.Columns[0], ListSortDirection.Descending);
-                            // Populate dgwINSTOCK with items that are currently in stock
-                            var actualStock = int.Parse(selectedRow.Cells["BALANCE"].Value.ToString());
-                            await PopulateInStockData(partName, actualStock);
-                        }
-                        else
-                        {
-                            MessageBox.Show("No stock movements found for the selected part.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        }
-                    }
-                    catch (HttpRequestException ex)
-                    {
-                        txtLog.SelectionColor = Color.Red; // Set the color to acid green
-                        txtLog.AppendText($"Request error: {ex.Message}");
-                        txtLog.ScrollToCaret();
-                    }
-                    catch (Exception ex)
-                    {
-                        if (txtLog != null && !txtLog.IsDisposed)
-                        {
-                            txtLog.SelectionColor = Color.Red; // Set the color to acid green
-                            txtLog.AppendText($"Request error: {ex.Message}");
-                            txtLog.ScrollToCaret();
-                        }
-                    }
-                }
+                // Store into cache and apply to row
+                balanceCache[cacheKey] = formattedBalance;
+                row["BALANCE"] = formattedBalance;
+            }
+            catch (Exception ex)
+            {
+                row["BALANCE"] = "Err";
+                AddLogRow($"Balance check failed for {ipn}: {ex.Message}", Color.Red);
             }
         }
+
+
+        private async Task<decimal> FetchSingleBalanceAsync(string wh, string ipn)
+    {
+        // Query parent WAREHOUSES filtered by WH, and expand only the specific IPN's balance
+        string url = $"{baseUrl}/WAREHOUSES?$filter=WARHSNAME eq '{EscapeOData(wh)}'" +
+                     $"&$select=WARHSNAME" +
+                     $"&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{EscapeOData(ipn)}';$select=BALANCE)";
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, url);
+        request.Headers.Accept.Clear();
+        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        ApiHelper.AuthenticateClient(request);
+
+        using var response = await sharedHttpClient.SendAsync(request);
+        response.EnsureSuccessStatusCode();
+
+        string json = await response.Content.ReadAsStringAsync();
+        var apiResponse = JsonConvert.DeserializeObject<WarehouseExpandBalanceResponse>(json);
+
+        // Sum across subform rows in case the warehouse has multiple storage bins/locations
+        var warehouse = apiResponse?.Value?.FirstOrDefault();
+        if (warehouse?.Balances != null && warehouse.Balances.Count > 0)
+        {
+            return warehouse.Balances.Sum(b => b.NumericBalance);
+        }
+
+        return 0m;
+    }
+
+    public class WarehouseBalanceResponse
+        {
+            [JsonProperty("value")]
+            public List<WarehouseBalanceEntry> Value { get; set; }
+        }
+
+        public class WarehouseBalanceEntry
+        {
+            public decimal BALANCE { get; set; }
+        }
+
+
         private async Task PopulateInStockData(string partName, int zeroOrHero)
         {
             if (zeroOrHero > 0)
@@ -745,7 +893,7 @@ namespace WH_Panel
                     //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
 
                     string usedUser = ApiHelper.AuthenticateClient(client);
-               // string usedUser = ApiHelper.AuthenticateClient(client);
+                    // string usedUser = ApiHelper.AuthenticateClient(client);
 
 
                     // Make the HTTP GET request for part details
@@ -829,7 +977,7 @@ namespace WH_Panel
 
 
                     string usedUser = ApiHelper.AuthenticateClient(client);
-               // string usedUser = ApiHelper.AuthenticateClient(client);
+                    // string usedUser = ApiHelper.AuthenticateClient(client);
 
 
                     // Make the HTTP GET request
@@ -950,7 +1098,7 @@ namespace WH_Panel
                         //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
 
                         string usedUser = ApiHelper.AuthenticateClient(client);
-                   // string usedUser = ApiHelper.AuthenticateClient(client);
+                        // string usedUser = ApiHelper.AuthenticateClient(client);
 
                         // Make the HTTP GET request
                         HttpResponseMessage response = await client.GetAsync(url);
@@ -1011,7 +1159,7 @@ namespace WH_Panel
 
 
                         string usedUser = ApiHelper.AuthenticateClient(client);
-                   // string usedUser = ApiHelper.AuthenticateClient(client);
+                        // string usedUser = ApiHelper.AuthenticateClient(client);
 
                         // Make the HTTP GET request
                         HttpResponseMessage response = await client.GetAsync(url);
@@ -1057,7 +1205,7 @@ namespace WH_Panel
 
 
                         string usedUser = ApiHelper.AuthenticateClient(client);
-                   // string usedUser = ApiHelper.AuthenticateClient(client);
+                        // string usedUser = ApiHelper.AuthenticateClient(client);
 
                         // Make the HTTP GET request
                         HttpResponseMessage response = await client.GetAsync(url);
@@ -1118,5 +1266,380 @@ namespace WH_Panel
             dataView.RowFilter = string.Empty;
             dgwALLDATA.ClearSelection();
         }
+
+
+        public class PartMnfOneResponse
+        {
+            [JsonProperty("value")]
+            public List<PartMnfOneItem> Value { get; set; }
+        }
+
+        public class PartMnfOneItem
+        {
+            public string PARTNAME { get; set; }
+            public string PARTDES { get; set; }
+            public string MNFPARTNAME { get; set; }
+            public string MNFNAME { get; set; }
+            public long PART { get; set; }
+        }
+
+        public class WarehouseExpandBalanceResponse
+        {
+            [JsonProperty("value")]
+            public List<WarehouseParentItem> Value { get; set; }
+        }
+
+        public class WarehouseParentItem
+        {
+            public string WARHSNAME { get; set; }
+
+            [JsonProperty("WARHSBAL_SUBFORM")]
+            public List<WarehouseBalanceSubformItem> Balances { get; set; }
+        }
+
+        public class WarehouseBalanceSubformItem
+        {
+            // Receive as object/string to safely handle Priority's localized number formatting
+            [JsonProperty("BALANCE")]
+            public string RawBalance { get; set; }
+
+            public decimal NumericBalance
+            {
+                get
+                {
+                    if (string.IsNullOrWhiteSpace(RawBalance))
+                        return 0m;
+
+                    // Strip normal spaces, non-breaking spaces (\u00A0), and commas
+                    string clean = RawBalance
+                        .Replace(" ", "")
+                        .Replace("\u00A0", "")
+                        .Replace(",", "");
+
+                    return decimal.TryParse(clean, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal val)
+                        ? val
+                        : 0m;
+                }
+            }
+        }
+
+        //private async void dgwALLDATA_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        //{
+        //    if (e.RowIndex >= 0) // Ensure the row index is valid
+        //    {
+        //        dgwINSTOCK.Rows.Clear();
+        //        var selectedRow = dgwALLDATA.Rows[e.RowIndex];
+        //        await ExtractMFPNForRow(selectedRow);
+        //        var partName = selectedRow.Cells["PARTNAME"].Value.ToString();
+        //        string logPartUrl = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{partName}'&$expand=PARTTRANSLAST2_SUBFORM";
+        //        using (HttpClient client = new HttpClient())
+        //        {
+        //            try
+        //            {
+        //                // Set the request headers if needed
+        //                client.DefaultRequestHeaders.Accept.Clear();
+        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //                // Set the Authorization header
+        //                //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+        //                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+        //                //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
+        //                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+        //                string usedUser = ApiHelper.AuthenticateClient(client);
+        //                // string usedUser = ApiHelper.AuthenticateClient(client);
+
+
+        //                // Measure the time taken for the HTTP POST request
+        //                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        //                // Make the HTTP GET request for stock movements
+        //                HttpResponseMessage logPartResponse = await client.GetAsync(logPartUrl);
+        //                logPartResponse.EnsureSuccessStatusCode();
+        //                stopwatch.Stop();
+        //                // Update the ping label
+        //                //UpdatePing(stopwatch.ElapsedMilliseconds);
+        //                // Read the response content
+        //                string logPartResponseBody = await logPartResponse.Content.ReadAsStringAsync();
+        //                // Parse the JSON response
+        //                var logPartApiResponse = JsonConvert.DeserializeObject<LogPartApiResponse>(logPartResponseBody);
+        //                // Check if the response contains any data
+        //                if (logPartApiResponse.value != null && logPartApiResponse.value.Count > 0)
+        //                {
+        //                    // Set AutoGenerateColumns to false
+        //                    dgwTRANSACTIONS.AutoGenerateColumns = false;
+        //                    // Clear existing columns
+        //                    dgwTRANSACTIONS.Columns.Clear();
+        //                    // Define the columns you want to display
+        //                    var curDateColumn = new DataGridViewTextBoxColumn
+        //                    {
+        //                        DataPropertyName = "UDATE",
+        //                        HeaderText = "Transaction Date",
+        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+        //                        Name = "UDATE"
+        //                    };
+        //                    var logDocNoColumn = new DataGridViewTextBoxColumn
+        //                    {
+        //                        DataPropertyName = "LOGDOCNO",
+        //                        HeaderText = "Document Number",
+        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+        //                        Name = "LOGDOCNO"
+        //                    };
+        //                    var logDOCDESColumn = new DataGridViewTextBoxColumn
+        //                    {
+        //                        DataPropertyName = "DOCDES",
+        //                        HeaderText = "DOCDES",
+        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+        //                        Name = "DOCDES"
+        //                    };
+        //                    var SUPCUSTNAMEColumn = new DataGridViewTextBoxColumn
+        //                    {
+        //                        DataPropertyName = "SUPCUSTNAME",
+        //                        HeaderText = "Source_Requester",
+        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+        //                        Name = "SUPCUSTNAME"
+        //                    };
+        //                    var tQuantColumn = new DataGridViewTextBoxColumn
+        //                    {
+        //                        DataPropertyName = "TQUANT",
+        //                        HeaderText = "QTY",
+        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+        //                        Name = "TQUANT"
+        //                    };
+        //                    var tPACKNAMEColumn = new DataGridViewTextBoxColumn
+        //                    {
+        //                        DataPropertyName = "PACKNAME",
+        //                        HeaderText = "PACK",
+        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+        //                        Name = "PACKNAME"
+        //                    };
+        //                    var DocBOOKNUMColumn = new DataGridViewTextBoxColumn
+        //                    {
+        //                        DataPropertyName = "BOOKNUM",
+        //                        HeaderText = "Client`s Document",
+        //                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+        //                        Name = "BOOKNUM"
+        //                    };
+        //                    // Add columns to the DataGridView
+        //                    dgwTRANSACTIONS.Columns.AddRange(new DataGridViewColumn[]
+        //                    {
+        //                curDateColumn,
+        //                logDocNoColumn,
+        //                logDOCDESColumn,
+        //                SUPCUSTNAMEColumn,
+        //                DocBOOKNUMColumn,
+        //                tQuantColumn,
+        //                tPACKNAMEColumn
+        //                    });
+        //                    // Populate the DataGridView with the data
+        //                    dgwTRANSACTIONS.Rows.Clear();
+        //                    foreach (var logPart in logPartApiResponse.value)
+        //                    {
+        //                        foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
+        //                        {
+        //                            if (trans.DOCDES != "קיזוז אוטומטי")
+        //                            {
+        //                                dgwTRANSACTIONS.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "");
+        //                            }
+
+        //                        }
+        //                    }
+        //                    groupBox6.Text = $"TRANSACTIONS for {partName}";
+        //                    //ColorTheRows(dataGridView2);
+        //                    foreach (DataGridViewRow row in dgwTRANSACTIONS.Rows)
+        //                    {
+        //                        var logDocNo = row.Cells["LOGDOCNO"].Value?.ToString();
+        //                        var partNameCell = partName;
+        //                        var quant = int.Parse(row.Cells["TQUANT"].Value?.ToString());
+        //                        if (logDocNo != null && partNameCell != null)
+        //                        {
+        //                            var results = await FetchPackCodeAsync(logDocNo, partNameCell, quant);
+        //                            foreach (var result in results)
+        //                            {
+        //                                if (result.PackCode != null)
+        //                                {
+        //                                    row.Cells["PACKNAME"].Value = result.PackCode;
+        //                                }
+        //                                if (result.BookNum != null)
+        //                                {
+        //                                    row.Cells["BOOKNUM"].Value = result.BookNum;
+        //                                }
+        //                                if (result.Date != null)
+        //                                {
+        //                                    row.Cells["UDATE"].Value = result.Date;
+        //                                }
+        //                            }
+        //                        }
+        //                    }
+        //                    // Sort the DataGridView by the first column in descending order
+        //                    dgwTRANSACTIONS.Sort(dgwTRANSACTIONS.Columns[0], ListSortDirection.Descending);
+        //                    // Populate dgwINSTOCK with items that are currently in stock
+        //                    var actualStock = int.Parse(selectedRow.Cells["BALANCE"].Value.ToString());
+        //                    await PopulateInStockData(partName, actualStock);
+        //                }
+        //                else
+        //                {
+        //                    MessageBox.Show("No stock movements found for the selected part.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //                }
+        //            }
+        //            catch (HttpRequestException ex)
+        //            {
+        //                txtLog.SelectionColor = Color.Red; // Set the color to acid green
+        //                txtLog.AppendText($"Request error: {ex.Message}");
+        //                txtLog.ScrollToCaret();
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                if (txtLog != null && !txtLog.IsDisposed)
+        //                {
+        //                    txtLog.SelectionColor = Color.Red; // Set the color to acid green
+        //                    txtLog.AppendText($"Request error: {ex.Message}");
+        //                    txtLog.ScrollToCaret();
+        //                }
+        //            }
+        //        }
+        //}
+        private async void dgwALLDATA_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // Ignore header clicks or out-of-range clicks
+            if (e.RowIndex < 0 || e.RowIndex >= dgwALLDATA.Rows.Count)
+                return;
+
+            var selectedRow = dgwALLDATA.Rows[e.RowIndex];
+            if (selectedRow.DataBoundItem is not DataRowView rowView)
+                return;
+
+            DataRow dr = rowView.Row;
+            string partName = dr["PARTNAME"]?.ToString();
+            string wh = dr["WH"]?.ToString();
+
+            if (string.IsNullOrEmpty(partName))
+                return;
+
+            try
+            {
+                dgwINSTOCK.Rows.Clear();
+
+                // 1. Ensure BALANCE is resolved and clean
+                string currentBalanceStr = dr["BALANCE"]?.ToString();
+                int actualStock = 0;
+
+                if (string.IsNullOrEmpty(currentBalanceStr) || currentBalanceStr == "-" || currentBalanceStr == "..." || currentBalanceStr == "Err")
+                {
+                    // Auto-fetch balance on double click if not clicked yet
+                    dr["BALANCE"] = "...";
+                    decimal fetchedBalance = await FetchSingleBalanceAsync(wh, partName);
+                    string formattedDigits = fetchedBalance.ToString("0");
+
+                    // Update cache and grid
+                    balanceCache[$"{wh}|{partName}"] = formattedDigits;
+                    dr["BALANCE"] = formattedDigits;
+                    actualStock = (int)fetchedBalance;
+                }
+                else
+                {
+                    int.TryParse(currentBalanceStr, out actualStock);
+                }
+
+                // 2. Fetch Stock Movements from LOGPART
+                AddLogRow($"Fetching transactions for {partName}...", Color.Orange);
+
+                string logPartUrl = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{EscapeOData(partName)}'&$expand=PARTTRANSLAST2_SUBFORM";
+
+                using var request = new HttpRequestMessage(HttpMethod.Get, logPartUrl);
+                request.Headers.Accept.Clear();
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                ApiHelper.AuthenticateClient(request);
+
+                using var response = await sharedHttpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+
+                string responseBody = await response.Content.ReadAsStringAsync();
+                var logPartApiResponse = JsonConvert.DeserializeObject<LogPartApiResponse>(responseBody);
+
+                if (logPartApiResponse?.value != null && logPartApiResponse.value.Count > 0)
+                {
+                    // Configure dgwTRANSACTIONS grid
+                    dgwTRANSACTIONS.AutoGenerateColumns = false;
+                    dgwTRANSACTIONS.Columns.Clear();
+
+                    dgwTRANSACTIONS.Columns.AddRange(new DataGridViewColumn[]
+                    {
+                new DataGridViewTextBoxColumn { DataPropertyName = "UDATE", HeaderText = "Transaction Date", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells, Name = "UDATE" },
+                new DataGridViewTextBoxColumn { DataPropertyName = "LOGDOCNO", HeaderText = "Document Number", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells, Name = "LOGDOCNO" },
+                new DataGridViewTextBoxColumn { DataPropertyName = "DOCDES", HeaderText = "DOCDES", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells, Name = "DOCDES" },
+                new DataGridViewTextBoxColumn { DataPropertyName = "SUPCUSTNAME", HeaderText = "Source_Requester", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells, Name = "SUPCUSTNAME" },
+                new DataGridViewTextBoxColumn { DataPropertyName = "BOOKNUM", HeaderText = "Client's Document", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells, Name = "BOOKNUM" },
+                new DataGridViewTextBoxColumn { DataPropertyName = "TQUANT", HeaderText = "QTY", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells, Name = "TQUANT" },
+                new DataGridViewTextBoxColumn { DataPropertyName = "PACKNAME", HeaderText = "PACK", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells, Name = "PACKNAME" }
+                    });
+
+                    dgwTRANSACTIONS.Rows.Clear();
+
+                    foreach (var logPart in logPartApiResponse.value)
+                    {
+                        if (logPart.PARTTRANSLAST2_SUBFORM == null) continue;
+
+                        foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
+                        {
+                            if (trans.DOCDES != "קיזוז אוטומטי")
+                            {
+                                dgwTRANSACTIONS.Rows.Add(
+                                    "",
+                                    trans.LOGDOCNO,
+                                    trans.DOCDES,
+                                    trans.SUPCUSTNAME,
+                                    "",
+                                    trans.TQUANT,
+                                    ""
+                                );
+                            }
+                        }
+                    }
+
+                    groupBox6.Text = $"TRANSACTIONS for {partName}";
+
+                    // 3. Enrich rows with Pack Code / Document info
+                    foreach (DataGridViewRow row in dgwTRANSACTIONS.Rows)
+                    {
+                        string logDocNo = row.Cells["LOGDOCNO"].Value?.ToString();
+                        string quantStr = row.Cells["TQUANT"].Value?.ToString();
+
+                        if (!string.IsNullOrEmpty(logDocNo) && int.TryParse(quantStr, out int quant))
+                        {
+                            var results = await FetchPackCodeAsync(logDocNo, partName, quant);
+                            if (results != null)
+                            {
+                                foreach (var result in results)
+                                {
+                                    if (result.PackCode != null) row.Cells["PACKNAME"].Value = result.PackCode;
+                                    if (result.BookNum != null) row.Cells["BOOKNUM"].Value = result.BookNum;
+                                    if (result.Date != null) row.Cells["UDATE"].Value = result.Date;
+                                }
+                            }
+                        }
+                    }
+
+                    // Sort by UDATE descending if there are rows
+                    if (dgwTRANSACTIONS.Rows.Count > 0)
+                    {
+                        dgwTRANSACTIONS.Sort(dgwTRANSACTIONS.Columns["UDATE"], ListSortDirection.Descending);
+                    }
+
+                    // 4. Populate In-Stock Data with verified numeric stock
+                    await PopulateInStockData(partName, actualStock);
+
+                    AddLogRow($"Loaded transactions for {partName}.", Color.Green);
+                }
+                else
+                {
+                    MessageBox.Show("No stock movements found for the selected part.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                AddLogRow($"Transaction fetch error for {partName}: {ex.Message}", Color.Red);
+            }
+        }
     }
+    
 }
