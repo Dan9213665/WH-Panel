@@ -3193,7 +3193,8 @@ namespace WH_Panel
                     $"{filterText} NOT needed anymore!\n\nDo you want to transfer spares into the kit?",
                     "Transfer Spares?",
                     MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question
+                    MessageBoxIcon.Question,
+                    MessageBoxDefaultButton.Button2 // Focuses "No" by default
                 );
 
                 if (confirmation == DialogResult.Yes && matchedRow != null)
