@@ -2189,7 +2189,7 @@ namespace WH_Panel
             // =========================================================================
             string logPartUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/LOGPART" +
                                 $"?$filter=PARTNAME eq '{Uri.EscapeDataString(partName)}'" +
-                                $"&$expand=PARTTRANSLAST2_SUBFORM($orderby=CURDATE asc)";
+                                $"&$expand=PARTTRANSLAST2_SUBFORM($orderby=CURDATE desc)";
 
             try
             {
