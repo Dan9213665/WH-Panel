@@ -98,9 +98,65 @@ namespace WH_Panel
                 columnSortDirections[columnName] = sortDirection;
             }
         }
-        private async void GetGetRobWosList(string warehouseName, string warehouseDesc)
+        //private async void GetGetRobWosList(string warehouseName, string warehouseDesc)
+        //{
+        //    string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=PARTNAME eq '{warehouseName}*'&$select=SERIALNAME,PARTNAME,SERIALSTATUSDES,QUANT,REVNUM";
+
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        try
+        //        {
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+
+        //            string usedUser = ApiHelper.AuthenticateClient(client);
+
+        //            HttpResponseMessage response = await client.GetAsync(url);
+        //            response.EnsureSuccessStatusCode();
+        //            string responseBody = await response.Content.ReadAsStringAsync();
+        //            var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+        //            var serials = apiResponse["value"].ToObject<List<Serial>>();
+        //            dgvBomsList.Rows.Clear();
+        //            int notClosedCount = serials.Count(serial => serial.SERIALSTATUSDES != "נסגרה");
+        //            if (serials.Count == 0)
+        //            {
+        //                AppendLogMessage($"No work order data found for {warehouseName} - {warehouseDesc}", Color.Red);
+        //                return;
+        //            }
+        //            else
+        //            {
+        //                foreach (var serial in serials)
+        //                {
+        //                    if (serial.SERIALSTATUSDES != "נסגרה")
+        //                    {
+        //                        int rowIndex = dgvBomsList.Rows.Add(false, serial.SERIALNAME, serial.PARTNAME, serial.SERIALSTATUSDES, serial.QUANT, serial.REVNUM);
+        //                        dgvBomsList.Rows[rowIndex].Cells["Selected"].Value = false;
+        //                    }
+        //                }
+        //                lblLoading.BackColor = Color.Green;
+        //                lblLoading.Text = "Data Loaded";
+        //                UpdateSelectedLabel();
+        //                AppendLogMessage($"{notClosedCount} not closed Work Orders loaded for {warehouseName} - {warehouseDesc}", Color.Green);
+        //                SortDataGridViewByStatus();
+        //            }
+        //        }
+        //        catch (HttpRequestException ex)
+        //        {
+        //            AppendLogMessage($"Request error: {ex.Message}", Color.Red);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            AppendLogMessage($"Request error: {ex.Message}", Color.Red);
+        //        }
+        //    }
+        //}
+
+        private async void GetRobWosList(string warehouseName, string warehouseDesc)
         {
-            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=PARTNAME eq '{warehouseName}*'&$select=SERIALNAME,PARTNAME,SERIALSTATUSDES,QUANT,REVNUM";
+            // סינון ישיר בשרת: שולף רק פק"עות שמתאימות למחסן ושאינן בסטטוס 'נסגרה'
+            string filter = $"PARTNAME eq '{warehouseName}*' and SERIALSTATUSDES ne '%D7%A0%D7%A1%D7%92%D7%A8%D7%94'";
+            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter={filter}&$select=SERIALNAME,PARTNAME,SERIALSTATUSDES,QUANT,REVNUM";
 
             using (HttpClient client = new HttpClient())
             {
@@ -109,48 +165,68 @@ namespace WH_Panel
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-
                     string usedUser = ApiHelper.AuthenticateClient(client);
 
                     HttpResponseMessage response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
+
                     string responseBody = await response.Content.ReadAsStringAsync();
                     var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-                    var serials = apiResponse["value"].ToObject<List<Serial>>();
-                    dgvBomsList.Rows.Clear();
-                    int notClosedCount = serials.Count(serial => serial.SERIALSTATUSDES != "נסגרה");
-                    if (serials.Count == 0)
+                    var serials = apiResponse["value"]?.ToObject<List<Serial>>() ?? new List<Serial>();
+
+                    dgvBomsList.SuspendLayout();
+                    try
                     {
-                        AppendLogMessage($"No work order data found for {warehouseName} - {warehouseDesc}", Color.Red);
-                        return;
-                    }
-                    else
-                    {
+                        dgvBomsList.Rows.Clear();
+
+                        if (serials.Count == 0)
+                        {
+                            lblLoading.BackColor = Color.Orange;
+                            lblLoading.Text = "No Open Orders";
+                            AppendLogMessage($"No open work order data found for {warehouseName} - {warehouseDesc}", Color.Red);
+                            return;
+                        }
+
+                        // כל הפק"עות שמגיעות מה-API כבר פתוחות
                         foreach (var serial in serials)
                         {
-                            if (serial.SERIALSTATUSDES != "נסגרה")
-                            {
-                                int rowIndex = dgvBomsList.Rows.Add(false, serial.SERIALNAME, serial.PARTNAME, serial.SERIALSTATUSDES, serial.QUANT, serial.REVNUM);
-                                dgvBomsList.Rows[rowIndex].Cells["Selected"].Value = false;
-                            }
+                            int rowIndex = dgvBomsList.Rows.Add(
+                                false,
+                                serial.SERIALNAME,
+                                serial.PARTNAME,
+                                serial.SERIALSTATUSDES,
+                                serial.QUANT,
+                                serial.REVNUM
+                            );
+                            dgvBomsList.Rows[rowIndex].Cells["Selected"].Value = false;
                         }
+
                         lblLoading.BackColor = Color.Green;
                         lblLoading.Text = "Data Loaded";
                         UpdateSelectedLabel();
-                        AppendLogMessage($"{notClosedCount} not closed Work Orders loaded for {warehouseName} - {warehouseDesc}", Color.Green);
+                        AppendLogMessage($"{serials.Count} not closed Work Orders loaded for {warehouseName} - {warehouseDesc}", Color.Green);
                         SortDataGridViewByStatus();
+                    }
+                    finally
+                    {
+                        dgvBomsList.ResumeLayout();
                     }
                 }
                 catch (HttpRequestException ex)
                 {
+                    lblLoading.BackColor = Color.Red;
+                    lblLoading.Text = "Error";
                     AppendLogMessage($"Request error: {ex.Message}", Color.Red);
                 }
                 catch (Exception ex)
                 {
+                    lblLoading.BackColor = Color.Red;
+                    lblLoading.Text = "Error";
                     AppendLogMessage($"Request error: {ex.Message}", Color.Red);
                 }
             }
         }
+
         private void SortDataGridViewByStatus()
         {
             dgvBomsList.Sort(dgvBomsList.Columns["SerialStatusDes"], ListSortDirection.Ascending);
@@ -347,7 +423,7 @@ namespace WH_Panel
                 string selectedWarehouse = loadedWareHouses[cmbWarehouses.SelectedIndex].WARHSNAME;
                 string selectedWarehouseDesc = loadedWareHouses[cmbWarehouses.SelectedIndex].WARHSDES;
                 // Retrieve the work orders for the selected warehouse
-                GetGetRobWosList(selectedWarehouse, selectedWarehouseDesc);
+                GetRobWosList(selectedWarehouse, selectedWarehouseDesc);
             }
             else
             {
