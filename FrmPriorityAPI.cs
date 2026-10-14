@@ -4634,6 +4634,8 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                             };
                             await WarehouseService.InsertDocumentAsync(Pdocument, this, settings);
                         }
+
+                        lastUserInput.Focus(); // Return focus to the last input field after operation
                     }
                     catch (Exception ex)
                     {
