@@ -3651,6 +3651,7 @@ namespace WH_Panel
                     {
                         // Successful update alert
                         AutoClosingMessageBox.Show($"{partName} - {qty} PCS moved to {serialName}", 1000, Color.Green);
+                        SafeAppendLog(color: Color.Green, message: $"{partName} - {qty} PCS moved to {serialName}");
                         isItemAddedToKit = true;
 
                         // ==========================================

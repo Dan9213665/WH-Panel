@@ -4635,7 +4635,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                             await WarehouseService.InsertDocumentAsync(Pdocument, this, settings);
                         }
 
-                        lastUserInput.Focus(); // Return focus to the last input field after operation
+                        
                     }
                     catch (Exception ex)
                     {
@@ -4647,6 +4647,18 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                         // This ALWAYS triggers when the awaits return or fail.
                         // It cleanly unfreezes input states without risk of lockouts.
                         SetInputLockState(false);
+                        // 2. Schedule focus after the UI message queue completes control state updates
+                        this.BeginInvoke(new System.Action(() =>
+                        {
+                            if (lastUserInput != null && lastUserInput.CanFocus)
+                            {
+                                lastUserInput.Focus();
+                                if (lastUserInput is TextBox tb)
+                                {
+                                    tb.SelectAll(); // Convenient for barcode scanners/rapid entry
+                                }
+                            }
+                        }));
                     }
                     // --- END OF SAFE DISPATCH BLOCK ---
                 }
