@@ -812,7 +812,8 @@ namespace WH_Panel
                 MFPN = textBox4.Text,
                 Description = textBox5.Text,
                 Stock = qty,
-                Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss"), //tt
+                //Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss"), //tt
+                Updated_on = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture),
                 Comments = comboBox1.Text,
                 Source_Requester = sorce_req
             };
@@ -884,7 +885,11 @@ namespace WH_Panel
                     command.Parameters.Add("@MFPN", SqlDbType.NVarChar, 255).Value = (object)wHitem.MFPN ?? DBNull.Value;
                     command.Parameters.Add("@Description", SqlDbType.NVarChar, 255).Value = (object)wHitem.Description ?? DBNull.Value;
                     command.Parameters.Add("@Stock", SqlDbType.Float).Value = wHitem.Stock;
-                    command.Parameters.Add("@Updated_on", SqlDbType.DateTime).Value = wHitem.Updated_on;
+                    // Replace this:
+                    // command.Parameters.Add("@Updated_on", SqlDbType.DateTime).Value = wHitem.Updated_on;
+
+                    // With this:
+                    command.Parameters.Add("@Updated_on", SqlDbType.NVarChar, 255).Value = (object)wHitem.Updated_on ?? DBNull.Value;
                     command.Parameters.Add("@Comments", SqlDbType.NVarChar, 255).Value = (object)wHitem.Comments ?? DBNull.Value;
                     command.Parameters.Add("@Source_Requester", SqlDbType.NVarChar, 255).Value = (object)wHitem.Source_Requester ?? DBNull.Value;
 
@@ -2298,14 +2303,16 @@ namespace WH_Panel
         {
             e.OriginalItem.Source_Requester = "SPLIT";
             e.OriginalItem.Stock = e.OriginalItem.Stock * (-1);
-            e.OriginalItem.Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
+            e.OriginalItem.Updated_on = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);//Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
+
+
             DataInserterSplitter(stockFile, "STOCK", e.OriginalItem, false);
             stockItems.Add(e.OriginalItem);
             Thread.Sleep(1000);
-            e.AdjustedItemA.Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
+            e.AdjustedItemA.Updated_on = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);//Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
             DataInserterSplitter(stockFile, "STOCK", e.AdjustedItemA, true);
             stockItems.Add(e.AdjustedItemA);
-            e.AdjustedItemB.Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
+            e.AdjustedItemB.Updated_on = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);//Updated_on = DateTime.Now.ToString("yyyy-MM-dd") + " " + DateTime.Now.ToString("HH:mm:ss");
             DataInserterSplitter(stockFile, "STOCK", e.AdjustedItemB, true);
             stockItems.Add(e.AdjustedItemB);
             PopulateStockView();
