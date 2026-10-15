@@ -2940,7 +2940,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                 }
 
                 // Fallback: Check manufacturer part numbers (PARTMNFONE) - Capped to Top 50
-                if (matchedItems.Count == 0)
+                if (matchedItems.Count != 0)
                 {
                     string mfpnPattern = $"*{cleanInput}*";
                     string mfpnUrl = $"{baseUrl}/PARTMNFONE?$select=PART,PARTNAME,MNFCTRNAME,MNFCTRPARTNAME" +
@@ -2965,6 +2965,8 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                 if (matchedItems.Count == 0)
                 {
                     MessageBox.Show($"No raw parts found in {selectedWarehouse} matching '{input}'.", "Not Found", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    AppendLog($"No raw parts found in {selectedWarehouse} matching '{input}'.\n", color: Color.Red);
+                    txtbFilterIPN.Clear();
                     return;
                 }
 
