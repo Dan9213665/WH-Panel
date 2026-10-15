@@ -2967,6 +2967,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                     MessageBox.Show($"No raw parts found in {selectedWarehouse} matching '{input}'.", "Not Found", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     AppendLog($"No raw parts found in {selectedWarehouse} matching '{input}'.\n", color: Color.Red);
                     txtbFilterIPN.Clear();
+                    txtbFilterIPN.Focus();
                     return;
                 }
 
