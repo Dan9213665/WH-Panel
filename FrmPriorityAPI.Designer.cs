@@ -71,7 +71,11 @@
             dataGridView1 = new DataGridView();
             txtbFilterIPN = new TextBox();
             groupBox4 = new GroupBox();
+            tableLayoutPanel12 = new TableLayoutPanel();
+            groupBox6 = new GroupBox();
             dataGridView2 = new DataGridView();
+            groupBox7 = new GroupBox();
+            dgvINSTOCKONLY = new DataGridView();
             txtbWHSID = new TextBox();
             txtbPART = new TextBox();
             tableLayoutPanel10 = new TableLayoutPanel();
@@ -119,7 +123,11 @@
             groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             groupBox4.SuspendLayout();
+            tableLayoutPanel12.SuspendLayout();
+            groupBox6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
+            groupBox7.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvINSTOCKONLY).BeginInit();
             tableLayoutPanel10.SuspendLayout();
             gpbxRequested.SuspendLayout();
             tableLayoutPanel11.SuspendLayout();
@@ -787,7 +795,7 @@
             // groupBox4
             // 
             tableLayoutPanel3.SetColumnSpan(groupBox4, 3);
-            groupBox4.Controls.Add(dataGridView2);
+            groupBox4.Controls.Add(tableLayoutPanel12);
             groupBox4.Dock = DockStyle.Fill;
             groupBox4.Location = new Point(831, 108);
             groupBox4.Margin = new Padding(3, 4, 3, 4);
@@ -797,7 +805,33 @@
             groupBox4.Size = new Size(559, 408);
             groupBox4.TabIndex = 4;
             groupBox4.TabStop = false;
-            groupBox4.Text = "Movements for IPN";
+            groupBox4.Text = "Detailed info for selected IPN";
+            // 
+            // tableLayoutPanel12
+            // 
+            tableLayoutPanel12.ColumnCount = 1;
+            tableLayoutPanel12.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel12.Controls.Add(groupBox6, 0, 1);
+            tableLayoutPanel12.Controls.Add(groupBox7, 0, 0);
+            tableLayoutPanel12.Dock = DockStyle.Fill;
+            tableLayoutPanel12.Location = new Point(3, 24);
+            tableLayoutPanel12.Name = "tableLayoutPanel12";
+            tableLayoutPanel12.RowCount = 2;
+            tableLayoutPanel12.RowStyles.Add(new RowStyle(SizeType.Percent, 41.31579F));
+            tableLayoutPanel12.RowStyles.Add(new RowStyle(SizeType.Percent, 58.68421F));
+            tableLayoutPanel12.Size = new Size(553, 380);
+            tableLayoutPanel12.TabIndex = 1;
+            // 
+            // groupBox6
+            // 
+            groupBox6.Controls.Add(dataGridView2);
+            groupBox6.Dock = DockStyle.Fill;
+            groupBox6.Location = new Point(3, 160);
+            groupBox6.Name = "groupBox6";
+            groupBox6.Size = new Size(547, 217);
+            groupBox6.TabIndex = 1;
+            groupBox6.TabStop = false;
+            groupBox6.Text = "All movements";
             // 
             // dataGridView2
             // 
@@ -809,15 +843,45 @@
             dataGridView2.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView2.Dock = DockStyle.Fill;
-            dataGridView2.Location = new Point(3, 24);
+            dataGridView2.Location = new Point(3, 23);
             dataGridView2.Margin = new Padding(3, 4, 3, 4);
             dataGridView2.Name = "dataGridView2";
             dataGridView2.ReadOnly = true;
             dataGridView2.RowHeadersWidth = 51;
-            dataGridView2.Size = new Size(553, 380);
+            dataGridView2.Size = new Size(541, 191);
             dataGridView2.TabIndex = 0;
+            dataGridView2.CellClick += dataGridView2_CellClick;
             dataGridView2.CellDoubleClick += dataGridView2_CellDoubleClick;
             dataGridView2.CellMouseDown += dataGridView2_CellMouseDown;
+            // 
+            // groupBox7
+            // 
+            groupBox7.Controls.Add(dgvINSTOCKONLY);
+            groupBox7.Dock = DockStyle.Fill;
+            groupBox7.Location = new Point(3, 3);
+            groupBox7.Name = "groupBox7";
+            groupBox7.Size = new Size(547, 151);
+            groupBox7.TabIndex = 2;
+            groupBox7.TabStop = false;
+            groupBox7.Text = "IN-STOCK items only";
+            // 
+            // dgvINSTOCKONLY
+            // 
+            dgvINSTOCKONLY.AllowUserToAddRows = false;
+            dgvINSTOCKONLY.AllowUserToDeleteRows = false;
+            dgvINSTOCKONLY.AllowUserToResizeColumns = false;
+            dgvINSTOCKONLY.AllowUserToResizeRows = false;
+            dgvINSTOCKONLY.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            dgvINSTOCKONLY.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            dgvINSTOCKONLY.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvINSTOCKONLY.Dock = DockStyle.Fill;
+            dgvINSTOCKONLY.Location = new Point(3, 23);
+            dgvINSTOCKONLY.Name = "dgvINSTOCKONLY";
+            dgvINSTOCKONLY.ReadOnly = true;
+            dgvINSTOCKONLY.RowHeadersWidth = 51;
+            dgvINSTOCKONLY.Size = new Size(541, 125);
+            dgvINSTOCKONLY.TabIndex = 0;
+            dgvINSTOCKONLY.CellDoubleClick += dgvINSTOCKONLY_CellDoubleClick;
             // 
             // txtbWHSID
             // 
@@ -1334,7 +1398,11 @@
             groupBox3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             groupBox4.ResumeLayout(false);
+            tableLayoutPanel12.ResumeLayout(false);
+            groupBox6.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
+            groupBox7.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvINSTOCKONLY).EndInit();
             tableLayoutPanel10.ResumeLayout(false);
             gpbxRequested.ResumeLayout(false);
             tableLayoutPanel11.ResumeLayout(false);
@@ -1431,5 +1499,9 @@
         private TextBox txtbMouse;
         private GroupBox gpbxOpenPOs;
         private FlowLayoutPanel flpOpenPOs;
+        private TableLayoutPanel tableLayoutPanel12;
+        private GroupBox groupBox6;
+        private GroupBox groupBox7;
+        private DataGridView dgvINSTOCKONLY;
     }
 }

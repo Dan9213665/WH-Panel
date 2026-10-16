@@ -874,7 +874,7 @@ namespace WH_Panel
         {
             var ipnToMfpn = new Dictionary<string, string>();
             var ipnList = ipns.Distinct().ToList();
-            int batchSize = 5; // Adjust as needed for API limits
+            int batchSize = 20; // Adjust as needed for API limits
 
             for (int i = 0; i < ipnList.Count; i += batchSize)
             {

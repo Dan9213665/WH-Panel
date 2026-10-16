@@ -2347,7 +2347,7 @@ namespace WH_Panel
 
                 var docData = new Dictionary<string, (string ToWarhs, string BookNum, string UDate, Dictionary<int, (string PackCode, string LineWarhs)> Packs)>(StringComparer.OrdinalIgnoreCase);
 
-                const int batchSize = 20;
+                const int batchSize = 30;
                 for (int i = 0; i < survivingDocNos.Count; i += batchSize)
                 {
                     var batch = survivingDocNos.Skip(i).Take(batchSize).ToList();
@@ -2457,7 +2457,7 @@ namespace WH_Panel
 
         private async Task FetchAltsForAllRows()
         {
-            const int batchSize = 40;
+            const int batchSize = 50;
             SafeAppendLog($"Fetching alts for all rows in batches of {batchSize}...", Color.Yellow);
 
             // Get all rows that need ALT fetching

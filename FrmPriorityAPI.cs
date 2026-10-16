@@ -379,7 +379,7 @@ namespace WH_Panel
             // -------------------------------------------------------------
             // TUNABLE BATCH SIZE: Change this to 15, 25, 40, etc. to test
             // -------------------------------------------------------------
-            int batchSize = 25;
+            int batchSize = 40;
 
             var resolvedMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
@@ -514,7 +514,7 @@ namespace WH_Panel
 
             public int TRANS { get; set; }
 
-            
+
         }
         public class WarehouseBalanceApiResponse
         {
@@ -686,9 +686,9 @@ namespace WH_Panel
 
         // 1. Blacklist uses friendly names cleanly
         public static HashSet<string> SessionBlacklist = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-{
-   //"Yuri_G","master","Jessica"
-};
+        {
+            //"Yuri_G","master","Jessica"
+        };
 
         public string SelectTheCredentialsByLoggedUser(AppSettings settings)
         {
@@ -770,7 +770,7 @@ namespace WH_Panel
 
         public class WarehouseService
         {
-           
+
             public static async Task InsertDocumentAsync(Document document, FrmPriorityAPI formInstance, AppSettings settings)
             {
                 using (HttpClient client = new HttpClient())
@@ -789,7 +789,7 @@ namespace WH_Panel
                             string apiUrl = $"{baseUrl}/DOCUMENTS_P";
                             string jsonPayload = JsonConvert.SerializeObject(document);
                             var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-                            
+
                             //MessageBox.Show(jsonPayload, "Raw JSON Payload");
 
                             HttpResponseMessage response = await client.PostAsync(apiUrl, content);
@@ -802,7 +802,8 @@ namespace WH_Panel
                                 string insertedIpn = formInstance.txtbInputIPN.Text;
 
                                 // UI Updates must be on UI Thread
-                                formInstance.Invoke((System.Windows.Forms.MethodInvoker)delegate {
+                                formInstance.Invoke((System.Windows.Forms.MethodInvoker)delegate
+                                {
                                     formInstance.comboBox1_SelectedIndexChanged(formInstance.cmbWarehouseList, EventArgs.Empty);
                                     formInstance.txtbInputIPN.Clear();
                                     formInstance.txtbInputMFPN.Clear();
@@ -842,7 +843,7 @@ namespace WH_Panel
                     }
                 }
             }
-           
+
 
             public static async Task TransfertDocumentAsync(TDocument document, FrmPriorityAPI formInstance, AppSettings settings)
             {
@@ -875,7 +876,7 @@ namespace WH_Panel
                             //MessageBox.Show(docNo);
                             string insertedIpn = formInstance.txtbInputIPN.Text;
                             formInstance.comboBox1_SelectedIndexChanged(formInstance.cmbWarehouseList, EventArgs.Empty);
-                            
+
                             formInstance.AppendLog($"{insertedIpn} successfully transferred. Document number: {docNo}\n", Color.Green);
 
                             formInstance.txtbInputIPN.Clear();
@@ -1251,13 +1252,13 @@ namespace WH_Panel
                         };
                         panel.Controls.Add(btnSerial);
 
-           
+
 
                         int currentLeft = btnSerial.Right + 15;
 
                         foreach (var kit in kitLines)
                         {
-                           
+
                             // Only take the first kit line
                             var firstKit = kitLines.FirstOrDefault();
                             if (firstKit != null)
@@ -1531,7 +1532,7 @@ namespace WH_Panel
                     btnMFG_Click(sender, e);
                     if (!tbtOUT.Checked)
                     {
-                        
+
                         btnPrintSticker_Click(sender, e);
 
                     }
@@ -1573,13 +1574,13 @@ namespace WH_Panel
                 QTY = qty // Set the QTY from textBox5
             };
             // Call the printSticker method
-            if(canPrint)
+            if (canPrint)
             {
 
                 printSticker(part);
                 flpSerials.Controls.Clear();
             }
-            
+
         }
         private async void txtbInputMFPN_KeyDown(object sender, KeyEventArgs e, TextBox lastInput)
         {
@@ -1692,7 +1693,7 @@ namespace WH_Panel
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     // Set the Authorization header
-                 
+
                     //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.ApiUsername}:{settings.ApiPassword}"));
                     string credentials = SelectTheCredentialsByLoggedUser(settings);
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
@@ -1957,7 +1958,7 @@ namespace WH_Panel
         //UPDATED 202609070851
 
         // --- 1. Static Client Pool(Prevents socket exhaustion and thread-safety issues) ---
-private static readonly ConcurrentBag<HttpClient> _clientPool = new();
+        private static readonly ConcurrentBag<HttpClient> _clientPool = new();
         private static readonly object _poolInitLock = new();
         private static bool _poolInitialized = false;
 
@@ -2016,7 +2017,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
         // --- 2. Main Event Handler ---
         private async void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            
+
         }
 
         // --- 3. Batched Document Enrichment ---
@@ -2037,7 +2038,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                 var docs = group.ToList();
 
                 // Prevent query URLs from exceeding length limits by chunking to 25 items per request
-                const int maxChunkSize = 25;
+                const int maxChunkSize = 40;
                 for (int i = 0; i < docs.Count; i += maxChunkSize)
                 {
                     var chunk = docs.Skip(i).Take(maxChunkSize).ToList();
@@ -2171,7 +2172,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                 var s when s.StartsWith("WR", StringComparison.OrdinalIgnoreCase) =>
                     new DocEndpointConfig("DOCUMENTS_T", "DOCNO", "TRANSORDER_T_SUBFORM", true, true),
                 var s when s.StartsWith("ROB", StringComparison.OrdinalIgnoreCase) =>
-            
+
                     new DocEndpointConfig("SERIAL", "SERIALNAME", "TRANSORDER_K_SUBFORM", false, false),
                 var s when s.StartsWith("SH", StringComparison.OrdinalIgnoreCase) =>
                     new DocEndpointConfig("DOCUMENTS_D", "DOCNO", "TRANSORDER_D_SUBFORM", true, true),
@@ -2260,7 +2261,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     // Set the Authorization header
-             
+
 
 
                     string usedUser = ApiHelper.AuthenticateClient(client);
@@ -2381,7 +2382,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                         // Set the Authorization header
-                   
+
 
 
                         string usedUser = ApiHelper.AuthenticateClient(client);
@@ -2434,7 +2435,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                         // Set the Authorization header
-                     
+
 
 
 
@@ -2966,8 +2967,8 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                 {
                     MessageBox.Show($"No raw parts found in {selectedWarehouse} matching '{input}'.", "Not Found", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     AppendLog($"No raw parts found in {selectedWarehouse} matching '{input}'.\n", color: Color.Red);
-                   txtbFilterIPN.Clear();
-                   txtbFilterIPN.Focus();
+                    txtbFilterIPN.Clear();
+                    txtbFilterIPN.Focus();
                     return;
                 }
 
@@ -3058,17 +3059,426 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
         }
 
 
+        //private async void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        //{
+        //    //MessageBox.Show("Print stickers from Stock Movements list  >>>>");
+
+        //    if (e.RowIndex < 0) return; // Ensure row index is valid
+
+        //    var selectedRow = dataGridView1.Rows[e.RowIndex];
+        //    var partName = selectedRow.Cells["PARTNAME"]?.Value?.ToString();
+        //    if (string.IsNullOrWhiteSpace(partName)) return;
+
+        //    string logPartUrl = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{Uri.EscapeDataString(partName)}'&$expand=PARTTRANSLAST2_SUBFORM($top=50;$orderby=CURDATE desc;)";
+
+        //    try
+        //    {
+        //        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
+        //        string logPartResponseBody = await ExecuteWithPooledClientAsync(async client =>
+        //        {
+        //            using var response = await client.GetAsync(logPartUrl);
+        //            response.EnsureSuccessStatusCode();
+        //            return await response.Content.ReadAsStringAsync();
+        //        });
+
+        //        stopwatch.Stop();
+        //        UpdatePing(stopwatch.ElapsedMilliseconds);
+
+        //        var logPartApiResponse = JsonConvert.DeserializeObject<LogPartApiResponse>(logPartResponseBody);
+        //        if (logPartApiResponse?.value == null || logPartApiResponse.value.Count == 0)
+        //        {
+        //            MessageBox.Show("No stock movements found for the selected part.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //            return;
+        //        }
+
+        //        // Initialize Grid 2 Structure
+        //        InitializeMovementsGrid();
+
+        //        var validDocNumbers = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        //        // Populate initial movement records
+        //        foreach (var logPart in logPartApiResponse.value)
+        //        {
+        //            if (logPart.PARTTRANSLAST2_SUBFORM == null) continue;
+
+        //            foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
+        //            {
+        //                if (trans.DOCDES != "קיזוז אוטומטי" && trans.DOCDES != "חשבוניות מס" && trans.TOWARHSNAME != "666")
+        //                {
+        //                    dataGridView2.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "");
+        //                    if (!string.IsNullOrWhiteSpace(trans.LOGDOCNO))
+        //                    {
+        //                        validDocNumbers.Add(trans.LOGDOCNO);
+        //                    }
+        //                }
+        //            }
+        //        }
+
+        //        groupBox4.Text = $"Stock Movements for {partName}";
+        //        ColorTheRows2(dataGridView2);
+
+        //        // Enrich only the retrieved unique documents in bulk
+        //        if (validDocNumbers.Count > 0)
+        //        {
+        //            await EnrichGridBatchedAsync(partName, validDocNumbers.ToList());
+        //        }
+        //    }
+        //    catch (HttpRequestException ex)
+        //    {
+        //        AppendLog($"Request error: {ex.Message}", Color.Red);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        if (txtLog != null && !txtLog.IsDisposed)
+        //        {
+        //            AppendLog($"Processing error: {ex.Message}", Color.Red);
+        //        }
+        //    }
+        //}
+
+
+
+        //private async void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        //{
+        //    if (e.RowIndex < 0) return;
+
+        //    var selectedRow = dataGridView1.Rows[e.RowIndex];
+        //    var partName = selectedRow.Cells["PARTNAME"]?.Value?.ToString();
+        //    if (string.IsNullOrWhiteSpace(partName)) return;
+
+        //    // 1. Grab target live warehouse balance if column exists in Grid 1 (BOM / Part list)
+        //    int targetBalance = -1; // -1 indicates unknown/not provided
+        //    if (dataGridView1.Columns.Contains("TBALANCE") && selectedRow.Cells["TBALANCE"]?.Value != null)
+        //    {
+        //        int.TryParse(selectedRow.Cells["TBALANCE"].Value.ToString(), out targetBalance);
+        //    }
+        //    else if (dataGridView1.Columns.Contains("BALANCE") && selectedRow.Cells["BALANCE"]?.Value != null)
+        //    {
+        //        int.TryParse(selectedRow.Cells["BALANCE"].Value.ToString(), out targetBalance);
+        //    }
+
+        //    InitializeMovementsGrid();
+        //    InitializeInStockGrid(); // Initializes dgvINSTOCKONLY columns and formatting
+
+        //    dataGridView2.Rows.Clear();
+        //    dgvINSTOCKONLY.Rows.Clear();
+
+        //    // =========================================================================
+        //    // API CALL 1: Pull transaction history (Single roundtrip)
+        //    // =========================================================================
+        //    string logPartUrl = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{Uri.EscapeDataString(partName)}'" +
+        //                        $"&$expand=PARTTRANSLAST2_SUBFORM($top=100;$orderby=CURDATE desc)";
+
+        //    try
+        //    {
+        //        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
+        //        string logPartResponseBody = await ExecuteWithPooledClientAsync(async client =>
+        //        {
+        //            using var response = await client.GetAsync(logPartUrl);
+        //            response.EnsureSuccessStatusCode();
+        //            return await response.Content.ReadAsStringAsync();
+        //        });
+
+        //        stopwatch.Stop();
+        //        UpdatePing(stopwatch.ElapsedMilliseconds);
+
+        //        var logPartApiResponse = JsonConvert.DeserializeObject<LogPartApiResponse>(logPartResponseBody);
+        //        var movements = logPartApiResponse?.value?.FirstOrDefault()?.PARTTRANSLAST2_SUBFORM;
+
+        //        if (movements == null || movements.Count == 0)
+        //        {
+        //            AppendLog($"No stock movements found for {partName}.", Color.Yellow);
+        //            return;
+        //        }
+
+        //        // =========================================================================
+        //        // STEP 1: Populate Audit History Grid (dataGridView2) & Split Inflow / Outflow
+        //        // =========================================================================
+        //        var receiptBuckets = new List<(PartTransLast2 Trans, int RemainingQty)>();
+        //        var issueBuckets = new List<(PartTransLast2 Trans, int RemainingQty)>();
+
+        //        foreach (var trans in movements)
+        //        {
+        //            string docNo = trans.LOGDOCNO?.Trim() ?? "";
+        //            if (string.IsNullOrEmpty(docNo)) continue;
+
+        //            bool isIC = docNo.StartsWith("IC", StringComparison.OrdinalIgnoreCase);
+        //            if (!isIC)
+        //            {
+        //                if (trans.DOCDES == "קיזוז אוטומטי" || trans.DOCDES == "חשבוניות מס")
+        //                    continue;
+        //            }
+
+        //            // Exclude quarantine warehouse 666
+        //            if (trans.TOWARHSNAME == "666")
+        //                continue;
+
+        //            if (isIC)
+        //            {
+        //                trans.TQUANT = Math.Abs(trans.TQUANT);
+        //            }
+
+        //            // Populate the historical ledger grid directly — ZERO enrichment calls!
+        //            dataGridView2.Rows.Add(
+        //                trans.CURDATE?.ToString() ?? "",
+        //                trans.LOGDOCNO,
+        //                trans.DOCDES,
+        //                trans.SUPCUSTNAME,
+        //                "", // BOOKNUM (Not needed for historical ledger)
+        //                trans.TQUANT,
+        //                ""  // PACK (Not needed for historical ledger)
+        //            );
+
+        //            int qty = (int)trans.TQUANT;
+        //            if (qty <= 0) continue;
+
+        //            // Separate incoming receipts vs outgoing issues
+        //            if (docNo.StartsWith("ROB", StringComparison.OrdinalIgnoreCase) ||
+        //                isIC ||
+        //                docNo.StartsWith("WR", StringComparison.OrdinalIgnoreCase) ||
+        //                docNo.StartsWith("SH", StringComparison.OrdinalIgnoreCase))
+        //            {
+        //                issueBuckets.Add((trans, qty));
+        //            }
+        //            else if (docNo.StartsWith("GR", StringComparison.OrdinalIgnoreCase))
+        //            {
+        //                receiptBuckets.Add((trans, qty));
+        //            }
+        //        }
+
+        //        groupBox4.Text = $"Stock Movements for {partName} ({dataGridView2.Rows.Count})";
+        //        ColorTheRows2(dataGridView2);
+
+        //        // Short-circuit if known balance is already 0
+        //        if (targetBalance == 0)
+        //        {
+        //            AppendLog($"Live balance is 0. No physical packages on shelf.", Color.LimeGreen);
+        //            return;
+        //        }
+
+        //        // =========================================================================
+        //        // STEP 2: Intelligent Stock Reconciliation (Exact Match + FIFO Drain)
+        //        // =========================================================================
+
+        //        // PASS 1: Exact Quantity Matching (Cancels full-reel issues, e.g. 5000 -> 5000)
+        //        for (int i = 0; i < issueBuckets.Count; i++)
+        //        {
+        //            if (issueBuckets[i].RemainingQty == 0) continue;
+
+        //            for (int r = 0; r < receiptBuckets.Count; r++)
+        //            {
+        //                if (receiptBuckets[r].RemainingQty == issueBuckets[i].RemainingQty)
+        //                {
+        //                    receiptBuckets[r] = (receiptBuckets[r].Trans, 0);
+        //                    issueBuckets[i] = (issueBuckets[i].Trans, 0);
+        //                    break;
+        //                }
+        //            }
+        //        }
+
+        //        // PASS 2: FIFO Partial Drain (Splits and partial issues)
+        //        for (int i = 0; i < issueBuckets.Count; i++)
+        //        {
+        //            int currentIssueRemaining = issueBuckets[i].RemainingQty;
+        //            if (currentIssueRemaining == 0) continue;
+
+        //            for (int r = 0; r < receiptBuckets.Count; r++)
+        //            {
+        //                if (currentIssueRemaining == 0) break;
+        //                if (receiptBuckets[r].RemainingQty == 0) continue;
+
+        //                if (receiptBuckets[r].RemainingQty <= currentIssueRemaining)
+        //                {
+        //                    currentIssueRemaining -= receiptBuckets[r].RemainingQty;
+        //                    receiptBuckets[r] = (receiptBuckets[r].Trans, 0);
+        //                }
+        //                else
+        //                {
+        //                    receiptBuckets[r] = (receiptBuckets[r].Trans, receiptBuckets[r].RemainingQty - currentIssueRemaining);
+        //                    currentIssueRemaining = 0;
+        //                }
+        //            }
+
+        //            issueBuckets[i] = (issueBuckets[i].Trans, currentIssueRemaining);
+        //        }
+
+        //        var survivingReceipts = receiptBuckets.Where(r => r.RemainingQty > 0).ToList();
+        //        if (survivingReceipts.Count == 0)
+        //        {
+        //            AppendLog("All packages consumed by ledger replay. In-stock is 0.", Color.Yellow);
+        //            return;
+        //        }
+
+        //        // =========================================================================
+        //        // API CALL 2: Fetch Metadata (PACKCODE, BOOKNUM) ONLY for surviving receipts
+        //        // =========================================================================
+        //        var survivingDocNos = survivingReceipts
+        //            .Select(x => x.Trans.LOGDOCNO.Trim())
+        //            .Distinct(StringComparer.OrdinalIgnoreCase)
+        //            .ToList();
+
+        //        var docData = new Dictionary<string, (string BookNum, string UDate, Dictionary<int, string> Packs)>(StringComparer.OrdinalIgnoreCase);
+
+        //        // Usually survivingDocNos is 1 to 3 documents, so this fires a single tight query
+        //        const int batchSize = 30;
+        //        for (int i = 0; i < survivingDocNos.Count; i += batchSize)
+        //        {
+        //            var batch = survivingDocNos.Skip(i).Take(batchSize).ToList();
+        //            string docFilter = string.Join(" or ", batch.Select(d => $"DOCNO eq '{Uri.EscapeDataString(d)}'"));
+        //            string batchDocUrl = $"{baseUrl}/DOCUMENTS_P?$filter=({docFilter})" +
+        //                                 $"&$select=DOCNO,BOOKNUM,UDATE,TOWARHSNAME" +
+        //                                 $"&$expand=TRANSORDER_P_SUBFORM($filter=PARTNAME eq '{Uri.EscapeDataString(partName)}';$select=PARTNAME,TQUANT,PACKCODE,WARHSNAME)";
+
+        //            string docResponseBody = await ExecuteWithPooledClientAsync(async client =>
+        //            {
+        //                using var response = await client.GetAsync(batchDocUrl);
+        //                if (!response.IsSuccessStatusCode) return null;
+        //                return await response.Content.ReadAsStringAsync();
+        //            });
+
+        //            if (!string.IsNullOrEmpty(docResponseBody))
+        //            {
+        //                var docApiResponse = JsonConvert.DeserializeObject<JObject>(docResponseBody);
+        //                var docs = docApiResponse?["value"] as JArray;
+
+        //                if (docs != null)
+        //                {
+        //                    foreach (var doc in docs)
+        //                    {
+        //                        string docNo = doc["DOCNO"]?.ToString();
+        //                        string bookNum = doc["BOOKNUM"]?.ToString() ?? "";
+        //                        string uDate = doc["UDATE"]?.ToString() ?? "";
+
+        //                        var packMap = new Dictionary<int, string>();
+        //                        if (doc["TRANSORDER_P_SUBFORM"] is JArray transP)
+        //                        {
+        //                            foreach (var line in transP)
+        //                            {
+        //                                int q = line["TQUANT"] != null ? (int)line["TQUANT"] : 0;
+        //                                string pCode = line["PACKCODE"]?.ToString() ?? "";
+        //                                packMap[q] = pCode;
+        //                            }
+        //                        }
+
+        //                        docData[docNo] = (bookNum, uDate, packMap);
+        //                    }
+        //                }
+        //            }
+        //        }
+
+        //        // =========================================================================
+        //        // STEP 3: Populate dgvINSTOCKONLY with surviving physical stock
+        //        // =========================================================================
+        //        dgvINSTOCKONLY.SuspendLayout();
+        //        try
+        //        {
+        //            foreach (var item in survivingReceipts)
+        //            {
+        //                string docNo = item.Trans.LOGDOCNO.Trim();
+        //                string bookNum = "";
+        //                string packCode = "";
+
+        //                if (docData.TryGetValue(docNo, out var meta))
+        //                {
+        //                    bookNum = meta.BookNum;
+        //                    if (meta.Packs.TryGetValue((int)item.Trans.TQUANT, out var foundPack))
+        //                    {
+        //                        packCode = foundPack;
+        //                    }
+        //                }
+
+        //                dgvINSTOCKONLY.Rows.Add(
+        //                    item.Trans.CURDATE?.ToString() ?? "",
+        //                    item.Trans.LOGDOCNO,
+        //                    item.Trans.DOCDES,
+        //                    item.Trans.SUPCUSTNAME,
+        //                    bookNum,
+        //                    item.RemainingQty, // Displays the true remaining quantity on this reel/package
+        //                    packCode
+        //                );
+        //            }
+        //        }
+        //        finally
+        //        {
+        //            dgvINSTOCKONLY.ResumeLayout();
+        //        }
+
+        //        ColorTheRows2(dgvINSTOCKONLY);
+        //    }
+        //    catch (HttpRequestException ex)
+        //    {
+        //        AppendLog($"Request error: {ex.Message}", Color.Red);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        AppendLog($"Stock movement error: {ex.Message}", Color.Red);
+        //    }
+        //}
+
+
+
+        private static DateTime ParsePriorityDate(string dateStr)
+        {
+            if (string.IsNullOrWhiteSpace(dateStr)) return DateTime.MinValue;
+
+            if (DateTime.TryParse(dateStr, System.Globalization.CultureInfo.InvariantCulture,
+                System.Globalization.DateTimeStyles.AdjustToUniversal | System.Globalization.DateTimeStyles.AssumeUniversal,
+                out DateTime parsedUtc))
+            {
+                return parsedUtc;
+            }
+
+            if (DateTime.TryParse(dateStr, out DateTime parsedLocal))
+            {
+                return parsedLocal;
+            }
+
+            return DateTime.MinValue;
+        }
+
+        private static string FormatPriorityDate(string dateStr)
+        {
+            if (string.IsNullOrWhiteSpace(dateStr)) return "";
+
+            DateTime dt = ParsePriorityDate(dateStr);
+            if (dt == DateTime.MinValue) return dateStr;
+
+            // Uniform clean view across all grids: "yyyy-MM-dd HH:mm:ss"
+            return dt.ToString("yyyy-MM-dd HH:mm:ss");
+        }
+
         private async void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            //MessageBox.Show("Print stickers from Stock Movements list  >>>>");
-
-            if (e.RowIndex < 0) return; // Ensure row index is valid
+            if (e.RowIndex < 0) return;
 
             var selectedRow = dataGridView1.Rows[e.RowIndex];
             var partName = selectedRow.Cells["PARTNAME"]?.Value?.ToString();
             if (string.IsNullOrWhiteSpace(partName)) return;
 
-            string logPartUrl = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{Uri.EscapeDataString(partName)}'&$expand=PARTTRANSLAST2_SUBFORM($top=50;$orderby=CURDATE desc;)";
+            // 1. Grab target live warehouse balance if column exists in Grid 1
+            double targetBalance = -1;
+            if (dataGridView1.Columns.Contains("TBALANCE") && selectedRow.Cells["TBALANCE"]?.Value != null)
+            {
+                double.TryParse(selectedRow.Cells["TBALANCE"].Value.ToString(), out targetBalance);
+            }
+            else if (dataGridView1.Columns.Contains("BALANCE") && selectedRow.Cells["BALANCE"]?.Value != null)
+            {
+                double.TryParse(selectedRow.Cells["BALANCE"].Value.ToString(), out targetBalance);
+            }
+
+            InitializeMovementsGrid();
+            InitializeInStockGrid();
+
+            dataGridView2.Rows.Clear();
+            dgvINSTOCKONLY.Rows.Clear();
+
+            // =========================================================================
+            // API CALL 1: Pull transaction history (Single roundtrip)
+            // =========================================================================
+            string logPartUrl = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{Uri.EscapeDataString(partName)}'" +
+                                $"&$expand=PARTTRANSLAST2_SUBFORM($top=100;$orderby=CURDATE desc)";
 
             try
             {
@@ -3085,43 +3495,270 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                 UpdatePing(stopwatch.ElapsedMilliseconds);
 
                 var logPartApiResponse = JsonConvert.DeserializeObject<LogPartApiResponse>(logPartResponseBody);
-                if (logPartApiResponse?.value == null || logPartApiResponse.value.Count == 0)
+                var movements = logPartApiResponse?.value?.FirstOrDefault()?.PARTTRANSLAST2_SUBFORM;
+
+                if (movements == null || movements.Count == 0)
                 {
-                    MessageBox.Show("No stock movements found for the selected part.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    AppendLog($"No stock movements found for {partName}.", Color.Yellow);
                     return;
                 }
 
-                // Initialize Grid 2 Structure
-                InitializeMovementsGrid();
+                // =========================================================================
+                // STEP 1: Populate Audit History Grid & Bucket Partitioning
+                // =========================================================================
+                var receiptBuckets = new List<(PartTransLast2 Trans, double RemainingQty, DateTime Date)>();
+                var issueBuckets = new List<(PartTransLast2 Trans, double RemainingQty, DateTime Date)>();
 
-                var validDocNumbers = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                DateTime? latestIcDate = null;
 
-                // Populate initial movement records
-                foreach (var logPart in logPartApiResponse.value)
+                foreach (var trans in movements)
                 {
-                    if (logPart.PARTTRANSLAST2_SUBFORM == null) continue;
+                    string docNo = trans.LOGDOCNO?.Trim() ?? "";
+                    if (string.IsNullOrEmpty(docNo)) continue;
 
-                    foreach (var trans in logPart.PARTTRANSLAST2_SUBFORM)
+                    bool isIC = docNo.StartsWith("IC", StringComparison.OrdinalIgnoreCase);
+                    if (!isIC)
                     {
-                        if (trans.DOCDES != "קיזוז אוטומטי" && trans.DOCDES != "חשבוניות מס" && trans.TOWARHSNAME != "666")
+                        if (trans.DOCDES == "קיזוז אוטומטי" || trans.DOCDES == "חשבוניות מס")
+                            continue;
+                    }
+
+                    if (trans.TOWARHSNAME == "666")
+                        continue;
+
+                    DateTime transDate = ParsePriorityDate(trans.CURDATE);
+
+                    if (isIC && latestIcDate == null)
+                    {
+                        latestIcDate = transDate;
+                    }
+
+                    // Raw audit log in dataGridView2
+                    dataGridView2.Rows.Add(
+                        FormatPriorityDate(trans.CURDATE),
+                        trans.LOGDOCNO,
+                        trans.DOCDES,
+                        trans.SUPCUSTNAME,
+                        trans.BOOKNUM ?? "",
+                        trans.TQUANT,
+                        ""
+                    );
+
+                    double qty = trans.TQUANT;
+                    if (Math.Abs(qty) < 0.0001 || isIC) continue;
+
+                    if (docNo.StartsWith("ROB", StringComparison.OrdinalIgnoreCase) ||
+                        docNo.StartsWith("WR", StringComparison.OrdinalIgnoreCase) ||
+                        docNo.StartsWith("SH", StringComparison.OrdinalIgnoreCase))
+                    {
+                        issueBuckets.Add((trans, Math.Abs(qty), transDate));
+                    }
+                    else if (docNo.StartsWith("GR", StringComparison.OrdinalIgnoreCase))
+                    {
+                        receiptBuckets.Add((trans, Math.Abs(qty), transDate));
+                    }
+                }
+
+                groupBox4.Text = $"Stock Movements for {partName} ({dataGridView2.Rows.Count})";
+                ColorTheRows2(dataGridView2);
+
+                if (targetBalance == 0)
+                {
+                    AppendLog($"Live balance is 0. No physical packages on shelf.", Color.LimeGreen);
+                    return;
+                }
+
+                // =========================================================================
+                // STEP 2: Chronological Reconciliation (Respecting Time Causality + IC)
+                // =========================================================================
+
+                // 1. Absorb pre-IC receipts
+                if (latestIcDate.HasValue)
+                {
+                    for (int r = 0; r < receiptBuckets.Count; r++)
+                    {
+                        if (receiptBuckets[r].Date < latestIcDate.Value)
                         {
-                            dataGridView2.Rows.Add("", trans.LOGDOCNO, trans.DOCDES, trans.SUPCUSTNAME, "", trans.TQUANT, "");
-                            if (!string.IsNullOrWhiteSpace(trans.LOGDOCNO))
+                            receiptBuckets[r] = (receiptBuckets[r].Trans, 0, receiptBuckets[r].Date);
+                        }
+                    }
+                }
+
+                // 2. Sort issues chronologically (oldest issue drains oldest receipt first)
+                issueBuckets = issueBuckets.OrderBy(i => i.Date).ToList();
+
+                // PASS 1: Exact Quantity Match with Causality (receipt.Date <= issue.Date)
+                for (int i = 0; i < issueBuckets.Count; i++)
+                {
+                    if (issueBuckets[i].RemainingQty <= 0) continue;
+
+                    for (int r = 0; r < receiptBuckets.Count; r++)
+                    {
+                        // CRITICAL: An issue cannot consume inventory that arrives in the future!
+                        if (receiptBuckets[r].RemainingQty <= 0) continue;
+                        if (receiptBuckets[r].Date > issueBuckets[i].Date) continue;
+
+                        if (Math.Abs(receiptBuckets[r].RemainingQty - issueBuckets[i].RemainingQty) < 0.0001)
+                        {
+                            receiptBuckets[r] = (receiptBuckets[r].Trans, 0, receiptBuckets[r].Date);
+                            issueBuckets[i] = (issueBuckets[i].Trans, 0, issueBuckets[i].Date);
+                            break;
+                        }
+                    }
+                }
+
+                // PASS 2: FIFO Partial Drain with Causality (receipt.Date <= issue.Date)
+                for (int i = 0; i < issueBuckets.Count; i++)
+                {
+                    double currentIssueRemaining = issueBuckets[i].RemainingQty;
+                    if (currentIssueRemaining <= 0) continue;
+
+                    // Match against oldest receipts first
+                    for (int r = receiptBuckets.Count - 1; r >= 0; r--)
+                    {
+                        if (currentIssueRemaining <= 0) break;
+                        if (receiptBuckets[r].RemainingQty <= 0) continue;
+                        if (receiptBuckets[r].Date > issueBuckets[i].Date) continue;
+
+                        if (receiptBuckets[r].RemainingQty <= currentIssueRemaining)
+                        {
+                            currentIssueRemaining -= receiptBuckets[r].RemainingQty;
+                            receiptBuckets[r] = (receiptBuckets[r].Trans, 0, receiptBuckets[r].Date);
+                        }
+                        else
+                        {
+                            receiptBuckets[r] = (receiptBuckets[r].Trans, receiptBuckets[r].RemainingQty - currentIssueRemaining, receiptBuckets[r].Date);
+                            currentIssueRemaining = 0;
+                        }
+                    }
+
+                    issueBuckets[i] = (issueBuckets[i].Trans, currentIssueRemaining, issueBuckets[i].Date);
+                }
+
+                var survivingReceipts = receiptBuckets.Where(r => r.RemainingQty > 0.0001).ToList();
+
+                if (survivingReceipts.Count == 0)
+                {
+                    AppendLog("All packages consumed by ledger replay. In-stock is 0.", Color.Yellow);
+                    return;
+                }
+
+                // =========================================================================
+                // API CALL 2: Fetch Metadata (PACKCODE, BOOKNUM, UDATE) ONLY for survivors
+                // =========================================================================
+                var survivingDocNos = survivingReceipts
+                    .Select(x => x.Trans.LOGDOCNO.Trim())
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+
+                var docData = new Dictionary<string, (string BookNum, string UDate, Dictionary<double, string> Packs)>(StringComparer.OrdinalIgnoreCase);
+
+                const int batchSize = 30;
+                for (int i = 0; i < survivingDocNos.Count; i += batchSize)
+                {
+                    var batch = survivingDocNos.Skip(i).Take(batchSize).ToList();
+                    string docFilter = string.Join(" or ", batch.Select(d => $"DOCNO eq '{Uri.EscapeDataString(d)}'"));
+                    string batchDocUrl = $"{baseUrl}/DOCUMENTS_P?$filter=({docFilter})" +
+                                         $"&$select=DOCNO,BOOKNUM,UDATE,TOWARHSNAME" +
+                                         $"&$expand=TRANSORDER_P_SUBFORM($filter=PARTNAME eq '{Uri.EscapeDataString(partName)}';$select=PARTNAME,TQUANT,PACKCODE,WARHSNAME)";
+
+                    string docResponseBody = await ExecuteWithPooledClientAsync(async client =>
+                    {
+                        using var response = await client.GetAsync(batchDocUrl);
+                        if (!response.IsSuccessStatusCode) return null;
+                        return await response.Content.ReadAsStringAsync();
+                    });
+
+                    if (!string.IsNullOrEmpty(docResponseBody))
+                    {
+                        var docApiResponse = JsonConvert.DeserializeObject<JObject>(docResponseBody);
+                        var docs = docApiResponse?["value"] as JArray;
+
+                        if (docs != null)
+                        {
+                            foreach (var doc in docs)
                             {
-                                validDocNumbers.Add(trans.LOGDOCNO);
+                                string docNo = doc["DOCNO"]?.ToString();
+                                string bookNum = doc["BOOKNUM"]?.ToString() ?? "";
+                                string uDate = doc["UDATE"]?.ToString() ?? "";
+
+                                var packMap = new Dictionary<double, string>();
+                                if (doc["TRANSORDER_P_SUBFORM"] is JArray transP)
+                                {
+                                    foreach (var line in transP)
+                                    {
+                                        double q = line["TQUANT"] != null ? (double)line["TQUANT"] : 0;
+                                        string pCode = line["PACKCODE"]?.ToString() ?? "";
+                                        packMap[q] = pCode;
+                                    }
+                                }
+
+                                docData[docNo] = (bookNum, uDate, packMap);
                             }
                         }
                     }
                 }
 
-                groupBox4.Text = $"Stock Movements for {partName}";
-                ColorTheRows2(dataGridView2);
-
-                // Enrich only the retrieved unique documents in bulk
-                if (validDocNumbers.Count > 0)
+                // =========================================================================
+                // STEP 3: Populate dgvINSTOCKONLY with surviving physical stock & accurate time
+                // =========================================================================
+                dgvINSTOCKONLY.SuspendLayout();
+                try
                 {
-                    await EnrichGridBatchedAsync(partName, validDocNumbers.ToList());
+                    foreach (var item in survivingReceipts)
+                    {
+                        string docNo = item.Trans.LOGDOCNO.Trim();
+                        string bookNum = item.Trans.BOOKNUM ?? "";
+                        string packCode = "";
+
+                        // Prioritize the enriched UDATE from DOCUMENTS_P because it holds the true hour/minute
+                        string displayDate = "";
+                        if (docData.TryGetValue(docNo, out var meta))
+                        {
+                            if (!string.IsNullOrWhiteSpace(meta.BookNum))
+                            {
+                                bookNum = meta.BookNum;
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(meta.UDate))
+                            {
+                                displayDate = FormatPriorityDate(meta.UDate);
+                            }
+
+                            var matchedPack = meta.Packs.FirstOrDefault(kvp => Math.Abs(kvp.Key - item.Trans.TQUANT) < 0.0001);
+                            if (!string.IsNullOrEmpty(matchedPack.Value))
+                            {
+                                packCode = matchedPack.Value;
+                            }
+                            else if (meta.Packs.Count > 0)
+                            {
+                                packCode = meta.Packs.Values.First();
+                            }
+                        }
+
+                        // Fallback to trans.CURDATE only if DOCUMENTS_P didn't return a date
+                        if (string.IsNullOrWhiteSpace(displayDate))
+                        {
+                            displayDate = FormatPriorityDate(item.Trans.CURDATE);
+                        }
+
+                        dgvINSTOCKONLY.Rows.Add(
+                            displayDate,
+                            item.Trans.LOGDOCNO,
+                            item.Trans.DOCDES,
+                            item.Trans.SUPCUSTNAME,
+                            bookNum,
+                            item.RemainingQty,
+                            packCode
+                        );
+                    }
                 }
+                finally
+                {
+                    dgvINSTOCKONLY.ResumeLayout();
+                }
+
+                ColorTheRows2(dgvINSTOCKONLY);
             }
             catch (HttpRequestException ex)
             {
@@ -3129,12 +3766,93 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
             }
             catch (Exception ex)
             {
-                if (txtLog != null && !txtLog.IsDisposed)
-                {
-                    AppendLog($"Processing error: {ex.Message}", Color.Red);
-                }
+                AppendLog($"Stock movement error: {ex.Message}", Color.Red);
             }
         }
+
+
+
+
+
+
+        private void InitializeInStockGrid()
+        {
+            dgvINSTOCKONLY.AutoGenerateColumns = false;
+            dgvINSTOCKONLY.Columns.Clear();
+            dgvINSTOCKONLY.Columns.AddRange(new DataGridViewColumn[]
+            {
+        new DataGridViewTextBoxColumn
+        {
+            DataPropertyName = "UDATE",
+            HeaderText = "Transaction Date",
+            AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+            Name = "UDATE"
+        },
+        new DataGridViewTextBoxColumn
+        {
+            DataPropertyName = "LOGDOCNO",
+            HeaderText = "Document Number",
+            AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+            Name = "LOGDOCNO"
+        },
+        new DataGridViewTextBoxColumn
+        {
+            DataPropertyName = "DOCDES",
+            HeaderText = "DOCDES",
+            AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+            Name = "DOCDES"
+        },
+        new DataGridViewTextBoxColumn
+        {
+            DataPropertyName = "SUPCUSTNAME",
+            HeaderText = "Source_Requester",
+            AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+            Name = "SUPCUSTNAME"
+        },
+        new DataGridViewTextBoxColumn
+        {
+            DataPropertyName = "BOOKNUM",
+            HeaderText = "Client`s Document",
+            AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+            Name = "BOOKNUM"
+        },
+        new DataGridViewTextBoxColumn
+        {
+            DataPropertyName = "TQUANT",
+            HeaderText = "QTY",
+            AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+            Name = "TQUANT"
+        },
+        new DataGridViewTextBoxColumn
+        {
+            DataPropertyName = "PACKNAME",
+            HeaderText = "PACK",
+            AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+            Name = "PACKNAME"
+        }
+            });
+
+            dgvINSTOCKONLY.Rows.Clear();
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         private void ColorTheRows(DataGridView dataGridView)
         {
             foreach (DataGridViewRow row in dataGridView.Rows)
@@ -3231,7 +3949,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                         int.TryParse(potentialMatch.Cells["TQUANT"].Value?.ToString(), out int pQty);
 
                         // Matching logic: Outgoing types or IC balancing
-                        bool isOutgoingType = pDocNo.StartsWith("ROB") || 
+                        bool isOutgoingType = pDocNo.StartsWith("ROB") ||
                                              pDocNo.StartsWith("SH") || pDocNo.StartsWith("WR") || pDocNo.StartsWith("IC");  //pDocNo.StartsWith("RD") ||
 
                         if (isOutgoingType && Math.Abs(pQty) == Math.Abs(qty))
@@ -3493,7 +4211,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
             }
             await Task.Delay(10); // Optional delay to allow the context menu to show
         }
-      
+
         private async void ShowSerialDetails(string serialName)
         {
             string url = $"{baseUrl}/SERIAL?$filter=SERIALNAME eq '{serialName}'&$select=PARTNAME,PARTDES,SERIALNAME,REVNAME,REVNUM,SERIALSTATUSDES,OWNERLOGIN,ORDNAME,QUANT";
@@ -3585,7 +4303,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
 
                 string partName = txtbIPN.Text.Trim();
                 string partDes = txtbDESC.Text.Trim();
-                string partMFPN =txtbMFPN.Text.Trim().ToUpper();
+                string partMFPN = txtbMFPN.Text.Trim().ToUpper();
                 string partMNFDes = txtbMNF.Text.Trim().ToUpper();
 
                 await InsertOrUpdateLogPartAsync(partName, partDes, partMFPN, partMNFDes);
@@ -3596,7 +4314,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
             }
             catch (Exception ex)
             {
-               AppendLog($"Error: {ex.Message}", Color.Red);
+                AppendLog($"Error: {ex.Message}", Color.Red);
             }
         }
 
@@ -3611,7 +4329,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
 
             // Truncate to DB limits
             if (partMNFDes.Length > 32)
-                partMNFDes = partMNFDes.Substring(0, 32).Replace("&","n");
+                partMNFDes = partMNFDes.Substring(0, 32).Replace("&", "n");
 
             string partMNFName = partMNFDes.Length > 10 ? partMNFDes.Substring(0, 10) : partMNFDes;
 
@@ -3793,7 +4511,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
             {
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-             
+
 
 
                 string usedUser = ApiHelper.AuthenticateClient(client);
@@ -3873,7 +4591,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                 {
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-             
+
 
 
                     string usedUser = ApiHelper.AuthenticateClient(client);
@@ -4102,7 +4820,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                     // Set the request headers
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-             
+
 
 
                     string usedUser = ApiHelper.AuthenticateClient(client);
@@ -4141,7 +4859,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
             }
             catch (Exception ex)
             {
-                AppendLog($"GetOrInsertManufacturer error: {ex.Message}",Color.Red);
+                AppendLog($"GetOrInsertManufacturer error: {ex.Message}", Color.Red);
                 return 0;
             }
 
@@ -4305,7 +5023,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
             txtbBuffer.Clear();
         }
 
-       public bool canPrint = false;
+        public bool canPrint = false;
         //private async void btnMFG_Click(object sender, EventArgs e)
         //{
         //    canPrint=false;
@@ -4472,7 +5190,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                     string _OWNERLOGIN = ""; //"Yuri_G";
                     string _SUPNAME = string.Empty;
                     string _ORDNAME = string.Empty;
-                    int? _OLINE= null;
+                    int? _OLINE = null;
                     if (rbtIN.Checked)
                     {
                         if (txtbINdoc.Text == string.Empty)
@@ -4638,7 +5356,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                             await WarehouseService.InsertDocumentAsync(Pdocument, this, settings);
                         }
 
-                        
+
                     }
                     catch (Exception ex)
                     {
@@ -4805,7 +5523,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
         }
 
 
-        int insertedRowsCount {get; set;}
+        int insertedRowsCount { get; set; }
         int addedNewMFPNaltsCount { get; set; }
 
         private async Task BulkInsertIntoDB(string filePath)
@@ -4867,7 +5585,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
                             stopwatch.Stop();
                             UpdatePing(stopwatch.ElapsedMilliseconds);
 
-                            
+
                             AppendLog($"Row {row}: Successfully processed {partName}, {partDes}, {partMFPN}, {partMNFDes}", Color.Gray);
                         }
                         catch (Exception ex)
@@ -5166,7 +5884,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
 
                 // 3. Batch-fetch MFPNs from PARTMNFONE (30 items per request to keep URI length safe)
                 var mfpnMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                int chunkSize = 30;
+                int chunkSize = 40;
                 var partBatches = consolidated.Select(x => x.PartName).Chunk(chunkSize);
 
                 foreach (var batch in partBatches)
@@ -5623,7 +6341,7 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
 
                             string potentialDocType = potentialMatch.Cells["LOGDOCNO"].Value?.ToString() ?? string.Empty;
 
-                            if ((potentialDocType.StartsWith("ROB") ||  potentialDocType.StartsWith("SH") || potentialDocType.StartsWith("RD") ||
+                            if ((potentialDocType.StartsWith("ROB") || potentialDocType.StartsWith("SH") || potentialDocType.StartsWith("RD") ||
                                  potentialDocType.StartsWith("WR") || potentialDocType.StartsWith("IC")) &&
                                 int.TryParse(potentialMatch.Cells["TQUANT"].Value?.ToString(), out int potentialBalanceValue))
                             {
@@ -6908,6 +7626,168 @@ private static readonly ConcurrentBag<HttpClient> _clientPool = new();
         private void txtbInputQty_Enter(object sender, EventArgs e)
         {
 
+        }
+
+        private async void dataGridView2_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // Ignore header clicks or invalid row indexes
+            if (e.RowIndex < 0) return;
+
+            var row = dataGridView2.Rows[e.RowIndex];
+
+            // 1. Check if row is already enriched (e.g. PACKNAME or BOOKNUM already filled)
+            var existingPack = row.Cells["PACKNAME"]?.Value?.ToString();
+            var existingBookNum = row.Cells["BOOKNUM"]?.Value?.ToString();
+            if (!string.IsNullOrWhiteSpace(existingPack) || !string.IsNullOrWhiteSpace(existingBookNum))
+            {
+                return; // Already enriched, no need to waste an API call
+            }
+
+            string docNo = row.Cells["LOGDOCNO"]?.Value?.ToString()?.Trim();
+            if (string.IsNullOrWhiteSpace(docNo)) return;
+
+            // Grab the active PARTNAME from dataGridView1's current selection
+            string partName = dataGridView1.CurrentRow?.Cells["PARTNAME"]?.Value?.ToString()?.Trim() ?? "";
+
+            try
+            {
+                // Indicate loading visually in the clicked row
+                row.Cells["PACKNAME"].Value = "...";
+
+                // 2. Resolve target endpoint based on document prefix
+                var config = GetDocTypeEndpoint(docNo);
+
+                // 3. Construct tight single-document OData query
+                string filterExpr = $"{config.KeyField} eq '{Uri.EscapeDataString(docNo)}'";
+
+                string expandClause = !string.IsNullOrEmpty(config.SubformName) && !string.IsNullOrEmpty(partName)
+                    ? $"&$expand={config.SubformName}($filter=PARTNAME eq '{Uri.EscapeDataString(partName)}';$select=PARTNAME,TQUANT,PACKCODE{(config.EntitySet == "SERIAL" ? ",CURDATE" : "")})"
+                    : "";
+
+                string selectClause = $"&$select={config.KeyField},{(config.EntitySet == "AFORM" ? "CURDATE" : "UDATE")}{(config.HasBookNum ? ",BOOKNUM" : "")}";
+                string url = $"{baseUrl}/{config.EntitySet}?$filter={filterExpr}{expandClause}{selectClause}";
+
+                // 4. Execute single API call using your pooled client
+                string responseBody = await ExecuteWithPooledClientAsync(async client =>
+                {
+                    using var response = await client.GetAsync(url);
+                    if (!response.IsSuccessStatusCode) return null;
+                    return await response.Content.ReadAsStringAsync();
+                });
+
+                if (string.IsNullOrEmpty(responseBody))
+                {
+                    row.Cells["PACKNAME"].Value = "";
+                    return;
+                }
+
+                var json = JObject.Parse(responseBody);
+                var docItem = (json["value"] as JArray)?.FirstOrDefault();
+                if (docItem == null)
+                {
+                    row.Cells["PACKNAME"].Value = "";
+                    return;
+                }
+
+                // 5. Parse returned metadata
+                string uDate = config.EntitySet == "AFORM"
+                    ? docItem["CURDATE"]?.ToString()
+                    : docItem["UDATE"]?.ToString();
+
+                string bookNum = config.HasBookNum ? docItem["BOOKNUM"]?.ToString() : "";
+                string packCode = "";
+
+                // Match the specific subform line by PARTNAME and Quantity
+                if (!string.IsNullOrEmpty(config.SubformName) && docItem[config.SubformName] is JArray lines)
+                {
+                    int targetQty = 0;
+                    if (row.Cells["TQUANT"]?.Value != null)
+                    {
+                        int.TryParse(row.Cells["TQUANT"].Value.ToString(), out targetQty);
+                    }
+
+                    // Match by PARTNAME and preferably by TQUANT if multiple lines exist
+                    var matchingLine = lines.FirstOrDefault(l =>
+                        l["PARTNAME"]?.ToString() == partName &&
+                        (targetQty == 0 || (int?)(l["TQUANT"]) == targetQty))
+                        ?? lines.FirstOrDefault(l => l["PARTNAME"]?.ToString() == partName);
+
+                    if (matchingLine != null)
+                    {
+                        packCode = matchingLine["PACKCODE"]?.ToString() ?? "";
+
+                        if (config.EntitySet == "SERIAL")
+                        {
+                            var curDateStr = matchingLine["CURDATE"]?.ToString();
+                            if (DateTime.TryParse(curDateStr, out DateTime curDate))
+                            {
+                                uDate = curDate.Date.AddDays(1).AddSeconds(-1).ToString("yyyy-MM-dd HH:mm");
+                            }
+                            else
+                            {
+                                uDate = curDateStr;
+                            }
+                        }
+                    }
+                }
+
+                // 6. Update row cells
+                if (!string.IsNullOrWhiteSpace(uDate))
+                {
+                    row.Cells["UDATE"].Value = uDate;
+                }
+                row.Cells["BOOKNUM"].Value = bookNum;
+                row.Cells["PACKNAME"].Value = packCode;
+
+                // Visual feedback that row is fully hydrated
+                //row.DefaultCellStyle.BackColor = Color.FromArgb(245, 250, 245);
+            }
+            catch (Exception ex)
+            {
+                row.Cells["PACKNAME"].Value = "";
+                AppendLog($"Error enriching row {docNo}: {ex.Message}", Color.Red);
+            }
+        }
+
+        private void dgvINSTOCKONLY_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0) // Ensure the row index is valid
+            {
+                // Get the selected row from dataGridView2
+                var selectedRow2 = dgvINSTOCKONLY.Rows[e.RowIndex];
+                // Get the selected row from dataGridView1
+                var selectedRow1 = dataGridView1.CurrentRow;
+                if (selectedRow1 != null)
+                {
+                    // Extract values from the selected row's cells in dataGridView1
+                    string partName = selectedRow1.Cells["PARTNAME"].Value.ToString();
+                    string mfpn = selectedRow1.Cells["MNFPARTNAME"].Value.ToString();
+                    string partDes = selectedRow1.Cells["PARTDES"].Value.ToString();
+                    // Extract the balance value from the selected row's cell in dataGridView2
+                    int balance = int.Parse(selectedRow2.Cells["TQUANT"].Value.ToString());
+                    // Create a PR_PART object with the extracted data
+                    PR_PART part = new PR_PART
+                    {
+                        PARTNAME = partName,
+                        MNFPARTNAME = mfpn,
+                        PARTDES = partDes,
+                        QTY = balance
+                    };
+                    string originalDtime = selectedRow2.Cells["UDATE"].Value?.ToString();
+
+                    // Use IsNullOrWhiteSpace to catch null, "", and " "
+                    if (!string.IsNullOrWhiteSpace(originalDtime))
+                    {
+                        printStickerDuplicate(part, originalDtime);
+                        //MessageBox.Show(originalDtime);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Wait for the DATE to load");
+                    }
+
+                }
+            }
         }
     }
     // Create a simple model to hold the pair
