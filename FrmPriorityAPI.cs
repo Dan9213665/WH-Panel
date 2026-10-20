@@ -3438,14 +3438,29 @@ namespace WH_Panel
             return DateTime.MinValue;
         }
 
-        private static string FormatPriorityDate(string dateStr)
+        //private static string FormatPriorityDate(string dateStr)
+        //{
+        //    if (string.IsNullOrWhiteSpace(dateStr)) return "";
+
+        //    DateTime dt = ParsePriorityDate(dateStr);
+        //    if (dt == DateTime.MinValue) return dateStr;
+
+        //    // Uniform clean view across all grids: "yyyy-MM-dd HH:mm:ss"
+        //    return dt.ToString("yyyy-MM-dd HH:mm:ss");
+        //}
+
+        private static string FormatPriorityDate(string dateStr, bool isEndOfDay = false)
         {
             if (string.IsNullOrWhiteSpace(dateStr)) return "";
 
             DateTime dt = ParsePriorityDate(dateStr);
             if (dt == DateTime.MinValue) return dateStr;
 
-            // Uniform clean view across all grids: "yyyy-MM-dd HH:mm:ss"
+            if (isEndOfDay)
+            {
+                dt = dt.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+            }
+
             return dt.ToString("yyyy-MM-dd HH:mm:ss");
         }
 
@@ -3478,7 +3493,7 @@ namespace WH_Panel
             // API CALL 1: Pull transaction history (Single roundtrip)
             // =========================================================================
             string logPartUrl = $"{baseUrl}/LOGPART?$filter=PARTNAME eq '{Uri.EscapeDataString(partName)}'" +
-                                $"&$expand=PARTTRANSLAST2_SUBFORM($top=100;$orderby=CURDATE desc)";
+                                $"&$expand=PARTTRANSLAST2_SUBFORM($orderby=CURDATE desc)";
 
             try
             {
@@ -3511,7 +3526,23 @@ namespace WH_Panel
 
                 DateTime? latestIcDate = null;
 
-                foreach (var trans in movements)
+
+                DateTime GetSortDate(PartTransLast2 t)
+                {
+                    DateTime dt = ParsePriorityDate(t.CURDATE);
+                    string doc = t.LOGDOCNO?.Trim() ?? "";
+                    if (doc.StartsWith("ROB", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return dt.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+                    }
+                    return dt.Date;
+                }
+
+                // 1. Order descending (newest on top) before processing
+                var orderedMovements = movements.OrderByDescending(GetSortDate).ToList();
+
+
+                foreach (var trans in orderedMovements) //movements
                 {
                     string docNo = trans.LOGDOCNO?.Trim() ?? "";
                     if (string.IsNullOrEmpty(docNo)) continue;
@@ -3533,9 +3564,20 @@ namespace WH_Panel
                         latestIcDate = transDate;
                     }
 
+                    //// Raw audit log in dataGridView2
+                    //dataGridView2.Rows.Add(
+                    //    FormatPriorityDate(trans.CURDATE),
+                    //    trans.LOGDOCNO,
+                    //    trans.DOCDES,
+                    //    trans.SUPCUSTNAME,
+                    //    trans.BOOKNUM ?? "",
+                    //    trans.TQUANT,
+                    //    ""
+                    //);
+
                     // Raw audit log in dataGridView2
                     dataGridView2.Rows.Add(
-                        FormatPriorityDate(trans.CURDATE),
+                        FormatPriorityDate(trans.CURDATE),//, isEndOfDay: docNo.StartsWith("ROB", StringComparison.OrdinalIgnoreCase)
                         trans.LOGDOCNO,
                         trans.DOCDES,
                         trans.SUPCUSTNAME,
@@ -3543,6 +3585,7 @@ namespace WH_Panel
                         trans.TQUANT,
                         ""
                     );
+
 
                     double qty = trans.TQUANT;
                     if (Math.Abs(qty) < 0.0001 || isIC) continue;

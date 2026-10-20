@@ -2347,7 +2347,7 @@ namespace WH_Panel
 
                 var docData = new Dictionary<string, (string ToWarhs, string BookNum, string UDate, Dictionary<int, (string PackCode, string LineWarhs)> Packs)>(StringComparer.OrdinalIgnoreCase);
 
-                const int batchSize = 30;
+                const int batchSize = 40;
                 for (int i = 0; i < survivingDocNos.Count; i += batchSize)
                 {
                     var batch = survivingDocNos.Skip(i).Take(batchSize).ToList();
