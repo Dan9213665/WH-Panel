@@ -2918,7 +2918,15 @@ namespace WH_Panel
             if (docNo.StartsWith("ROB"))
             {
                 // Fetch UDATE from SERIAL
-                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{docNo}'&$select=UDATE";
+                //string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{docNo}'&$select=UDATE";
+
+
+                // SERIALNAME must accompany UDATE in $select to guarantee the key avoids full entity hydration
+                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL"
+                           + $"?$filter=SERIALNAME eq '{docNo}'"
+                           + $"&$select=SERIALNAME,UDATE";
+
+
                 using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
                 {
                     try
@@ -3722,8 +3730,12 @@ namespace WH_Panel
                 // STEP 2: Retrieve Subform Data (GET)
                 // ==========================================
                 string getUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM?$filter=PARTNAME eq '{partName}'&$select=PARTNAME,CQUANT,KLINE,PACKCODE";
+                        
+                
+
+
                 int kline = 0;
-                string package = string.Empty;
+                string package = null;
 
                 try
                 {
@@ -3791,7 +3803,12 @@ namespace WH_Panel
                         PACKCODE = package
                     };
 
+                   
                     var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+                    if (!client.DefaultRequestHeaders.Contains("Prefer"))
+                    {
+                        client.DefaultRequestHeaders.Add("Prefer", "return=minimal");
+                    }
                     HttpResponseMessage patchResponse = await client.PatchAsync(patchUrl, content);
 
                     // ⚠️ FIX HERE: Check response code explicitly instead of calling EnsureSuccessStatusCode()
@@ -4847,58 +4864,128 @@ namespace WH_Panel
                 //rtxtbComments.Text = "No comments found for the selected ROB work order.";
             }
         }
+        //private async void btnSaveComments_Click(object sender, EventArgs e)
+        //{
+        //    if (string.IsNullOrEmpty(txtbRob.Text))
+        //    {
+        //        MessageBox.Show("No ROB work order is currently loaded.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        return;
+        //    }
+        //    string serialName = txtbRob.Text;
+        //    string comments = rtxtbComments.Text;
+        //    // Ask for confirmation before patching the data
+        //    DialogResult result = MessageBox.Show("Are you sure you want to save the comments?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+        //    if (result == DialogResult.No)
+        //    {
+        //        return;
+        //    }
+        //    // Reverse the process of stripping HTML tags
+        //    string htmlComments = ConvertToHtml(comments);
+        //    string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/SERIALTEXT_SUBFORM";
+        //    using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
+        //    {
+        //        try
+        //        {
+        //            // Set the request headers if needed
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            // Set the Authorization header
+        //            //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}"));
+        //            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+        //            string usedUser = ApiHelper.AuthenticateClient(client);
+
+        //            RegisterTransaction("Api2"); // Log this transaction timestamp
+        //            // Create the JSON payload for the PATCH request
+        //            var payload = new
+        //            {
+        //                TEXT = htmlComments
+        //            };
+        //            var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+        //            // Make the PATCH request
+        //            HttpResponseMessage response = await client.PatchAsync(url, content);
+        //            response.EnsureSuccessStatusCode();
+        //            MessageBox.Show("Comments saved successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //        }
+        //        catch (HttpRequestException ex)
+        //        {
+        //            SafeAppendLog($"Request error: {ex.Message}", Color.Red);
+
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            SafeAppendLog($"Request error: {ex.Message}", Color.Red);
+
+        //        }
+        //    }
+        //}
+
         private async void btnSaveComments_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtbRob.Text))
+            if (string.IsNullOrWhiteSpace(txtbRob.Text))
             {
                 MessageBox.Show("No ROB work order is currently loaded.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            string serialName = txtbRob.Text;
+
+            string serialName = txtbRob.Text.Trim();
             string comments = rtxtbComments.Text;
-            // Ask for confirmation before patching the data
-            DialogResult result = MessageBox.Show("Are you sure you want to save the comments?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            DialogResult result = MessageBox.Show(
+                "Are you sure you want to save the comments?",
+                "Confirmation",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
             if (result == DialogResult.No)
             {
                 return;
             }
-            // Reverse the process of stripping HTML tags
+
             string htmlComments = ConvertToHtml(comments);
             string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/SERIALTEXT_SUBFORM";
+
             using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
             {
                 try
                 {
-                    // Set the request headers if needed
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    // Set the Authorization header
-                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}"));
-                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+                    // CRITICAL: Suppresses 200 OK entity payload serialization.
+                    // Priority returns 204 No Content, preventing DOCTODOLISTLOG status recalculation.
+                    client.DefaultRequestHeaders.Add("Prefer", "return=minimal");
 
                     string usedUser = ApiHelper.AuthenticateClient(client);
+                    RegisterTransaction("Api2");
 
-                    RegisterTransaction("Api2"); // Log this transaction timestamp
-                    // Create the JSON payload for the PATCH request
                     var payload = new
                     {
                         TEXT = htmlComments
                     };
+
                     var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-                    // Make the PATCH request
+
                     HttpResponseMessage response = await client.PatchAsync(url, content);
-                    response.EnsureSuccessStatusCode();
-                    MessageBox.Show("Comments saved successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        MessageBox.Show("Comments saved successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        string errorBody = await response.Content.ReadAsStringAsync();
+                        SafeAppendLog($"PATCH Comments Failed ({response.StatusCode}): {errorBody}", Color.Red);
+                        MessageBox.Show($"Failed to save comments: {response.ReasonPhrase}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
                 }
                 catch (HttpRequestException ex)
                 {
                     SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-
                 }
                 catch (Exception ex)
                 {
-                    SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-
+                    SafeAppendLog($"Execution error: {ex.Message}", Color.Red);
                 }
             }
         }
@@ -5404,12 +5491,42 @@ namespace WH_Panel
             }
         }
 
+        //private async Task PatchUpdateUdateAsync(string serialName)
+        //{
+        //    string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')";
+
+        //    var patchData = new
+        //    {
+        //        UDATE = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")
+        //    };
+
+        //    using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
+        //    {
+        //        string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api2Username}:{settings.Api2Password}"));
+        //        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+        //        client.DefaultRequestHeaders.Accept.Clear();
+        //        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //        RegisterTransaction("Api2");
+        //        var json = JsonConvert.SerializeObject(patchData);
+        //        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        //        var request = new HttpRequestMessage(HttpMethod.Patch, url)
+        //        {
+        //            Content = content
+        //        };
+
+        //        HttpResponseMessage response = await client.SendAsync(request);
+        //        response.EnsureSuccessStatusCode();
+        //    }
+        //}
+
         private async Task PatchUpdateUdateAsync(string serialName)
         {
             string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')";
 
             var patchData = new
             {
+                // Priority OData date-time formats usually accept yyyy-MM-ddTHH:mm:ssZ or yyyy-MM-ddTHH:mm:ss+00:00
                 UDATE = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")
             };
 
@@ -5419,7 +5536,11 @@ namespace WH_Panel
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                RegisterTransaction("Api3");
+
+                // Tells Priority NOT to hydrate and return the entire updated SERIAL record in the response
+                client.DefaultRequestHeaders.Add("Prefer", "return=minimal");
+
+                RegisterTransaction("Api2");
                 var json = JsonConvert.SerializeObject(patchData);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
@@ -5429,9 +5550,13 @@ namespace WH_Panel
                 };
 
                 HttpResponseMessage response = await client.SendAsync(request);
+
+                // 204 No Content or 200 OK both succeed
                 response.EnsureSuccessStatusCode();
             }
         }
+
+
 
         private void dgwBom_MouseDown(object sender, MouseEventArgs e)
         {
