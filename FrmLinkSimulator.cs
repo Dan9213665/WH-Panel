@@ -17,6 +17,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Reflection.Emit;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -2002,6 +2003,84 @@ var myPieChart = new Chart(ctx, {
             PopulateDataGridView();
             SetSelectedBoms();
         }
+
+        //private void button8_Click(object sender, EventArgs e)
+        //{
+        //    LoadWarehouseFilesMultipleMonthsBack(comboBox6.SelectedItem?.ToString(), 0);
+        //}
+
+        /// <summary>
+        /// Loads warehouse Excel files across a specified monthly span.
+        /// </summary>
+        /// <param name="warehouseName">Selected warehouse (e.g., "Cropx", "Cropxrobotron")</param>
+        /// <param name="monthsBack">0 = current month only, 1 = current + previous month, etc.</param>
+        private void LoadWarehouseFilesMultipleMonthsBack(string warehouseName, int monthsBack)
+        {
+            if (string.IsNullOrWhiteSpace(warehouseName))
+            {
+                MessageBox.Show("Please select a warehouse before proceeding.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                comboBox6.DroppedDown = true;
+                return;
+            }
+
+            warehouseName = warehouseName.Trim();
+            DateTime today = DateTime.Today;
+
+            // Boundary regex: matches "Cropx.xlsm", "Cropx_11.xlsm", "Cropx - Nov.xlsm", "Cropx 2026.xlsm"
+            // Rejects prefix bleed: will NEVER match "Cropxrobotron..." when "Cropx" is passed
+            string regexPattern = $@"^{Regex.Escape(warehouseName)}([\s_\-\.].*)?\.xlsm$";
+
+            var matchedFiles = new List<string>();
+
+            for (int i = 0; i <= monthsBack; i++)
+            {
+                DateTime targetMonth = today.AddMonths(-i);
+                string folderPath = $@"\\dbr1\Data\WareHouse\{targetMonth.Year}\{targetMonth:MM.yyyy}";
+
+                if (!Directory.Exists(folderPath))
+                    continue;
+
+                var filesInFolder = Directory.GetFiles(folderPath, "*.xlsm")
+                    .Where(file => Regex.IsMatch(Path.GetFileName(file), regexPattern, RegexOptions.IgnoreCase));
+
+                matchedFiles.AddRange(filesInFolder);
+            }
+
+            allFiles = matchedFiles.ToArray();
+
+            if (allFiles.Length == 0)
+            {
+                string spanLabel = monthsBack == 0 ? "the current month" : $"the last {monthsBack + 1} months";
+                MessageBox.Show($"No files found for warehouse '{warehouseName}' in {spanLabel}.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            int newlyLoadedCount = 0;
+
+            foreach (string filePath in allFiles)
+            {
+                string fileName = Path.GetFileName(filePath);
+
+                if (IsFileLoaded(fileName))
+                {
+                    MessageBox.Show($"File {fileName} is already loaded!", "Notice", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    DataLoader(filePath, fileName);
+                    selectedFileNames.Add(fileName);
+                    newlyLoadedCount++;
+                }
+            }
+
+            if (newlyLoadedCount > 0)
+            {
+                PopulateDataGridView();
+                SetSelectedBoms();
+            }
+        }
+
+
         //private void button9_Click(object sender, EventArgs e)
         //{
         //    // Check if a warehouse has been selected
@@ -2047,12 +2126,65 @@ var myPieChart = new Chart(ctx, {
         //    SetSelectedBoms();
         //}
 
+        //private void button9_Click(object sender, EventArgs e)
+        //{
+
+        //    //if (comboBox6.SelectedItem == null) return;
+        //    //LoadWarehouseFiles(comboBox6.SelectedItem.ToString(), 1); // current + previous month
+
+        //    if (comboBox6.SelectedItem == null)
+        //    {
+        //        MessageBox.Show("Please select a warehouse before proceeding.");
+        //        comboBox6.DroppedDown = true;
+        //        return;
+        //    }
+
+        //    string selectedWarehouseName = comboBox6.SelectedItem.ToString();
+
+        //    // Current month and previous month
+        //    DateTime currentMonth = DateTime.Today;
+        //    DateTime previousMonth = currentMonth.AddMonths(-1);
+
+        //    string currentMonthPath =
+        //        $@"\\dbr1\Data\WareHouse\{currentMonth.Year}\{currentMonth:MM.yyyy}";
+        //    string previousMonthPath =
+        //        $@"\\dbr1\Data\WareHouse\{previousMonth.Year}\{previousMonth:MM.yyyy}";
+
+        //    string[] currentMonthFiles =
+        //        Directory.GetFiles(currentMonthPath, $"{selectedWarehouseName}*.xlsm");
+        //    string[] previousMonthFiles =
+        //        Directory.GetFiles(previousMonthPath, $"{selectedWarehouseName}*.xlsm");
+
+        //    allFiles = currentMonthFiles.Concat(previousMonthFiles).ToArray();
+
+        //    if (allFiles.Length == 0)
+        //    {
+        //        MessageBox.Show("No files found for the selected warehouse.");
+        //        return;
+        //    }
+
+        //    foreach (string fileName in allFiles)
+        //    {
+        //        string theExcelFilePath = Path.GetFileName(fileName);
+
+        //        if (IsFileLoaded(theExcelFilePath))
+        //        {
+        //            MessageBox.Show($"File {theExcelFilePath} is already loaded!");
+        //        }
+        //        else
+        //        {
+        //            DataLoader(fileName, theExcelFilePath);
+        //            selectedFileNames.Add(theExcelFilePath);
+        //        }
+        //    }
+
+        //    PopulateDataGridView();
+        //    SetSelectedBoms();
+        //}
+
+
         private void button9_Click(object sender, EventArgs e)
         {
-
-            //if (comboBox6.SelectedItem == null) return;
-            //LoadWarehouseFiles(comboBox6.SelectedItem.ToString(), 1); // current + previous month
-
             if (comboBox6.SelectedItem == null)
             {
                 MessageBox.Show("Please select a warehouse before proceeding.");
@@ -2060,27 +2192,37 @@ var myPieChart = new Chart(ctx, {
                 return;
             }
 
-            string selectedWarehouseName = comboBox6.SelectedItem.ToString();
+            string selectedWarehouseName = comboBox6.SelectedItem.ToString().Trim();
 
-            // Current month and previous month
             DateTime currentMonth = DateTime.Today;
             DateTime previousMonth = currentMonth.AddMonths(-1);
 
-            string currentMonthPath =
-                $@"\\dbr1\Data\WareHouse\{currentMonth.Year}\{currentMonth:MM.yyyy}";
-            string previousMonthPath =
-                $@"\\dbr1\Data\WareHouse\{previousMonth.Year}\{previousMonth:MM.yyyy}";
+            string currentMonthPath = $@"\\dbr1\Data\WareHouse\{currentMonth.Year}\{currentMonth:MM.yyyy}";
+            string previousMonthPath = $@"\\dbr1\Data\WareHouse\{previousMonth.Year}\{previousMonth:MM.yyyy}";
 
-            string[] currentMonthFiles =
-                Directory.GetFiles(currentMonthPath, $"{selectedWarehouseName}*.xlsm");
-            string[] previousMonthFiles =
-                Directory.GetFiles(previousMonthPath, $"{selectedWarehouseName}*.xlsm");
+            // Helper local function to fetch and filter strictly by warehouse name boundary
+            string[] GetFilteredWarehouseFiles(string folderPath, string warehouse)
+            {
+                if (!Directory.Exists(folderPath))
+                    return Array.Empty<string>();
+
+                // Matches: "Cropx.xlsm", "Cropx_2026.xlsm", "Cropx - 11.xlsm", "Cropx 01.xlsm"
+                // Will NOT match: "Cropxrobotron..."
+                string pattern = $@"^{Regex.Escape(warehouse)}([\s_\-\.].*)?\.xlsm$";
+
+                return Directory.GetFiles(folderPath, "*.xlsm")
+                    .Where(f => Regex.IsMatch(Path.GetFileName(f), pattern, RegexOptions.IgnoreCase))
+                    .ToArray();
+            }
+
+            string[] currentMonthFiles = GetFilteredWarehouseFiles(currentMonthPath, selectedWarehouseName);
+            string[] previousMonthFiles = GetFilteredWarehouseFiles(previousMonthPath, selectedWarehouseName);
 
             allFiles = currentMonthFiles.Concat(previousMonthFiles).ToArray();
 
             if (allFiles.Length == 0)
             {
-                MessageBox.Show("No files found for the selected warehouse.");
+                MessageBox.Show($"No files found strictly matching warehouse '{selectedWarehouseName}'.");
                 return;
             }
 
@@ -2102,6 +2244,11 @@ var myPieChart = new Chart(ctx, {
             PopulateDataGridView();
             SetSelectedBoms();
         }
+
+        //private void button9_Click(object sender, EventArgs e)
+        //{
+        //    LoadWarehouseFiles(comboBox6.SelectedItem?.ToString(), 1);
+        //}
 
         //private void button10_Click(object sender, EventArgs e)
         //{
@@ -2151,6 +2298,8 @@ var myPieChart = new Chart(ctx, {
         //    PopulateDataGridView();
         //    SetSelectedBoms();
         //}
+
+
 
         private void button10_Click(object sender, EventArgs e)
         {

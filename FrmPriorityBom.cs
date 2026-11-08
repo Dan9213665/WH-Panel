@@ -246,109 +246,9 @@ namespace WH_Panel
             public int PART { get; set; }
             public string MNFPARTNAME { get; set; }
         }
-        //private async void GetRobWosList()
-        //{
-        //    string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL";
-        //    using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
-        //    {
-        //        try
-        //        {
-        //            // Set the request headers if needed
-        //            client.DefaultRequestHeaders.Accept.Clear();
-        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //            // Set the Authorization header
-        //            //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
-        //            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
 
 
-        //            string usedUser = ApiHelper.AuthenticateClient(client);
-        //            // string usedUser = ApiHelper.AuthenticateClient(client);
-        //            RegisterTransaction(usedUser); // Log this transaction timestamp
-        //            // Make the HTTP GET request
-        //            HttpResponseMessage response = await client.GetAsync(url);
-        //            response.EnsureSuccessStatusCode();
-        //            // Read the response content
-        //            string responseBody = await response.Content.ReadAsStringAsync();
-        //            // Parse the JSON response
-        //            var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-        //            var serials = apiResponse["value"].ToObject<List<Serial>>();
-        //            // Store the original work orders
-        //            originalSerials = serials ?? new List<Serial>();
-        //            // Populate the dropdown with the data
-        //            cmbROBxList.Items.Clear();
-        //            foreach (var serial in serials)
-        //            {
-        //                // Hide work orders with status "נסגרה" if the checkbox is not checked
-        //                if ((serial.SERIALSTATUSDES != "נסגרה" && serial.SERIALSTATUSDES != "קיט מלא") || cnkbClosed.Checked)
-        //                {
-        //                    cmbROBxList.Items.Add(serial);
-        //                }
-        //            }
-        //            lblLoading.BackColor = Color.Green;
-        //            lblLoading.Text = "Data Loaded";
-        //            cmbROBxList.DroppedDown = true;
-        //            // Attach event handler to the checkbox
-        //            cnkbClosed.CheckedChanged += (s, e) => FilterWorkOrders(serials);
-        //        }
-        //        catch (HttpRequestException ex)
-        //        {
-
-        //            SafeAppendLog($"Request error: {ex.Message}");
-
-        //        }
-        //        catch (Exception ex)
-        //        {
-
-        //            SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-
-        //        }
-        //    }
-        //}
-
-
-        //private async void GetRobWosList()
-        //{
-        //    string url = "https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL";
-        //    using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
-        //    {
-        //        try
-        //        {
-        //            client.DefaultRequestHeaders.Accept.Clear();
-        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-        //            string usedUser = ApiHelper.AuthenticateClient(client);
-        //            RegisterTransaction(usedUser);
-
-        //            HttpResponseMessage response = await client.GetAsync(url);
-        //            response.EnsureSuccessStatusCode();
-
-        //            string responseBody = await response.Content.ReadAsStringAsync();
-        //            var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-        //            var serials = apiResponse["value"].ToObject<List<Serial>>();
-
-        //            // Store the original work orders globally
-        //            originalSerials = serials ?? new List<Serial>();
-
-        //            // Disable native auto-complete so it doesn't conflict with our custom real-time filter
-        //            cmbROBxList.AutoCompleteMode = AutoCompleteMode.None;
-
-        //            // Initially populate the combo box
-        //            RefreshComboBoxItems();
-
-        //            lblLoading.BackColor = Color.Green;
-        //            lblLoading.Text = "Data Loaded";
-        //            cmbROBxList.DroppedDown = true;
-        //        }
-        //        catch (HttpRequestException ex)
-        //        {
-        //            SafeAppendLog($"Request error: {ex.Message}");
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-        //        }
-        //    }
-        //}
+     
 
         private async void GetRobWosList()
         {
@@ -640,6 +540,115 @@ namespace WH_Panel
         }
 
 
+        //private async Task LoadBomDetails(string serialName)
+        //{
+        //    SafeAppendLog($"Fetching warehouse balances...", Color.Yellow);
+        //    if (dgwBom != null)
+        //    {
+        //        progressBar1.Value = 0;
+        //        progressBar1.Update();
+        //        int completedItems = 0;
+        //        string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{serialName}'&$expand=TRANSORDER_K_SUBFORM($select=PARTNAME,PARTDES,CQUANT,QUANT,KLINE,TRANS,KITLINE)";
+
+        //        using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
+        //        {
+        //            try
+        //            {
+        //                // Set the request headers if needed
+        //                client.DefaultRequestHeaders.Accept.Clear();
+        //                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //                // Set the Authorization header
+        //                //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
+        //                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+        //                string usedUser = ApiHelper.AuthenticateClient(client);
+        //                // string usedUser = ApiHelper.AuthenticateClient(client);
+        //                RegisterTransaction(usedUser); // Log this transaction timestamp
+        //                // Make the HTTP GET request
+        //                HttpResponseMessage response = await client.GetAsync(url);
+        //                response.EnsureSuccessStatusCode();
+        //                // Read the response content
+        //                string responseBody = await response.Content.ReadAsStringAsync();
+        //                // Parse the JSON response
+        //                var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+        //                // Check if the response contains the expected data
+        //                if (apiResponse["value"] != null && apiResponse["value"].Any())
+        //                {
+        //                    var bomDetails = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
+        //                    // Aggregate the PQUANT values for each unique PARTNAME
+        //                    int bomCountFromDB = await FetchIPNcountFromBom(txtbName.Text);
+        //                    SafeAppendLog($"Loading {bomCountFromDB} items from {txtbName.Text} bom", Color.Yellow);
+        //                    dgwBom.Rows.Clear();
+        //                    var aggregatedDetails = bomDetails
+        //                        .GroupBy(detail => detail.PARTNAME)
+        //                        .Select(group => new TransOrderKSubform
+        //                        {
+        //                            PARTNAME = group.Key,
+        //                            PARTDES = group.First().PARTDES,
+        //                            //CQUANT = group.First().CQUANT,
+        //                            CQUANT = group.Max(detail => detail.CQUANT),
+        //                            CALC = string.Join("+", group.Select(detail => detail.QUANT)),
+        //                            QUANT = group.Sum(detail => detail.QUANT),
+        //                            KLINE = group.First().KLINE,
+        //                            KITLINE = group.First().KITLINE,
+        //                            TRANS = group.First().TRANS
+        //                        })
+        //                        .ToList();
+        //                    // Populate the DataGridView with the aggregated data
+        //                    foreach (var detail in aggregatedDetails)
+        //                    {
+        //                        // Remove "+0" from CALC if present
+        //                        if (detail.CALC.Contains("+0"))
+        //                        {
+        //                            detail.CALC = detail.CALC.Replace("+0", "");
+        //                        }
+        //                        // If CALC is "0" or contains a single number, set it to an empty string
+        //                        if (detail.CALC == "0" || !detail.CALC.Contains("+"))
+        //                        {
+        //                            detail.CALC = "";
+        //                        }
+        //                        dgwBom.Rows.Add(detail.PARTNAME, "", detail.PARTDES, "", detail.QUANT, detail.CQUANT, detail.DELTA, detail.CALC, "", "", detail.TRANS, detail.KLINE, detail.KITLINE);
+        //                        int pbTotal = aggregatedDetails.Count;
+        //                        if (detail.DELTA >= 0)
+        //                        {
+        //                            completedItems++;
+        //                        }
+        //                        progressBar1.Value = (completedItems * 100) / pbTotal;
+        //                    }
+        //                    // Sort the DataGridView by the DELTA column in descending order
+        //                    dgwBom.Sort(dgwBom.Columns["DELTA"], ListSortDirection.Ascending);
+        //                    // Update the progress label
+        //                    UpdateProgressLabel();
+        //                    progressBar1.Update();
+        //                    txtbInputIPN.PlaceholderText = $"Filter by IPN ({aggregatedDetails.Count})";
+        //                    // Fetch warehouse balances
+        //                    await FetchWarehouseBalances();
+        //                    // Fetch MFPNs in a single API call
+        //                    await FetchMFPNsForAllRowsInSinglePull();
+
+        //                    await FetchAltsForAllRows();
+        //                }
+        //                else
+        //                {
+        //                    SafeAppendLog("No BOM details found for the selected serial.", Color.Red);
+
+        //                }
+        //            }
+        //            catch (HttpRequestException ex)
+        //            {
+        //                SafeAppendLog($"Request error: {ex.Message}", Color.Red);
+
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                SafeAppendLog($"Request error: {ex.Message}", Color.Red);
+
+        //            }
+        //        }
+        //    }
+        //}
+
         private async Task LoadBomDetails(string serialName)
         {
             SafeAppendLog($"Fetching warehouse balances...", Color.Yellow);
@@ -648,45 +657,50 @@ namespace WH_Panel
                 progressBar1.Value = 0;
                 progressBar1.Update();
                 int completedItems = 0;
-                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{serialName}'&$expand=TRANSORDER_K_SUBFORM($select=PARTNAME,PARTDES,CQUANT,QUANT,KLINE,TRANS,KITLINE)";
+
+                // Added &$select=SERIALNAME to eliminate root entity hydration and DOCTODOLISTLOG leak
+                string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL"
+                           + $"?$filter=SERIALNAME eq '{serialName}'"
+                           + $"&$select=SERIALNAME"
+                           + $"&$expand=TRANSORDER_K_SUBFORM($select=PARTNAME,PARTDES,CQUANT,QUANT,KLINE,TRANS,KITLINE)";
 
                 using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
                 {
                     try
                     {
-                        // Set the request headers if needed
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        // Set the Authorization header
-                        //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
-                        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
 
                         string usedUser = ApiHelper.AuthenticateClient(client);
-                        // string usedUser = ApiHelper.AuthenticateClient(client);
                         RegisterTransaction(usedUser); // Log this transaction timestamp
+
                         // Make the HTTP GET request
                         HttpResponseMessage response = await client.GetAsync(url);
                         response.EnsureSuccessStatusCode();
+
                         // Read the response content
                         string responseBody = await response.Content.ReadAsStringAsync();
+
                         // Parse the JSON response
                         var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+
                         // Check if the response contains the expected data
                         if (apiResponse["value"] != null && apiResponse["value"].Any())
                         {
                             var bomDetails = apiResponse["value"].First["TRANSORDER_K_SUBFORM"].ToObject<List<TransOrderKSubform>>();
+
                             // Aggregate the PQUANT values for each unique PARTNAME
                             int bomCountFromDB = await FetchIPNcountFromBom(txtbName.Text);
                             SafeAppendLog($"Loading {bomCountFromDB} items from {txtbName.Text} bom", Color.Yellow);
+
                             dgwBom.Rows.Clear();
+
                             var aggregatedDetails = bomDetails
                                 .GroupBy(detail => detail.PARTNAME)
                                 .Select(group => new TransOrderKSubform
                                 {
                                     PARTNAME = group.Key,
                                     PARTDES = group.First().PARTDES,
-                                    //CQUANT = group.First().CQUANT,
                                     CQUANT = group.Max(detail => detail.CQUANT),
                                     CALC = string.Join("+", group.Select(detail => detail.QUANT)),
                                     QUANT = group.Sum(detail => detail.QUANT),
@@ -695,6 +709,7 @@ namespace WH_Panel
                                     TRANS = group.First().TRANS
                                 })
                                 .ToList();
+
                             // Populate the DataGridView with the aggregated data
                             foreach (var detail in aggregatedDetails)
                             {
@@ -703,27 +718,34 @@ namespace WH_Panel
                                 {
                                     detail.CALC = detail.CALC.Replace("+0", "");
                                 }
+
                                 // If CALC is "0" or contains a single number, set it to an empty string
                                 if (detail.CALC == "0" || !detail.CALC.Contains("+"))
                                 {
                                     detail.CALC = "";
                                 }
+
                                 dgwBom.Rows.Add(detail.PARTNAME, "", detail.PARTDES, "", detail.QUANT, detail.CQUANT, detail.DELTA, detail.CALC, "", "", detail.TRANS, detail.KLINE, detail.KITLINE);
+
                                 int pbTotal = aggregatedDetails.Count;
                                 if (detail.DELTA >= 0)
                                 {
                                     completedItems++;
                                 }
-                                progressBar1.Value = (completedItems * 100) / pbTotal;
+                                progressBar1.Value = pbTotal > 0 ? (completedItems * 100) / pbTotal : 0;
                             }
-                            // Sort the DataGridView by the DELTA column in descending order
+
+                            // Sort the DataGridView by the DELTA column in ascending order
                             dgwBom.Sort(dgwBom.Columns["DELTA"], ListSortDirection.Ascending);
+
                             // Update the progress label
                             UpdateProgressLabel();
                             progressBar1.Update();
                             txtbInputIPN.PlaceholderText = $"Filter by IPN ({aggregatedDetails.Count})";
+
                             // Fetch warehouse balances
                             await FetchWarehouseBalances();
+
                             // Fetch MFPNs in a single API call
                             await FetchMFPNsForAllRowsInSinglePull();
 
@@ -732,24 +754,19 @@ namespace WH_Panel
                         else
                         {
                             SafeAppendLog("No BOM details found for the selected serial.", Color.Red);
-
                         }
                     }
                     catch (HttpRequestException ex)
                     {
                         SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-
                     }
                     catch (Exception ex)
                     {
                         SafeAppendLog($"Request error: {ex.Message}", Color.Red);
-
                     }
                 }
             }
         }
-
-
         private async Task FetchMFPNsForAllRowsInSinglePull()
         {
             var partNames = dgwBom.Rows.Cast<DataGridViewRow>()
@@ -3736,583 +3753,7 @@ namespace WH_Panel
         }
 
 
-        //private async Task AddItemToKit(string partName, string serialName, int cQuant, int qty, DataGridViewRow filteredRow, string wh)
-        //{
-        //    // =========================================================================
-        //    // STEP 1: Real-time Stock Check (KEPT for physical warehouse reality)
-        //    // =========================================================================
-        //    string checkUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{wh}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{partName}')";
-        //    int availableQty = 0;
-
-        //    using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
-        //    {
-        //        client.DefaultRequestHeaders.Accept.Clear();
-        //        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-        //        try
-        //        {
-        //            string usedUser = ApiHelper.AuthenticateClient(client);
-        //            RegisterTransaction(usedUser);
-
-        //            HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
-        //            if (!checkResponse.IsSuccessStatusCode)
-        //            {
-        //                SafeAppendLog($"Inventory check failed: {checkResponse.StatusCode}", Color.Red);
-        //                MessageBox.Show("Could not verify inventory availability. Please try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        //                return;
-        //            }
-
-        //            string checkResponseBody = await checkResponse.Content.ReadAsStringAsync();
-        //            var checkApiResponse = JsonConvert.DeserializeObject<JObject>(checkResponseBody);
-        //            var warehouse = checkApiResponse["value"]?.FirstOrDefault();
-
-        //            if (warehouse != null)
-        //            {
-        //                var balance = warehouse["WARHSBAL_SUBFORM"]?.FirstOrDefault();
-        //                if (balance != null)
-        //                {
-        //                    availableQty = balance["TBALANCE"].Value<int>();
-        //                    filteredRow.Cells["TBALANCE"].Value = availableQty; // Update UI with true live number
-        //                }
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            SafeAppendLog($"Inventory check exception: {ex.Message}", Color.Red);
-        //            return;
-        //        }
-
-        //        // Validate quantity against live server stock
-        //        if (availableQty < qty)
-        //        {
-        //            MessageBox.Show($"Insufficient quantity available in warehouse {wh}.\nAvailable: {availableQty}, Requested: {qty}",
-        //                            "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //            return;
-        //        }
-
-        //        // =========================================================================
-        //        // STEP 2: Use KLINE from Memory (Saves 1 GET to TRANSORDER_K)
-        //        // =========================================================================
-        //        if (filteredRow.Cells["KLINE"].Value == null ||
-        //            !int.TryParse(filteredRow.Cells["KLINE"].Value.ToString(), out int kline) ||
-        //            kline <= 0)
-        //        {
-        //            MessageBox.Show("Missing KLINE identifier in grid. Please reload the BOM.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //            return;
-        //        }
-
-        //        //string package = filteredRow.Cells["PACKCODE"]?.Value?.ToString() ?? string.Empty;
-
-        //        // =========================================================================
-        //        // STEP 3: Execute Transfer Update (1 Write)
-        //        // =========================================================================
-        //        string patchUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM(TYPE='K',KLINE={kline})";
-
-        //        try
-        //        {
-        //            var payload = new
-        //            {
-        //                QUANT = qty,
-        //                WARHSNAME = wh,
-        //                TOWARHSNAME = "Flr"
-        //            };
-
-        //            var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-        //            HttpResponseMessage patchResponse = await client.PatchAsync(patchUrl, content);
-
-        //            if (patchResponse.IsSuccessStatusCode)
-        //            {
-        //                AutoClosingMessageBox.Show($"{partName} - {qty} PCS moved to {serialName}", 1000, Color.Green);
-        //                isItemAddedToKit = true;
-
-        //                // =====================================================================
-        //                // STEP 4: Local Decrement (Saves 1 GET to WAREHOUSES)
-        //                // We know what the stock was 1 second ago in Step 1, minus our pick.
-        //                // =====================================================================
-        //                int newBalance = Math.Max(0, availableQty - qty);
-        //                filteredRow.Cells["TBALANCE"].Value = newBalance;
-
-        //                // =====================================================================
-        //                // STEP 5: Grid Quantities & Delta Calculations
-        //                // =====================================================================
-        //                int prevQty = 0;
-        //                if (filteredRow.Cells["QUANT"].Value != null)
-        //                {
-        //                    int.TryParse(filteredRow.Cells["QUANT"].Value.ToString(), out prevQty);
-        //                }
-
-        //                int currentINkit = prevQty + qty;
-        //                filteredRow.Cells["QUANT"].Value = currentINkit;
-
-        //                int requiredQty = 0;
-        //                if (filteredRow.Cells["CQUANT"].Value != null)
-        //                {
-        //                    int.TryParse(filteredRow.Cells["CQUANT"].Value.ToString(), out requiredQty);
-        //                }
-
-        //                filteredRow.Cells["DELTA"].Value = currentINkit - requiredQty;
-
-        //                string currentCALC = filteredRow.Cells["CALC"].Value?.ToString();
-        //                if (!string.IsNullOrEmpty(currentCALC) && currentINkit != 0)
-        //                {
-        //                    filteredRow.Cells["CALC"].Value = $"{currentCALC}+{qty}";
-        //                }
-        //                else if (string.IsNullOrEmpty(currentCALC) && currentINkit != 0 && prevQty > 0)
-        //                {
-        //                    filteredRow.Cells["CALC"].Value = $"{prevQty}+{qty}";
-        //                }
-
-        //                filteredRow.Cells["LEFTOVERS"].Value = (newBalance + currentINkit) - requiredQty;
-        //            }
-        //            else
-        //            {
-        //                SafeAppendLog($"PATCH Failed: {patchResponse.StatusCode}", Color.Red);
-        //                MessageBox.Show("The server transaction failed. Please check details and retry.",
-        //                                "Transaction Failure", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            SafeAppendLog($"Execution error: {ex.Message}", Color.Red);
-        //        }
-        //    }
-        //}
-
-
-
-
-        //private async Task AddItemToKit(string partName, string serialName, int cQuant, int qty, DataGridViewRow filteredRow, string wh)
-        //{
-        //    // =========================================================================
-        //    // STEP 1: Real-time Stock Check (KEPT for physical warehouse reality)
-        //    // =========================================================================
-        //    string checkUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{wh}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{partName}')";
-        //    int availableQty = 0;
-        //    string usedUser = "Unknown";
-
-        //    using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
-        //    {
-        //        client.DefaultRequestHeaders.Accept.Clear();
-        //        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-        //        try
-        //        {
-        //            usedUser = ApiHelper.AuthenticateClient(client);
-        //            RegisterTransaction(usedUser); // Read transaction
-
-        //            HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
-        //            if (!checkResponse.IsSuccessStatusCode)
-        //            {
-        //                SafeAppendLog($"[{usedUser}] Inventory check failed: {checkResponse.StatusCode}", Color.Red);
-        //                MessageBox.Show("Could not verify inventory availability. Please try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        //                return;
-        //            }
-
-        //            string checkResponseBody = await checkResponse.Content.ReadAsStringAsync();
-        //            var checkApiResponse = JsonConvert.DeserializeObject<JObject>(checkResponseBody);
-        //            var warehouse = checkApiResponse["value"]?.FirstOrDefault();
-
-        //            if (warehouse != null)
-        //            {
-        //                var balance = warehouse["WARHSBAL_SUBFORM"]?.FirstOrDefault();
-        //                if (balance != null)
-        //                {
-        //                    availableQty = balance["TBALANCE"].Value<int>();
-        //                    filteredRow.Cells["TBALANCE"].Value = availableQty; // Update UI with true live number
-        //                }
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            SafeAppendLog($"[{usedUser}] Inventory check exception: {ex.Message}", Color.Red);
-        //            return;
-        //        }
-
-        //        // Validate quantity against live server stock
-        //        if (availableQty < qty)
-        //        {
-        //            MessageBox.Show($"Insufficient quantity available in warehouse {wh}.\nAvailable: {availableQty}, Requested: {qty}",
-        //                            "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //            return;
-        //        }
-
-        //        // =========================================================================
-        //        // STEP 2: Use KLINE from Memory (Saves 1 GET to TRANSORDER_K)
-        //        // =========================================================================
-        //        if (filteredRow.Cells["KLINE"].Value == null ||
-        //            !int.TryParse(filteredRow.Cells["KLINE"].Value.ToString(), out int kline) ||
-        //            kline <= 0)
-        //        {
-        //            MessageBox.Show("Missing KLINE identifier in grid. Please reload the BOM.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //            return;
-        //        }
-
-        //        // =========================================================================
-        //        // STEP 3: Execute Transfer Update (1 Write)
-        //        // =========================================================================
-        //        string patchUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM(TYPE='K',KLINE={kline})";
-
-        //        try
-        //        {
-        //            var payload = new
-        //            {
-        //                QUANT = qty,
-        //                WARHSNAME = wh,
-        //                TOWARHSNAME = "Flr"
-        //            };
-
-        //            var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-
-        //            RegisterTransaction(usedUser); // Write transaction
-        //            HttpResponseMessage patchResponse = await client.PatchAsync(patchUrl, content);
-
-        //            if (patchResponse.IsSuccessStatusCode)
-        //            {
-        //                AutoClosingMessageBox.Show($"{partName} - {qty} PCS moved to {serialName}", 1000, Color.Green);
-        //                SafeAppendLog($"[{usedUser}] Kitted {qty} PCS of {partName} into {serialName} (WH: {wh} -> Flr)", Color.DarkGreen);
-        //                isItemAddedToKit = true;
-
-        //                // =====================================================================
-        //                // STEP 4: Local Decrement (Saves 1 GET to WAREHOUSES)
-        //                // =====================================================================
-        //                int newBalance = Math.Max(0, availableQty - qty);
-        //                filteredRow.Cells["TBALANCE"].Value = newBalance;
-
-        //                // =====================================================================
-        //                // STEP 5: Grid Quantities & Delta Calculations
-        //                // =====================================================================
-        //                int prevQty = 0;
-        //                if (filteredRow.Cells["QUANT"].Value != null)
-        //                {
-        //                    int.TryParse(filteredRow.Cells["QUANT"].Value.ToString(), out prevQty);
-        //                }
-
-        //                int currentINkit = prevQty + qty;
-        //                filteredRow.Cells["QUANT"].Value = currentINkit;
-
-        //                int requiredQty = 0;
-        //                if (filteredRow.Cells["CQUANT"].Value != null)
-        //                {
-        //                    int.TryParse(filteredRow.Cells["CQUANT"].Value.ToString(), out requiredQty);
-        //                }
-
-        //                filteredRow.Cells["DELTA"].Value = currentINkit - requiredQty;
-
-        //                string currentCALC = filteredRow.Cells["CALC"].Value?.ToString();
-        //                if (!string.IsNullOrEmpty(currentCALC) && currentINkit != 0)
-        //                {
-        //                    filteredRow.Cells["CALC"].Value = $"{currentCALC}+{qty}";
-        //                }
-        //                else if (string.IsNullOrEmpty(currentCALC) && currentINkit != 0 && prevQty > 0)
-        //                {
-        //                    filteredRow.Cells["CALC"].Value = $"{prevQty}+{qty}";
-        //                }
-
-        //                filteredRow.Cells["LEFTOVERS"].Value = (newBalance + currentINkit) - requiredQty;
-        //            }
-        //            else
-        //            {
-
-        //                    string errorBody = await patchResponse.Content.ReadAsStringAsync();
-        //                    SafeAppendLog($"[{usedUser}] PATCH Failed: {patchResponse.StatusCode} - {errorBody}", Color.Red);
-        //                    MessageBox.Show($"Transaction failed:\n{errorBody}",
-        //                                    "Transaction Failure", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            SafeAppendLog($"[{usedUser}] Execution error: {ex.Message}", Color.Red);
-        //        }
-        //    }
-        //}
-
-
-        //private async Task AddItemToKit(string partName, string serialName, int cQuant, int qty, DataGridViewRow filteredRow, string wh)
-        //{
-        //    string usedUser = "Unknown";
-
-        //    using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
-        //    {
-        //        client.DefaultRequestHeaders.Accept.Clear();
-        //        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-        //        try
-        //        {
-        //            usedUser = ApiHelper.AuthenticateClient(client);
-
-        //            // =========================================================================
-        //            // STEP 1: Real-time Stock Check
-        //            // =========================================================================
-        //            string checkUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{wh}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{partName}')";
-        //            RegisterTransaction(usedUser);
-
-        //            HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
-        //            if (!checkResponse.IsSuccessStatusCode)
-        //            {
-        //                SafeAppendLog($"[{usedUser}] Inventory check failed: {checkResponse.StatusCode}", Color.Red);
-        //                MessageBox.Show("Could not verify inventory availability. Please try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        //                return;
-        //            }
-
-        //            string checkResponseBody = await checkResponse.Content.ReadAsStringAsync();
-        //            var checkApiResponse = JsonConvert.DeserializeObject<JObject>(checkResponseBody);
-        //            var warehouse = checkApiResponse["value"]?.FirstOrDefault();
-
-        //            int availableQty = 0;
-        //            if (warehouse != null)
-        //            {
-        //                var balance = warehouse["WARHSBAL_SUBFORM"]?.FirstOrDefault();
-        //                if (balance != null)
-        //                {
-        //                    availableQty = balance["TBALANCE"]?.Value<int>() ?? 0;
-        //                    filteredRow.Cells["TBALANCE"].Value = availableQty;
-        //                }
-        //            }
-
-        //            if (availableQty < qty)
-        //            {
-        //                MessageBox.Show($"Insufficient quantity in warehouse {wh}.\nAvailable: {availableQty}, Requested: {qty}",
-        //                                "Insufficient Stock", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //                return;
-        //            }
-
-        //            // =========================================================================
-        //            // STEP 2: Live KLINE & TYPE Resolution (Ensures 100% Valid Target Key)
-        //            // =========================================================================
-        //            string klineQueryUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM?$filter=PARTNAME eq '{partName}'&$select=KLINE,TYPE,QUANT";
-        //            RegisterTransaction(usedUser);
-
-        //            HttpResponseMessage klineResponse = await client.GetAsync(klineQueryUrl);
-        //            if (!klineResponse.IsSuccessStatusCode)
-        //            {
-        //                string klineErr = await klineResponse.Content.ReadAsStringAsync();
-        //                SafeAppendLog($"[{usedUser}] Failed to fetch KLINE for {partName}: {klineResponse.StatusCode} - {klineErr}", Color.Red);
-        //                MessageBox.Show($"Could not resolve work order line for {partName}.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //                return;
-        //            }
-
-        //            string klineBody = await klineResponse.Content.ReadAsStringAsync();
-        //            var klineJson = JsonConvert.DeserializeObject<JObject>(klineBody);
-        //            var klineRecord = klineJson["value"]?.FirstOrDefault();
-
-        //            HttpResponseMessage writeResponse;
-
-        //            if (klineRecord != null)
-        //            {
-        //                // Line already exists -> PATCH existing line
-        //                int liveKline = klineRecord["KLINE"].Value<int>();
-        //                string lineType = klineRecord["TYPE"]?.Value<string>() ?? "K";
-
-        //                filteredRow.Cells["KLINE"].Value = liveKline;
-
-        //                string patchUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM(TYPE='{lineType}',KLINE={liveKline})";
-
-        //                var payload = new
-        //                {
-        //                    QUANT = qty,
-        //                    WARHSNAME = wh,
-        //                    TOWARHSNAME = "Flr"
-        //                };
-
-        //                var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-        //                RegisterTransaction(usedUser);
-        //                writeResponse = await client.PatchAsync(patchUrl, content);
-        //            }
-        //            else
-        //            {
-        //                // Line does NOT exist (Alt part / unallocated demand) -> POST new line
-        //                SafeAppendLog($"[{usedUser}] No existing KLINE found for {partName} in {serialName}. Creating new record via POST...", Color.DarkOrange);
-
-        //                string postUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM";
-
-        //                var payload = new
-        //                {
-        //                    PARTNAME = partName,
-        //                    QUANT = qty,
-        //                    WARHSNAME = wh,
-        //                    TOWARHSNAME = "Flr"
-        //                };
-
-        //                var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-        //                RegisterTransaction(usedUser);
-        //                writeResponse = await client.PostAsync(postUrl, content);
-        //            }
-
-        //            // =========================================================================
-        //            // STEP 3: Handle Result & UI Sync
-        //            // =========================================================================
-        //            if (writeResponse.IsSuccessStatusCode)
-        //            {
-        //                AutoClosingMessageBox.Show($"{partName} - {qty} PCS moved to {serialName}", 1000, Color.Green);
-        //                SafeAppendLog($"[{usedUser}] Successfully kitted {qty} PCS of {partName} into {serialName} (WH: {wh} -> Flr)", Color.DarkGreen);
-        //                isItemAddedToKit = true;
-
-        //                // Local balance decrement
-        //                int newBalance = Math.Max(0, availableQty - qty);
-        //                filteredRow.Cells["TBALANCE"].Value = newBalance;
-
-        //                // Update Grid Quantities & Delta
-        //                int prevQty = 0;
-        //                if (filteredRow.Cells["QUANT"].Value != null)
-        //                {
-        //                    int.TryParse(filteredRow.Cells["QUANT"].Value.ToString(), out prevQty);
-        //                }
-
-        //                int currentINkit = prevQty + qty;
-        //                filteredRow.Cells["QUANT"].Value = currentINkit;
-
-        //                int requiredQty = 0;
-        //                if (filteredRow.Cells["CQUANT"].Value != null)
-        //                {
-        //                    int.TryParse(filteredRow.Cells["CQUANT"].Value.ToString(), out requiredQty);
-        //                }
-
-        //                filteredRow.Cells["DELTA"].Value = currentINkit - requiredQty;
-
-        //                string currentCALC = filteredRow.Cells["CALC"].Value?.ToString();
-        //                if (!string.IsNullOrEmpty(currentCALC) && currentINkit != 0)
-        //                {
-        //                    filteredRow.Cells["CALC"].Value = $"{currentCALC}+{qty}";
-        //                }
-        //                else if (string.IsNullOrEmpty(currentCALC) && currentINkit != 0 && prevQty > 0)
-        //                {
-        //                    filteredRow.Cells["CALC"].Value = $"{prevQty}+{qty}";
-        //                }
-
-        //                filteredRow.Cells["LEFTOVERS"].Value = (newBalance + currentINkit) - requiredQty;
-        //            }
-        //            else
-        //            {
-        //                string writeErr = await writeResponse.Content.ReadAsStringAsync();
-        //                SafeAppendLog($"[{usedUser}] Kitting Write Failed ({writeResponse.StatusCode}): {writeErr}", Color.Red);
-        //                MessageBox.Show($"Transaction failed:\n{writeErr}", "Transaction Failure", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            SafeAppendLog($"[{usedUser}] Execution error: {ex.Message}", Color.Red);
-        //        }
-        //    }
-        //}
-
-
-        //private async Task AddSparesToKit(string partName, string serialName, int qty, DataGridViewRow filteredRow, string wh)
-        //{
-        //    // Extract the KITLINE id from your hidden/existing column
-        //    string kitLineStr = filteredRow.Cells["KITLINE"].Value?.ToString();
-        //    if (string.IsNullOrEmpty(kitLineStr))
-        //    {
-        //        MessageBox.Show("KITLINE identification is missing for this row.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //        return;
-        //    }
-
-        //    string checkUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/WAREHOUSES?$filter=WARHSNAME eq '{wh}'&$expand=WARHSBAL_SUBFORM($filter=PARTNAME eq '{partName}')";
-        //    int availableQty = 0;
-
-        //    using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
-        //    {
-        //        client.DefaultRequestHeaders.Accept.Clear();
-        //        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-        //        // ==========================================
-        //        // STEP 1: Check Inventory Availability (GET)
-        //        // ==========================================
-        //        try
-        //        {
-        //            string usedUser = ApiHelper.AuthenticateClient(client);
-        //            RegisterTransaction(usedUser);
-
-        //            HttpResponseMessage checkResponse = await client.GetAsync(checkUrl);
-        //            if (!checkResponse.IsSuccessStatusCode)
-        //            {
-        //                MessageBox.Show("Could not verify inventory availability.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        //                return;
-        //            }
-
-        //            string checkResponseBody = await checkResponse.Content.ReadAsStringAsync();
-        //            var checkApiResponse = JsonConvert.DeserializeObject<JObject>(checkResponseBody);
-        //            var warehouse = checkApiResponse["value"]?.FirstOrDefault();
-        //            if (warehouse != null)
-        //            {
-        //                var balance = warehouse["WARHSBAL_SUBFORM"]?.FirstOrDefault();
-        //                if (balance != null) availableQty = balance["TBALANCE"].Value<int>();
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            SafeAppendLog($"Inventory check exception: {ex.Message}", Color.Red);
-        //            return;
-        //        }
-
-        //        if (availableQty < qty)
-        //        {
-        //            MessageBox.Show("Insufficient quantity available in the warehouse.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //            return;
-        //        }
-
-        //        // ==========================================
-        //        // STEP 2: Execute New Entry Insertion (POST)
-        //        // ==========================================
-        //        // Notice we point to the generic collection endpoint, NOT a specific KLINE row
-        //        string postUrl = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL('{serialName}')/TRANSORDER_K_SUBFORM";
-
-        //        try
-        //        {
-        //            // Create payload matching Priority requirements for a new transaction line
-        //            var payload = new
-        //            {
-        //                TYPE = "K",
-        //                KITLINE = int.Parse(kitLineStr), // Relate it back to the original Kit Line ID
-        //                PARTNAME = partName,
-        //                QUANT = qty,
-        //                WARHSNAME = wh,
-        //                TOWARHSNAME = "Flr"
-        //            };
-
-        //            var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-        //            HttpResponseMessage postResponse = await client.PostAsync(postUrl, content);
-
-        //            if (postResponse.IsSuccessStatusCode)
-        //            {
-        //                AutoClosingMessageBox.Show($"Spare Transfer: {partName} - {qty} PCS added to {serialName}", 1500, Color.Green);
-
-        //                // =========================================================
-        //                // STEP 3: Local UI Grid Mathematics (Update Delta & Overages)
-        //                // =========================================================
-        //                int prevQty = 0;
-        //                if (filteredRow.Cells["QUANT"].Value != null)
-        //                {
-        //                    int.TryParse(filteredRow.Cells["QUANT"].Value.ToString(), out prevQty);
-        //                }
-
-        //                int requiredQty = 0;
-        //                if (filteredRow.Cells["CQUANT"].Value != null)
-        //                {
-        //                    int.TryParse(filteredRow.Cells["CQUANT"].Value.ToString(), out requiredQty);
-        //                }
-
-        //                // Update row values
-        //                int newKitQty = prevQty + qty;
-        //                filteredRow.Cells["QUANT"].Value = newKitQty;
-        //                filteredRow.Cells["DELTA"].Value = newKitQty - requiredQty; // Will go positive, indicating surplus
-
-        //                // Reflect fresh warehouse balance logic down here if needed like your Step 4...
-
-        //            }
-        //            else
-        //            {
-        //                string errContent = await postResponse.Content.ReadAsStringAsync();
-        //                SafeAppendLog($"POST Failed: {postResponse.StatusCode} - {errContent}", Color.Red);
-        //                MessageBox.Show("Priority rejected the spare transfer line creation.", "Transaction Failure", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            SafeAppendLog($"Execution error: {ex.Message}", Color.Red);
-        //        }
-        //    }
-        //}
+      
 
         private async Task AddSparesToKit(string partName, string serialName, int qty, DataGridViewRow filteredRow, string wh)
         {
@@ -5195,7 +4636,17 @@ namespace WH_Panel
                 return;
             }
             string serialName = txtbRob.Text;
-            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{serialName}'&$expand=SERIALTEXT_SUBFORM";
+
+            //string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{serialName}'&$expand=SERIALTEXT_SUBFORM";
+
+
+            string url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL" +
+             $"?$filter=SERIALNAME eq '{Uri.EscapeDataString(serialName)}'" +
+             $"&$select=SERIALNAME" +
+             $"&$expand=SERIALTEXT_SUBFORM($select=TEXT)";
+
+
+
             using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
             {
                 try
