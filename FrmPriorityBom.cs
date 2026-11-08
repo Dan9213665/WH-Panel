@@ -2651,118 +2651,247 @@ namespace WH_Panel
             }
             SortIPNMovesByDate();
         }
+        //public async Task<List<(string PackCode, string BookNum, string Date)>> FetchPackCodeAsync(string logDocNo, string partName, int quant)
+        //{
+        //    List<(string PackCode, string BookNum, string Date)> results = new List<(string PackCode, string BookNum, string Date)>();
+        //    string url;
+        //    if (logDocNo.StartsWith("GR"))
+        //    {
+        //        // Handle GR documents
+        //        url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM";
+        //    }
+        //    else if (logDocNo.StartsWith("IC"))
+        //    {
+        //        url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_C?$filter=DOCNO eq '{logDocNo}'";
+        //    }
+        //    else if (logDocNo.StartsWith("SH"))
+        //    {
+        //        url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_D?$filter=DOCNO eq '{logDocNo}'";
+        //    }
+        //    else if (logDocNo.StartsWith("WR"))
+        //    {
+        //        url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_T?$filter=DOCNO eq '{logDocNo}'";
+        //    }
+        //    else if (logDocNo.StartsWith("ROB"))
+        //    {
+        //        // Handle ROB documents
+        //        url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{logDocNo}'";
+        //    }
+        //    else
+        //    {
+        //        // Handle other document types if needed
+        //        url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM";
+        //    }
+        //    results = await FetchPackCodeFromUrlAsync(url, logDocNo, partName, quant, logDocNo.StartsWith("ROB"));
+        //    return results;
+        //}
+        //private async Task<List<(string PackCode, string BookNum, string Date)>> FetchPackCodeFromUrlAsync(string url, string logDocNo, string partName, int quant, bool isRobDocument)
+        //{
+        //    using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
+        //    {
+        //        try
+        //        {
+        //            // Set the request headers if needed
+        //            client.DefaultRequestHeaders.Accept.Clear();
+        //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //            // Set the Authorization header
+        //            //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
+        //            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+
+        //            string usedUser = ApiHelper.AuthenticateClient(client);
+        //            RegisterTransaction(usedUser); // Log this transaction timestamp
+        //            // string usedUser = ApiHelper.AuthenticateClient(client);
+        //            // Make the HTTP GET request
+        //            HttpResponseMessage response = await client.GetAsync(url);
+        //            response.EnsureSuccessStatusCode();
+        //            // Read the response content
+        //            string responseBody = await response.Content.ReadAsStringAsync();
+        //            // Parse the JSON response
+        //            var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
+        //            if (apiResponse == null || apiResponse["value"] == null || !apiResponse["value"].Any())
+        //            {
+        //                return new List<(string PackCode, string BookNum, string Date)>();
+        //            }
+        //            var document = apiResponse["value"].FirstOrDefault();
+        //            if (document == null)
+        //            {
+        //                return new List<(string PackCode, string BookNum, string Date)>();
+        //            }
+        //            var results = new List<(string PackCode, string BookNum, string Date)>();
+        //            if (isRobDocument)
+        //            {
+        //                // Handle ROB document logic
+        //                string packCode = document["PACKCODE"]?.ToString();
+        //                string bookNum = document["BOOKNUM"]?.ToString();
+        //                string date = document["UDATE"]?.ToString();
+        //                results.Add((packCode, bookNum, date));
+        //            }
+        //            else if (logDocNo.StartsWith("IC"))
+        //            {
+        //                // Handle IC document logic
+        //                string date = document["UDATE"]?.ToString();
+        //                results.Add((null, null, date));
+        //            }
+        //            else if (logDocNo.StartsWith("SH"))
+        //            {
+        //                // Handle IC document logic
+        //                string date = document["UDATE"]?.ToString();
+        //                results.Add((null, null, date));
+        //            }
+        //            else if (logDocNo.StartsWith("WR"))
+        //            {
+        //                // Handle IC document logic
+        //                string date = document["UDATE"]?.ToString();
+        //                results.Add((null, null, date));
+        //            }
+        //            else if (logDocNo.StartsWith("GR"))
+        //            {
+        //                // Handle GR document logic
+        //                var transOrders = document["TRANSORDER_P_SUBFORM"]?.ToList();
+        //                if (transOrders == null)
+        //                {
+        //                    return new List<(string PackCode, string BookNum, string Date)>();
+        //                }
+        //                // Find all matching PARTNAME and QUANT
+        //                var matchingOrders = transOrders.Where(t => t["PARTNAME"].ToString() == partName && int.Parse(t["TQUANT"].ToString()) == quant).ToList();
+        //                foreach (var matchingOrder in matchingOrders)
+        //                {
+        //                    string packCode = matchingOrder["PACKCODE"]?.ToString();
+        //                    string bookNum = document["BOOKNUM"]?.ToString();
+        //                    string date = await FetchUDateAsync(logDocNo);
+        //                    results.Add((packCode, bookNum, date));
+        //                }
+        //            }
+        //            return results;
+        //        }
+        //        catch (HttpRequestException ex)
+        //        {
+        //            SafeAppendLog($"Request error: {ex.Message}", Color.Red);
+        //            return new List<(string PackCode, string BookNum, string Date)>();
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            SafeAppendLog($"Request error: {ex.Message}", Color.Red);
+        //            return new List<(string PackCode, string BookNum, string Date)>();
+        //        }
+        //    }
+        //}
+
+
         public async Task<List<(string PackCode, string BookNum, string Date)>> FetchPackCodeAsync(string logDocNo, string partName, int quant)
         {
-            List<(string PackCode, string BookNum, string Date)> results = new List<(string PackCode, string BookNum, string Date)>();
             string url;
+
             if (logDocNo.StartsWith("GR"))
             {
-                // Handle GR documents
-                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM";
+                // Pinned to BOOKNUM, UDATE on header and only required columns on lines
+                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P"
+                    + $"?$filter=DOCNO eq '{logDocNo}'"
+                    + $"&$select=DOCNO,BOOKNUM,UDATE"
+                    + $"&$expand=TRANSORDER_P_SUBFORM($select=PARTNAME,TQUANT,PACKCODE)";
             }
             else if (logDocNo.StartsWith("IC"))
             {
-                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_C?$filter=DOCNO eq '{logDocNo}'";
+                // Only DOCNO and UDATE
+                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_C?$filter=DOCNO eq '{logDocNo}'&$select=DOCNO,UDATE";
             }
             else if (logDocNo.StartsWith("SH"))
             {
-                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_D?$filter=DOCNO eq '{logDocNo}'";
+                // Only DOCNO and UDATE
+                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_D?$filter=DOCNO eq '{logDocNo}'&$select=DOCNO,UDATE";
             }
             else if (logDocNo.StartsWith("WR"))
             {
-                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_T?$filter=DOCNO eq '{logDocNo}'";
+                // Only DOCNO and UDATE
+                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_T?$filter=DOCNO eq '{logDocNo}'&$select=DOCNO,UDATE";
             }
             else if (logDocNo.StartsWith("ROB"))
             {
-                // Handle ROB documents
-                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL?$filter=SERIALNAME eq '{logDocNo}'";
+                // CRITICAL FIX: Explicit $select on SERIAL completely suppresses DOCTODOLISTLOG hydration
+                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/SERIAL"
+                    + $"?$filter=SERIALNAME eq '{logDocNo}'"
+                    + $"&$select=SERIALNAME,PACKCODE,BOOKNUM,UDATE";
             }
             else
             {
-                // Handle other document types if needed
-                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P?$filter=DOCNO eq '{logDocNo}'&$expand=TRANSORDER_P_SUBFORM";
+                url = $"https://p.priority-connect.online/odata/Priority/tabzad51.ini/a020522/DOCUMENTS_P"
+                    + $"?$filter=DOCNO eq '{logDocNo}'"
+                    + $"&$select=DOCNO,BOOKNUM,UDATE"
+                    + $"&$expand=TRANSORDER_P_SUBFORM($select=PARTNAME,TQUANT,PACKCODE)";
             }
-            results = await FetchPackCodeFromUrlAsync(url, logDocNo, partName, quant, logDocNo.StartsWith("ROB"));
-            return results;
+
+            return await FetchPackCodeFromUrlAsync(url, logDocNo, partName, quant, logDocNo.StartsWith("ROB"));
         }
-        private async Task<List<(string PackCode, string BookNum, string Date)>> FetchPackCodeFromUrlAsync(string url, string logDocNo, string partName, int quant, bool isRobDocument)
+
+        private async Task<List<(string PackCode, string BookNum, string Date)>> FetchPackCodeFromUrlAsync(
+            string url, string logDocNo, string partName, int quant, bool isRobDocument)
         {
             using (HttpClient client = new HttpClient(_handler, disposeHandler: false))
             {
                 try
                 {
-                    // Set the request headers if needed
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    // Set the Authorization header
-                    //string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{settings.Api3Username}:{settings.Api3Password}"));
-                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
-
 
                     string usedUser = ApiHelper.AuthenticateClient(client);
-                    RegisterTransaction(usedUser); // Log this transaction timestamp
-                    // string usedUser = ApiHelper.AuthenticateClient(client);
-                    // Make the HTTP GET request
+                    RegisterTransaction(usedUser);
+
                     HttpResponseMessage response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
-                    // Read the response content
+
                     string responseBody = await response.Content.ReadAsStringAsync();
-                    // Parse the JSON response
                     var apiResponse = JsonConvert.DeserializeObject<JObject>(responseBody);
-                    if (apiResponse == null || apiResponse["value"] == null || !apiResponse["value"].Any())
+
+                    if (apiResponse?["value"] == null || !apiResponse["value"].Any())
                     {
                         return new List<(string PackCode, string BookNum, string Date)>();
                     }
+
                     var document = apiResponse["value"].FirstOrDefault();
                     if (document == null)
                     {
                         return new List<(string PackCode, string BookNum, string Date)>();
                     }
+
                     var results = new List<(string PackCode, string BookNum, string Date)>();
+
                     if (isRobDocument)
                     {
-                        // Handle ROB document logic
                         string packCode = document["PACKCODE"]?.ToString();
                         string bookNum = document["BOOKNUM"]?.ToString();
                         string date = document["UDATE"]?.ToString();
                         results.Add((packCode, bookNum, date));
                     }
-                    else if (logDocNo.StartsWith("IC"))
+                    else if (logDocNo.StartsWith("IC") || logDocNo.StartsWith("SH") || logDocNo.StartsWith("WR"))
                     {
-                        // Handle IC document logic
-                        string date = document["UDATE"]?.ToString();
-                        results.Add((null, null, date));
-                    }
-                    else if (logDocNo.StartsWith("SH"))
-                    {
-                        // Handle IC document logic
-                        string date = document["UDATE"]?.ToString();
-                        results.Add((null, null, date));
-                    }
-                    else if (logDocNo.StartsWith("WR"))
-                    {
-                        // Handle IC document logic
                         string date = document["UDATE"]?.ToString();
                         results.Add((null, null, date));
                     }
                     else if (logDocNo.StartsWith("GR"))
                     {
-                        // Handle GR document logic
                         var transOrders = document["TRANSORDER_P_SUBFORM"]?.ToList();
                         if (transOrders == null)
                         {
-                            return new List<(string PackCode, string BookNum, string Date)>();
+                            return results;
                         }
-                        // Find all matching PARTNAME and QUANT
-                        var matchingOrders = transOrders.Where(t => t["PARTNAME"].ToString() == partName && int.Parse(t["TQUANT"].ToString()) == quant).ToList();
+
+                        // Header UDATE is already loaded in the initial call — eliminates FetchUDateAsync secondary round-trips!
+                        string docDate = document["UDATE"]?.ToString();
+                        string bookNum = document["BOOKNUM"]?.ToString();
+
+                        var matchingOrders = transOrders.Where(t =>
+                            string.Equals(t["PARTNAME"]?.ToString(), partName, StringComparison.OrdinalIgnoreCase) &&
+                            int.TryParse(t["TQUANT"]?.ToString(), out int tq) && tq == quant
+                        ).ToList();
+
                         foreach (var matchingOrder in matchingOrders)
                         {
                             string packCode = matchingOrder["PACKCODE"]?.ToString();
-                            string bookNum = document["BOOKNUM"]?.ToString();
-                            string date = await FetchUDateAsync(logDocNo);
-                            results.Add((packCode, bookNum, date));
+                            results.Add((packCode, bookNum, docDate));
                         }
                     }
+
                     return results;
                 }
                 catch (HttpRequestException ex)
@@ -2777,6 +2906,8 @@ namespace WH_Panel
                 }
             }
         }
+
+
         public async Task<string> FetchUDateAsync(string docNo)
         {
             string uDate = null;
